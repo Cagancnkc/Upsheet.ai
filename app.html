@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Upsheet — AI Excel Asistanı</title>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#f97316">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Upsheet">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='black'/><path d='M 30 65 Q 28 40 50 28 Q 65 22 75 32 L 68 40 Q 60 33 50 37 Q 35 45 36 63 Z' fill='white'/></svg>">
+<meta name="description" content="Upsheet ile Excel tablolarınızı Türkçe komutlarla yönetin">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<link rel="stylesheet" href="css/style.css">
+<script src="api.js"></script>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div id="topbar">
+  <div class="logo">
+    <div class="logo-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+    </div>
+    <a href="index.html" style="color:inherit;text-decoration:none;">Upsheet</a>
+  </div>
+  <div id="topMetrics">
+    <span class="tb-metric-badge" id="mbCells">⚡ 0 hücre</span>
+    <span class="tb-metric-badge" id="mbRows">↕ 0 satır</span>
+    <span class="tb-metric-badge" id="mbAI">🤖 0 işlem</span>
+  </div>
+  <div class="file-name-wrap">
+    <span id="fileName" onclick="startRename()" title="Düzenlemek için tıkla">Yeni Dosya.xlsx</span>
+    <span id="saveIndicator" class="saved"><span class="save-dot"></span><span id="saveText">Kaydedildi ✓</span></span>
+    <span id="syncBadge" class="sync-badge" style="display:none"><span class="sync-dot"></span><span id="syncText">Senkronize</span></span>
+    <input id="fileNameInput" type="text" value="Yeni Dosya.xlsx" onblur="finishRename()" onkeydown="if(event.key==='Enter')finishRename()">
+  </div>
+  <div class="topbar-right">
+    <button class="btn btn-ghost" onclick="triggerUpload()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      Excel Yükle
+    </button>
+    <button id="downloadBtn" class="btn btn-primary" onclick="downloadFile()" title="Excel olarak indir (.xlsx)">
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      İndir
+    </button>
+    <button class="btn btn-ghost" onclick="downloadCSV()" title="Aktif sheet'i CSV olarak indir">
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      CSV
+    </button>
+    <div class="icon-btn" onclick="openSettings()" title="API Ayarları">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M4.93 19.07l1.41-1.41M19.07 19.07l-1.41-1.41M12 2v2M12 20v2M2 12h2M20 12h2"/></svg>
+    </div>
+  </div>
+</div>
+
+<!-- ONBOARDING BANNER -->
+<div id="onboardBanner" class="hidden">
+  <span class="ob-text">⚡ AI özelliklerini aktifleştirmek için API key ekle</span>
+  <span class="ob-link" onclick="openSettings()">Ayarları Aç →</span>
+  <button id="obClose" onclick="closeOnboardBanner()" title="Kapat">
+    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+</div>
+
+<div id="main">
+
+<!-- SIDEBAR -->
+<div id="sidebar">
+  <!-- Header: logo + collapse -->
+  <div class="sb-header">
+    <a href="index.html" class="sb-logo">
+      <span class="sb-logo-accent"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" style="width:24px;height:24px;border-radius:5px;flex-shrink:0;"><rect width="100" height="100" fill="black"/><path d="M 30 65 Q 28 40 50 28 Q 65 22 75 32 L 68 40 Q 60 33 50 37 Q 35 45 36 63 Z" fill="white"/></svg></span>
+      <span class="sb-logo-text">Upsheet</span>
+    </a>
+    <div id="sbCollapseBtn" onclick="toggleSidebar()" title="Kenar çubuğunu daralt">
+      <svg id="sbCollapseIcon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+  </div>
+
+  <div class="sb-scroll">
+    <!-- FILES -->
+    <div class="sb-group">
+      <div class="sb-label">Dosyalar</div>
+      <div class="sb-new" onclick="newFile()" title="Yeni Dosya">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Yeni Dosya
+      </div>
+      <div id="recentFiles"></div>
+    </div>
+
+    <!-- SHEETS -->
+    <div class="sb-group">
+      <div class="sb-label">Sheet'ler</div>
+      <div id="sbSheetList"></div>
+      <div class="sb-new" style="margin-top:4px" onclick="addSheet()" title="Yeni Sheet">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Yeni Sheet
+      </div>
+    </div>
+
+    <!-- TOOLS -->
+    <div class="sb-group">
+      <div class="sb-label">Araçlar</div>
+      <div class="sb-item" onclick="openFindReplace()" title="Bul &amp; Değiştir">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        Bul &amp; Değiştir
+      </div>
+      <div class="sb-item" onclick="sortData()" title="Sırala">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        Sırala
+      </div>
+      <div class="sb-item" onclick="clearHighlights()" title="Temizle">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>
+        Temizle
+      </div>
+    </div>
+
+    <!-- VERSION HISTORY -->
+    <div class="sb-group">
+      <div class="sb-label">Geçmiş</div>
+      <div id="vhList"><div id="vhEmpty" style="font-size:12px;color:#4a4a5a;font-style:italic;padding:4px 10px;">Henüz işlem yok</div></div>
+    </div>
+  </div>
+
+  <div class="sb-footer">
+    <div class="user-row" onclick="openSettings()">
+      <div class="avatar">EA</div>
+      <div class="user-info-sb">
+        <div class="user-name-sb">Kullanıcı</div>
+        <div class="user-role-sb">⚡ AI Pro</div>
+      </div>
+      <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#4a4a5a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </div>
+    <div class="sb-storage">
+      <div class="sb-storage-label">Depolama: 2.3 MB / 100 MB</div>
+      <div class="sb-storage-bar"><div class="sb-storage-fill"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<div id="content">
+
+  <!-- TOOLBAR -->
+  <div id="toolbar">
+    <select class="tb-select" style="width:80px" onchange="applyFont(this.value)" id="fontFamilySelect">
+      <option>Inter</option><option>Arial</option><option>Times New Roman</option><option>Courier New</option><option>Georgia</option>
+    </select>
+    <select class="tb-select" style="width:46px" onchange="applyFontSize(this.value)" id="fontSizeSelect">
+      <option>10</option><option>11</option><option selected>12</option><option>13</option><option>14</option><option>16</option><option>18</option><option>20</option><option>24</option>
+    </select>
+    <div class="tb-sep"></div>
+    <button class="tb-btn" id="tbBold" title="Kalın (Ctrl+B)" onclick="toggleFormat('bold')"><b>B</b></button>
+    <button class="tb-btn" id="tbItalic" title="İtalik (Ctrl+I)" onclick="toggleFormat('italic')"><i>I</i></button>
+    <button class="tb-btn" id="tbUnderline" title="Altı Çizili (Ctrl+U)" onclick="toggleFormat('underline')"><u>U</u></button>
+    <div class="tb-sep"></div>
+    <button class="tb-btn" title="Sola Hizala" onclick="applyAlign('left')">
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="13" y1="18" x2="3" y2="18"/></svg>
+    </button>
+    <button class="tb-btn" title="Ortala" onclick="applyAlign('center')">
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="10" x2="6" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="18" y1="18" x2="6" y2="18"/></svg>
+    </button>
+    <button class="tb-btn" title="Sağa Hizala" onclick="applyAlign('right')">
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" y1="10" x2="7" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="21" y1="18" x2="11" y2="18"/></svg>
+    </button>
+    <div class="tb-sep"></div>
+    <button class="tb-btn" title="Seçili hücreleri birleştir" onclick="mergeCells()">⊞ Birleştir</button>
+    <div class="tb-sep"></div>
+    <input type="color" class="tb-color" title="Hücre Rengi" id="bgColorPicker" value="#ffffff" onchange="applyCellBg(this.value)">
+    <input type="color" class="tb-color" title="Yazı Rengi" id="textColorPicker" value="#0f172a" onchange="applyCellColor(this.value)">
+    <div class="tb-sep"></div>
+    <button class="tb-btn" title="Filtre Ekle" onclick="addFilter()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+      Filtre
+    </button>
+    <div class="tb-sep"></div>
+    <button class="tb-btn" id="tbChartBtn" title="Grafik Ekle" onclick="toggleChartBuilder()" style="color:#7c3aed;font-weight:500;gap:5px;padding:4px 10px;border:1px solid #e9d5ff;border-radius:6px;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      Grafik Ekle
+    </button>
+    <div class="tb-sep"></div>
+    <button class="tb-btn" id="tbFreezeBtn" title="İlk satırı sabitle / serbest bırak" onclick="toggleFreeze()">❄ Sabitle</button>
+    <div style="flex:1"></div>
+    <span style="font-size:11px;color:#94a3b8;margin-right:4px;" id="selectionInfo"></span>
+  </div>
+
+  <!-- FORMULA BAR -->
+  <div id="formulaBar">
+    <input id="cellRef" value="A1" readonly>
+    <div class="fx-divider"></div>
+    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg>
+    <input id="formulaInput" placeholder="Formül veya değer girin..." onkeydown="formulaKeydown(event)" oninput="formulaInput_oninput(this.value)">
+  </div>
+
+  <!-- GRID -->
+  <div id="gridWrap" oncontextmenu="showCtx(event)">
+    <table id="grid"></table>
+    <div id="emptyState">
+      <div class="es-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+      </div>
+      <div class="es-title">Henüz veri yok</div>
+      <div class="es-sub">Bir Excel dosyası yükleyin veya örnek veriyle başlayın</div>
+      <div class="es-actions">
+        <button class="es-btn-primary" onclick="triggerUpload()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-right:5px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Excel Yükle
+        </button>
+        <button class="es-btn-ghost" onclick="loadSampleData()">Örnek Veri</button>
+      </div>
+      <div id="esRecent" class="es-recent" style="display:none">
+        <div class="es-recent-title">Son Dosyalar</div>
+        <div id="esRecentList"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SHEET TABS -->
+  <div id="sheetTabs"></div>
+
+  <!-- STATUS BAR -->
+  <div id="statusBar">
+    <div id="sbLeft">
+      <div class="sb-chip"><span class="sb-chip-label">📍</span> <span class="sb-val" id="sbRef">A1</span></div>
+      <div class="sb-chip" id="sbSelChip" style="display:none"><span class="sb-val" id="sbSelCount">1</span><span class="sb-chip-label"> hücre</span></div>
+      <div class="sb-chip" id="sbSumChip" style="display:none"><span class="sb-chip-label">∑</span> <span class="sb-val" id="sbSumVal">0</span></div>
+      <div class="sb-chip" id="sbAvgChip" style="display:none"><span class="sb-chip-label">⌀</span> <span class="sb-val" id="sbAvgVal">0</span></div>
+      <div class="sb-chip" id="sbMinChip" style="display:none"><span class="sb-chip-label">↓</span> <span class="sb-val" id="sbMinVal">0</span></div>
+      <div class="sb-chip" id="sbMaxChip" style="display:none"><span class="sb-chip-label">↑</span> <span class="sb-val" id="sbMaxVal">0</span></div>
+    </div>
+    <div id="sbRight">
+      <span class="sb-info"><span class="sb-val" id="sbFilled">0</span> dolu hücre</span>
+      <span class="sb-info"><span class="sb-val" id="sbRowsInfo">0</span> satır</span>
+      <span id="sbLastAI">Son: —</span>
+      <div id="sbZoom">
+        <button class="zoom-btn" onclick="changeZoom(-10)">−</button>
+        <span id="zoomLabel">100%</span>
+        <button class="zoom-btn" onclick="changeZoom(+10)">+</button>
+      </div>
+    </div>
+    <!-- Legacy IDs for JS backward compatibility -->
+    <span id="stCells" style="display:none"></span>
+    <span id="stSel"   style="display:none"></span>
+    <span id="stSum"   style="display:none"></span>
+    <span id="stAvg"   style="display:none"></span>
+    <span id="stCount" style="display:none"></span>
+  </div>
+</div>
+</div>
+
+<!-- CONTEXT MENU -->
+<div id="ctxMenu">
+  <div class="citem" onclick="ctxAction('cut')">
+    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/></svg>
+    Kes
+  </div>
+  <div class="citem" onclick="ctxAction('copy')">
+    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+    Kopyala
+  </div>
+  <div class="citem" onclick="ctxAction('paste')">
+    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
+    Yapıştır
+  </div>
+  <div class="csep"></div>
+  <div class="citem" onclick="ctxAction('insertRowAbove')">↑ Üste Satır Ekle</div>
+  <div class="citem" onclick="ctxAction('insertRowBelow')">↓ Alta Satır Ekle</div>
+  <div class="citem" onclick="ctxAction('insertColLeft')">← Sola Sütun Ekle</div>
+  <div class="citem" onclick="ctxAction('insertColRight')">→ Sağa Sütun Ekle</div>
+  <div class="csep"></div>
+  <div class="citem danger" onclick="ctxAction('deleteRow')">Satırı Sil</div>
+  <div class="citem danger" onclick="ctxAction('deleteCol')">Sütunu Sil</div>
+  <div class="citem danger" onclick="ctxAction('clearCell')">Hücreyi Temizle</div>
+</div>
+
+<!-- COMMAND PALETTE -->
+<div id="cmdOverlay" onclick="cmdClickOutside(event)">
+  <div id="cmdPanel">
+    <div id="cmdSearchRow">
+      <div id="cmdSearchIcon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </div>
+      <input id="cmdInput" placeholder="Komut çalıştır veya AI'a sor..."
+        oninput="cmdFilter()" onkeydown="cmdKeydown(event)" autocomplete="off" spellcheck="false">
+      <span id="cmdKbd">ESC</span>
+    </div>
+    <div id="cmdResults"></div>
+    <div id="cmdShortcuts">
+      <div class="cmd-sh-title">Klavye Kısayolları</div>
+      <div class="cmd-sh-row"><span>Kaydet</span><span class="cmd-sh-key"><kbd class="cmd-sh-kbd">Ctrl</kbd><kbd class="cmd-sh-kbd">S</kbd></span></div>
+      <div class="cmd-sh-row"><span>Geri Al</span><span class="cmd-sh-key"><kbd class="cmd-sh-kbd">Ctrl</kbd><kbd class="cmd-sh-kbd">Z</kbd></span></div>
+      <div class="cmd-sh-row"><span>İleri Al</span><span class="cmd-sh-key"><kbd class="cmd-sh-kbd">Ctrl</kbd><kbd class="cmd-sh-kbd">Y</kbd></span></div>
+      <div class="cmd-sh-row"><span>Kalın</span><span class="cmd-sh-key"><kbd class="cmd-sh-kbd">Ctrl</kbd><kbd class="cmd-sh-kbd">B</kbd></span></div>
+      <div class="cmd-sh-row"><span>İtalik</span><span class="cmd-sh-key"><kbd class="cmd-sh-kbd">Ctrl</kbd><kbd class="cmd-sh-kbd">I</kbd></span></div>
+      <div class="cmd-sh-row"><span>Bul &amp; Değiştir</span><span class="cmd-sh-key"><kbd class="cmd-sh-kbd">Ctrl</kbd><kbd class="cmd-sh-kbd">F</kbd></span></div>
+      <div class="cmd-sh-row"><span>Komut Paleti</span><span class="cmd-sh-key"><kbd class="cmd-sh-kbd">Ctrl</kbd><kbd class="cmd-sh-kbd">K</kbd></span></div>
+      <div class="cmd-sh-row"><span>AI Asistan</span><span class="cmd-sh-key"><kbd class="cmd-sh-kbd">Ctrl</kbd><kbd class="cmd-sh-kbd">D</kbd></span></div>
+      <div class="cmd-sh-row"><span>Hücreyi Temizle</span><span class="cmd-sh-key"><kbd class="cmd-sh-kbd">Delete</kbd></span></div>
+      <div class="cmd-sh-row"><span>Sağ Hücre</span><span class="cmd-sh-key"><kbd class="cmd-sh-kbd">Tab</kbd></span></div>
+    </div>
+    <div class="cmd-footer">
+      <span class="cmd-hint"><kbd>↑↓</kbd> Gezin</span>
+      <span class="cmd-hint"><kbd>↵</kbd> Çalıştır</span>
+      <span class="cmd-hint"><kbd>ESC</kbd> Kapat</span>
+    </div>
+  </div>
+</div>
+
+<!-- SHEET CONTEXT MENU -->
+<div id="sheetCtxMenu">
+  <div class="scm-item" id="scmRename" onclick="scmAction('rename')">
+    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+    Yeniden Adlandır
+  </div>
+  <div class="scm-item" onclick="scmAction('duplicate')">
+    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+    Kopyala
+  </div>
+  <div class="scm-sep"></div>
+  <div class="scm-item danger" onclick="scmAction('delete')">
+    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>
+    Sil
+  </div>
+</div>
+
+<!-- CHART SIDE PANEL -->
+<div id="chartSidePanel">
+  <div id="cspHeader">
+    <div class="csp-title">
+      <span class="csp-title-dot"></span>
+      Grafik Oluştur
+    </div>
+    <button id="cspCloseBtn" onclick="toggleChartBuilder()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div id="cspBody">
+    <div>
+      <div class="csp-label">Grafik Tipi</div>
+      <div class="csp-type-grid">
+        <div class="csp-type-card active" data-type="bar" onclick="cspSelectType('bar',this)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          Çubuk
+        </div>
+        <div class="csp-type-card" data-type="line" onclick="cspSelectType('line',this)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          Çizgi
+        </div>
+        <div class="csp-type-card" data-type="pie" onclick="cspSelectType('pie',this)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+          Pasta
+        </div>
+        <div class="csp-type-card" data-type="polarArea" onclick="cspSelectType('polarArea',this)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+          Alan
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="csp-label">Veri Aralığı</div>
+      <input class="csp-input" id="chartRange" placeholder="örn: A1:B10" value="A1:B10">
+      <div class="csp-hint">İlk sütun etiket, diğerleri değer olarak kullanılır</div>
+    </div>
+    <div>
+      <div class="csp-label">Grafik Başlığı</div>
+      <input class="csp-input" id="chartTitle" placeholder="Başlık (isteğe bağlı)">
+    </div>
+    <div>
+      <div class="csp-label">Veri Seti Etiketi</div>
+      <input class="csp-input" id="chartDataLabel" placeholder="örn: Satış, Gelir...">
+    </div>
+  </div>
+  <div id="cspFooter">
+    <button id="cspCreateBtn" onclick="createChart()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      Grafiği Oluştur
+    </button>
+  </div>
+</div>
+
+<!-- CHART MODAL -->
+<div id="chartModal" onclick="chartModalClickOutside(event)">
+  <div id="chartModalPanel">
+    <div id="chartModalHeader">
+      <span class="chart-modal-dot"></span>
+      <span id="chartModalTitle">Grafik</span>
+      <div id="chartModalTypeSwitcher">
+        <button class="cm-type-btn active" data-t="bar" onclick="cmSwitchType('bar',this)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          Çubuk
+        </button>
+        <button class="cm-type-btn" data-t="line" onclick="cmSwitchType('line',this)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          Çizgi
+        </button>
+        <button class="cm-type-btn" data-t="pie" onclick="cmSwitchType('pie',this)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+          Pasta
+        </button>
+        <button class="cm-type-btn" data-t="polarArea" onclick="cmSwitchType('polarArea',this)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>
+          Alan
+        </button>
+      </div>
+      <button id="chartModalClose" onclick="closeChartPanel()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div id="chartModalCanvas">
+      <canvas id="myChartCanvas"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- Legacy stubs (IDs referenced in old JS kept alive invisibly) -->
+<div id="chartBuilderPanel" style="display:none"></div>
+<div id="chartPanel" style="display:none">
+  <div id="chartDragBar"></div>
+  <span id="chartPanelTitle"></span>
+  <span id="chartDot"></span>
+  <div id="chartCanvas"><canvas id="_legacyCanvas"></canvas></div>
+  <div id="chartLivePreviewBadge"></div>
+</div>
+
+<!-- HISTORY PREVIEW MODAL -->
+<div id="historyModal" onclick="historyModalClickOutside(event)">
+  <div id="historyModalPanel">
+    <div id="hmHeader">
+      <div class="hm-title" id="hmTitle">İşlem Önizlemesi</div>
+      <div class="hm-sub" id="hmSub"></div>
+    </div>
+    <div id="hmPreview"></div>
+    <div id="hmFooter">
+      <button class="hm-restore" onclick="restoreHistory()">Geri Dön</button>
+      <button class="hm-cancel" onclick="closeHistoryModal()">İptal</button>
+    </div>
+  </div>
+</div>
+
+<!-- FILE INPUT -->
+<input type="file" id="fileInput" accept=".xlsx,.xls,.csv" style="display:none" onchange="handleFile(event)">
+
+<!-- CUSTOM TOOLTIP -->
+<div id="customTooltip"></div>
+
+<!-- DROP OVERLAY -->
+<div id="dropOverlay">
+  <div class="drop-text">📂 Dosyayı Bırakın</div>
+  <div class="drop-sub">.xlsx, .xls, .csv dosyaları desteklenir</div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div id="toasts"></div>
+
+<script src="js/app.js"></script>
+
+<!-- FLOATING AI CHAT -->
+<div id="floatingChat">
+  <button id="fcBubble" onclick="toggleFloatingChat()" title="AI Asistan">
+    <div class="fc-ping"></div>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+  </button>
+
+  <div id="chatPanel" style="display:none">
+
+    <div id="fcHeader">
+      <div class="fc-header-left">
+        <div class="fc-avatar-wrap">
+          <div class="fc-avatar">AI</div>
+          <div class="fc-online-dot"></div>
+        </div>
+        <div>
+          <div class="fc-title">AI Asistan</div>
+          <div class="fc-subtitle" id="fcSubtitle">Çevrimiçi</div>
+        </div>
+      </div>
+      <div class="fc-header-right">
+        <button class="fc-icon-btn" onclick="clearChat()" title="Sohbeti temizle">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>
+        </button>
+        <button class="fc-icon-btn" onclick="toggleFloatingChat()" title="Kapat">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div id="chatMsgs"></div>
+
+    <div class="chips" id="chips">
+      <span class="chip" onclick="useChip(this)">📊 Verimi analiz et</span>
+      <span class="chip" onclick="useChip(this)">🔢 Formül öner</span>
+      <span class="chip" onclick="useChip(this)">🧹 Boş satırları temizle</span>
+      <span class="chip" onclick="useChip(this)">📈 Grafik oluştur</span>
+      <span class="chip" onclick="useChip(this)">∑ Toplam satırı ekle</span>
+    </div>
+
+    <div id="chatInputRow">
+      <textarea id="chatInput" placeholder="Excel tablonuz hakkında bir şey sorun..." rows="1"
+        onkeydown="chatKeydown(event)" oninput="autoResize(this)"></textarea>
+      <button class="send-btn" id="fcSendBtn" onclick="sendChat()" title="Gönder (Enter)">
+        <svg id="fcSendIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/></svg>
+        <div id="fcSpinner" style="display:none;width:16px;height:16px;background:#fff;border-radius:3px;animation:spinSquare 3s linear infinite;"></div>
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- FLOATING CELL TOOLBAR -->
+<div id="floatToolbar">
+  <button class="ft-btn" id="ftBold"      title="Kalın"       onclick="toggleFormat('bold')"><b>B</b></button>
+  <button class="ft-btn" id="ftItalic"    title="İtalik"      onclick="toggleFormat('italic')"><i>I</i></button>
+  <button class="ft-btn" id="ftUnderline" title="Altı çizili" onclick="toggleFormat('underline')"><u>U</u></button>
+  <div class="ft-sep"></div>
+  <button class="ft-btn" title="Sola" onclick="applyAlign('left')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="13" y1="18" x2="3" y2="18"/></svg>
+  </button>
+  <button class="ft-btn" title="Ortala" onclick="applyAlign('center')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><line x1="18" y1="10" x2="6" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="18" y1="18" x2="6" y2="18"/></svg>
+  </button>
+  <button class="ft-btn" title="Sağa" onclick="applyAlign('right')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><line x1="21" y1="10" x2="7" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="21" y1="18" x2="11" y2="18"/></svg>
+  </button>
+  <div class="ft-sep"></div>
+  <input type="color" class="ft-color" title="Yazı rengi" value="#0f172a" onchange="applyCellColor(this.value)">
+  <div class="ft-sep"></div>
+  <button class="ft-btn" title="Temizle" onclick="ctxAction('clearCell')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>
+  </button>
+</div>
+
+<!-- RESIZE LINE -->
+<div id="resizeLine"></div>
+
+<!-- ONBOARDING OVERLAY — 2-step Excel connect flow -->
+<div id="onboardOverlay" style="display:flex; position:fixed; inset:0; z-index:99999; background:rgba(9,9,11,0.85); backdrop-filter:blur(20px); align-items:center; justify-content:center;">
+
+  <!-- STEP 1: Excel Bağla -->
+  <div id="obStep1" class="ob-premium-panel">
+    <div class="ob-brand"><div class="logo-mark" style="display:inline-flex;align-items:center;gap:8px;"><div style="width:28px;height:28px;flex-shrink:0;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" style="width:100%;height:100%;border-radius:6px;"><rect width="100" height="100" fill="black"/><path d="M 30 65 Q 28 40 50 28 Q 65 22 75 32 L 68 40 Q 60 33 50 37 Q 35 45 36 63 Z" fill="white"/></svg></div><span style="font-weight:700;font-size:16px;color:#ffffff;letter-spacing:-0.3px;">Upsheet</span></div></div>
+    <h1 class="ob-main-title">Excel dosyanızı bağlayın,<br>AI geri kalanını yapsın</h1>
+    <p class="ob-main-sub">Formül yok. Makro yok. Sadece Türkçe yazın.</p>
+
+    <div id="obDropZone" class="ob-dropzone" onclick="document.getElementById('fileInput').click()">
+      <div class="ob-upload-icon">📂</div>
+      <div class="ob-upload-label">Dosyanızı buraya sürükleyin</div>
+      <div class="ob-upload-or">veya</div>
+      <button class="ob-upload-btn" onclick="event.stopPropagation(); document.getElementById('fileInput').click()">
+        📂 Excel Dosyası Seç
+      </button>
+      <div class="ob-format-badges">
+        <span class="ob-badge">.xlsx</span>
+        <span class="ob-badge">.xls</span>
+        <span class="ob-badge">.csv</span>
+      </div>
+    </div>
+
+    <button class="ob-sample-link" onclick="obUseSample()">
+      Önce örnek veriyle görmek istiyorum →
+    </button>
+  </div>
+
+  <!-- STEP 2: Başarılı -->
+  <div id="obStep2" class="ob-premium-panel" style="display:none; text-align:center;">
+    <div class="ob-success-circle">
+      <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+        <polyline points="10,24 20,34 38,16" stroke="#22c55e" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" class="ob-check-line"/>
+      </svg>
+    </div>
+    <h2 class="ob-success-title">Bağlandı! ✓</h2>
+    <div class="ob-file-info">
+      <div class="ob-file-name" id="obFileName">—</div>
+      <div class="ob-file-stats" id="obFileStats">—</div>
+    </div>
+    <button class="ob-start-btn" onclick="obFinish()">AI Asistanı Başlat →</button>
+  </div>
+
+</div>
+
+<!-- FILE LOADING OVERLAY -->
+<div id="fileLoadingOverlay" style="display:none;position:fixed;inset:0;z-index:9998;background:rgba(9,9,11,0.72);backdrop-filter:blur(4px);align-items:center;justify-content:center;flex-direction:column;gap:14px;">
+  <div class="file-load-spinner"></div>
+  <div style="color:#e2e2e2;font-size:14px;font-weight:500;letter-spacing:.01em;">Dosya işleniyor...</div>
+</div>
+
+<!-- PWA INSTALL BANNER -->
+<div id="pwaBanner" style="display:none;position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:9999;background:#18181b;border:1px solid #27272a;border-radius:14px;padding:12px 20px;align-items:center;gap:12px;box-shadow:0 8px 32px rgba(0,0,0,0.5);backdrop-filter:blur(12px);white-space:nowrap;">
+  <span style="font-size:14px;color:#e4e4e7;">📱 Upsheet'i ana ekrana ekle</span>
+  <button onclick="installPWA()" style="background:#f97316;color:#fff;border:none;border-radius:8px;padding:6px 16px;font-size:13px;font-weight:600;cursor:pointer;">Kur</button>
+  <button onclick="dismissPWA()" style="background:transparent;color:#71717a;border:none;font-size:16px;cursor:pointer;line-height:1;padding:2px 4px;" title="Kapat">✕</button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+// ── SUPABASE ─────────────────────────────────────────────────────
+const { createClient: _sbCreate } = supabase;
+const sb = _sbCreate(
+  'https://ogizbfzoywylljvnidak.supabase.co',
+  'sb_publishable_WauaqVsDx_vgHsilyJl0gg_1DvfSIzC'
+);
+
+// ── File system state ─────────────────────────────────────────────
+let currentUser    = null;
+let currentFileId  = null;
+let autoSaveTimer  = null;
+let isSyncing      = false;
+
+// Session guard + init
+sb.auth.getSession().then(({ data }) => {
+  if (!data.session) {
+    location.href = 'auth.html';
+    return;
+  }
+  // Kullanıcı bilgilerini sidebar'a yaz
+  const user = data.session.user;
+  const name  = (user.user_metadata && user.user_metadata.full_name)
+                  ? user.user_metadata.full_name
+                  : user.email.split('@')[0];
+  const email = user.email;
+  const nameEl   = document.querySelector('.user-name-sb');
+  const roleEl   = document.querySelector('.user-role-sb');
+  const avatarEl = document.querySelector('.avatar');
+  if (nameEl)   nameEl.textContent   = name;
+  if (roleEl)   roleEl.textContent   = email;
+  if (avatarEl) avatarEl.textContent = name.substring(0, 2).toUpperCase();
+
+  // Set current user and boot file system
+  currentUser = user;
+  if (typeof initFileSystem === 'function') initFileSystem();
+});
+
+// SIGNED_OUT event — auth sayfasına yönlendir
+sb.auth.onAuthStateChange(function(event, session) {
+  if (event === 'SIGNED_OUT') location.href = 'auth.html';
+});
+
+// Çıkış fonksiyonu
+async function sbSignOut() {
+  await sb.auth.signOut();
+  location.href = 'auth.html';
+}
+
+// openSettings override — Çıkış Yap butonu ekle
+function openSettings() {
+  showModal(`
+    <h2>⚙️ API Ayarları</h2>
+    <p>OpenAI API anahtarınızı girerek AI özelliklerini etkinleştirin</p>
+    <div class="fgroup">
+      <label class="flabel">OpenAI API Key</label>
+      <input class="finput" id="apiKeyInput" type="password" placeholder="sk-..." value="${typeof apiKey !== 'undefined' ? apiKey : ''}">
+      <div class="fhint">Anahtarınız yalnızca tarayıcınızda saklanır, hiçbir sunucuya gönderilmez.</div>
+    </div>
+    <div class="fgroup">
+      <label class="flabel">Model</label>
+      <select class="finput" id="modelSelect">
+        <option value="gpt-4o">GPT-4o (Önerilen)</option>
+        <option value="gpt-4o-mini">GPT-4o Mini (Hızlı)</option>
+        <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+      </select>
+    </div>
+    <div class="modal-foot" style="justify-content:space-between;align-items:center;">
+      <button class="btn btn-ghost" style="color:#ef4444;" onclick="sbSignOut()">🚪 Çıkış Yap</button>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-ghost" onclick="closeModal()">İptal</button>
+        <button class="btn btn-primary" onclick="saveSettings()">Kaydet</button>
+      </div>
+    </div>
+  `);
+}
+// ─────────────────────────────────────────────────────────────────
+
+function toggleFloatingChat() {
+  const p = document.getElementById('chatPanel');
+  p.style.display = p.style.display === 'none' ? 'flex' : 'none';
+}
+function openFloatingChat() {
+  document.getElementById('chatPanel').style.display = 'flex';
+}
+
+// Drag support
+(function() {
+  const hdr  = document.getElementById('fcHeader');
+  const wrap = document.getElementById('floatingChat');
+  let drag = false, sx, sy, or, ob;
+  hdr.addEventListener('mousedown', function(e) {
+    if (e.target.closest('.fc-icon-btn')) return;
+    drag = true;
+    sx = e.clientX; sy = e.clientY;
+    const r = wrap.getBoundingClientRect();
+    or = window.innerWidth  - r.right;
+    ob = window.innerHeight - r.bottom;
+    e.preventDefault();
+  });
+  document.addEventListener('mousemove', function(e) {
+    if (!drag) return;
+    wrap.style.right  = Math.max(0, or - (e.clientX - sx)) + 'px';
+    wrap.style.bottom = Math.max(0, ob - (e.clientY - sy)) + 'px';
+  });
+  document.addEventListener('mouseup', function() { drag = false; });
+}());
+
+// ── ONBOARDING v2 — 2-step Excel connect flow ───
+(function() {
+  var dz = document.getElementById('obDropZone');
+  if (dz) {
+    dz.addEventListener('dragover', function(e) {
+      e.preventDefault();
+      dz.classList.add('ob-drag-active');
+    });
+    dz.addEventListener('dragleave', function() {
+      dz.classList.remove('ob-drag-active');
+    });
+    dz.addEventListener('drop', function(e) {
+      e.preventDefault();
+      dz.classList.remove('ob-drag-active');
+      var file = e.dataTransfer.files[0];
+      if (file) {
+        document.getElementById('fileInput').value = '';
+        handleFileObject(file);
+      }
+    });
+  }
+})();
+
+function obShowStep2(fileName, rows, cols) {
+  document.getElementById('obStep1').style.display = 'none';
+  document.getElementById('obStep2').style.display = '';
+  document.getElementById('obFileName').textContent = fileName || 'Dosya';
+  document.getElementById('obFileStats').textContent = rows + ' satır · ' + cols + ' sütun';
+}
+
+function obFinish() {
+  var overlay = document.getElementById('onboardOverlay');
+  if (overlay) {
+    overlay.style.opacity = '0';
+    overlay.style.transition = 'opacity 0.3s';
+    setTimeout(function() { overlay.style.display = 'none'; }, 320);
+  }
+  localStorage.setItem('onboarded', 'true');
+  if (typeof openFloatingChat === 'function') openFloatingChat();
+}
+
+function obUseSample() {
+  if (typeof loadSampleData === 'function') loadSampleData();
+  obFinish();
+}
+
+function handleFileObject(file) {
+  handleFile({ target: { files: [file] } });
+}
+
+// ── PWA: Service Worker registration ────────────────────────────
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js')
+      .then(function(reg) { console.log('SW registered', reg.scope); })
+      .catch(function(err) { console.log('SW failed:', err); });
+
+    // Background sync reply — show toast when queued message is sent
+    navigator.serviceWorker.addEventListener('message', function(e) {
+      if (e.data && e.data.type === 'sync-done') {
+        if (typeof showToast === 'function')
+          showToast('Bağlantı geri geldi, bekleyen mesajınız gönderiliyor...', 'info');
+      }
+    });
+  });
+}
+
+// ── PWA: Install banner ──────────────────────────────────────────
+var deferredPrompt;
+window.addEventListener('beforeinstallprompt', function(e) {
+  e.preventDefault();
+  deferredPrompt = e;
+  setTimeout(function() {
+    if (!localStorage.getItem('pwa-dismissed')) {
+      document.getElementById('pwaBanner').style.display = 'flex';
+    }
+  }, 30000);
+});
+
+function installPWA() {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(function(choice) {
+    if (choice.outcome === 'accepted' && typeof showToast === 'function')
+      showToast('Uygulama kuruldu! ✓', 'success');
+    document.getElementById('pwaBanner').style.display = 'none';
+    localStorage.setItem('pwa-dismissed', 'true');
+    deferredPrompt = null;
+  });
+}
+
+function dismissPWA() {
+  document.getElementById('pwaBanner').style.display = 'none';
+  localStorage.setItem('pwa-dismissed', 'true');
+}
+
+// ── PWA: IndexedDB queue for offline AI messages ─────────────────
+function queueOfflineMessage(payload) {
+  var req = indexedDB.open('upsheet-sync', 1);
+  req.onupgradeneeded = function(e) {
+    e.target.result.createObjectStore('pending', { keyPath: 'id', autoIncrement: true });
+  };
+  req.onsuccess = function(e) {
+    var db = e.target.result;
+    db.transaction('pending', 'readwrite').objectStore('pending').add({ payload: payload });
+    if ('serviceWorker' in navigator && 'SyncManager' in window) {
+      navigator.serviceWorker.ready.then(function(sw) {
+        sw.sync.register('ai-message-sync');
+      });
+    }
+  };
+}
+</script>
+
+</body>
+</html>

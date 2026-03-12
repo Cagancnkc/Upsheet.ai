@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ExcelAI — Paylaşılan Dosya</title>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#f97316">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:#09090b;color:#e2e8f0;font-family:'Inter',sans-serif;min-height:100vh;display:flex;flex-direction:column;}
+
+/* Topbar */
+#topbar{display:flex;align-items:center;gap:12px;padding:0 16px;height:48px;background:#111;border-bottom:1px solid #1e1e2e;flex-shrink:0;}
+.logo{display:flex;align-items:center;gap:8px;font-size:16px;font-weight:700;color:#f97316;}
+.logo-icon{width:28px;height:28px;background:#f97316;border-radius:7px;display:flex;align-items:center;justify-content:center;}
+#shareInfo{flex:1;display:flex;align-items:center;gap:8px;}
+#sharedFileName{font-size:13px;font-weight:500;color:#cbd5e1;}
+.ro-badge{font-size:11px;background:rgba(249,115,22,.15);color:#f97316;border:1px solid rgba(249,115,22,.3);border-radius:20px;padding:2px 9px;font-weight:500;}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;border:none;text-decoration:none;}
+.btn-primary{background:#f97316;color:#fff;}
+.btn-primary:hover{background:#ea6c0a;}
+.btn-ghost{background:transparent;color:#94a3b8;border:1px solid #27272a;}
+.btn-ghost:hover{background:#1a1a1a;color:#e2e8f0;}
+
+/* Read-only banner */
+#roBanner{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;background:rgba(249,115,22,.08);border-bottom:1px solid rgba(249,115,22,.2);font-size:12px;color:#f97316;flex-shrink:0;}
+#roBanner a{color:#f97316;font-weight:600;text-decoration:none;}
+#roBanner a:hover{text-decoration:underline;}
+
+/* Loading / error states */
+#loadState{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;}
+.spinner{width:36px;height:36px;border:3px solid #27272a;border-top-color:#f97316;border-radius:50%;animation:spin 0.8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+#errCard{text-align:center;max-width:360px;}
+#errCard h2{font-size:18px;font-weight:700;color:#f97316;margin-bottom:8px;}
+#errCard p{font-size:13px;color:#64748b;line-height:1.6;}
+
+/* Grid */
+#gridWrap{flex:1;overflow:auto;padding:8px;}
+#grid{border-collapse:collapse;font-size:12px;min-width:100%;}
+#grid th,#grid td{
+  border:1px solid #1e293b;padding:4px 8px;
+  white-space:nowrap;text-overflow:ellipsis;overflow:hidden;
+  max-width:200px;min-width:80px;
+}
+#grid th{background:#111;color:#64748b;font-weight:500;position:sticky;top:0;z-index:1;}
+#grid td{background:#09090b;color:#e2e8f0;}
+#grid tr:hover td{background:#111;}
+.corner{background:#111 !important;width:36px;min-width:36px;}
+.rh{background:#111 !important;color:#4a5568;font-weight:500;text-align:center;position:sticky;left:0;z-index:1;}
+
+/* Sheet tabs */
+#sheetTabs{display:flex;gap:4px;padding:4px 12px;background:#111;border-top:1px solid #1e1e2e;flex-shrink:0;overflow-x:auto;}
+.sheet-tab{padding:4px 12px;border-radius:6px;font-size:12px;cursor:pointer;color:#64748b;white-space:nowrap;}
+.sheet-tab.active{background:rgba(249,115,22,.15);color:#f97316;font-weight:500;}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div id="topbar">
+  <div class="logo">
+    <div class="logo-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+    </div>
+    ExcelAI
+  </div>
+  <div id="shareInfo">
+    <span id="sharedFileName">Yükleniyor...</span>
+    <span class="ro-badge">Salt Okunur</span>
+  </div>
+  <a href="auth.html" class="btn btn-primary">ExcelAI'da Aç</a>
+</div>
+
+<!-- READ-ONLY BANNER -->
+<div id="roBanner">
+  📖 Bu dosya salt okunur paylaşımdır. Düzenlemek için
+  <a href="auth.html">&nbsp;ExcelAI'ya giriş yapın →</a>
+</div>
+
+<!-- CONTENT -->
+<div id="loadState">
+  <div class="spinner"></div>
+  <div style="font-size:13px;color:#64748b;">Dosya yükleniyor...</div>
+</div>
+
+<div id="gridWrap" style="display:none;">
+  <table id="grid"></table>
+</div>
+<div id="sheetTabs" style="display:none;"></div>
+
+<script>
+(function() {
+  var COLS = 26;
+  var sheetData = {};
+  var activeSheet = '';
+
+  function colLetter(i) {
+    if (i < 26) return String.fromCharCode(65 + i);
+    return String.fromCharCode(64 + Math.floor(i / 26)) + String.fromCharCode(65 + (i % 26));
+  }
+
+  function showError(msg) {
+    var ls = document.getElementById('loadState');
+    ls.innerHTML =
+      '<div id="errCard">' +
+        '<h2>⚠️ Dosya Açılamadı</h2>' +
+        '<p>' + msg + '</p>' +
+        '<a href="index.html" class="btn btn-ghost" style="margin-top:20px;display:inline-flex;">Ana Sayfa</a>' +
+      '</div>';
+  }
+
+  function renderGrid(data) {
+    var grid = document.getElementById('grid');
+    grid.innerHTML = '';
+    var maxCols = 0;
+    data.forEach(function(row) { maxCols = Math.max(maxCols, row.length); });
+    maxCols = Math.min(maxCols || 10, COLS);
+
+    // Header
+    var hrow = grid.insertRow();
+    var corner = hrow.insertCell(); corner.className = 'corner';
+    for (var c = 0; c < maxCols; c++) {
+      var th = document.createElement('th'); th.textContent = colLetter(c); hrow.appendChild(th);
+    }
+
+    // Data rows
+    data.forEach(function(rowData, r) {
+      var row = grid.insertRow();
+      var rh = row.insertCell(); rh.className = 'rh'; rh.textContent = r + 1;
+      for (var c = 0; c < maxCols; c++) {
+        var td = row.insertCell(); td.textContent = rowData[c] != null ? rowData[c] : '';
+      }
+    });
+
+    document.getElementById('loadState').style.display = 'none';
+    document.getElementById('gridWrap').style.display  = '';
+  }
+
+  function renderSheetTabs(names) {
+    var tabs = document.getElementById('sheetTabs');
+    tabs.innerHTML = '';
+    tabs.style.display = names.length > 1 ? '' : 'none';
+    names.forEach(function(name) {
+      var tab = document.createElement('div');
+      tab.className = 'sheet-tab' + (name === activeSheet ? ' active' : '');
+      tab.textContent = name;
+      tab.onclick = function() {
+        activeSheet = name;
+        renderGrid(sheetData[name] || []);
+        tabs.querySelectorAll('.sheet-tab').forEach(function(t) {
+          t.classList.toggle('active', t.textContent === name);
+        });
+      };
+      tabs.appendChild(tab);
+    });
+  }
+
+  function loadSharedFile(token) {
+    fetch('/api/shared/' + encodeURIComponent(token))
+      .then(function(res) {
+        if (!res.ok) throw new Error(res.status === 404 ? 'Paylaşım linki geçersiz veya kaldırılmış.' : 'Dosya yüklenemedi (' + res.status + ').');
+        var name = '';
+        var cd = res.headers.get('content-disposition');
+        if (cd) { var m = cd.match(/filename="?([^"]+)"?/); if (m) name = decodeURIComponent(m[1]); }
+        document.getElementById('sharedFileName').textContent = name || 'Paylaşılan Dosya';
+        document.title = 'ExcelAI — ' + (name || 'Paylaşılan Dosya');
+        return res.arrayBuffer();
+      })
+      .then(function(ab) {
+        var wb = XLSX.read(ab);
+        wb.SheetNames.forEach(function(sName) {
+          var ws   = wb.Sheets[sName];
+          var json = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+          sheetData[sName] = json;
+        });
+        activeSheet = wb.SheetNames[0];
+        renderGrid(sheetData[activeSheet]);
+        renderSheetTabs(wb.SheetNames);
+      })
+      .catch(function(err) {
+        showError(err.message || 'Bilinmeyen hata.');
+      });
+  }
+
+  // Read token from URL
+  var params = new URLSearchParams(window.location.search);
+  var token  = params.get('token');
+  if (!token) {
+    showError('Geçersiz paylaşım linki. Token bulunamadı.');
+  } else {
+    loadSharedFile(token);
+  }
+})();
+</script>
+</body>
+</html>

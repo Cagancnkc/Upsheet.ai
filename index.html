@@ -1,0 +1,874 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Upsheet — Excel'i AI ile Yönet</title>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#f97316">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Upsheet">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='black'/><path d='M 30 65 Q 28 40 50 28 Q 65 22 75 32 L 68 40 Q 60 33 50 37 Q 35 45 36 63 Z' fill='white'/></svg>">
+<meta name="description" content="Upsheet ile Excel tablolarınızı Türkçe komutlarla yönetin">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/landing.css">
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <div class="container nav-inner">
+    <a href="index.html" class="nav-logo"><div class="logo-mark" style="display:inline-flex;align-items:center;gap:8px;"><div style="width:28px;height:28px;flex-shrink:0;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" style="width:100%;height:100%;border-radius:6px;"><rect width="100" height="100" fill="black"/><path d="M 30 65 Q 28 40 50 28 Q 65 22 75 32 L 68 40 Q 60 33 50 37 Q 35 45 36 63 Z" fill="white"/></svg></div><span style="font-weight:700;font-size:16px;color:#ffffff;letter-spacing:-0.3px;">Upsheet</span></div></a>
+    <ul class="nav-links">
+      <li><a href="#pain">Problem</a></li>
+      <li><a href="#how">Nasıl Çalışır</a></li>
+      <li><a href="#pricing">Fiyatlar</a></li>
+      <li><a href="#feedback">Geri Bildirim</a></li>
+    </ul>
+    <div class="nav-actions">
+      <a href="auth.html" class="btn btn-secondary btn-sm">Giriş Yap</a>
+      <a href="javascript:void(0)" onclick="googleLogin()" class="btn btn-primary btn-sm">Ücretsiz Başla</a>
+    </div>
+    <button class="hamburger" id="hamburger" aria-label="Menü">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#pain">Problem</a>
+    <a href="#how">Nasıl Çalışır</a>
+    <a href="#pricing">Fiyatlar</a>
+    <a href="#feedback">Geri Bildirim</a>
+    <div class="mobile-actions">
+      <a href="auth.html" class="btn btn-secondary btn-sm">Giriş Yap</a>
+      <a href="app.html" class="btn btn-primary btn-sm">Ücretsiz Başla</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-badge reveal revealed">🇹🇷 Türkiye'nin İlk Excel AI Asistanı · Upsheet</div>
+    <h1 class="reveal revealed">
+      Pazartesi sabahı 3 saatlik<br>
+      <span class="gradient-text">rapor hazırlığını</span> 8 dakikaya indirin
+    </h1>
+    <p class="hero-sub reveal revealed">Finans analistleri, muhasebeciler ve veri yöneticileri için. Türkçe yazın — formül yazmadan, makro öğrenmeden, hata yapmadan Excel tablolarınızı yönetin.</p>
+    <div class="hero-cta reveal revealed">
+      <a href="javascript:void(0)" onclick="googleLogin()" class="btn btn-primary">⚡ Karmaşık Dosyamı Temizle — Ücretsiz</a>
+      <a href="#pain" class="btn btn-secondary">Sorunu Anlat</a>
+    </div>
+    <div class="hero-google-btn reveal revealed">
+      <button onclick="googleLogin()" class="btn-google-hero">
+        <img src="https://www.svgrepo.com/show/475656/google-color.svg"
+             width="18" height="18" alt="Google">
+        Google ile Ücretsiz Başla
+      </button>
+      <span class="hero-google-note">Kredi kartı gerekmez · 30 saniyede hazır</span>
+    </div>
+    <div class="trust-bar reveal revealed">
+      <span>✓ Kredi kartı gerekmez</span>
+      <span>✓ 2 dakikada kurulum</span>
+      <span>✓ İlk analiz ücretsiz</span>
+      <span>✓ 847 kişi bekleme listesinde</span>
+    </div>
+
+    <!-- DEMO WINDOW -->
+    <div class="hero-demo reveal revealed">
+      <div class="demo-inner">
+        <div class="demo-browser-bar">
+          <div class="dots">
+            <div class="dot dot-r"></div>
+            <div class="dot dot-y"></div>
+            <div class="dot dot-g"></div>
+          </div>
+          <div class="url-bar">upsheet.app</div>
+        </div>
+        <div class="demo-toolbar-mock">
+          <button class="dtb-btn">B</button>
+          <button class="dtb-btn dtb-italic">I</button>
+          <button class="dtb-btn dtb-under">U</button>
+          <div class="dtb-sep"></div>
+          <div class="dtb-swatch" style="background:#6366f1;"></div>
+          <div class="dtb-swatch" style="background:#22c55e;"></div>
+          <div class="dtb-swatch" style="background:#f59e0b;"></div>
+        </div>
+        <div class="demo-grid-wrap">
+          <table class="demo-grid">
+            <thead>
+              <tr>
+                <th>Şirket</th>
+                <th>Gelir</th>
+                <th>Gider</th>
+                <th>Kâr</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>TechCorp A.Ş.</td>
+                <td class="hl-cell">₺280.000</td>
+                <td>₺195.000</td>
+                <td class="kp">₺85.000</td>
+              </tr>
+              <tr>
+                <td>MediaPlus</td>
+                <td>₺164.000</td>
+                <td>₺142.000</td>
+                <td class="kp">₺22.000</td>
+              </tr>
+              <tr>
+                <td>RetailX Ltd.</td>
+                <td class="hl-cell">₺312.000</td>
+                <td>₺198.000</td>
+                <td class="kp">₺114.000</td>
+              </tr>
+              <tr>
+                <td>FinansSoft</td>
+                <td>₺95.000</td>
+                <td>₺112.000</td>
+                <td class="kn">-₺17.000</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="demo-ai-float">
+          <span class="demo-ai-dot"></span>
+          Kâr analizi tamamlandı ✓
+        </div>
+        <div class="demo-chat-bar">
+          <div class="demo-input-mock">
+            <span class="type-text" id="typeText"></span><span class="demo-cursor"></span>
+          </div>
+          <button class="demo-send-btn">
+            <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PAIN SECTION -->
+<section id="pain" class="pain-section">
+  <div class="container">
+    <div class="section-label reveal">TANIYOR MUSUNUZ?</div>
+    <h2 class="section-heading reveal">Bu sorunlar size de tanıdık mı?</h2>
+    <div class="pain-grid">
+      <div class="pain-card reveal" data-delay="0">
+        <div class="pain-icon">😤</div>
+        <h3>"Formül neden çalışmıyor?"</h3>
+        <p>2 saatte yazdığınız DÜŞEY ARA formülü hata veriyor. Nedeni bir hücre formatı farklıymış. Bu bir daha olmayacak.</p>
+      </div>
+      <div class="pain-card reveal" data-delay="100">
+        <div class="pain-icon">⏰</div>
+        <h3>"Her ay aynı rapor, aynı yorgunluk"</h3>
+        <p>Pazartesi sabahı gelir, aynı pivot tablo, aynı formüller, aynı grafik. Değişen sadece sayılar.</p>
+      </div>
+      <div class="pain-card reveal" data-delay="200">
+        <div class="pain-icon">🤯</div>
+        <h3>"3.000 satırlık veriyle başbaşa"</h3>
+        <p>Müşteri listesi, stok verisi, sipariş geçmişi. Hepsi aynı dosyada, hiçbiri düzgün.</p>
+      </div>
+    </div>
+    <div class="pain-cta reveal">
+      <a href="javascript:void(0)" onclick="googleLogin()" class="btn btn-primary">Evet, Çözmek İstiyorum →</a>
+    </div>
+  </div>
+</section>
+
+<!-- LOGO BAR -->
+<section class="logo-bar">
+  <div class="logo-bar-label">10,000+ profesyonel tarafından kullanılıyor</div>
+  <div class="marquee-wrap">
+    <div class="marquee-track" id="marqueeTrack">
+      <span class="marquee-item">Deloitte</span>
+      <span class="marquee-item">McKinsey &amp; Co.</span>
+      <span class="marquee-item">Akbank</span>
+      <span class="marquee-item">Türk Telekom</span>
+      <span class="marquee-item">Getir</span>
+      <span class="marquee-item">Trendyol</span>
+      <span class="marquee-item">Deloitte</span>
+      <span class="marquee-item">McKinsey &amp; Co.</span>
+      <span class="marquee-item">Akbank</span>
+      <span class="marquee-item">Türk Telekom</span>
+      <span class="marquee-item">Getir</span>
+      <span class="marquee-item">Trendyol</span>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES CARDS -->
+<section class="feat-section">
+  <div class="container">
+    <div class="section-label reveal">ÖZELLİKLER</div>
+    <h2 class="section-heading reveal">Excel başında geçirdiğiniz her saati geri alın</h2>
+    <div class="feat-grid">
+
+      <!-- Lightning Fast -->
+      <div class="feat-card reveal" data-delay="0">
+        <div class="feat-vis feat-vis-fast">
+          <div class="mg-track">
+            <div class="mg-inner">
+              <div class="mg-row"><span>TechCorp</span><span>₺280K</span><span class="mg-pos">₺85K</span></div>
+              <div class="mg-row mg-row-hl"><span>RetailX</span><span>₺312K</span><span class="mg-pos">₺114K</span></div>
+              <div class="mg-row"><span>MediaPlus</span><span>₺164K</span><span>₺22K</span></div>
+              <div class="mg-row mg-row-hl"><span>FinansSoft</span><span>₺95K</span><span class="mg-neg">-₺17K</span></div>
+              <div class="mg-row"><span>TechCorp</span><span>₺280K</span><span class="mg-pos">₺85K</span></div>
+              <div class="mg-row mg-row-hl"><span>RetailX</span><span>₺312K</span><span class="mg-pos">₺114K</span></div>
+              <div class="mg-row"><span>MediaPlus</span><span>₺164K</span><span>₺22K</span></div>
+              <div class="mg-row mg-row-hl"><span>FinansSoft</span><span>₺95K</span><span class="mg-neg">-₺17K</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="feat-body">
+          <div class="feat-icon-wrap">⚡</div>
+          <h3>Saniyeler İçinde Sonuç</h3>
+          <p>500 satırlık aylık satış raporunuz? "Kâr marjını hesapla ve renklendir" yazın — 12 saniyede hazır.</p>
+        </div>
+      </div>
+
+      <!-- AI Powered -->
+      <div class="feat-card reveal" data-delay="100">
+        <div class="feat-vis feat-vis-ai">
+          <div class="ai-vis-chat">
+            <div class="avc-bubble avc-user">B sütununu sırala</div>
+            <div class="avc-bubble avc-ai">
+              <span class="avc-typing">
+                <span></span><span></span><span></span>
+              </span>
+            </div>
+            <div class="avc-bubble avc-user" style="margin-top:2px">Grafik oluştur</div>
+            <div class="avc-bubble avc-ai avc-done">Tamamlandı ✓</div>
+          </div>
+        </div>
+        <div class="feat-body">
+          <div class="feat-icon-wrap">🤖</div>
+          <h3>Türkçe Anlayan AI</h3>
+          <p>DÜŞEY ARA, EĞER, karmaşık makrolar: bunları artık bilmenize gerek yok.</p>
+        </div>
+      </div>
+
+      <!-- Secure -->
+      <div class="feat-card reveal" data-delay="200">
+        <div class="feat-vis feat-vis-secure">
+          <div class="lock-vis">
+            <div class="lock-rings">
+              <div class="lr lr1"></div>
+              <div class="lr lr2"></div>
+              <div class="lr lr3"></div>
+            </div>
+            <div class="lock-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+        <div class="feat-body">
+          <div class="feat-icon-wrap">🔒</div>
+          <h3>Verileriniz Sadece Sizin</h3>
+          <p>Finansal tablolarınız, müşteri listeniz hiçbiri sunucularımızda saklanmaz.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="container">
+    <div class="how-header">
+      <div class="section-label reveal">NASIL ÇALIŞIR</div>
+      <h2 class="section-heading reveal">İlk analizinizi 2 dakikada yapın</h2>
+      <p class="section-sub reveal">Kod yok. Formül yok. Sadece Türkçe yazın.</p>
+    </div>
+
+    <div class="steps-grid">
+      <div class="step-card reveal" data-delay="0">
+        <div class="step-num">ADIM 01</div>
+        <div class="step-icon">📂</div>
+        <h3>Excel'inizi Bağlayın</h3>
+        <p>XLSX, XLS veya CSV dosyanızı sürükleyip bırakın. 10 saniyede yüklendi.</p>
+      </div>
+      <div class="step-card reveal" data-delay="100">
+        <div class="step-num">ADIM 02</div>
+        <div class="step-icon">💬</div>
+        <h3>Probleminizi Türkçe Söyleyin</h3>
+        <p>"B ve C sütunlarındaki tutarsızlıkları bul", "Ocak-Mart arası gelir grafiği çıkar"</p>
+      </div>
+      <div class="step-card reveal" data-delay="200">
+        <div class="step-num">ADIM 03</div>
+        <div class="step-icon">✅</div>
+        <h3>Hazır — Kaydedin</h3>
+        <p>AI değişiklikleri önizleme ile gösterir, onayladıktan sonra .xlsx olarak indirin.</p>
+      </div>
+    </div>
+
+    <!-- FEATURE SHOWCASE -->
+    <div class="feature-showcase">
+      <div class="feature-list" id="featureList">
+        <div class="feature-item active" data-panel="fp-formula">
+          <div class="fi-icon">⚡</div>
+          <div>
+            <div class="fi-title">Akıllı Formül Motoru</div>
+            <div class="fi-desc">AI formülleri otomatik uygular</div>
+          </div>
+        </div>
+        <div class="feature-item" data-panel="fp-chart">
+          <div class="fi-icon">📊</div>
+          <div>
+            <div class="fi-title">Otomatik Grafik Oluşturma</div>
+            <div class="fi-desc">Tek komutla görsel grafikler</div>
+          </div>
+        </div>
+        <div class="feature-item" data-panel="fp-analysis">
+          <div class="fi-icon">🔍</div>
+          <div>
+            <div class="fi-title">Veri Analizi ve Özet</div>
+            <div class="fi-desc">Derin veri içgörüleri</div>
+          </div>
+        </div>
+        <div class="feature-item" data-panel="fp-format">
+          <div class="fi-icon">🎨</div>
+          <div>
+            <div class="fi-title">Koşullu Biçimlendirme</div>
+            <div class="fi-desc">Akıllı renk kodlama</div>
+          </div>
+        </div>
+        <div class="feature-item" data-panel="fp-sheets">
+          <div class="fi-icon">📁</div>
+          <div>
+            <div class="fi-title">Çoklu Sheet Yönetimi</div>
+            <div class="fi-desc">Sınırsız sayfa desteği</div>
+          </div>
+        </div>
+        <div class="feature-item" data-panel="fp-undo">
+          <div class="fi-icon">↩️</div>
+          <div>
+            <div class="fi-title">Sınırsız Undo/Redo</div>
+            <div class="fi-desc">Hiçbir değişikliği kaybetme</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="feature-panel-wrap">
+        <div class="fp-bar">
+          <div class="dots">
+            <div class="dot dot-r"></div>
+            <div class="dot dot-y"></div>
+            <div class="dot dot-g"></div>
+          </div>
+          <span class="fp-bar-title" id="fpBarTitle">Akıllı Formül Motoru</span>
+        </div>
+
+        <div class="fp-panel active" id="fp-formula">
+          <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;">
+            <div class="fp-chat-bubble fp-chat-user">B sütunundaki toplamı hesapla</div>
+            <div class="fp-chat-bubble fp-chat-ai">Tabii! B sütununu analiz ediyorum... =SUM(B2:B5) formülünü uygulayacağım.</div>
+          </div>
+          <table class="fp-mini-grid">
+            <tr><th>Ürün</th><th>Ocak (B)</th><th>Şubat</th></tr>
+            <tr><td style="color:rgba(255,255,255,.6)">Laptop</td><td class="fp-highlight">45.000</td><td style="color:rgba(255,255,255,.4)">52.000</td></tr>
+            <tr><td style="color:rgba(255,255,255,.6)">Telefon</td><td class="fp-highlight">32.000</td><td style="color:rgba(255,255,255,.4)">38.000</td></tr>
+            <tr><td style="color:rgba(255,255,255,.6)">Tablet</td><td class="fp-highlight">18.000</td><td style="color:rgba(255,255,255,.4)">21.000</td></tr>
+            <tr><td style="color:rgba(255,255,255,.6)">Yazılım</td><td class="fp-highlight">12.000</td><td style="color:rgba(255,255,255,.4)">14.000</td></tr>
+            <tr><td style="color:rgba(255,255,255,.4);font-size:11px;">TOPLAM</td><td class="fp-sum">107.000</td><td></td></tr>
+          </table>
+        </div>
+
+        <div class="fp-panel" id="fp-chart">
+          <div style="color:rgba(255,255,255,.5);font-size:12px;margin-bottom:12px;">Aylık Satış Grafiği — 2024</div>
+          <div class="fp-chart">
+            <div class="fp-bar-wrap">
+              <div class="fp-bar-fill" style="height:65%;"></div>
+              <div class="fp-bar-label">Ocak</div>
+            </div>
+            <div class="fp-bar-wrap">
+              <div class="fp-bar-fill" style="height:85%;"></div>
+              <div class="fp-bar-label">Şubat</div>
+            </div>
+            <div class="fp-bar-wrap">
+              <div class="fp-bar-fill" style="height:75%;"></div>
+              <div class="fp-bar-label">Mart</div>
+            </div>
+            <div class="fp-bar-wrap">
+              <div class="fp-bar-fill" style="height:95%;"></div>
+              <div class="fp-bar-label">Nisan</div>
+            </div>
+          </div>
+          <div style="color:rgba(255,255,255,.3);font-size:11px;text-align:center;margin-top:8px;">Toplam 4 ay • Artış trendi: +28%</div>
+        </div>
+
+        <div class="fp-panel" id="fp-analysis">
+          <div style="color:rgba(255,255,255,.5);font-size:12px;margin-bottom:14px;">Veri Analizi Özeti</div>
+          <div class="fp-stats">
+            <div class="fp-stat">
+              <div class="fp-stat-val" data-target="356" data-suffix="K">356K</div>
+              <div class="fp-stat-lbl">Toplam Satış</div>
+            </div>
+            <div class="fp-stat">
+              <div class="fp-stat-val" data-target="89" data-suffix="K">89K</div>
+              <div class="fp-stat-lbl">Ortalama</div>
+            </div>
+            <div class="fp-stat">
+              <div class="fp-stat-val" data-target="145" data-suffix="K">145K</div>
+              <div class="fp-stat-lbl">En Yüksek</div>
+            </div>
+            <div class="fp-stat">
+              <div class="fp-stat-val">41.5K</div>
+              <div class="fp-stat-lbl">En Düşük</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="fp-panel" id="fp-format">
+          <div style="color:rgba(255,255,255,.5);font-size:12px;margin-bottom:12px;">Koşullu Biçimlendirme Uygulandı</div>
+          <table class="fp-format-table">
+            <tr><th>Ürün</th><th>Satış</th><th>Durum</th></tr>
+            <tr>
+              <td>Laptop</td><td>145.000</td>
+              <td><span class="status-green">Hedef Aşıldı</span></td>
+            </tr>
+            <tr>
+              <td>Telefon</td><td>111.000</td>
+              <td><span class="status-green">Hedef Aşıldı</span></td>
+            </tr>
+            <tr>
+              <td>Tablet</td><td>58.500</td>
+              <td><span class="status-yellow">Hedefte</span></td>
+            </tr>
+            <tr>
+              <td>Yazılım</td><td>41.500</td>
+              <td><span class="status-red">Hedef Altı</span></td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="fp-panel" id="fp-sheets">
+          <div style="color:rgba(255,255,255,.5);font-size:12px;margin-bottom:14px;">Sheet Yönetimi</div>
+          <div class="fp-sheet-item active">
+            <span class="fp-sheet-name">📊 Satış 2024</span>
+            <span class="fp-sheet-badge">4 satır</span>
+          </div>
+          <div class="fp-sheet-item">
+            <span class="fp-sheet-name">📈 Büyüme Analizi</span>
+            <span class="fp-sheet-badge">12 satır</span>
+          </div>
+          <div class="fp-sheet-item">
+            <span class="fp-sheet-name">👥 Müşteri Listesi</span>
+            <span class="fp-sheet-badge">248 satır</span>
+          </div>
+          <div class="fp-sheet-item">
+            <span class="fp-sheet-name">📦 Stok Takibi</span>
+            <span class="fp-sheet-badge">87 satır</span>
+          </div>
+        </div>
+
+        <div class="fp-panel" id="fp-undo">
+          <div style="color:rgba(255,255,255,.5);font-size:12px;margin-bottom:14px;">Değişiklik Geçmişi</div>
+          <div class="fp-history-item">
+            <div class="fp-history-dot"></div>
+            <span>B sütunu toplamı hesaplandı</span>
+          </div>
+          <div class="fp-history-item">
+            <div class="fp-history-dot"></div>
+            <span>Koşullu biçimlendirme uygulandı</span>
+          </div>
+          <div class="fp-history-item current">
+            <div class="fp-history-dot"></div>
+            <span>Tabloya yeni satır eklendi ← Şu an</span>
+          </div>
+          <div class="fp-history-item" style="opacity:.4;">
+            <div class="fp-history-dot"></div>
+            <span>Sütun A sıralandı</span>
+          </div>
+          <div class="fp-history-item" style="opacity:.25;">
+            <div class="fp-history-dot"></div>
+            <span>Dosya yüklendi</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="testimonials">
+  <div class="container">
+    <div class="testimonials-header">
+      <div class="section-label reveal">KULLANICI YORUMLARI</div>
+      <h2 class="section-heading reveal">Ayda ortalama 23 saat kazanıyorlar</h2>
+    </div>
+
+    <div class="testimonials-grid" style="margin-top:48px;">
+      <div class="testi-card reveal" data-delay="0">
+        <div class="testi-stars">⭐⭐⭐⭐⭐</div>
+        <p class="testi-quote">"Her ay aynı şeyi yapıyordum: 200 satırlık satış verisi, 3 farklı formül, 1 kaçınılmaz hata. Artık 'Aylık özet tablosunu hazırla' yazıyorum. 4 dakika."</p>
+        <div class="testi-author">
+          <div class="testi-avatar">AK</div>
+          <div>
+            <div class="testi-name">AK</div>
+            <div class="testi-role">Finans Analisti · E-ticaret</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card reveal" data-delay="100">
+        <div class="testi-stars">⭐⭐⭐⭐⭐</div>
+        <p class="testi-quote">"Muhasebecim Excel bilmiyordu. Upsheet'i verdim: 'stok miktarı 0 olan ürünleri sil' yazıyor, hallediyor. Artık bağımsız çalışıyor."</p>
+        <div class="testi-author">
+          <div class="testi-avatar">MT</div>
+          <div>
+            <div class="testi-name">MT</div>
+            <div class="testi-role">KOBİ Sahibi · Toptan Satış</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card reveal" data-delay="200">
+        <div class="testi-stars">⭐⭐⭐⭐⭐</div>
+        <p class="testi-quote">"30 dakikalık pivot işini 3 dakikada yapıyorum. Rakiplerimden önce sunum yapıyorum."</p>
+        <div class="testi-author">
+          <div class="testi-avatar">ZA</div>
+          <div>
+            <div class="testi-name">ZA</div>
+            <div class="testi-role">Yönetim Danışmanı</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="metrics-bar reveal">
+      <div class="metric-item">
+        <div class="metric-value" data-count="847" data-suffix="+">847+</div>
+        <div class="metric-label">Bekleme Listesinde</div>
+      </div>
+      <div class="metric-item">
+        <div class="metric-value" data-count-decimal="4.9" data-suffix="/5">4.9/5</div>
+        <div class="metric-label">Beta Kullanıcı Puanı</div>
+      </div>
+      <div class="metric-item">
+        <div class="metric-value" data-count="87" data-suffix="%">%87</div>
+        <div class="metric-label">Daha Az Zaman Harcıyor</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="container">
+    <div class="pricing-header">
+      <div class="section-label reveal">FİYATLANDIRMA</div>
+      <h2 class="section-heading reveal">Bir çalışanın saatlik maliyetinden az</h2>
+      <p class="section-sub reveal" style="max-width:520px;margin:12px auto 0;">Excel başında harcadığınız zamanın değeri aylık binlerce lira. Biz çok daha ucuzuz.</p>
+    </div>
+
+    <!-- 3-way interval toggle -->
+    <div class="pt3-wrap reveal">
+      <div class="pt3-toggle" id="pt3Toggle">
+        <button class="pt3-btn" data-interval="weekly">Haftalık</button>
+        <button class="pt3-btn pt3-active" data-interval="monthly">Aylık</button>
+        <button class="pt3-btn" data-interval="yearly">Yıllık <span class="pt3-save">-20%</span></button>
+      </div>
+    </div>
+
+    <!-- Plan selector cards -->
+    <div class="ps-grid reveal">
+      <button class="ps-card" data-plan="starter">
+        <div class="ps-name">Starter</div>
+        <div class="ps-price-row">
+          <span class="ps-cur">₺</span>
+          <span class="ps-amount" id="psAmount0">199</span>
+          <span class="ps-period" id="psPeriod0">/ay</span>
+        </div>
+      </button>
+      <button class="ps-card ps-selected" data-plan="pro">
+        <div class="ps-popular-badge">Popüler</div>
+        <div class="ps-name">Pro</div>
+        <div class="ps-price-row">
+          <span class="ps-cur">₺</span>
+          <span class="ps-amount" id="psAmount1">399</span>
+          <span class="ps-period" id="psPeriod1">/ay</span>
+        </div>
+      </button>
+      <button class="ps-card" data-plan="max">
+        <div class="ps-name">Max</div>
+        <div class="ps-price-row">
+          <span class="ps-cur">₺</span>
+          <span class="ps-amount" id="psAmount2">799</span>
+          <span class="ps-period" id="psPeriod2">/ay</span>
+        </div>
+      </button>
+    </div>
+
+    <!-- Feature comparison table -->
+    <div class="pft-wrap reveal">
+      <div class="pft-header">
+        <div class="pft-feat-col">Özellikler</div>
+        <div class="pft-plan-cols">
+          <div class="pft-plan-name">Starter</div>
+          <div class="pft-plan-name">Pro</div>
+          <div class="pft-plan-name">Max</div>
+        </div>
+      </div>
+      <div class="pft-row" data-included="starter">
+        <div class="pft-feat">AI Komut</div>
+        <div class="pft-checks">
+          <div class="pft-check pft-yes">50/hafta</div>
+          <div class="pft-check pft-yes">Sınırsız</div>
+          <div class="pft-check pft-yes">Sınırsız</div>
+        </div>
+      </div>
+      <div class="pft-row" data-included="starter">
+        <div class="pft-feat">Sheet Sayısı</div>
+        <div class="pft-checks">
+          <div class="pft-check pft-yes">1</div>
+          <div class="pft-check pft-yes">10</div>
+          <div class="pft-check pft-yes">Sınırsız</div>
+        </div>
+      </div>
+      <div class="pft-row" data-included="pro">
+        <div class="pft-feat">Grafik Oluşturma</div>
+        <div class="pft-checks">
+          <div class="pft-check pft-no">—</div>
+          <div class="pft-check pft-yes">✓</div>
+          <div class="pft-check pft-yes">✓</div>
+        </div>
+      </div>
+      <div class="pft-row" data-included="max">
+        <div class="pft-feat">Öncelikli Destek</div>
+        <div class="pft-checks">
+          <div class="pft-check pft-no">—</div>
+          <div class="pft-check pft-no">—</div>
+          <div class="pft-check pft-yes">✓</div>
+        </div>
+      </div>
+      <div class="pft-row" data-included="max">
+        <div class="pft-feat">API Erişimi</div>
+        <div class="pft-checks">
+          <div class="pft-check pft-no">—</div>
+          <div class="pft-check pft-no">—</div>
+          <div class="pft-check pft-yes">✓</div>
+        </div>
+      </div>
+      <div class="pft-row" data-included="max">
+        <div class="pft-feat">Ekip Yönetimi</div>
+        <div class="pft-checks">
+          <div class="pft-check pft-no">—</div>
+          <div class="pft-check pft-no">—</div>
+          <div class="pft-check pft-yes">✓</div>
+        </div>
+      </div>
+      <div id="pricingDiscountNote" style="display:none;text-align:center;padding:12px 0 4px;font-size:13px;color:#7c3aed;font-weight:500;">%20 indirim uygulandı 🎉</div>
+    </div>
+    <div class="pricing-cta-new reveal">
+      <a href="javascript:void(0)" onclick="pricingCta('pro')" class="btn btn-primary" id="pricingCtaBtn">Pro ile Başla →</a>
+    </div>
+  </div>
+</section>
+
+<!-- FEEDBACK SECTION -->
+<section id="feedback" class="feedback-section">
+  <div class="container">
+    <div class="feedback-grid">
+      <div class="feedback-left">
+        <div class="section-label" style="color:#f97316">ŞEKİLLENDİRİN</div>
+        <h2 class="section-heading" style="color:#fff">Hangi Excel sorunu sizi en çok çileden çıkarıyor?</h2>
+        <p style="color:#9ca3af; font-size:15px; line-height:1.7; margin-top:16px;">Cevabınız platforma doğrudan yansıyacak. En çok istenen özellikler önce geliştiriliyor.</p>
+        <ul class="feedback-benefits">
+          <li>✓ 24 saat içinde geri dönüş</li>
+          <li>✓ Beta erişimi kazanırsınız</li>
+          <li>✓ Öneriniz platforma eklenir</li>
+        </ul>
+      </div>
+      <div class="feedback-right">
+        <div class="poll-options">
+          <button class="poll-option" onclick="selectPoll(this)" data-val="formul">😤 Bozulan formüller ve HATA mesajları</button>
+          <button class="poll-option" onclick="selectPoll(this)" data-val="rapor">⏰ Aynı raporları her ay tekrar yapmak</button>
+          <button class="poll-option" onclick="selectPoll(this)" data-val="hata">🔍 Büyük veride hata ve tekrar bulmak</button>
+          <button class="poll-option" onclick="selectPoll(this)" data-val="grafik">📊 Grafik ve görselleştirme yapmak</button>
+          <button class="poll-option" onclick="selectPoll(this)" data-val="birlestir">🤯 Birden fazla dosyayı birleştirmek</button>
+        </div>
+        <div id="pollExtra" class="poll-extra" style="display:none">
+          <textarea class="poll-textarea" id="pollNote" placeholder="Varsa eklemek istediğiniz..."></textarea>
+          <input type="email" class="poll-email" id="pollEmail" placeholder="E-posta adresiniz (isteğe bağlı)">
+          <button class="poll-submit-btn" onclick="submitPoll()">Gönder →</button>
+        </div>
+        <div id="pollThanks" class="poll-thanks" style="display:none">
+          <div class="poll-thanks-icon">🎉</div>
+          <div class="poll-thanks-text">Teşekkürler! 24 saat içinde dönüş yapacağız.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="container">
+    <div class="cta-content">
+      <span class="cta-emoji">⚡</span>
+      <h2>Bu Hafta Kaç Saat Kaybedeceksiniz?</h2>
+      <p>Ortalama kullanıcımız ayda 23 saatini Excel başında geçiriyordu. Şimdi sadece 2 saat.</p>
+      <a href="javascript:void(0)" onclick="googleLogin()" class="btn-white">⚡ Ücretsiz Excel Analizimi Başlat</a>
+      <div class="cta-trust">
+        <span>✓ Kredi kartı gerekmez</span>
+        <span>✓ İlk analiz ücretsiz</span>
+        <span>✓ 2 dakikada kurulum</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo"><div class="logo-mark" style="display:inline-flex;align-items:center;gap:8px;"><div style="width:28px;height:28px;flex-shrink:0;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" style="width:100%;height:100%;border-radius:6px;"><rect width="100" height="100" fill="black"/><path d="M 30 65 Q 28 40 50 28 Q 65 22 75 32 L 68 40 Q 60 33 50 37 Q 35 45 36 63 Z" fill="white"/></svg></div><span style="font-weight:700;font-size:16px;color:#ffffff;letter-spacing:-0.3px;">Upsheet</span></div></div>
+        <p class="footer-desc">Excel yönetimini AI ile kolaylaştırıyoruz. Türkçe, hızlı, güvenli.</p>
+        <div class="social-row">
+          <a href="https://twitter.com" target="_blank" class="social-btn" aria-label="Twitter">
+            <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.26 5.632zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          </a>
+          <a href="https://linkedin.com" target="_blank" class="social-btn" aria-label="LinkedIn">
+            <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          </a>
+          <a href="https://github.com" target="_blank" class="social-btn" aria-label="GitHub">
+            <svg viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+          </a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title">ÜRÜN</div>
+        <ul class="footer-links">
+          <li><a href="#features">Özellikler</a></li>
+          <li><a href="#pricing">Fiyatlar</a></li>
+          <li><a href="#testimonials">Demo</a></li>
+          <li><a href="#">API</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">ŞİRKET</div>
+        <ul class="footer-links">
+          <li><a href="#">Hakkımızda</a></li>
+          <li><a href="#">Blog</a></li>
+          <li><a href="#">Kariyer</a></li>
+          <li><a href="#">İletişim</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">DESTEK</div>
+        <ul class="footer-links">
+          <li><a href="#">Dokümantasyon</a></li>
+          <li><a href="#">SSS</a></li>
+          <li><a href="#">Gizlilik</a></li>
+          <li><a href="#">Şartlar</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="footer-bottom-left">© 2026 Upsheet. Tüm hakları saklıdır.</div>
+      <div class="footer-bottom-right">
+        <a href="#">Gizlilik</a>
+        <a href="#">Şartlar</a>
+        <a href="#">Çerezler</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/landing.js"></script>
+
+<!-- FLOATING AI ASSISTANT -->
+<div id="floatingAI">
+  <button id="faiBubble" class="fai-bubble" title="AI Asistan">
+    <div class="fai-ping"></div>
+    <div class="fai-inner">
+      <svg id="faiBotIcon" class="fai-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="11" width="18" height="10" rx="2"/>
+        <path d="M9 11V7a3 3 0 0 1 6 0v4"/>
+        <circle cx="9" cy="16" r="1" fill="currentColor" stroke="none"/>
+        <circle cx="15" cy="16" r="1" fill="currentColor" stroke="none"/>
+        <line x1="12" y1="2" x2="12" y2="5"/>
+      </svg>
+      <svg id="faiCloseIcon" class="fai-icon" style="display:none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </div>
+  </button>
+
+  <div id="faiPanel" style="display:none">
+    <div class="fai-panel-inner">
+
+      <!-- Header -->
+      <div class="fai-header">
+        <div class="fai-status">
+          <div class="fai-dot"></div>
+          <span>AI Assistant</span>
+        </div>
+        <div class="fai-badges">
+          <span class="fai-badge fai-badge-dark">Claude AI</span>
+          <span class="fai-badge fai-badge-purple">Pro</span>
+          <button class="fai-close-btn" id="faiCloseBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="14" height="14">
+              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Textarea -->
+      <textarea id="faiInput" class="fai-textarea" placeholder="Excel tablonuz hakkında bir şeyler sorun..." rows="4"></textarea>
+
+      <!-- Toolbar -->
+      <div class="fai-toolbar">
+        <div class="fai-tools-left">
+          <div class="fai-tool-group">
+            <button class="fai-tool-btn" title="Dosya ekle">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+            </button>
+            <button class="fai-tool-btn fai-tool-link" title="Link ekle">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+            </button>
+            <button class="fai-tool-btn fai-tool-code" title="Kod ekle">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            </button>
+          </div>
+          <button class="fai-tool-btn fai-tool-mic" title="Ses">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
+          </button>
+        </div>
+        <div class="fai-tools-right">
+          <span class="fai-char-count"><span id="faiCharCount">0</span>/<span>2000</span></span>
+          <button class="fai-send-btn" id="faiSendBtn" title="Gönder (Enter)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Hint -->
+      <div class="fai-hint">
+        <div class="fai-hint-left">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+          <span>Shift + Enter ile yeni satır</span>
+        </div>
+        <div class="fai-hint-right">
+          <div class="fai-active-dot"></div>
+          <span>Sistem aktif</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
