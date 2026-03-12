@@ -40,10 +40,23 @@ const chatLimiter = rateLimit({
 // Helmet security headers (CSP off — app serves static HTML files)
 app.use(helmet({ contentSecurityPolicy: false }));
 
-// CORS: all origins in dev, restrict to FRONTEND_URL in prod
-const allowedOrigin = process.env.FRONTEND_URL || '*';
+// CORS: whitelist localhost + Vercel + custom FRONTEND_URL
+const allowedOrigins = [
+  'http://localhost:8080',
+  'http://localhost:3000',
+  'http://127.0.0.1:5500',
+  'https://upsheet-ai.vercel.app',
+  process.env.FRONTEND_URL
+].filter(Boolean);
+
 app.use(cors({
-  origin: allowedOrigin,
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('CORS: Bu origin\'e izin verilmiyor'));
+    }
+  },
   methods: ['GET', 'POST', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   optionsSuccessStatus: 204
@@ -112,7 +125,7 @@ function validateChatBody(body) {
 
 // ── Routes ───────────────────────────────────────────────────
 app.get('/', (_req, res) => {
-  res.json({ status: 'ok', service: 'ExcelAI Backend' });
+  res.json({ status: 'ok', service: 'Upsheet API', version: '1.0.0' });
 });
 
 app.get('/api/health', (_req, res) => {
@@ -221,4 +234,4 @@ app.use((err, req, res, _next) => {
 });
 
 // ── Start ────────────────────────────────────────────────────
-app.listen(port, () => console.log(`ExcelAI backend → http://localhost:${port}`));
+app.listen(port, () => console.log(`Upsheet API → http://localhost:${port}`));
