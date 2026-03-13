@@ -482,7 +482,7 @@ async function handleGoogleLogin() {
     var { error } = await sb.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: window.location.origin + '/app.html',
+        redirectTo: 'https://upsheet-ai.vercel.app/app.html',
         queryParams: { access_type: 'offline', prompt: 'consent' }
       }
     });
