@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Upsheet — AI Excel Asistanı</title>
-<link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#f97316">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -756,22 +755,6 @@ function handleFileObject(file) {
   handleFile({ target: { files: [file] } });
 }
 
-// ── PWA: Service Worker registration ────────────────────────────
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/sw.js')
-      .then(function(reg) { console.log('SW registered', reg.scope); })
-      .catch(function(err) { console.log('SW failed:', err); });
-
-    // Background sync reply — show toast when queued message is sent
-    navigator.serviceWorker.addEventListener('message', function(e) {
-      if (e.data && e.data.type === 'sync-done') {
-        if (typeof showToast === 'function')
-          showToast('Bağlantı geri geldi, bekleyen mesajınız gönderiliyor...', 'info');
-      }
-    });
-  });
-}
 
 // ── PWA: Install banner ──────────────────────────────────────────
 var deferredPrompt;
