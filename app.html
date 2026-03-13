@@ -20,6 +20,16 @@
 <script src="api.js"></script>
 </head>
 <body>
+<script>
+window.addEventListener('error', function(e) {
+  document.title = 'HATA: ' + e.message;
+  alert('HATA: ' + e.message + '\nDosya: ' + e.filename + '\nSatır: ' + e.lineno);
+});
+
+window.addEventListener('unhandledrejection', function(e) {
+  alert('PROMISE HATA: ' + e.reason);
+});
+</script>
 
 <!-- TOPBAR -->
 <div id="topbar">
