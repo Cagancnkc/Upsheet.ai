@@ -1,12 +1,11 @@
 // Upsheet — Backend API wrapper (tarayıcıda yüklenir)
-const API_URL = window.location.hostname === 'localhost'
-  ? 'http://localhost:3001'
-  : null; // Backend henüz deploy edilmedi
+const API_URL = (typeof window !== 'undefined' && window.location.hostname !== 'localhost')
+  ? null
+  : 'http://localhost:3001';
 
 async function callAPI(endpoint, body) {
   if (!API_URL) {
-    if (typeof showToast === 'function') showToast('AI özelliği yakında aktif olacak', 'info');
-    return null;
+    return { error: 'offline', message: 'AI özelliği yakında aktif olacak' };
   }
   let res;
   try {
@@ -29,5 +28,6 @@ async function callAPI(endpoint, body) {
 
 async function processAICommand(message, sheetContext, sheetName, history) {
   const data = await callAPI('/api/chat', { message, sheetContext, sheetName, history });
-  return data ? data.reply : null;
+  if (!data || data.error === 'offline') return data || { error: 'offline' };
+  return data.reply;
 }

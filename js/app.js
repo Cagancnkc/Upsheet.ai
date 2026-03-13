@@ -1237,6 +1237,12 @@ async function sendChat() {
     let reply;
     if (typeof processAICommand === 'function') {
       reply = await processAICommand(msg, getSheetContext(), activeSheet, chatHistory.slice(-8));
+      if (!reply || reply?.error === 'offline') {
+        clearInterval(_loadTimer);
+        loader.remove();
+        if (typeof showToast === 'function') showToast('⚡ AI özelliği yakında aktif olacak!', 'info');
+        return;
+      }
     } else if (apiKey) {
       reply = await callOpenAI(msg);
     } else {
