@@ -1,33 +1,33 @@
 // Upsheet — Backend API wrapper (tarayıcıda yüklenir)
-const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+const API_URL = window.location.hostname === 'localhost'
   ? 'http://localhost:3001'
-  : 'RAILWAY_URL_BURAYA';
+  : null; // Backend henüz deploy edilmedi
 
-async function processAICommand(message, sheetContext, sheetName, history) {
+async function callAPI(endpoint, body) {
+  if (!API_URL) {
+    if (typeof showToast === 'function') showToast('AI özelliği yakında aktif olacak', 'info');
+    return null;
+  }
   let res;
   try {
-    res = await fetch(`${API_BASE}/api/chat`, {
+    res = await fetch(`${API_URL}${endpoint}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message, sheetContext, sheetName, history })
+      body: JSON.stringify(body)
     });
   } catch (networkErr) {
     throw new Error('Sunucuya bağlanılamıyor. Backend çalışıyor mu?');
   }
-
-  if (res.status === 500) {
-    throw new Error('Sunucu hatası. Lütfen tekrar deneyin.');
-  }
-
-  if (res.status === 401 || res.status === 403) {
-    throw new Error('AI servisi henüz yapılandırılmadı.');
-  }
-
+  if (res.status === 500) throw new Error('Sunucu hatası. Lütfen tekrar deneyin.');
+  if (res.status === 401 || res.status === 403) throw new Error('AI servisi henüz yapılandırılmadı.');
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
     throw new Error(err.error || `Sunucu hatası: ${res.status}`);
   }
+  return res.json();
+}
 
-  const data = await res.json();
-  return data.reply;
+async function processAICommand(message, sheetContext, sheetName, history) {
+  const data = await callAPI('/api/chat', { message, sheetContext, sheetName, history });
+  return data ? data.reply : null;
 }
