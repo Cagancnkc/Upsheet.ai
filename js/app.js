@@ -3211,4 +3211,3 @@ function formatFileDate(iso) {
     return d.toLocaleDateString('tr-TR', { day:'2-digit', month:'short', year:'numeric' });
   } catch(e) { return ''; }
 }
-</script>
