@@ -1,4 +1,29 @@
-﻿// ═══════════════════════════════════════════════════════════════
+﻿// Supabase client — app.html'den gelir, yoksa dummy objesi kullan
+var sb = window._sb || {
+  from: () => ({
+    select: () => ({ order: () => ({ data: [], error: null }) }),
+    insert: () => ({ select: () => ({ single: () => ({ data: null, error: null }) }) }),
+    update: () => ({ eq: () => ({ data: null, error: null }) }),
+    eq: () => ({ single: () => ({ data: null, error: null }) })
+  }),
+  storage: {
+    from: () => ({
+      upload: () => ({ error: null }),
+      download: () => ({ data: null, error: null })
+    })
+  },
+  auth: {
+    getSession: () => Promise.resolve({ data: { session: null } }),
+    onAuthStateChange: () => {}
+  }
+};
+
+// Supabase hazır olunca güncelle
+window.addEventListener('load', function() {
+  if (window._sb) sb = window._sb;
+});
+
+// ═══════════════════════════════════════════════════════════════
 //  PERF UTILITIES — debounce & throttle
 // ═══════════════════════════════════════════════════════════════
 function debounce(fn, delay) {
