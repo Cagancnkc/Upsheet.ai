@@ -20,43 +20,6 @@
 </head>
 <body>
 
-<!-- TOPBAR -->
-<div id="topbar">
-  <div class="logo">
-    <div class="logo-icon">
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-    </div>
-    <a href="index.html" style="color:inherit;text-decoration:none;">Upsheet</a>
-  </div>
-  <div id="topMetrics">
-    <span class="tb-metric-badge" id="mbCells">⚡ 0 hücre</span>
-    <span class="tb-metric-badge" id="mbRows">↕ 0 satır</span>
-    <span class="tb-metric-badge" id="mbAI">🤖 0 işlem</span>
-  </div>
-  <div class="file-name-wrap">
-    <span id="fileName" onclick="startRename()" title="Düzenlemek için tıkla">Yeni Dosya.xlsx</span>
-    <span id="saveIndicator" class="saved"><span class="save-dot"></span><span id="saveText">Kaydedildi ✓</span></span>
-    <span id="syncBadge" class="sync-badge" style="display:none"><span class="sync-dot"></span><span id="syncText">Senkronize</span></span>
-    <input id="fileNameInput" type="text" value="Yeni Dosya.xlsx" onblur="finishRename()" onkeydown="if(event.key==='Enter')finishRename()">
-  </div>
-  <div class="topbar-right">
-    <button class="btn btn-ghost" onclick="triggerUpload()">
-      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-      Excel Yükle
-    </button>
-    <button id="downloadBtn" class="btn btn-primary" onclick="downloadFile()" title="Excel olarak indir (.xlsx)">
-      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      İndir
-    </button>
-    <button class="btn btn-ghost" onclick="downloadCSV()" title="Aktif sheet'i CSV olarak indir">
-      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      CSV
-    </button>
-    <div class="icon-btn" onclick="openSettings()" title="API Ayarları">
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M4.93 19.07l1.41-1.41M19.07 19.07l-1.41-1.41M12 2v2M12 20v2M2 12h2M20 12h2"/></svg>
-    </div>
-  </div>
-</div>
 
 <!-- ONBOARDING BANNER -->
 <div id="onboardBanner" class="hidden">
