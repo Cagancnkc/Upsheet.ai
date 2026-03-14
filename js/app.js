@@ -38,10 +38,11 @@ function colLetter(i) {
   return String.fromCharCode(64 + Math.floor(i / 26)) + String.fromCharCode(65 + (i % 26));
 }
 
-function buildGrid() {
+function buildGrid(data) {
+  data = data || sheets[activeSheet] || [];
+  if (!data) return;
   const grid = document.getElementById('grid');
   grid.innerHTML = '';
-  const data = sheets[activeSheet];
   const meta = getCellMeta();
 
   // Header row
@@ -883,7 +884,9 @@ function fmtTime(ts) {
 
 function renderRecentFiles() {
   const el = document.getElementById('recentFiles');
-  const activeName = document.getElementById('fileName').textContent;
+  if (!el) return;
+  const fileNameEl = document.getElementById('fileName');
+  const activeName = fileNameEl ? fileNameEl.textContent : '';
   if (!recentFiles.length) {
     el.innerHTML = `<div style="padding:6px 10px;font-size:11px;color:#6b6b6b;">Henüz dosya açılmadı</div>`;
     return;
