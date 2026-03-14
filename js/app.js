@@ -3211,3 +3211,4 @@ function formatFileDate(iso) {
     return d.toLocaleDateString('tr-TR', { day:'2-digit', month:'short', year:'numeric' });
   } catch(e) { return ''; }
 }
+/* cache bust Sat Mar 14 19:03:28 TSS 2026 */
