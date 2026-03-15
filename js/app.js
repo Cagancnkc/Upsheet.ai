@@ -294,6 +294,8 @@ function selectColumn(c, shift) {
 // ═══════════════════════════════════════════════════════════════
 function updateStatus() {
   const data = sheets[activeSheet];
+  if (!data) return;
+  if (!document.getElementById('mbCells')) return;
   let filled = 0, numCount = 0, total = 0, activeRows = 0;
   const rows = data.length;
 
@@ -1047,6 +1049,7 @@ function saveSettings() {
 
 function updateApiStatus() {
   const el = document.getElementById('apiKeyStatus');
+  if (!el) return;
   if (apiKey) {
     el.innerHTML = `<span style="color:#16a34a;">● Bağlı</span>`;
   } else {
