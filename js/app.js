@@ -22,6 +22,8 @@ let cellMeta = {}; // {sheetName: {r_c: {bold,italic,underline,align,bg,color,fo
 let recentFiles = [];
 let colWidths = {};
 let rowHeights = {};
+let versionHistory = []; // [{type, desc, time, snapshot, metaSnap}]
+let historyRestoreIdx = -1;
 let apiKey = localStorage.getItem('openai_key') || '';
 let chatHistory = [];
 let clipboard = null;
@@ -2101,8 +2103,6 @@ function chartModalClickOutside(e) {
 // ═══════════════════════════════════════════════════════════════
 //  VERSION HISTORY
 // ═══════════════════════════════════════════════════════════════
-let versionHistory = []; // [{type, desc, time, snapshot, metaSnap}]
-let historyRestoreIdx = -1;
 
 function takeSnapshot() {
   const snap = {};
