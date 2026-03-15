@@ -20,6 +20,8 @@ let selRow = 0, selCol = 0;
 let selStart = null, selEnd = null;
 let cellMeta = {}; // {sheetName: {r_c: {bold,italic,underline,align,bg,color,fontFamily,fontSize}}}
 let recentFiles = [];
+let colWidths = {};
+let rowHeights = {};
 let apiKey = localStorage.getItem('openai_key') || '';
 let chatHistory = [];
 let clipboard = null;
@@ -2289,8 +2291,6 @@ window.addEventListener('resize', throttle(function() {
 // ═══════════════════════════════════════════════════════════════
 //  FLOATING CELL TOOLBAR
 // ═══════════════════════════════════════════════════════════════
-var colWidths  = {};
-var rowHeights = {};
 var _resize = null;
 
 function showFloatToolbar(r, c) {
