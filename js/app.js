@@ -39,8 +39,11 @@ function colLetter(i) {
 }
 
 function buildGrid(data) {
-  data = data || sheets[activeSheet] || [];
-  if (!data) return;
+  if (!data) data = sheets && activeSheet ? (sheets[activeSheet] || []) : [];
+  if (!data || !Array.isArray(data)) {
+    console.warn('buildGrid: geçersiz data', data);
+    return;
+  }
   const grid = document.getElementById('grid');
   grid.innerHTML = '';
   const meta = getCellMeta();
@@ -2817,21 +2820,15 @@ function setSyncBadge(state) {
 // ── Init file system ──────────────────────────────────────────
 async function initFileSystem() {
   try {
-    // Load user's files from Supabase
-    var result = await sb.from('files').select('*').order('updated_at', { ascending: false });
-    var files  = result.data || [];
-
-    var list = document.getElementById('recentFiles');
-    if (list) list.innerHTML = '';
-    files.forEach(function(f) { renderFileItem(f); });
-
-    // Restore last opened file from IndexedDB
-    var db         = await openIDB();
-    var lastFileMeta = await idbGet(db, 'meta', 'lastFileId');
-    if (lastFileMeta && lastFileMeta.value) {
-      await loadFileById(lastFileMeta.value);
+    if (!window._sb) return;
+    const { data, error } = await window._sb
+      .from('files')
+      .select('*')
+      .order('updated_at', { ascending: false });
+    if (error) { console.warn('initFileSystem:', error.message); return; }
+    if (data && data.length > 0) {
+      data.forEach(f => renderFileItem(f));
     }
-    // else: let onboarding stay visible (existing behaviour)
   } catch(e) {
     console.warn('initFileSystem error:', e);
   }
