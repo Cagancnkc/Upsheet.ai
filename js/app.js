@@ -154,9 +154,37 @@ function buildGrid(data) {
   checkEmptyState();
 }
 
-function getCellMeta() {
+function getCellMeta(r, c) {
   if (!cellMeta[activeSheet]) cellMeta[activeSheet] = {};
-  return cellMeta[activeSheet];
+  if (r === undefined) return cellMeta[activeSheet];
+  return cellMeta[activeSheet][r + '_' + c] || {};
+}
+
+function setCellMeta(r, c, meta) {
+  if (!cellMeta[activeSheet]) cellMeta[activeSheet] = {};
+  cellMeta[activeSheet][r + '_' + c] = meta;
+}
+
+function getSelectedCells() {
+  if (!selStart || !selEnd) return [{ r: selRow, c: selCol }];
+  const r1 = Math.min(selStart.r, selEnd.r), r2 = Math.max(selStart.r, selEnd.r);
+  const c1 = Math.min(selStart.c, selEnd.c), c2 = Math.max(selStart.c, selEnd.c);
+  const cells = [];
+  for (let r = r1; r <= r2; r++)
+    for (let c = c1; c <= c2; c++)
+      cells.push({ r, c });
+  return cells;
+}
+
+function applyMetaToCell(r, c) {
+  const cell = document.querySelector(`#grid td[data-r="${r}"][data-c="${c}"]`);
+  if (!cell) return;
+  const meta = getCellMeta(r, c);
+  cell.classList.toggle('bold', !!meta.bold);
+  cell.classList.toggle('italic', !!meta.italic);
+  cell.classList.toggle('underline', !!meta.underline);
+  cell.style.color = meta.color || '';
+  cell.style.background = meta.bg || '';
 }
 
 function selectCell(r, c, inp) {
@@ -372,13 +400,16 @@ updateStatus = debounce(updateStatus, 150);
 //  FORMAT
 // ═══════════════════════════════════════════════════════════════
 function toggleFormat(type) {
-  const meta = getCellMeta();
-  const key = selRow + '_' + selCol;
-  if (!meta[key]) meta[key] = {};
-  meta[key][type] = !meta[key][type];
-  const td = getCell(selRow, selCol);
-  if (td) td.classList.toggle(type);
-  document.getElementById('tb' + type.charAt(0).toUpperCase() + type.slice(1)).classList.toggle('on', meta[key][type]);
+  const cells = getSelectedCells();
+  if (!cells || cells.length === 0) { toast('Önce bir hücre seçin', 'warn'); return; }
+  cells.forEach(({r, c}) => {
+    const meta = getCellMeta(r, c);
+    if (type === 'bold') meta.bold = !meta.bold;
+    if (type === 'italic') meta.italic = !meta.italic;
+    if (type === 'underline') meta.underline = !meta.underline;
+    setCellMeta(r, c, meta);
+    applyMetaToCell(r, c);
+  });
 }
 
 function applyAlign(dir) {
@@ -406,6 +437,28 @@ function applyCellColor(color) {
   meta[key].color = color;
   const td = getCell(selRow, selCol);
   if (td) td.style.color = color;
+}
+
+function setTextColor(color) {
+  const cells = getSelectedCells();
+  if (!cells || cells.length === 0) { toast('Önce bir hücre seçin', 'warn'); return; }
+  cells.forEach(({r, c}) => {
+    const meta = getCellMeta(r, c);
+    meta.color = color;
+    setCellMeta(r, c, meta);
+    applyMetaToCell(r, c);
+  });
+}
+
+function setCellBgColor(color) {
+  const cells = getSelectedCells();
+  if (!cells || cells.length === 0) { toast('Önce bir hücre seçin', 'warn'); return; }
+  cells.forEach(({r, c}) => {
+    const meta = getCellMeta(r, c);
+    meta.bg = color;
+    setCellMeta(r, c, meta);
+    applyMetaToCell(r, c);
+  });
 }
 
 function applyFont(family) {

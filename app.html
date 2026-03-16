@@ -145,8 +145,8 @@
     <div class="tb-sep"></div>
     <button class="tb-btn" title="Seçili hücreleri birleştir" onclick="mergeCells()">⊞ Birleştir</button>
     <div class="tb-sep"></div>
-    <input type="color" class="tb-color" title="Hücre Rengi" id="bgColorPicker" value="#ffffff" onchange="applyCellBg(this.value)">
-    <input type="color" class="tb-color" title="Yazı Rengi" id="textColorPicker" value="#0f172a" onchange="applyCellColor(this.value)">
+    <input type="color" class="tb-color" title="Hücre Rengi" id="bgColorPicker" value="#ffffff" onchange="setCellBgColor(this.value)">
+    <input type="color" class="tb-color" title="Yazı Rengi" id="textColorPicker" value="#0f172a" onchange="setTextColor(this.value)">
     <div class="tb-sep"></div>
     <button class="tb-btn" title="Filtre Ekle" onclick="addFilter()">
       <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
@@ -499,7 +499,7 @@
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><line x1="21" y1="10" x2="7" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="21" y1="18" x2="11" y2="18"/></svg>
   </button>
   <div class="ft-sep"></div>
-  <input type="color" class="ft-color" title="Yazı rengi" value="#0f172a" onchange="applyCellColor(this.value)">
+  <input type="color" class="ft-color" title="Yazı rengi" value="#0f172a" onchange="setTextColor(this.value)">
   <div class="ft-sep"></div>
   <button class="ft-btn" title="Temizle" onclick="ctxAction('clearCell')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>
