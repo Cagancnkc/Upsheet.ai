@@ -1749,6 +1749,7 @@ function init() {
   initOnboardBanner();
   checkEmptyState();
   renderVersionHistory();
+  loadHistory();
   if (localStorage.getItem('sb_collapsed') === '1') toggleSidebar();
   // Focus first cell
   setTimeout(() => focusCell(0, 0), 100);
@@ -2119,11 +2120,45 @@ function takeSnapshot() {
   return { sheets: snap, cellMeta: metaSnap, activeSheet };
 }
 
-function addHistory(type, desc) {
-  const entry = { type, desc, time: Date.now(), snap: takeSnapshot() };
-  versionHistory.unshift(entry);
-  if (versionHistory.length > 15) versionHistory.length = 15;
+async function addHistory(type, text) {
+  versionHistory.unshift({ type, desc: text, text, time: Date.now() });
+  if (versionHistory.length > 50) versionHistory.pop();
   renderVersionHistory();
+
+  try {
+    if (!window._sb || !currentUser) return;
+    await window._sb.from('history').insert({
+      user_id: currentUser.id,
+      file_id: currentFileId || null,
+      type: type,
+      text: text,
+      created_at: new Date().toISOString()
+    });
+  } catch(e) {
+    console.warn('History kaydetme hatası:', e);
+  }
+}
+
+async function loadHistory() {
+  try {
+    if (!window._sb || !currentUser) return;
+    const { data } = await window._sb
+      .from('history')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(50);
+    if (data && data.length > 0) {
+      versionHistory = data.map(h => ({
+        type: h.type,
+        desc: h.text,
+        text: h.text,
+        time: new Date(h.created_at).getTime()
+      }));
+      renderVersionHistory();
+    }
+  } catch(e) {
+    console.warn('History yükleme hatası:', e);
+  }
 }
 
 function fmtHistoryTime(ts) {

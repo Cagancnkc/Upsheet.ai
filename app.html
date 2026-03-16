@@ -604,6 +604,7 @@ sb.auth.getSession().then(({ data }) => {
 
   // Set current user and boot file system
   currentUser = user;
+  window.currentUser = user;
   if (typeof initFileSystem === 'function') initFileSystem();
 });
 
