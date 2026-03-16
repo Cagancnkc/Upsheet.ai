@@ -726,7 +726,7 @@ function renderChunked(data, onDone, chunkSize) {
 }
 
 function handleFile(e) {
-  const file = e.target.files[0];
+  const file = e instanceof File ? e : (e.target ? e.target.files[0] : null);
   if (!file) return;
 
   // ── File size guard ──────────────────────────────────────────
@@ -778,8 +778,10 @@ function handleFile(e) {
       });
 
       activeSheet = wb.SheetNames[0];
-      document.getElementById('fileName').textContent = file.name;
-      document.getElementById('fileNameInput').value = file.name;
+      const fileNameEl = document.getElementById('fileName');
+      if (fileNameEl) fileNameEl.textContent = file.name;
+      const fileNameInputEl = document.getElementById('fileNameInput');
+      if (fileNameInputEl) fileNameInputEl.value = file.name;
       document.title = 'ExcelAI — ' + file.name;
       addRecentFile(file.name);
       renderSheetTabs();
@@ -830,7 +832,7 @@ function handleFile(e) {
 
   if (isCSV) reader.readAsText(file, 'UTF-8');
   else reader.readAsBinaryString(file);
-  e.target.value = '';
+  if (e.target) e.target.value = '';
 }
 
 function downloadFile() {
