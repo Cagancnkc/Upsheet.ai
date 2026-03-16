@@ -1732,6 +1732,7 @@ function toggleSidebar() {
   const icon = document.getElementById('sbCollapseIcon');
   const btn = document.getElementById('sbCollapseBtn');
   const collapsed = sb.classList.toggle('collapsed');
+  document.body.classList.toggle('sidebar-collapsed', collapsed);
   const poly = icon.querySelector('polyline');
   if (poly) poly.setAttribute('points', collapsed ? '9 18 15 12 9 6' : '15 18 9 12 15 6');
   btn.title = collapsed ? 'Kenar Çubuğunu Genişlet' : 'Kenar Çubuğunu Daralt';

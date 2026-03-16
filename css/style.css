@@ -45,7 +45,7 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',sans-serif;background:
 .tb-metric-badge.pulse{animation:pulse-badge .6s ease;}
 
 /* ── MAIN ───────────────────────────────────── */
-#main{display:flex;height:100vh;margin-left:220px;}
+#main{display:flex;height:100vh;margin-left:220px;transition:margin-left 0.2s ease;}
 
 /* ── SIDEBAR ────────────────────────────────── */
 #sidebar {
@@ -54,6 +54,7 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',sans-serif;background:
   left: 0;
   height: 100vh;
   width: 220px;
+  transition: width 0.2s ease;
   background: #111111;
   border-right: 1px solid #1e1e1e;
   display: flex;
@@ -93,6 +94,7 @@ html,body{height:100%;overflow:hidden;font-family:'Inter',sans-serif;background:
 #sidebar.collapsed .user-info-sb{display:none;}
 #sidebar.collapsed .user-row{justify-content:center;}
 #sidebar.collapsed .sb-storage{display:none;}
+body.sidebar-collapsed #main{margin-left:52px;}
 
 /* Tooltip for collapsed icons */
 #sidebar.collapsed .sb-item[title]{position:relative;}
