@@ -610,12 +610,15 @@ function switchSheet(name) {
   buildGrid();
 }
 
-function addSheet() {
-  const names = Object.keys(sheets);
-  let i = names.length + 1;
-  while (sheets['Sheet' + i]) i++;
-  sheets['Sheet' + i] = createEmptySheet();
-  switchSheet('Sheet' + i);
+function addSheet(name) {
+  if (!sheets) sheets = {};
+  const sheetName = name || 'Sheet' + (Object.keys(sheets).length + 1);
+  if (!sheets[sheetName]) {
+    sheets[sheetName] = Array.from({length: ROWS}, () => Array(COLS).fill(''));
+  }
+  activeSheet = sheetName;
+  buildGrid(sheets[activeSheet]);
+  renderSheetTabs();
 }
 
 function renameSheet(oldName) {
