@@ -368,20 +368,20 @@ function submitPoll() {
 // ── PRICING TOGGLE ────────────────────────────────────────────
 const prices = {
   weekly: {
-    pro:  { amount: '$4.99',  period: '/hafta', saving: '' },
-    biz:  { amount: '$12.99', period: '/hafta', saving: '' }
+    pro:  { amount: '$4.99',  period: '/hafta', saving: '', tl: '≈ ₺165/hafta', tlBiz: '' },
+    biz:  { amount: '$12.99', period: '/hafta', saving: '', tl: '', tlBiz: '≈ ₺430/hafta' }
   },
   monthly: {
-    pro:  { amount: '$14.99', period: '/ay', saving: '' },
-    biz:  { amount: '$39.99', period: '/ay', saving: '' }
+    pro:  { amount: '$14.99', period: '/ay', saving: '', tl: '≈ ₺500/ay', tlBiz: '' },
+    biz:  { amount: '$39.99', period: '/ay', saving: '', tl: '', tlBiz: '≈ ₺1.350/ay' }
   },
   yearly: {
-    pro:  { amount: '$8.25',  period: '/ay', saving: 'Yıllık $99 — $81 tasarruf (%45)' },
-    biz:  { amount: '$24.99', period: '/ay', saving: 'Yıllık $299 — $181 tasarruf (%38)' }
+    pro:  { amount: '$8.25',  period: '/ay', saving: '2 ay ücretsiz · $81 tasarruf', tl: '≈ ₺275/ay', tlBiz: '' },
+    biz:  { amount: '$24.99', period: '/ay', saving: '2 ay ücretsiz · $181 tasarruf', tl: '', tlBiz: '≈ ₺835/ay' }
   }
 };
 
-let currentPeriod = 'monthly';
+let currentPeriod = 'yearly';
 
 function setPeriod(period) {
   currentPeriod = period;
@@ -399,6 +399,12 @@ function setPeriod(period) {
   document.getElementById('proPeriod').textContent = p.pro.period;
   document.getElementById('bizPrice').textContent = p.biz.amount;
   document.getElementById('bizPeriod').textContent = p.biz.period;
+
+  // TL gösterimi
+  const proTl = document.getElementById('proTl');
+  const bizTl = document.getElementById('bizTl');
+  if (proTl) proTl.textContent = p.pro.tl;
+  if (bizTl) bizTl.textContent = p.biz.tlBiz;
 
   // Tasarruf mesajı
   const proSaving = document.getElementById('proSaving');

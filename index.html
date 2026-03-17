@@ -625,13 +625,13 @@
 
     <div class="pricing-header">
       <h2>Bir çalışanın saatlik maliyetinden az</h2>
-      <p>Excel'de harcadığınız zamanın değeri aylık binlerce dolar. Biz çok daha ucuzuz.</p>
+      <p>Excel'de harcadığınız zamanın değeri aylık binlerce lira. Biz çok daha ucuzuz.</p>
 
       <!-- Periyot Toggle -->
       <div class="pricing-toggle">
-        <button class="ptog-btn active" onclick="setPeriod('monthly')">Aylık</button>
+        <button class="ptog-btn" onclick="setPeriod('monthly')">Aylık</button>
         <button class="ptog-btn" onclick="setPeriod('weekly')">Haftalık</button>
-        <button class="ptog-btn" onclick="setPeriod('yearly')">
+        <button class="ptog-btn active" onclick="setPeriod('yearly')">
           Yıllık
           <span class="ptog-badge">%45 İndirim</span>
         </button>
@@ -661,6 +661,7 @@
         <a href="auth.html" class="pc-btn pc-btn-outline">
           Ücretsiz Başla
         </a>
+        <div class="pc-trust">✓ 14 gün para iade garantisi · ✓ İstediğin zaman iptal</div>
       </div>
 
       <!-- PRO — EN POPÜLER -->
@@ -671,10 +672,11 @@
           <div class="pc-desc">Bireysel kullanıcılar için</div>
         </div>
         <div class="pc-price">
-          <span class="pc-amount" id="proPrice">$14.99</span>
+          <span class="pc-amount" id="proPrice">$8.25</span>
           <span class="pc-period" id="proPeriod">/ay</span>
         </div>
-        <div class="pc-saving" id="proSaving" style="display:none"></div>
+        <div class="pc-tl" id="proTl">≈ ₺275/ay</div>
+        <div class="pc-saving" id="proSaving">2 ay ücretsiz · $81 tasarruf</div>
         <ul class="pc-features">
           <li>✓ Sınırsız dosya</li>
           <li>✓ 500 AI sorgusu/ay</li>
@@ -686,6 +688,7 @@
         <a href="auth.html" class="pc-btn pc-btn-primary" id="proBtn">
           Pro'ya Geç →
         </a>
+        <div class="pc-trust">✓ 14 gün para iade garantisi · ✓ İstediğin zaman iptal</div>
       </div>
 
       <!-- BUSINESS -->
@@ -695,10 +698,11 @@
           <div class="pc-desc">Takımlar ve firmalar için</div>
         </div>
         <div class="pc-price">
-          <span class="pc-amount" id="bizPrice">$39.99</span>
+          <span class="pc-amount" id="bizPrice">$24.99</span>
           <span class="pc-period" id="bizPeriod">/ay</span>
         </div>
-        <div class="pc-saving" id="bizSaving" style="display:none"></div>
+        <div class="pc-tl" id="bizTl">≈ ₺835/ay</div>
+        <div class="pc-saving" id="bizSaving">2 ay ücretsiz · $181 tasarruf</div>
         <ul class="pc-features">
           <li>✓ Her şey Pro'da var +</li>
           <li>✓ 5 kullanıcı</li>
@@ -710,8 +714,14 @@
         <a href="auth.html" class="pc-btn pc-btn-outline" id="bizBtn">
           Business'a Geç →
         </a>
+        <div class="pc-trust">✓ 14 gün para iade garantisi · ✓ İstediğin zaman iptal</div>
       </div>
 
+    </div>
+
+    <!-- Taksit bilgisi -->
+    <div class="pricing-installment">
+      💳 Kredi kartına 3-6-9-12 taksit imkanı
     </div>
 
     <!-- Alt not -->
