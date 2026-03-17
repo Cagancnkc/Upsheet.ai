@@ -364,3 +364,57 @@ function submitPoll() {
     thanks.style.animation = '';
   }
 }
+
+// ── PRICING TOGGLE ────────────────────────────────────────────
+const prices = {
+  weekly: {
+    pro:  { amount: '$4.99',  period: '/hafta', saving: '' },
+    biz:  { amount: '$12.99', period: '/hafta', saving: '' }
+  },
+  monthly: {
+    pro:  { amount: '$14.99', period: '/ay', saving: '' },
+    biz:  { amount: '$39.99', period: '/ay', saving: '' }
+  },
+  yearly: {
+    pro:  { amount: '$8.25',  period: '/ay', saving: 'Yıllık $99 — $81 tasarruf (%45)' },
+    biz:  { amount: '$24.99', period: '/ay', saving: 'Yıllık $299 — $181 tasarruf (%38)' }
+  }
+};
+
+let currentPeriod = 'monthly';
+
+function setPeriod(period) {
+  currentPeriod = period;
+
+  // Toggle butonları güncelle
+  document.querySelectorAll('.ptog-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  event.target.closest('.ptog-btn').classList.add('active');
+
+  // Fiyatları güncelle
+  const p = prices[period];
+
+  document.getElementById('proPrice').textContent = p.pro.amount;
+  document.getElementById('proPeriod').textContent = p.pro.period;
+  document.getElementById('bizPrice').textContent = p.biz.amount;
+  document.getElementById('bizPeriod').textContent = p.biz.period;
+
+  // Tasarruf mesajı
+  const proSaving = document.getElementById('proSaving');
+  const bizSaving = document.getElementById('bizSaving');
+
+  if (p.pro.saving) {
+    proSaving.textContent = p.pro.saving;
+    proSaving.style.display = 'block';
+  } else {
+    proSaving.style.display = 'none';
+  }
+
+  if (p.biz.saving) {
+    bizSaving.textContent = p.biz.saving;
+    bizSaving.style.display = 'block';
+  } else {
+    bizSaving.style.display = 'none';
+  }
+}

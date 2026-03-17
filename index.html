@@ -613,115 +613,105 @@
 </section>
 
 <!-- PRICING -->
-<section id="pricing">
+<section id="pricing" class="pricing-section">
   <div class="container">
+
     <div class="pricing-header">
-      <div class="section-label reveal">FİYATLANDIRMA</div>
-      <h2 class="section-heading reveal">Bir çalışanın saatlik maliyetinden az</h2>
-      <p class="section-sub reveal" style="max-width:520px;margin:12px auto 0;">Excel başında harcadığınız zamanın değeri aylık binlerce lira. Biz çok daha ucuzuz.</p>
+      <h2>Bir çalışanın saatlik maliyetinden az</h2>
+      <p>Excel'de harcadığınız zamanın değeri aylık binlerce dolar. Biz çok daha ucuzuz.</p>
+
+      <!-- Periyot Toggle -->
+      <div class="pricing-toggle">
+        <button class="ptog-btn active" onclick="setPeriod('monthly')">Aylık</button>
+        <button class="ptog-btn" onclick="setPeriod('weekly')">Haftalık</button>
+        <button class="ptog-btn" onclick="setPeriod('yearly')">
+          Yıllık
+          <span class="ptog-badge">%45 İndirim</span>
+        </button>
+      </div>
     </div>
 
-    <!-- 3-way interval toggle -->
-    <div class="pt3-wrap reveal">
-      <div class="pt3-toggle" id="pt3Toggle">
-        <button class="pt3-btn" data-interval="weekly">Haftalık</button>
-        <button class="pt3-btn pt3-active" data-interval="monthly">Aylık</button>
-        <button class="pt3-btn" data-interval="yearly">Yıllık <span class="pt3-save">-20%</span></button>
+    <div class="pricing-grid">
+
+      <!-- STARTER -->
+      <div class="pricing-card">
+        <div class="pc-header">
+          <div class="pc-plan">Starter</div>
+          <div class="pc-desc">Denemek isteyenler için</div>
+        </div>
+        <div class="pc-price">
+          <span class="pc-amount">$0</span>
+          <span class="pc-period">/sonsuza kadar</span>
+        </div>
+        <ul class="pc-features">
+          <li>✓ 5 dosya/ay</li>
+          <li>✓ 10 AI sorgusu/ay</li>
+          <li>✓ Max 500 satır</li>
+          <li>✓ 1 kullanıcı</li>
+          <li class="pc-no">✗ Versiyon geçmişi yok</li>
+          <li class="pc-no">✗ Öncelikli destek yok</li>
+        </ul>
+        <a href="auth.html" class="pc-btn pc-btn-outline">
+          Ücretsiz Başla
+        </a>
       </div>
+
+      <!-- PRO — EN POPÜLER -->
+      <div class="pricing-card pricing-card-featured">
+        <div class="pc-popular">⭐ En Popüler</div>
+        <div class="pc-header">
+          <div class="pc-plan">Pro</div>
+          <div class="pc-desc">Bireysel kullanıcılar için</div>
+        </div>
+        <div class="pc-price">
+          <span class="pc-amount" id="proPrice">$14.99</span>
+          <span class="pc-period" id="proPeriod">/ay</span>
+        </div>
+        <div class="pc-saving" id="proSaving" style="display:none"></div>
+        <ul class="pc-features">
+          <li>✓ Sınırsız dosya</li>
+          <li>✓ 500 AI sorgusu/ay</li>
+          <li>✓ Max 50.000 satır</li>
+          <li>✓ Versiyon geçmişi</li>
+          <li>✓ Öncelikli destek</li>
+          <li>✓ 1 kullanıcı</li>
+        </ul>
+        <a href="auth.html" class="pc-btn pc-btn-primary" id="proBtn">
+          Pro'ya Geç →
+        </a>
+      </div>
+
+      <!-- BUSINESS -->
+      <div class="pricing-card">
+        <div class="pc-header">
+          <div class="pc-plan">Business</div>
+          <div class="pc-desc">Takımlar ve firmalar için</div>
+        </div>
+        <div class="pc-price">
+          <span class="pc-amount" id="bizPrice">$39.99</span>
+          <span class="pc-period" id="bizPeriod">/ay</span>
+        </div>
+        <div class="pc-saving" id="bizSaving" style="display:none"></div>
+        <ul class="pc-features">
+          <li>✓ Her şey Pro'da var +</li>
+          <li>✓ 5 kullanıcı</li>
+          <li>✓ Sınırsız AI sorgusu</li>
+          <li>✓ Paylaşımlı dosyalar</li>
+          <li>✓ Admin paneli</li>
+          <li>✓ Fatura/Invoice</li>
+        </ul>
+        <a href="auth.html" class="pc-btn pc-btn-outline" id="bizBtn">
+          Business'a Geç →
+        </a>
+      </div>
+
     </div>
 
-    <!-- Plan selector cards -->
-    <div class="ps-grid reveal">
-      <button class="ps-card" data-plan="starter">
-        <div class="ps-name">Starter</div>
-        <div class="ps-price-row">
-          <span class="ps-cur">₺</span>
-          <span class="ps-amount" id="psAmount0">199</span>
-          <span class="ps-period" id="psPeriod0">/ay</span>
-        </div>
-      </button>
-      <button class="ps-card ps-selected" data-plan="pro">
-        <div class="ps-popular-badge">Popüler</div>
-        <div class="ps-name">Pro</div>
-        <div class="ps-price-row">
-          <span class="ps-cur">₺</span>
-          <span class="ps-amount" id="psAmount1">399</span>
-          <span class="ps-period" id="psPeriod1">/ay</span>
-        </div>
-      </button>
-      <button class="ps-card" data-plan="max">
-        <div class="ps-name">Max</div>
-        <div class="ps-price-row">
-          <span class="ps-cur">₺</span>
-          <span class="ps-amount" id="psAmount2">799</span>
-          <span class="ps-period" id="psPeriod2">/ay</span>
-        </div>
-      </button>
+    <!-- Alt not -->
+    <div class="pricing-note">
+      <p>✓ Kredi kartı gerekmez · ✓ İstediğin zaman iptal · ✓ 14 gün para iade garantisi</p>
     </div>
 
-    <!-- Feature comparison table -->
-    <div class="pft-wrap reveal">
-      <div class="pft-header">
-        <div class="pft-feat-col">Özellikler</div>
-        <div class="pft-plan-cols">
-          <div class="pft-plan-name">Starter</div>
-          <div class="pft-plan-name">Pro</div>
-          <div class="pft-plan-name">Max</div>
-        </div>
-      </div>
-      <div class="pft-row" data-included="starter">
-        <div class="pft-feat">AI Komut</div>
-        <div class="pft-checks">
-          <div class="pft-check pft-yes">50/hafta</div>
-          <div class="pft-check pft-yes">Sınırsız</div>
-          <div class="pft-check pft-yes">Sınırsız</div>
-        </div>
-      </div>
-      <div class="pft-row" data-included="starter">
-        <div class="pft-feat">Sheet Sayısı</div>
-        <div class="pft-checks">
-          <div class="pft-check pft-yes">1</div>
-          <div class="pft-check pft-yes">10</div>
-          <div class="pft-check pft-yes">Sınırsız</div>
-        </div>
-      </div>
-      <div class="pft-row" data-included="pro">
-        <div class="pft-feat">Grafik Oluşturma</div>
-        <div class="pft-checks">
-          <div class="pft-check pft-no">—</div>
-          <div class="pft-check pft-yes">✓</div>
-          <div class="pft-check pft-yes">✓</div>
-        </div>
-      </div>
-      <div class="pft-row" data-included="max">
-        <div class="pft-feat">Öncelikli Destek</div>
-        <div class="pft-checks">
-          <div class="pft-check pft-no">—</div>
-          <div class="pft-check pft-no">—</div>
-          <div class="pft-check pft-yes">✓</div>
-        </div>
-      </div>
-      <div class="pft-row" data-included="max">
-        <div class="pft-feat">API Erişimi</div>
-        <div class="pft-checks">
-          <div class="pft-check pft-no">—</div>
-          <div class="pft-check pft-no">—</div>
-          <div class="pft-check pft-yes">✓</div>
-        </div>
-      </div>
-      <div class="pft-row" data-included="max">
-        <div class="pft-feat">Ekip Yönetimi</div>
-        <div class="pft-checks">
-          <div class="pft-check pft-no">—</div>
-          <div class="pft-check pft-no">—</div>
-          <div class="pft-check pft-yes">✓</div>
-        </div>
-      </div>
-      <div id="pricingDiscountNote" style="display:none;text-align:center;padding:12px 0 4px;font-size:13px;color:#7c3aed;font-weight:500;">%20 indirim uygulandı 🎉</div>
-    </div>
-    <div class="pricing-cta-new reveal">
-      <a href="javascript:void(0)" onclick="pricingCta('pro')" class="btn btn-primary" id="pricingCtaBtn">Pro ile Başla →</a>
-    </div>
   </div>
 </section>
 
