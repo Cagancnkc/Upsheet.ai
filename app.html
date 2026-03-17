@@ -102,6 +102,19 @@
   </div>
 
   <div class="sb-footer">
+    <div id="settingsMenu" class="settings-menu" style="display:none">
+      <div class="settings-header">
+        <span>⚙️ Ayarlar</span>
+        <button onclick="closeSettings()">✕</button>
+      </div>
+      <div class="settings-item" onclick="toggleTheme()">
+        <span id="themeToggleBtn">🌙 Koyu Tema</span>
+      </div>
+      <div class="settings-divider"></div>
+      <div class="settings-item" onclick="logOut()" style="color:#ef4444;">
+        <span>🚪 Çıkış Yap</span>
+      </div>
+    </div>
     <div class="user-row" onclick="openSettings()">
       <div class="avatar">EA</div>
       <div class="user-info-sb">
@@ -636,33 +649,6 @@ async function sbSignOut() {
   location.href = 'auth.html';
 }
 
-// openSettings override — Çıkış Yap butonu ekle
-function openSettings() {
-  showModal(`
-    <h2>⚙️ API Ayarları</h2>
-    <p>OpenAI API anahtarınızı girerek AI özelliklerini etkinleştirin</p>
-    <div class="fgroup">
-      <label class="flabel">OpenAI API Key</label>
-      <input class="finput" id="apiKeyInput" type="password" placeholder="sk-..." value="${typeof apiKey !== 'undefined' ? apiKey : ''}">
-      <div class="fhint">Anahtarınız yalnızca tarayıcınızda saklanır, hiçbir sunucuya gönderilmez.</div>
-    </div>
-    <div class="fgroup">
-      <label class="flabel">Model</label>
-      <select class="finput" id="modelSelect">
-        <option value="gpt-4o">GPT-4o (Önerilen)</option>
-        <option value="gpt-4o-mini">GPT-4o Mini (Hızlı)</option>
-        <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
-      </select>
-    </div>
-    <div class="modal-foot" style="justify-content:space-between;align-items:center;">
-      <button class="btn btn-ghost" style="color:#ef4444;" onclick="sbSignOut()">🚪 Çıkış Yap</button>
-      <div style="display:flex;gap:8px;">
-        <button class="btn btn-ghost" onclick="closeModal()">İptal</button>
-        <button class="btn btn-primary" onclick="saveSettings()">Kaydet</button>
-      </div>
-    </div>
-  `);
-}
 // ─────────────────────────────────────────────────────────────────
 
 function toggleFloatingChat() {

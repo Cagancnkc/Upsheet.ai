@@ -1073,27 +1073,51 @@ function doFindReplace() {
 //  SETTINGS MODAL
 // ═══════════════════════════════════════════════════════════════
 function openSettings() {
-  showModal(`
-    <h2>⚙️ API Ayarları</h2>
-    <p>OpenAI API anahtarınızı girerek AI özelliklerini etkinleştirin</p>
-    <div class="fgroup">
-      <label class="flabel">OpenAI API Key</label>
-      <input class="finput" id="apiKeyInput" type="password" placeholder="sk-..." value="${apiKey}">
-      <div class="fhint">Anahtarınız yalnızca tarayıcınızda saklanır, hiçbir sunucuya gönderilmez.</div>
-    </div>
-    <div class="fgroup">
-      <label class="flabel">Model</label>
-      <select class="finput" id="modelSelect">
-        <option value="gpt-4o" ${apiKey ? '' : ''}>GPT-4o (Önerilen)</option>
-        <option value="gpt-4o-mini">GPT-4o Mini (Hızlı)</option>
-        <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
-      </select>
-    </div>
-    <div class="modal-foot">
-      <button class="btn btn-ghost" onclick="closeModal()">İptal</button>
-      <button class="btn btn-primary" onclick="saveSettings()">Kaydet</button>
-    </div>
-  `);
+  const menu = document.getElementById('settingsMenu');
+  if (!menu) return;
+  const isOpen = menu.style.display !== 'none';
+  if (isOpen) { menu.style.display = 'none'; return; }
+  menu.style.display = 'block';
+  setTimeout(() => {
+    document.addEventListener('click', function handler(e) {
+      if (!menu.contains(e.target) && !e.target.closest('.user-row')) {
+        menu.style.display = 'none';
+        document.removeEventListener('click', handler);
+      }
+    });
+  }, 0);
+}
+
+function closeSettings() {
+  const menu = document.getElementById('settingsMenu');
+  if (menu) menu.style.display = 'none';
+}
+
+async function logOut() {
+  const ok = window.confirm('Çıkış yapmak istiyor musunuz?');
+  if (!ok) return;
+  if (window._sb) await window._sb.auth.signOut();
+  window.location.href = 'auth.html';
+}
+
+function toggleTheme() {
+  const isDark = document.body.classList.contains('dark');
+  if (isDark) {
+    document.body.classList.remove('dark');
+    document.body.classList.add('light');
+    localStorage.setItem('theme', 'light');
+  } else {
+    document.body.classList.remove('light');
+    document.body.classList.add('dark');
+    localStorage.setItem('theme', 'dark');
+  }
+  updateThemeIcon();
+}
+
+function updateThemeIcon() {
+  const isDark = document.body.classList.contains('dark');
+  const btn = document.getElementById('themeToggleBtn');
+  if (btn) btn.textContent = isDark ? '☀️ Açık Tema' : '🌙 Koyu Tema';
 }
 
 function saveSettings() {
@@ -2433,6 +2457,10 @@ function closeOnboardBanner() {
 // Cell edit debounce for manual history
 let _cellEditTimer = null;
 document.addEventListener('DOMContentLoaded', () => {
+  const savedTheme = localStorage.getItem('theme') || 'dark';
+  document.body.classList.add(savedTheme);
+  updateThemeIcon();
+
   const gw = document.getElementById('gridWrap');
   if (gw) gw.addEventListener('input', () => {
     clearTimeout(_cellEditTimer);

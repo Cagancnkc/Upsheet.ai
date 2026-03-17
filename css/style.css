@@ -151,7 +151,7 @@ body.sidebar-collapsed #main{margin-left:52px;}
 
 /* Footer */
 .sb-footer{
-  border-top:1px solid #1e1e1e;padding:10px 8px 12px;flex-shrink:0;
+  border-top:1px solid #1e1e1e;padding:10px 8px 12px;flex-shrink:0;position:relative;
 }
 .user-row{
   display:flex;align-items:center;gap:10px;padding:8px 8px;
@@ -1406,3 +1406,11 @@ body.with-banner #main{height:calc(100vh - 36px);}
 .sync-dot{width:6px;height:6px;border-radius:50%;background:currentColor;}
 .sync-badge.syncing .sync-dot{animation:pulse 1s ease-in-out infinite;}
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+
+/* Settings Menu */
+.settings-menu{position:absolute;bottom:60px;left:12px;width:200px;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:12px;padding:8px;z-index:9999;box-shadow:0 8px 32px rgba(0,0,0,0.4);}
+.settings-header{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;font-size:13px;font-weight:600;color:#e2e8f0;border-bottom:1px solid #2a2a2a;margin-bottom:4px;}
+.settings-header button{background:none;border:none;color:#71717a;cursor:pointer;font-size:16px;}
+.settings-item{padding:10px 12px;border-radius:8px;cursor:pointer;font-size:13px;color:#e2e8f0;transition:background 0.15s;}
+.settings-item:hover{background:#2a2a2a;}
+.settings-divider{height:1px;background:#2a2a2a;margin:4px 0;}
