@@ -26,6 +26,7 @@ let versionHistory = []; // [{type, desc, time, snapshot, metaSnap}]
 let historyRestoreIdx = -1;
 let apiKey = localStorage.getItem('openai_key') || '';
 let chatHistory = [];
+let chatAttachments = [];
 let clipboard = null;
 let cutSource = null;
 let dirtyCells = new Set(); // tracks modified cells for optimized localStorage saves
@@ -1267,15 +1268,82 @@ function useChip(el) {
   sendChat();
 }
 
+function handleChatFile(input) {
+  const files = Array.from(input.files);
+  if (!files.length) return;
+  files.forEach(file => {
+    if (file.size > 5 * 1024 * 1024) { toast('Dosya çok büyük (max 5MB)', 'err'); return; }
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const att = { name: file.name, type: file.type, size: file.size, data: e.target.result, file };
+      chatAttachments.push(att);
+      renderChatAttachment(att);
+    };
+    if (file.type.startsWith('image/')) reader.readAsDataURL(file);
+    else reader.readAsArrayBuffer(file);
+  });
+  input.value = '';
+}
+
+function renderChatAttachment(att) {
+  const preview = document.getElementById('chatAttachPreview');
+  if (!preview) return;
+  preview.style.display = 'flex';
+  const item = document.createElement('div');
+  item.style.cssText = 'display:flex;align-items:center;gap:6px;background:rgba(249,115,22,0.12);border:1px solid rgba(249,115,22,0.25);border-radius:8px;padding:4px 10px;font-size:12px;color:#f97316;font-weight:500;';
+  let icon = '📎';
+  if (att.name.match(/\.(xlsx|xls|csv)$/i)) icon = '📊';
+  else if (att.name.match(/\.(png|jpg|jpeg)$/i)) icon = '🖼️';
+  else if (att.name.match(/\.pdf$/i)) icon = '📄';
+  item.dataset.attName = att.name;
+  item.innerHTML = `<span>${icon}</span><span style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${att.name}</span><button onclick="removeChatAttachment('${att.name}')" style="background:none;border:none;cursor:pointer;color:#f97316;font-size:14px;padding:0;line-height:1;">×</button>`;
+  preview.appendChild(item);
+}
+
+function removeChatAttachment(name) {
+  chatAttachments = chatAttachments.filter(a => a.name !== name);
+  const preview = document.getElementById('chatAttachPreview');
+  if (!preview) return;
+  const item = preview.querySelector(`[data-att-name="${CSS.escape(name)}"]`);
+  if (item) item.remove();
+  if (!preview.children.length) preview.style.display = 'none';
+}
+
+function clearChatAttachments() {
+  chatAttachments = [];
+  const preview = document.getElementById('chatAttachPreview');
+  if (preview) { preview.innerHTML = ''; preview.style.display = 'none'; }
+}
+
+async function buildMessageWithAttachments(userMessage) {
+  if (!chatAttachments.length) return userMessage;
+  let fullMessage = userMessage;
+  for (const att of chatAttachments) {
+    if (att.name.match(/\.(xlsx|xls|csv)$/i)) {
+      try {
+        const wb = XLSX.read(att.data, { type: 'array' });
+        const ws = wb.Sheets[wb.SheetNames[0]];
+        const csv = XLSX.utils.sheet_to_csv(ws);
+        const lines = csv.split('\n').slice(0, 50).join('\n');
+        fullMessage = `Ek dosya: ${att.name}\n${lines}\n\n${userMessage}`;
+      } catch(e) { console.warn('Ek dosya parse hatası:', e); }
+    }
+  }
+  return fullMessage;
+}
+
 async function sendChat() {
   const input = document.getElementById('chatInput');
   const msg = input.value.trim();
-  if (!msg) return;
+  if (!msg && !chatAttachments.length) return;
   input.value = '';
   input.style.height = '34px';
 
-  addMsg('user', msg);
-  chatHistory.push({role: 'user', content: msg});
+  const displayMsg = msg || chatAttachments.map(a => `📎 ${a.name}`).join(', ');
+  addMsg('user', displayMsg);
+  const finalMessage = await buildMessageWithAttachments(msg);
+  chatHistory.push({role: 'user', content: finalMessage});
+  clearChatAttachments();
 
   // Loading state
   const _fcSubtitle  = document.getElementById('fcSubtitle');
@@ -1307,7 +1375,7 @@ async function sendChat() {
   try {
     let reply;
     if (typeof processAICommand === 'function') {
-      reply = await processAICommand(msg, getSheetContext(), activeSheet, chatHistory.slice(-8));
+      reply = await processAICommand(finalMessage, getSheetContext(), activeSheet, chatHistory.slice(-8));
       if (!reply || reply?.error === 'offline') {
         clearInterval(_loadTimer);
         loader.remove();
