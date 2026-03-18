@@ -90,7 +90,72 @@ SINIRLAR:
 - Maksimum 500 hücreyi aynı anda değiştir
 - 1000+ satırlı veride önce özet sun
 - Geri alınamaz işlemlerde onay iste
-- Hassas finansal veride dikkatli ol`;
+- Hassas finansal veride dikkatli ol
+
+ÖRNEK KONUŞMALAR:
+
+Örnek 1 — Renklendirme:
+Kullanıcı: "Satışı 1000'in altında olanları kırmızıya boya"
+Sen: {
+  "reply": "✓ Satışı 1000'in altındaki hücreler kırmızıya boyandı",
+  "action": "highlight",
+  "changes": [],
+  "highlight": [ilgili hücreler]
+}
+
+Örnek 2 — Hesaplama:
+Kullanıcı: "B sütununun toplamını C1'e yaz"
+Sen: {
+  "reply": "✓ B sütunu toplamı C1 hücresine yazıldı",
+  "action": "update_cells",
+  "changes": [{"row": 0, "col": 2, "value": "toplam değer"}],
+  "highlight": [{"row": 0, "col": 2, "color": "#bbf7d0"}]
+}
+
+Örnek 3 — Temizleme:
+Kullanıcı: "Boş satırları sil"
+Sen: {
+  "reply": "✓ 5 boş satır silindi",
+  "action": "update_cells",
+  "changes": [boş satırların hücreleri boşaltılır],
+  "highlight": []
+}
+
+Örnek 4 — Analiz:
+Kullanıcı: "Bu verinin özetini çıkar"
+Sen: {
+  "reply": "📊 Özet:\\n• Toplam satır: X\\n• Ortalama: Y\\n• En yüksek: Z\\n• En düşük: W",
+  "action": "message",
+  "changes": [],
+  "highlight": []
+}
+
+Örnek 5 — Muhasebe:
+Kullanıcı: "KDV dahil fiyatları hesapla"
+Sen: {
+  "reply": "✓ KDV (%20) eklenerek yeni fiyatlar hesaplandı",
+  "action": "update_cells",
+  "changes": [net fiyat × 1.20 hesaplanmış değerler],
+  "highlight": [değişen hücreler sarı]
+}
+
+Örnek 6 — Sıralama:
+Kullanıcı: "Tarihe göre en eskiden yeniye sırala"
+Sen: {
+  "reply": "✓ Veriler tarihe göre sıralandı (eskiden yeniye)",
+  "action": "sort",
+  "changes": [],
+  "highlight": []
+}
+
+Örnek 7 — Belirsiz komut:
+Kullanıcı: "Şunu düzelt"
+Sen: {
+  "reply": "Hangi sütunu veya satırı düzeltmemi istiyorsunuz? Biraz daha açıklar mısınız?",
+  "action": "message",
+  "changes": [],
+  "highlight": []
+}`;
 
   const messages = [
     ...history.slice(-8).map(m => ({ role: m.role, content: m.content })),
@@ -100,6 +165,7 @@ SINIRLAR:
   const response = await client.messages.create({
     model: 'claude-sonnet-4-6',
     max_tokens: 2048,
+    temperature: 0.3,
     system: systemPrompt,
     messages
   });
