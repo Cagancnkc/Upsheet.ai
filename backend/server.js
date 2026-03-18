@@ -3,6 +3,91 @@ import express from 'express';
 import cors from 'cors';
 import Anthropic from '@anthropic-ai/sdk';
 
+const UPSHEET_KNOWLEDGE_BASE = {
+
+  excel_formulas: {
+    TOPLA: "=SUM(A1:A10) — Belirtilen aralığın toplamı",
+    ORTALAMA: "=AVERAGE(A1:A10) — Ortalama değer",
+    EĞER: "=IF(A1>0,'Pozitif','Negatif') — Koşullu değer",
+    DÜŞEY_ARA: "=VLOOKUP(aranan,tablo,sütun,0) — Dikey arama",
+    YATAY_ARA: "=HLOOKUP(aranan,tablo,satır,0) — Yatay arama",
+    BAĞ_DEĞ_SAY: "=COUNTIF(A1:A10,'>0') — Koşullu sayma",
+    ETOPLA: "=SUMIF(A1:A10,'>0',B1:B10) — Koşullu toplama",
+    MAKS: "=MAX(A1:A10) — En büyük değer",
+    MIN: "=MIN(A1:A10) — En küçük değer",
+    UZUNLUK: "=LEN(A1) — Karakter sayısı",
+    KIRP: "=TRIM(A1) — Baştaki/sondaki boşlukları kaldır",
+    BİRLEŞTİR: "=CONCATENATE(A1,' ',B1) — Hücreleri birleştir",
+    METNE_ÇEVİR: "=TEXT(A1,'DD.MM.YYYY') — Tarihi metne çevir",
+    PARÇAAL: "=MID(A1,2,3) — Metinden parça al",
+    BÜYÜKHARF: "=UPPER(A1) — Büyük harfe çevir",
+    KÜÇÜKHARF: "=LOWER(A1) — Küçük harfe çevir",
+    YUVARLAK: "=ROUND(A1,2) — Yuvarla",
+    MUTLAK: "=ABS(A1) — Mutlak değer",
+    BUGÜN: "=TODAY() — Bugünün tarihi",
+    ŞİMDİ: "=NOW() — Şimdiki tarih ve saat",
+  },
+
+  accounting_terms: {
+    KDV: "Katma Değer Vergisi — Türkiye'de %20 (genel), %10 (indirimli), %1 (özel)",
+    KDV_HESAP: "KDV Dahil = Net Tutar × 1.20 | KDV Hariç = KDV Dahil / 1.20",
+    BRÜT_MAAŞ: "Çalışanın işverene toplam maliyeti (SGK dahil)",
+    NET_MAAŞ: "Çalışanın eline geçen tutar (kesintiler sonrası)",
+    SGK_İŞÇİ: "İşçi SGK payı: %14 (emeklilik %9 + sağlık %5)",
+    SGK_İŞVEREN: "İşveren SGK payı: %20.5",
+    GELİR_VERGİSİ: "Dilimler: %15, %20, %27, %35, %40",
+    ASGARI_ÜCRET: "2025: 22.104 TL (brüt)",
+    KAR_MARJI: "(Gelir - Gider) / Gelir × 100",
+    CARİ_ORAN: "Dönen Varlıklar / Kısa Vadeli Borçlar",
+    ROI: "(Kazanç - Maliyet) / Maliyet × 100",
+    EBITDA: "Faiz, Vergi, Amortisman Öncesi Kâr",
+  },
+
+  colors: {
+    kırmızı: "#fecaca",
+    turuncu: "#fed7aa",
+    sarı: "#fef08a",
+    yeşil: "#bbf7d0",
+    mavi: "#bfdbfe",
+    mor: "#e9d5ff",
+    pembe: "#fce7f3",
+    gri: "#f3f4f6",
+    siyah: "#000000",
+    beyaz: "#ffffff",
+  },
+
+  date_formats: {
+    tr_short: "GG.AA.YYYY",
+    tr_long: "GG MMMM YYYY",
+    tr_months: {
+      1: "Ocak", 2: "Şubat", 3: "Mart", 4: "Nisan",
+      5: "Mayıs", 6: "Haziran", 7: "Temmuz", 8: "Ağustos",
+      9: "Eylül", 10: "Ekim", 11: "Kasım", 12: "Aralık"
+    }
+  },
+
+  common_tasks: {
+    monthly_report: [
+      "Aylık satış toplamı",
+      "Ürün bazlı grupla",
+      "Önceki ayla karşılaştır",
+      "Grafik oluştur"
+    ],
+    data_cleaning: [
+      "Boş satırları sil",
+      "Tekrar edenleri kaldır",
+      "Format düzelt",
+      "Büyük/küçük harf normalize et"
+    ],
+    financial_analysis: [
+      "Gelir-gider tablosu",
+      "KDV hesaplama",
+      "Kâr marjı analizi",
+      "Bütçe vs gerçek karşılaştırma"
+    ]
+  }
+};
+
 const app    = express();
 const port   = process.env.PORT || 3001;
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
@@ -155,7 +240,26 @@ Sen: {
   "action": "message",
   "changes": [],
   "highlight": []
-}`;
+}
+
+REFERANS BİLGİ TABANI:
+Kullanıcı bir Excel formülü, muhasebe terimi veya Türkçe komut kullandığında aşağıdaki bilgiyi kullan:
+
+Excel Formülleri: ${JSON.stringify(UPSHEET_KNOWLEDGE_BASE.excel_formulas)}
+
+Muhasebe Terimleri: ${JSON.stringify(UPSHEET_KNOWLEDGE_BASE.accounting_terms)}
+
+Renk Kodları: ${JSON.stringify(UPSHEET_KNOWLEDGE_BASE.colors)}
+
+Tarih Formatları: Türkçe tarihler için ${JSON.stringify(UPSHEET_KNOWLEDGE_BASE.date_formats)}
+
+Yaygın Görevler: ${JSON.stringify(UPSHEET_KNOWLEDGE_BASE.common_tasks)}
+
+Bu bilgiyi kullanarak:
+1. Kullanıcı "KDV ekle" dediğinde doğru oranı kullan
+2. Kullanıcı "sarıya boya" dediğinde doğru hex kodunu kullan
+3. Kullanıcı "DÜŞEY ARA" dediğinde doğru formülü öner
+4. Muhasebe hesaplamalarında Türk vergi sistemini uygula`;
 
   const messages = [
     ...history.slice(-8).map(m => ({ role: m.role, content: m.content })),
