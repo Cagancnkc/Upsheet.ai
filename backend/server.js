@@ -1,7 +1,7 @@
-import 'dotenv/config';
-import express from 'express';
-import cors from 'cors';
-import Anthropic from '@anthropic-ai/sdk';
+require('dotenv').config();
+const express   = require('express');
+const cors      = require('cors');
+const Anthropic = require('@anthropic-ai/sdk');
 
 const UPSHEET_KNOWLEDGE_BASE = {
 
@@ -92,10 +92,32 @@ const app    = express();
 const port   = process.env.PORT || 3001;
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
-app.use(cors({ origin: process.env.FRONTEND_URL || '*' }));
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://localhost:8080',
+  'https://upsheet-ai.vercel.app',
+  process.env.FRONTEND_URL
+].filter(Boolean);
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('CORS hatası'));
+    }
+  },
+  credentials: true
+}));
 app.use(express.json({ limit: '2mb' }));
 
-app.get('/', (_req, res) => res.json({ status: 'ok', service: 'ExcelAI Backend' }));
+app.get('/', (req, res) => {
+  res.json({ status: 'ok', service: 'Upsheet API', version: '1.0.0' });
+});
+
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString(), anthropic: !!process.env.ANTHROPIC_API_KEY });
+});
 
 app.post('/api/chat', async (req, res) => {
   const { message, sheetContext, history = [], sheetName = 'Sheet1' } = req.body;
