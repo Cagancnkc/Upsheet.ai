@@ -2394,6 +2394,20 @@ footer {
 .reveal { will-change: transform, opacity; }
 .chat-msg { will-change: transform, opacity; }
 
+/* ===== HERO CTA GROUP ===== */
+.hero-cta-group {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 12px;
+}
+@media (max-width: 600px) {
+  .hero-cta-group { flex-direction: column; }
+  .hero-cta-group .btn,
+  .hero-cta-group .btn-google-hero { width: 100%; }
+}
+
 /* ===== FOOTER REDESIGN ===== */
 .footer-grid {
   display: grid;
