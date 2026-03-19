@@ -1135,11 +1135,7 @@ function saveSettings() {
 function updateApiStatus() {
   const el = document.getElementById('apiKeyStatus');
   if (!el) return;
-  if (apiKey) {
-    el.innerHTML = `<span style="color:#16a34a;">● Bağlı</span>`;
-  } else {
-    el.innerHTML = `<span style="color:#94a3b8;cursor:pointer;" onclick="openSettings()">API key ekle</span>`;
-  }
+  el.innerHTML = `<span style="color:#16a34a;">● Bağlı</span>`;
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -1406,8 +1402,6 @@ async function sendChat() {
         if (typeof showToast === 'function') showToast('⚡ AI özelliği yakında aktif olacak!', 'info');
         return;
       }
-    } else if (apiKey) {
-      reply = await callOpenAI(msg);
     } else {
       await new Promise(r => setTimeout(r, 900));
       reply = generateLocalReply(msg);
@@ -1472,7 +1466,7 @@ function generateLocalReply(msg) {
       for (let c = 0; c < COLS; c++) {
         if (data[r][c]) { filled++; const v = parseFloat(data[r][c]); if (!isNaN(v)) { numeric++; total += v; } }
       }
-    return `📊 "${activeSheet}" analizi:\n• ${filled} dolu hücre\n• ${numeric} sayısal değer\n• Toplam: ${total.toLocaleString('tr-TR', {maximumFractionDigits:2})}\n• Ortalama: ${numeric ? (total/numeric).toLocaleString('tr-TR', {maximumFractionDigits:2}) : 'N/A'}\n\nAI tam analiz için OpenAI API anahtarı ekleyin (ayarlar ⚙️).`;
+    return `📊 "${activeSheet}" analizi:\n• ${filled} dolu hücre\n• ${numeric} sayısal değer\n• Toplam: ${total.toLocaleString('tr-TR', {maximumFractionDigits:2})}\n• Ortalama: ${numeric ? (total/numeric).toLocaleString('tr-TR', {maximumFractionDigits:2}) : 'N/A'}`;
   }
 
   if (lower.includes('formül') || lower.includes('formula')) {
@@ -1500,7 +1494,7 @@ function generateLocalReply(msg) {
     return `📋 Pivot tablo oluşturmak için:\n1. Veri aralığınızı seçin\n2. Dosyayı indirin (İndir butonu)\n3. Excel'de Ekle → PivotTable seçin\n\nAlternatif: Verilerinizi açıklayın, ben gruplama formülleri önereyim!`;
   }
 
-  return `Merhaba! Excel veriniz hakkında yardımcı olmaktan mutluluk duyarım. 🤖\n\nŞunları yapabilirim:\n• Veri analizi ve istatistik\n• Formül önerileri\n• Veri temizleme ipuçları\n• Grafik önerileri\n\n💡 Tam AI deneyimi için ⚙️ ayarlardan OpenAI API anahtarı ekleyin!`;
+  return `Merhaba! Excel veriniz hakkında yardımcı olmaktan mutluluk duyarım. 🤖\n\nŞunları yapabilirim:\n• Veri analizi ve istatistik\n• Formül önerileri\n• Veri temizleme ipuçları\n• Grafik önerileri`;
 }
 
 function applyAISuggestions(msg, reply) {
@@ -2438,14 +2432,7 @@ function loadSampleData() {
 //  ONBOARDING BANNER
 // ═══════════════════════════════════════════════════════════════
 function initOnboardBanner() {
-  const dismissed = localStorage.getItem('ob_dismissed');
-  const banner = document.getElementById('onboardBanner');
-  if (!apiKey && !dismissed) {
-    banner.classList.remove('hidden');
-    document.body.classList.add('with-banner');
-  } else {
-    banner.classList.add('hidden');
-  }
+  document.getElementById('onboardBanner').classList.add('hidden');
 }
 
 function closeOnboardBanner() {
