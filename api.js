@@ -1,7 +1,7 @@
 // Upsheet — Backend API wrapper (tarayıcıda yüklenir)
-const API_URL = (typeof window !== 'undefined' && window.location.hostname !== 'localhost')
-  ? null
-  : 'http://localhost:3001';
+const API_URL = window.location.hostname === 'localhost'
+  ? 'http://localhost:3001'
+  : 'https://upsheet-ai.onrender.com';
 
 async function callAPI(endpoint, body) {
   if (!API_URL) {
