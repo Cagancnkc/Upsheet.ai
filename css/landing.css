@@ -1607,3 +1607,105 @@ footer {
   .footer-brand { grid-column: 1 / -1; }
   .footer-bottom { flex-direction: column; text-align: center; }
 }
+
+/* ── AI INPUT BLOCK ───────────────────────────────────────── */
+.ai-input-block {
+  width: 100%;
+  max-width: 640px;
+  margin: 8px auto 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+.ai-input-label {
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #9CA3AF;
+}
+.ai-input-wrapper {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  background: #FFFFFF;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 16px;
+  padding: 6px 6px 6px 16px;
+  gap: 10px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.ai-input-wrapper:focus-within {
+  border-color: #4F46E5;
+  box-shadow: 0 4px 24px rgba(79,70,229,0.12);
+}
+.ai-input-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.ai-input-field {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-family: 'Sora', sans-serif;
+  font-size: 15px;
+  color: #0D0D2B;
+  background: transparent;
+  padding: 10px 0;
+}
+.ai-input-field::placeholder {
+  color: #9CA3AF;
+  font-size: 14px;
+}
+.ai-input-btn {
+  background: #4F46E5;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 20px;
+  font-family: 'Sora', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background 0.2s, transform 0.15s;
+}
+.ai-input-btn:hover {
+  background: #4338CA;
+  transform: translateY(-1px);
+}
+.ai-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+.ai-chip {
+  background: #F5F5FF;
+  color: #4F46E5;
+  border: 1.5px solid #E0E0FF;
+  border-radius: 100px;
+  padding: 8px 16px;
+  font-family: 'Sora', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+.ai-chip:hover {
+  background: #4F46E5;
+  color: white;
+  border-color: #4F46E5;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(79,70,229,0.2);
+}
+@media (max-width: 640px) {
+  .ai-input-wrapper { border-radius: 12px; }
+  .ai-input-btn { padding: 8px 14px; font-size: 13px; }
+  .ai-chips { gap: 6px; }
+  .ai-chip { font-size: 12px; padding: 6px 12px; }
+}

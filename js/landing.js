@@ -403,3 +403,28 @@ function setPeriod(period) {
     bizSaving.style.display = 'none';
   }
 }
+
+// ── AI INPUT BLOCK ─────────────────────────────────────────
+function fillInput(chip) {
+  const input = document.getElementById('aiCommandInput');
+  if (!input) return;
+  const text = chip.textContent.trim().replace(/^[\u{1F300}-\u{1FAFF}\u{2600}-\u{27FF}\s]+/gu, '').trim();
+  input.value = text;
+  input.focus();
+}
+
+function runAICommand() {
+  const input = document.getElementById('aiCommandInput');
+  if (!input || !input.value.trim()) return;
+  const cmd = encodeURIComponent(input.value.trim());
+  window.location.href = 'auth.html?cmd=' + cmd;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  const input = document.getElementById('aiCommandInput');
+  if (input) {
+    input.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') runAICommand();
+    });
+  }
+});

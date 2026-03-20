@@ -118,29 +118,46 @@
         <span>✓ İstediğin zaman iptal</span>
       </p>
 
-      <!-- Kullanım senaryosu kartları -->
-      <div class="hero-use-cases reveal">
-        <p class="hero-use-cases-label">Ne yapmak istiyorsunuz?</p>
-        <div class="hero-use-cases-grid">
-          <a href="auth.html" class="use-case-card">
-            📊 Aylık rapor hazırla
-          </a>
-          <a href="auth.html" class="use-case-card">
-            🧹 Veriyi temizle
-          </a>
-          <a href="auth.html" class="use-case-card">
-            📈 Grafik oluştur
-          </a>
-          <a href="auth.html" class="use-case-card">
-            🔍 Hata bul
-          </a>
-          <a href="auth.html" class="use-case-card">
-            💰 KDV hesapla
-          </a>
-          <a href="auth.html" class="use-case-card">
-            ✨ Başka bir şey
-          </a>
+      <!-- AI Input Block -->
+      <div class="ai-input-block">
+
+        <p class="ai-input-label">Excel'de ne yapmak istiyorsun?</p>
+
+        <div class="ai-input-wrapper">
+          <span class="ai-input-icon">✨</span>
+          <input
+            type="text"
+            id="aiCommandInput"
+            class="ai-input-field"
+            placeholder="Örn: B sütununu topla ve sonucu C1'e yaz"
+            autocomplete="off"
+          />
+          <button class="ai-input-btn" onclick="runAICommand()">
+            Çalıştır →
+          </button>
         </div>
+
+        <div class="ai-chips">
+          <button class="ai-chip" onclick="fillInput(this)">
+            📊 Aylık rapor oluştur
+          </button>
+          <button class="ai-chip" onclick="fillInput(this)">
+            🧹 Veriyi temizle
+          </button>
+          <button class="ai-chip" onclick="fillInput(this)">
+            📈 Grafik oluştur
+          </button>
+          <button class="ai-chip" onclick="fillInput(this)">
+            🔍 En yüksek değeri bul
+          </button>
+          <button class="ai-chip" onclick="fillInput(this)">
+            ⚠️ Hataları tespit et
+          </button>
+          <button class="ai-chip" onclick="fillInput(this)">
+            💰 KDV hesapla
+          </button>
+        </div>
+
       </div>
 
     </div>
