@@ -70,65 +70,32 @@ const observer = new IntersectionObserver((entries) => {
 }, { threshold: 0.1 });
 document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-// ── SCROLL REVEAL ──
-const revealObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('revealed');
-    }
-  });
-}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
 
-document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
-
-// ── TYPING ANIMATION ──
-const messages = [
-  'B sütunundaki toplamı hesapla',
-  'Tabloyu en yüksekten sırala',
-  'Aylık satış grafiği oluştur',
-  'Boş satırları temizle'
+// ── DÖNEN BAŞLIK (HERO) ──
+const rotatingPhrases = [
+  'dakikalar içinde düzenle',
+  '12 kat daha hızlı analiz et',
+  'Türkçe komutla yönet',
+  'AI ile temizle ve raporla'
 ];
-const typeTextEl = document.getElementById('typeText');
-const hlCells = document.querySelectorAll('.hl-cell');
-let msgIdx = 0, charIdx = 0, typing = true, highlighted = false;
-
-function typeLoop() {
-  const msg = messages[msgIdx];
-  if (typing) {
-    if (charIdx < msg.length) {
-      typeTextEl.textContent = msg.slice(0, charIdx + 1);
-      charIdx++;
-      const jitter = Math.floor(Math.random() * 30);
-      setTimeout(typeLoop, 55 + jitter);
-    } else {
-      // Message complete — highlight cells
-      hlCells.forEach(c => c.classList.add('hi'));
-      highlighted = true;
-      setTimeout(() => {
-        typing = false;
-        eraseLoop();
-      }, 1800);
-    }
-  }
+let phraseIndex = 0;
+const rotatingEl = document.getElementById('rotatingText');
+function rotatePhrases() {
+  if (!rotatingEl) return;
+  rotatingEl.style.opacity = '0';
+  rotatingEl.style.transform = 'translateY(10px)';
+  setTimeout(() => {
+    phraseIndex = (phraseIndex + 1) % rotatingPhrases.length;
+    rotatingEl.textContent = rotatingPhrases[phraseIndex];
+    rotatingEl.style.opacity = '1';
+    rotatingEl.style.transform = 'translateY(0)';
+  }, 300);
 }
-
-function eraseLoop() {
-  const msg = messages[msgIdx];
-  if (charIdx > 0) {
-    charIdx--;
-    typeTextEl.textContent = msg.slice(0, charIdx);
-    setTimeout(eraseLoop, 25);
-  } else {
-    // Remove highlight
-    hlCells.forEach(c => c.classList.remove('hi'));
-    msgIdx = (msgIdx + 1) % messages.length;
-    typing = true;
-    setTimeout(typeLoop, 400);
-  }
+if (rotatingEl) {
+  rotatingEl.textContent = rotatingPhrases[0];
+  rotatingEl.style.opacity = '1';
+  setInterval(rotatePhrases, 3500);
 }
-
-// Start typing after a short delay
-setTimeout(typeLoop, 1200);
 
 // ── FEATURE TABS ──
 const featureItems = document.querySelectorAll('.feature-item');
