@@ -39,24 +39,36 @@ sb.auth.getSession().then(({ data }) => {
 // ─────────────────────────────────────────────────────────────────
 
 // ── NAVBAR SCROLL ──
-const navbar = document.getElementById('navbar');
 window.addEventListener('scroll', () => {
-  navbar.classList.toggle('scrolled', window.scrollY > 10);
+  const navbar = document.getElementById('navbar');
+  if (navbar) navbar.classList.toggle('scrolled', window.scrollY > 20);
 }, { passive: true });
 
 // ── HAMBURGER ──
-const hamburger = document.getElementById('hamburger');
-const mobileMenu = document.getElementById('mobileMenu');
-hamburger.addEventListener('click', () => {
-  hamburger.classList.toggle('open');
-  mobileMenu.classList.toggle('open');
-});
-mobileMenu.querySelectorAll('a').forEach(link => {
-  link.addEventListener('click', () => {
-    hamburger.classList.remove('open');
-    mobileMenu.classList.remove('open');
+const hamburger = document.getElementById('navHamburger');
+const mobileMenu = document.getElementById('navMobile');
+if (hamburger && mobileMenu) {
+  hamburger.addEventListener('click', () => {
+    mobileMenu.classList.toggle('open');
   });
-});
+  mobileMenu.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      mobileMenu.classList.remove('open');
+    });
+  });
+}
+
+// ── SCROLL REVEAL ──
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const delay = entry.target.dataset.delay || 0;
+      setTimeout(() => entry.target.classList.add('visible'), parseInt(delay));
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
 // ── SCROLL REVEAL ──
 const revealObserver = new IntersectionObserver((entries) => {
