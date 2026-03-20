@@ -1348,3 +1348,146 @@ footer {
   .stats-grid { grid-template-columns: 1fr; gap: 32px; }
 }
 .text-center { text-align: center; }
+
+/* ── TESTIMONIALS CAROUSEL ────────────────────────────────── */
+.testimonials-section {
+  padding: 80px 0 0;
+  background: var(--bg-light);
+  overflow: hidden;
+}
+.section-header {
+  text-align: center;
+  margin-bottom: 56px;
+}
+.section-subtitle {
+  font-size: 18px;
+  color: var(--text-body);
+  max-width: 520px;
+  margin: 16px auto 0;
+  line-height: 1.6;
+}
+.testimonial-carousel-wrapper {
+  overflow: hidden;
+  padding: 24px 0 60px;
+  mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+}
+.testimonial-track {
+  display: flex;
+  gap: 24px;
+  width: max-content;
+  animation: testimonialScroll 35s linear infinite;
+}
+.testimonial-track:hover { animation-play-state: paused; }
+@keyframes testimonialScroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.testimonial-card {
+  background: var(--bg-white);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  min-width: 300px;
+  max-width: 320px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  border: 1px solid var(--border-light);
+}
+.testimonial-metric {
+  font-size: 48px;
+  font-weight: 700;
+  color: var(--text-dark);
+  line-height: 1.0;
+  letter-spacing: -0.02em;
+}
+.testimonial-metric-label {
+  font-size: 14px;
+  color: var(--text-muted);
+  font-weight: 500;
+  margin-top: -8px;
+}
+.testimonial-quote {
+  font-size: 15px;
+  color: var(--text-body);
+  line-height: 1.5;
+  font-style: italic;
+  flex: 1;
+}
+.testimonial-author {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-light);
+}
+.testimonial-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--brand-primary), #7C3AED);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.testimonial-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+.testimonial-role {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* ── PAIN SECTION ─────────────────────────────────────────── */
+.pain-section {
+  padding: 100px 0;
+  background: var(--bg-white);
+}
+.pain-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-bottom: 48px;
+}
+.pain-card {
+  background: var(--bg-white);
+  border: 1.5px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 32px 28px;
+  transition: all 0.2s ease;
+}
+.pain-card:hover {
+  border-color: var(--brand-primary);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-4px);
+}
+.pain-icon {
+  font-size: 36px;
+  margin-bottom: 16px;
+}
+.pain-card h3 {
+  margin-bottom: 12px;
+  font-size: 18px;
+}
+.pain-card p {
+  font-size: 15px;
+  color: var(--text-body);
+  line-height: 1.6;
+}
+.pain-cta {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+@media (max-width: 768px) {
+  .pain-grid { grid-template-columns: 1fr; }
+}
