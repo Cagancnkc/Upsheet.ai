@@ -1,4 +1,4 @@
-// Upsheet — Backend API wrapper (tarayıcıda yüklenir)
+// MockSheets — Backend API wrapper (tarayıcıda yüklenir)
 const API_URL = window.location.hostname === 'localhost'
   ? 'http://localhost:3001'
   : 'https://upsheet-ai.onrender.com';
