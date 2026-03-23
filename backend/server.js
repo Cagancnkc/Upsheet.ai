@@ -89,7 +89,7 @@ const UPSHEET_KNOWLEDGE_BASE = {
 };
 
 const app    = express();
-const port   = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3001;
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 const allowedOrigins = [
@@ -137,4 +137,6 @@ app.use((err, _req, res, _next) => {
   res.status(500).json({ error: err.message });
 });
 
-app.listen(port, () => console.log(`ExcelAI backend → http://localhost:${port}`));
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server ${PORT} portunda çalışıyor`);
+});
