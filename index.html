@@ -950,9 +950,12 @@ window.addEventListener('scroll', function() {
 
 <!-- Hamburger menu -->
 <script>
-document.getElementById('hamburger').addEventListener('click', function() {
-  document.getElementById('mobileMenu').classList.toggle('open');
-});
+const hamburger = document.getElementById('hamburger');
+if (hamburger) {
+  hamburger.addEventListener('click', function() {
+    document.getElementById('mobileMenu').classList.toggle('open');
+  });
+}
 </script>
 
 </body>
