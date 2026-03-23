@@ -1527,11 +1527,63 @@ function applyAIChanges(result) {
     });
   }
 
+  // Sort action
+  if (result.action === 'sort' && typeof result.column === 'number') {
+    if (changed) buildGrid();
+    sortColumn(result.column, result.direction || 'asc');
+    return;
+  }
+  // Delete empty rows
+  if (result.action === 'delete_rows') {
+    if (changed) buildGrid();
+    cmdCleanEmptyRows();
+    return;
+  }
+  // Remove duplicates
+  if (result.action === 'remove_duplicates') {
+    if (changed) buildGrid();
+    cmdRemoveDuplicates();
+    return;
+  }
+
   if (changed) {
     buildGrid(data);
     if (typeof showToast === 'function') showToast('✓ Değişiklikler uygulandı', 'success');
   }
 }
+
+function setCell(row, col, value) {
+  const data = sheets[activeSheet];
+  if (!data) return;
+  while (data.length <= row) data.push(Array(COLS).fill(''));
+  while (data[row].length <= col) data[row].push('');
+  data[row][col] = value !== undefined ? String(value) : '';
+}
+
+function highlightCell(row, col, color) {
+  const meta = getCellMeta(row, col);
+  meta.bg = color || '';
+  setCellMeta(row, col, meta);
+}
+
+function sortColumn(col, direction) {
+  const data = sheets[activeSheet];
+  if (!data) return;
+  const hasHeader = data[0] && data[0][col] && isNaN(parseFloat(data[0][col]));
+  const header = hasHeader ? data.shift() : null;
+  data.sort(function(a, b) {
+    const va = parseFloat(a[col]), vb = parseFloat(b[col]);
+    if (!isNaN(va) && !isNaN(vb)) return direction === 'desc' ? vb - va : va - vb;
+    const cmp = String(a[col] || '').localeCompare(String(b[col] || ''), 'tr');
+    return direction === 'desc' ? -cmp : cmp;
+  });
+  if (header) data.unshift(header);
+  buildGrid();
+  toast(colLetter(col) + ' sütununa göre sıralandı', 'ok');
+}
+
+function deleteEmptyRows() { cmdCleanEmptyRows(); }
+function removeDuplicates() { cmdRemoveDuplicates(); }
 
 function applyAISuggestions(msg, reply) {
   // Highlight cells if AI mentions cell ranges
