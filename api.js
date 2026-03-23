@@ -29,5 +29,5 @@ async function callAPI(endpoint, body) {
 async function processAICommand(message, sheetContext, sheetName, history) {
   const data = await callAPI('/api/chat', { message, sheetContext, sheetName, history });
   if (!data || data.error === 'offline') return data || { error: 'offline' };
-  return data.reply;
+  return data;
 }

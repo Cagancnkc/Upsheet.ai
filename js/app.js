@@ -1395,13 +1395,15 @@ async function sendChat() {
   try {
     let reply;
     if (typeof processAICommand === 'function') {
-      reply = await processAICommand(finalMessage, getSheetContext(), activeSheet, chatHistory.slice(-8));
-      if (!reply || reply?.error === 'offline') {
+      const aiResult = await processAICommand(finalMessage, getSheetContext(), activeSheet, chatHistory.slice(-8));
+      if (!aiResult || aiResult?.error === 'offline') {
         clearInterval(_loadTimer);
         loader.remove();
         if (typeof showToast === 'function') showToast('⚡ AI özelliği yakında aktif olacak!', 'info');
         return;
       }
+      reply = typeof aiResult === 'string' ? aiResult : (aiResult.reply || 'İşlem tamamlandı');
+      applyAIChanges(aiResult);
     } else {
       await new Promise(r => setTimeout(r, 900));
       reply = generateLocalReply(msg);
@@ -1495,6 +1497,40 @@ function generateLocalReply(msg) {
   }
 
   return `Merhaba! Excel veriniz hakkında yardımcı olmaktan mutluluk duyarım. 🤖\n\nŞunları yapabilirim:\n• Veri analizi ve istatistik\n• Formül önerileri\n• Veri temizleme ipuçları\n• Grafik önerileri`;
+}
+
+function applyAIChanges(result) {
+  if (!result || typeof result !== 'object') return;
+  const data = sheets[activeSheet];
+  if (!data) return;
+  let changed = false;
+
+  if (Array.isArray(result.changes) && result.changes.length > 0) {
+    result.changes.forEach(function(ch) {
+      const r = ch.row, c = ch.col;
+      if (r === undefined || c === undefined) return;
+      while (data.length <= r) data.push([]);
+      while (data[r].length <= c) data[r].push('');
+      data[r][c] = ch.value !== undefined ? String(ch.value) : '';
+      changed = true;
+    });
+  }
+
+  if (Array.isArray(result.highlight) && result.highlight.length > 0) {
+    result.highlight.forEach(function(h) {
+      const r = h.row, c = h.col;
+      if (r === undefined || c === undefined) return;
+      const meta = getCellMeta(r, c);
+      meta.bg = h.color || '';
+      setCellMeta(r, c, meta);
+      changed = true;
+    });
+  }
+
+  if (changed) {
+    buildGrid(data);
+    if (typeof showToast === 'function') showToast('✓ Değişiklikler uygulandı', 'success');
+  }
 }
 
 function applyAISuggestions(msg, reply) {
