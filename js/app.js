@@ -3499,4 +3499,40 @@ function generateAutoReport() {
   }
 }
 
+function handleCompareFile(input, role) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 10 * 1024 * 1024) {
+    toast('Dosya çok büyük (max 10MB)', 'err');
+    input.value = '';
+    return;
+  }
+  const ext = file.name.split('.').pop().toLowerCase();
+  if (!['xlsx', 'xls', 'csv'].includes(ext)) {
+    toast('Sadece Excel (.xlsx, .xls) ve CSV dosyaları desteklenir', 'err');
+    input.value = '';
+    return;
+  }
+  const nameEl = document.getElementById(role === 'my' ? 'myDataFileName' : 'rivalDataFileName');
+  if (nameEl) nameEl.textContent = '⏳ ' + file.name;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const isCSV = ext === 'csv';
+      const wb = XLSX.read(e.target.result, { type: isCSV ? 'string' : 'binary' });
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const csv = XLSX.utils.sheet_to_csv(ws);
+      const rowCount = csv.split('\n').filter(function(r) { return r.trim(); }).length;
+      if (nameEl) nameEl.textContent = '✅ ' + file.name + ' (' + rowCount + ' satır)';
+      toast((role === 'my' ? 'Kendi veriniz' : 'Rakip verisi') + ' yüklendi: ' + file.name, 'ok');
+    } catch(err) {
+      if (nameEl) nameEl.textContent = '❌ Hata';
+      toast('Dosya okunamadı: ' + err.message, 'err');
+    }
+  };
+  if (ext === 'csv') reader.readAsText(file, 'UTF-8');
+  else reader.readAsBinaryString(file);
+  input.value = '';
+}
+
 /* cache bust Sat Mar 14 19:03:28 TSS 2026 */

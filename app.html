@@ -843,6 +843,30 @@ function queueOfflineMessage(payload) {
           </tbody>
         </table>
       </div>
+      <div class="compare-upload-section">
+        <div class="compare-upload-box">
+          <label for="myDataFile" class="upload-box-label">
+            <span class="upload-box-icon">📁</span>
+            <span class="upload-box-title">Benim Verim</span>
+            <span class="upload-box-desc">Excel veya CSV yükleyin</span>
+            <span class="upload-box-btn">Dosya Seç</span>
+          </label>
+          <input type="file" id="myDataFile" accept=".xlsx,.xls,.csv"
+                 style="display:none" onchange="handleCompareFile(this, 'my')">
+          <span id="myDataFileName" class="upload-file-name"></span>
+        </div>
+        <div class="compare-upload-box">
+          <label for="rivalDataFile" class="upload-box-label">
+            <span class="upload-box-icon">🔍</span>
+            <span class="upload-box-title">Rakip Verisi</span>
+            <span class="upload-box-desc">Rakibinizin Excel veya CSV dosyasını yükleyin</span>
+            <span class="upload-box-btn">Dosya Seç</span>
+          </label>
+          <input type="file" id="rivalDataFile" accept=".xlsx,.xls,.csv"
+                 style="display:none" onchange="handleCompareFile(this, 'rival')">
+          <span id="rivalDataFileName" class="upload-file-name"></span>
+        </div>
+      </div>
       <div class="compare-report-section">
         <p class="compare-report-desc">Mevcut verinizin otomatik raporunu oluşturun</p>
         <button class="compare-report-btn" onclick="generateAutoReport(); closeCompareModal();">
@@ -903,6 +927,29 @@ function queueOfflineMessage(payload) {
   transition: background 0.2s, transform 0.15s;
 }
 .compare-report-btn:hover { background: #4338CA; transform: translateY(-1px); }
+.compare-upload-section { display:flex; gap:16px; flex-wrap:wrap; }
+.compare-upload-box {
+  flex:1; min-width:200px;
+  border:2px dashed #D1D5DB; border-radius:12px;
+  text-align:center; padding:4px;
+}
+.upload-box-label {
+  display:flex; flex-direction:column; align-items:center;
+  gap:6px; padding:20px 16px; cursor:pointer;
+}
+.upload-box-label:hover { background:#F9FAFB; border-radius:10px; }
+.upload-box-icon { font-size:28px; }
+.upload-box-title { font-weight:700; font-size:14px; color:#0D0D2B; }
+.upload-box-desc { font-size:12px; color:#6B7280; }
+.upload-box-btn {
+  background:#4F46E5; color:white; border-radius:8px;
+  padding:6px 16px; font-size:13px; font-weight:600; margin-top:4px;
+}
+.upload-file-name {
+  display:block; font-size:12px; color:#4F46E5;
+  padding:4px 8px; font-weight:500;
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
 @media (max-width: 600px) {
   .compare-table th, .compare-table td { padding: 8px 10px; font-size: 12px; }
 }
