@@ -449,6 +449,76 @@
     <span id="stAvg"   style="display:none"></span>
     <span id="stCount" style="display:none"></span>
   </div>
+
+  <!-- Yeni chat bar -->
+  <div class="chat-input-area">
+
+    <!-- Hızlı komutlar -->
+    <div class="quick-actions">
+      <button class="quick-chip" onclick="fillChatInput(this)">
+        📊 B sütununu topla
+      </button>
+      <button class="quick-chip" onclick="fillChatInput(this)">
+        🧹 Boş satırları sil
+      </button>
+      <button class="quick-chip" onclick="fillChatInput(this)">
+        🔴 Negatif değerleri kırmızıya boya
+      </button>
+      <button class="quick-chip" onclick="fillChatInput(this)">
+        📈 A sütununu küçükten büyüğe sırala
+      </button>
+      <button class="quick-chip" onclick="fillChatInput(this)">
+        💰 KDV dahil fiyatları hesapla
+      </button>
+      <button class="quick-chip" onclick="fillChatInput(this)">
+        📋 Verilerin özetini çıkar
+      </button>
+    </div>
+
+    <!-- Dosya önizleme (eklenti varsa görünür) -->
+    <div class="attachment-preview-bar" id="attachmentPreviewBar"></div>
+
+    <!-- Input satırı -->
+    <div class="chat-input-row">
+
+      <!-- Paperclip (dosya ekle) -->
+      <button class="chat-attach-btn"
+              onclick="document.getElementById('chatFileInput').click()"
+              title="Dosya ekle">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path fill-rule="evenodd" clip-rule="evenodd"
+            d="M10.86 1.71a2.57 2.57 0 0 0-1.82.75L2.79 8.7a3.5 3.5 0 1 0 4.95 4.95l6.24-6.24 1.06 1.06-6.24 6.24a5 5 0 1 1-7.07-7.07L8 1.39A4.07 4.07 0 1 1 13.76 7l-6.3 6.24a2.5 2.5 0 1 1-3.53-3.54l5.76-5.75 1.06 1.06-5.76 5.75a1 1 0 1 0 1.41 1.42L12.7 6a2.07 2.07 0 0 0-1.84-3.5z"
+            fill="currentColor"/>
+        </svg>
+      </button>
+
+      <input type="file" id="chatFileInput" style="display:none"
+             accept=".xlsx,.xls,.csv,.txt,.json"
+             multiple onchange="handleChatAttachment(this)">
+
+      <!-- Textarea -->
+      <textarea
+        id="chatInput"
+        class="chat-textarea"
+        placeholder="Bir komut yazın... (ör: B sütununu topla ve C1'e yaz)"
+        rows="1"
+        onkeydown="handleChatKeydown(event)"
+        oninput="autoResizeChatInput(this)"
+      ></textarea>
+
+      <!-- Gönder -->
+      <button class="chat-send-btn" id="chatSendBtn"
+              onclick="sendChatMessage()" title="Gönder (Enter)">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+          <path fill-rule="evenodd" clip-rule="evenodd"
+            d="M8.707 1.396a1 1 0 0 0-1.414 0L2.22 6.47 1.69 7l1.06 1.06.53-.53L7 3.56V14.25a.75.75 0 0 0 1.5 0V3.56l3.72 3.97.53.53L13.81 7l-.53-.53-4.573-5.074z"
+            fill="currentColor"/>
+        </svg>
+      </button>
+    </div>
+
+  </div>
+
 </div>
 </div>
 
@@ -655,75 +725,6 @@
 
 <!-- TOAST CONTAINER -->
 <div id="toastContainer" class="toast-container"></div>
-
-<!-- Yeni chat bar -->
-<div class="chat-input-area">
-
-  <!-- Hızlı komutlar -->
-  <div class="quick-actions">
-    <button class="quick-chip" onclick="fillChatInput(this)">
-      📊 B sütununu topla
-    </button>
-    <button class="quick-chip" onclick="fillChatInput(this)">
-      🧹 Boş satırları sil
-    </button>
-    <button class="quick-chip" onclick="fillChatInput(this)">
-      🔴 Negatif değerleri kırmızıya boya
-    </button>
-    <button class="quick-chip" onclick="fillChatInput(this)">
-      📈 A sütununu küçükten büyüğe sırala
-    </button>
-    <button class="quick-chip" onclick="fillChatInput(this)">
-      💰 KDV dahil fiyatları hesapla
-    </button>
-    <button class="quick-chip" onclick="fillChatInput(this)">
-      📋 Verilerin özetini çıkar
-    </button>
-  </div>
-
-  <!-- Dosya önizleme (eklenti varsa görünür) -->
-  <div class="attachment-preview-bar" id="attachmentPreviewBar"></div>
-
-  <!-- Input satırı -->
-  <div class="chat-input-row">
-
-    <!-- Paperclip (dosya ekle) -->
-    <button class="chat-attach-btn"
-            onclick="document.getElementById('chatFileInput').click()"
-            title="Dosya ekle">
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-        <path fill-rule="evenodd" clip-rule="evenodd"
-          d="M10.86 1.71a2.57 2.57 0 0 0-1.82.75L2.79 8.7a3.5 3.5 0 1 0 4.95 4.95l6.24-6.24 1.06 1.06-6.24 6.24a5 5 0 1 1-7.07-7.07L8 1.39A4.07 4.07 0 1 1 13.76 7l-6.3 6.24a2.5 2.5 0 1 1-3.53-3.54l5.76-5.75 1.06 1.06-5.76 5.75a1 1 0 1 0 1.41 1.42L12.7 6a2.07 2.07 0 0 0-1.84-3.5z"
-          fill="currentColor"/>
-      </svg>
-    </button>
-
-    <input type="file" id="chatFileInput" style="display:none"
-           accept=".xlsx,.xls,.csv,.txt,.json"
-           multiple onchange="handleChatAttachment(this)">
-
-    <!-- Textarea -->
-    <textarea
-      id="chatInput"
-      class="chat-textarea"
-      placeholder="Bir komut yazın... (ör: B sütununu topla ve C1'e yaz)"
-      rows="1"
-      onkeydown="handleChatKeydown(event)"
-      oninput="autoResizeChatInput(this)"
-    ></textarea>
-
-    <!-- Gönder -->
-    <button class="chat-send-btn" id="chatSendBtn"
-            onclick="sendChatMessage()" title="Gönder (Enter)">
-      <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-        <path fill-rule="evenodd" clip-rule="evenodd"
-          d="M8.707 1.396a1 1 0 0 0-1.414 0L2.22 6.47 1.69 7l1.06 1.06.53-.53L7 3.56V14.25a.75.75 0 0 0 1.5 0V3.56l3.72 3.97.53.53L13.81 7l-.53-.53-4.573-5.074z"
-          fill="currentColor"/>
-      </svg>
-    </button>
-  </div>
-
-</div>
 
 <!-- FLOATING CELL TOOLBAR -->
 <div id="floatToolbar">
