@@ -1164,7 +1164,7 @@ function toast(msg, type = 'ok', undoable = false) {
     err:  `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`,
     info: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`
   };
-  const container = document.getElementById('toasts');
+  const container = document.getElementById('toastContainer');
   if (!container) return;
   while (container.children.length >= 3) container.firstChild.remove();
   const t = document.createElement('div');
@@ -2852,7 +2852,7 @@ function toast(msg, type, undoable, duration) {
     warning: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#eab308" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`,
     ai:      `<span style="font-size:13px;line-height:1;flex-shrink:0;">⚡</span>`,
   };
-  const container = document.getElementById('toasts');
+  const container = document.getElementById('toastContainer');
   if (!container) return;
   while (container.children.length >= 3) container.firstChild.remove();
   const t = document.createElement('div');
@@ -3498,6 +3498,176 @@ function generateAutoReport() {
     if (typeof sendChat === 'function') sendChat();
   }
 }
+
+// ── TOAST SİSTEMİ ──────────────────────────────────
+
+function showToast(message, type = 'success', duration = 3500) {
+  const container = document.getElementById('toastContainer');
+  if (!container) return;
+
+  const icon = type === 'success' ? '✓' : '✕';
+  const toastEl = document.createElement('div');
+  toastEl.className = `toast ${type}`;
+  toastEl.innerHTML = `
+    <span class="toast-icon">${icon}</span>
+    <span class="toast-msg">${message}</span>
+    <button class="toast-close" onclick="removeToast(this.parentElement)">×</button>
+  `;
+
+  container.appendChild(toastEl);
+
+  setTimeout(() => removeToast(toastEl), duration);
+}
+
+function removeToast(toastEl) {
+  if (!toastEl || !toastEl.parentElement) return;
+  toastEl.style.animation = 'toastOut 0.25s ease forwards';
+  setTimeout(() => toastEl.remove(), 250);
+}
+
+// ── CHAT BAR FONKSİYONLARI ─────────────────────────
+
+function fillChatInput(chip) {
+  const input = document.getElementById('chatInput');
+  if (!input) return;
+  const text = chip.textContent.trim()
+    .replace(/^[\u{1F300}-\u{1FAFF}\u{2600}-\u{27FF}\s]+/gu, '')
+    .trim();
+  input.value = text;
+  input.focus();
+  autoResizeChatInput(input);
+}
+
+function autoResizeChatInput(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+}
+
+function handleChatKeydown(event) {
+  if (event.key === 'Enter' && !event.shiftKey) {
+    event.preventDefault();
+    sendChatMessage();
+  }
+}
+
+function handleChatAttachment(input) {
+  const files = Array.from(input.files);
+  if (!files.length) return;
+
+  files.forEach(file => {
+    chatAttachments.push(file);
+    renderAttachmentChip(file);
+  });
+  input.value = '';
+}
+
+function renderAttachmentChip(file) {
+  const bar = document.getElementById('attachmentPreviewBar');
+  if (!bar) return;
+  const chip = document.createElement('div');
+  chip.className = 'attachment-chip';
+  chip.dataset.filename = file.name;
+  chip.innerHTML = `
+    <span>📎 ${file.name}</span>
+    <button onclick="removeAttachmentChip('${file.name}')" title="Kaldır">×</button>
+  `;
+  bar.appendChild(chip);
+}
+
+function removeAttachmentChip(filename) {
+  chatAttachments = chatAttachments.filter(f => f.name !== filename);
+  const chip = document.querySelector(
+    `.attachment-chip[data-filename="${filename}"]`
+  );
+  if (chip) chip.remove();
+}
+
+// ── ANA GÖNDER FONKSİYONU ──────────────────────────
+
+async function sendChatMessage() {
+  const input = document.getElementById('chatInput');
+  const sendBtn = document.getElementById('chatSendBtn');
+  if (!input) return;
+
+  const message = input.value.trim();
+  if (!message) return;
+
+  input.value = '';
+  autoResizeChatInput(input);
+  sendBtn.disabled = true;
+  sendBtn.classList.add('loading');
+  sendBtn.innerHTML = `
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+         style="animation:spin 0.8s linear infinite">
+      <circle cx="12" cy="12" r="10" stroke="currentColor"
+              stroke-width="3" stroke-dasharray="31.4"
+              stroke-dashoffset="10"/>
+    </svg>
+  `;
+
+  if (typeof addMsg === 'function') addMsg('user', message);
+
+  try {
+    const sheetContext = typeof getSheetContext === 'function'
+      ? getSheetContext()
+      : '';
+
+    const response = await fetch(API_URL + '/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message, sheetContext })
+    });
+
+    if (!response.ok) throw new Error('Sunucu hatası: ' + response.status);
+
+    const data = await response.json();
+
+    if (data.reply && typeof addMsg === 'function') {
+      addMsg('ai', data.reply);
+    }
+
+    let applied = false;
+    if (data.action && data.action !== 'message') {
+      if (typeof applyAIChanges === 'function') {
+        applyAIChanges(data);
+        applied = true;
+      }
+    }
+
+    if (applied) {
+      showToast(data.reply || 'İşlem uygulandı', 'success');
+    } else if (data.action === 'message') {
+      showToast('Yanıt alındı', 'success');
+    }
+
+  } catch (error) {
+    console.error('Chat hatası:', error);
+    showToast('Bağlantı hatası. Tekrar deneyin.', 'error');
+    if (typeof addMsg === 'function') {
+      addMsg('ai', '❌ Hata oluştu. Lütfen tekrar deneyin.');
+    }
+  } finally {
+    sendBtn.disabled = false;
+    sendBtn.classList.remove('loading');
+    sendBtn.innerHTML = `
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+        <path fill-rule="evenodd" clip-rule="evenodd"
+          d="M8.707 1.396a1 1 0 0 0-1.414 0L2.22 6.47 1.69 7l1.06 1.06.53-.53L7 3.56V14.25a.75.75 0 0 0 1.5 0V3.56l3.72 3.97.53.53L13.81 7l-.53-.53-4.573-5.074z"
+          fill="currentColor"/>
+      </svg>
+    `;
+    chatAttachments = [];
+    const bar = document.getElementById('attachmentPreviewBar');
+    if (bar) bar.innerHTML = '';
+  }
+}
+
+// Spin animasyonu
+(function() {
+  const spinStyle = document.createElement('style');
+  spinStyle.textContent = '@keyframes spin { to { transform: rotate(360deg); } }';
+  document.head.appendChild(spinStyle);
+})();
 
 function handleCompareFile(input, role) {
   const file = input.files[0];
