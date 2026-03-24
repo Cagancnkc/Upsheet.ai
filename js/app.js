@@ -3479,4 +3479,24 @@ function formatFileDate(iso) {
     return d.toLocaleDateString('tr-TR', { day:'2-digit', month:'short', year:'numeric' });
   } catch(e) { return ''; }
 }
+// ── RAKIP KARŞILAŞTIRMASI ─────────────────────────────────────
+function showCompareModal() {
+  const modal = document.getElementById('compareModal');
+  if (modal) modal.style.display = 'flex';
+}
+
+function closeCompareModal(event) {
+  if (event && event.target !== document.getElementById('compareModal')) return;
+  const modal = document.getElementById('compareModal');
+  if (modal) modal.style.display = 'none';
+}
+
+function generateAutoReport() {
+  const inp = document.getElementById('chatInput');
+  if (inp) {
+    inp.value = 'Otomatik rapor oluştur';
+    if (typeof sendChat === 'function') sendChat();
+  }
+}
+
 /* cache bust Sat Mar 14 19:03:28 TSS 2026 */

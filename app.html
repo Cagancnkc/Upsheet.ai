@@ -92,6 +92,9 @@
         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>
         Temizle
       </div>
+      <div class="sb-item" onclick="showCompareModal()" title="Rakip Karşılaştırması">
+        📊 Rakip Karşılaştırması
+      </div>
     </div>
 
     <!-- VERSION HISTORY -->
@@ -780,5 +783,130 @@ function queueOfflineMessage(payload) {
 </script>
 
 <script src="js/app.js"></script>
+
+<!-- Rakip Karşılaştırması Modal -->
+<div id="compareModal" class="compare-modal-overlay"
+     style="display:none;" onclick="closeCompareModal(event)">
+  <div class="compare-modal-box">
+    <div class="compare-modal-header">
+      <h3>📊 Rakip Karşılaştırması</h3>
+      <button class="compare-close-btn" onclick="closeCompareModal()">✕</button>
+    </div>
+    <div class="compare-modal-body">
+      <div class="compare-table-wrapper">
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>Özellik</th>
+              <th class="highlight-col">🐸 Mocksheet</th>
+              <th>Excel Copilot</th>
+              <th>SheetAI</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Türkçe komut desteği</td>
+              <td class="highlight-col">✅ Tam</td>
+              <td>⚠️ Kısmi</td>
+              <td>❌ Yok</td>
+            </tr>
+            <tr>
+              <td>Türk muhasebe (KDV, SGK)</td>
+              <td class="highlight-col">✅ Yerleşik</td>
+              <td>❌ Yok</td>
+              <td>❌ Yok</td>
+            </tr>
+            <tr>
+              <td>Ücretsiz başlangıç</td>
+              <td class="highlight-col">✅ Kredi kartı yok</td>
+              <td>❌ Microsoft 365</td>
+              <td>⚠️ Sınırlı</td>
+            </tr>
+            <tr>
+              <td>Kurulum gerektirmez</td>
+              <td class="highlight-col">✅ Tarayıcıda</td>
+              <td>❌ Office kurulumu</td>
+              <td>⚠️ Eklenti</td>
+            </tr>
+            <tr>
+              <td>Otomatik rapor</td>
+              <td class="highlight-col">✅ Tek tık</td>
+              <td>⚠️ Manuel</td>
+              <td>⚠️ Manuel</td>
+            </tr>
+            <tr>
+              <td>Fiyat (aylık)</td>
+              <td class="highlight-col">✅ Ücretsiz / ₺149</td>
+              <td>❌ ₺650+</td>
+              <td>❌ $10+</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="compare-report-section">
+        <p class="compare-report-desc">Mevcut verinizin otomatik raporunu oluşturun</p>
+        <button class="compare-report-btn" onclick="generateAutoReport(); closeCompareModal();">
+          📋 Otomatik Rapor Oluştur
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.compare-modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+  z-index: 9999; display: flex; align-items: center;
+  justify-content: center; padding: 20px;
+}
+.compare-modal-box {
+  background: white; border-radius: 16px; width: 100%;
+  max-width: 720px; max-height: 85vh; overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+}
+.compare-modal-header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 20px 24px; border-bottom: 1px solid #E5E7EB;
+}
+.compare-modal-header h3 { font-size: 18px; font-weight: 700; color: #0D0D2B; margin: 0; }
+.compare-close-btn {
+  background: none; border: none; font-size: 18px; cursor: pointer;
+  color: #9CA3AF; padding: 4px 8px; border-radius: 6px; transition: background 0.2s;
+}
+.compare-close-btn:hover { background: #F3F4F6; }
+.compare-modal-body { padding: 24px; display: flex; flex-direction: column; gap: 24px; }
+.compare-table-wrapper { overflow-x: auto; border-radius: 12px; border: 1px solid #E5E7EB; }
+.compare-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.compare-table th {
+  padding: 12px 16px; font-weight: 700; color: #0D0D2B;
+  background: #F9FAFB; border-bottom: 2px solid #E5E7EB;
+  text-align: center; white-space: nowrap;
+}
+.compare-table th:first-child { text-align: left; }
+.compare-table td {
+  padding: 12px 16px; color: #4B5563;
+  border-bottom: 1px solid #F3F4F6; text-align: center;
+}
+.compare-table td:first-child { text-align: left; font-weight: 500; color: #0D0D2B; }
+.compare-table tr:last-child td { border-bottom: none; }
+.compare-table tr:hover td { background: #FAFAFA; }
+.highlight-col { background: #F0F0FF !important; color: #4F46E5 !important; font-weight: 700 !important; }
+.compare-table th.highlight-col { background: #4F46E5 !important; color: white !important; }
+.compare-report-section {
+  text-align: center; padding: 20px; background: #F9FAFB;
+  border-radius: 12px; border: 1px solid #E5E7EB;
+}
+.compare-report-desc { font-size: 14px; color: #6B7280; margin-bottom: 12px; }
+.compare-report-btn {
+  background: #4F46E5; color: white; border: none; border-radius: 10px;
+  padding: 12px 28px; font-size: 15px; font-weight: 600; cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+}
+.compare-report-btn:hover { background: #4338CA; transform: translateY(-1px); }
+@media (max-width: 600px) {
+  .compare-table th, .compare-table td { padding: 8px 10px; font-size: 12px; }
+}
+</style>
+
 </body>
 </html>
