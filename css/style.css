@@ -283,7 +283,7 @@ body.sidebar-collapsed #main{margin-left:52px;}
 
 /* ── FLOATING AI CHAT ───────────────────────── */
 #floatingChat{
-  position:fixed;bottom:24px;right:24px;z-index:9000;
+  position:fixed;bottom:84px;right:24px;z-index:9000;
   display:flex;flex-direction:column;align-items:flex-end;gap:12px;
 }
 #fcBubble{
@@ -299,7 +299,7 @@ body.sidebar-collapsed #main{margin-left:52px;}
 }
 @keyframes fcPing{0%{transform:scale(1);opacity:.7}100%{transform:scale(1.55);opacity:0}}
 #chatPanel{
-  width:400px;height:520px;background:#0f0f1a;border-radius:16px;
+  width:320px;height:auto;max-height:420px;background:#0f0f1a;border-radius:16px;
   border:1px solid rgba(124,58,237,.25);box-shadow:0 8px 40px rgba(0,0,0,.55);
   display:flex;flex-direction:column;overflow:hidden;
   transform-origin:bottom right;animation:fcOpen .2s cubic-bezier(.34,1.56,.64,1);
@@ -335,7 +335,7 @@ body.sidebar-collapsed #main{margin-left:52px;}
 }
 .fc-icon-btn:hover{background:rgba(255,255,255,.07);color:#e2e8f0;}
 #chatMsgs{
-  flex:1;overflow-y:auto;padding:14px;
+  min-height:120px;max-height:220px;overflow-y:auto;padding:14px;
   display:flex;flex-direction:column;gap:10px;
 }
 #chatMsgs::-webkit-scrollbar{width:3px;}
