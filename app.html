@@ -142,26 +142,32 @@
 .chat-textarea {
   width: 100%;
   box-sizing: border-box;
-  flex: 1;
-  border: none;
-  outline: none;
-  background: transparent;
-  font-family: inherit;
+  min-height: 44px;
+  max-height: 120px;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 12px;
+  background: #F9FAFB;
+  padding: 10px 14px 44px 14px;
   font-size: 13px;
+  font-family: inherit;
   color: #1A1A1A !important;
   resize: none;
-  min-height: 20px;
-  max-height: 80px;
-  padding: 10px 14px 44px 14px;
+  outline: none;
+  overflow-y: auto;
   line-height: 1.5;
   caret-color: #4F46E5;
-  overflow-y: auto;
+  transition: border-color 0.15s, background 0.15s;
 }
 .chat-textarea::placeholder {
   color: #9B9B9B !important;
   opacity: 1;
 }
-.chat-textarea:focus { outline: none; }
+.chat-textarea:focus {
+  border-color: #4F46E5;
+  background: #fff;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(79,70,229,0.1);
+}
 
 /* Chat input row */
 .chat-input-row {

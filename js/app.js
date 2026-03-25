@@ -3595,6 +3595,9 @@ async function sendChatMessage() {
   const message = input.value.trim();
   if (!message) return;
 
+  // Floating chat panel'i aç (kapalıysa)
+  if (typeof openFloatingChat === 'function') openFloatingChat();
+
   input.value = '';
   autoResizeChatInput(input);
   sendBtn.disabled = true;
