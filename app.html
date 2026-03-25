@@ -349,6 +349,12 @@
     <span style="font-size:11px;color:#94a3b8;margin-right:4px;" id="selectionInfo"></span>
   </div>
 
+  <!-- Hidden elements kept for JS compatibility -->
+  <div id="formulaBar" style="display:none">
+    <input id="cellRef" value="A1" readonly>
+    <input id="formulaInput">
+  </div>
+
   <!-- GRID -->
   <div id="gridWrap" oncontextmenu="showCtx(event)">
     <table id="grid"></table>
@@ -371,6 +377,8 @@
       </div>
     </div>
   </div>
+
+  <div id="sheetTabs" style="display:none"></div>
 
   <!-- STATUS BAR -->
   <div id="statusBar">
