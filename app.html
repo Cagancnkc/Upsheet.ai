@@ -77,154 +77,115 @@
 /* ── YENİ CHAT BAR ── */
 .chat-input-area {
   padding: 12px 16px 16px;
-  background: var(--bg-primary, #fff);
+  background: #fff;
   border-top: 1px solid rgba(0,0,0,0.08);
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 16px;
 }
 
-/* Hızlı komut chip'leri */
+/* Suggested actions — 2 kolon grid */
 .quick-actions {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-  padding-bottom: 2px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  padding-bottom: 4px;
 }
 .quick-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  background: #F3F4F6;
-  border: 1.5px solid #E5E7EB;
-  border-radius: 100px;
-  padding: 5px 12px;
-  font-size: 12px;
-  font-weight: 500;
-  color: #374151;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  white-space: nowrap;
-  user-select: none;
-}
-.quick-chip:hover {
-  background: #4F46E5;
-  border-color: #4F46E5;
-  color: white;
-  transform: translateY(-1px);
-}
-
-/* Input satırı */
-.chat-input-row {
-  display: flex;
-  align-items: flex-end;
-  gap: 8px;
-  background: #F9FAFB;
-  border: 1.5px solid #E5E7EB;
-  border-radius: 16px;
-  padding: 8px 8px 8px 14px;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-.chat-input-row:focus-within {
-  border-color: #4F46E5;
-  box-shadow: 0 0 0 3px rgba(79,70,229,0.08);
+  text-align: left;
+  border: 1px solid #D1D5DB;
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 13px;
   background: #fff;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  transition: background 0.15s;
 }
+.quick-chip:hover { background: #F3F4F6; }
+.quick-chip .chip-title { font-weight: 600; color: #111827; }
+.quick-chip .chip-sub   { color: #6B7280; font-size: 12px; }
+
+/* Attachment previews */
+.attachment-preview-bar { display: flex; gap: 12px; flex-wrap: wrap; overflow-x: auto; }
+.attachment-chip { display: flex; flex-direction: column; gap: 4px; }
+.attachment-chip-thumb {
+  width: 80px; height: 64px; border-radius: 8px;
+  background: #E5E7EB; border: 1px solid #D1D5DB;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden; position: relative;
+}
+.attachment-chip-thumb img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1); }
+.attachment-chip-thumb .file-ext { font-size: 11px; color: #6B7280; text-align: center; padding: 4px; }
+.attachment-chip-remove {
+  position: absolute; top: -6px; right: -6px; width: 18px; height: 18px;
+  border-radius: 50%; background: #fff; border: 1px solid #D1D5DB;
+  cursor: pointer; font-size: 11px; display: flex; align-items: center; justify-content: center;
+  color: #374151;
+}
+.attachment-chip-remove:hover { background: #FEE2E2; border-color: #EF4444; color: #EF4444; }
+.attachment-chip-name { font-size: 11px; color: #6B7280; max-width: 80px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Textarea wrapper */
+.chat-textarea-wrap { position: relative; width: 100%; }
+
+/* Textarea */
 .chat-textarea {
-  flex: 1;
-  border: none;
-  outline: none;
-  background: transparent;
-  font-family: inherit;
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 56px;
+  max-height: calc(75vh);
+  border: 1.5px solid #D1D5DB;
+  border-radius: 16px;
+  background: #F3F4F6;
+  padding: 10px 14px 44px 14px;
   font-size: 14px;
-  color: #0D0D2B;
+  font-family: inherit;
+  color: #111827;
   resize: none;
-  min-height: 24px;
-  max-height: 120px;
+  outline: none;
   overflow-y: auto;
   line-height: 1.5;
-  padding: 2px 0;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
 }
 .chat-textarea::placeholder { color: #9CA3AF; }
+.chat-textarea:focus {
+  border-color: #374151;
+  box-shadow: 0 0 0 3px rgba(0,0,0,0.06);
+  background: #fff;
+}
 
-/* Attach butonu */
+/* Sol-alt: attach butonu */
+.chat-bottom-left { position: absolute; bottom: 8px; left: 8px; }
 .chat-attach-btn {
-  width: 34px;
-  height: 34px;
-  border-radius: 10px;
-  border: 1.5px solid #E5E7EB;
-  background: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px;
+  border-radius: 8px 8px 6px 8px;
+  border: 1.5px solid #D1D5DB;
+  background: #fff;
+  cursor: pointer; color: #6B7280;
   transition: all 0.15s;
-  color: #6B7280;
 }
-.chat-attach-btn:hover {
-  border-color: #4F46E5;
-  color: #4F46E5;
-  background: #F5F5FF;
-}
+.chat-attach-btn:hover { background: #F3F4F6; border-color: #374151; color: #111827; }
+.chat-attach-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-/* Gönder butonu */
+/* Sağ-alt: send butonu */
+.chat-bottom-right { position: absolute; bottom: 8px; right: 8px; }
 .chat-send-btn {
-  width: 34px;
-  height: 34px;
-  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px;
+  border-radius: 50%;
   border: none;
-  background: #4F46E5;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background: #111827;
+  color: #fff;
   cursor: pointer;
-  flex-shrink: 0;
-  transition: all 0.15s;
+  transition: background 0.15s;
 }
-.chat-send-btn:hover:not(:disabled) {
-  background: #4338CA;
-  transform: translateY(-1px);
-}
-.chat-send-btn:disabled {
-  background: #D1D5DB;
-  cursor: not-allowed;
-  transform: none;
-}
-.chat-send-btn.loading {
-  background: #4F46E5;
-  cursor: not-allowed;
-}
-
-/* Dosya eklenti önizleme */
-.attachment-preview-bar {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-.attachment-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: #EEF2FF;
-  border: 1px solid #C7D2FE;
-  border-radius: 8px;
-  padding: 4px 10px;
-  font-size: 12px;
-  color: #4F46E5;
-  font-weight: 500;
-}
-.attachment-chip button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: #818CF8;
-  font-size: 14px;
-  padding: 0;
-  line-height: 1;
-}
-.attachment-chip button:hover { color: #ef4444; }
+.chat-send-btn:hover:not(:disabled) { background: #374151; }
+.chat-send-btn:disabled { background: #D1D5DB; cursor: not-allowed; }
+.chat-send-btn.loading { background: #374151; cursor: not-allowed; }
 </style>
 </head>
 <body>
@@ -453,50 +414,31 @@
   <!-- Yeni chat bar -->
   <div class="chat-input-area">
 
-    <!-- Hızlı komutlar -->
+    <!-- Suggested actions — 2 kolon grid -->
     <div class="quick-actions">
       <button class="quick-chip" onclick="fillChatInput(this)">
-        📊 B sütununu topla
+        <span class="chip-title">B sütununu topla</span>
+        <span class="chip-sub">ve C1'e yaz</span>
       </button>
       <button class="quick-chip" onclick="fillChatInput(this)">
-        🧹 Boş satırları sil
+        <span class="chip-title">Boş satırları sil</span>
+        <span class="chip-sub">veriyi temizle</span>
       </button>
       <button class="quick-chip" onclick="fillChatInput(this)">
-        🔴 Negatif değerleri kırmızıya boya
+        <span class="chip-title">Negatif değerleri kırmızıya boya</span>
+        <span class="chip-sub">koşullu biçimlendirme</span>
       </button>
       <button class="quick-chip" onclick="fillChatInput(this)">
-        📈 A sütununu küçükten büyüğe sırala
-      </button>
-      <button class="quick-chip" onclick="fillChatInput(this)">
-        💰 KDV dahil fiyatları hesapla
-      </button>
-      <button class="quick-chip" onclick="fillChatInput(this)">
-        📋 Verilerin özetini çıkar
+        <span class="chip-title">A sütununu sırala</span>
+        <span class="chip-sub">küçükten büyüğe</span>
       </button>
     </div>
 
-    <!-- Dosya önizleme (eklenti varsa görünür) -->
+    <!-- Attachment previews -->
     <div class="attachment-preview-bar" id="attachmentPreviewBar"></div>
 
-    <!-- Input satırı -->
-    <div class="chat-input-row">
-
-      <!-- Paperclip (dosya ekle) -->
-      <button class="chat-attach-btn"
-              onclick="document.getElementById('chatFileInput').click()"
-              title="Dosya ekle">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-          <path fill-rule="evenodd" clip-rule="evenodd"
-            d="M10.86 1.71a2.57 2.57 0 0 0-1.82.75L2.79 8.7a3.5 3.5 0 1 0 4.95 4.95l6.24-6.24 1.06 1.06-6.24 6.24a5 5 0 1 1-7.07-7.07L8 1.39A4.07 4.07 0 1 1 13.76 7l-6.3 6.24a2.5 2.5 0 1 1-3.53-3.54l5.76-5.75 1.06 1.06-5.76 5.75a1 1 0 1 0 1.41 1.42L12.7 6a2.07 2.07 0 0 0-1.84-3.5z"
-            fill="currentColor"/>
-        </svg>
-      </button>
-
-      <input type="file" id="chatFileInput" style="display:none"
-             accept=".xlsx,.xls,.csv,.txt,.json"
-             multiple onchange="handleChatAttachment(this)">
-
-      <!-- Textarea -->
+    <!-- Textarea wrapper (relative — butonlar içinde absolute) -->
+    <div class="chat-textarea-wrap">
       <textarea
         id="chatInput"
         class="chat-textarea"
@@ -506,15 +448,33 @@
         oninput="autoResizeChatInput(this)"
       ></textarea>
 
-      <!-- Gönder -->
-      <button class="chat-send-btn" id="chatSendBtn"
-              onclick="sendChatMessage()" title="Gönder (Enter)">
-        <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-          <path fill-rule="evenodd" clip-rule="evenodd"
-            d="M8.707 1.396a1 1 0 0 0-1.414 0L2.22 6.47 1.69 7l1.06 1.06.53-.53L7 3.56V14.25a.75.75 0 0 0 1.5 0V3.56l3.72 3.97.53.53L13.81 7l-.53-.53-4.573-5.074z"
-            fill="currentColor"/>
-        </svg>
-      </button>
+      <!-- Sol-alt: dosya ekle -->
+      <div class="chat-bottom-left">
+        <button class="chat-attach-btn"
+                onclick="document.getElementById('chatFileInput').click()"
+                title="Dosya ekle">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" style="transform:rotate(-45deg)">
+            <path fill-rule="evenodd" clip-rule="evenodd"
+              d="M10.86 1.71a2.57 2.57 0 0 0-1.82.75L2.79 8.7a3.5 3.5 0 1 0 4.95 4.95l6.24-6.24 1.06 1.06-6.24 6.24a5 5 0 1 1-7.07-7.07L8 1.39A4.07 4.07 0 1 1 13.76 7l-6.3 6.24a2.5 2.5 0 1 1-3.53-3.54l5.76-5.75 1.06 1.06-5.76 5.75a1 1 0 1 0 1.41 1.42L12.7 6a2.07 2.07 0 0 0-1.84-3.5z"
+              fill="currentColor"/>
+          </svg>
+        </button>
+        <input type="file" id="chatFileInput" style="display:none"
+               accept=".xlsx,.xls,.csv,.txt,.json"
+               multiple onchange="handleChatAttachment(this)">
+      </div>
+
+      <!-- Sağ-alt: gönder -->
+      <div class="chat-bottom-right">
+        <button class="chat-send-btn" id="chatSendBtn"
+                onclick="sendChatMessage()" title="Gönder (Enter)">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+            <path fill-rule="evenodd" clip-rule="evenodd"
+              d="M8.707 1.396a1 1 0 0 0-1.414 0L2.22 6.47 1.69 7l1.06 1.06.53-.53L7 3.56V14.25a.75.75 0 0 0 1.5 0V3.56l3.72 3.97.53.53L13.81 7l-.53-.53-4.573-5.074z"
+              fill="currentColor"/>
+          </svg>
+        </button>
+      </div>
     </div>
 
   </div>

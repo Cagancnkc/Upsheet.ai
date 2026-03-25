@@ -3530,9 +3530,12 @@ function removeToast(toastEl) {
 function fillChatInput(chip) {
   const input = document.getElementById('chatInput');
   if (!input) return;
-  const text = chip.textContent.trim()
-    .replace(/^[\u{1F300}-\u{1FAFF}\u{2600}-\u{27FF}\s]+/gu, '')
-    .trim();
+  const titleEl = chip.querySelector('.chip-title');
+  const text = titleEl
+    ? titleEl.textContent.trim()
+    : chip.textContent.trim()
+        .replace(/^[\u{1F300}-\u{1FAFF}\u{2600}-\u{27FF}\s]+/gu, '')
+        .trim();
   input.value = text;
   input.focus();
   autoResizeChatInput(input);
