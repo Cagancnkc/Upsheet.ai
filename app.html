@@ -76,12 +76,19 @@
 
 /* ── YENİ CHAT BAR ── */
 .chat-input-area {
-  padding: 12px 16px 16px;
+  position: fixed;
+  bottom: 20px;
+  right: 24px;
+  width: 360px;
+  z-index: 999;
   background: #fff;
-  border-top: 1px solid rgba(0,0,0,0.08);
+  border-radius: 16px;
+  border: 1px solid #E5E7EB;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+  padding: 12px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 8px;
 }
 
 /* Suggested actions — 2 kolon grid */
@@ -135,7 +142,7 @@
 .chat-textarea {
   width: 100%;
   box-sizing: border-box;
-  min-height: 56px;
+  min-height: 44px;
   max-height: calc(75vh);
   border: 1.5px solid #D1D5DB;
   border-radius: 16px;
@@ -410,26 +417,6 @@
 
   <!-- Yeni chat bar -->
   <div class="chat-input-area">
-
-    <!-- Suggested actions — 2 kolon grid -->
-    <div class="quick-actions">
-      <button class="quick-chip" onclick="fillChatInput(this)">
-        <span class="chip-title">B sütununu topla</span>
-        <span class="chip-sub">ve C1'e yaz</span>
-      </button>
-      <button class="quick-chip" onclick="fillChatInput(this)">
-        <span class="chip-title">Boş satırları sil</span>
-        <span class="chip-sub">veriyi temizle</span>
-      </button>
-      <button class="quick-chip" onclick="fillChatInput(this)">
-        <span class="chip-title">Negatif değerleri kırmızıya boya</span>
-        <span class="chip-sub">koşullu biçimlendirme</span>
-      </button>
-      <button class="quick-chip" onclick="fillChatInput(this)">
-        <span class="chip-title">A sütununu sırala</span>
-        <span class="chip-sub">küçükten büyüğe</span>
-      </button>
-    </div>
 
     <!-- Attachment previews -->
     <div class="attachment-preview-bar" id="attachmentPreviewBar"></div>
