@@ -837,6 +837,7 @@ function handleFile(e) {
       const fileNameInputEl = document.getElementById('fileNameInput');
       if (fileNameInputEl) fileNameInputEl.value = file.name;
       document.title = 'ExcelAI — ' + file.name;
+      updateToolbarFilename(file.name);
       addRecentFile(file.name);
       renderSheetTabs();
 
@@ -3706,3 +3707,52 @@ function handleCompareFile(input, role) {
 }
 
 /* cache bust Sat Mar 14 19:03:28 TSS 2026 */
+
+// ═══════════════════════════════════════════════════════════════
+//  UI REDESIGN — Minimal toolbar, sidebar, floating chat panel
+// ═══════════════════════════════════════════════════════════════
+
+// Toolbar wrapper aliases
+function undoAction() { if (typeof undo === 'function') undo(); }
+function redoAction() { /* redo henüz uygulanmadı */ }
+function exportFile() { if (typeof downloadFile === 'function') downloadFile(); }
+
+// Toolbar dosya adı güncelleyici
+function updateToolbarFilename(name) {
+  var el = document.getElementById('toolbarFilename');
+  if (el) el.textContent = name || 'Dosya yüklenmedi';
+}
+
+// Chat panelini aç/kapat
+function toggleChatPanel() {
+  var panel = document.getElementById('chatPanel');
+  var badge = document.getElementById('chatFabBadge');
+  if (!panel) return;
+  var isOpen = panel.classList.contains('open');
+  panel.classList.toggle('open');
+  if (!isOpen) {
+    if (badge) badge.style.display = 'none';
+    setTimeout(function() {
+      var inp = document.getElementById('chatInput');
+      if (inp) inp.focus();
+    }, 200);
+  }
+}
+
+// Yeni mesaj balonu oluştur (addMsg'yi override etmeden yeni isim)
+function addMessage(text, role) {
+  var container = document.getElementById('chatMessages');
+  if (!container) return;
+  var welcome = container.querySelector('.chat-welcome');
+  if (welcome) welcome.remove();
+  var msg = document.createElement('div');
+  msg.className = 'chat-msg ' + role;
+  msg.innerHTML = '<div class="chat-msg-bubble">' + text + '</div>';
+  container.appendChild(msg);
+  container.scrollTop = container.scrollHeight;
+  var panel = document.getElementById('chatPanel');
+  var badge = document.getElementById('chatFabBadge');
+  if (role === 'ai' && badge && (!panel || !panel.classList.contains('open'))) {
+    badge.style.display = 'flex';
+  }
+}

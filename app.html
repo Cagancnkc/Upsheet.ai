@@ -18,6 +18,572 @@
 <link rel="stylesheet" href="css/style.css">
 <script src="api.js"></script>
 <style>
+/* ── TEMA DEĞİŞKENLERİ ── */
+:root {
+  --app-bg: #F7F7F5;
+  --sidebar-bg: #FBFBFA;
+  --sidebar-border: #E8E8E5;
+  --toolbar-bg: #FFFFFF;
+  --toolbar-border: #EBEBEA;
+  --grid-bg: #FFFFFF;
+  --grid-border: #E8E8E5;
+  --grid-header-bg: #F7F7F5;
+  --cell-hover: #F1F1EF;
+  --cell-selected: #E8F0FE;
+  --cell-selected-border: #4F46E5;
+  --text-primary: #1A1A1A;
+  --text-secondary: #6B6B6B;
+  --text-muted: #9B9B9B;
+  --accent: #4F46E5;
+  --accent-light: #EEF2FF;
+  --success: #22c55e;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
+}
+
+body {
+  background: var(--app-bg);
+  font-family: -apple-system, BlinkMacSystemFont,
+               'Inter', 'Segoe UI', sans-serif;
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── TOOLBAR ── */
+.app-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 48px;
+  padding: 0 12px;
+  background: var(--toolbar-bg);
+  border-bottom: 1px solid var(--toolbar-border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  gap: 8px;
+}
+.toolbar-left, .toolbar-right, .toolbar-center {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+.toolbar-left { flex: 1; }
+.toolbar-center { flex: 2; justify-content: center; }
+.toolbar-right { flex: 1; justify-content: flex-end; gap: 4px; }
+.toolbar-logo {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  text-decoration: none;
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+.toolbar-logo:hover { background: var(--cell-hover); }
+.toolbar-logo img { border-radius: 4px; }
+.toolbar-filename {
+  font-size: 13px;
+  color: var(--text-secondary);
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 2px 6px;
+}
+.toolbar-divider {
+  width: 1px;
+  height: 20px;
+  background: var(--toolbar-border);
+  margin: 0 4px;
+  flex-shrink: 0;
+}
+.tb-app-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 8px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+.tb-app-btn:hover {
+  background: var(--cell-hover);
+  color: var(--text-primary);
+}
+.tb-app-btn-icon { padding: 5px 6px; }
+.tb-app-btn-danger:hover { background: #FEF2F2; color: var(--danger); }
+.toolbar-status {
+  font-size: 12px;
+  color: var(--text-muted);
+  padding: 3px 8px;
+  background: var(--app-bg);
+  border-radius: 100px;
+}
+
+/* ── SIDEBAR ── */
+.app-sidebar {
+  width: 220px;
+  min-height: 100%;
+  background: var(--sidebar-bg);
+  border-right: 1px solid var(--sidebar-border);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: width 0.2s ease;
+  flex-shrink: 0;
+}
+.app-sidebar.collapsed {
+  width: 0;
+  overflow: hidden;
+}
+.sidebar-toggle {
+  position: absolute;
+  top: 8px;
+  right: -14px;
+  width: 24px;
+  height: 24px;
+  background: var(--toolbar-bg);
+  border: 1px solid var(--sidebar-border);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  color: var(--text-muted);
+  transition: color 0.15s, background 0.15s;
+}
+.sidebar-toggle:hover {
+  color: var(--text-primary);
+  background: var(--cell-hover);
+}
+.sidebar-inner {
+  padding: 8px 0;
+  overflow-y: auto;
+  flex: 1;
+}
+.sidebar-section {
+  padding: 0 8px 12px;
+}
+.sidebar-section-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  padding: 8px 8px 4px;
+}
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 7px 10px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 450;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.12s, color 0.12s;
+}
+.sidebar-item:hover {
+  background: var(--cell-hover);
+  color: var(--text-primary);
+}
+.sidebar-item-primary {
+  background: var(--accent-light);
+  color: var(--accent);
+  font-weight: 500;
+}
+.sidebar-item-primary:hover {
+  background: var(--accent);
+  color: white;
+}
+.sidebar-item.active {
+  background: var(--accent-light);
+  color: var(--accent);
+  font-weight: 500;
+}
+.sidebar-sheet-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  margin-bottom: 4px;
+}
+.sidebar-sheet-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background 0.12s;
+}
+.sidebar-sheet-item:hover { background: var(--cell-hover); }
+.sidebar-sheet-item.active {
+  background: var(--accent-light);
+  color: var(--accent);
+  font-weight: 500;
+}
+.sidebar-version-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.sidebar-version-item {
+  padding: 5px 10px;
+  font-size: 11px;
+  color: var(--text-muted);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background 0.12s;
+}
+.sidebar-version-item:hover {
+  background: var(--cell-hover);
+  color: var(--text-primary);
+}
+.sidebar-empty {
+  font-size: 12px;
+  color: var(--text-muted);
+  padding: 4px 10px;
+  font-style: italic;
+}
+
+/* ── GRİD ── */
+.grid-container {
+  flex: 1;
+  overflow: auto;
+  background: var(--grid-bg);
+  border-radius: 0;
+}
+.grid-table {
+  border-collapse: collapse;
+  width: max-content;
+  min-width: 100%;
+  font-size: 13px;
+}
+.grid-table th {
+  background: var(--grid-header-bg);
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 6px 10px;
+  border: 1px solid var(--grid-border);
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  min-width: 80px;
+  text-align: center;
+  user-select: none;
+}
+.grid-table th:first-child {
+  min-width: 40px;
+  width: 40px;
+  left: 0;
+  z-index: 3;
+  text-align: center;
+}
+.grid-table td {
+  border: 1px solid var(--grid-border);
+  padding: 5px 10px;
+  min-width: 80px;
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--text-primary);
+  transition: background 0.1s;
+  cursor: cell;
+  height: 28px;
+}
+.grid-table td:first-child {
+  background: var(--grid-header-bg);
+  color: var(--text-muted);
+  font-size: 11px;
+  text-align: center;
+  width: 40px;
+  min-width: 40px;
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  cursor: default;
+  user-select: none;
+}
+.grid-table td:hover { background: var(--cell-hover); }
+.grid-table td.selected {
+  background: var(--cell-selected) !important;
+  outline: 2px solid var(--cell-selected-border);
+  outline-offset: -2px;
+}
+.grid-table input.cell-edit {
+  border: none;
+  outline: none;
+  background: transparent;
+  width: 100%;
+  font-size: 13px;
+  font-family: inherit;
+  color: var(--text-primary);
+  padding: 0;
+}
+
+/* ── CHAT FAB & PANEL ── */
+.chat-fab {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: white;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(79,70,229,0.35);
+  z-index: 1000;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.chat-fab:hover {
+  transform: scale(1.08);
+  box-shadow: 0 6px 28px rgba(79,70,229,0.45);
+}
+.chat-fab-badge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 16px;
+  height: 16px;
+  background: var(--danger);
+  border-radius: 50%;
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid white;
+}
+.chat-panel {
+  position: fixed;
+  bottom: 84px;
+  right: 24px;
+  width: 340px;
+  height: 480px;
+  background: var(--toolbar-bg);
+  border: 1px solid var(--sidebar-border);
+  border-radius: 16px;
+  box-shadow: var(--shadow-md), 0 12px 40px rgba(0,0,0,0.12);
+  display: flex;
+  flex-direction: column;
+  z-index: 999;
+  transform: scale(0.95) translateY(10px);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1),
+              opacity 0.2s ease;
+  overflow: hidden;
+}
+.chat-panel.open {
+  transform: scale(1) translateY(0);
+  opacity: 1;
+  pointer-events: all;
+}
+.chat-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--sidebar-border);
+  flex-shrink: 0;
+}
+.chat-panel-title {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.chat-panel-actions {
+  display: flex;
+  gap: 2px;
+}
+.chat-panel-btn {
+  width: 26px;
+  height: 26px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.12s, color 0.12s;
+}
+.chat-panel-btn:hover {
+  background: var(--cell-hover);
+  color: var(--text-primary);
+}
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  scroll-behavior: smooth;
+}
+.chat-welcome {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 8px;
+  text-align: center;
+}
+.chat-welcome-icon { font-size: 32px; }
+.chat-welcome-text {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+.chat-welcome-examples {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+  margin-top: 4px;
+}
+.chat-example {
+  background: var(--app-bg);
+  border: 1px solid var(--grid-border);
+  border-radius: var(--radius-sm);
+  padding: 7px 10px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.12s;
+}
+.chat-example:hover {
+  background: var(--accent-light);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.chat-msg {
+  display: flex;
+  flex-direction: column;
+  max-width: 85%;
+}
+.chat-msg.user { align-self: flex-end; }
+.chat-msg.ai { align-self: flex-start; }
+.chat-msg-bubble {
+  padding: 8px 12px;
+  border-radius: 12px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.chat-msg.user .chat-msg-bubble {
+  background: var(--accent);
+  color: white;
+  border-bottom-right-radius: 4px;
+}
+.chat-msg.ai .chat-msg-bubble {
+  background: var(--app-bg);
+  color: var(--text-primary);
+  border: 1px solid var(--grid-border);
+  border-bottom-left-radius: 4px;
+}
+.chat-input-area-panel {
+  padding: 10px 12px 12px;
+  border-top: 1px solid var(--sidebar-border);
+  flex-shrink: 0;
+}
+.chat-input-row-panel {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  background: var(--app-bg);
+  border: 1.5px solid var(--grid-border);
+  border-radius: 10px;
+  padding: 6px 6px 6px 12px;
+  transition: border-color 0.2s;
+}
+.chat-input-row-panel:focus-within {
+  border-color: var(--accent);
+  background: white;
+}
+.chat-textarea-panel {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--text-primary);
+  resize: none;
+  min-height: 20px;
+  max-height: 80px;
+  line-height: 1.5;
+}
+.chat-textarea-panel::placeholder { color: var(--text-muted); }
+.chat-send-btn-panel {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: none;
+  background: var(--accent);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s, transform 0.1s;
+}
+.chat-send-btn-panel:hover:not(:disabled) {
+  background: #4338CA;
+  transform: scale(1.05);
+}
+.chat-send-btn-panel:disabled {
+  background: var(--grid-border);
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .chat-panel {
+    width: calc(100vw - 32px);
+    right: 16px;
+    bottom: 80px;
+  }
+  .chat-fab { bottom: 16px; right: 16px; }
+}
+
 /* ── TOAST BİLDİRİM ── */
 .toast-container {
   position: fixed;
@@ -239,81 +805,189 @@
   </button>
 </div>
 
+<header class="app-toolbar">
+  <div class="toolbar-left">
+    <!-- Logo -->
+    <a href="index.html" class="toolbar-logo">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="22" height="22" style="border-radius:4px;flex-shrink:0;">
+        <rect width="100" height="100" fill="black"/>
+        <path d="M 30 65 Q 28 40 50 28 Q 65 22 75 32 L 68 40 Q 60 33 50 37 Q 35 45 36 63 Z" fill="white"/>
+      </svg>
+      <span>Mocksheet</span>
+    </a>
+    <div class="toolbar-divider"></div>
+    <!-- Dosya adı -->
+    <div class="toolbar-filename" id="toolbarFilename">Dosya yüklenmedi</div>
+  </div>
+
+  <div class="toolbar-center">
+    <button class="tb-app-btn" onclick="triggerUpload()" title="Dosya Aç">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+        <polyline points="14 2 14 8 20 8"/>
+      </svg>
+      <span>Aç</span>
+    </button>
+    <button class="tb-app-btn" onclick="exportFile()" title="Dışa Aktar">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+        <polyline points="7 10 12 15 17 10"/>
+        <line x1="12" y1="15" x2="12" y2="3"/>
+      </svg>
+      <span>İndir</span>
+    </button>
+    <div class="toolbar-divider"></div>
+    <button class="tb-app-btn" onclick="undoAction()" title="Geri Al">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="9 14 4 9 9 4"/>
+        <path d="M20 20v-7a4 4 0 0 0-4-4H4"/>
+      </svg>
+    </button>
+    <button class="tb-app-btn" onclick="redoAction()" title="Yeniden Yap">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="15 14 20 9 15 4"/>
+        <path d="M4 20v-7a4 4 0 0 1 4-4h12"/>
+      </svg>
+    </button>
+    <div class="toolbar-divider"></div>
+    <button class="tb-app-btn" onclick="generateAutoReport()" title="Otomatik Rapor">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/>
+        <line x1="9" y1="21" x2="9" y2="9"/>
+      </svg>
+      <span>Rapor</span>
+    </button>
+    <button class="tb-app-btn" onclick="showCompareModal()" title="Rakip Analizi">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="18" y1="20" x2="18" y2="10"/>
+        <line x1="12" y1="20" x2="12" y2="4"/>
+        <line x1="6" y1="20" x2="6" y2="14"/>
+      </svg>
+      <span>Analiz</span>
+    </button>
+  </div>
+
+  <div class="toolbar-right">
+    <div class="toolbar-status" id="appStatusBar">Hazır</div>
+    <button class="tb-app-btn tb-app-btn-icon" onclick="toggleTheme()" title="Tema">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="5"/>
+        <line x1="12" y1="1" x2="12" y2="3"/>
+        <line x1="12" y1="21" x2="12" y2="23"/>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+        <line x1="1" y1="12" x2="3" y2="12"/>
+        <line x1="21" y1="12" x2="23" y2="12"/>
+      </svg>
+    </button>
+    <button class="tb-app-btn tb-app-btn-icon tb-app-btn-danger" onclick="logOut()" title="Çıkış">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+        <polyline points="16 17 21 12 16 7"/>
+        <line x1="21" y1="12" x2="9" y2="12"/>
+      </svg>
+    </button>
+  </div>
+</header>
+
 <div id="main">
 
 <!-- SIDEBAR -->
-<div id="sidebar">
-  <div style="height:52px;display:flex;align-items:center;padding:0 16px;border-bottom:1px solid #1e1e1e;gap:8px;flex-shrink:0;">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" style="width:24px;height:24px;border-radius:5px;flex-shrink:0;">
-      <rect width="100" height="100" fill="black"/>
-      <path d="M 30 65 Q 28 40 50 28 Q 65 22 75 32 L 68 40 Q 60 33 50 37 Q 35 45 36 63 Z" fill="white"/>
+<aside class="app-sidebar" id="sidebar">
+
+  <!-- Sidebar toggle -->
+  <button class="sidebar-toggle" id="sbCollapseBtn"
+          onclick="toggleSidebar()" title="Sidebar'ı gizle/göster">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="2">
+      <rect x="3" y="3" width="18" height="18" rx="2"/>
+      <line x1="9" y1="3" x2="9" y2="21"/>
     </svg>
-    <span style="font-weight:700;font-size:15px;color:#ffffff;">MockSheets</span>
-  </div>
-  <!-- Header: logo + collapse -->
-  <div class="sb-header">
-    <a href="index.html" class="sb-logo">
-      <span class="sb-logo-accent"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" style="width:24px;height:24px;border-radius:5px;flex-shrink:0;"><rect width="100" height="100" fill="black"/><path d="M 30 65 Q 28 40 50 28 Q 65 22 75 32 L 68 40 Q 60 33 50 37 Q 35 45 36 63 Z" fill="white"/></svg></span>
-      <span class="sb-logo-text">MockSheets</span>
-    </a>
-    <div id="sbCollapseBtn" onclick="toggleSidebar()" title="Kenar çubuğunu daralt">
-      <svg id="sbCollapseIcon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-    </div>
-  </div>
+  </button>
 
-  <div class="sb-scroll">
-    <!-- FILES -->
-    <div class="sb-group">
-      <div class="sb-label">Dosyalar</div>
-      <div class="sb-new" onclick="newFile()" title="Yeni Dosya">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Yeni Dosya
-      </div>
-      <div class="sb-new" onclick="triggerUpload()" title="Dosya Yükle">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-        Dosya Yükle
-      </div>
-      <div id="recentFiles"></div>
+  <div class="sidebar-inner">
+
+    <!-- Dosya yükle -->
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Dosya</div>
+      <button class="sidebar-item sidebar-item-primary"
+              onclick="triggerUpload()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="17 8 12 3 7 8"/>
+          <line x1="12" y1="3" x2="12" y2="15"/>
+        </svg>
+        <span>Dosya Yükle</span>
+      </button>
     </div>
 
-    <!-- SHEETS -->
-    <div class="sb-group">
-      <div class="sb-label">Sheet'ler</div>
-      <div id="sbSheetList"></div>
-      <div class="sb-new" style="margin-top:4px" onclick="addSheet()" title="Yeni Sheet">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Yeni Sheet
+    <!-- Sheet sekmeleri -->
+    <div class="sidebar-section" id="sheetTabsSection">
+      <div class="sidebar-section-label">Sayfalar</div>
+      <div class="sidebar-sheet-list" id="sidebarSheetList"></div>
+      <!-- Mevcut sbSheetList alias -->
+      <div id="sbSheetList" style="display:none"></div>
+      <button class="sidebar-item" onclick="addSheet()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="8" x2="12" y2="16"/>
+          <line x1="8" y1="12" x2="16" y2="12"/>
+        </svg>
+        <span>Sayfa Ekle</span>
+      </button>
+    </div>
+
+    <!-- Araçlar -->
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Araçlar</div>
+      <button class="sidebar-item" onclick="generateAutoReport()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="18" height="18" rx="2"/>
+          <line x1="3" y1="9" x2="21" y2="9"/>
+          <line x1="9" y1="21" x2="9" y2="9"/>
+        </svg>
+        <span>Otomatik Rapor</span>
+      </button>
+      <button class="sidebar-item" onclick="showCompareModal()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="20" x2="18" y2="10"/>
+          <line x1="12" y1="20" x2="12" y2="4"/>
+          <line x1="6" y1="20" x2="6" y2="14"/>
+        </svg>
+        <span>Rakip Analizi</span>
+      </button>
+      <button class="sidebar-item" onclick="exportFile()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="7 10 12 15 17 10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        <span>Excel İndir</span>
+      </button>
+      <button class="sidebar-item" onclick="openFindReplace()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <span>Bul &amp; Değiştir</span>
+      </button>
+    </div>
+
+    <!-- Versiyon geçmişi -->
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Geçmiş</div>
+      <div class="sidebar-version-list" id="vhList">
+        <div id="vhEmpty" class="sidebar-empty">Henüz işlem yok</div>
       </div>
     </div>
 
-    <!-- TOOLS -->
-    <div class="sb-group">
-      <div class="sb-label">Araçlar</div>
-      <div class="sb-item" onclick="openFindReplace()" title="Bul &amp; Değiştir">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        Bul &amp; Değiştir
-      </div>
-      <div class="sb-item" onclick="sortData()" title="Sırala">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-        Sırala
-      </div>
-      <div class="sb-item" onclick="clearHighlights()" title="Temizle">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>
-        Temizle
-      </div>
-      <div class="sb-item" onclick="showCompareModal()" title="Rakip Karşılaştırması">
-        📊 Rakip Karşılaştırması
-      </div>
-    </div>
-
-    <!-- VERSION HISTORY -->
-    <div class="sb-group">
-      <div class="sb-label">Geçmiş</div>
-      <div id="vhList"><div id="vhEmpty" style="font-size:12px;color:#4a4a5a;font-style:italic;padding:4px 10px;">Henüz işlem yok</div></div>
-    </div>
-  </div>
-
-  <div class="sb-footer">
+    <!-- Ayarlar (gizli, mevcut JS için) -->
     <div id="settingsMenu" class="settings-menu" style="display:none">
       <div class="settings-header">
         <span>⚙️ Ayarlar</span>
@@ -327,20 +1001,22 @@
         <span>🚪 Çıkış Yap</span>
       </div>
     </div>
-    <div class="user-row" onclick="openSettings()">
-      <div class="avatar">EA</div>
-      <div class="user-info-sb">
-        <div class="user-name-sb">Kullanıcı</div>
-        <div class="user-role-sb">⚡ AI Pro</div>
-      </div>
-      <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#4a4a5a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-    </div>
-    <div class="sb-storage">
-      <div class="sb-storage-label">Depolama: 2.3 MB / 100 MB</div>
-      <div class="sb-storage-bar"><div class="sb-storage-fill"></div></div>
+
+  </div>
+
+  <!-- Kullanıcı satırı (mevcut JS için korundu) -->
+  <div class="user-row" onclick="openSettings()" style="padding:8px 12px;border-top:1px solid var(--sidebar-border);">
+    <div class="avatar">EA</div>
+    <div class="user-info-sb">
+      <div class="user-name-sb">Kullanıcı</div>
+      <div class="user-role-sb">⚡ AI Pro</div>
     </div>
   </div>
-</div>
+
+  <!-- Gizli eski ID'ler (JS uyumu için) -->
+  <div id="recentFiles" style="display:none"></div>
+
+</aside>
 
 <!-- CONTENT -->
 <div id="content">
@@ -397,8 +1073,8 @@
   </div>
 
   <!-- GRID -->
-  <div id="gridWrap" oncontextmenu="showCtx(event)">
-    <table id="grid"></table>
+  <div id="gridWrap" class="grid-container" oncontextmenu="showCtx(event)">
+    <table id="grid" class="grid-table"></table>
     <div id="emptyState">
       <div class="es-icon">
         <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
@@ -450,65 +1126,104 @@
     <span id="stCount" style="display:none"></span>
   </div>
 
-  <!-- Yeni chat bar -->
-  <div class="chat-input-area">
+  <!-- Eski chat input alanı kaldırıldı; floating panel aşağıda -->
 
-    <!-- Hızlı komutlar -->
-    <div class="quick-actions">
-      <button class="quick-chip" onclick="fillChatInput(this)">
-        📊 B sütununu topla
+</div>
+</div>
+
+<!-- Chat FAB butonu (her zaman görünür, sağ alt) -->
+<button class="chat-fab" id="chatFab" onclick="toggleChatPanel()"
+        title="AI Asistan">
+  <svg id="chatFabIcon" width="20" height="20" viewBox="0 0 24 24"
+       fill="none" stroke="currentColor" stroke-width="2">
+    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+  </svg>
+  <span class="chat-fab-badge" id="chatFabBadge" style="display:none">!</span>
+</button>
+
+<!-- Chat paneli -->
+<div class="chat-panel" id="chatPanel">
+
+  <!-- Panel header -->
+  <div class="chat-panel-header">
+    <div class="chat-panel-title">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+      </svg>
+      <span>AI Asistan</span>
+    </div>
+    <div class="chat-panel-actions">
+      <button class="chat-panel-btn" onclick="clearChat()" title="Temizle">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2">
+          <polyline points="3 6 5 6 21 6"/>
+          <path d="M19 6l-1 14H6L5 6"/>
+        </svg>
       </button>
-      <button class="quick-chip" onclick="fillChatInput(this)">
-        🧹 Boş satırları sil
-      </button>
-      <button class="quick-chip" onclick="fillChatInput(this)">
-        🔴 Negatif değerleri kırmızıya boya
-      </button>
-      <button class="quick-chip" onclick="fillChatInput(this)">
-        📈 A sütununu küçükten büyüğe sırala
-      </button>
-      <button class="quick-chip" onclick="fillChatInput(this)">
-        💰 KDV dahil fiyatları hesapla
-      </button>
-      <button class="quick-chip" onclick="fillChatInput(this)">
-        📋 Verilerin özetini çıkar
+      <button class="chat-panel-btn" onclick="toggleChatPanel()" title="Kapat">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
       </button>
     </div>
+  </div>
 
-    <!-- Dosya önizleme (eklenti varsa görünür) -->
-    <div class="attachment-preview-bar" id="attachmentPreviewBar"></div>
+  <!-- Mesajlar -->
+  <div class="chat-messages" id="chatMessages">
+    <div class="chat-welcome">
+      <div class="chat-welcome-icon">🤖</div>
+      <div class="chat-welcome-text">
+        Merhaba! Excel verinizi Türkçe komutlarla yönetebilirsiniz.
+      </div>
+      <div class="chat-welcome-examples">
+        <div onclick="fillChatInput(this)" class="chat-example">
+          📊 B sütununu topla
+        </div>
+        <div onclick="fillChatInput(this)" class="chat-example">
+          🧹 Boş satırları sil
+        </div>
+        <div onclick="fillChatInput(this)" class="chat-example">
+          🔴 Negatif değerleri kırmızıya boya
+        </div>
+        <div onclick="fillChatInput(this)" class="chat-example">
+          💰 KDV dahil fiyatları hesapla
+        </div>
+      </div>
+    </div>
+  </div>
 
-    <!-- Input satırı -->
-    <div class="chat-input-row">
+  <!-- Eklenti önizleme (mevcut JS uyumu için) -->
+  <div class="attachment-preview-bar" id="attachmentPreviewBar" style="padding:0 12px;"></div>
 
-      <!-- Paperclip (dosya ekle) -->
-      <button class="chat-attach-btn"
+  <!-- Chat input alanı -->
+  <div class="chat-input-area-panel">
+    <div class="chat-input-row-panel">
+      <!-- Paperclip -->
+      <button style="background:none;border:none;cursor:pointer;color:var(--text-muted);display:flex;align-items:center;padding:2px;"
               onclick="document.getElementById('chatFileInput').click()"
               title="Dosya ekle">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
           <path fill-rule="evenodd" clip-rule="evenodd"
             d="M10.86 1.71a2.57 2.57 0 0 0-1.82.75L2.79 8.7a3.5 3.5 0 1 0 4.95 4.95l6.24-6.24 1.06 1.06-6.24 6.24a5 5 0 1 1-7.07-7.07L8 1.39A4.07 4.07 0 1 1 13.76 7l-6.3 6.24a2.5 2.5 0 1 1-3.53-3.54l5.76-5.75 1.06 1.06-5.76 5.75a1 1 0 1 0 1.41 1.42L12.7 6a2.07 2.07 0 0 0-1.84-3.5z"
             fill="currentColor"/>
         </svg>
       </button>
-
       <input type="file" id="chatFileInput" style="display:none"
              accept=".xlsx,.xls,.csv,.txt,.json"
              multiple onchange="handleChatAttachment(this)">
-
-      <!-- Textarea -->
       <textarea
         id="chatInput"
-        class="chat-textarea"
-        placeholder="Bir komut yazın... (ör: B sütununu topla ve C1'e yaz)"
+        class="chat-textarea-panel"
+        placeholder="Komut yazın... (Enter ile gönder)"
         rows="1"
         onkeydown="handleChatKeydown(event)"
         oninput="autoResizeChatInput(this)"
       ></textarea>
-
-      <!-- Gönder -->
-      <button class="chat-send-btn" id="chatSendBtn"
-              onclick="sendChatMessage()" title="Gönder (Enter)">
+      <button class="chat-send-btn-panel" id="chatSendBtn"
+              onclick="sendChatMessage()">
         <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
           <path fill-rule="evenodd" clip-rule="evenodd"
             d="M8.707 1.396a1 1 0 0 0-1.414 0L2.22 6.47 1.69 7l1.06 1.06.53-.53L7 3.56V14.25a.75.75 0 0 0 1.5 0V3.56l3.72 3.97.53.53L13.81 7l-.53-.53-4.573-5.074z"
@@ -516,10 +1231,8 @@
         </svg>
       </button>
     </div>
-
   </div>
 
-</div>
 </div>
 
 <!-- CONTEXT MENU -->
