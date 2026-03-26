@@ -3,950 +3,479 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MockSheets — Formül Bilmeden Excel Kullan</title>
+<title>Mocksheet — Excel'i 12x Hızlandır</title>
 <link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#3B3BF9">
+<meta name="theme-color" content="#4F46E5">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="MockSheets">
+<meta name="apple-mobile-web-app-title" content="Mocksheet">
 <link rel="apple-touch-icon" href="/icon-192.png">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%233B3BF9' rx='20'/><path d='M 30 65 Q 28 40 50 28 Q 65 22 75 32 L 68 40 Q 60 33 50 37 Q 35 45 36 63 Z' fill='white'/></svg>">
-<meta name="description" content="MockSheets ile formül yazmadan Excel'i kontrol et. Türkçe yazın, AI uygulasın. Ücretsiz deneyin.">
-<meta property="og:title" content="MockSheets — Formül Bilmeden Excel Kullan">
-<meta property="og:description" content="Doğal dil ile Excel'i kontrol et. Formül yok, karmaşıklık yok.">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='black' rx='20'/><path d='M 30 65 Q 28 40 50 28 Q 65 22 75 32 L 68 40 Q 60 33 50 37 Q 35 45 36 63 Z' fill='white'/></svg>">
+<meta name="description" content="Türkçe yazın, AI halleder. Formül yok, makro yok. Excel işlerini 12x daha hızlı bitirin.">
+<meta property="og:title" content="Mocksheet — Excel'i 12x Hızlandır">
+<meta property="og:description" content="Türkçe yazın, AI halleder. Formül yok, makro yok.">
 <meta property="og:url" content="https://upsheet-ai.vercel.app">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="MockSheets — Formül Bilmeden Excel Kullan">
-<!-- Sora Font -->
+<meta name="twitter:title" content="Mocksheet — Excel'i 12x Hızlandır">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/landing.css">
 </head>
 <body>
 
-<!-- ============================================================
-     NAVBAR
-     ============================================================ -->
-<nav class="navbar" id="navbar">
-  <div class="container">
-    <div class="nav-inner">
+<!-- NAVBAR -->
+<nav class="lp-nav">
+  <a href="index.html" class="lp-nav-logo">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" style="width:26px;height:26px;border-radius:5px;flex-shrink:0;">
+      <rect width="100" height="100" fill="black"/>
+      <path d="M 30 65 Q 28 40 50 28 Q 65 22 75 32 L 68 40 Q 60 33 50 37 Q 35 45 36 63 Z" fill="white"/>
+    </svg>
+    <span>Mocksheet</span>
+  </a>
+  <div class="lp-nav-links">
+    <a href="#features">Özellikler</a>
+    <a href="#pricing">Fiyatlar</a>
+    <a href="#testimonials">Kullanıcılar</a>
+    <a href="auth.html">Giriş Yap</a>
+  </div>
+  <a href="auth.html" class="lp-nav-cta">Ücretsiz Başla</a>
+</nav>
 
-      <!-- Logo -->
-      <a href="index.html" class="nav-logo">
-        <img src="images/logo.png" alt="MockSheets"
-             class="nav-logo-img" width="28" height="28">
-        <span class="nav-logo-text">MockSheets</span>
-      </a>
+<!-- HERO -->
+<section class="lp-hero">
+  <div class="lp-hero-badge">
+    <span>🤖 AI ile Excel</span>
+  </div>
 
-      <!-- Orta linkler -->
-      <div class="nav-links">
-        <a href="#pain" class="nav-link">Sorunlar</a>
-        <a href="#how" class="nav-link">Nasıl Çalışır</a>
-        <a href="#pricing" class="nav-link">Fiyatlar</a>
-        <a href="#testimonials" class="nav-link">Kullanıcılar</a>
-      </div>
+  <h1 class="lp-hero-h1">
+    Excel işlerini<br>
+    <span class="lp-gradient-text">12x daha hızlı</span> bitir.
+  </h1>
 
-      <!-- Sağ CTA -->
-      <div class="nav-actions">
-        <a href="auth.html" class="nav-signin">Giriş Yap</a>
-        <a href="auth.html" class="btn-primary nav-cta">
-          Ücretsiz Başla
-        </a>
-      </div>
+  <p class="lp-hero-sub">
+    Türkçe yaz, AI halleder. Formül yok, makro yok,
+    saat süren işler dakikalara iniyor.
+  </p>
 
-      <!-- Mobil hamburger -->
-      <button class="nav-hamburger" id="navHamburger">
-        <span></span><span></span><span></span>
-      </button>
+  <div class="lp-hero-ctas">
+    <a href="auth.html" class="lp-btn-primary">
+      Ücretsiz Dene
+    </a>
+    <a href="#features" class="lp-btn-ghost">
+      Nasıl çalışır? →
+    </a>
+  </div>
+
+  <div class="lp-hero-proof">
+    <div class="lp-proof-item">
+      <strong>⭐ 4.9/5</strong>
+      <span>847+ kullanıcı</span>
+    </div>
+    <div class="lp-proof-divider"></div>
+    <div class="lp-proof-item">
+      <strong>🇹🇷 Türkçe</strong>
+      <span>Tam destek</span>
+    </div>
+    <div class="lp-proof-divider"></div>
+    <div class="lp-proof-item">
+      <strong>⚡ 12x</strong>
+      <span>Daha hızlı</span>
     </div>
   </div>
 
-  <!-- Mobil menü -->
-  <div class="nav-mobile" id="navMobile">
-    <a href="#pain">Sorunlar</a>
-    <a href="#how">Nasıl Çalışır</a>
-    <a href="#pricing">Fiyatlar</a>
-    <a href="#testimonials">Kullanıcılar</a>
-    <a href="auth.html" class="btn-primary">Ücretsiz Başla</a>
+  <div class="lp-hero-mockup">
+    <div class="lp-mockup-bar">
+      <span class="lp-mockup-dot r"></span>
+      <span class="lp-mockup-dot y"></span>
+      <span class="lp-mockup-dot g"></span>
+      <span class="lp-mockup-title">Mocksheet — AI Excel</span>
+    </div>
+    <div class="lp-mockup-body">
+      <div class="lp-mockup-chat">
+        <div class="lp-chat-msg user">B sütununu topla ve C1'e yaz</div>
+        <div class="lp-chat-msg ai">✓ B sütunu toplamı hesaplandı → C1: 48.750 ₺</div>
+        <div class="lp-chat-msg user">Negatif değerleri kırmızıya boya</div>
+        <div class="lp-chat-msg ai">✓ 3 hücre kırmızıya boyandı</div>
+        <div class="lp-chat-msg user">KDV dahil fiyatları hesapla</div>
+        <div class="lp-chat-msg ai">✓ %20 KDV eklendi, 127 satır güncellendi</div>
+      </div>
+    </div>
   </div>
-</nav>
+</section>
 
-<!-- ============================================================
-     HERO
-     ============================================================ -->
-<section class="hero-section">
-  <div class="container">
-    <div class="hero-content">
+<!-- AKAN YAZI EFEKTİ -->
+<section class="lp-flowing-text" id="features">
+  <div class="lp-container">
+    <div class="lp-flow-line">
+      <span class="flow-word active">Mocksheet'te</span>
+      <span class="flow-word active">biz</span>
+      <span class="flow-word dim">Excel'i</span>
+      <span class="flow-word dim">yönetme</span>
+      <span class="flow-word dim">şeklini</span>
+    </div>
+    <div class="lp-flow-line">
+      <span class="flow-word dim">tamamen</span>
+      <span class="flow-word dim">yeniden</span>
+      <span class="flow-word dim">tasarlıyoruz.</span>
+    </div>
+    <div class="lp-flow-spacer"></div>
+    <div class="lp-flow-line">
+      <span class="flow-word dim">En son</span>
+      <span class="flow-word dim">AI modellerini</span>
+      <span class="flow-word dim">kullanarak</span>
+    </div>
+    <div class="lp-flow-line">
+      <span class="flow-word dim">verini</span>
+      <span class="flow-word dim">analiz</span>
+      <span class="flow-word dim">ediyoruz,</span>
+    </div>
+    <div class="lp-flow-line">
+      <span class="flow-word dim">raporlar</span>
+      <span class="flow-word dim">oluşturuyoruz</span>
+      <span class="flow-word dim">ve</span>
+      <span class="flow-word dim">düzenliyoruz.</span>
+    </div>
+    <div class="lp-flow-spacer"></div>
+    <div class="lp-flow-line">
+      <span class="flow-word dim">Böylece</span>
+      <span class="flow-word dim">sen</span>
+      <span class="flow-word dim">işin</span>
+      <span class="flow-word dim">gerçek</span>
+    </div>
+    <div class="lp-flow-line">
+      <span class="flow-word dim">kısmına</span>
+      <span class="flow-word dim">odaklanabilirsin.</span>
+    </div>
+  </div>
+</section>
 
-      <!-- Sosyal kanıt rozeti -->
-      <div class="hero-badge reveal">
-        <span class="hero-badge-stars">⭐⭐⭐⭐⭐</span>
-        <span>847+ kullanıcı · 4.9/5 puan</span>
+<!-- MARQUEE -->
+<section class="lp-marquee-section">
+  <p class="lp-marquee-label">Kullanıcılarımızın en çok kullandığı komutlar</p>
+  <div class="lp-marquee-wrapper">
+    <div class="lp-marquee-track">
+      <div class="lp-marquee-chip">📊 B sütununu topla</div>
+      <div class="lp-marquee-chip">🧹 Boş satırları sil</div>
+      <div class="lp-marquee-chip">💰 KDV hesapla</div>
+      <div class="lp-marquee-chip">🔴 Negatifleri kırmızıya boya</div>
+      <div class="lp-marquee-chip">📈 A'dan Z'ye sırala</div>
+      <div class="lp-marquee-chip">📋 Aylık rapor oluştur</div>
+      <div class="lp-marquee-chip">🔍 En yüksek 5 değeri bul</div>
+      <div class="lp-marquee-chip">💼 Net maaş hesapla</div>
+      <div class="lp-marquee-chip">📊 B sütununu topla</div>
+      <div class="lp-marquee-chip">🧹 Boş satırları sil</div>
+      <div class="lp-marquee-chip">💰 KDV hesapla</div>
+      <div class="lp-marquee-chip">🔴 Negatifleri kırmızıya boya</div>
+      <div class="lp-marquee-chip">📈 A'dan Z'ye sırala</div>
+      <div class="lp-marquee-chip">📋 Aylık rapor oluştur</div>
+      <div class="lp-marquee-chip">🔍 En yüksek 5 değeri bul</div>
+      <div class="lp-marquee-chip">💼 Net maaş hesapla</div>
+    </div>
+  </div>
+  <div class="lp-marquee-wrapper lp-marquee-reverse">
+    <div class="lp-marquee-track">
+      <div class="lp-marquee-chip dark">⚡ Tekrarları kaldır</div>
+      <div class="lp-marquee-chip dark">📉 Trend analizi yap</div>
+      <div class="lp-marquee-chip dark">🎯 Pivot tablo oluştur</div>
+      <div class="lp-marquee-chip dark">💡 Anomali tespit et</div>
+      <div class="lp-marquee-chip dark">📅 Tarihleri formatla</div>
+      <div class="lp-marquee-chip dark">✏️ Büyük harfe çevir</div>
+      <div class="lp-marquee-chip dark">🔗 Sütunları birleştir</div>
+      <div class="lp-marquee-chip dark">📊 SGK hesapla</div>
+      <div class="lp-marquee-chip dark">⚡ Tekrarları kaldır</div>
+      <div class="lp-marquee-chip dark">📉 Trend analizi yap</div>
+      <div class="lp-marquee-chip dark">🎯 Pivot tablo oluştur</div>
+      <div class="lp-marquee-chip dark">💡 Anomali tespit et</div>
+      <div class="lp-marquee-chip dark">📅 Tarihleri formatla</div>
+      <div class="lp-marquee-chip dark">✏️ Büyük harfe çevir</div>
+      <div class="lp-marquee-chip dark">🔗 Sütunları birleştir</div>
+      <div class="lp-marquee-chip dark">📊 SGK hesapla</div>
+    </div>
+  </div>
+</section>
+
+<!-- BENTO FEATURES -->
+<section class="lp-features">
+  <div class="lp-container">
+    <h2 class="lp-section-title">
+      Sadece bir araç değil.<br>
+      <span class="lp-gradient-text">Tam bir Excel asistanı.</span>
+    </h2>
+
+    <div class="lp-bento">
+
+      <div class="lp-bento-card lp-bento-large">
+        <div class="lp-bento-tag">🤖 AI Motoru</div>
+        <h3>Türkçe yaz,<br>AI anlasın</h3>
+        <p>Formül bilmeden Excel yönet.
+        "KDV ekle", "sırala", "temizle" — hepsi çalışıyor.</p>
+        <div class="lp-bento-demo">
+          <div class="lp-demo-row">
+            <span class="lp-demo-cmd">→ "Aylık satış ortalamasını hesapla"</span>
+          </div>
+          <div class="lp-demo-row success">
+            <span>✓ Ortalama: 24.840 ₺ (127 satır analiz edildi)</span>
+          </div>
+          <div class="lp-demo-row">
+            <span class="lp-demo-cmd">→ "En düşük 3 değeri kırmızıya boya"</span>
+          </div>
+          <div class="lp-demo-row success">
+            <span>✓ 3 hücre kırmızıya boyandı</span>
+          </div>
+        </div>
       </div>
 
-      <!-- Dönen başlık -->
-      <h1 class="hero-title reveal">
-        <span class="hero-title-static">Excel verini </span>
-        <span class="hero-title-rotating" id="rotatingText"></span>
-      </h1>
-
-      <!-- Alt başlık -->
-      <p class="hero-subtitle reveal">
-        MockSheets kullananlar aynı işi 12 kat daha hızlı bitiriyor.<br>
-        Türkçe yaz, AI halleder.
-      </p>
-
-      <!-- CTA butonları -->
-      <div class="hero-cta-group reveal">
-        <a href="auth.html" class="btn-primary hero-cta-btn">
-          ⚡ Ücretsiz Denememi Başlat
-        </a>
-        <a href="auth.html" onclick="googleLogin()"
-           class="btn-secondary hero-cta-btn">
-          <img src="https://www.svgrepo.com/show/475656/google-color.svg"
-               width="18" height="18" alt="Google">
-          Google ile Başla
-        </a>
+      <div class="lp-bento-card">
+        <div class="lp-bento-tag">💰 Muhasebe</div>
+        <h3>Türk vergi<br>sistemi dahil</h3>
+        <p>KDV, SGK, gelir vergisi, kıdem tazminatı — hepsi hazır.</p>
+        <div class="lp-bento-pills">
+          <span>KDV %20</span>
+          <span>SGK %14</span>
+          <span>Net Maaş</span>
+          <span>Kıdem</span>
+        </div>
       </div>
 
-      <!-- Mikro kopya -->
-      <p class="hero-micro reveal">
-        <span>✓ Kredi kartı gerekmez</span>
-        <span>✓ 2 dakikada hazır</span>
-        <span>✓ İstediğin zaman iptal</span>
-      </p>
-
-      <!-- AI Input Block -->
-      <div class="ai-input-block">
-
-        <p class="ai-input-label">Excel'de ne yapmak istiyorsun?</p>
-
-        <div class="ai-input-wrapper">
-          <span class="ai-input-icon">✨</span>
-          <input
-            type="text"
-            id="aiCommandInput"
-            class="ai-input-field"
-            placeholder="Örn: B sütununu topla ve sonucu C1'e yaz"
-            autocomplete="off"
-          />
-          <button class="ai-input-btn" onclick="runAICommand()">
-            Çalıştır →
-          </button>
+      <div class="lp-bento-card">
+        <div class="lp-bento-tag">📊 Rapor</div>
+        <h3>Otomatik<br>rapor oluştur</h3>
+        <p>Tek komutla aylık, haftalık veya günlük raporlar.</p>
+        <div class="lp-bento-stat">
+          <span class="lp-stat-num">3 dk</span>
+          <span class="lp-stat-label">Eskiden 3 saat</span>
         </div>
+      </div>
 
-        <div class="ai-chips">
-          <button class="ai-chip" onclick="fillInput(this)">
-            📊 Aylık rapor oluştur
-          </button>
-          <button class="ai-chip" onclick="fillInput(this)">
-            🧹 Veriyi temizle
-          </button>
-          <button class="ai-chip" onclick="fillInput(this)">
-            📈 Grafik oluştur
-          </button>
-          <button class="ai-chip" onclick="fillInput(this)">
-            🔍 En yüksek değeri bul
-          </button>
-          <button class="ai-chip" onclick="fillInput(this)">
-            ⚠️ Hataları tespit et
-          </button>
-          <button class="ai-chip" onclick="fillInput(this)">
-            💰 KDV hesapla
-          </button>
+      <div class="lp-bento-card">
+        <div class="lp-bento-tag">🧹 Temizlik</div>
+        <h3>Dağınık veriyi<br>saniyede düzelt</h3>
+        <p>Boş satır, tekrar, format hatası — hepsini otomatik temizle.</p>
+      </div>
+
+      <div class="lp-bento-card">
+        <div class="lp-bento-tag">🔒 Güvenlik</div>
+        <h3>KVKK uyumlu,<br>veriler güvende</h3>
+        <p>Dosyalarınız sunucumuzda saklanmaz. Tamamen güvenli.</p>
+        <div class="lp-bento-badges">
+          <span>🔒 SSL</span>
+          <span>🇹🇷 KVKK</span>
+          <span>✅ Güvenli</span>
         </div>
-
       </div>
 
     </div>
   </div>
 </section>
 
-
-<!-- Stats Bar -->
-<section class="stats-section">
-  <div class="container">
-    <div class="stats-grid">
-      <div class="stat-item reveal">
-        <div class="stat-number">12x</div>
-        <div class="stat-label">Daha hızlı veri düzenleme</div>
+<!-- İSTATİSTİKLER -->
+<section class="lp-stats">
+  <div class="lp-container">
+    <div class="lp-stats-grid">
+      <div class="lp-stat-item">
+        <div class="lp-stat-big">12x</div>
+        <div class="lp-stat-desc">Daha hızlı veri düzenleme</div>
       </div>
-      <div class="stat-item reveal">
-        <div class="stat-number">18 saat</div>
-        <div class="stat-label">Haftada kazanılan zaman</div>
+      <div class="lp-stat-item">
+        <div class="lp-stat-big">18 saat</div>
+        <div class="lp-stat-desc">Haftada kazanılan ortalama süre</div>
       </div>
-      <div class="stat-item reveal">
-        <div class="stat-number">%87</div>
-        <div class="stat-label">Daha az hata oranı</div>
+      <div class="lp-stat-item">
+        <div class="lp-stat-big">%87</div>
+        <div class="lp-stat-desc">Daha az formül hatası</div>
+      </div>
+      <div class="lp-stat-item">
+        <div class="lp-stat-big">847+</div>
+        <div class="lp-stat-desc">Aktif kullanıcı</div>
       </div>
     </div>
-    <p class="stats-source">
-      * MockSheets beta kullanıcı anketi 2025
+    <p class="lp-stats-source">* Mocksheet beta kullanıcı anketi 2025</p>
+  </div>
+</section>
+
+<!-- TESTİMONIALS -->
+<section class="lp-testimonials" id="testimonials">
+  <div class="lp-container">
+    <p class="lp-marquee-label">Kullanıcılar ne diyor?</p>
+    <h2 class="lp-section-title">
+      Gerçek insanlar,<br>gerçek sonuçlar.
+    </h2>
+
+    <div class="lp-testi-grid">
+      <div class="lp-testi-card lp-testi-featured">
+        <div class="lp-testi-metric">23 saat</div>
+        <div class="lp-testi-metric-label">Aylık kazanılan zaman</div>
+        <p>"Artık aynı KDV raporunu 4 dakikada hazırlıyorum. Eskiden yarım günümü alıyordu."</p>
+        <div class="lp-testi-author">
+          <div class="lp-testi-avatar">AK</div>
+          <div>
+            <div class="lp-testi-name">Ayşe K.</div>
+            <div class="lp-testi-role">Mali Müşavir · İstanbul</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="lp-testi-card">
+        <div class="lp-testi-metric">10x</div>
+        <div class="lp-testi-metric-label">Daha hızlı rapor</div>
+        <p>"Çalışanım Excel bilmiyordu. Mocksheet'i verdim, artık bağımsız çalışıyor."</p>
+        <div class="lp-testi-author">
+          <div class="lp-testi-avatar">MT</div>
+          <div>
+            <div class="lp-testi-name">Mehmet T.</div>
+            <div class="lp-testi-role">KOBİ Sahibi · Ankara</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="lp-testi-card">
+        <div class="lp-testi-metric">%50</div>
+        <div class="lp-testi-metric-label">Daha az hata</div>
+        <p>"30 dakikalık pivot işini 3 dakikada yapıyorum. Hayat kurtarıcı."</p>
+        <div class="lp-testi-author">
+          <div class="lp-testi-avatar">ZA</div>
+          <div>
+            <div class="lp-testi-name">Zeynep A.</div>
+            <div class="lp-testi-role">Finans Analisti · İzmir</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FİYATLANDIRMA -->
+<section class="lp-pricing" id="pricing">
+  <div class="lp-container">
+    <h2 class="lp-section-title">
+      Basit fiyatlandırma,<br>
+      <span class="lp-gradient-text">karmaşık değil.</span>
+    </h2>
+
+    <div class="lp-pricing-grid">
+      <div class="lp-price-card">
+        <div class="lp-price-plan">Başlangıç</div>
+        <div class="lp-price-amount">
+          <span class="lp-price-num">Ücretsiz</span>
+        </div>
+        <ul class="lp-price-features">
+          <li>✓ 5 AI komut/gün</li>
+          <li>✓ Temel temizleme</li>
+          <li>✓ CSV &amp; Excel desteği</li>
+          <li class="dim">✗ Muhasebe formülleri</li>
+          <li class="dim">✗ Otomatik rapor</li>
+        </ul>
+        <a href="auth.html" class="lp-btn-ghost lp-btn-full">Başla</a>
+      </div>
+
+      <div class="lp-price-card lp-price-featured">
+        <div class="lp-price-badge">En Popüler</div>
+        <div class="lp-price-plan">Pro</div>
+        <div class="lp-price-amount">
+          <span class="lp-price-num">₺149</span>
+          <span class="lp-price-period">/ay</span>
+        </div>
+        <ul class="lp-price-features">
+          <li>✓ Sınırsız AI komut</li>
+          <li>✓ Tüm temizleme araçları</li>
+          <li>✓ KDV, SGK, Maaş hesaplama</li>
+          <li>✓ Otomatik rapor</li>
+          <li>✓ Rakip analizi</li>
+        </ul>
+        <a href="auth.html" class="lp-btn-primary lp-btn-full">Hemen Başla</a>
+      </div>
+
+      <div class="lp-price-card">
+        <div class="lp-price-plan">İş</div>
+        <div class="lp-price-amount">
+          <span class="lp-price-num">₺399</span>
+          <span class="lp-price-period">/ay</span>
+        </div>
+        <ul class="lp-price-features">
+          <li>✓ Pro'daki her şey</li>
+          <li>✓ Ekip hesabı (5 kullanıcı)</li>
+          <li>✓ Öncelikli destek</li>
+          <li>✓ API erişimi</li>
+          <li>✓ Özel entegrasyon</li>
+        </ul>
+        <a href="auth.html" class="lp-btn-ghost lp-btn-full">İletişime Geç</a>
+      </div>
+    </div>
+
+    <p class="lp-pricing-note">
+      ✓ Kredi kartı gerekmez &nbsp;·&nbsp;
+      ✓ 14 gün para iade garantisi &nbsp;·&nbsp;
+      ✓ İstediğin zaman iptal
     </p>
   </div>
 </section>
 
-<!-- ============================================================
-     SOCIAL PROOF
-     ============================================================ -->
-<section class="social-proof">
-  <div class="container">
-    <div class="sp-top">
-      <div class="sp-badge">
-        <span class="sp-badge-dot"></span>
-        847+ aktif kullanıcı MockSheets'e güveniyor
-      </div>
-      <p class="sp-sub">Türkiye'nin önde gelen şirketleri ve freelancer'ları tarafından kullanılıyor</p>
-    </div>
-
-    <!-- Logo cloud -->
-    <div class="sp-logos">
-      <img src="https://svgl.app/library/claude-ai-wordmark-icon_light.svg" alt="Claude AI" loading="lazy">
-      <img src="https://svgl.app/library/supabase_wordmark_light.svg" alt="Supabase" loading="lazy">
-      <img src="https://svgl.app/library/github_wordmark_light.svg" alt="GitHub" loading="lazy">
-      <img src="https://svgl.app/library/vercel_wordmark.svg" alt="Vercel" loading="lazy">
-      <img src="https://svgl.app/library/openai_wordmark_light.svg" alt="OpenAI" loading="lazy">
-    </div>
-
-    <!-- Metrics -->
-    <div class="sp-metrics">
-      <div class="sp-metric reveal">
-        <div class="sp-metric-num">10x</div>
-        <div class="sp-metric-label">Daha hızlı işlem</div>
-      </div>
-      <div class="sp-metric reveal">
-        <div class="sp-metric-num">%90</div>
-        <div class="sp-metric-label">Daha az manuel iş</div>
-      </div>
-      <div class="sp-metric reveal">
-        <div class="sp-metric-num">0</div>
-        <div class="sp-metric-label">Formül bilgisi gerekli</div>
-      </div>
-      <div class="sp-metric reveal">
-        <div class="sp-metric-num">4.8★</div>
-        <div class="sp-metric-label">Ortalama puan</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ============================================================
-     FEATURES (ADIM 5)
-     ============================================================ -->
-<section id="features" class="features-section">
-  <div class="container">
-    <div class="features-header">
-      <div class="section-label reveal">ÖZELLİKLER</div>
-      <h2 class="reveal">Excel'de saatler harcadığınız işleri<br>dakikalara indiriyoruz</h2>
-      <p class="section-sub reveal">Türkçe yazın, AI uygulasın. Formül bilmek zorunda değilsiniz.</p>
-    </div>
-
-    <div class="feat-grid">
-
-      <!-- Kart 1: Komut yaz -->
-      <div class="feat-card reveal" data-delay="0">
-        <div class="feat-mockup">
-          <div class="feat-mockup-bar">
-            <div class="feat-mockup-dot r"></div>
-            <div class="feat-mockup-dot y"></div>
-            <div class="feat-mockup-dot g"></div>
-          </div>
-          <div class="mock-chat">
-            <div class="mock-chat-user">B sütununu topla ve alt satıra yaz</div>
-            <div class="mock-chat-ai">Anlıyorum... =SUM(B2:B312) formülü uygulandı ✓</div>
-            <div class="mock-chat-user">Şimdi ortalamasını da hesapla</div>
-            <div class="mock-chat-ai">Ortalama: 8.420 ₺ — C sütununa eklendi ✓</div>
-          </div>
-        </div>
-        <div class="feat-body">
-          <div class="feat-icon-tag">⚡ Anında</div>
-          <h3>Komut yaz, Excel çalışsın</h3>
-          <p>Formül yazmadan hesapla, sırala, filtrele. "B sütununu topla" gibi doğal cümleler yeterli.</p>
-        </div>
-      </div>
-
-      <!-- Kart 2: Veri analizi -->
-      <div class="feat-card reveal" data-delay="100">
-        <div class="feat-mockup">
-          <div class="feat-mockup-bar">
-            <div class="feat-mockup-dot r"></div>
-            <div class="feat-mockup-dot y"></div>
-            <div class="feat-mockup-dot g"></div>
-          </div>
-          <div class="mock-chart">
-            <div class="mock-bar-wrap">
-              <div class="mock-bar" style="height:55%"></div>
-              <div class="mock-bar-label">Oca</div>
-            </div>
-            <div class="mock-bar-wrap">
-              <div class="mock-bar" style="height:72%"></div>
-              <div class="mock-bar-label">Şub</div>
-            </div>
-            <div class="mock-bar-wrap">
-              <div class="mock-bar active" style="height:88%"></div>
-              <div class="mock-bar-label">Mar</div>
-            </div>
-            <div class="mock-bar-wrap">
-              <div class="mock-bar" style="height:65%"></div>
-              <div class="mock-bar-label">Nis</div>
-            </div>
-            <div class="mock-bar-wrap">
-              <div class="mock-bar active" style="height:95%"></div>
-              <div class="mock-bar-label">May</div>
-            </div>
-          </div>
-        </div>
-        <div class="feat-body">
-          <div class="feat-icon-tag">📊 Görsel</div>
-          <h3>Veriyi anında analiz et</h3>
-          <p>500 satırlık veriyi "özet çıkar ve grafik yap" yazarak dakikalar içinde analiz edin.</p>
-        </div>
-      </div>
-
-      <!-- Kart 3: Rapor -->
-      <div class="feat-card reveal" data-delay="200">
-        <div class="feat-mockup">
-          <div class="feat-mockup-bar">
-            <div class="feat-mockup-dot r"></div>
-            <div class="feat-mockup-dot y"></div>
-            <div class="feat-mockup-dot g"></div>
-          </div>
-          <table class="mock-table">
-            <tr><th>Ürün</th><th>Satış</th><th>Durum</th></tr>
-            <tr>
-              <td class="hl">Laptop</td>
-              <td class="hl">₺145K</td>
-              <td class="pos">▲ +28%</td>
-            </tr>
-            <tr>
-              <td class="hl">Telefon</td>
-              <td class="hl">₺111K</td>
-              <td class="pos">▲ +14%</td>
-            </tr>
-            <tr>
-              <td>Tablet</td>
-              <td>₺58K</td>
-              <td>→ 0%</td>
-            </tr>
-            <tr>
-              <td>Yazılım</td>
-              <td>₺41K</td>
-              <td class="neg">▼ -8%</td>
-            </tr>
-          </table>
-        </div>
-        <div class="feat-body">
-          <div class="feat-icon-tag">📋 Otomatik</div>
-          <h3>Otomatik rapor oluştur</h3>
-          <p>Her ay aynı raporu tekrar hazırlamak yok. Tek komutla profesyonel raporlar hazırlayın.</p>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-<!-- ============================================================
-     HOW IT WORKS (ADIM 6)
-     ============================================================ -->
-<section id="how" class="how-section">
-  <div class="container">
-    <div class="how-header">
-      <div class="section-label reveal">NASIL ÇALIŞIR</div>
-      <h2 class="reveal">4 adımda veriniz hazır</h2>
-      <p class="section-sub reveal">Kod yok. Formül yok. Sadece Türkçe yazın.</p>
-    </div>
-
-    <div class="steps-grid">
-      <div class="step-item reveal" data-delay="0">
-        <div class="step-num-circle">📂</div>
-        <div class="step-label">ADIM 01</div>
-        <h3>Dosyanı Yükle</h3>
-        <p>Excel veya CSV — hangi formatta olursa olsun</p>
-      </div>
-      <div class="step-item reveal" data-delay="100">
-        <div class="step-num-circle">💬</div>
-        <div class="step-label">ADIM 02</div>
-        <h3>Komutunu Yaz</h3>
-        <p>"Tekrar eden satırları sil", "aylık özet çıkar" gibi Türkçe komutlar</p>
-      </div>
-      <div class="step-item reveal" data-delay="200">
-        <div class="step-num-circle">🤖</div>
-        <div class="step-label">ADIM 03</div>
-        <h3>AI Veriyi İşler</h3>
-        <p>Claude AI komutunuzu analiz eder ve en doğru işlemi uygular</p>
-      </div>
-      <div class="step-item reveal" data-delay="300">
-        <div class="step-num-circle">✅</div>
-        <div class="step-label">ADIM 04</div>
-        <h3>Sonuç Hazır</h3>
-        <p>Değişiklikler otomatik uygulanır — indirin veya kaydedin</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ============================================================
-     USE CASES (ADIM 7)
-     ============================================================ -->
-<section id="usecases" class="usecases-section">
-  <div class="container">
-    <div class="usecases-header">
-      <div class="section-label reveal">KULLANIM ALANLARI</div>
-      <h2 class="reveal">Her sektörden profesyoneller kullanıyor</h2>
-      <p class="section-sub reveal">Finans, satış, stok veya kişisel kullanım — MockSheets hepsine uyar.</p>
-    </div>
-
-    <div class="usecases-grid">
-      <div class="usecase-card reveal" data-delay="0">
-        <div class="usecase-icon">💰</div>
-        <h3>Finans Takibi</h3>
-        <p>Aylık gelir/gider raporları, KDV hesaplamaları, bütçe takibi.</p>
-        <span class="usecase-tag">Mali Müşavirler</span>
-      </div>
-      <div class="usecase-card reveal" data-delay="80">
-        <div class="usecase-icon">📈</div>
-        <h3>Satış Raporu</h3>
-        <p>Satış performansı, hedef takibi, ürün bazlı analizler.</p>
-        <span class="usecase-tag">Satış Ekipleri</span>
-      </div>
-      <div class="usecase-card reveal" data-delay="160">
-        <div class="usecase-icon">📦</div>
-        <h3>Stok Yönetimi</h3>
-        <p>Stok takibi, sipariş yönetimi, düşük stok uyarıları.</p>
-        <span class="usecase-tag">KOBİ'ler</span>
-      </div>
-      <div class="usecase-card reveal" data-delay="240">
-        <div class="usecase-icon">🏠</div>
-        <h3>Kişisel Bütçe</h3>
-        <p>Aylık harcama takibi, tasarruf planı, abonelik yönetimi.</p>
-        <span class="usecase-tag">Bireysel Kullanım</span>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="testimonials-section" id="testimonials">
-  <div class="container">
-    <div class="section-header reveal">
-      <span class="section-label">Kullanıcılar</span>
-      <h2>Ayda ortalama 18 saat kazanıyorlar</h2>
-    </div>
-  </div>
-
-  <!-- Kayan carousel -->
-  <div class="testimonial-carousel-wrapper">
-    <div class="testimonial-track" id="testimonialTrack">
-
-      <div class="testimonial-card">
-        <div class="testimonial-metric">23 saat</div>
-        <div class="testimonial-metric-label">
-          Aylık kazanılan zaman
-        </div>
-        <p class="testimonial-quote">
-          "Artık aynı KDV raporunu 4 dakikada hazırlıyorum."
-        </p>
-        <div class="testimonial-author">
-          <div class="testimonial-avatar">AK</div>
-          <div>
-            <div class="testimonial-name">Ayşe K.</div>
-            <div class="testimonial-role">Mali Müşavir · İstanbul</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="testimonial-card">
-        <div class="testimonial-metric">%50</div>
-        <div class="testimonial-metric-label">
-          Daha az hata
-        </div>
-        <p class="testimonial-quote">
-          "Çalışanım Excel bilmiyordu. MockSheets'i verdim,
-          artık bağımsız çalışıyor."
-        </p>
-        <div class="testimonial-author">
-          <div class="testimonial-avatar">MT</div>
-          <div>
-            <div class="testimonial-name">Mehmet T.</div>
-            <div class="testimonial-role">KOBİ Sahibi · Ankara</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="testimonial-card">
-        <div class="testimonial-metric">10x</div>
-        <div class="testimonial-metric-label">
-          Daha hızlı rapor
-        </div>
-        <p class="testimonial-quote">
-          "30 dakikalık pivot işini 3 dakikada yapıyorum."
-        </p>
-        <div class="testimonial-author">
-          <div class="testimonial-avatar">ZA</div>
-          <div>
-            <div class="testimonial-name">Zeynep A.</div>
-            <div class="testimonial-role">Finans Analisti · İzmir</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="testimonial-card">
-        <div class="testimonial-metric">4 dk</div>
-        <div class="testimonial-metric-label">
-          Aylık rapor süresi
-        </div>
-        <p class="testimonial-quote">
-          "Eskiden 3 saat süren raporum artık 4 dakika."
-        </p>
-        <div class="testimonial-author">
-          <div class="testimonial-avatar">BK</div>
-          <div>
-            <div class="testimonial-name">Burak K.</div>
-            <div class="testimonial-role">Muhasebe Müdürü · Bursa</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Tekrar (infinite) -->
-      <div class="testimonial-card">
-        <div class="testimonial-metric">23 saat</div>
-        <div class="testimonial-metric-label">Aylık kazanılan zaman</div>
-        <p class="testimonial-quote">
-          "Artık aynı KDV raporunu 4 dakikada hazırlıyorum."
-        </p>
-        <div class="testimonial-author">
-          <div class="testimonial-avatar">AK</div>
-          <div>
-            <div class="testimonial-name">Ayşe K.</div>
-            <div class="testimonial-role">Mali Müşavir · İstanbul</div>
-          </div>
-        </div>
-      </div>
-      <div class="testimonial-card">
-        <div class="testimonial-metric">%50</div>
-        <div class="testimonial-metric-label">Daha az hata</div>
-        <p class="testimonial-quote">
-          "Çalışanım Excel bilmiyordu. MockSheets'i verdim."
-        </p>
-        <div class="testimonial-author">
-          <div class="testimonial-avatar">MT</div>
-          <div>
-            <div class="testimonial-name">Mehmet T.</div>
-            <div class="testimonial-role">KOBİ Sahibi · Ankara</div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-<!-- Pain Section -->
-<section class="pain-section" id="pain">
-  <div class="container">
-    <div class="section-header reveal">
-      <span class="section-label">Neden MockSheets?</span>
-      <h2>Excel başında kaç saat harcıyorsunuz?</h2>
-      <p class="section-subtitle">
-        Türkiye'de profesyoneller haftada ortalama 18 saat
-        Excel'de vakit kaybediyor.
-      </p>
-    </div>
-
-    <div class="pain-grid">
-      <div class="pain-card reveal">
-        <div class="pain-icon">😤</div>
-        <h3>Formül hatası — yine</h3>
-        <p>2 saatte yazdığınız DÜŞEY ARA formülü hata
-        veriyor. Nedeni bir hücre formatı farklıymış.</p>
-      </div>
-      <div class="pain-card reveal">
-        <div class="pain-icon">⏰</div>
-        <h3>Her ay aynı rapor</h3>
-        <p>Pazartesi sabahı gelir: aynı pivot, aynı
-        formüller. Değişen sadece sayılar.</p>
-      </div>
-      <div class="pain-card reveal">
-        <div class="pain-icon">🤯</div>
-        <h3>3.000 satır, sıfır düzen</h3>
-        <p>Müşteri listesi, stok, sipariş — hepsi aynı
-        dosyada, hiçbiri düzgün formatlanmış.</p>
-      </div>
-    </div>
-
-    <div class="pain-cta reveal">
-      <a href="auth.html" class="btn-primary">
-        ⚡ Ücretsiz Denememi Başlat
+<!-- SON CTA -->
+<section class="lp-final-cta">
+  <div class="lp-container">
+    <div class="lp-final-inner">
+      <h2>
+        Bu hafta kaç saat<br>
+        <span class="lp-gradient-text">Excel'de harcayacaksın?</span>
+      </h2>
+      <p>Ortalama kullanıcımız haftada 18 saat harcıyordu. Şimdi 1.5 saat.</p>
+      <a href="auth.html" class="lp-btn-primary lp-btn-large">
+        Ücretsiz Başla — Kredi Kartı Yok
       </a>
-      <p class="hero-micro">
-        <span>✓ Kredi kartı gerekmez</span>
-        <span>✓ 2 dakikada hazır</span>
-      </p>
-    </div>
-  </div>
-</section>
-
-<!-- ============================================================
-     PRICING (ADIM 9)
-     ============================================================ -->
-<section id="pricing" class="pricing-section">
-  <div class="container">
-    <div class="pricing-header">
-      <div class="section-label reveal">FİYATLANDIRMA</div>
-      <h2 class="reveal">Bir çalışanın saatlik maliyetinden az</h2>
-      <p class="reveal">Excel'de harcadığınız zamanın değeri aylık binlerce lira. Biz çok daha ucuzuz.</p>
-
-      <!-- Period Toggle -->
-      <div class="pricing-toggle">
-        <button class="ptog-btn" onclick="setPeriod('monthly')">Aylık</button>
-        <button class="ptog-btn" onclick="setPeriod('weekly')">Haftalık</button>
-        <button class="ptog-btn active" onclick="setPeriod('yearly')">
-          Yıllık
-          <span class="ptog-badge">%45 İndirim</span>
-        </button>
-      </div>
-    </div>
-
-    <div class="pricing-grid">
-
-      <!-- STARTER -->
-      <div class="pricing-card reveal" data-delay="0">
-        <div class="pc-plan">Starter</div>
-        <div class="pc-desc">Denemek isteyenler için</div>
-        <div class="pc-price">
-          <span class="pc-amount">$0</span>
-          <span class="pc-period">/sonsuza</span>
-        </div>
-        <div class="pc-divider"></div>
-        <ul class="pc-features">
-          <li>5 dosya/ay</li>
-          <li>10 AI sorgusu/ay</li>
-          <li>Max 500 satır</li>
-          <li>1 kullanıcı</li>
-          <li class="pc-no">Versiyon geçmişi yok</li>
-          <li class="pc-no">Öncelikli destek yok</li>
-        </ul>
-        <a href="auth.html" class="pc-btn pc-btn-outline">Ücretsiz Başla</a>
-        <div class="pc-trust">✓ Kredi kartı gerekmez</div>
-      </div>
-
-      <!-- PRO -->
-      <div class="pricing-card pricing-card-featured reveal" data-delay="100">
-        <div class="pc-popular">⭐ En Popüler</div>
-        <div class="pc-plan">Pro</div>
-        <div class="pc-desc">Bireysel kullanıcılar için</div>
-        <div class="pc-price">
-          <span class="pc-amount" id="proPrice">$8.25</span>
-          <span class="pc-period" id="proPeriod">/ay</span>
-        </div>
-        <div class="pc-tl" id="proTl">≈ ₺275/ay</div>
-        <div class="pc-saving" id="proSaving">2 ay ücretsiz · $81 tasarruf</div>
-        <div class="pc-divider"></div>
-        <ul class="pc-features">
-          <li>Sınırsız dosya</li>
-          <li>500 AI sorgusu/ay</li>
-          <li>Max 50.000 satır</li>
-          <li>Versiyon geçmişi</li>
-          <li>Öncelikli destek</li>
-          <li>1 kullanıcı</li>
-        </ul>
-        <a href="auth.html" class="pc-btn pc-btn-primary" id="proBtn">Pro'ya Geç →</a>
-        <div class="pc-trust">✓ 14 gün para iade garantisi</div>
-      </div>
-
-      <!-- MAX -->
-      <div class="pricing-card reveal" data-delay="200">
-        <div class="pc-plan">Max</div>
-        <div class="pc-desc">Takımlar ve firmalar için</div>
-        <div class="pc-price">
-          <span class="pc-amount" id="bizPrice">$24.99</span>
-          <span class="pc-period" id="bizPeriod">/ay</span>
-        </div>
-        <div class="pc-tl" id="bizTl">≈ ₺835/ay</div>
-        <div class="pc-saving" id="bizSaving">2 ay ücretsiz · $181 tasarruf</div>
-        <div class="pc-divider"></div>
-        <ul class="pc-features">
-          <li>Her şey Pro'da var +</li>
-          <li>5 kullanıcı</li>
-          <li>Sınırsız AI sorgusu</li>
-          <li>Paylaşımlı dosyalar</li>
-          <li>Admin paneli</li>
-          <li>Fatura / Invoice</li>
-        </ul>
-        <a href="auth.html" class="pc-btn pc-btn-outline" id="bizBtn">Max'a Geç →</a>
-        <div class="pc-trust">✓ 14 gün para iade garantisi</div>
-      </div>
-
-    </div>
-
-    <div class="pricing-note">
-      ✓ Kredi kartı gerekmez &nbsp;·&nbsp; ✓ İstediğin zaman iptal &nbsp;·&nbsp; ✓ 14 gün para iade garantisi
-    </div>
-
-    <div class="money-back">
-      <div class="money-back-icon">🛡️</div>
-      <h3>14 Gün Para İade Garantisi</h3>
-      <p>Memnun kalmazsanız, hiçbir soru sormadan paranızı iade ediyoruz.</p>
-    </div>
-  </div>
-</section>
-
-<!-- ============================================================
-     FEEDBACK / POLL
-     ============================================================ -->
-<section id="feedback" class="feedback-section">
-  <div class="container">
-    <div class="feedback-grid">
-      <div class="feedback-left">
-        <div class="section-label">ŞEKİLLENDİRİN</div>
-        <h2>Hangi Excel sorunu sizi en çok çileden çıkarıyor?</h2>
-        <p>Cevabınız platforma doğrudan yansıyacak. En çok istenen özellikler önce geliştiriliyor.</p>
-        <ul class="feedback-benefits">
-          <li>24 saat içinde geri dönüş</li>
-          <li>Beta erişimi kazanırsınız</li>
-          <li>Öneriniz platforma eklenir</li>
-        </ul>
-      </div>
-      <div class="feedback-right">
-        <div class="poll-options">
-          <button class="poll-option" onclick="selectPoll(this)" data-val="formul">😤 Bozulan formüller ve HATA mesajları</button>
-          <button class="poll-option" onclick="selectPoll(this)" data-val="rapor">⏰ Aynı raporları her ay tekrar yapmak</button>
-          <button class="poll-option" onclick="selectPoll(this)" data-val="hata">🔍 Büyük veride hata ve tekrar bulmak</button>
-          <button class="poll-option" onclick="selectPoll(this)" data-val="grafik">📊 Grafik ve görselleştirme yapmak</button>
-          <button class="poll-option" onclick="selectPoll(this)" data-val="birlestir">🤯 Birden fazla dosyayı birleştirmek</button>
-        </div>
-        <div id="pollExtra" class="poll-extra" style="display:none">
-          <textarea class="poll-textarea" id="pollNote" placeholder="Varsa eklemek istediğiniz..."></textarea>
-          <input type="email" class="poll-email" id="pollEmail" placeholder="E-posta adresiniz (isteğe bağlı)">
-          <button class="poll-submit-btn" onclick="submitPoll()">Gönder →</button>
-        </div>
-        <div id="pollThanks" class="poll-thanks" style="display:none">
-          <div class="poll-thanks-icon">🎉</div>
-          <div class="poll-thanks-text">Teşekkürler! 24 saat içinde dönüş yapacağız.</div>
-        </div>
+      <div class="lp-final-proof">
+        <span>⭐⭐⭐⭐⭐</span>
+        <span>847+ kullanıcı · 4.9/5 puan</span>
       </div>
     </div>
   </div>
 </section>
 
-<section class="final-cta-section">
-  <div class="container">
-    <div class="final-cta-inner reveal">
-      <span class="section-label">Başlamaya hazır mısınız?</span>
-      <h2>Bu Hafta Kaç Saat Kaybedeceksiniz?</h2>
-      <p>Ortalama kullanıcımız haftada 18 saat Excel'de
-      harcıyordu. Şimdi 1.5 saat.</p>
-      <div class="hero-cta-group">
-        <a href="auth.html" class="btn-primary hero-cta-btn">
-          ⚡ Ücretsiz Denememi Başlat
+<!-- FOOTER -->
+<footer class="lp-footer">
+  <div class="lp-container">
+    <div class="lp-footer-grid">
+      <div class="lp-footer-brand">
+        <a href="index.html" class="lp-nav-logo lp-footer-logo">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" style="width:24px;height:24px;border-radius:5px;flex-shrink:0;">
+            <rect width="100" height="100" fill="white"/>
+            <path d="M 30 65 Q 28 40 50 28 Q 65 22 75 32 L 68 40 Q 60 33 50 37 Q 35 45 36 63 Z" fill="black"/>
+          </svg>
+          <span>Mocksheet</span>
         </a>
-        <a href="auth.html" class="btn-secondary hero-cta-btn">
-          Demo İzle →
-        </a>
+        <p>Veri düzenlemeyi 12x hızlandırıyoruz.</p>
       </div>
-      <p class="hero-micro">
-        <span>✓ Kredi kartı gerekmez</span>
-        <span>✓ 2 dakikada hazır</span>
-        <span>✓ 14 gün para iade garantisi</span>
-      </p>
-    </div>
-  </div>
-</section>
-
-<footer class="footer">
-  <div class="container">
-    <div class="footer-grid">
-
-      <!-- Sol kolon -->
-      <div class="footer-brand">
-        <a href="index.html" class="nav-logo footer-logo">
-          <img src="images/logo.png" alt="MockSheets"
-               width="28" height="28"
-               style="filter: brightness(0) invert(1);">
-          <span style="color:white;">MockSheets</span>
-        </a>
-        <p class="footer-desc">
-          Veri düzenlemeyi 12 kat hızlandırıyoruz.
-          Türkçe yaz, AI halleder.
-        </p>
-        <div class="footer-social">
-          <a href="#" aria-label="LinkedIn">in</a>
-          <a href="#" aria-label="Twitter">𝕏</a>
-          <a href="#" aria-label="Instagram">ig</a>
-        </div>
-      </div>
-
-      <!-- Ürün -->
-      <div class="footer-col">
+      <div class="lp-footer-col">
         <h4>Ürün</h4>
-        <a href="#how">Nasıl Çalışır</a>
+        <a href="#features">Özellikler</a>
         <a href="#pricing">Fiyatlar</a>
         <a href="auth.html">Ücretsiz Başla</a>
-        <a href="auth.html">Giriş Yap</a>
       </div>
-
-      <!-- Şirket -->
-      <div class="footer-col">
+      <div class="lp-footer-col">
         <h4>Şirket</h4>
         <a href="#">Hakkımızda</a>
         <a href="#">Blog</a>
-        <a href="#">Kariyer</a>
         <a href="#">İletişim</a>
       </div>
-
-      <!-- Destek -->
-      <div class="footer-col">
+      <div class="lp-footer-col">
         <h4>Destek</h4>
-        <a href="#">Yardım Merkezi</a>
-        <a href="https://wa.me/905000000000" target="_blank">
-          💬 WhatsApp
-        </a>
-        <a href="mailto:destek@upsheet.ai">
-          destek@upsheet.ai
-        </a>
-        <p style="font-size:13px;color:#9CA3AF;margin-top:4px;">
-          Hf içi 09:00–18:00 (GMT+3)
-        </p>
-      </div>
-
-    </div>
-
-    <!-- Trust badges -->
-    <div class="footer-trust">
-      <span class="ftb">🔒 SSL</span>
-      <span class="ftb">🇹🇷 KVKK Uyumlu</span>
-      <span class="ftb">💳 Güvenli Ödeme</span>
-      <span class="ftb">⭐ 4.9/5 Puan</span>
-    </div>
-
-    <!-- Alt bar -->
-    <div class="footer-bottom">
-      <span>© 2026 MockSheets. Tüm hakları saklıdır.</span>
-      <div class="footer-legal">
         <a href="#">KVKK</a>
         <a href="#">Gizlilik</a>
         <a href="#">Kullanım Koşulları</a>
       </div>
     </div>
+    <div class="lp-footer-bottom">
+      <span>© 2026 Mocksheet. Tüm hakları saklıdır.</span>
+      <div class="lp-footer-trust">
+        <span>🔒 SSL</span>
+        <span>🇹🇷 KVKK</span>
+        <span>💳 Güvenli Ödeme</span>
+      </div>
+    </div>
   </div>
 </footer>
 
-<!-- ============================================================
-     FLOATING AI WIDGET
-     ============================================================ -->
-<div id="floatingAI">
-  <button id="faiBubble" class="fai-bubble" title="AI Asistan">
-    <div class="fai-ping"></div>
-    <div class="fai-inner">
-      <svg id="faiBotIcon" class="fai-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="3" y="11" width="18" height="10" rx="2"/>
-        <path d="M9 11V7a3 3 0 0 1 6 0v4"/>
-        <circle cx="9" cy="16" r="1" fill="currentColor" stroke="none"/>
-        <circle cx="15" cy="16" r="1" fill="currentColor" stroke="none"/>
-        <line x1="12" y1="2" x2="12" y2="5"/>
-      </svg>
-      <svg id="faiCloseIcon" class="fai-icon" style="display:none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-      </svg>
-    </div>
-  </button>
-
-  <div id="faiPanel" style="display:none">
-    <div class="fai-panel-inner">
-      <div class="fai-header">
-        <div class="fai-status">
-          <div class="fai-dot"></div>
-          <span>AI Asistan</span>
-        </div>
-        <div class="fai-badges">
-          <span class="fai-badge fai-badge-dark">Claude AI</span>
-          <span class="fai-badge fai-badge-purple">Pro</span>
-          <button class="fai-close-btn" id="faiCloseBtn">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="14" height="14">
-              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-            </svg>
-          </button>
-        </div>
-      </div>
-      <textarea id="faiInput" class="fai-textarea" placeholder="Excel tablonuz hakkında bir şeyler sorun..." rows="4"></textarea>
-      <div class="fai-toolbar">
-        <div class="fai-tools-left">
-          <div class="fai-tool-group">
-            <button class="fai-tool-btn" title="Dosya ekle">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
-            </button>
-            <button class="fai-tool-btn" title="Link ekle">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-            </button>
-          </div>
-          <button class="fai-tool-btn" title="Ses">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
-          </button>
-        </div>
-        <div class="fai-tools-right">
-          <span class="fai-char-count"><span id="faiCharCount">0</span>/2000</span>
-          <button class="fai-send-btn" id="faiSendBtn" title="Gönder (Enter)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/></svg>
-          </button>
-        </div>
-      </div>
-      <div class="fai-hint">
-        <div class="fai-hint-left">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
-          <span>Shift + Enter ile yeni satır</span>
-        </div>
-        <div class="fai-hint-right">
-          <div class="fai-active-dot"></div>
-          <span>Sistem aktif</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Scripts -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script defer src="js/landing.js"></script>
-
-<!-- Hero Rotating Headlines -->
-<script>
-(function() {
-  const headlines = document.querySelectorAll('.hero-headline');
-  if (!headlines.length) return;
-  let current = 0;
-  setInterval(function() {
-    headlines[current].classList.remove('active');
-    current = (current + 1) % headlines.length;
-    headlines[current].classList.add('active');
-  }, 2800);
-})();
-</script>
-
-<!-- Scroll Reveal -->
-<script>
-(function() {
-  const els = document.querySelectorAll('.reveal');
-  const io = new IntersectionObserver(function(entries) {
-    entries.forEach(function(e) {
-      if (e.isIntersecting) {
-        const delay = e.target.dataset.delay || 0;
-        setTimeout(function() { e.target.classList.add('visible'); }, parseInt(delay));
-        io.unobserve(e.target);
-      }
-    });
-  }, { threshold: 0.12 });
-  els.forEach(function(el) { io.observe(el); });
-})();
-</script>
-
-<!-- Navbar scroll shadow -->
-<script>
-window.addEventListener('scroll', function() {
-  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 10);
-});
-</script>
-
 </body>
 </html>
