@@ -355,50 +355,87 @@
     </h2>
 
     <div class="lp-pricing-grid">
+      <!-- Başlangıç -->
       <div class="lp-price-card">
         <div class="lp-price-plan">Başlangıç</div>
+        <div class="lp-price-desc">Bireysel kullanıcılar için</div>
         <div class="lp-price-amount">
           <span class="lp-price-num">Ücretsiz</span>
         </div>
         <ul class="lp-price-features">
-          <li>✓ 5 AI komut/gün</li>
+          <li>✓ 20 AI komut/ay</li>
           <li>✓ Temel temizleme</li>
           <li>✓ CSV &amp; Excel desteği</li>
+          <li>✓ Formül yardımcısı</li>
+          <li>✓ 1 çalışma sayfası</li>
           <li class="dim">✗ Muhasebe formülleri</li>
           <li class="dim">✗ Otomatik rapor</li>
+          <li class="dim">✗ Ekip hesabı</li>
+          <li class="dim">✗ API erişimi</li>
         </ul>
         <a href="auth.html" class="lp-btn-ghost lp-btn-full">Başla</a>
       </div>
 
+      <!-- Pro -->
       <div class="lp-price-card lp-price-featured">
         <div class="lp-price-badge">En Popüler</div>
         <div class="lp-price-plan">Pro</div>
+        <div class="lp-price-desc">Profesyoneller için</div>
         <div class="lp-price-amount">
           <span class="lp-price-num">₺149</span>
           <span class="lp-price-period">/ay</span>
         </div>
         <ul class="lp-price-features">
-          <li>✓ Sınırsız AI komut</li>
+          <li>✓ 200 AI komut/ay</li>
           <li>✓ Tüm temizleme araçları</li>
           <li>✓ KDV, SGK, Maaş hesaplama</li>
           <li>✓ Otomatik rapor</li>
           <li>✓ Rakip analizi</li>
+          <li>✓ Çoklu çalışma sayfası</li>
+          <li>✓ Öncelik desteği</li>
+          <li class="dim">✗ Ekip hesabı</li>
+          <li class="dim">✗ API erişimi</li>
         </ul>
-        <a href="auth.html" class="lp-btn-primary lp-btn-full">Hemen Başla</a>
+        <a href="auth.html" class="lp-btn-white lp-btn-full">Hemen Başla</a>
       </div>
 
-      <div class="lp-price-card">
+      <!-- İş -->
+      <div class="lp-price-card lp-price-business">
         <div class="lp-price-plan">İş</div>
+        <div class="lp-price-desc">Büyüyen ekipler için</div>
         <div class="lp-price-amount">
-          <span class="lp-price-num">₺399</span>
+          <span class="lp-price-num" id="bizPrice">₺399</span>
           <span class="lp-price-period">/ay</span>
         </div>
+
+        <div class="lp-user-selector">
+          <div class="lp-user-selector-header">
+            <span>Kullanıcı sayısı</span>
+            <span class="lp-user-count-badge" id="userCountBadge">5 kullanıcı</span>
+          </div>
+          <div class="lp-user-controls">
+            <button class="lp-user-btn" onclick="changeUsers(-5)">−</button>
+            <div class="lp-user-bar-wrapper">
+              <input type="range" class="lp-user-slider" id="userSlider"
+                min="5" max="50" step="5" value="5"
+                oninput="updateBizPrice(parseInt(this.value))">
+              <div class="lp-user-bar-fill" id="userBarFill"></div>
+            </div>
+            <button class="lp-user-btn" onclick="changeUsers(5)">+</button>
+          </div>
+          <div class="lp-user-discount" id="userDiscount" style="display:none"></div>
+        </div>
+
         <ul class="lp-price-features">
           <li>✓ Pro'daki her şey</li>
-          <li>✓ Ekip hesabı (5 kullanıcı)</li>
+          <li>✓ Ekip hesabı</li>
           <li>✓ Öncelikli destek</li>
           <li>✓ API erişimi</li>
           <li>✓ Özel entegrasyon</li>
+          <li>✓ Gelişmiş analitik</li>
+          <li>✓ SSO &amp; SAML</li>
+          <li>✓ SLA garantisi</li>
+          <li>✓ Özel onboarding</li>
         </ul>
         <a href="auth.html" class="lp-btn-ghost lp-btn-full">İletişime Geç</a>
       </div>
