@@ -353,103 +353,178 @@
 <!-- FİYATLANDIRMA -->
 <section class="lp-pricing" id="pricing">
   <div class="lp-container">
+
     <h2 class="lp-section-title">
-      <span data-i18n="pricing_title">Basit fiyatlandırma,</span><br>
-      <span class="lp-gradient-text" data-i18n="pricing_title_2">karmaşık değil.</span>
+      Simple pricing,<br>
+      <span class="lp-gradient-text">no surprises.</span>
     </h2>
 
-    <div class="lp-pricing-grid">
-      <!-- Başlangıç -->
-      <div class="lp-price-card">
-        <div class="lp-price-plan" data-i18n="pricing_free">Başlangıç</div>
-        <div class="lp-price-desc">Bireysel kullanıcılar için</div>
-        <div class="lp-price-amount">
-          <span class="lp-price-num" data-i18n="pricing_free_price">Ücretsiz</span>
-        </div>
-        <ul class="lp-price-features">
-          <li>✓ 20 AI komut/ay</li>
-          <li>✓ Temel temizleme</li>
-          <li>✓ CSV &amp; Excel desteği</li>
-          <li>✓ Formül yardımcısı</li>
-          <li>✓ 1 çalışma sayfası</li>
-          <li class="dim">✗ Muhasebe formülleri</li>
-          <li class="dim">✗ Otomatik rapor</li>
-          <li class="dim">✗ Ekip hesabı</li>
-          <li class="dim">✗ API erişimi</li>
-        </ul>
-        <a href="auth.html" class="lp-btn-ghost lp-btn-full" data-i18n="plan_start_btn">Başla</a>
-      </div>
-
-      <!-- Pro -->
-      <div class="lp-price-card lp-price-featured">
-        <div class="lp-price-badge">En Popüler</div>
-        <div class="lp-price-plan" data-i18n="pricing_pro">Pro</div>
-        <div class="lp-price-desc">Profesyoneller için</div>
-        <div class="lp-price-amount">
-          <span class="lp-price-num">₺149</span>
-          <span class="lp-price-period">/ay</span>
-        </div>
-        <ul class="lp-price-features">
-          <li>✓ 200 AI komut/ay</li>
-          <li>✓ Tüm temizleme araçları</li>
-          <li>✓ KDV, SGK, Maaş hesaplama</li>
-          <li>✓ Otomatik rapor</li>
-          <li>✓ Rakip analizi</li>
-          <li>✓ Çoklu çalışma sayfası</li>
-          <li>✓ Öncelik desteği</li>
-          <li class="dim">✗ Ekip hesabı</li>
-          <li class="dim">✗ API erişimi</li>
-        </ul>
-        <a href="auth.html" class="lp-btn-white lp-btn-full" data-i18n="plan_pro_btn">Hemen Başla</a>
-      </div>
-
-      <!-- İş -->
-      <div class="lp-price-card lp-price-business">
-        <div class="lp-price-plan" data-i18n="pricing_biz">İş</div>
-        <div class="lp-price-desc">Büyüyen ekipler için</div>
-        <div class="lp-price-amount">
-          <span class="lp-price-num" id="bizPrice">₺399</span>
-          <span class="lp-price-period">/ay</span>
-        </div>
-
-        <div class="lp-user-selector">
-          <div class="lp-user-selector-header">
-            <span>Kullanıcı sayısı</span>
-            <span class="lp-user-count-badge" id="userCountBadge">5 kullanıcı</span>
-          </div>
-          <div class="lp-user-controls">
-            <button class="lp-user-btn" onclick="changeUsers(-5)">−</button>
-            <div class="lp-user-bar-wrapper">
-              <input type="range" class="lp-user-slider" id="userSlider"
-                min="5" max="50" step="5" value="5"
-                oninput="updateBizPrice(parseInt(this.value))">
-              <div class="lp-user-bar-fill" id="userBarFill"></div>
-            </div>
-            <button class="lp-user-btn" onclick="changeUsers(5)">+</button>
-          </div>
-          <div class="lp-user-discount" id="userDiscount" style="display:none"></div>
-        </div>
-
-        <ul class="lp-price-features">
-          <li>✓ Pro'daki her şey</li>
-          <li>✓ Ekip hesabı</li>
-          <li>✓ Öncelikli destek</li>
-          <li>✓ API erişimi</li>
-          <li>✓ Özel entegrasyon</li>
-          <li>✓ Gelişmiş analitik</li>
-          <li>✓ SSO &amp; SAML</li>
-          <li>✓ SLA garantisi</li>
-          <li>✓ Özel onboarding</li>
-        </ul>
-        <a href="auth.html" class="lp-btn-ghost lp-btn-full" data-i18n="plan_biz_btn">İletişime Geç</a>
-      </div>
+    <!-- Periyot seçici -->
+    <div class="lp-period-switcher">
+      <button class="lp-period-btn"
+              data-period="weekly"
+              onclick="setPeriod('weekly')">
+        Weekly
+      </button>
+      <button class="lp-period-btn active"
+              data-period="monthly"
+              onclick="setPeriod('monthly')">
+        Monthly
+      </button>
+      <button class="lp-period-btn"
+              data-period="yearly"
+              onclick="setPeriod('yearly')">
+        Yearly
+        <span class="lp-period-badge">-33%</span>
+      </button>
     </div>
 
-    <p class="lp-pricing-note" data-i18n="pricing_note">
-      ✓ Kredi kartı gerekmez &nbsp;·&nbsp;
-      ✓ 14 gün para iade garantisi &nbsp;·&nbsp;
-      ✓ İstediğin zaman iptal
+    <div class="lp-pricing-grid">
+
+      <!-- STARTER -->
+      <div class="lp-price-card">
+        <div class="lp-price-plan">Starter</div>
+        <div class="lp-price-amount">
+          <span class="lp-price-num"
+                id="price-starter">Free</span>
+          <span class="lp-price-period"
+                id="period-starter"></span>
+        </div>
+        <p class="lp-price-desc">
+          Perfect for exploring Mocksheet.
+        </p>
+        <ul class="lp-price-features">
+          <li>✓ <strong>20 AI commands</strong> / month</li>
+          <li>✓ Basic data cleaning</li>
+          <li>✓ Remove duplicates &amp; empty rows</li>
+          <li>✓ CSV &amp; Excel (.xlsx) support</li>
+          <li>✓ Sort &amp; filter</li>
+          <li class="dim">✗ Accounting formulas</li>
+          <li class="dim">✗ Auto report generation</li>
+          <li class="dim">✗ Competitor analysis</li>
+        </ul>
+        <a href="auth.html" class="lp-btn-ghost"
+           style="width:100%;justify-content:center;
+                  margin-top:auto;">
+          Get Started Free
+        </a>
+      </div>
+
+      <!-- PRO -->
+      <div class="lp-price-card lp-price-featured">
+        <div class="lp-price-badge">Most Popular</div>
+        <div class="lp-price-plan">Pro</div>
+        <div class="lp-price-amount">
+          <span class="lp-price-curr">$</span>
+          <span class="lp-price-num"
+                id="price-pro">14.99</span>
+          <span class="lp-price-period"
+                id="period-pro">/mo</span>
+        </div>
+        <div class="lp-price-orig"
+             id="orig-pro"
+             style="display:none">
+        </div>
+        <p class="lp-price-desc"
+           style="color:rgba(255,255,255,0.5)">
+          Everything you need for professional use.
+        </p>
+        <ul class="lp-price-features">
+          <li>✓ <strong>200 AI commands</strong> / month</li>
+          <li>✓ Advanced data cleaning &amp; transform</li>
+          <li>✓ VAT, tax &amp; salary calculations</li>
+          <li>✓ Auto monthly &amp; weekly reports</li>
+          <li>✓ Conditional formatting</li>
+          <li>✓ VLOOKUP, SUMIF, IF formulas</li>
+          <li>✓ Competitor data analysis</li>
+          <li>✓ Email support (48h response)</li>
+        </ul>
+        <a href="auth.html" class="lp-btn-primary"
+           style="width:100%;justify-content:center;
+                  margin-top:auto;background:white;
+                  color:#1d1d1f;">
+          Start Now
+        </a>
+      </div>
+
+      <!-- BUSINESS -->
+      <div class="lp-price-card lp-price-business">
+        <div class="lp-price-plan">Business</div>
+        <div class="lp-price-amount">
+          <span class="lp-price-curr">$</span>
+          <span class="lp-price-num"
+                id="price-biz">39.99</span>
+          <span class="lp-price-period"
+                id="period-biz">/mo</span>
+        </div>
+        <div class="lp-price-orig"
+             id="orig-biz"
+             style="display:none">
+        </div>
+
+        <!-- Kullanıcı seçici -->
+        <div class="lp-user-selector">
+          <div class="lp-user-selector-top">
+            <span class="lp-user-label">Team size</span>
+            <span class="lp-user-count-badge"
+                  id="userCountBadge">5 users</span>
+          </div>
+          <div class="lp-user-controls">
+            <button class="lp-user-btn"
+                    onclick="changeUsers(-1)"
+                    id="userMinus">−</button>
+            <div class="lp-user-bar-wrapper">
+              <input type="range" id="userSlider"
+                     min="5" max="50" step="5" value="5"
+                     class="lp-user-slider"
+                     oninput="updateBizPrice(this.value)">
+              <div class="lp-user-bar-fill"
+                   id="userBarFill"
+                   style="width:0%"></div>
+            </div>
+            <button class="lp-user-btn"
+                    onclick="changeUsers(1)"
+                    id="userPlus">+</button>
+          </div>
+          <div class="lp-user-discount"
+               id="userDiscount"
+               style="display:none">
+            🎉 <span id="discountText"></span> discount applied!
+          </div>
+        </div>
+
+        <p class="lp-price-desc"
+           style="font-size:12px;color:#6B7280">
+          +$2.5 per extra user · 10% off 10+,
+          15% off 20+, 20% off 30+ users
+        </p>
+
+        <ul class="lp-price-features">
+          <li>✓ <strong>Unlimited</strong> AI commands</li>
+          <li>✓ Everything in Pro</li>
+          <li>✓ Centralized team dashboard</li>
+          <li>✓ User-level permissions</li>
+          <li>✓ Bulk processing (10,000+ rows)</li>
+          <li>✓ Custom accounting templates</li>
+          <li>✓ API access &amp; webhooks</li>
+          <li>✓ Priority support (4h response)</li>
+        </ul>
+
+        <a href="auth.html" class="lp-btn-primary"
+           style="width:100%;justify-content:center;
+                  margin-top:auto;">
+          Get a Quote
+        </a>
+      </div>
+
+    </div>
+
+    <p class="lp-pricing-note">
+      ✓ No credit card required &nbsp;·&nbsp;
+      ✓ 14-day money-back guarantee &nbsp;·&nbsp;
+      ✓ Cancel anytime
     </p>
+
   </div>
 </section>
 
