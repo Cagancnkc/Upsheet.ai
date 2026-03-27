@@ -46,7 +46,7 @@ function colLetter(i) {
 function buildGrid(data) {
   if (!data) data = sheets && activeSheet ? (sheets[activeSheet] || []) : [];
   if (!data || !Array.isArray(data)) {
-    console.warn('buildGrid: geçersiz data', data);
+    console.warn('buildGrid: invalid data', data);
     return;
   }
   const grid = document.getElementById('grid');
@@ -287,7 +287,7 @@ function cellKeydown(e, r, c) {
     if (e.key === 'c') { e.preventDefault(); copyCell(); }
     if (e.key === 'x') { e.preventDefault(); cutCell(); }
     if (e.key === 'v') { e.preventDefault(); pasteCell(); }
-    if (e.key === 'z') { e.preventDefault(); toast('Geri al işlevi yakında!', 'ok'); }
+    if (e.key === 'z') { e.preventDefault(); toast('Undo feature coming soon!', 'ok'); }
   }
 }
 
@@ -344,11 +344,11 @@ function updateStatus() {
   }
 
   // Topbar badges
-  document.getElementById('mbCells').textContent = '⚡ ' + filled + ' hücre';
-  document.getElementById('mbRows').textContent = '↕ ' + activeRows + ' satır';
+  document.getElementById('mbCells').textContent = '⚡ ' + filled + ' cells';
+  document.getElementById('mbRows').textContent = '↕ ' + activeRows + ' rows';
 
   // Right section of status bar
-  document.getElementById('sbFilled').textContent = filled.toLocaleString('tr-TR');
+  document.getElementById('sbFilled').textContent = filled.toLocaleString('en-US');
   document.getElementById('sbRowsInfo').textContent = activeRows;
 
   // Selection metrics chips
@@ -402,7 +402,7 @@ updateStatus = debounce(updateStatus, 150);
 // ═══════════════════════════════════════════════════════════════
 function toggleFormat(type) {
   const cells = getSelectedCells();
-  if (!cells || cells.length === 0) { toast('Önce bir hücre seçin', 'warn'); return; }
+  if (!cells || cells.length === 0) { toast('Select a cell first', 'warn'); return; }
   cells.forEach(({r, c}) => {
     const meta = getCellMeta(r, c);
     if (type === 'bold') meta.bold = !meta.bold;
@@ -442,7 +442,7 @@ function applyCellColor(color) {
 
 function setTextColor(color) {
   const cells = getSelectedCells();
-  if (!cells || cells.length === 0) { toast('Önce bir hücre seçin', 'warn'); return; }
+  if (!cells || cells.length === 0) { toast('Select a cell first', 'warn'); return; }
   cells.forEach(({r, c}) => {
     const meta = getCellMeta(r, c);
     meta.color = color;
@@ -453,7 +453,7 @@ function setTextColor(color) {
 
 function setCellBgColor(color) {
   const cells = getSelectedCells();
-  if (!cells || cells.length === 0) { toast('Önce bir hücre seçin', 'warn'); return; }
+  if (!cells || cells.length === 0) { toast('Select a cell first', 'warn'); return; }
   cells.forEach(({r, c}) => {
     const meta = getCellMeta(r, c);
     meta.bg = color;
@@ -490,16 +490,16 @@ function updateToolbarState() {
 }
 
 function mergeCells() {
-  toast('Birleştirme özelliği yakında!', 'ok');
+  toast('Merge feature coming soon!', 'ok');
 }
 
 function addFilter() {
-  toast('Filtre eklendi (simülasyon)', 'ok');
+  toast('Filter added (simulation)', 'ok');
 }
 
 function clearHighlights() {
   document.querySelectorAll('.cell.hi').forEach(el => el.classList.remove('hi'));
-  toast('Vurgular temizlendi', 'ok');
+  toast('Highlights cleared', 'ok');
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -509,7 +509,7 @@ function copyCell() {
   const data = sheets[activeSheet];
   clipboard = data[selRow][selCol];
   cutSource = null;
-  toast('Kopyalandı', 'ok');
+  toast('Copied', 'ok');
 }
 
 function cutCell() {
@@ -571,34 +571,34 @@ function ctxAction(action) {
       data.splice(selRow, 0, Array(COLS).fill(''));
       data.pop();
       buildGrid();
-      toast('Satır eklendi', 'ok');
+      toast('Row added', 'ok');
       break;
     case 'insertRowBelow':
       data.splice(selRow + 1, 0, Array(COLS).fill(''));
       data.pop();
       buildGrid();
-      toast('Satır eklendi', 'ok');
+      toast('Row added', 'ok');
       break;
     case 'insertColLeft':
       data.forEach(row => { row.splice(selCol, 0, ''); row.pop(); });
       buildGrid();
-      toast('Sütun eklendi', 'ok');
+      toast('Column added', 'ok');
       break;
     case 'insertColRight':
       data.forEach(row => { row.splice(selCol + 1, 0, ''); row.pop(); });
       buildGrid();
-      toast('Sütun eklendi', 'ok');
+      toast('Column added', 'ok');
       break;
     case 'deleteRow':
       data.splice(selRow, 1);
       data.push(Array(COLS).fill(''));
       buildGrid();
-      toast('Satır silindi', 'ok');
+      toast('Row deleted', 'ok');
       break;
     case 'deleteCol':
       data.forEach(row => { row.splice(selCol, 1); row.push(''); });
       buildGrid();
-      toast('Sütun silindi', 'ok');
+      toast('Column deleted', 'ok');
       break;
   }
 }
@@ -676,7 +676,7 @@ function addSheet(name) {
 }
 
 function renameSheet(oldName) {
-  const newName = prompt('Sheet adını girin:', oldName);
+  const newName = prompt('Enter sheet name:', oldName);
   if (!newName || newName === oldName || sheets[newName]) return;
   const data = sheets[oldName];
   const meta = cellMeta[oldName];
@@ -686,7 +686,7 @@ function renameSheet(oldName) {
   if (meta) cellMeta[newName] = meta;
   if (activeSheet === oldName) activeSheet = newName;
   renderSheetTabs();
-  toast(`"${newName}" olarak yeniden adlandırıldı`, 'ok');
+  toast(`Renamed to "${newName}"`, 'ok');
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -787,12 +787,12 @@ function handleFile(e) {
   const MB10 = 10 * 1024 * 1024;
   const MB5  =  5 * 1024 * 1024;
   if (file.size > MB10) {
-    toast('Bu dosya çok büyük (max 10MB). Daha küçük bir dosya seçin.', 'err');
+    toast('This file is too large (max 10MB). Please select a smaller file.', 'err');
     e.target.value = '';
     return;
   }
   if (file.size > MB5) {
-    toast('Büyük dosya yükleniyor, lütfen bekleyin...', 'warning');
+    toast('Loading large file, please wait...', 'warning');
   }
 
   const reader = new FileReader();
@@ -856,12 +856,12 @@ function handleFile(e) {
         buildGrid();
       }
 
-      addHistory('file', '"' + file.name + '" yüklendi');
+      addHistory('file', '"' + file.name + '" loaded');
 
       if (trimmedRows) {
-        toast('Dosyanızda ' + trimmedRows.toLocaleString('tr-TR') + ' satır var. İlk 5.000 satır gösteriliyor.', 'info');
+        toast('Your file has ' + trimmedRows.toLocaleString('en-US') + ' rows. Showing the first 5,000 rows.', 'info');
       } else {
-        toast('"' + file.name + '" yüklendi', 'ok');
+        toast('"' + file.name + '" loaded', 'ok');
       }
 
       // Onboarding step 2
@@ -880,7 +880,7 @@ function handleFile(e) {
         uploadFileToSupabase(file, sheets);
       }
     } catch(err) {
-      toast('Dosya okunamadı: ' + err.message, 'err');
+      toast('Could not read file: ' + err.message, 'err');
     }
   };
 
@@ -897,7 +897,7 @@ function downloadFile() {
     XLSX.utils.book_append_sheet(wb, ws, name);
   });
   XLSX.writeFile(wb, fileName.endsWith('.xlsx') ? fileName : fileName + '.xlsx');
-  toast(`"${fileName}" indirildi`, 'ok');
+  toast(`"${fileName}" downloaded`, 'ok');
 }
 
 function downloadCSV() {
@@ -917,11 +917,11 @@ function downloadCSV() {
   a.download = fileName;
   a.click();
   URL.revokeObjectURL(a.href);
-  toast(`"${fileName}" indirildi`, 'ok');
+  toast(`"${fileName}" downloaded`, 'ok');
 }
 
 function newFile() {
-  const name = 'Yeni Dosya.xlsx';
+  const name = 'New File.xlsx';
   sheets = { Sheet1: createEmptySheet(), Sheet2: createEmptySheet() };
   cellMeta = {};
   activeSheet = 'Sheet1';
@@ -931,8 +931,8 @@ function newFile() {
   addRecentFile(name);
   renderSheetTabs();
   buildGrid();
-  addHistory('file', 'Yeni dosya oluşturuldu');
-  toast('Yeni dosya oluşturuldu', 'ok');
+  addHistory('file', 'New file created');
+  toast('New file created', 'ok');
 }
 
 function addRecentFile(name) {
@@ -944,10 +944,10 @@ function addRecentFile(name) {
 
 function fmtTime(ts) {
   const diff = Date.now() - ts;
-  if (diff < 60000)  return 'Az önce';
-  if (diff < 3600000) return Math.floor(diff/60000) + ' dk önce';
-  if (diff < 86400000) return Math.floor(diff/3600000) + ' sa önce';
-  return new Date(ts).toLocaleDateString('tr-TR', {day:'numeric',month:'short'});
+  if (diff < 60000)  return 'Just now';
+  if (diff < 3600000) return Math.floor(diff/60000) + ' min ago';
+  if (diff < 86400000) return Math.floor(diff/3600000) + ' hr ago';
+  return new Date(ts).toLocaleDateString('en-US', {day:'numeric',month:'short'});
 }
 
 function renderRecentFiles() {
@@ -956,7 +956,7 @@ function renderRecentFiles() {
   const fileNameEl = document.getElementById('fileName');
   const activeName = fileNameEl ? fileNameEl.textContent : '';
   if (!recentFiles.length) {
-    el.innerHTML = `<div style="padding:6px 10px;font-size:11px;color:#6b6b6b;">Henüz dosya açılmadı</div>`;
+    el.innerHTML = `<div style="padding:6px 10px;font-size:11px;color:#6b6b6b;">No files opened yet</div>`;
     return;
   }
   el.innerHTML = recentFiles.map(f => `
@@ -985,7 +985,7 @@ function startRename() {
 function finishRename() {
   const disp = document.getElementById('fileName');
   const inp = document.getElementById('fileNameInput');
-  const val = inp.value.trim() || 'Yeni Dosya.xlsx';
+  const val = inp.value.trim() || 'New File.xlsx';
   disp.textContent = val;
   inp.style.display = 'none';
   disp.style.display = '';
@@ -1003,11 +1003,11 @@ function sortData() {
   data.sort((a, b) => {
     const va = parseFloat(a[col]), vb = parseFloat(b[col]);
     if (!isNaN(va) && !isNaN(vb)) return va - vb;
-    return String(a[col]).localeCompare(String(b[col]), 'tr');
+    return String(a[col]).localeCompare(String(b[col]), 'en');
   });
   if (header) data.unshift(header);
   buildGrid();
-  toast(`${colLetter(col)} sütununa göre sıralandı`, 'ok');
+  toast(`Sorted by column ${colLetter(col)}`, 'ok');
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -1015,20 +1015,20 @@ function sortData() {
 // ═══════════════════════════════════════════════════════════════
 function openFindReplace() {
   showModal(`
-    <h2>Bul &amp; Değiştir</h2>
-    <p>Seçili sheet'teki verilerde arama yapın</p>
+    <h2>Find &amp; Replace</h2>
+    <p>Search in the active sheet data</p>
     <div class="fgroup">
-      <label class="flabel">Aranan Metin</label>
-      <input class="finput" id="frFind" placeholder="Aranacak metin...">
+      <label class="flabel">Search Text</label>
+      <input class="finput" id="frFind" placeholder="Text to find...">
     </div>
     <div class="fgroup">
-      <label class="flabel">Yeni Metin</label>
-      <input class="finput" id="frReplace" placeholder="Yeni metin (boş bırakabilirsiniz)...">
+      <label class="flabel">Replace With</label>
+      <input class="finput" id="frReplace" placeholder="Replacement text (leave empty to delete)...">
     </div>
     <div class="modal-foot">
-      <button class="btn btn-ghost" onclick="closeModal()">İptal</button>
-      <button class="btn btn-ghost" onclick="doFind()">Bul</button>
-      <button class="btn btn-primary" onclick="doFindReplace()">Tümünü Değiştir</button>
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-ghost" onclick="doFind()">Find</button>
+      <button class="btn btn-primary" onclick="doFindReplace()">Replace All</button>
     </div>
   `);
 }
@@ -1047,7 +1047,7 @@ function doFind() {
         found++;
       }
   closeModal();
-  toast(`${found} hücre bulundu`, found ? 'ok' : 'err');
+  toast(`${found} cells found`, found ? 'ok' : 'err');
 }
 
 function doFindReplace() {
@@ -1066,7 +1066,7 @@ function doFindReplace() {
         count++;
       }
   closeModal();
-  toast(`${count} hücre değiştirildi`, 'ok');
+  toast(`${count} cells replaced`, 'ok');
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -1094,7 +1094,7 @@ function closeSettings() {
 }
 
 async function logOut() {
-  const ok = window.confirm('Çıkış yapmak istiyor musunuz?');
+  const ok = window.confirm('Are you sure you want to log out?');
   if (!ok) return;
   if (window._sb) await window._sb.auth.signOut();
   window.location.href = 'auth.html';
@@ -1117,7 +1117,7 @@ function toggleTheme() {
 function updateThemeIcon() {
   const isDark = document.body.classList.contains('dark');
   const btn = document.getElementById('themeToggleBtn');
-  if (btn) btn.textContent = isDark ? '☀️ Açık Tema' : '🌙 Koyu Tema';
+  if (btn) btn.textContent = isDark ? '☀️ Light Theme' : '🌙 Dark Mode';
 }
 
 function saveSettings() {
@@ -1129,13 +1129,13 @@ function saveSettings() {
     document.getElementById('onboardBanner').classList.add('hidden');
     document.body.classList.remove('with-banner');
   }
-  toast(apiKey ? 'API key kaydedildi' : 'API key temizlendi', 'ok');
+  toast(apiKey ? 'API key saved' : 'API key cleared', 'ok');
 }
 
 function updateApiStatus() {
   const el = document.getElementById('apiKeyStatus');
   if (!el) return;
-  el.innerHTML = `<span style="color:#16a34a;">● Bağlı</span>`;
+  el.innerHTML = `<span style="color:#16a34a;">● Connected</span>`;
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -1178,7 +1178,7 @@ function toast(msg, type = 'ok', undoable = false) {
 function showToast(msg, type, undoable) { toast(msg, type, undoable); }
 
 function undo() {
-  if (!versionHistory || versionHistory.length < 2) { toast('Geri alınacak işlem yok', 'info'); return; }
+  if (!versionHistory || versionHistory.length < 2) { toast('Nothing to undo', 'info'); return; }
   versionHistory.shift();
   const prev = versionHistory[0];
   sheets = JSON.parse(JSON.stringify(prev.snap.sheets));
@@ -1187,7 +1187,7 @@ function undo() {
   buildGrid();
   if (typeof renderSheetTabs === 'function') renderSheetTabs();
   updateStatus();
-  toast('Geri alındı', 'info');
+  toast('Undone', 'info');
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -1216,7 +1216,7 @@ function pulseMetricBadge(id) {
 
 function notifyAIAction(desc) {
   aiActionCount++;
-  document.getElementById('mbAI').textContent = '🤖 ' + aiActionCount + ' işlem';
+  document.getElementById('mbAI').textContent = '🤖 ' + aiActionCount + ' actions';
   const sbEl = document.getElementById('sbLastAI');
   if (sbEl) sbEl.textContent = 'Son: AI · ' + (desc.length > 22 ? desc.substring(0, 22) + '…' : desc);
   pulseMetricBadge('mbAI');
@@ -1292,7 +1292,7 @@ function handleChatFile(input) {
   const files = Array.from(input.files);
   if (!files.length) return;
   files.forEach(file => {
-    if (file.size > 5 * 1024 * 1024) { toast('Dosya çok büyük (max 5MB)', 'err'); return; }
+    if (file.size > 5 * 1024 * 1024) { toast('File too large (max 5MB)', 'err'); return; }
     const reader = new FileReader();
     reader.onload = function(e) {
       const att = { name: file.name, type: file.type, size: file.size, data: e.target.result, file };
@@ -1346,7 +1346,7 @@ async function buildMessageWithAttachments(userMessage) {
         const csv = XLSX.utils.sheet_to_csv(ws);
         const lines = csv.split('\n').slice(0, 50).join('\n');
         fullMessage = `Ek dosya: ${att.name}\n${lines}\n\n${userMessage}`;
-      } catch(e) { console.warn('Ek dosya parse hatası:', e); }
+      } catch(e) { console.warn('Attachment parse error:', e); }
     }
   }
   return fullMessage;
@@ -1370,18 +1370,18 @@ async function sendChat() {
   const _fcSendIcon  = document.getElementById('fcSendIcon');
   const _fcSpinner   = document.getElementById('fcSpinner');
   const _chatInputEl = document.getElementById('chatInput');
-  if (_fcSubtitle) { _fcSubtitle.textContent = 'AI düşünüyor...'; _fcSubtitle.classList.add('loading'); }
+  if (_fcSubtitle) { _fcSubtitle.textContent = 'AI thinking...'; _fcSubtitle.classList.add('loading'); }
   if (_fcSendIcon)  _fcSendIcon.style.display  = 'none';
   if (_fcSpinner)   _fcSpinner.style.display   = 'block';
   if (_chatInputEl) _chatInputEl.disabled = true;
 
   // Rotating loading messages
   const _loadMsgs = [
-    'Tablo analiz ediliyor...',
-    'Değişiklikler hesaplanıyor...',
-    'Sonuçlar uygulanıyor...',
-    'Veri işleniyor...',
-    'Yanıt hazırlanıyor...'
+    'Analyzing table...',
+    'Computing changes...',
+    'Applying results...',
+    'Processing data...',
+    'Preparing response...'
   ];
   const loader = addMsg('ai', _loadMsgs[0]);
   const _loaderBubble = loader.querySelector('.mbubble');
@@ -1399,10 +1399,10 @@ async function sendChat() {
       if (!aiResult || aiResult?.error === 'offline') {
         clearInterval(_loadTimer);
         loader.remove();
-        if (typeof showToast === 'function') showToast('⚡ AI özelliği yakında aktif olacak!', 'info');
+        if (typeof showToast === 'function') showToast('⚡ AI feature coming soon!', 'info');
         return;
       }
-      reply = typeof aiResult === 'string' ? aiResult : (aiResult.reply || 'İşlem tamamlandı');
+      reply = typeof aiResult === 'string' ? aiResult : (aiResult.reply || 'Done');
       applyAIChanges(aiResult);
     } else {
       await new Promise(r => setTimeout(r, 900));
@@ -1419,9 +1419,9 @@ async function sendChat() {
   } catch(err) {
     clearInterval(_loadTimer);
     _loaderBubble.style.cssText = '';
-    _loaderBubble.innerHTML = `<span style="color:#f87171;">Hata: ${err.message}</span>`;
+    _loaderBubble.innerHTML = `<span style="color:#f87171;">Error: ${err.message}</span>`;
   } finally {
-    if (_fcSubtitle) { _fcSubtitle.textContent = 'Çevrimiçi'; _fcSubtitle.classList.remove('loading'); }
+    if (_fcSubtitle) { _fcSubtitle.textContent = 'Online'; _fcSubtitle.classList.remove('loading'); }
     if (_fcSendIcon)  _fcSendIcon.style.display  = '';
     if (_fcSpinner)   _fcSpinner.style.display   = 'none';
     if (_chatInputEl) { _chatInputEl.disabled = false; _chatInputEl.focus(); }
@@ -1433,12 +1433,12 @@ async function sendChat() {
 
 async function callOpenAI(userMsg) {
   const sheetCtx = getSheetContext();
-  const system = `Sen bir Excel AI asistanısın. Kullanıcının Excel verilerini analiz et, formüller öner, içgörüler sun.
-Aktif sheet: "${activeSheet}"
-İlk 20 satır, 10 sütun verisi:
+  const system = `You are an Excel AI assistant. Analyze the user's Excel data, suggest formulas, and provide insights.
+Active sheet: "${activeSheet}"
+First 20 rows, 10 columns of data:
 ${sheetCtx}
 
-Kısa, net ve Türkçe yanıtlar ver. Formül önerilerinde Excel formatını kullan (=TOPLA(), =ORTALAMA() vb.).`;
+Give short, clear answers in English. Use standard Excel formula format for suggestions (=SUM(), =AVERAGE(), etc.).`;
 
   const resp = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
@@ -1453,7 +1453,7 @@ Kısa, net ve Türkçe yanıtlar ver. Formül önerilerinde Excel formatını ku
       temperature: 0.7
     })
   });
-  if (!resp.ok) throw new Error(`API Hatası: ${resp.status}`);
+  if (!resp.ok) throw new Error(`API Error: ${resp.status}`);
   const data = await resp.json();
   return data.choices[0].message.content;
 }
@@ -1462,17 +1462,17 @@ function generateLocalReply(msg) {
   const data = sheets[activeSheet];
   const lower = msg.toLowerCase();
 
-  if (lower.includes('analiz') || lower.includes('incele')) {
+  if (lower.includes('analiz') || lower.includes('analyze') || lower.includes('incele')) {
     let filled = 0, numeric = 0, total = 0;
     for (let r = 0; r < ROWS; r++)
       for (let c = 0; c < COLS; c++) {
         if (data[r][c]) { filled++; const v = parseFloat(data[r][c]); if (!isNaN(v)) { numeric++; total += v; } }
       }
-    return `📊 "${activeSheet}" analizi:\n• ${filled} dolu hücre\n• ${numeric} sayısal değer\n• Toplam: ${total.toLocaleString('tr-TR', {maximumFractionDigits:2})}\n• Ortalama: ${numeric ? (total/numeric).toLocaleString('tr-TR', {maximumFractionDigits:2}) : 'N/A'}`;
+    return `📊 "${activeSheet}" analysis:\n• ${filled} filled cells\n• ${numeric} numeric values\n• Sum: ${total.toLocaleString('en-US', {maximumFractionDigits:2})}\n• Average: ${numeric ? (total/numeric).toLocaleString('en-US', {maximumFractionDigits:2}) : 'N/A'}`;
   }
 
-  if (lower.includes('formül') || lower.includes('formula')) {
-    return `💡 Sık kullanılan Excel formülleri:\n• =TOPLA(A1:A10) — Toplam\n• =ORTALAMA(A1:A10) — Ortalama\n• =EĞER(A1>100;"Yüksek";"Düşük") — Koşul\n• =MAK(A1:A10) — En büyük\n• =MİN(A1:A10) — En küçük\n• =BAĞ_DEĞ_SAY(A1:A10) — Dolu hücre sayısı\n\nHangi formül için detay istiyorsunuz?`;
+  if (lower.includes('formula')) {
+    return `💡 Common Excel formulas:\n• =SUM(A1:A10) — Total\n• =AVERAGE(A1:A10) — Average\n• =IF(A1>100,"High","Low") — Conditional\n• =MAX(A1:A10) — Largest\n• =MIN(A1:A10) — Smallest\n• =COUNTA(A1:A10) — Count filled cells\n\nWhich formula would you like more detail on?`;
   }
 
   if (lower.includes('toplam') || lower.includes('sum')) {
@@ -1481,22 +1481,22 @@ function generateLocalReply(msg) {
       const v = parseFloat(data[r][selCol]);
       if (!isNaN(v)) { total += v; count++; }
     }
-    return `${colLetter(selCol)} sütunu toplamı: ${total.toLocaleString('tr-TR', {maximumFractionDigits:2})}\n(${count} sayısal değer)`;
+    return `${colLetter(selCol)} column sum: ${total.toLocaleString('en-US', {maximumFractionDigits:2})}\n(${count} numeric values)`;
   }
 
-  if (lower.includes('boş') || lower.includes('temizle')) {
-    return `Boş satırları temizlemek için:\n1. Sağ tıklayın → Satırı Sil seçin\n2. Ya da Bul&Değiştir'i kullanın\n3. Otomatik temizlik için API anahtarı ekleyin ⚙️`;
+  if (lower.includes('empty') || lower.includes('clean') || lower.includes('delete') || lower.includes('remove')) {
+    return `To remove empty rows:\n1. Right-click → Delete Row\n2. Or use Find & Replace\n3. Add an API key for automatic cleanup ⚙️`;
   }
 
   if (lower.includes('grafik') || lower.includes('chart')) {
-    return `📈 Veri görselleştirme önerileri:\n• Satış verisi → Çizgi grafik\n• Kategori karşılaştırma → Çubuk grafik\n• Oran gösterimi → Pasta grafik\n• Dağılım analizi → Scatter plot\n\nGrafik ekleme için Excel'e aktarın (İndir butonu) ve Excel'de grafik ekleyin.`;
+    return `📈 Data visualization suggestions:\n• Sales data → Line chart\n• Category comparison → Bar chart\n• Proportion display → Pie chart\n• Distribution analysis → Scatter plot\n\nTo add a chart, export to Excel (Download button) and insert a chart there.`;
   }
 
   if (lower.includes('pivot')) {
-    return `📋 Pivot tablo oluşturmak için:\n1. Veri aralığınızı seçin\n2. Dosyayı indirin (İndir butonu)\n3. Excel'de Ekle → PivotTable seçin\n\nAlternatif: Verilerinizi açıklayın, ben gruplama formülleri önereyim!`;
+    return `📋 To create a pivot table:\n1. Select your data range\n2. Download the file (Download button)\n3. In Excel: Insert → PivotTable\n\nAlternative: Describe your data and I'll suggest grouping formulas!`;
   }
 
-  return `Merhaba! Excel veriniz hakkında yardımcı olmaktan mutluluk duyarım. 🤖\n\nŞunları yapabilirim:\n• Veri analizi ve istatistik\n• Formül önerileri\n• Veri temizleme ipuçları\n• Grafik önerileri`;
+  return `Hello! I'm happy to help with your Excel data. 🤖\n\nI can:\n• Analyze data and statistics\n• Suggest formulas\n• Data cleanup tips\n• Chart suggestions`;
 }
 
 function applyAIChanges(result) {
@@ -1548,7 +1548,7 @@ function applyAIChanges(result) {
 
   if (changed) {
     buildGrid(data);
-    if (typeof showToast === 'function') showToast('✓ Değişiklikler uygulandı', 'success');
+    if (typeof showToast === 'function') showToast('✓ Changes applied', 'success');
   }
 }
 
@@ -1574,12 +1574,12 @@ function sortColumn(col, direction) {
   data.sort(function(a, b) {
     const va = parseFloat(a[col]), vb = parseFloat(b[col]);
     if (!isNaN(va) && !isNaN(vb)) return direction === 'desc' ? vb - va : va - vb;
-    const cmp = String(a[col] || '').localeCompare(String(b[col] || ''), 'tr');
+    const cmp = String(a[col] || '').localeCompare(String(b[col] || ''), 'en');
     return direction === 'desc' ? -cmp : cmp;
   });
   if (header) data.unshift(header);
   buildGrid();
-  toast(colLetter(col) + ' sütununa göre sıralandı', 'ok');
+  toast('Sorted by column ' + colLetter(col), 'ok');
 }
 
 function deleteEmptyRows() { cmdCleanEmptyRows(); }
@@ -1617,7 +1617,7 @@ function addMsg(role, html) {
   if (role === 'user') {
     const bubble = el.querySelector('.mbubble');
     bubble.style.cursor = 'pointer';
-    bubble.title = 'Tekrar göndermek için tıkla';
+    bubble.title = 'Click to resend';
     bubble.addEventListener('click', () => {
       const inp = document.getElementById('chatInput');
       inp.value = typeof html === 'string' ? html : bubble.textContent.trim();
@@ -1638,7 +1638,7 @@ function clearChat() {
 }
 
 function addWelcomeMsg() {
-  addMsg('ai', `Merhaba! Ben ExcelAI asistanınım. 👋\n\nVerinizi analiz edebilir, formül önerebilir ve veri işleme konusunda yardımcı olabilirim.\n\nBir soru sorun veya aşağıdaki önerilerden birini seçin!`);
+  addMsg('ai', `Hello! I'm your ExcelAI assistant. 👋\n\nI can analyze your data, suggest formulas, and help with data processing.\n\nAsk me a question or pick one of the suggestions below!`);
 }
 
 function saveChatHistory() {
@@ -1676,20 +1676,20 @@ document.addEventListener('keydown', e => {
 //  COMMAND PALETTE
 // ═══════════════════════════════════════════════════════════════
 const CMD_DEFS = [
-  // ⚡ Hızlı İşlemler
-  {group:'⚡ HIZLI İŞLEMLER', name:'Seçili alanı topla',       shortcut:'Ctrl+Shift+T', icon:'sum',      action:'sumSelection'},
-  {group:'⚡ HIZLI İŞLEMLER', name:'Tabloyu sırala',            shortcut:'Ctrl+Shift+S', icon:'sort',     action:'sortData'},
-  {group:'⚡ HIZLI İŞLEMLER', name:'Boş satırları temizle',     shortcut:'',             icon:'clean',    action:'cleanEmptyRows'},
-  {group:'⚡ HIZLI İŞLEMLER', name:'Tekrar edenleri sil',       shortcut:'',             icon:'dedup',    action:'removeDuplicates'},
-  // 🤖 AI Komutları
-  {group:'🤖 AI KOMUTLARI',   name:'Seçili alanı analiz et',    shortcut:'',             icon:'ai',       action:'aiAnalyze'},
-  {group:'🤖 AI KOMUTLARI',   name:'Otomatik grafik oluştur',   shortcut:'',             icon:'chart',    action:'aiChart'},
-  {group:'🤖 AI KOMUTLARI',   name:'Veriden özet çıkar',        shortcut:'',             icon:'summary',  action:'aiSummary'},
-  {group:'🤖 AI KOMUTLARI',   name:'Formül öner',               shortcut:'',             icon:'formula',  action:'aiFormula'},
-  // 📁 Dosya
-  {group:'📁 DOSYA',           name:'Excel yükle',               shortcut:'Ctrl+O',       icon:'upload',   action:'triggerUpload'},
-  {group:'📁 DOSYA',           name:'XLSX indir',                shortcut:'Ctrl+S',       icon:'download', action:'downloadFile'},
-  {group:'📁 DOSYA',           name:'Yeni dosya',                shortcut:'Ctrl+N',       icon:'new',      action:'newFile'},
+  // ⚡ Quick Actions
+  {group:'⚡ QUICK ACTIONS', name:'Sum selected range',       shortcut:'Ctrl+Shift+T', icon:'sum',      action:'sumSelection'},
+  {group:'⚡ QUICK ACTIONS', name:'Sort table',               shortcut:'Ctrl+Shift+S', icon:'sort',     action:'sortData'},
+  {group:'⚡ QUICK ACTIONS', name:'Remove empty rows',        shortcut:'',             icon:'clean',    action:'cleanEmptyRows'},
+  {group:'⚡ QUICK ACTIONS', name:'Remove duplicates',        shortcut:'',             icon:'dedup',    action:'removeDuplicates'},
+  // 🤖 AI Commands
+  {group:'🤖 AI COMMANDS',   name:'Analyze selected range',   shortcut:'',             icon:'ai',       action:'aiAnalyze'},
+  {group:'🤖 AI COMMANDS',   name:'Auto-generate chart',      shortcut:'',             icon:'chart',    action:'aiChart'},
+  {group:'🤖 AI COMMANDS',   name:'Summarize data',           shortcut:'',             icon:'summary',  action:'aiSummary'},
+  {group:'🤖 AI COMMANDS',   name:'Suggest formula',          shortcut:'',             icon:'formula',  action:'aiFormula'},
+  // 📁 File
+  {group:'📁 FILE',           name:'Upload Excel',             shortcut:'Ctrl+O',       icon:'upload',   action:'triggerUpload'},
+  {group:'📁 FILE',           name:'Download XLSX',            shortcut:'Ctrl+S',       icon:'download', action:'downloadFile'},
+  {group:'📁 FILE',           name:'New file',                 shortcut:'Ctrl+N',       icon:'new',      action:'newFile'},
 ];
 
 const CMD_ICONS = {
@@ -1768,8 +1768,8 @@ function cmdFilter() {
   cmdFocusIdx = -1;
 
   // If query looks like a question/AI prompt — show AI shortcut
-  const isQuestion = q.endsWith('?') || q.startsWith('neden') || q.startsWith('nasıl') ||
-                     q.startsWith('ne ') || q.startsWith('analiz') || q.length > 30;
+  const isQuestion = q.endsWith('?') || q.startsWith('why') || q.startsWith('how') ||
+                     q.startsWith('what ') || q.startsWith('analyze') || q.startsWith('analiz') || q.length > 30;
 
   if (q && isQuestion) {
     cmdRender([], q, true);
@@ -1793,7 +1793,7 @@ function cmdRender(items, query, aiMode) {
           <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
         </div>
         <div>
-          <div style="font-size:13px;color:#f97316;font-weight:500;">AI'a sor</div>
+          <div style="font-size:13px;color:#f97316;font-weight:500;">Ask AI</div>
           <div style="font-size:12px;color:#6b6b6b;margin-top:3px;">"${document.getElementById('cmdInput').value}"</div>
         </div>
       </div>`;
@@ -1805,7 +1805,7 @@ function cmdRender(items, query, aiMode) {
     container.innerHTML = `
       <div class="cmd-empty">
         <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <span>Sonuç bulunamadı</span>
+        <span>No results found</span>
       </div>`;
     return;
   }
@@ -1839,10 +1839,10 @@ function cmdExec(action) {
       case 'sortData':       sortData(); break;
       case 'cleanEmptyRows': cmdCleanEmptyRows(); break;
       case 'removeDuplicates': cmdRemoveDuplicates(); break;
-      case 'aiAnalyze':      cmdAIAction('analiz'); break;
-      case 'aiChart':        cmdAIAction('grafik'); break;
-      case 'aiSummary':      cmdAIAction('özet'); break;
-      case 'aiFormula':      cmdAIAction('formül'); break;
+      case 'aiAnalyze':      cmdAIAction('analyze'); break;
+      case 'aiChart':        cmdAIAction('chart'); break;
+      case 'aiSummary':      cmdAIAction('summary'); break;
+      case 'aiFormula':      cmdAIAction('formula'); break;
       case 'triggerUpload':  triggerUpload(); break;
       case 'downloadFile':   downloadFile(); break;
       case 'newFile':        newFile(); break;
@@ -1878,7 +1878,7 @@ function cmdSumSelection() {
   insertRow = Math.min(insertRow, ROWS - 1);
   data[insertRow][selCol] = String(total);
   buildGrid();
-  toast(`${colLetter(selCol)} toplamı: ${total.toLocaleString('tr-TR', {maximumFractionDigits:2})} (${count} değer)`, 'ok');
+  toast(`${colLetter(selCol)} sum: ${total.toLocaleString('en-US', {maximumFractionDigits:2})} (${count} values)`, 'ok');
 }
 
 function cmdCleanEmptyRows() {
@@ -1892,7 +1892,7 @@ function cmdCleanEmptyRows() {
   }
   while (data.length < ROWS) data.push(Array(COLS).fill(''));
   buildGrid();
-  toast(removed ? `${removed} boş satır temizlendi` : 'Boş satır bulunamadı', removed ? 'ok' : 'err');
+  toast(removed ? `${removed} empty rows removed` : 'No empty rows found', removed ? 'ok' : 'err');
 }
 
 function cmdRemoveDuplicates() {
@@ -1911,15 +1911,20 @@ function cmdRemoveDuplicates() {
   }
   while (data.length < ROWS) data.push(Array(COLS).fill(''));
   buildGrid();
-  toast(removed ? `${removed} tekrarlı satır silindi` : 'Tekrarlı satır bulunamadı', removed ? 'ok' : 'err');
+  toast(removed ? `${removed} duplicate rows removed` : 'No duplicate rows found', removed ? 'ok' : 'err');
 }
 
 function cmdAIAction(type) {
   const prompts = {
-    analiz:  `Aktif sheet "${activeSheet}" verilerini analiz et ve önemli içgörüler sun.`,
-    grafik:  `Bu veriler için en uygun grafik tipini öner ve neden bu tipin uygun olduğunu açıkla.`,
-    özet:    `Bu Excel verilerinden kısa ve net bir yönetici özeti (executive summary) çıkar.`,
-    formül:  `Bu veri yapısı için kullanışlı Excel formülleri öner.`,
+    analyze: `Analyze the data in the active sheet "${activeSheet}" and highlight key insights.`,
+    chart:   `Suggest the most suitable chart type for this data and explain why.`,
+    summary: `Create a short, clear executive summary from this Excel data.`,
+    formula: `Suggest useful Excel formulas for this data structure.`,
+    // legacy Turkish keys for backward compat
+    analiz:  `Analyze the data in the active sheet "${activeSheet}" and highlight key insights.`,
+    grafik:  `Suggest the most suitable chart type for this data and explain why.`,
+    özet:    `Create a short, clear executive summary from this Excel data.`,
+    formül:  `Suggest useful Excel formulas for this data structure.`,
   };
   document.getElementById('chatInput').value = prompts[type];
   if (typeof openFloatingChat === 'function') openFloatingChat();
@@ -1943,15 +1948,15 @@ document.addEventListener('keydown', e => {
 // ═══════════════════════════════════════════════════════════════
 function deleteSheetDirect(name) {
   const names = Object.keys(sheets);
-  if (names.length <= 1) { toast('Son sheet silinemez', 'err'); return; }
-  if (!confirm(`"${name}" sheet'ini silmek istediğinizden emin misiniz?`)) return;
+  if (names.length <= 1) { toast('Cannot delete the last sheet', 'err'); return; }
+  if (!confirm(`Are you sure you want to delete the sheet "${name}"?`)) return;
   const idx = names.indexOf(name);
   delete sheets[name];
   delete cellMeta[name];
   const remaining = Object.keys(sheets);
   const nextSheet = remaining[Math.min(idx, remaining.length - 1)];
   switchSheet(nextSheet);
-  toast(`"${name}" silindi`, 'ok');
+  toast(`"${name}" deleted`, 'ok');
 }
 
 function toggleSidebar() {
@@ -1962,7 +1967,7 @@ function toggleSidebar() {
   document.body.classList.toggle('sidebar-collapsed', collapsed);
   const poly = icon.querySelector('polyline');
   if (poly) poly.setAttribute('points', collapsed ? '9 18 15 12 9 6' : '15 18 9 12 15 6');
-  btn.title = collapsed ? 'Kenar Çubuğunu Genişlet' : 'Kenar Çubuğunu Daralt';
+  btn.title = collapsed ? 'Expand Sidebar' : 'Collapse Sidebar';
   localStorage.setItem('sb_collapsed', collapsed ? '1' : '0');
 }
 
@@ -2037,10 +2042,10 @@ function scmAction(action) {
     Object.keys(sheets).forEach(k => delete sheets[k]);
     Object.assign(sheets, ordered);
     switchSheet(newName);
-    toast(`"${newName}" oluşturuldu`, 'ok');
+    toast(`"${newName}" created`, 'ok');
   } else if (action === 'delete') {
     const names = Object.keys(sheets);
-    if (names.length <= 1) { toast('Son sheet silinemez', 'err'); return; }
+    if (names.length <= 1) { toast('Cannot delete the last sheet', 'err'); return; }
     const idx = names.indexOf(name);
     delete sheets[name];
     delete cellMeta[name];
@@ -2118,7 +2123,7 @@ function extractChartData(rangeStr) {
 
   // First column = labels, remaining = series
   for (let r = r1; r <= Math.min(r2, data.length - 1); r++) {
-    labels.push(data[r][c1] || `Satır ${r + 1}`);
+    labels.push(data[r][c1] || `Row ${r + 1}`);
   }
 
   // Create one dataset per value column
@@ -2158,9 +2163,9 @@ function extractChartData(rangeStr) {
       values.push(parseFloat(data[r][c1]) || 0);
     }
     labels.length = 0;
-    values.forEach((_, i) => labels.push(`Değer ${i + 1}`));
+    values.forEach((_, i) => labels.push(`Value ${i + 1}`));
     datasets.push({
-      label: 'Veri',
+      label: 'Data',
       data: values,
       backgroundColor: CHART_PALETTE.slice(0, values.length).map(c => c + 'cc'),
       borderColor: CHART_PALETTE.slice(0, values.length),
@@ -2188,7 +2193,7 @@ function createChart() {
   const titleVal = document.getElementById('chartTitle').value.trim();
 
   if (!parseRange(rangeVal)) {
-    toast('Geçersiz aralık — örn: A1:B10', 'err');
+    toast('Invalid range — e.g. A1:B10', 'err');
     return;
   }
   chartCurrentRange = rangeVal;
@@ -2203,7 +2208,7 @@ function createChart() {
   // Open modal
   const modal = document.getElementById('chartModal');
   modal.classList.add('open');
-  document.getElementById('chartModalTitle').textContent = titleVal || 'Grafik';
+  document.getElementById('chartModalTitle').textContent = titleVal || 'Chart';
 
   // Sync modal type switcher
   document.querySelectorAll('.cm-type-btn').forEach(b => {
@@ -2212,7 +2217,7 @@ function createChart() {
 
   renderChart(titleVal);
   chartAutoUpdate = true;
-  toast('Grafik oluşturuldu!', 'ok');
+  toast('Chart created!', 'ok');
 }
 
 // ── Chart modal: click outside to close ─────
@@ -2223,10 +2228,10 @@ function chartModalClickOutside(e) {
 // ── Render / re-render (dark Amplemarket theme)
 function renderChart(title) {
   const extracted = extractChartData(chartCurrentRange);
-  if (!extracted) { toast('Veri okunamadı', 'err'); return; }
+  if (!extracted) { toast('Could not read data', 'err'); return; }
 
   const { labels, datasets } = extracted;
-  if (!datasets || datasets.length === 0) { toast('Seçili aralıkta veri yok', 'err'); return; }
+  if (!datasets || datasets.length === 0) { toast('No data in selected range', 'err'); return; }
 
   const canvas = document.getElementById('myChartCanvas');
   if (activeChartInstance) { activeChartInstance.destroy(); activeChartInstance = null; }
@@ -2362,7 +2367,7 @@ async function addHistory(type, text) {
       created_at: new Date().toISOString()
     });
   } catch(e) {
-    console.warn('History kaydetme hatası:', e);
+    console.warn('History save error:', e);
   }
 }
 
@@ -2384,16 +2389,16 @@ async function loadHistory() {
       renderVersionHistory();
     }
   } catch(e) {
-    console.warn('History yükleme hatası:', e);
+    console.warn('History load error:', e);
   }
 }
 
 function fmtHistoryTime(ts) {
   const d = Date.now() - ts;
-  if (d < 60000) return 'Az önce';
-  if (d < 3600000) return Math.floor(d / 60000) + ' dk önce';
-  if (d < 86400000) return Math.floor(d / 3600000) + ' sa önce';
-  return new Date(ts).toLocaleDateString('tr-TR', {day:'numeric', month:'short'});
+  if (d < 60000) return 'Just now';
+  if (d < 3600000) return Math.floor(d / 60000) + ' min ago';
+  if (d < 86400000) return Math.floor(d / 3600000) + ' hr ago';
+  return new Date(ts).toLocaleDateString('en-US', {day:'numeric', month:'short'});
 }
 
 const VH_ICONS = {
@@ -2406,7 +2411,7 @@ function renderVersionHistory() {
   const list = document.getElementById('vhList');
   if (!list) return;
   if (versionHistory.length === 0) {
-    list.innerHTML = '<div id="vhEmpty">Henüz işlem yok</div>';
+    list.innerHTML = '<div id="vhEmpty">No actions yet</div>';
     return;
   }
   list.innerHTML = versionHistory.map((entry, i) => {
@@ -2428,7 +2433,7 @@ function showHistoryPreview(idx) {
 
   document.getElementById('hmTitle').textContent = entry.desc;
   document.getElementById('hmSub').textContent = fmtHistoryTime(entry.time) + ' · ' +
-    (entry.type === 'ai' ? 'AI işlemi' : entry.type === 'file' ? 'Dosya işlemi' : 'Manuel düzenleme');
+    (entry.type === 'ai' ? 'AI action' : entry.type === 'file' ? 'File action' : 'Manual edit');
 
   // Build mini grid preview (8 cols × 10 rows of the snapshot's activeSheet)
   const data = entry.snap.sheets[entry.snap.activeSheet] || [];
@@ -2463,7 +2468,7 @@ function restoreHistory() {
   renderSheetTabs();
   buildGrid();
   updateStatus();
-  toast('Geçmişe geri dönüldü', 'ok');
+  toast('Restored from history', 'ok');
 }
 
 function closeHistoryModal() {
@@ -2492,7 +2497,7 @@ function checkEmptyState() {
     const esRecent = document.getElementById('esRecent');
     if (rec && esRecent) {
       rec.innerHTML = recentFiles.slice(0, 3).map(function(f, i) {
-        return `<div class="es-recent-item" onclick="loadRecentFile(${i})">📄 ${f.name || 'Dosya'}</div>`;
+        return `<div class="es-recent-item" onclick="loadRecentFile(${i})">📄 ${f.name || 'File'}</div>`;
       }).join('');
       esRecent.style.display = recentFiles.length ? '' : 'none';
     }
@@ -2502,18 +2507,18 @@ function checkEmptyState() {
 function loadSampleData() {
   const data = sheets[activeSheet];
   const sample = [
-    ['Ürün','Ocak','Şubat','Mart','Toplam'],
+    ['Product','January','February','March','Total'],
     ['Laptop','45000','52000','48000','145000'],
-    ['Telefon','32000','38000','41000','111000'],
+    ['Phone','32000','38000','41000','111000'],
     ['Tablet','18000','21000','19500','58500'],
-    ['Aksesuar','8500','9200','10100','27800'],
-    ['Yazılım','12000','14000','15500','41500'],
+    ['Accessories','8500','9200','10100','27800'],
+    ['Software','12000','14000','15500','41500'],
   ];
   sample.forEach((row, r) => row.forEach((v, c) => { data[r][c] = v; }));
   buildGrid();
   updateStatus();
-  addHistory('file', 'Örnek veri yüklendi');
-  toast('Örnek veri yüklendi', 'ok');
+  addHistory('file', 'Sample data loaded');
+  toast('Sample data loaded', 'ok');
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -2541,7 +2546,7 @@ document.addEventListener('DOMContentLoaded', () => {
     clearTimeout(_cellEditTimer);
     _cellEditTimer = setTimeout(() => {
       const ref = colLetter(selCol) + (selRow + 1);
-      addHistory('manual', ref + ' düzenlendi');
+      addHistory('manual', ref + ' edited');
     }, 2000);
   });
 
@@ -2709,12 +2714,12 @@ function saveData() {
         localStorage.setItem('excel_autosave', JSON.stringify(minPayload));
         dirtyCells.clear();
         setTimeout(function() { setSaveState('saved'); }, 400);
-        toast('Depolama doluydu; sadece aktif sheet kaydedildi', 'warning');
+        toast('Storage was full; only active sheet was saved', 'warning');
       } catch(e2) {
-        toast('Depolama alanı dolu — kayıt yapılamadı', 'err');
+        toast('Storage full — could not save', 'err');
       }
     } else {
-      toast('Kayıt başarısız', 'err');
+      toast('Save failed', 'err');
     }
   }
 }
@@ -2831,8 +2836,8 @@ function loadRecentFile(idx) {
     if (typeof renderSheetTabs === 'function') renderSheetTabs();
     updateStatus();
     const fn = document.getElementById('fileName');
-    if (fn) fn.textContent = f.name || 'Dosya';
-    toast((f.name || 'Dosya') + ' yüklendi', 'ok');
+    if (fn) fn.textContent = f.name || 'File';
+    toast((f.name || 'File') + ' loaded', 'ok');
   }
 }
 
@@ -2895,14 +2900,14 @@ function showToast(msg, type, undoable) { toast(msg, type, undoable); }
     var origHTML = btn ? btn.innerHTML : null;
     if (btn) {
       btn.disabled = true;
-      btn.innerHTML = '<svg class="btn-spin" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg> İndiriliyor...';
+      btn.innerHTML = '<svg class="btn-spin" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg> Downloading...';
     }
     _origDownload.apply(this, arguments);
     if (btn) {
       setTimeout(function() {
         btn.disabled = false;
         btn.innerHTML = origHTML;
-        toast('⬇ Dosya indirildi', 'info');
+        toast('⬇ File downloaded', 'info');
       }, 400);
     }
   };
@@ -2912,10 +2917,10 @@ function showToast(msg, type, undoable) { toast(msg, type, undoable); }
 (function() {
   if (typeof CMD_DEFS === 'undefined') return;
   CMD_DEFS.push(
-    {group:'🤖 AI KOMUTLARI',   name:'AI Asistanı Aç/Kapat', shortcut:'Ctrl+D', icon:'chat',      action:'toggleChat'},
-    {group:'📊 GÖRÜNÜM',         name:'Grafiği Aç/Kapat',      shortcut:'',       icon:'chartOpen', action:'toggleChart'},
-    {group:'📁 DOSYA',           name:'CSV İndir',              shortcut:'',       icon:'csvDown',   action:'downloadCSV'},
-    {group:'⚡ HIZLI İŞLEMLER', name:'Tüm Hücreleri Seç',      shortcut:'Ctrl+A', icon:'selectAll', action:'selectAll'}
+    {group:'🤖 AI COMMANDS',   name:'Toggle AI Assistant', shortcut:'Ctrl+D', icon:'chat',      action:'toggleChat'},
+    {group:'📊 VIEW',           name:'Toggle Chart',         shortcut:'',       icon:'chartOpen', action:'toggleChart'},
+    {group:'📁 FILE',           name:'Download CSV',         shortcut:'',       icon:'csvDown',   action:'downloadCSV'},
+    {group:'⚡ QUICK ACTIONS', name:'Select All Cells',      shortcut:'Ctrl+A', icon:'selectAll', action:'selectAll'}
   );
   if (typeof CMD_ICONS !== 'undefined') {
     CMD_ICONS.chat      = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`;
@@ -2937,11 +2942,11 @@ function showToast(msg, type, undoable) { toast(msg, type, undoable); }
 
 // ── 5. selectAllCells() helper ───────────────────────────────
 function selectAllCells() {
-  if (!sheets || !sheets[activeSheet]) { toast('Önce bir dosya yükleyin', 'info'); return; }
+  if (!sheets || !sheets[activeSheet]) { toast('Load a file first', 'info'); return; }
   selRow = 0; selCol = 0;
   selRow2 = ROWS - 1; selCol2 = COLS - 1;
   if (typeof highlightSelection === 'function') highlightSelection();
-  toast('Tüm hücreler seçildi', 'info');
+  toast('All cells selected', 'info');
 }
 
 // ── 6. Extra keyboard shortcuts ──────────────────────────────
@@ -2963,7 +2968,7 @@ document.addEventListener('keydown', function(e) {
   if (ctrl && e.shiftKey && e.key === 'Z') {
     e.preventDefault();
     if (typeof redo === 'function') redo();
-    else toast('Yeniden yapmak mevcut değil', 'info');
+    else toast('Nothing to redo', 'info');
   }
 
   // Ctrl+A → select all cells (not in input)
@@ -2991,7 +2996,7 @@ document.addEventListener('keydown', function(e) {
     }
     var count = (r2 - r1 + 1) * (c2 - c1 + 1);
     if (typeof buildGrid === 'function') buildGrid();
-    toast(count + ' hücre temizlendi', 'info', true);
+    toast(count + ' cells cleared', 'info', true);
   }
 
   // Escape → close panels in priority order (context menu → palette → chat)
@@ -3081,7 +3086,7 @@ function setSyncBadge(state) {
   if (!badge) return;
   badge.style.display = 'inline-flex';
   badge.className = 'sync-badge ' + (state === 'syncing' ? 'syncing' : state === 'synced' ? 'synced' : '');
-  if (text) text.textContent = state === 'syncing' ? 'Kaydediliyor...' : state === 'synced' ? 'Buluta kaydedildi ✓' : 'Kaydedilmemiş değişiklikler';
+  if (text) text.textContent = state === 'syncing' ? 'Saving...' : state === 'synced' ? 'Saved to cloud ✓' : 'Unsaved changes';
   if (state === 'synced') setTimeout(function() { if (badge) badge.style.display = 'none'; }, 3000);
 }
 
@@ -3110,7 +3115,7 @@ async function uploadFileToSupabase(file, parsedSheets) {
   var storagePath = currentUser.id + '/' + Date.now() + '_' + file.name;
   var uploadRes   = await sb.storage.from('excel-files').upload(storagePath, file, { upsert: false });
   if (uploadRes.error) {
-    toast('Buluta yükleme başarısız: ' + uploadRes.error.message, 'err');
+    toast('Cloud upload failed: ' + uploadRes.error.message, 'err');
     setSyncBadge('unsaved');
     return;
   }
@@ -3122,7 +3127,7 @@ async function uploadFileToSupabase(file, parsedSheets) {
     storage_path: storagePath
   }).select().single();
   if (insertRes.error) {
-    toast('Dosya kaydedilemedi', 'err');
+    toast('File could not be saved', 'err');
     setSyncBadge('unsaved');
     return;
   }
@@ -3135,7 +3140,7 @@ async function uploadFileToSupabase(file, parsedSheets) {
     file_id:        fileRecord.id,
     version_number: 1,
     storage_path:   storagePath,
-    label:          'İlk yükleme'
+    label:          'Initial upload'
   });
 
   // Cache in IndexedDB
@@ -3192,7 +3197,7 @@ async function autoSave() {
     setSyncBadge('synced');
   } catch(e) {
     setSyncBadge('unsaved');
-    toast('Otomatik kaydetme başarısız', 'warning');
+    toast('Auto-save failed', 'warning');
   } finally {
     isSyncing = false;
   }
@@ -3254,9 +3259,9 @@ async function loadFileById(fileId) {
 
     // Not cached — download from Supabase
     var recRes = await sb.from('files').select('*').eq('id', fileId).single();
-    if (recRes.error) { toast('Dosya bulunamadı', 'err'); return; }
+    if (recRes.error) { toast('File not found', 'err'); return; }
     var blobRes = await sb.storage.from('excel-files').download(recRes.data.storage_path);
-    if (blobRes.error) { toast('Dosya indirilemedi', 'err'); return; }
+    if (blobRes.error) { toast('File could not be downloaded', 'err'); return; }
     var ab = await blobRes.data.arrayBuffer();
     var wb = XLSX.read(ab);
     sheets = {};
@@ -3286,14 +3291,14 @@ async function loadFileById(fileId) {
       el.classList.toggle('active', el.dataset.id === String(fileId));
     });
   } catch(e) {
-    toast('Dosya açılamadı', 'err');
+    toast('Could not open file', 'err');
     console.error('loadFileById error:', e);
   }
 }
 
 // ── Version history ───────────────────────────────────────────
 async function saveVersion(label) {
-  if (!currentFileId) { toast('Önce bir dosya açın', 'warning'); return; }
+  if (!currentFileId) { toast('Open a file first', 'warning'); return; }
   try {
     setSyncBadge('syncing');
     var recRes = await sb.from('files').select('*').eq('id', currentFileId).single();
@@ -3315,14 +3320,14 @@ async function saveVersion(label) {
       file_id:        currentFileId,
       version_number: nextVersion,
       storage_path:   versionPath,
-      label:          label || ('Versiyon ' + nextVersion)
+      label:          label || ('Version ' + nextVersion)
     });
 
     setSyncBadge('synced');
-    toast('\u2713 Versiyon ' + nextVersion + ' kaydedildi', 'success');
+    toast('\u2713 Version ' + nextVersion + ' saved', 'success');
   } catch(e) {
     setSyncBadge('unsaved');
-    toast('Versiyon kaydedilemedi', 'err');
+    toast('Version could not be saved', 'err');
   }
 }
 
@@ -3348,16 +3353,16 @@ async function restoreVersion(versionId) {
     activeSheet = wb.SheetNames[0];
     buildGrid();
     renderSheetTabs();
-    toast('Eski versiyona geri d\u00f6nd\u00fc', 'info');
+    toast('Reverted to old version', 'info');
   } catch(e) {
-    toast('Versiyon y\u00fcklenemedi', 'err');
+    toast('Version could not be loaded', 'err');
   }
 }
 
 // ── Share file ────────────────────────────────────────────────
 async function shareFile(fileId) {
   var fid = fileId || currentFileId;
-  if (!fid) { toast('Önce bir dosya açın', 'warning'); return; }
+  if (!fid) { toast('Open a file first', 'warning'); return; }
   try {
     var token = (Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15));
     var res = await sb.from('files').update({ share_token: token, is_shared: true }).eq('id', fid);
@@ -3367,36 +3372,36 @@ async function shareFile(fileId) {
     showShareModal(shareUrl);
     if (fid === currentFileId) currentFileId = fid; // ensure stays set
   } catch(e) {
-    toast('Paylaşım başarısız', 'err');
+    toast('Sharing failed', 'err');
   }
 }
 
 async function stopSharing() {
   if (!currentFileId) return;
   var res = await sb.from('files').update({ is_shared: false, share_token: null }).eq('id', currentFileId);
-  if (res.error) { toast('Paylaşım kaldırılamadı', 'err'); return; }
-  toast('Paylaşım kaldırıldı', 'info');
+  if (res.error) { toast('Could not remove sharing', 'err'); return; }
+  toast('Sharing removed', 'info');
 }
 
 function showShareModal(shareUrl) {
-  if (typeof showModal !== 'function') { alert('Paylaşım linki: ' + shareUrl); return; }
+  if (typeof showModal !== 'function') { alert('Share link: ' + shareUrl); return; }
   showModal(
-    '<h2>🔗 Paylaşım Linki</h2>' +
-    '<p style="font-size:13px;color:#94a3b8;margin-bottom:12px;">Bu linke sahip herkes dosyanızı görüntüleyebilir.</p>' +
+    '<h2>🔗 Share Link</h2>' +
+    '<p style="font-size:13px;color:#94a3b8;margin-bottom:12px;">Anyone with this link can view your file.</p>' +
     '<div style="display:flex;gap:8px;align-items:center;">' +
       '<input class="finput" style="flex:1;font-size:12px;" readonly value="' + shareUrl + '" onclick="this.select()">' +
-      '<button class="btn btn-primary" onclick="navigator.clipboard&&navigator.clipboard.writeText(\'' + shareUrl + '\');toast(\'Kopyalandı ✓\',\'ok\')">Kopyala</button>' +
+      '<button class="btn btn-primary" onclick="navigator.clipboard&&navigator.clipboard.writeText(\'' + shareUrl + '\');toast(\'Copied ✓\',\'ok\')">Copy</button>' +
     '</div>' +
     '<div class="modal-foot">' +
-      '<button class="btn btn-ghost" style="color:#ef4444;" onclick="stopSharing();closeModal()">Paylaşımı Kaldır</button>' +
-      '<button class="btn btn-ghost" onclick="closeModal()">Kapat</button>' +
+      '<button class="btn btn-ghost" style="color:#ef4444;" onclick="stopSharing();closeModal()">Remove Sharing</button>' +
+      '<button class="btn btn-ghost" onclick="closeModal()">Close</button>' +
     '</div>'
   );
 }
 
 // ── Delete file ───────────────────────────────────────────────
 async function deleteFile(fileId) {
-  if (!window.confirm('Bu dosyayı kalıcı olarak silmek istiyor musunuz?')) return;
+  if (!window.confirm('Are you sure you want to permanently delete this file?')) return;
   try {
     // Get storage path first
     var recRes = await sb.from('files').select('storage_path').eq('id', fileId).single();
@@ -3427,9 +3432,9 @@ async function deleteFile(fileId) {
       renderSheetTabs();
     }
 
-    toast('Dosya silindi', 'info');
+    toast('File deleted', 'info');
   } catch(e) {
-    toast('Dosya silinemedi', 'err');
+    toast('File could not be deleted', 'err');
   }
 }
 
@@ -3454,8 +3459,8 @@ function renderFileItem(file) {
       '<div class="sfi-meta">' + formatFileDate(file.updated_at) + '</div>' +
     '</div>' +
     '<div class="sfi-actions">' +
-      '<button onclick="event.stopPropagation();shareFile(\'' + file.id + '\')" title="Paylaş">🔗</button>' +
-      '<button onclick="event.stopPropagation();deleteFile(\'' + file.id + '\')" title="Sil">🗑</button>' +
+      '<button onclick="event.stopPropagation();shareFile(\'' + file.id + '\')" title="Share">🔗</button>' +
+      '<button onclick="event.stopPropagation();deleteFile(\'' + file.id + '\')" title="Delete">🗑</button>' +
     '</div>';
 
   // Prepend so most recent is on top
@@ -3472,14 +3477,14 @@ function formatFileDate(iso) {
     var d = new Date(iso);
     var now = new Date();
     var diff = now - d;
-    if (diff < 60000)          return 'Az önce';
-    if (diff < 3600000)        return Math.floor(diff / 60000) + ' dk önce';
-    if (diff < 86400000)       return Math.floor(diff / 3600000) + ' sa önce';
-    if (diff < 7 * 86400000)   return Math.floor(diff / 86400000) + ' gün önce';
-    return d.toLocaleDateString('tr-TR', { day:'2-digit', month:'short', year:'numeric' });
+    if (diff < 60000)          return 'Just now';
+    if (diff < 3600000)        return Math.floor(diff / 60000) + ' min ago';
+    if (diff < 86400000)       return Math.floor(diff / 3600000) + ' hr ago';
+    if (diff < 7 * 86400000)   return Math.floor(diff / 86400000) + ' days ago';
+    return d.toLocaleDateString('en-US', { day:'2-digit', month:'short', year:'numeric' });
   } catch(e) { return ''; }
 }
-// ── RAKIP KARŞILAŞTIRMASI ─────────────────────────────────────
+// ── COMPETITOR COMPARISON ─────────────────────────────────────
 function showCompareModal() {
   const modal = document.getElementById('compareModal');
   if (modal) modal.style.display = 'flex';
@@ -3494,12 +3499,12 @@ function closeCompareModal(event) {
 function generateAutoReport() {
   const inp = document.getElementById('chatInput');
   if (inp) {
-    inp.value = 'Otomatik rapor oluştur';
+    inp.value = 'Auto-generate report';
     if (typeof sendChat === 'function') sendChat();
   }
 }
 
-// ── TOAST SİSTEMİ ──────────────────────────────────
+// ── TOAST SYSTEM ───────────────────────────────────
 
 function showToast(message, type = 'success', duration = 3500) {
   const container = document.getElementById('toastContainer');
@@ -3525,7 +3530,7 @@ function removeToast(toastEl) {
   setTimeout(() => toastEl.remove(), 250);
 }
 
-// ── CHAT BAR FONKSİYONLARI ─────────────────────────
+// ── CHAT BAR FUNCTIONS ─────────────────────────────
 
 function fillChatInput(chip) {
   const input = document.getElementById('chatInput');
@@ -3572,7 +3577,7 @@ function renderAttachmentChip(file) {
   chip.dataset.filename = file.name;
   chip.innerHTML = `
     <span>📎 ${file.name}</span>
-    <button onclick="removeAttachmentChip('${file.name}')" title="Kaldır">×</button>
+    <button onclick="removeAttachmentChip('${file.name}')" title="Remove">×</button>
   `;
   bar.appendChild(chip);
 }
@@ -3585,7 +3590,7 @@ function removeAttachmentChip(filename) {
   if (chip) chip.remove();
 }
 
-// ── ANA GÖNDER FONKSİYONU ──────────────────────────
+// ── MAIN SEND FUNCTION ─────────────────────────────
 
 async function sendChatMessage() {
   const input = document.getElementById('chatInput');
@@ -3595,7 +3600,7 @@ async function sendChatMessage() {
   const message = input.value.trim();
   if (!message) return;
 
-  // Floating chat panel'i aç (kapalıysa)
+  // Open floating chat panel (if closed)
   if (typeof openFloatingChat === 'function') openFloatingChat();
 
   input.value = '';
@@ -3624,7 +3629,7 @@ async function sendChatMessage() {
       body: JSON.stringify({ message, sheetContext })
     });
 
-    if (!response.ok) throw new Error('Sunucu hatası: ' + response.status);
+    if (!response.ok) throw new Error('Server error: ' + response.status);
 
     const data = await response.json();
 
@@ -3641,16 +3646,16 @@ async function sendChatMessage() {
     }
 
     if (applied) {
-      showToast(data.reply || 'İşlem uygulandı', 'success');
+      showToast(data.reply || 'Changes applied', 'success');
     } else if (data.action === 'message') {
-      showToast('Yanıt alındı', 'success');
+      showToast('Response received', 'success');
     }
 
   } catch (error) {
-    console.error('Chat hatası:', error);
-    showToast('Bağlantı hatası. Tekrar deneyin.', 'error');
+    console.error('Chat error:', error);
+    showToast('Connection error. Please try again.', 'error');
     if (typeof addMsg === 'function') {
-      addMsg('ai', '❌ Hata oluştu. Lütfen tekrar deneyin.');
+      addMsg('ai', '❌ An error occurred. Please try again.');
     }
   } finally {
     sendBtn.disabled = false;
@@ -3668,7 +3673,7 @@ async function sendChatMessage() {
   }
 }
 
-// Spin animasyonu
+// Spin animation
 (function() {
   const spinStyle = document.createElement('style');
   spinStyle.textContent = '@keyframes spin { to { transform: rotate(360deg); } }';
@@ -3679,13 +3684,13 @@ function handleCompareFile(input, role) {
   const file = input.files[0];
   if (!file) return;
   if (file.size > 10 * 1024 * 1024) {
-    toast('Dosya çok büyük (max 10MB)', 'err');
+    toast('File too large (max 10MB)', 'err');
     input.value = '';
     return;
   }
   const ext = file.name.split('.').pop().toLowerCase();
   if (!['xlsx', 'xls', 'csv'].includes(ext)) {
-    toast('Sadece Excel (.xlsx, .xls) ve CSV dosyaları desteklenir', 'err');
+    toast('Only Excel (.xlsx, .xls) and CSV files are supported', 'err');
     input.value = '';
     return;
   }
@@ -3699,11 +3704,11 @@ function handleCompareFile(input, role) {
       const ws = wb.Sheets[wb.SheetNames[0]];
       const csv = XLSX.utils.sheet_to_csv(ws);
       const rowCount = csv.split('\n').filter(function(r) { return r.trim(); }).length;
-      if (nameEl) nameEl.textContent = '✅ ' + file.name + ' (' + rowCount + ' satır)';
-      toast((role === 'my' ? 'Kendi veriniz' : 'Rakip verisi') + ' yüklendi: ' + file.name, 'ok');
+      if (nameEl) nameEl.textContent = '✅ ' + file.name + ' (' + rowCount + ' rows)';
+      toast((role === 'my' ? 'Your data' : 'Competitor data') + ' loaded: ' + file.name, 'ok');
     } catch(err) {
       if (nameEl) nameEl.textContent = '❌ Hata';
-      toast('Dosya okunamadı: ' + err.message, 'err');
+      toast('Could not read file: ' + err.message, 'err');
     }
   };
   if (ext === 'csv') reader.readAsText(file, 'UTF-8');
