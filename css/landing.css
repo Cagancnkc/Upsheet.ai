@@ -618,6 +618,26 @@ body {
 }
 .lp-price-featured .lp-user-discount { color: #86efac; }
 
+/* ── DİL SEÇİCİ ─────────────────────────────────────────────────── */
+.lang-switcher {
+  display: flex; align-items: center;
+  background: rgba(0,0,0,0.05);
+  border-radius: 100px; padding: 3px; gap: 2px;
+}
+.lang-btn {
+  padding: 4px 10px; border: none;
+  background: transparent; border-radius: 100px;
+  font-size: 12px; font-weight: 600;
+  color: var(--text-muted, #6B6B6B);
+  cursor: pointer; transition: all 0.15s;
+  letter-spacing: 0.02em;
+}
+.lang-btn.active {
+  background: white; color: var(--text-dark, #1A1A1A);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
+.lang-btn:hover:not(.active) { color: var(--text-dark, #1A1A1A); }
+
 @media (max-width: 768px) {
   .lp-container { padding: 0 20px; }
   .lp-footer-grid { grid-template-columns: 1fr 1fr; }

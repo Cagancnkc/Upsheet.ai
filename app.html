@@ -213,6 +213,24 @@
 .chat-send-btn:hover:not(:disabled) { background: #374151; }
 .chat-send-btn:disabled { background: #D1D5DB; cursor: not-allowed; }
 .chat-send-btn.loading { background: #374151; cursor: not-allowed; }
+
+/* ── DİL SEÇİCİ ── */
+.lang-switcher {
+  display: flex; align-items: center;
+  background: rgba(0,0,0,0.05);
+  border-radius: 100px; padding: 3px; gap: 2px;
+}
+.lang-btn {
+  padding: 4px 10px; border: none;
+  background: transparent; border-radius: 100px;
+  font-size: 12px; font-weight: 600; color: #6B7280;
+  cursor: pointer; transition: all 0.15s; letter-spacing: 0.02em;
+}
+.lang-btn.active { background: white; color: #1A1A1A; box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+.lang-btn:hover:not(.active) { color: #1A1A1A; }
+body.dark .lang-switcher { background: rgba(255,255,255,0.06); }
+body.dark .lang-btn { color: #9ca3af; }
+body.dark .lang-btn.active { background: rgba(255,255,255,0.12); color: #fff; box-shadow: 0 1px 4px rgba(0,0,0,0.4); }
 </style>
 </head>
 <body>
@@ -252,7 +270,7 @@
       </div>
       <div class="sb-new" onclick="triggerUpload()" title="Dosya Yükle">
         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-        Dosya Yükle
+        <span data-i18n="app_upload">Dosya Yükle</span>
       </div>
       <div id="recentFiles"></div>
     </div>
@@ -365,6 +383,11 @@
     </button>
     <div class="tb-sep"></div>
     <button class="tb-btn" id="tbFreezeBtn" title="İlk satırı sabitle / serbest bırak" onclick="toggleFreeze()">❄ Sabitle</button>
+    <div class="tb-sep"></div>
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="tr" onclick="setLang('tr')">TR</button>
+      <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
+    </div>
     <div style="flex:1"></div>
     <span style="font-size:11px;color:#94a3b8;margin-right:4px;" id="selectionInfo"></span>
   </div>
@@ -439,6 +462,7 @@
       <textarea
         id="chatInput"
         class="chat-textarea"
+        data-i18n-placeholder="app_chat_placeholder"
         placeholder="Bir komut yazın... (ör: B sütununu topla ve C1'e yaz)"
         rows="1"
         onkeydown="handleChatKeydown(event)"
@@ -1122,5 +1146,6 @@ function queueOfflineMessage(payload) {
 }
 </style>
 
+<script src="i18n.js"></script>
 </body>
 </html>

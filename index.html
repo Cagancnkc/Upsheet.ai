@@ -35,35 +35,39 @@
     <span>Mocksheet</span>
   </a>
   <div class="lp-nav-links">
-    <a href="#features">Özellikler</a>
-    <a href="#pricing">Fiyatlar</a>
+    <a href="#features" data-i18n="nav_features">Özellikler</a>
+    <a href="#pricing" data-i18n="nav_pricing">Fiyatlar</a>
     <a href="#testimonials">Kullanıcılar</a>
-    <a href="auth.html">Giriş Yap</a>
+    <a href="auth.html" data-i18n="nav_login">Giriş Yap</a>
   </div>
-  <a href="auth.html" class="lp-nav-cta">Ücretsiz Başla</a>
+  <div class="lang-switcher">
+    <button class="lang-btn active" data-lang="tr" onclick="setLang('tr')">TR</button>
+    <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
+  </div>
+  <a href="auth.html" class="lp-nav-cta" data-i18n="nav_start">Ücretsiz Başla</a>
 </nav>
 
 <!-- HERO -->
 <section class="lp-hero">
   <div class="lp-hero-badge">
-    <span>🤖 AI ile Excel</span>
+    <span data-i18n="hero_badge">🤖 AI ile Excel</span>
   </div>
 
   <h1 class="lp-hero-h1">
-    Excel işlerini<br>
-    <span class="lp-gradient-text">12x daha hızlı</span> bitir.
+    <span data-i18n="hero_title_1">Excel işlerini</span><br>
+    <span class="lp-gradient-text" data-i18n="hero_title_2">12x daha hızlı</span> <span data-i18n="hero_title_3">bitir.</span>
   </h1>
 
-  <p class="lp-hero-sub">
+  <p class="lp-hero-sub" data-i18n="hero_sub">
     Türkçe yaz, AI halleder. Formül yok, makro yok,
     saat süren işler dakikalara iniyor.
   </p>
 
   <div class="lp-hero-ctas">
-    <a href="auth.html" class="lp-btn-primary">
+    <a href="auth.html" class="lp-btn-primary" data-i18n="hero_cta_primary">
       Ücretsiz Dene
     </a>
-    <a href="#features" class="lp-btn-ghost">
+    <a href="#features" class="lp-btn-ghost" data-i18n="hero_cta_ghost">
       Nasıl çalışır? →
     </a>
   </div>
@@ -200,8 +204,8 @@
 <section class="lp-features">
   <div class="lp-container">
     <h2 class="lp-section-title">
-      Sadece bir araç değil.<br>
-      <span class="lp-gradient-text">Tam bir Excel asistanı.</span>
+      <span data-i18n="features_title">Sadece bir araç değil.</span><br>
+      <span class="lp-gradient-text" data-i18n="features_title_2">Tam bir Excel asistanı.</span>
     </h2>
 
     <div class="lp-bento">
@@ -275,20 +279,20 @@
   <div class="lp-container">
     <div class="lp-stats-grid">
       <div class="lp-stat-item">
-        <div class="lp-stat-big">12x</div>
-        <div class="lp-stat-desc">Daha hızlı veri düzenleme</div>
+        <div class="lp-stat-big" data-i18n="stat_1_val">12x</div>
+        <div class="lp-stat-desc" data-i18n="stat_1_label">Daha hızlı veri düzenleme</div>
       </div>
       <div class="lp-stat-item">
-        <div class="lp-stat-big">18 saat</div>
-        <div class="lp-stat-desc">Haftada kazanılan ortalama süre</div>
+        <div class="lp-stat-big" data-i18n="stat_2_val">18 saat</div>
+        <div class="lp-stat-desc" data-i18n="stat_2_label">Haftada kazanılan ortalama süre</div>
       </div>
       <div class="lp-stat-item">
-        <div class="lp-stat-big">%87</div>
-        <div class="lp-stat-desc">Daha az formül hatası</div>
+        <div class="lp-stat-big" data-i18n="stat_3_val">%87</div>
+        <div class="lp-stat-desc" data-i18n="stat_3_label">Daha az formül hatası</div>
       </div>
       <div class="lp-stat-item">
-        <div class="lp-stat-big">847+</div>
-        <div class="lp-stat-desc">Aktif kullanıcı</div>
+        <div class="lp-stat-big" data-i18n="stat_4_val">847+</div>
+        <div class="lp-stat-desc" data-i18n="stat_4_label">Aktif kullanıcı</div>
       </div>
     </div>
     <p class="lp-stats-source">* Mocksheet beta kullanıcı anketi 2025</p>
@@ -350,17 +354,17 @@
 <section class="lp-pricing" id="pricing">
   <div class="lp-container">
     <h2 class="lp-section-title">
-      Basit fiyatlandırma,<br>
-      <span class="lp-gradient-text">karmaşık değil.</span>
+      <span data-i18n="pricing_title">Basit fiyatlandırma,</span><br>
+      <span class="lp-gradient-text" data-i18n="pricing_title_2">karmaşık değil.</span>
     </h2>
 
     <div class="lp-pricing-grid">
       <!-- Başlangıç -->
       <div class="lp-price-card">
-        <div class="lp-price-plan">Başlangıç</div>
+        <div class="lp-price-plan" data-i18n="pricing_free">Başlangıç</div>
         <div class="lp-price-desc">Bireysel kullanıcılar için</div>
         <div class="lp-price-amount">
-          <span class="lp-price-num">Ücretsiz</span>
+          <span class="lp-price-num" data-i18n="pricing_free_price">Ücretsiz</span>
         </div>
         <ul class="lp-price-features">
           <li>✓ 20 AI komut/ay</li>
@@ -373,13 +377,13 @@
           <li class="dim">✗ Ekip hesabı</li>
           <li class="dim">✗ API erişimi</li>
         </ul>
-        <a href="auth.html" class="lp-btn-ghost lp-btn-full">Başla</a>
+        <a href="auth.html" class="lp-btn-ghost lp-btn-full" data-i18n="plan_start_btn">Başla</a>
       </div>
 
       <!-- Pro -->
       <div class="lp-price-card lp-price-featured">
         <div class="lp-price-badge">En Popüler</div>
-        <div class="lp-price-plan">Pro</div>
+        <div class="lp-price-plan" data-i18n="pricing_pro">Pro</div>
         <div class="lp-price-desc">Profesyoneller için</div>
         <div class="lp-price-amount">
           <span class="lp-price-num">₺149</span>
@@ -396,12 +400,12 @@
           <li class="dim">✗ Ekip hesabı</li>
           <li class="dim">✗ API erişimi</li>
         </ul>
-        <a href="auth.html" class="lp-btn-white lp-btn-full">Hemen Başla</a>
+        <a href="auth.html" class="lp-btn-white lp-btn-full" data-i18n="plan_pro_btn">Hemen Başla</a>
       </div>
 
       <!-- İş -->
       <div class="lp-price-card lp-price-business">
-        <div class="lp-price-plan">İş</div>
+        <div class="lp-price-plan" data-i18n="pricing_biz">İş</div>
         <div class="lp-price-desc">Büyüyen ekipler için</div>
         <div class="lp-price-amount">
           <span class="lp-price-num" id="bizPrice">₺399</span>
@@ -437,11 +441,11 @@
           <li>✓ SLA garantisi</li>
           <li>✓ Özel onboarding</li>
         </ul>
-        <a href="auth.html" class="lp-btn-ghost lp-btn-full">İletişime Geç</a>
+        <a href="auth.html" class="lp-btn-ghost lp-btn-full" data-i18n="plan_biz_btn">İletişime Geç</a>
       </div>
     </div>
 
-    <p class="lp-pricing-note">
+    <p class="lp-pricing-note" data-i18n="pricing_note">
       ✓ Kredi kartı gerekmez &nbsp;·&nbsp;
       ✓ 14 gün para iade garantisi &nbsp;·&nbsp;
       ✓ İstediğin zaman iptal
@@ -454,11 +458,11 @@
   <div class="lp-container">
     <div class="lp-final-inner">
       <h2>
-        Bu hafta kaç saat<br>
-        <span class="lp-gradient-text">Excel'de harcayacaksın?</span>
+        <span data-i18n="final_title_1">Bu hafta kaç saat</span><br>
+        <span class="lp-gradient-text" data-i18n="final_title_2">Excel'de harcayacaksın?</span>
       </h2>
-      <p>Ortalama kullanıcımız haftada 18 saat harcıyordu. Şimdi 1.5 saat.</p>
-      <a href="auth.html" class="lp-btn-primary lp-btn-large">
+      <p data-i18n="final_sub">Ortalama kullanıcımız haftada 18 saat harcıyordu. Şimdi 1.5 saat.</p>
+      <a href="auth.html" class="lp-btn-primary lp-btn-large" data-i18n="final_cta">
         Ücretsiz Başla — Kredi Kartı Yok
       </a>
       <div class="lp-final-proof">
@@ -484,26 +488,26 @@
         <p>Veri düzenlemeyi 12x hızlandırıyoruz.</p>
       </div>
       <div class="lp-footer-col">
-        <h4>Ürün</h4>
+        <h4 data-i18n="footer_product">Ürün</h4>
         <a href="#features">Özellikler</a>
         <a href="#pricing">Fiyatlar</a>
         <a href="auth.html">Ücretsiz Başla</a>
       </div>
       <div class="lp-footer-col">
-        <h4>Şirket</h4>
+        <h4 data-i18n="footer_company">Şirket</h4>
         <a href="#">Hakkımızda</a>
         <a href="#">Blog</a>
         <a href="#">İletişim</a>
       </div>
       <div class="lp-footer-col">
-        <h4>Destek</h4>
+        <h4 data-i18n="footer_support">Destek</h4>
         <a href="#">KVKK</a>
         <a href="#">Gizlilik</a>
         <a href="#">Kullanım Koşulları</a>
       </div>
     </div>
     <div class="lp-footer-bottom">
-      <span>© 2026 Mocksheet. Tüm hakları saklıdır.</span>
+      <span data-i18n="footer_rights">© 2026 Mocksheet. Tüm hakları saklıdır.</span>
       <div class="lp-footer-trust">
         <span>🔒 SSL</span>
         <span>🇹🇷 KVKK</span>
@@ -513,6 +517,7 @@
   </div>
 </footer>
 
+<script src="i18n.js"></script>
 <script defer src="js/landing.js"></script>
 </body>
 </html>
