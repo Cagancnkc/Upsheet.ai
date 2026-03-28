@@ -287,7 +287,7 @@ function cellKeydown(e, r, c) {
     if (e.key === 'c') { e.preventDefault(); copyCell(); }
     if (e.key === 'x') { e.preventDefault(); cutCell(); }
     if (e.key === 'v') { e.preventDefault(); pasteCell(); }
-    if (e.key === 'z') { e.preventDefault(); toast('Undo feature coming soon!', 'ok'); }
+    if (e.key === 'z') { e.preventDefault(); toast(t('toast_undo_soon'), 'ok'); }
   }
 }
 
@@ -344,11 +344,11 @@ function updateStatus() {
   }
 
   // Topbar badges
-  document.getElementById('mbCells').textContent = '⚡ ' + filled + ' cells';
-  document.getElementById('mbRows').textContent = '↕ ' + activeRows + ' rows';
+  document.getElementById('mbCells').textContent = '⚡ ' + filled + ' ' + t('cells');
+  document.getElementById('mbRows').textContent = '↕ ' + activeRows + ' ' + t('rows');
 
   // Right section of status bar
-  document.getElementById('sbFilled').textContent = filled.toLocaleString('en-US');
+  document.getElementById('sbFilled').textContent = filled.toLocaleString(currentLang === 'tr' ? 'tr-TR' : 'en-US');
   document.getElementById('sbRowsInfo').textContent = activeRows;
 
   // Selection metrics chips
@@ -367,7 +367,7 @@ function updateStatus() {
     document.getElementById('sbSelChip').style.display = multi ? '' : 'none';
     if (nums.length > 0 && multi) {
       const s = nums.reduce((a, b) => a + b, 0);
-      const fmt = n => n.toLocaleString('tr-TR', {maximumFractionDigits: 2});
+      const fmt = n => n.toLocaleString(currentLang === 'tr' ? 'tr-TR' : 'en-US', {maximumFractionDigits: 2});
       document.getElementById('sbSumVal').textContent = fmt(s);
       document.getElementById('sbAvgVal').textContent = fmt(s / nums.length);
       document.getElementById('sbMinVal').textContent = fmt(Math.min(...nums));
@@ -384,8 +384,8 @@ function updateStatus() {
 
   // Legacy IDs
   document.getElementById('stCells').textContent = filled;
-  document.getElementById('stSum').textContent = numCount ? total.toLocaleString('tr-TR', {maximumFractionDigits: 2}) : '0';
-  document.getElementById('stAvg').textContent = numCount ? (total / numCount).toLocaleString('tr-TR', {maximumFractionDigits: 2}) : '0';
+  document.getElementById('stSum').textContent = numCount ? total.toLocaleString(currentLang === 'tr' ? 'tr-TR' : 'en-US', {maximumFractionDigits: 2}) : '0';
+  document.getElementById('stAvg').textContent = numCount ? (total / numCount).toLocaleString(currentLang === 'tr' ? 'tr-TR' : 'en-US', {maximumFractionDigits: 2}) : '0';
   document.getElementById('stCount').textContent = numCount;
 
   // Chart auto-update hook
@@ -402,7 +402,7 @@ updateStatus = debounce(updateStatus, 150);
 // ═══════════════════════════════════════════════════════════════
 function toggleFormat(type) {
   const cells = getSelectedCells();
-  if (!cells || cells.length === 0) { toast('Select a cell first', 'warn'); return; }
+  if (!cells || cells.length === 0) { toast(t('toast_select_cell'), 'warn'); return; }
   cells.forEach(({r, c}) => {
     const meta = getCellMeta(r, c);
     if (type === 'bold') meta.bold = !meta.bold;
@@ -442,7 +442,7 @@ function applyCellColor(color) {
 
 function setTextColor(color) {
   const cells = getSelectedCells();
-  if (!cells || cells.length === 0) { toast('Select a cell first', 'warn'); return; }
+  if (!cells || cells.length === 0) { toast(t('toast_select_cell'), 'warn'); return; }
   cells.forEach(({r, c}) => {
     const meta = getCellMeta(r, c);
     meta.color = color;
@@ -453,7 +453,7 @@ function setTextColor(color) {
 
 function setCellBgColor(color) {
   const cells = getSelectedCells();
-  if (!cells || cells.length === 0) { toast('Select a cell first', 'warn'); return; }
+  if (!cells || cells.length === 0) { toast(t('toast_select_cell'), 'warn'); return; }
   cells.forEach(({r, c}) => {
     const meta = getCellMeta(r, c);
     meta.bg = color;
@@ -490,16 +490,16 @@ function updateToolbarState() {
 }
 
 function mergeCells() {
-  toast('Merge feature coming soon!', 'ok');
+  toast(t('toast_merge_soon'), 'ok');
 }
 
 function addFilter() {
-  toast('Filter added (simulation)', 'ok');
+  toast(t('toast_filter_added'), 'ok');
 }
 
 function clearHighlights() {
   document.querySelectorAll('.cell.hi').forEach(el => el.classList.remove('hi'));
-  toast('Highlights cleared', 'ok');
+  toast(t('toast_highlights_cleared'), 'ok');
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -509,14 +509,14 @@ function copyCell() {
   const data = sheets[activeSheet];
   clipboard = data[selRow][selCol];
   cutSource = null;
-  toast('Copied', 'ok');
+  toast(t('toast_copied'), 'ok');
 }
 
 function cutCell() {
   const data = sheets[activeSheet];
   clipboard = data[selRow][selCol];
   cutSource = {r: selRow, c: selCol, sheet: activeSheet};
-  toast('Kesildi', 'ok');
+  toast(t('toast_cut'), 'ok');
 }
 
 function pasteCell() {
@@ -627,7 +627,7 @@ function renderSheetTabs() {
       <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
       ${name}
       ${count > 0 ? `<span class="stab-count">${count}</span>` : ''}
-      <span class="stab-del" onclick="event.stopPropagation();deleteSheetDirect('${name.replace(/'/g,"\\'")}');" title="Sheet'i Sil">×</span>`;
+      <span class="stab-del" onclick="event.stopPropagation();deleteSheetDirect('${name.replace(/'/g,"\\'")}');" title="${t('sheet_del_title')}">×</span>`;
     tab.onclick = () => switchSheet(name);
     tab.ondblclick = () => renameSheet(name);
     tab.addEventListener('contextmenu', e => showSheetCtx(e, name));
@@ -636,7 +636,7 @@ function renderSheetTabs() {
 
   const addBtn = document.createElement('div');
   addBtn.className = 'stab-add';
-  addBtn.title = 'Yeni sheet';
+  addBtn.title = t('sheet_new_title');
   addBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>`;
   addBtn.onclick = addSheet;
   tabs.appendChild(addBtn);
@@ -676,7 +676,7 @@ function addSheet(name) {
 }
 
 function renameSheet(oldName) {
-  const newName = prompt('Enter sheet name:', oldName);
+  const newName = prompt(t('prompt_sheet_name'), oldName);
   if (!newName || newName === oldName || sheets[newName]) return;
   const data = sheets[oldName];
   const meta = cellMeta[oldName];
@@ -686,7 +686,7 @@ function renameSheet(oldName) {
   if (meta) cellMeta[newName] = meta;
   if (activeSheet === oldName) activeSheet = newName;
   renderSheetTabs();
-  toast(`Renamed to "${newName}"`, 'ok');
+  toast(tpl('toast_renamed_tpl', {name: newName}), 'ok');
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -859,9 +859,9 @@ function handleFile(e) {
       addHistory('file', '"' + file.name + '" loaded');
 
       if (trimmedRows) {
-        toast('Your file has ' + trimmedRows.toLocaleString('en-US') + ' rows. Showing the first 5,000 rows.', 'info');
+        toast(tpl('toast_file_trimmed_tpl', {count: trimmedRows.toLocaleString(currentLang === 'tr' ? 'tr-TR' : 'en-US')}), 'info');
       } else {
-        toast('"' + file.name + '" loaded', 'ok');
+        toast(tpl('toast_file_loaded_tpl', {name: file.name}), 'ok');
       }
 
       // Onboarding step 2
@@ -897,7 +897,7 @@ function downloadFile() {
     XLSX.utils.book_append_sheet(wb, ws, name);
   });
   XLSX.writeFile(wb, fileName.endsWith('.xlsx') ? fileName : fileName + '.xlsx');
-  toast(`"${fileName}" downloaded`, 'ok');
+  toast(tpl('toast_downloaded_tpl', {name: fileName}), 'ok');
 }
 
 function downloadCSV() {
@@ -917,7 +917,7 @@ function downloadCSV() {
   a.download = fileName;
   a.click();
   URL.revokeObjectURL(a.href);
-  toast(`"${fileName}" downloaded`, 'ok');
+  toast(tpl('toast_downloaded_tpl', {name: fileName}), 'ok');
 }
 
 function newFile() {
@@ -932,7 +932,7 @@ function newFile() {
   renderSheetTabs();
   buildGrid();
   addHistory('file', 'New file created');
-  toast('New file created', 'ok');
+  toast(t('toast_new_file'), 'ok');
 }
 
 function addRecentFile(name) {
@@ -956,7 +956,7 @@ function renderRecentFiles() {
   const fileNameEl = document.getElementById('fileName');
   const activeName = fileNameEl ? fileNameEl.textContent : '';
   if (!recentFiles.length) {
-    el.innerHTML = `<div style="padding:6px 10px;font-size:11px;color:#6b6b6b;">No files opened yet</div>`;
+    el.innerHTML = `<div style="padding:6px 10px;font-size:11px;color:#6b6b6b;">${t('ui_no_files_yet')}</div>`;
     return;
   }
   el.innerHTML = recentFiles.map(f => `
@@ -1117,7 +1117,7 @@ function toggleTheme() {
 function updateThemeIcon() {
   const isDark = document.body.classList.contains('dark');
   const btn = document.getElementById('themeToggleBtn');
-  if (btn) btn.textContent = isDark ? '☀️ Light Theme' : '🌙 Dark Mode';
+  if (btn) btn.textContent = isDark ? t('theme_light') : t('theme_dark');
 }
 
 function saveSettings() {
@@ -1129,7 +1129,7 @@ function saveSettings() {
     document.getElementById('onboardBanner').classList.add('hidden');
     document.body.classList.remove('with-banner');
   }
-  toast(apiKey ? 'API key saved' : 'API key cleared', 'ok');
+  toast(apiKey ? t('toast_api_saved') : t('toast_api_cleared'), 'ok');
 }
 
 function updateApiStatus() {
@@ -1169,7 +1169,7 @@ function toast(msg, type = 'ok', undoable = false) {
   while (container.children.length >= 3) container.firstChild.remove();
   const t = document.createElement('div');
   t.className = `toast ${type}`;
-  const undoBtn = undoable ? `<button class="toast-undo" onclick="undo();this.closest('.toast').remove()">Geri Al</button>` : '';
+  const undoBtn = undoable ? `<button class="toast-undo" onclick="undo();this.closest('.toast').remove()">${t('undo')}</button>` : '';
   t.innerHTML = `<div class="toast-bar"></div><div class="toast-body">${icons[type]||icons.ok}<span>${msg}</span>${undoBtn}</div>`;
   container.appendChild(t);
   const hide = () => { t.classList.add('leaving'); setTimeout(() => t.remove(), 310); };
@@ -1178,7 +1178,7 @@ function toast(msg, type = 'ok', undoable = false) {
 function showToast(msg, type, undoable) { toast(msg, type, undoable); }
 
 function undo() {
-  if (!versionHistory || versionHistory.length < 2) { toast('Nothing to undo', 'info'); return; }
+  if (!versionHistory || versionHistory.length < 2) { toast(t('toast_nothing_undo'), 'info'); return; }
   versionHistory.shift();
   const prev = versionHistory[0];
   sheets = JSON.parse(JSON.stringify(prev.snap.sheets));
@@ -1187,7 +1187,7 @@ function undo() {
   buildGrid();
   if (typeof renderSheetTabs === 'function') renderSheetTabs();
   updateStatus();
-  toast('Undone', 'info');
+  toast(t('toast_undone'), 'info');
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -1218,7 +1218,7 @@ function notifyAIAction(desc) {
   aiActionCount++;
   document.getElementById('mbAI').textContent = '🤖 ' + aiActionCount + ' actions';
   const sbEl = document.getElementById('sbLastAI');
-  if (sbEl) sbEl.textContent = 'Son: AI · ' + (desc.length > 22 ? desc.substring(0, 22) + '…' : desc);
+  if (sbEl) sbEl.textContent = t('last_ai') + ': AI · ' + (desc.length > 22 ? desc.substring(0, 22) + '…' : desc);
   pulseMetricBadge('mbAI');
   pulseMetricBadge('mbCells');
 }
@@ -1461,6 +1461,7 @@ Give short, clear answers in English. Use standard Excel formula format for sugg
 function generateLocalReply(msg) {
   const data = sheets[activeSheet];
   const lower = msg.toLowerCase();
+  const loc = currentLang === 'tr' ? 'tr-TR' : 'en-US';
 
   if (lower.includes('analiz') || lower.includes('analyze') || lower.includes('incele')) {
     let filled = 0, numeric = 0, total = 0;
@@ -1468,11 +1469,17 @@ function generateLocalReply(msg) {
       for (let c = 0; c < COLS; c++) {
         if (data[r][c]) { filled++; const v = parseFloat(data[r][c]); if (!isNaN(v)) { numeric++; total += v; } }
       }
-    return `📊 "${activeSheet}" analysis:\n• ${filled} filled cells\n• ${numeric} numeric values\n• Sum: ${total.toLocaleString('en-US', {maximumFractionDigits:2})}\n• Average: ${numeric ? (total/numeric).toLocaleString('en-US', {maximumFractionDigits:2}) : 'N/A'}`;
+    return tpl('local_analysis_tpl', {
+      sheet: activeSheet,
+      filled: filled,
+      numeric: numeric,
+      sum: total.toLocaleString(loc, {maximumFractionDigits:2}),
+      avg: numeric ? (total/numeric).toLocaleString(loc, {maximumFractionDigits:2}) : t('local_na')
+    });
   }
 
-  if (lower.includes('formula')) {
-    return `💡 Common Excel formulas:\n• =SUM(A1:A10) — Total\n• =AVERAGE(A1:A10) — Average\n• =IF(A1>100,"High","Low") — Conditional\n• =MAX(A1:A10) — Largest\n• =MIN(A1:A10) — Smallest\n• =COUNTA(A1:A10) — Count filled cells\n\nWhich formula would you like more detail on?`;
+  if (lower.includes('formül') || lower.includes('formula')) {
+    return t('local_formula');
   }
 
   if (lower.includes('toplam') || lower.includes('sum')) {
@@ -1481,22 +1488,26 @@ function generateLocalReply(msg) {
       const v = parseFloat(data[r][selCol]);
       if (!isNaN(v)) { total += v; count++; }
     }
-    return `${colLetter(selCol)} column sum: ${total.toLocaleString('en-US', {maximumFractionDigits:2})}\n(${count} numeric values)`;
+    return tpl('local_sum_tpl', {
+      col: colLetter(selCol),
+      total: total.toLocaleString(loc, {maximumFractionDigits:2}),
+      count: count
+    });
   }
 
-  if (lower.includes('empty') || lower.includes('clean') || lower.includes('delete') || lower.includes('remove')) {
-    return `To remove empty rows:\n1. Right-click → Delete Row\n2. Or use Find & Replace\n3. Add an API key for automatic cleanup ⚙️`;
+  if (lower.includes('empty') || lower.includes('clean') || lower.includes('delete') || lower.includes('remove') || lower.includes('boş') || lower.includes('temiz')) {
+    return t('local_empty');
   }
 
   if (lower.includes('grafik') || lower.includes('chart')) {
-    return `📈 Data visualization suggestions:\n• Sales data → Line chart\n• Category comparison → Bar chart\n• Proportion display → Pie chart\n• Distribution analysis → Scatter plot\n\nTo add a chart, export to Excel (Download button) and insert a chart there.`;
+    return t('local_chart');
   }
 
   if (lower.includes('pivot')) {
-    return `📋 To create a pivot table:\n1. Select your data range\n2. Download the file (Download button)\n3. In Excel: Insert → PivotTable\n\nAlternative: Describe your data and I'll suggest grouping formulas!`;
+    return t('local_pivot');
   }
 
-  return `Hello! I'm happy to help with your Excel data. 🤖\n\nI can:\n• Analyze data and statistics\n• Suggest formulas\n• Data cleanup tips\n• Chart suggestions`;
+  return t('local_default');
 }
 
 function applyAIChanges(result) {
@@ -1579,7 +1590,7 @@ function sortColumn(col, direction) {
   });
   if (header) data.unshift(header);
   buildGrid();
-  toast('Sorted by column ' + colLetter(col), 'ok');
+  toast(tpl('toast_sorted_tpl', {col: colLetter(col)}), 'ok');
 }
 
 function deleteEmptyRows() { cmdCleanEmptyRows(); }
@@ -1604,7 +1615,7 @@ function addMsg(role, html) {
   const msgs = document.getElementById('chatMsgs');
   const el = document.createElement('div');
   el.className = `msg ${role}`;
-  const initials = role === 'ai' ? 'AI' : 'Sen';
+  const initials = role === 'ai' ? 'AI' : t('ui_you');
   el.innerHTML = `
     <div class="mavatar ${role}">${initials}</div>
     <div class="mbubble">${html}</div>
@@ -1638,7 +1649,7 @@ function clearChat() {
 }
 
 function addWelcomeMsg() {
-  addMsg('ai', `Hello! I'm your ExcelAI assistant. 👋\n\nI can analyze your data, suggest formulas, and help with data processing.\n\nAsk me a question or pick one of the suggestions below!`);
+  addMsg('ai', t('welcome_msg'));
 }
 
 function saveChatHistory() {
@@ -1677,19 +1688,19 @@ document.addEventListener('keydown', e => {
 // ═══════════════════════════════════════════════════════════════
 const CMD_DEFS = [
   // ⚡ Quick Actions
-  {group:'⚡ QUICK ACTIONS', name:'Sum selected range',       shortcut:'Ctrl+Shift+T', icon:'sum',      action:'sumSelection'},
-  {group:'⚡ QUICK ACTIONS', name:'Sort table',               shortcut:'Ctrl+Shift+S', icon:'sort',     action:'sortData'},
-  {group:'⚡ QUICK ACTIONS', name:'Remove empty rows',        shortcut:'',             icon:'clean',    action:'cleanEmptyRows'},
-  {group:'⚡ QUICK ACTIONS', name:'Remove duplicates',        shortcut:'',             icon:'dedup',    action:'removeDuplicates'},
+  {group:'cmd_group_quick', name:'cmd_sum_range',      shortcut:'Ctrl+Shift+T', icon:'sum',      action:'sumSelection'},
+  {group:'cmd_group_quick', name:'cmd_sort_table',     shortcut:'Ctrl+Shift+S', icon:'sort',     action:'sortData'},
+  {group:'cmd_group_quick', name:'cmd_remove_empty',   shortcut:'',             icon:'clean',    action:'cleanEmptyRows'},
+  {group:'cmd_group_quick', name:'cmd_remove_dup',     shortcut:'',             icon:'dedup',    action:'removeDuplicates'},
   // 🤖 AI Commands
-  {group:'🤖 AI COMMANDS',   name:'Analyze selected range',   shortcut:'',             icon:'ai',       action:'aiAnalyze'},
-  {group:'🤖 AI COMMANDS',   name:'Auto-generate chart',      shortcut:'',             icon:'chart',    action:'aiChart'},
-  {group:'🤖 AI COMMANDS',   name:'Summarize data',           shortcut:'',             icon:'summary',  action:'aiSummary'},
-  {group:'🤖 AI COMMANDS',   name:'Suggest formula',          shortcut:'',             icon:'formula',  action:'aiFormula'},
+  {group:'cmd_group_ai',    name:'cmd_analyze_range',  shortcut:'',             icon:'ai',       action:'aiAnalyze'},
+  {group:'cmd_group_ai',    name:'cmd_auto_chart',     shortcut:'',             icon:'chart',    action:'aiChart'},
+  {group:'cmd_group_ai',    name:'cmd_summarize',      shortcut:'',             icon:'summary',  action:'aiSummary'},
+  {group:'cmd_group_ai',    name:'cmd_suggest_formula',shortcut:'',             icon:'formula',  action:'aiFormula'},
   // 📁 File
-  {group:'📁 FILE',           name:'Upload Excel',             shortcut:'Ctrl+O',       icon:'upload',   action:'triggerUpload'},
-  {group:'📁 FILE',           name:'Download XLSX',            shortcut:'Ctrl+S',       icon:'download', action:'downloadFile'},
-  {group:'📁 FILE',           name:'New file',                 shortcut:'Ctrl+N',       icon:'new',      action:'newFile'},
+  {group:'cmd_group_file',  name:'cmd_upload',         shortcut:'Ctrl+O',       icon:'upload',   action:'triggerUpload'},
+  {group:'cmd_group_file',  name:'cmd_download',       shortcut:'Ctrl+S',       icon:'download', action:'downloadFile'},
+  {group:'cmd_group_file',  name:'cmd_new_file',       shortcut:'Ctrl+N',       icon:'new',      action:'newFile'},
 ];
 
 const CMD_ICONS = {
@@ -1777,7 +1788,7 @@ function cmdFilter() {
   }
 
   const filtered = q
-    ? CMD_DEFS.filter(c => c.name.toLowerCase().includes(q) || c.group.toLowerCase().includes(q))
+    ? CMD_DEFS.filter(c => t(c.name).toLowerCase().includes(q) || t(c.group).toLowerCase().includes(q))
     : CMD_DEFS;
   cmdRender(filtered, q, false);
 }
@@ -1805,7 +1816,7 @@ function cmdRender(items, query, aiMode) {
     container.innerHTML = `
       <div class="cmd-empty">
         <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <span>No results found</span>
+        <span>${t('ui_no_results')}</span>
       </div>`;
     return;
   }
@@ -1814,10 +1825,10 @@ function cmdRender(items, query, aiMode) {
   let lastGroup = null;
   items.forEach((cmd, idx) => {
     if (cmd.group !== lastGroup) {
-      html += `<div class="cmd-group-label">${cmd.group}</div>`;
+      html += `<div class="cmd-group-label">${t(cmd.group)}</div>`;
       lastGroup = cmd.group;
     }
-    const nameHtml = highlight(cmd.name, query);
+    const nameHtml = highlight(t(cmd.name), query);
     const shortcutHtml = cmd.shortcut
       ? `<span class="cmd-shortcut">${cmd.shortcut}</span>` : '';
     html += `
@@ -1878,7 +1889,7 @@ function cmdSumSelection() {
   insertRow = Math.min(insertRow, ROWS - 1);
   data[insertRow][selCol] = String(total);
   buildGrid();
-  toast(`${colLetter(selCol)} sum: ${total.toLocaleString('en-US', {maximumFractionDigits:2})} (${count} values)`, 'ok');
+  toast(tpl('toast_sum_tpl', {col: colLetter(selCol), sum: total.toLocaleString(currentLang === 'tr' ? 'tr-TR' : 'en-US', {maximumFractionDigits:2}), count}), 'ok');
 }
 
 function cmdCleanEmptyRows() {
@@ -1892,7 +1903,7 @@ function cmdCleanEmptyRows() {
   }
   while (data.length < ROWS) data.push(Array(COLS).fill(''));
   buildGrid();
-  toast(removed ? `${removed} empty rows removed` : 'No empty rows found', removed ? 'ok' : 'err');
+  toast(removed ? tpl('toast_empty_removed_tpl', {count: removed}) : t('toast_no_empty_rows'), removed ? 'ok' : 'err');
 }
 
 function cmdRemoveDuplicates() {
@@ -1911,7 +1922,7 @@ function cmdRemoveDuplicates() {
   }
   while (data.length < ROWS) data.push(Array(COLS).fill(''));
   buildGrid();
-  toast(removed ? `${removed} duplicate rows removed` : 'No duplicate rows found', removed ? 'ok' : 'err');
+  toast(removed ? tpl('toast_dup_removed_tpl', {count: removed}) : t('toast_no_dup'), removed ? 'ok' : 'err');
 }
 
 function cmdAIAction(type) {
@@ -1948,15 +1959,15 @@ document.addEventListener('keydown', e => {
 // ═══════════════════════════════════════════════════════════════
 function deleteSheetDirect(name) {
   const names = Object.keys(sheets);
-  if (names.length <= 1) { toast('Cannot delete the last sheet', 'err'); return; }
-  if (!confirm(`Are you sure you want to delete the sheet "${name}"?`)) return;
+  if (names.length <= 1) { toast(t('toast_no_last_sheet'), 'err'); return; }
+  if (!confirm(tpl('confirm_delete_sheet_tpl', {name}))) return;
   const idx = names.indexOf(name);
   delete sheets[name];
   delete cellMeta[name];
   const remaining = Object.keys(sheets);
   const nextSheet = remaining[Math.min(idx, remaining.length - 1)];
   switchSheet(nextSheet);
-  toast(`"${name}" deleted`, 'ok');
+  toast(tpl('toast_sheet_deleted_tpl', {name}), 'ok');
 }
 
 function toggleSidebar() {
@@ -2024,9 +2035,9 @@ function scmAction(action) {
     renameSheet(name);
   } else if (action === 'duplicate') {
     const names = Object.keys(sheets);
-    let newName = name + ' (Kopya)';
+    let newName = name + t('sheet_copy_suffix');
     let i = 2;
-    while (sheets[newName]) newName = name + ` (Kopya ${i++})`;
+    while (sheets[newName]) newName = name + tpl('sheet_copy_suffix_n', {n: i++});
     // Deep copy sheet data
     sheets[newName] = sheets[name].map(row => [...row]);
     // Deep copy meta
@@ -2042,17 +2053,17 @@ function scmAction(action) {
     Object.keys(sheets).forEach(k => delete sheets[k]);
     Object.assign(sheets, ordered);
     switchSheet(newName);
-    toast(`"${newName}" created`, 'ok');
+    toast(tpl('toast_sheet_created_tpl', {name: newName}), 'ok');
   } else if (action === 'delete') {
     const names = Object.keys(sheets);
-    if (names.length <= 1) { toast('Cannot delete the last sheet', 'err'); return; }
+    if (names.length <= 1) { toast(t('toast_no_last_sheet'), 'err'); return; }
     const idx = names.indexOf(name);
     delete sheets[name];
     delete cellMeta[name];
     const remaining = Object.keys(sheets);
     const nextSheet = remaining[Math.min(idx, remaining.length - 1)];
     switchSheet(nextSheet);
-    toast(`"${name}" silindi`, 'ok');
+    toast(tpl('toast_sheet_deleted_tpl', {name}), 'ok');
   }
 }
 
@@ -2217,7 +2228,7 @@ function createChart() {
 
   renderChart(titleVal);
   chartAutoUpdate = true;
-  toast('Chart created!', 'ok');
+  toast(t('toast_chart_created'), 'ok');
 }
 
 // ── Chart modal: click outside to close ─────
@@ -2228,7 +2239,7 @@ function chartModalClickOutside(e) {
 // ── Render / re-render (dark Amplemarket theme)
 function renderChart(title) {
   const extracted = extractChartData(chartCurrentRange);
-  if (!extracted) { toast('Could not read data', 'err'); return; }
+  if (!extracted) { toast(t('toast_chart_read_err'), 'err'); return; }
 
   const { labels, datasets } = extracted;
   if (!datasets || datasets.length === 0) { toast('No data in selected range', 'err'); return; }
@@ -2411,7 +2422,7 @@ function renderVersionHistory() {
   const list = document.getElementById('vhList');
   if (!list) return;
   if (versionHistory.length === 0) {
-    list.innerHTML = '<div id="vhEmpty">No actions yet</div>';
+    list.innerHTML = `<div id="vhEmpty">${t('ui_no_actions_yet')}</div>`;
     return;
   }
   list.innerHTML = versionHistory.map((entry, i) => {
@@ -2433,7 +2444,7 @@ function showHistoryPreview(idx) {
 
   document.getElementById('hmTitle').textContent = entry.desc;
   document.getElementById('hmSub').textContent = fmtHistoryTime(entry.time) + ' · ' +
-    (entry.type === 'ai' ? 'AI action' : entry.type === 'file' ? 'File action' : 'Manual edit');
+    (entry.type === 'ai' ? t('history_ai') : entry.type === 'file' ? t('history_file') : t('history_manual'));
 
   // Build mini grid preview (8 cols × 10 rows of the snapshot's activeSheet)
   const data = entry.snap.sheets[entry.snap.activeSheet] || [];
@@ -2468,7 +2479,7 @@ function restoreHistory() {
   renderSheetTabs();
   buildGrid();
   updateStatus();
-  toast('Restored from history', 'ok');
+  toast(t('toast_restored'), 'ok');
 }
 
 function closeHistoryModal() {
@@ -2518,7 +2529,7 @@ function loadSampleData() {
   buildGrid();
   updateStatus();
   addHistory('file', 'Sample data loaded');
-  toast('Sample data loaded', 'ok');
+  toast(t('toast_sample_loaded'), 'ok');
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -2671,7 +2682,7 @@ function setSaveState(state) {
   const tx = document.getElementById('saveText');
   if (!el) return;
   el.className = state;
-  if (tx) tx.textContent = state === 'saved' ? 'Kaydedildi ✓' : state === 'saving' ? 'Kaydediliyor...' : 'Kaydedilmedi';
+  if (tx) tx.textContent = state === 'saved' ? t('save_saved') : state === 'saving' ? t('save_saving') : t('save_unsaved');
 }
 
 function saveData() {
@@ -2699,7 +2710,7 @@ function saveData() {
     localStorage.setItem('excel_autosave', serialized);
     dirtyCells.clear(); // reset dirty tracking after successful save
     setTimeout(function() { setSaveState('saved'); }, 400);
-    toast('Kaydedildi', 'ok');
+    toast(t('toast_saved'), 'ok');
   } catch(err) {
     setSaveState('unsaved');
     if (err.name === 'QuotaExceededError' || err.code === 22 || err.code === 1014) {
@@ -2714,12 +2725,12 @@ function saveData() {
         localStorage.setItem('excel_autosave', JSON.stringify(minPayload));
         dirtyCells.clear();
         setTimeout(function() { setSaveState('saved'); }, 400);
-        toast('Storage was full; only active sheet was saved', 'warning');
+        toast(t('toast_storage_full'), 'warning');
       } catch(e2) {
-        toast('Storage full — could not save', 'err');
+        toast(t('toast_storage_full_err'), 'err');
       }
     } else {
-      toast('Save failed', 'err');
+      toast(t('toast_save_failed'), 'err');
     }
   }
 }
@@ -2837,7 +2848,7 @@ function loadRecentFile(idx) {
     updateStatus();
     const fn = document.getElementById('fileName');
     if (fn) fn.textContent = f.name || 'File';
-    toast((f.name || 'File') + ' loaded', 'ok');
+    toast(tpl('toast_file_loaded_tpl', {name: f.name || 'File'}), 'ok');
   }
 }
 
@@ -2862,7 +2873,7 @@ function toast(msg, type, undoable, duration) {
   while (container.children.length >= 3) container.firstChild.remove();
   const t = document.createElement('div');
   t.className = 'toast ' + type;
-  const undoBtn  = undoable ? `<button class="toast-undo" onclick="undo();this.closest('.toast').remove()">Geri Al</button>` : '';
+  const undoBtn  = undoable ? `<button class="toast-undo" onclick="undo();this.closest('.toast').remove()">${t('undo')}</button>` : '';
   const closeBtn = `<button class="toast-close" onclick="this.closest('.toast').remove()">×</button>`;
   t.innerHTML = `<div class="toast-bar"></div><div class="toast-body">${ICONS[type]||ICONS.ok}<span class="toast-msg">${msg}</span>${undoBtn}${closeBtn}</div><div class="toast-progress-wrap"><div class="toast-progress"></div></div>`;
   container.appendChild(t);
@@ -2907,7 +2918,7 @@ function showToast(msg, type, undoable) { toast(msg, type, undoable); }
       setTimeout(function() {
         btn.disabled = false;
         btn.innerHTML = origHTML;
-        toast('⬇ File downloaded', 'info');
+        toast(t('toast_file_downloaded_info'), 'info');
       }, 400);
     }
   };
@@ -2917,10 +2928,10 @@ function showToast(msg, type, undoable) { toast(msg, type, undoable); }
 (function() {
   if (typeof CMD_DEFS === 'undefined') return;
   CMD_DEFS.push(
-    {group:'🤖 AI COMMANDS',   name:'Toggle AI Assistant', shortcut:'Ctrl+D', icon:'chat',      action:'toggleChat'},
-    {group:'📊 VIEW',           name:'Toggle Chart',         shortcut:'',       icon:'chartOpen', action:'toggleChart'},
-    {group:'📁 FILE',           name:'Download CSV',         shortcut:'',       icon:'csvDown',   action:'downloadCSV'},
-    {group:'⚡ QUICK ACTIONS', name:'Select All Cells',      shortcut:'Ctrl+A', icon:'selectAll', action:'selectAll'}
+    {group:'cmd_group_ai',    name:'cmd_toggle_ai',      shortcut:'Ctrl+D', icon:'chat',      action:'toggleChat'},
+    {group:'cmd_group_view',  name:'cmd_toggle_chart',   shortcut:'',       icon:'chartOpen', action:'toggleChart'},
+    {group:'cmd_group_file',  name:'cmd_download_csv',   shortcut:'',       icon:'csvDown',   action:'downloadCSV'},
+    {group:'cmd_group_quick', name:'cmd_select_all',     shortcut:'Ctrl+A', icon:'selectAll', action:'selectAll'}
   );
   if (typeof CMD_ICONS !== 'undefined') {
     CMD_ICONS.chat      = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`;
@@ -2942,11 +2953,11 @@ function showToast(msg, type, undoable) { toast(msg, type, undoable); }
 
 // ── 5. selectAllCells() helper ───────────────────────────────
 function selectAllCells() {
-  if (!sheets || !sheets[activeSheet]) { toast('Load a file first', 'info'); return; }
+  if (!sheets || !sheets[activeSheet]) { toast(t('toast_load_first'), 'info'); return; }
   selRow = 0; selCol = 0;
   selRow2 = ROWS - 1; selCol2 = COLS - 1;
   if (typeof highlightSelection === 'function') highlightSelection();
-  toast('All cells selected', 'info');
+  toast(t('toast_all_selected'), 'info');
 }
 
 // ── 6. Extra keyboard shortcuts ──────────────────────────────
@@ -2968,7 +2979,7 @@ document.addEventListener('keydown', function(e) {
   if (ctrl && e.shiftKey && e.key === 'Z') {
     e.preventDefault();
     if (typeof redo === 'function') redo();
-    else toast('Nothing to redo', 'info');
+    else toast(t('toast_nothing_redo'), 'info');
   }
 
   // Ctrl+A → select all cells (not in input)
@@ -2996,7 +3007,7 @@ document.addEventListener('keydown', function(e) {
     }
     var count = (r2 - r1 + 1) * (c2 - c1 + 1);
     if (typeof buildGrid === 'function') buildGrid();
-    toast(count + ' cells cleared', 'info', true);
+    toast(tpl('toast_cells_cleared_tpl', {count}), 'info', true);
   }
 
   // Escape → close panels in priority order (context menu → palette → chat)
@@ -3086,7 +3097,7 @@ function setSyncBadge(state) {
   if (!badge) return;
   badge.style.display = 'inline-flex';
   badge.className = 'sync-badge ' + (state === 'syncing' ? 'syncing' : state === 'synced' ? 'synced' : '');
-  if (text) text.textContent = state === 'syncing' ? 'Saving...' : state === 'synced' ? 'Saved to cloud ✓' : 'Unsaved changes';
+  if (text) text.textContent = state === 'syncing' ? t('sync_saving') : state === 'synced' ? t('sync_saved') : t('sync_unsaved');
   if (state === 'synced') setTimeout(function() { if (badge) badge.style.display = 'none'; }, 3000);
 }
 
@@ -3127,7 +3138,7 @@ async function uploadFileToSupabase(file, parsedSheets) {
     storage_path: storagePath
   }).select().single();
   if (insertRes.error) {
-    toast('File could not be saved', 'err');
+    toast(t('toast_file_not_saved'), 'err');
     setSyncBadge('unsaved');
     return;
   }
@@ -3149,7 +3160,7 @@ async function uploadFileToSupabase(file, parsedSheets) {
   await idbPut(db, 'meta',  { key: 'lastFileId', value: fileRecord.id });
 
   setSyncBadge('synced');
-  toast('\u2713 ' + file.name + ' buluta y\u00fcklendi', 'success');
+  toast(tpl('toast_cloud_uploaded_tpl', {name: file.name}), 'ok');
   renderFileItem(fileRecord);
 
   // Highlight active item
@@ -3197,7 +3208,7 @@ async function autoSave() {
     setSyncBadge('synced');
   } catch(e) {
     setSyncBadge('unsaved');
-    toast('Auto-save failed', 'warning');
+    toast(t('toast_autosave_failed'), 'warning');
   } finally {
     isSyncing = false;
   }
@@ -3259,9 +3270,9 @@ async function loadFileById(fileId) {
 
     // Not cached — download from Supabase
     var recRes = await sb.from('files').select('*').eq('id', fileId).single();
-    if (recRes.error) { toast('File not found', 'err'); return; }
+    if (recRes.error) { toast(t('toast_file_not_found'), 'err'); return; }
     var blobRes = await sb.storage.from('excel-files').download(recRes.data.storage_path);
-    if (blobRes.error) { toast('File could not be downloaded', 'err'); return; }
+    if (blobRes.error) { toast(t('toast_file_dl_failed'), 'err'); return; }
     var ab = await blobRes.data.arrayBuffer();
     var wb = XLSX.read(ab);
     sheets = {};
@@ -3291,14 +3302,14 @@ async function loadFileById(fileId) {
       el.classList.toggle('active', el.dataset.id === String(fileId));
     });
   } catch(e) {
-    toast('Could not open file', 'err');
+    toast(t('toast_file_open_failed'), 'err');
     console.error('loadFileById error:', e);
   }
 }
 
 // ── Version history ───────────────────────────────────────────
 async function saveVersion(label) {
-  if (!currentFileId) { toast('Open a file first', 'warning'); return; }
+  if (!currentFileId) { toast(t('toast_open_file_first'), 'warning'); return; }
   try {
     setSyncBadge('syncing');
     var recRes = await sb.from('files').select('*').eq('id', currentFileId).single();
@@ -3327,7 +3338,7 @@ async function saveVersion(label) {
     toast('\u2713 Version ' + nextVersion + ' saved', 'success');
   } catch(e) {
     setSyncBadge('unsaved');
-    toast('Version could not be saved', 'err');
+    toast(t('toast_version_save_failed'), 'err');
   }
 }
 
@@ -3353,9 +3364,9 @@ async function restoreVersion(versionId) {
     activeSheet = wb.SheetNames[0];
     buildGrid();
     renderSheetTabs();
-    toast('Reverted to old version', 'info');
+    toast(t('toast_reverted'), 'info');
   } catch(e) {
-    toast('Version could not be loaded', 'err');
+    toast(t('toast_version_load_failed'), 'err');
   }
 }
 
@@ -3372,15 +3383,15 @@ async function shareFile(fileId) {
     showShareModal(shareUrl);
     if (fid === currentFileId) currentFileId = fid; // ensure stays set
   } catch(e) {
-    toast('Sharing failed', 'err');
+    toast(t('toast_sharing_failed'), 'err');
   }
 }
 
 async function stopSharing() {
   if (!currentFileId) return;
   var res = await sb.from('files').update({ is_shared: false, share_token: null }).eq('id', currentFileId);
-  if (res.error) { toast('Could not remove sharing', 'err'); return; }
-  toast('Sharing removed', 'info');
+  if (res.error) { toast(t('toast_unshare_failed'), 'err'); return; }
+  toast(t('toast_unshared'), 'info');
 }
 
 function showShareModal(shareUrl) {
@@ -3432,9 +3443,9 @@ async function deleteFile(fileId) {
       renderSheetTabs();
     }
 
-    toast('File deleted', 'info');
+    toast(t('toast_file_deleted'), 'info');
   } catch(e) {
-    toast('File could not be deleted', 'err');
+    toast(t('toast_file_del_failed'), 'err');
   }
 }
 
@@ -3705,9 +3716,9 @@ function handleCompareFile(input, role) {
       const csv = XLSX.utils.sheet_to_csv(ws);
       const rowCount = csv.split('\n').filter(function(r) { return r.trim(); }).length;
       if (nameEl) nameEl.textContent = '✅ ' + file.name + ' (' + rowCount + ' rows)';
-      toast((role === 'my' ? 'Your data' : 'Competitor data') + ' loaded: ' + file.name, 'ok');
+      toast(tpl(role === 'my' ? 'toast_my_data_loaded_tpl' : 'toast_rival_data_loaded_tpl', {name: file.name}), 'ok');
     } catch(err) {
-      if (nameEl) nameEl.textContent = '❌ Hata';
+      if (nameEl) nameEl.textContent = '❌ ' + t('error');
       toast('Could not read file: ' + err.message, 'err');
     }
   };
@@ -3715,5 +3726,16 @@ function handleCompareFile(input, role) {
   else reader.readAsBinaryString(file);
   input.value = '';
 }
+
+// ═══════════════════════════════════════════════════════════════
+//  LANGUAGE CHANGE — re-render dynamic UI on lang switch
+// ═══════════════════════════════════════════════════════════════
+document.addEventListener('langchange', function() {
+  if (typeof updateStatus === 'function') updateStatus();
+  if (typeof renderVersionHistory === 'function') renderVersionHistory();
+  if (typeof renderRecentFiles === 'function') renderRecentFiles();
+  if (typeof renderSheetTabs === 'function') renderSheetTabs();
+  if (typeof updateThemeIcon === 'function') updateThemeIcon();
+});
 
 /* cache bust Sat Mar 14 19:03:28 TSS 2026 */
