@@ -31,6 +31,12 @@ let clipboard = null;
 let cutSource = null;
 let dirtyCells = new Set(); // tracks modified cells for optimized localStorage saves
 
+const VH_ICONS = {
+  ai:     {emoji:'⚡', cls:'ai'},
+  manual: {emoji:'✏️', cls:'manual'},
+  file:   {emoji:'📁', cls:'file'}
+};
+
 function createEmptySheet() {
   return Array.from({length: ROWS}, () => Array(COLS).fill(''));
 }
@@ -1630,6 +1636,7 @@ function applyAISuggestions(msg, reply) {
 
 function addMsg(role, html) {
   const msgs = document.getElementById('chatMsgs');
+  if (!msgs) return;
   const el = document.createElement('div');
   el.className = `msg ${role}`;
   const initials = role === 'ai' ? 'AI' : t('ui_you');
@@ -2428,12 +2435,6 @@ function fmtHistoryTime(ts) {
   if (d < 86400000) return Math.floor(d / 3600000) + ' hr ago';
   return new Date(ts).toLocaleDateString('en-US', {day:'numeric', month:'short'});
 }
-
-const VH_ICONS = {
-  ai:     {emoji:'⚡', cls:'ai'},
-  manual: {emoji:'✏️', cls:'manual'},
-  file:   {emoji:'📁', cls:'file'}
-};
 
 function renderVersionHistory() {
   const list = document.getElementById('vhList');

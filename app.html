@@ -860,16 +860,20 @@ async function sbSignOut() {
 
 function toggleFloatingChat() {
   const p = document.getElementById('chatPanel');
+  if (!p) return;
   p.style.display = p.style.display === 'none' ? 'flex' : 'none';
 }
 function openFloatingChat() {
-  document.getElementById('chatPanel').style.display = 'flex';
+  const p = document.getElementById('chatPanel');
+  if (!p) return;
+  p.style.display = 'flex';
 }
 
 // Drag support
 (function() {
   const hdr  = document.getElementById('fcHeader');
   const wrap = document.getElementById('floatingChat');
+  if (!hdr || !wrap) return;
   let drag = false, sx, sy, or, ob;
   hdr.addEventListener('mousedown', function(e) {
     if (e.target.closest('.fc-icon-btn')) return;
