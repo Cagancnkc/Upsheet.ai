@@ -153,11 +153,16 @@ function buildGrid(data) {
   updateStatus();
   updateFormulaBar();
   checkEmptyState();
-  // Share current sheet data with integrations page
+  // Integrations sayfası için veriyi sessionStorage'a yaz
   try {
-    sessionStorage.setItem('mocksheet_current',
-      JSON.stringify((sheets[activeSheet] || []).slice(0, 500)));
-  } catch(e) {}
+    const sheetData = sheets[activeSheet] || [];
+    if (sheetData.length > 0) {
+      sessionStorage.setItem('mocksheet_current', JSON.stringify(sheetData.slice(0, 1000)));
+      sessionStorage.setItem('mocksheet_sheet_name', activeSheet || 'Sheet1');
+    }
+  } catch(e) {
+    console.warn('sessionStorage write failed:', e);
+  }
 }
 
 function getCellMeta(r, c) {
@@ -903,6 +908,13 @@ function downloadFile() {
   });
   XLSX.writeFile(wb, fileName.endsWith('.xlsx') ? fileName : fileName + '.xlsx');
   toast(tpl('toast_downloaded_tpl', {name: fileName}), 'ok');
+  // Export webhook
+  try {
+    const _wh = JSON.parse(localStorage.getItem('int_webhook') || '{}');
+    if (_wh.url && (_wh.trigger === 'export' || _wh.trigger === 'all')) {
+      fetch(API_URL + '/api/integrations/webhook/send', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url: _wh.url, event: 'export', data: { filename: fileName, rows: (sheets[activeSheet] || []).length, format: 'xlsx', timestamp: new Date().toISOString() } }) }).catch(() => {});
+    }
+  } catch(_e) {}
 }
 
 function downloadCSV() {
@@ -3659,6 +3671,14 @@ async function sendChatMessage() {
         applyAIChanges(data);
         applied = true;
       }
+      // Webhook tetikle
+      try {
+        const _wh = JSON.parse(localStorage.getItem('int_webhook') || '{}');
+        if (_wh.url && (_wh.trigger === 'ai_action' || _wh.trigger === 'all')) {
+          const _payload = { source: 'Mocksheet', event: 'ai_action', timestamp: new Date().toISOString(), data: { action: data.action, reply: data.reply, changes_count: (data.changes || []).length, sheet: activeSheet || 'Sheet1', rows: (sheets[activeSheet] || []).length } };
+          fetch(API_URL + '/api/integrations/webhook/send', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url: _wh.url, event: 'ai_action', data: _payload }) }).catch(() => { fetch(_wh.url, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(_payload) }); });
+        }
+      } catch(_e) { console.warn('Webhook trigger failed:', _e); }
     }
 
     if (applied) {
