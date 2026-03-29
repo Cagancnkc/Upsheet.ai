@@ -153,6 +153,11 @@ function buildGrid(data) {
   updateStatus();
   updateFormulaBar();
   checkEmptyState();
+  // Share current sheet data with integrations page
+  try {
+    sessionStorage.setItem('mocksheet_current',
+      JSON.stringify((sheets[activeSheet] || []).slice(0, 500)));
+  } catch(e) {}
 }
 
 function getCellMeta(r, c) {

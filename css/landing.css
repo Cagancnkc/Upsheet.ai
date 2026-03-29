@@ -730,3 +730,120 @@ body {
   .lp-hero { padding: 100px 20px 60px; }
   .lp-flowing-text { padding: 80px 0; }
 }
+
+/* ── Integrations section ── */
+.lp-integrations { padding: 120px 0; background: white; }
+
+.lp-int-logos {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin-bottom: 64px;
+}
+.lp-int-logo-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+}
+.lp-int-logo-icon {
+  width: 56px; height: 56px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  border: 1.5px solid rgba(0,0,0,0.06);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.lp-int-logo-item:hover .lp-int-logo-icon {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+}
+.lp-int-logo-item span {
+  font-size: 12px;
+  font-weight: 500;
+  color: #6B7280;
+}
+.lp-int-soon {
+  font-size: 10px !important;
+  background: #EEF2FF;
+  color: #4F46E5 !important;
+  padding: 2px 6px;
+  border-radius: 100px;
+  font-weight: 600 !important;
+}
+
+.lp-int-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.lp-int-card {
+  background: #F9FAFB;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 16px;
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.lp-int-card:hover {
+  border-color: #D1D5DB;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.06);
+  background: white;
+}
+.lp-int-card-icon { font-size: 32px; }
+.lp-int-card h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+  line-height: 1.3;
+}
+.lp-int-card p {
+  font-size: 14px;
+  color: #6B7280;
+  line-height: 1.6;
+  flex: 1;
+}
+.lp-int-demo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+  padding: 14px;
+  background: white;
+  border-radius: 10px;
+  border: 1px solid #E5E7EB;
+}
+.lp-int-demo-step {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: #6B7280;
+}
+.lp-int-demo-step.success { color: #059669; }
+.step-num {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: #F3F4F6;
+  color: #374151;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.lp-int-demo-step.success .step-num {
+  background: #D1FAE5;
+  color: #059669;
+}
+@media (max-width: 768px) {
+  .lp-int-cards { grid-template-columns: 1fr; }
+  .lp-integrations { padding: 80px 0; }
+}

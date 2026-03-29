@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Integrations — Mocksheet</title>
+  <link rel="stylesheet" href="css/landing.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #F7F7F5;
+      font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
+      color: #111827;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Layout ── */
+    .int-layout {
+      display: flex;
+      min-height: 100vh;
+      padding-top: 60px;
+    }
+    .int-sidebar {
+      width: 240px;
+      background: white;
+      border-right: 1px solid #E5E7EB;
+      padding: 24px 0;
+      position: fixed;
+      top: 60px;
+      left: 0;
+      bottom: 0;
+      overflow-y: auto;
+    }
+    .int-main {
+      flex: 1;
+      margin-left: 240px;
+      padding: 40px 48px;
+      max-width: 900px;
+    }
+
+    /* ── Sidebar nav ── */
+    .int-nav-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #9CA3AF;
+      padding: 0 20px;
+      margin-bottom: 8px;
+    }
+    .int-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 20px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #6B7280;
+      cursor: pointer;
+      transition: all 0.12s;
+      border: none;
+      background: transparent;
+      width: 100%;
+      text-align: left;
+      text-decoration: none;
+    }
+    .int-nav-item:hover { background: #F9FAFB; color: #111827; }
+    .int-nav-item.active { background: #EEF2FF; color: #4F46E5; font-weight: 600; }
+    .int-nav-icon {
+      width: 28px; height: 28px;
+      border-radius: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    .int-nav-status {
+      margin-left: auto;
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: #D1D5DB;
+    }
+    .int-nav-status.on { background: #10B981; }
+    .int-nav-divider { height: 1px; background: #F3F4F6; margin: 12px 16px; }
+
+    /* ── Page header ── */
+    .int-page-title {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 4px;
+    }
+    .int-page-desc {
+      font-size: 14px;
+      color: #6B7280;
+      margin-bottom: 32px;
+    }
+
+    /* ── Sections ── */
+    .int-section { display: none; }
+    .int-section.active { display: block; }
+
+    /* ── Cards ── */
+    .int-card {
+      background: white;
+      border: 1.5px solid #E5E7EB;
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .int-card-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 20px 24px;
+      border-bottom: 1px solid #F3F4F6;
+    }
+    .int-card-logo {
+      width: 48px; height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+    .int-card-meta { flex: 1; }
+    .int-card-title { font-size: 16px; font-weight: 700; margin-bottom: 2px; }
+    .int-card-subtitle { font-size: 13px; color: #6B7280; }
+    .int-badge {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 100px;
+    }
+    .badge-inactive { background: #F3F4F6; color: #9CA3AF; }
+    .badge-active { background: #D1FAE5; color: #065F46; }
+    .badge-error { background: #FEE2E2; color: #991B1B; }
+    .int-card-body { padding: 24px; }
+
+    /* ── Form fields ── */
+    .int-form { display: flex; flex-direction: column; gap: 16px; }
+    .int-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .int-field { display: flex; flex-direction: column; gap: 6px; }
+    .int-field label { font-size: 12px; font-weight: 600; color: #374151; }
+    .int-field input,
+    .int-field textarea,
+    .int-field select {
+      border: 1.5px solid #E5E7EB;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 13px;
+      font-family: inherit;
+      color: #111827;
+      outline: none;
+      background: white;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .int-field input:focus,
+    .int-field textarea:focus,
+    .int-field select:focus {
+      border-color: #4F46E5;
+      box-shadow: 0 0 0 3px rgba(79,70,229,0.08);
+    }
+    .int-field textarea { resize: vertical; min-height: 80px; }
+    .int-field-hint { font-size: 11px; color: #9CA3AF; line-height: 1.4; }
+    .int-field-hint a { color: #4F46E5; text-decoration: none; }
+    .int-field-hint a:hover { text-decoration: underline; }
+
+    /* ── Buttons ── */
+    .int-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      padding-top: 4px;
+    }
+    .int-action-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.15s;
+    }
+    .btn-dark { background: #111827; color: white; }
+    .btn-dark:hover { background: #1F2937; }
+    .btn-outline { background: white; color: #374151; border: 1.5px solid #E5E7EB; }
+    .btn-outline:hover { background: #F9FAFB; border-color: #D1D5DB; }
+    .btn-green { background: #059669; color: white; }
+    .btn-green:hover { background: #047857; }
+    .btn-notion { background: #000; color: white; }
+    .btn-notion:hover { background: #111; }
+    .int-action-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* ── Alert ── */
+    .int-alert {
+      display: none;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      line-height: 1.4;
+    }
+    .int-alert.success { background: #D1FAE5; color: #065F46; display: flex; }
+    .int-alert.error { background: #FEE2E2; color: #991B1B; display: flex; }
+    .int-alert.info { background: #EEF2FF; color: #3730A3; display: flex; }
+
+    /* ── Logs table ── */
+    .int-logs-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .int-logs-table th {
+      text-align: left;
+      padding: 10px 14px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #9CA3AF;
+      border-bottom: 1px solid #F3F4F6;
+      background: #FAFAFA;
+    }
+    .int-logs-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid #F9FAFB;
+      color: #374151;
+    }
+    .int-logs-table tr:last-child td { border-bottom: none; }
+    .log-badge { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 100px; }
+    .log-success { background: #D1FAE5; color: #065F46; }
+    .log-error { background: #FEE2E2; color: #991B1B; }
+    .log-empty { text-align: center; padding: 40px; color: #9CA3AF; font-size: 14px; }
+
+    /* ── Overview grid ── */
+    .int-overview-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+    .int-overview-card {
+      background: white;
+      border: 1.5px solid #E5E7EB;
+      border-radius: 12px;
+      padding: 20px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .int-overview-card:hover {
+      border-color: #D1D5DB;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+    }
+    .int-overview-card.active-card { border-color: #4F46E5; background: #FAFAFE; }
+    .int-ov-icon {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+    .int-ov-name { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+    .int-ov-status { font-size: 12px; color: #9CA3AF; }
+    .int-ov-status.on { color: #059669; }
+
+    @media (max-width: 768px) {
+      .int-sidebar { display: none; }
+      .int-main { margin-left: 0; padding: 24px 20px; }
+      .int-form-row { grid-template-columns: 1fr; }
+      .int-overview-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="lp-nav">
+  <a href="index.html" class="lp-nav-logo">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"
+         style="width:26px;height:26px;border-radius:5px;flex-shrink:0;">
+      <rect width="100" height="100" fill="black"/>
+      <path d="M 30 65 Q 28 40 50 28 Q 65 22 75 32 L 68 40 Q 60 33 50 37 Q 35 45 36 63 Z"
+            fill="white"/>
+    </svg>
+    <span>Mocksheet</span>
+  </a>
+  <div class="lp-nav-links">
+    <a href="app.html">← Back to App</a>
+  </div>
+  <a href="app.html" class="lp-nav-cta">Open App</a>
+</nav>
+
+<div class="int-layout">
+
+  <!-- ── Sidebar ── -->
+  <aside class="int-sidebar">
+    <div style="padding:0 20px 16px">
+      <div style="font-size:16px;font-weight:700;margin-bottom:2px">
+        Integrations
+      </div>
+      <div style="font-size:12px;color:#9CA3AF">Manage your connections</div>
+    </div>
+
+    <div class="int-nav-label">Connected Apps</div>
+
+    <button class="int-nav-item active" onclick="showSection('overview', this)">
+      <div class="int-nav-icon" style="background:#F3F4F6">🏠</div>
+      Overview
+    </button>
+
+    <button class="int-nav-item" onclick="showSection('google', this)" id="nav-google">
+      <div class="int-nav-icon" style="background:#E8F5E9">📊</div>
+      Google Sheets
+      <div class="int-nav-status" id="status-gs"></div>
+    </button>
+
+    <button class="int-nav-item" onclick="showSection('notion', this)" id="nav-notion">
+      <div class="int-nav-icon" style="background:#F3F4F6">◻️</div>
+      Notion
+      <div class="int-nav-status" id="status-notion"></div>
+    </button>
+
+    <button class="int-nav-item" onclick="showSection('webhook', this)" id="nav-webhook">
+      <div class="int-nav-icon" style="background:#FFF0EB">⚡</div>
+      Zapier / Webhook
+      <div class="int-nav-status" id="status-webhook"></div>
+    </button>
+
+    <div class="int-nav-divider"></div>
+    <div class="int-nav-label">Coming Soon</div>
+
+    <div class="int-nav-item" style="opacity:0.4;cursor:default">
+      <div class="int-nav-icon" style="background:#FFF0F5">💬</div>
+      Slack
+      <span style="margin-left:auto;font-size:10px;background:#EEF2FF;
+                   color:#4F46E5;padding:2px 6px;border-radius:100px;
+                   font-weight:600">Soon</span>
+    </div>
+
+    <div class="int-nav-divider"></div>
+    <div class="int-nav-label">More</div>
+
+    <button class="int-nav-item" onclick="showSection('logs', this)">
+      <div class="int-nav-icon" style="background:#F0FDF4">📋</div>
+      Activity Logs
+    </button>
+  </aside>
+
+  <!-- ── Main content ── -->
+  <main class="int-main">
+
+    <!-- OVERVIEW -->
+    <div class="int-section active" id="sec-overview">
+      <div class="int-page-title">Overview</div>
+      <div class="int-page-desc">All your connected integrations in one place.</div>
+
+      <div class="int-overview-grid">
+        <div class="int-overview-card"
+             onclick="showSection('google', document.getElementById('nav-google'))"
+             id="ov-google">
+          <div class="int-ov-icon" style="background:#E8F5E9">📊</div>
+          <div class="int-ov-name">Google Sheets</div>
+          <div class="int-ov-status" id="ov-st-gs">Not connected</div>
+        </div>
+        <div class="int-overview-card"
+             onclick="showSection('notion', document.getElementById('nav-notion'))"
+             id="ov-notion">
+          <div class="int-ov-icon" style="background:#F3F4F6">◻️</div>
+          <div class="int-ov-name">Notion</div>
+          <div class="int-ov-status" id="ov-st-notion">Not connected</div>
+        </div>
+        <div class="int-overview-card"
+             onclick="showSection('webhook', document.getElementById('nav-webhook'))"
+             id="ov-webhook">
+          <div class="int-ov-icon" style="background:#FFF0EB">⚡</div>
+          <div class="int-ov-name">Zapier / Webhook</div>
+          <div class="int-ov-status" id="ov-st-webhook">Not connected</div>
+        </div>
+      </div>
+
+      <div class="int-card">
+        <div class="int-card-header">
+          <div class="int-card-meta">
+            <div class="int-card-title">Quick Export</div>
+            <div class="int-card-subtitle">
+              Export your current sheet to any connected app
+            </div>
+          </div>
+        </div>
+        <div class="int-card-body">
+          <div class="int-actions">
+            <button class="int-action-btn btn-green" onclick="quickExportGS()">
+              📊 Export to Google Sheets
+            </button>
+            <button class="int-action-btn btn-notion" onclick="quickExportNotion()">
+              ◻️ Export to Notion
+            </button>
+            <button class="int-action-btn btn-outline" onclick="quickSendWebhook()">
+              ⚡ Trigger Webhook
+            </button>
+          </div>
+          <div id="alert-quick" class="int-alert" style="margin-top:12px"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GOOGLE SHEETS -->
+    <div class="int-section" id="sec-google">
+      <div class="int-page-title">Google Sheets</div>
+      <div class="int-page-desc">
+        Export your spreadsheet data directly to Google Sheets.
+      </div>
+
+      <div class="int-card">
+        <div class="int-card-header">
+          <div class="int-card-logo" style="background:#E8F5E9">📊</div>
+          <div class="int-card-meta">
+            <div class="int-card-title">Connection Settings</div>
+            <div class="int-card-subtitle">Connect to your Google Sheets document</div>
+          </div>
+          <span class="int-badge badge-inactive" id="badge-gs">Not connected</span>
+        </div>
+        <div class="int-card-body">
+          <div class="int-form">
+            <div class="int-field">
+              <label>Google Sheets URL or ID *</label>
+              <input id="gs-url" type="text"
+                placeholder="https://docs.google.com/spreadsheets/d/1BxiMV...">
+              <span class="int-field-hint">Paste the full URL or just the spreadsheet ID</span>
+            </div>
+            <div class="int-form-row">
+              <div class="int-field">
+                <label>Sheet / Tab Name</label>
+                <input id="gs-tab" type="text" placeholder="Sheet1">
+                <span class="int-field-hint">Leave empty to use the first sheet</span>
+              </div>
+              <div class="int-field">
+                <label>Start Cell</label>
+                <input id="gs-cell" type="text" placeholder="A1" value="A1">
+              </div>
+            </div>
+            <div id="alert-gs" class="int-alert"></div>
+            <div class="int-actions">
+              <button class="int-action-btn btn-outline" onclick="testGoogleSheets()">
+                🔍 Validate URL
+              </button>
+              <button class="int-action-btn btn-dark" onclick="saveGoogleSheets()">
+                💾 Save Connection
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="int-card">
+        <div class="int-card-header">
+          <div class="int-card-meta">
+            <div class="int-card-title">Export Data</div>
+            <div class="int-card-subtitle">Send your current sheet to Google Sheets</div>
+          </div>
+        </div>
+        <div class="int-card-body">
+          <div style="font-size:13px;color:#6B7280;margin-bottom:16px;line-height:1.6">
+            Your data will be exported as a CSV file and you'll be redirected to import
+            it into Google Sheets. For direct write access, enable the
+            <a href="https://console.cloud.google.com" target="_blank"
+               style="color:#4F46E5">Google Sheets API</a> with a service account.
+          </div>
+          <div id="alert-gs-export" class="int-alert" style="margin-bottom:12px"></div>
+          <div class="int-actions">
+            <button class="int-action-btn btn-green" id="btn-gs-export"
+                    onclick="exportGoogleSheets()">
+              📤 Export to Google Sheets
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NOTION -->
+    <div class="int-section" id="sec-notion">
+      <div class="int-page-title">Notion</div>
+      <div class="int-page-desc">Push spreadsheet rows into a Notion database.</div>
+
+      <div class="int-card">
+        <div class="int-card-header">
+          <div class="int-card-logo" style="background:#F3F4F6">◻️</div>
+          <div class="int-card-meta">
+            <div class="int-card-title">Connection Settings</div>
+            <div class="int-card-subtitle">Add your Notion credentials</div>
+          </div>
+          <span class="int-badge badge-inactive" id="badge-notion">Not connected</span>
+        </div>
+        <div class="int-card-body">
+          <div class="int-form">
+            <div class="int-field">
+              <label>Integration Token *</label>
+              <input id="notion-token" type="password"
+                placeholder="secret_xxxxxxxxxxxxxxxxxxxxxxxx">
+              <span class="int-field-hint">
+                Get it from
+                <a href="https://www.notion.so/my-integrations" target="_blank">
+                  notion.so/my-integrations
+                </a>
+                → New integration → Copy Internal Integration Secret
+              </span>
+            </div>
+            <div class="int-field">
+              <label>Database ID *</label>
+              <input id="notion-db" type="text"
+                placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx">
+              <span class="int-field-hint">
+                Found in your Notion database URL after the workspace name.
+                Make sure to share the database with your integration.
+              </span>
+            </div>
+            <div id="alert-notion" class="int-alert"></div>
+            <div class="int-actions">
+              <button class="int-action-btn btn-outline" onclick="testNotionConn()">
+                🔍 Test Connection
+              </button>
+              <button class="int-action-btn btn-dark" onclick="saveNotionConn()">
+                💾 Save Connection
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="int-card">
+        <div class="int-card-header">
+          <div class="int-card-meta">
+            <div class="int-card-title">Export Data</div>
+            <div class="int-card-subtitle">Up to 100 rows exported per operation</div>
+          </div>
+        </div>
+        <div class="int-card-body">
+          <div style="font-size:13px;color:#6B7280;margin-bottom:16px;line-height:1.6">
+            Column headers from your spreadsheet will become Notion database properties.
+            Numbers and dates are detected automatically. First column becomes the title.
+          </div>
+          <div id="alert-notion-export" class="int-alert" style="margin-bottom:12px"></div>
+          <div class="int-actions">
+            <button class="int-action-btn btn-notion" id="btn-notion-export"
+                    onclick="exportNotion()">
+              📤 Export to Notion
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WEBHOOK -->
+    <div class="int-section" id="sec-webhook">
+      <div class="int-page-title">Zapier / Webhook</div>
+      <div class="int-page-desc">Send data to any app when AI actions happen.</div>
+
+      <div class="int-card">
+        <div class="int-card-header">
+          <div class="int-card-logo" style="background:#FFF0EB">⚡</div>
+          <div class="int-card-meta">
+            <div class="int-card-title">Webhook Settings</div>
+            <div class="int-card-subtitle">Configure your webhook endpoint</div>
+          </div>
+          <span class="int-badge badge-inactive" id="badge-webhook">Not connected</span>
+        </div>
+        <div class="int-card-body">
+          <div class="int-form">
+            <div class="int-field">
+              <label>Webhook URL *</label>
+              <input id="wh-url" type="text"
+                placeholder="https://hooks.zapier.com/hooks/catch/...">
+              <span class="int-field-hint">
+                Works with Zapier, Make, n8n, Pipedream, and any HTTP endpoint
+              </span>
+            </div>
+            <div class="int-form-row">
+              <div class="int-field">
+                <label>Trigger Event</label>
+                <select id="wh-trigger">
+                  <option value="manual">Manual only</option>
+                  <option value="ai_action">After every AI action</option>
+                  <option value="export">On file export</option>
+                  <option value="all">All events</option>
+                </select>
+              </div>
+              <div class="int-field">
+                <label>Secret Key (optional)</label>
+                <input id="wh-secret" type="text" placeholder="my-secret-key">
+                <span class="int-field-hint">Added as X-Webhook-Secret header</span>
+              </div>
+            </div>
+            <div id="alert-webhook" class="int-alert"></div>
+            <div class="int-actions">
+              <button class="int-action-btn btn-outline" onclick="testWebhookConn()">
+                📨 Send Test Payload
+              </button>
+              <button class="int-action-btn btn-dark" onclick="saveWebhookConn()">
+                💾 Save & Activate
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="int-card">
+        <div class="int-card-header">
+          <div class="int-card-meta">
+            <div class="int-card-title">Payload Preview</div>
+            <div class="int-card-subtitle">This is what gets sent to your webhook</div>
+          </div>
+        </div>
+        <div class="int-card-body">
+          <pre style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:10px;
+                      padding:16px;font-size:12px;line-height:1.6;
+                      overflow-x:auto;color:#374151">{
+  "source": "Mocksheet",
+  "event": "ai_action",
+  "timestamp": "2026-03-29T12:00:00Z",
+  "data": {
+    "action": "delete_rows",
+    "reply": "✓ 12 empty rows deleted",
+    "changes_count": 12,
+    "sheet": "Sales Q1",
+    "rows": 247
+  }
+}</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- LOGS -->
+    <div class="int-section" id="sec-logs">
+      <div class="int-page-title">Activity Logs</div>
+      <div class="int-page-desc">Recent integration activity from your account.</div>
+
+      <div class="int-card">
+        <div class="int-card-header">
+          <div class="int-card-meta">
+            <div class="int-card-title">Recent Events</div>
+          </div>
+          <button class="int-action-btn btn-outline"
+                  style="padding:7px 14px;font-size:12px"
+                  onclick="loadLogs()">
+            🔄 Refresh
+          </button>
+        </div>
+        <div class="int-card-body" style="padding:0">
+          <table class="int-logs-table">
+            <thead>
+              <tr>
+                <th>Provider</th>
+                <th>Event</th>
+                <th>Status</th>
+                <th>Rows</th>
+                <th>Time</th>
+              </tr>
+            </thead>
+            <tbody id="logs-body">
+              <tr>
+                <td colspan="5" class="log-empty">Loading logs...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+const API_URL = window.location.hostname === 'localhost'
+  ? 'http://localhost:3001'
+  : 'https://upsheet-ai.onrender.com';
+
+// ── Auth token ────────────────────────────────────
+function getAuthToken() {
+  try {
+    const key = Object.keys(localStorage)
+      .find(k => k.startsWith('sb-') && k.endsWith('-auth-token'));
+    if (!key) return null;
+    const data = JSON.parse(localStorage.getItem(key));
+    return data?.access_token || null;
+  } catch { return null; }
+}
+
+function authHeaders() {
+  const token = getAuthToken();
+  return {
+    'Content-Type': 'application/json',
+    ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+  };
+}
+
+// ── Section navigation ────────────────────────────
+function showSection(id, btn) {
+  document.querySelectorAll('.int-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.int-nav-item').forEach(b => b.classList.remove('active'));
+  document.getElementById('sec-' + id)?.classList.add('active');
+  btn?.classList.add('active');
+  if (id === 'logs') loadLogs();
+}
+
+// ── Alert helper ──────────────────────────────────
+function showAlert(id, msg, type) {
+  const el = document.getElementById('alert-' + id);
+  if (!el) return;
+  el.textContent = msg;
+  el.className = 'int-alert ' + type;
+  setTimeout(() => { el.className = 'int-alert'; el.textContent = ''; }, 6000);
+}
+
+// ── Status helpers ────────────────────────────────
+function setStatus(provider, status) {
+  const dot = document.getElementById('status-' + provider);
+  if (dot) dot.className = 'int-nav-status' + (status === 'active' ? ' on' : '');
+
+  const badge = document.getElementById('badge-' + provider);
+  if (badge) {
+    badge.className = 'int-badge';
+    if (status === 'active') {
+      badge.classList.add('badge-active');
+      badge.textContent = '✓ Connected';
+    } else if (status === 'error') {
+      badge.classList.add('badge-error');
+      badge.textContent = '✗ Error';
+    } else {
+      badge.classList.add('badge-inactive');
+      badge.textContent = 'Not connected';
+    }
+  }
+
+  const ovCard = document.getElementById('ov-' + provider);
+  const ovStatus = document.getElementById('ov-st-' + provider);
+  if (ovCard && ovStatus) {
+    if (status === 'active') {
+      ovCard.classList.add('active-card');
+      ovStatus.textContent = '✓ Connected';
+      ovStatus.className = 'int-ov-status on';
+    } else {
+      ovCard.classList.remove('active-card');
+      ovStatus.textContent = 'Not connected';
+      ovStatus.className = 'int-ov-status';
+    }
+  }
+}
+
+// ── Load saved ────────────────────────────────────
+async function loadIntegrations() {
+  const gs = JSON.parse(localStorage.getItem('int_gs') || '{}');
+  const notion = JSON.parse(localStorage.getItem('int_notion') || '{}');
+  const webhook = JSON.parse(localStorage.getItem('int_webhook') || '{}');
+
+  if (gs.url) {
+    document.getElementById('gs-url').value = gs.url;
+    if (gs.tab) document.getElementById('gs-tab').value = gs.tab;
+    setStatus('gs', 'active');
+  }
+  if (notion.token) {
+    document.getElementById('notion-token').value = notion.token;
+    if (notion.dbId) document.getElementById('notion-db').value = notion.dbId;
+    setStatus('notion', 'active');
+  }
+  if (webhook.url) {
+    document.getElementById('wh-url').value = webhook.url;
+    if (webhook.trigger) document.getElementById('wh-trigger').value = webhook.trigger;
+    if (webhook.secret) document.getElementById('wh-secret').value = webhook.secret;
+    setStatus('webhook', 'active');
+  }
+
+  // Also load from API if authenticated
+  try {
+    const res = await fetch(API_URL + '/api/integrations', { headers: authHeaders() });
+    if (res.ok) {
+      const data = await res.json();
+      const map = { google_sheets: 'gs', notion: 'notion', webhook: 'webhook' };
+      data.forEach(int => {
+        if (int.status === 'active') setStatus(map[int.provider] || int.provider, 'active');
+      });
+    }
+  } catch (e) { /* offline — localStorage is the source of truth */ }
+}
+
+// ── Google Sheets ─────────────────────────────────
+function testGoogleSheets() {
+  const url = document.getElementById('gs-url').value.trim();
+  if (!url) { showAlert('gs', '✗ Please enter a URL or ID', 'error'); return; }
+  const match = url.match(/\/d\/([a-zA-Z0-9-_]{20,})/);
+  if (match || url.length > 20) {
+    showAlert('gs', '✓ Valid Google Sheets URL detected', 'success');
+  } else {
+    showAlert('gs', '✗ URL format seems incorrect', 'error');
+  }
+}
+
+function saveGoogleSheets() {
+  const url = document.getElementById('gs-url').value.trim();
+  if (!url) { showAlert('gs', '✗ Please enter a URL', 'error'); return; }
+  const tab = document.getElementById('gs-tab').value.trim();
+  localStorage.setItem('int_gs', JSON.stringify({ url, tab }));
+  setStatus('gs', 'active');
+  showAlert('gs', '✓ Google Sheets connection saved', 'success');
+  fetch(API_URL + '/api/integrations/save', {
+    method: 'POST', headers: authHeaders(),
+    body: JSON.stringify({ provider: 'google_sheets', config: { url, tab } })
+  }).catch(() => {});
+}
+
+async function exportGoogleSheets() {
+  const gs = JSON.parse(localStorage.getItem('int_gs') || '{}');
+  if (!gs.url) { showAlert('gs-export', '✗ Save connection first', 'error'); return; }
+
+  const data = JSON.parse(sessionStorage.getItem('mocksheet_current') || 'null');
+  if (!data?.length) {
+    showAlert('gs-export', '✗ No data. Open the app and upload a file first.', 'error');
+    return;
+  }
+
+  const btn = document.getElementById('btn-gs-export');
+  if (btn) { btn.disabled = true; btn.textContent = 'Exporting...'; }
+
+  try {
+    const res = await fetch(API_URL + '/api/integrations/sheets/export', {
+      method: 'POST', headers: authHeaders(),
+      body: JSON.stringify({ sheetId: gs.url, data, sheetName: gs.tab || 'Sheet1' })
+    });
+    const result = await res.json();
+
+    if (result.csv) {
+      const blob = new Blob([result.csv], { type: 'text/csv;charset=utf-8;' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'mocksheet-export.csv';
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      showAlert('gs-export',
+        `✓ CSV downloaded (${data.length} rows). Import: File → Import → Upload`,
+        'success');
+      setTimeout(() => {
+        if (confirm('Open Google Sheets to import?'))
+          window.open(result.sheetUrl, '_blank');
+      }, 800);
+    }
+  } catch (e) {
+    showAlert('gs-export', '✗ Export failed: ' + e.message, 'error');
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '📤 Export to Google Sheets'; }
+  }
+}
+
+// ── Notion ────────────────────────────────────────
+async function testNotionConn() {
+  const token = document.getElementById('notion-token').value.trim();
+  const dbId = document.getElementById('notion-db').value.trim();
+  if (!token) { showAlert('notion', '✗ Enter your integration token', 'error'); return; }
+  showAlert('notion', 'Testing connection...', 'info');
+  try {
+    const res = await fetch(API_URL + '/api/integrations/notion/test', {
+      method: 'POST', headers: authHeaders(),
+      body: JSON.stringify({ token, dbId })
+    });
+    const data = await res.json();
+    if (data.success) {
+      showAlert('notion', '✓ Connected: ' + (data.name || 'Notion database found'), 'success');
+    } else {
+      showAlert('notion', '✗ ' + (data.error || 'Invalid credentials'), 'error');
+    }
+  } catch (e) {
+    showAlert('notion', '✗ Server unreachable. Check your connection.', 'error');
+  }
+}
+
+function saveNotionConn() {
+  const token = document.getElementById('notion-token').value.trim();
+  const dbId = document.getElementById('notion-db').value.trim();
+  if (!token) { showAlert('notion', '✗ Enter your token', 'error'); return; }
+  if (!dbId) { showAlert('notion', '✗ Enter your database ID', 'error'); return; }
+  localStorage.setItem('int_notion', JSON.stringify({ token, dbId }));
+  setStatus('notion', 'active');
+  showAlert('notion', '✓ Notion connection saved', 'success');
+  fetch(API_URL + '/api/integrations/save', {
+    method: 'POST', headers: authHeaders(),
+    body: JSON.stringify({ provider: 'notion', config: { token: '***', dbId } })
+  }).catch(() => {});
+}
+
+async function exportNotion() {
+  const notion = JSON.parse(localStorage.getItem('int_notion') || '{}');
+  if (!notion.token || !notion.dbId) {
+    showAlert('notion-export', '✗ Save your Notion credentials first', 'error');
+    return;
+  }
+  const data = JSON.parse(sessionStorage.getItem('mocksheet_current') || 'null');
+  if (!data || data.length < 2) {
+    showAlert('notion-export', '✗ No data. Open the app and upload a file first.', 'error');
+    return;
+  }
+
+  const btn = document.getElementById('btn-notion-export');
+  if (btn) { btn.disabled = true; btn.textContent = 'Exporting...'; }
+
+  const headers = data[0] || [];
+  const rows = data.slice(1).filter(r => r?.some(c => c));
+  showAlert('notion-export', `Exporting ${Math.min(rows.length, 100)} rows...`, 'info');
+
+  try {
+    const res = await fetch(API_URL + '/api/integrations/notion/export', {
+      method: 'POST', headers: authHeaders(),
+      body: JSON.stringify({
+        token: notion.token,
+        databaseId: notion.dbId,
+        headers,
+        rows: rows.slice(0, 100)
+      })
+    });
+    const result = await res.json();
+    if (result.success) {
+      showAlert('notion-export',
+        `✓ ${result.count}/${result.total} rows exported to Notion`, 'success');
+      const dbUrl = `https://notion.so/${notion.dbId.replace(/-/g, '')}`;
+      setTimeout(() => {
+        if (confirm('Open Notion database?')) window.open(dbUrl, '_blank');
+      }, 800);
+    } else {
+      showAlert('notion-export', '✗ ' + (result.error || 'Export failed'), 'error');
+    }
+  } catch (e) {
+    showAlert('notion-export', '✗ ' + e.message, 'error');
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '📤 Export to Notion'; }
+  }
+}
+
+// ── Webhook ───────────────────────────────────────
+async function testWebhookConn() {
+  const url = document.getElementById('wh-url').value.trim();
+  if (!url) { showAlert('webhook', '✗ Enter a webhook URL', 'error'); return; }
+
+  const payload = {
+    source: 'Mocksheet', event: 'test',
+    timestamp: new Date().toISOString(),
+    message: 'Test webhook from Mocksheet Integrations'
+  };
+
+  try {
+    await fetch(API_URL + '/api/integrations/webhook/send', {
+      method: 'POST', headers: authHeaders(),
+      body: JSON.stringify({ url, event: 'test', data: payload })
+    });
+    showAlert('webhook', '✓ Test payload sent — check your endpoint', 'success');
+  } catch (e) {
+    fetch(url, {
+      method: 'POST', mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    showAlert('webhook', '✓ Test sent (check your Zapier/Make dashboard)', 'success');
+  }
+}
+
+function saveWebhookConn() {
+  const url = document.getElementById('wh-url').value.trim();
+  const trigger = document.getElementById('wh-trigger').value;
+  const secret = document.getElementById('wh-secret').value.trim();
+  if (!url) { showAlert('webhook', '✗ Enter a webhook URL', 'error'); return; }
+  localStorage.setItem('int_webhook', JSON.stringify({ url, trigger, secret }));
+  setStatus('webhook', 'active');
+  showAlert('webhook', '✓ Webhook activated', 'success');
+  fetch(API_URL + '/api/integrations/save', {
+    method: 'POST', headers: authHeaders(),
+    body: JSON.stringify({ provider: 'webhook', config: { url, trigger, secret } })
+  }).catch(() => {});
+}
+
+// ── Quick actions (overview) ──────────────────────
+async function quickExportGS() {
+  const gs = JSON.parse(localStorage.getItem('int_gs') || '{}');
+  if (!gs.url) {
+    showAlert('quick', '✗ Google Sheets not connected. Go to Google Sheets tab.', 'error');
+    return;
+  }
+  showSection('google', document.getElementById('nav-google'));
+  setTimeout(exportGoogleSheets, 300);
+}
+
+async function quickExportNotion() {
+  const notion = JSON.parse(localStorage.getItem('int_notion') || '{}');
+  if (!notion.token) {
+    showAlert('quick', '✗ Notion not connected. Go to Notion tab.', 'error');
+    return;
+  }
+  showSection('notion', document.getElementById('nav-notion'));
+  setTimeout(exportNotion, 300);
+}
+
+async function quickSendWebhook() {
+  const wh = JSON.parse(localStorage.getItem('int_webhook') || '{}');
+  if (!wh.url) {
+    showAlert('quick', '✗ Webhook not configured. Go to Zapier tab.', 'error');
+    return;
+  }
+  const data = JSON.parse(sessionStorage.getItem('mocksheet_current') || 'null');
+  try {
+    await fetch(API_URL + '/api/integrations/webhook/send', {
+      method: 'POST', headers: authHeaders(),
+      body: JSON.stringify({
+        url: wh.url,
+        event: 'manual',
+        data: { sheet_rows: data?.length || 0, timestamp: new Date().toISOString() }
+      })
+    });
+    showAlert('quick', '✓ Webhook triggered successfully', 'success');
+  } catch (e) {
+    showAlert('quick', '✗ Failed to send webhook: ' + e.message, 'error');
+  }
+}
+
+// ── Activity Logs ─────────────────────────────────
+async function loadLogs() {
+  const tbody = document.getElementById('logs-body');
+  tbody.innerHTML = '<tr><td colspan="5" class="log-empty">Loading...</td></tr>';
+
+  try {
+    const res = await fetch(API_URL + '/api/integrations/logs', { headers: authHeaders() });
+    if (!res.ok) throw new Error('Not authenticated');
+    const logs = await res.json();
+
+    if (!logs.length) {
+      tbody.innerHTML = '<tr><td colspan="5" class="log-empty">No activity yet</td></tr>';
+      return;
+    }
+
+    const providerLabel = {
+      google_sheets: '📊 Google Sheets',
+      notion: '◻️ Notion',
+      webhook: '⚡ Webhook'
+    };
+
+    tbody.innerHTML = logs.map(log => `
+      <tr>
+        <td>${providerLabel[log.provider] || log.provider}</td>
+        <td>${log.event}</td>
+        <td><span class="log-badge ${log.status === 'success' ? 'log-success' : 'log-error'}">
+          ${log.status}
+        </span></td>
+        <td>${log.rows_affected || '—'}</td>
+        <td style="color:#9CA3AF">${new Date(log.created_at).toLocaleString()}</td>
+      </tr>
+    `).join('');
+  } catch (e) {
+    tbody.innerHTML = `<tr><td colspan="5" class="log-empty">
+      Sign in to view activity logs
+    </td></tr>`;
+  }
+}
+
+// ── Init ──────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', loadIntegrations);
+</script>
+</body>
+</html>
