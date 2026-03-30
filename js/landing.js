@@ -35,7 +35,7 @@ const PRICES = {
   yearly:  {
     pro: 9.99, biz: 24.99, period: '/mo', bizBase: 24.99,
     proOrig: 14.99, bizOrig: 39.99,
-    proNote: 'billed $119.88/yr', bizNote: 'billed $299.88/yr'
+    proNote: 'billed ₺119.88/yr', bizNote: 'billed ₺299.88/yr'
   }
 };
 
@@ -61,7 +61,7 @@ function setPeriod(period) {
   if (proPeriodEl) proPeriodEl.textContent = p.period;
   if (proOrigEl) {
     if (period === 'yearly' && p.proOrig) {
-      proOrigEl.textContent = '$' + p.proOrig + '/mo';
+      proOrigEl.textContent = '₺' + p.proOrig + '/mo';
       proOrigEl.style.display = 'block';
     } else {
       proOrigEl.style.display = 'none';
@@ -112,7 +112,7 @@ function updateBizPrice(users) {
   if (bizOrigEl) {
     var p = PRICES[currentPeriod];
     if (currentPeriod === 'yearly' && p?.bizOrig) {
-      bizOrigEl.textContent = '$' + (p.bizOrig + extraUsers * PER_USER_USD).toFixed(2) + '/mo';
+      bizOrigEl.textContent = '₺' + (p.bizOrig + extraUsers * PER_USER_USD).toFixed(2) + '/mo';
       bizOrigEl.style.display = 'block';
     } else {
       bizOrigEl.style.display = 'none';
