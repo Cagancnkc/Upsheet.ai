@@ -2963,7 +2963,254 @@ const EXCEL_DATASET = [
   { user_command: "Senaryo 57: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A57, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 57 başarıyla işlendi." } },
   { user_command: "Senaryo 58: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A58, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 58 başarıyla işlendi." } },
   { user_command: "Senaryo 59: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A59, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 59 başarıyla işlendi." } },
-  { user_command: "Senaryo 60: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A60, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 60 başarıyla işlendi." } }
+  { user_command: "Senaryo 60: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A60, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 60 başarıyla işlendi." } },
+
+  // ── QUANT FINANCE & ACTUARIAL ─────────────────────────────────────
+  {
+    user_command: "Black-Scholes modeline göre Alım (Call) Opsiyonu fiyatını hesapla",
+    logic: "Apply Black-Scholes formula: C = S*N(d1) - K*e^(-rt)*N(d2)",
+    category: "quant_finance",
+    output: {
+      action: "formula",
+      formula: "=LET(S, A2, K, B2, t, C2, r, D2, v, E2, d1, (LN(S/K)+(r+v^2/2)*t)/(v*SQRT(t)), d2, d1-v*SQRT(t), S*NORM.S.DIST(d1, TRUE) - K*EXP(-r*t)*NORM.S.DIST(d2, TRUE))",
+      changes: [],
+      reply: "✓ Black-Scholes modeli kullanılarak opsiyonun teorik değeri hesaplandı."
+    }
+  },
+  {
+    user_command: "Monte Carlo simülasyonu ile hisse senedi fiyat yolu oluştur",
+    logic: "Geometric Brownian Motion: S_t = S_0 * exp((r - 0.5*sigma^2)*t + sigma*sqrt(t)*Z)",
+    category: "quant_finance",
+    output: {
+      action: "formula",
+      formula: "=A2 * EXP((B2 - 0.5*C2^2)*D2 + C2*SQRT(D2)*NORM.S.INV(RAND()))",
+      changes: [],
+      reply: "✓ Geometrik Brown Hareketi kullanılarak rastgele bir fiyat yolu simüle edildi."
+    }
+  },
+  {
+    user_command: "Hayat sigortası için net tek prim (NSP) hesapla",
+    logic: "Sum of (v^t * tpx * qx+t) for life insurance pricing",
+    category: "actuarial",
+    output: {
+      action: "formula",
+      formula: "=SUMPRODUCT((1.05^-SEQUENCE(50)), B2:B51, C2:C51)",
+      changes: [],
+      reply: "✓ Mortalite tablosu ve iskonto oranı kullanılarak net tek prim hesaplandı."
+    }
+  },
+  {
+    user_command: "IBNR (Gerçekleşmiş Ancak Bildirilmemiş) hasar karşılığını Chain Ladder ile hesapla",
+    logic: "Loss development factor (LDF) application on claims triangle",
+    category: "actuarial",
+    output: {
+      action: "formula",
+      formula: "=SUM(A2:E2) * PRODUCT(F2:F6)",
+      changes: [],
+      reply: "✓ Gelişim katsayıları kullanılarak nihai hasar yükü ve IBNR karşılığı tahmin edildi."
+    }
+  },
+  {
+    user_command: "Klinik test için Kaplan-Meier sağkalım olasılığını hesapla",
+    logic: "Product of (1 - di/ni) for survival analysis",
+    category: "biostatistics",
+    output: {
+      action: "formula",
+      formula: "=PRODUCT(1 - (B2:B20 / A2:A20))",
+      changes: [],
+      reply: "✓ Kaplan-Meier yöntemiyle kümülatif sağkalım olasılığı belirlendi."
+    }
+  },
+  {
+    user_command: "İki grup arasındaki Odds Ratio (OR) değerini hesapla",
+    logic: "(a*d) / (b*c) for case-control studies",
+    category: "biostatistics",
+    output: {
+      action: "formula",
+      formula: "=(A2*D2) / (B2*C2)",
+      changes: [],
+      reply: "✓ Vaka ve kontrol grupları arasındaki maruziyet ilişkisi (Odds Ratio) hesaplandı."
+    }
+  },
+  {
+    user_command: "Kirişin maksimum sehimini (deflection) hesapla",
+    logic: "Deflection = (P*L^3) / (48*E*I) for center load",
+    category: "engineering",
+    output: {
+      action: "formula",
+      formula: "=(A2 * B2^3) / (48 * C2 * D2)",
+      changes: [],
+      reply: "✓ Malzeme özellikleri ve yükleme koşullarına göre maksimum sehim hesaplandı."
+    }
+  },
+  {
+    user_command: "Boru hattındaki basınç kaybını Darcy-Weisbach ile hesapla",
+    logic: "h_f = f * (L/D) * (v^2 / 2g)",
+    category: "engineering",
+    output: {
+      action: "formula",
+      formula: "=A2 * (B2/C2) * (D2^2 / (2 * 9.81))",
+      changes: [],
+      reply: "✓ Sürtünme katsayısı ve akış hızı baz alınarak yük kaybı belirlendi."
+    }
+  },
+  {
+    user_command: "Metindeki tüm boşlukları özyinelemeli olarak kaldır",
+    logic: "Recursive LAMBDA to strip spaces",
+    category: "advanced_logic",
+    output: {
+      action: "define_name",
+      formula: "=LAMBDA(text, IF(ISERROR(FIND(\" \", text)), text, CLEAN_SPACE(SUBSTITUTE(text, \" \", \"\"))))",
+      changes: [],
+      reply: "✓ 'CLEAN_SPACE' adında özyinelemeli bir boşluk temizleme fonksiyonu tanımlandı."
+    }
+  },
+  {
+    user_command: "Hiyerarşik veride (Parent-Child) kök dizini bul",
+    logic: "Recursive LAMBDA to traverse up a tree structure",
+    category: "advanced_logic",
+    output: {
+      action: "define_name",
+      formula: "=LAMBDA(id, table, LET(p, XLOOKUP(id, table[ID], table[Parent]), IF(p=\"\", id, GET_ROOT(p, table))))",
+      changes: [],
+      reply: "✓ 'GET_ROOT' fonksiyonu ile hiyerarşinin en üst seviyesine otomatik ulaşıldı."
+    }
+  },
+  {
+    user_command: "Veri modelinden belirli bir ölçüyü (Measure) çek",
+    logic: "CUBEMEMBER and CUBEVALUE for Power Pivot data",
+    category: "bi",
+    output: {
+      action: "formula",
+      formula: "=CUBEVALUE(\"ThisWorkbookDataModel\", \"[Measures].[Total Sales]\", \"[Date].[Year].[2023]\")",
+      changes: [],
+      reply: "✓ Veri modelindeki 'Toplam Satış' ölçüsü 2023 yılı için getirildi."
+    }
+  },
+  {
+    user_command: "Veri setinin Entropisini (Shannon Entropy) hesapla",
+    logic: "Sum of -p * log2(p) for information gain",
+    category: "data_science",
+    output: {
+      action: "formula",
+      formula: "=-SUMPRODUCT(A2:A10, IFERROR(LOG(A2:A10, 2), 0))",
+      changes: [],
+      reply: "✓ Veri dağılımındaki belirsizlik (Entropi) miktarı hesaplandı."
+    }
+  },
+  {
+    user_command: "Office Scripts ile tüm boş sayfaları sil",
+    logic: "Excel.run and workbook.getWorksheets()",
+    category: "automation",
+    output: {
+      action: "script",
+      formula: "workbook.getWorksheets().forEach(s => { if(s.getUsedRange() === undefined) s.delete(); });",
+      changes: [],
+      reply: "✓ Workbook içindeki tüm boş çalışma sayfaları TypeScript tabanlı script ile temizlendi."
+    }
+  },
+
+  // ── DETAYLI ANALİZ 1-100 ──────────────────────────────────────────
+  { user_command: "Detaylı Analiz 1: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_1), 1, 1)", changes: [], reply: "✓ Değişken 1 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 2: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_2), 1, 1)", changes: [], reply: "✓ Değişken 2 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 3: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_3), 1, 1)", changes: [], reply: "✓ Değişken 3 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 4: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_4), 1, 1)", changes: [], reply: "✓ Değişken 4 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 5: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_5), 1, 1)", changes: [], reply: "✓ Değişken 5 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 6: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_6), 1, 1)", changes: [], reply: "✓ Değişken 6 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 7: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_7), 1, 1)", changes: [], reply: "✓ Değişken 7 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 8: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_8), 1, 1)", changes: [], reply: "✓ Değişken 8 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 9: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_9), 1, 1)", changes: [], reply: "✓ Değişken 9 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 10: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_10), 1, 1)", changes: [], reply: "✓ Değişken 10 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 11: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_11), 1, 1)", changes: [], reply: "✓ Değişken 11 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 12: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_12), 1, 1)", changes: [], reply: "✓ Değişken 12 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 13: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_13), 1, 1)", changes: [], reply: "✓ Değişken 13 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 14: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_14), 1, 1)", changes: [], reply: "✓ Değişken 14 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 15: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_15), 1, 1)", changes: [], reply: "✓ Değişken 15 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 16: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_16), 1, 1)", changes: [], reply: "✓ Değişken 16 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 17: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_17), 1, 1)", changes: [], reply: "✓ Değişken 17 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 18: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_18), 1, 1)", changes: [], reply: "✓ Değişken 18 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 19: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_19), 1, 1)", changes: [], reply: "✓ Değişken 19 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 20: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_20), 1, 1)", changes: [], reply: "✓ Değişken 20 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 21: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_21), 1, 1)", changes: [], reply: "✓ Değişken 21 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 22: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_22), 1, 1)", changes: [], reply: "✓ Değişken 22 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 23: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_23), 1, 1)", changes: [], reply: "✓ Değişken 23 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 24: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_24), 1, 1)", changes: [], reply: "✓ Değişken 24 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 25: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_25), 1, 1)", changes: [], reply: "✓ Değişken 25 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 26: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_26), 1, 1)", changes: [], reply: "✓ Değişken 26 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 27: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_27), 1, 1)", changes: [], reply: "✓ Değişken 27 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 28: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_28), 1, 1)", changes: [], reply: "✓ Değişken 28 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 29: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_29), 1, 1)", changes: [], reply: "✓ Değişken 29 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 30: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_30), 1, 1)", changes: [], reply: "✓ Değişken 30 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 31: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_31), 1, 1)", changes: [], reply: "✓ Değişken 31 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 32: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_32), 1, 1)", changes: [], reply: "✓ Değişken 32 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 33: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_33), 1, 1)", changes: [], reply: "✓ Değişken 33 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 34: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_34), 1, 1)", changes: [], reply: "✓ Değişken 34 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 35: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_35), 1, 1)", changes: [], reply: "✓ Değişken 35 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 36: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_36), 1, 1)", changes: [], reply: "✓ Değişken 36 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 37: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_37), 1, 1)", changes: [], reply: "✓ Değişken 37 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 38: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_38), 1, 1)", changes: [], reply: "✓ Değişken 38 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 39: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_39), 1, 1)", changes: [], reply: "✓ Değişken 39 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 40: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_40), 1, 1)", changes: [], reply: "✓ Değişken 40 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 41: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_41), 1, 1)", changes: [], reply: "✓ Değişken 41 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 42: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_42), 1, 1)", changes: [], reply: "✓ Değişken 42 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 43: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_43), 1, 1)", changes: [], reply: "✓ Değişken 43 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 44: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_44), 1, 1)", changes: [], reply: "✓ Değişken 44 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 45: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_45), 1, 1)", changes: [], reply: "✓ Değişken 45 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 46: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_46), 1, 1)", changes: [], reply: "✓ Değişken 46 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 47: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_47), 1, 1)", changes: [], reply: "✓ Değişken 47 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 48: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_48), 1, 1)", changes: [], reply: "✓ Değişken 48 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 49: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_49), 1, 1)", changes: [], reply: "✓ Değişken 49 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 50: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_50), 1, 1)", changes: [], reply: "✓ Değişken 50 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 51: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_51), 1, 1)", changes: [], reply: "✓ Değişken 51 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 52: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_52), 1, 1)", changes: [], reply: "✓ Değişken 52 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 53: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_53), 1, 1)", changes: [], reply: "✓ Değişken 53 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 54: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_54), 1, 1)", changes: [], reply: "✓ Değişken 54 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 55: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_55), 1, 1)", changes: [], reply: "✓ Değişken 55 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 56: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_56), 1, 1)", changes: [], reply: "✓ Değişken 56 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 57: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_57), 1, 1)", changes: [], reply: "✓ Değişken 57 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 58: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_58), 1, 1)", changes: [], reply: "✓ Değişken 58 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 59: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_59), 1, 1)", changes: [], reply: "✓ Değişken 59 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 60: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_60), 1, 1)", changes: [], reply: "✓ Değişken 60 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 61: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_61), 1, 1)", changes: [], reply: "✓ Değişken 61 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 62: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_62), 1, 1)", changes: [], reply: "✓ Değişken 62 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 63: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_63), 1, 1)", changes: [], reply: "✓ Değişken 63 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 64: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_64), 1, 1)", changes: [], reply: "✓ Değişken 64 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 65: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_65), 1, 1)", changes: [], reply: "✓ Değişken 65 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 66: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_66), 1, 1)", changes: [], reply: "✓ Değişken 66 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 67: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_67), 1, 1)", changes: [], reply: "✓ Değişken 67 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 68: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_68), 1, 1)", changes: [], reply: "✓ Değişken 68 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 69: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_69), 1, 1)", changes: [], reply: "✓ Değişken 69 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 70: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_70), 1, 1)", changes: [], reply: "✓ Değişken 70 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 71: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_71), 1, 1)", changes: [], reply: "✓ Değişken 71 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 72: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_72), 1, 1)", changes: [], reply: "✓ Değişken 72 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 73: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_73), 1, 1)", changes: [], reply: "✓ Değişken 73 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 74: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_74), 1, 1)", changes: [], reply: "✓ Değişken 74 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 75: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_75), 1, 1)", changes: [], reply: "✓ Değişken 75 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 76: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_76), 1, 1)", changes: [], reply: "✓ Değişken 76 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 77: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_77), 1, 1)", changes: [], reply: "✓ Değişken 77 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 78: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_78), 1, 1)", changes: [], reply: "✓ Değişken 78 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 79: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_79), 1, 1)", changes: [], reply: "✓ Değişken 79 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 80: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_80), 1, 1)", changes: [], reply: "✓ Değişken 80 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 81: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_81), 1, 1)", changes: [], reply: "✓ Değişken 81 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 82: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_82), 1, 1)", changes: [], reply: "✓ Değişken 82 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 83: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_83), 1, 1)", changes: [], reply: "✓ Değişken 83 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 84: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_84), 1, 1)", changes: [], reply: "✓ Değişken 84 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 85: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_85), 1, 1)", changes: [], reply: "✓ Değişken 85 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 86: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_86), 1, 1)", changes: [], reply: "✓ Değişken 86 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 87: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_87), 1, 1)", changes: [], reply: "✓ Değişken 87 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 88: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_88), 1, 1)", changes: [], reply: "✓ Değişken 88 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 89: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_89), 1, 1)", changes: [], reply: "✓ Değişken 89 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 90: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_90), 1, 1)", changes: [], reply: "✓ Değişken 90 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 91: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_91), 1, 1)", changes: [], reply: "✓ Değişken 91 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 92: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_92), 1, 1)", changes: [], reply: "✓ Değişken 92 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 93: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_93), 1, 1)", changes: [], reply: "✓ Değişken 93 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 94: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_94), 1, 1)", changes: [], reply: "✓ Değişken 94 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 95: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_95), 1, 1)", changes: [], reply: "✓ Değişken 95 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 96: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_96), 1, 1)", changes: [], reply: "✓ Değişken 96 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 97: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_97), 1, 1)", changes: [], reply: "✓ Değişken 97 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 98: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_98), 1, 1)", changes: [], reply: "✓ Değişken 98 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 99: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_99), 1, 1)", changes: [], reply: "✓ Değişken 99 için regresyon katsayısı hesaplandı." } },
+  { user_command: "Detaylı Analiz 100: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_100), 1, 1)", changes: [], reply: "✓ Değişken 100 için regresyon katsayısı hesaplandı." } }
 
 ];
 
