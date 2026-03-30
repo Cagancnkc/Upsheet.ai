@@ -2314,7 +2314,656 @@ const EXCEL_DATASET = [
       changes: [],
       reply: "Büyüme oranı = (Mevcut Dönem - Önceki Dönem) / Önceki Dönem × 100. Formül: =(B3-B2)/B2*100 → %X büyüme/küçülme."
     }
-  }
+  },
+
+  // ── DYNAMIC ARRAYS ───────────────────────────────────────────────
+  {
+    user_command: "Satışları 5000'den büyük olanları filtrele ve alfabetik sırala",
+    logic: "apply SORT(FILTER(data, sales > 5000), 1, 1)",
+    category: "dynamic_arrays",
+    output: {
+      action: "formula",
+      cell: "F2#",
+      formula: "=SORT(FILTER(A2:C100, C2:C100 > 5000), 1, 1)",
+      changes: ["dynamic spill range"],
+      reply: "✓ 5000'den büyük satışlar filtrelendi ve alfabetik olarak sıralandı."
+    }
+  },
+  {
+    user_command: "Benzersiz müşteri listesini şehir bazlı getir",
+    logic: "apply UNIQUE(FILTER(customers, city='İstanbul'))",
+    category: "dynamic_arrays",
+    output: {
+      action: "formula",
+      cell: "H2#",
+      formula: "=UNIQUE(FILTER(B2:B500, D2:D500=\"İstanbul\"))",
+      changes: ["unique list generation"],
+      reply: "✓ İstanbul'daki benzersiz müşteri listesi oluşturuldu."
+    }
+  },
+
+  // ── OPTIMIZATION (LET) ───────────────────────────────────────────
+  {
+    user_command: "Karmaşık vergi hesaplamasını LET ile optimize et",
+    logic: "use LET to define variables for sales, tax_rate, and discount",
+    category: "optimization",
+    output: {
+      action: "formula",
+      cell: "E2",
+      formula: "=LET(sales, A2, rate, 0.18, disc, 0.05, (sales * (1-disc)) * rate)",
+      changes: ["formula optimization"],
+      reply: "✓ Vergi hesaplaması LET fonksiyonu ile optimize edilerek okunabilir hale getirildi."
+    }
+  },
+  {
+    user_command: "Kar marjını hesapla, eğer %20'den azsa 'Düşük' değilse 'Yüksek' yaz (LET kullanarak)",
+    logic: "LET(profit, (price-cost), margin, profit/price, IF(margin < 0.2, 'Düşük', 'Yüksek'))",
+    category: "optimization",
+    output: {
+      action: "formula",
+      cell: "F2",
+      formula: "=LET(p, B2-C2, m, p/B2, IF(m < 0.2, \"Düşük\", \"Yüksek\"))",
+      changes: ["conditional logic with variables"],
+      reply: "✓ Kar marjı analizi değişkenler tanımlanarak yapıldı."
+    }
+  },
+
+  // ── CUSTOM FUNCTIONS (LAMBDA) ────────────────────────────────────
+  {
+    user_command: "Daire alanı hesaplayan özel bir fonksiyon oluştur",
+    logic: "define LAMBDA(r, PI()*r^2) as AREA_CIRCLE",
+    category: "custom_functions",
+    output: {
+      action: "define_name",
+      name: "ALAN_HESAPLA",
+      formula: "=LAMBDA(yaricap, PI()*yaricap^2)",
+      changes: ["new custom function"],
+      reply: "✓ 'ALAN_HESAPLA' adında özel bir fonksiyon tanımlandı. Artık =ALAN_HESAPLA(A2) şeklinde kullanabilirsiniz."
+    }
+  },
+  {
+    user_command: "Metindeki tüm sayıları temizleyen fonksiyon tanımla",
+    logic: "use LAMBDA with TEXTJOIN logic to strip numbers from text",
+    category: "custom_functions",
+    output: {
+      action: "define_name",
+      name: "SAYI_TEMIZLE",
+      formula: "=LAMBDA(text, TEXTJOIN(\"\", TRUE, IF(ISERR(MID(text, SEQUENCE(LEN(text)), 1)*1), MID(text, SEQUENCE(LEN(text)), 1), \"\")))",
+      changes: ["text cleaning function"],
+      reply: "✓ 'SAYI_TEMIZLE' fonksiyonu oluşturuldu; metin içindeki rakamları otomatik olarak ayıklar."
+    }
+  },
+
+  // ── ADVANCED LOOKUP ──────────────────────────────────────────────
+  {
+    user_command: "Personel ID'ye göre hem isim hem departman bilgisini tek seferde getir",
+    logic: "use XLOOKUP returning multiple columns",
+    category: "advanced_lookup",
+    output: {
+      action: "formula",
+      cell: "B2#",
+      formula: "=XLOOKUP(A2, Personel!A:A, Personel!B:C)",
+      changes: ["multi-column return"],
+      reply: "✓ Personel ismi ve departmanı tek bir XLOOKUP ile getirildi."
+    }
+  },
+  {
+    user_command: "Satır ve sütun başlığına göre kesişim değerini bul (2D Lookup)",
+    logic: "INDEX(data, MATCH(row_val, row_range, 0), MATCH(col_val, col_range, 0))",
+    category: "advanced_lookup",
+    output: {
+      action: "formula",
+      cell: "D10",
+      formula: "=INDEX(A1:Z100, MATCH(\"Mart\", A1:A100, 0), MATCH(\"Gelir\", A1:Z1, 0))",
+      changes: ["two-dimensional lookup"],
+      reply: "✓ Mart ayı Gelir değeri satır ve sütun eşleşmesiyle bulundu."
+    }
+  },
+
+  // ── FINANCE (gelişmiş) ───────────────────────────────────────────
+  {
+    user_command: "Yatırımın 5 yıllık net bugünkü değerini (NBD) hesapla",
+    logic: "apply NPV(rate, cash_flows)",
+    category: "finance",
+    output: {
+      action: "formula",
+      cell: "B10",
+      formula: "=NPV(0.1, B2:B6) - B1",
+      changes: ["financial modeling"],
+      reply: "✓ %10 iskonto oranı ile 5 yıllık Net Bugünkü Değer hesaplandı."
+    }
+  },
+
+  // ── STATISTICS (gelişmiş) ────────────────────────────────────────
+  {
+    user_command: "Satış trendini kullanarak gelecek ayın tahminini yap",
+    logic: "apply FORECAST.LINEAR or TREND function",
+    category: "statistics",
+    output: {
+      action: "formula",
+      cell: "C12",
+      formula: "=FORECAST.LINEAR(DATE(2024,4,1), B2:B11, A2:A11)",
+      changes: ["predictive analysis"],
+      reply: "✓ Geçmiş veriler analiz edilerek Nisan 2024 için satış tahmini yapıldı."
+    }
+  },
+
+  // ── TRANSFORMATION ───────────────────────────────────────────────
+  {
+    user_command: "Hücredeki metni kelimelere ayır ve alt alta listele",
+    logic: "apply TEXTSPLIT and TRANSPOSE",
+    category: "transformation",
+    output: {
+      action: "formula",
+      cell: "E2#",
+      formula: "=TRANSPOSE(TEXTSPLIT(A2, \" \"))",
+      changes: ["text to rows transformation"],
+      reply: "✓ Metin boşluklardan bölünerek dikey bir liste haline getirildi."
+    }
+  },
+  {
+    user_command: "Belirli bir desene uyan verileri çek (RegEx benzeri)",
+    logic: "use FILTER with SEARCH to find pattern-matching values",
+    category: "transformation",
+    output: {
+      action: "formula",
+      cell: "G2#",
+      formula: "=FILTER(A2:A100, ISNUMBER(SEARCH(\"TR-???-2023\", A2:A100)))",
+      changes: ["pattern matching filter"],
+      reply: "✓ 'TR-XXX-2023' formatındaki tüm kodlar filtrelendi."
+    }
+  },
+
+  // ── MATH (gelişmiş) ──────────────────────────────────────────────
+  {
+    user_command: "Sadece görünür hücreleri topla",
+    logic: "SUBTOTAL(9, range) to ignore hidden rows",
+    category: "math",
+    output: {
+      action: "formula",
+      formula: "=SUBTOTAL(9, A2:A100)",
+      changes: [],
+      reply: "✓ Filtrelenmiş veya gizlenmiş satırlar hariç toplam alındı."
+    }
+  },
+  {
+    user_command: "Ağırlıklı ortalama hesapla",
+    logic: "SUMPRODUCT(values, weights) / SUM(weights)",
+    category: "math",
+    output: {
+      action: "formula",
+      formula: "=SUMPRODUCT(B2:B10, C2:C10) / SUM(C2:C10)",
+      changes: [],
+      reply: "✓ Birim fiyat ve miktara göre ağırlıklı ortalama hesaplandı."
+    }
+  },
+  {
+    user_command: "Her 3. satırı topla",
+    logic: "SUMPRODUCT with MOD and ROW logic",
+    category: "math",
+    output: {
+      action: "formula",
+      formula: "=SUMPRODUCT((MOD(ROW(A2:A100)-ROW(A2)+1, 3)=0)*(A2:A100))",
+      changes: [],
+      reply: "✓ Belirli bir periyottaki (her 3. satır) değerler toplandı."
+    }
+  },
+  {
+    user_command: "En yakın 10'un katına yuvarla",
+    logic: "MROUND(number, 10)",
+    category: "math",
+    output: {
+      action: "formula",
+      formula: "=MROUND(A2, 10)",
+      changes: [],
+      reply: "✓ Sayı en yakın 10'luk birime yuvarlandı."
+    }
+  },
+  {
+    user_command: "Rastgele benzersiz tam sayı üret",
+    logic: "RANDARRAY with SORTBY to generate unique random integers",
+    category: "math",
+    output: {
+      action: "formula",
+      formula: "=SORTBY(SEQUENCE(10), RANDARRAY(10))",
+      changes: [],
+      reply: "✓ 1'den 10'a kadar benzersiz rastgele sayılar üretildi."
+    }
+  },
+
+  // ── TEXT (gelişmiş) ──────────────────────────────────────────────
+  {
+    user_command: "Metindeki tüm sayıları ayıkla",
+    logic: "TEXTJOIN with SEQUENCE and ISNUMBER to extract digits",
+    category: "text",
+    output: {
+      action: "formula",
+      formula: "=TEXTJOIN(\"\", TRUE, IF(ISNUMBER(MID(A2, SEQUENCE(LEN(A2)), 1)*1), MID(A2, SEQUENCE(LEN(A2)), 1), \"\"))",
+      changes: [],
+      reply: "✓ Metin içerisindeki tüm rakamlar birleştirilerek ayıklandı."
+    }
+  },
+  {
+    user_command: "İsmin sadece baş harflerini al (Initials)",
+    logic: "TEXTJOIN and LEFT with TEXTSPLIT to get initials",
+    category: "text",
+    output: {
+      action: "formula",
+      formula: "=TEXTJOIN(\".\", TRUE, LEFT(TEXTSPLIT(A2, \" \"), 1)) & \".\"",
+      changes: [],
+      reply: "✓ 'Ahmet Yılmaz' metni 'A.Y.' formatına dönüştürülür."
+    }
+  },
+  {
+    user_command: "URL'den domain adını çek",
+    logic: "MID and FIND logic for domain extraction from URL",
+    category: "text",
+    output: {
+      action: "formula",
+      formula: "=MID(A2, FIND(\"//\", A2)+2, FIND(\"/\", A2, FIND(\"//\", A2)+2) - (FIND(\"//\", A2)+2))",
+      changes: [],
+      reply: "✓ Web sitesi adresinden domain bilgisi başarıyla çekildi."
+    }
+  },
+  {
+    user_command: "Metni tersten yazdır",
+    logic: "TEXTJOIN and MID with SEQUENCE reversed to reverse text",
+    category: "text",
+    output: {
+      action: "formula",
+      formula: "=TEXTJOIN(\"\", TRUE, MID(A2, SEQUENCE(LEN(A2), , LEN(A2), -1), 1))",
+      changes: [],
+      reply: "✓ Hücredeki metin karakter bazlı olarak tersine çevrildi."
+    }
+  },
+  {
+    user_command: "Sadece metin karakterlerini bırak (Sayıları sil)",
+    logic: "TEXTJOIN with ISERR to keep only non-numeric characters",
+    category: "text",
+    output: {
+      action: "formula",
+      formula: "=TEXTJOIN(\"\", TRUE, IF(ISERR(MID(A2, SEQUENCE(LEN(A2)), 1)*1), MID(A2, SEQUENCE(LEN(A2)), 1), \"\"))",
+      changes: [],
+      reply: "✓ Metin içindeki tüm rakamlar temizlendi."
+    }
+  },
+
+  // ── LOGIC (gelişmiş) ─────────────────────────────────────────────
+  {
+    user_command: "Çoklu kritere göre durum belirle (IFS)",
+    logic: "IFS(cond1, res1, cond2, res2...) for multi-branch scoring",
+    category: "logic",
+    output: {
+      action: "formula",
+      formula: "=IFS(A2>=90, \"A\", A2>=80, \"B\", A2>=70, \"C\", TRUE, \"F\")",
+      changes: [],
+      reply: "✓ Puan tablosuna göre harf notu ataması yapıldı."
+    }
+  },
+  {
+    user_command: "Hata varsa alternatif formülü çalıştır",
+    logic: "IFERROR nested with another formula as fallback",
+    category: "logic",
+    output: {
+      action: "formula",
+      formula: "=IFERROR(VLOOKUP(A2, Tablo1, 2, 0), VLOOKUP(A2, Tablo2, 2, 0))",
+      changes: [],
+      reply: "✓ İlk tabloda bulunamazsa otomatik olarak ikinci tabloya bakılır."
+    }
+  },
+  {
+    user_command: "Hem sayı hem metin içeren hücreleri kontrol et",
+    logic: "AND(ISNUMBER, ISTEXT) logic to detect mixed cell types",
+    category: "logic",
+    output: {
+      action: "formula",
+      formula: "=IF(AND(SUM(COUNTIF(A2, {\"*\", \"?\"}))>0, ISNUMBER(A2)), \"Karma\", \"Saf\")",
+      changes: [],
+      reply: "✓ Hücrenin veri tipi karmaşıklığı analiz edildi."
+    }
+  },
+
+  // ── LOOKUP (gelişmiş) ────────────────────────────────────────────
+  {
+    user_command: "Geriye doğru (Soldaki sütuna) arama yap",
+    logic: "XLOOKUP or INDEX/MATCH for left lookup",
+    category: "lookup",
+    output: {
+      action: "formula",
+      formula: "=XLOOKUP(A2, B:B, A:A)",
+      changes: [],
+      reply: "✓ Aranan değerin solundaki veriler başarıyla getirildi."
+    }
+  },
+  {
+    user_command: "İki farklı kritere göre veri getir",
+    logic: "INDEX/MATCH with array logic (A=x)*(B=y) for two-criteria lookup",
+    category: "lookup",
+    output: {
+      action: "formula",
+      formula: "=INDEX(C2:C100, MATCH(1, (A2:A100=E1)*(B2:B100=E2), 0))",
+      changes: [],
+      reply: "✓ Hem Tarih hem Ürün kriterine uyan fiyat bilgisi çekildi."
+    }
+  },
+  {
+    user_command: "Son dolu hücrenin değerini bul",
+    logic: "LOOKUP(2, 1/(range<>''), range) to find last non-empty cell",
+    category: "lookup",
+    output: {
+      action: "formula",
+      formula: "=LOOKUP(2, 1/(A:A<>\"\"), A:A)",
+      changes: [],
+      reply: "✓ Sütundaki en son girilen veri tespit edildi."
+    }
+  },
+  {
+    user_command: "Resim URL'sine göre dinamik resim getir",
+    logic: "IMAGE function (Excel 365) to display image from URL",
+    category: "lookup",
+    output: {
+      action: "formula",
+      formula: "=IMAGE(A2, \"Ürün Resmi\", 1)",
+      changes: [],
+      reply: "✓ Hücredeki URL kullanılarak ürün görseli dinamik olarak çekildi."
+    }
+  },
+  {
+    user_command: "Arama sonucunda birden fazla eşleşmeyi birleştir",
+    logic: "TEXTJOIN with FILTER to concatenate all matches",
+    category: "lookup",
+    output: {
+      action: "formula",
+      formula: "=TEXTJOIN(\", \", TRUE, FILTER(B2:B100, A2:A100=D1))",
+      changes: [],
+      reply: "✓ Bir kategoriye ait tüm alt öğeler tek bir hücrede virgülle ayrıldı."
+    }
+  },
+
+  // ── DATE (gelişmiş) ──────────────────────────────────────────────
+  {
+    user_command: "Hafta sonları hariç teslim tarihini bul",
+    logic: "WORKDAY(start, days, holidays) to skip weekends and holidays",
+    category: "date",
+    output: {
+      action: "formula",
+      formula: "=WORKDAY(A2, 15, Tatiller!A:A)",
+      changes: [],
+      reply: "✓ Hafta sonları ve resmi tatiller hariç 15 iş günü sonrası hesaplandı."
+    }
+  },
+  {
+    user_command: "Ayın son iş gününü bul",
+    logic: "WORKDAY with EOMONTH to find last business day of month",
+    category: "date",
+    output: {
+      action: "formula",
+      formula: "=WORKDAY(EOMONTH(A2, 0)+1, -1)",
+      changes: [],
+      reply: "✓ İlgili ayın en son mesai günü belirlendi."
+    }
+  },
+  {
+    user_command: "İki tarih arasındaki toplam çalışma saatini hesapla",
+    logic: "NETWORKDAYS with time math to calculate total working hours",
+    category: "date",
+    output: {
+      action: "formula",
+      formula: "=(NETWORKDAYS(A2, B2)-1)*8 + (B2-INT(B2)) - (A2-INT(A2))",
+      changes: [],
+      reply: "✓ İki tarih/saat arasındaki net mesai saati (8 saatlik gün bazlı) hesaplandı."
+    }
+  },
+
+  // ── FINANCE (PMT/IRR/CAGR) ───────────────────────────────────────
+  {
+    user_command: "Kredinin aylık ödemesini hesapla",
+    logic: "PMT(rate/12, nper, pv) for monthly loan payment",
+    category: "finance",
+    output: {
+      action: "formula",
+      formula: "=PMT(0.05/12, 36, -100000)",
+      changes: [],
+      reply: "✓ %5 faizle 36 ay vadeli 100.000 TL kredinin aylık taksiti hesaplandı."
+    }
+  },
+  {
+    user_command: "İç Verim Oranını (İVO) hesapla",
+    logic: "IRR(values) for internal rate of return calculation",
+    category: "finance",
+    output: {
+      action: "formula",
+      formula: "=IRR(A2:A20)",
+      changes: [],
+      reply: "✓ Nakit akış tablosuna göre projenin yıllık getiri oranı (IRR) hesaplandı."
+    }
+  },
+  {
+    user_command: "Yıllık Bileşik Büyüme Oranını (CAGR) hesapla",
+    logic: "((End/Start)^(1/Years))-1 for compound annual growth rate",
+    category: "finance",
+    output: {
+      action: "formula",
+      formula: "=((B10/B2)^(1/8))-1",
+      changes: [],
+      reply: "✓ 8 yıllık dönem için yıllık bileşik büyüme oranı (CAGR) bulundu."
+    }
+  },
+
+  // ── STATS (gelişmiş) ─────────────────────────────────────────────
+  {
+    user_command: "Standart sapmaya göre aykırı değerleri bul",
+    logic: "IF(ABS(val-mean)>2*std, 'Outlier', '') for outlier detection",
+    category: "stats",
+    output: {
+      action: "formula",
+      formula: "=IF(ABS(A2-AVERAGE($A$2:$A$100)) > 2*STDEV.P($A$2:$A$100), \"Aykırı\", \"Normal\")",
+      changes: [],
+      reply: "✓ Veri setindeki istatistiksel sapmalar (outliers) işaretlendi."
+    }
+  },
+  {
+    user_command: "Yüzdelik dilimi (Percentile) hesapla",
+    logic: "PERCENTILE.INC(range, k) to find percentile threshold",
+    category: "stats",
+    output: {
+      action: "formula",
+      formula: "=PERCENTILE.INC(A2:A100, 0.9)",
+      changes: [],
+      reply: "✓ Verilerin %90'ının altında kaldığı eşik değer bulundu."
+    }
+  },
+  {
+    user_command: "Korelasyon katsayısını hesapla",
+    logic: "CORREL(array1, array2) for Pearson correlation",
+    category: "stats",
+    output: {
+      action: "formula",
+      formula: "=CORREL(A2:A50, B2:B50)",
+      changes: [],
+      reply: "✓ Reklam harcaması ile satışlar arasındaki ilişki gücü hesaplandı."
+    }
+  },
+
+  // ── DYNAMIC (gelişmiş) ───────────────────────────────────────────
+  {
+    user_command: "Satışları azalan sırada listele ve ilk 5'i al",
+    logic: "TAKE(SORT(data, col, -1), 5) for top 5 sorted records",
+    category: "dynamic",
+    output: {
+      action: "formula",
+      formula: "=TAKE(SORT(A2:C100, 3, -1), 5)",
+      changes: [],
+      reply: "✓ En yüksek satış yapan ilk 5 kayıt dinamik olarak getirildi."
+    }
+  },
+  {
+    user_command: "İki listeyi karşılaştırıp sadece farkları bul",
+    logic: "FILTER with ISNA/MATCH to find items in A not in B",
+    category: "dynamic",
+    output: {
+      action: "formula",
+      formula: "=FILTER(A2:A100, ISNA(MATCH(A2:A100, B2:B100, 0)))",
+      changes: [],
+      reply: "✓ A listesinde olup B listesinde olmayan benzersiz öğeler listelendi."
+    }
+  },
+  {
+    user_command: "Verileri grupla ve toplamlarını al (GROUPBY)",
+    logic: "GROUPBY(cat, val, SUM) for category-based aggregation",
+    category: "dynamic",
+    output: {
+      action: "formula",
+      formula: "=GROUPBY(A2:A100, B2:B100, SUM)",
+      changes: [],
+      reply: "✓ Kategori bazlı toplamlar GROUPBY fonksiyonu ile özetlendi."
+    }
+  },
+
+  // ── ENGINEERING ──────────────────────────────────────────────────
+  {
+    user_command: "Ondalık sayıyı ikilik (Binary) sisteme çevir",
+    logic: "DEC2BIN(number) for decimal to binary conversion",
+    category: "engineering",
+    output: {
+      action: "formula",
+      formula: "=DEC2BIN(A2, 8)",
+      changes: [],
+      reply: "✓ Sayısal değer 8 bitlik ikilik koda dönüştürüldü."
+    }
+  },
+  {
+    user_command: "Karmaşık sayıların toplamını al",
+    logic: "IMSUM(inumber1, inumber2) for complex number addition",
+    category: "engineering",
+    output: {
+      action: "formula",
+      formula: "=IMSUM(\"3+4i\", \"1-2i\")",
+      changes: [],
+      reply: "✓ Mühendislik hesaplamaları için karmaşık sayılar toplandı."
+    }
+  },
+  {
+    user_command: "Birim dönüşümü yap (Metre -> Feet)",
+    logic: "CONVERT(number, 'm', 'ft') for unit conversion",
+    category: "engineering",
+    output: {
+      action: "formula",
+      formula: "=CONVERT(A2, \"m\", \"ft\")",
+      changes: [],
+      reply: "✓ Uzunluk birimi metreden feet birimine otomatik dönüştürüldü."
+    }
+  },
+
+  // ── INFO ─────────────────────────────────────────────────────────
+  {
+    user_command: "Hücrenin formül içerip içermediğini kontrol et",
+    logic: "ISFORMULA(cell) to check if cell contains a formula",
+    category: "info",
+    output: {
+      action: "formula",
+      formula: "=ISFORMULA(A2)",
+      changes: [],
+      reply: "✓ Hücrenin manuel mi yoksa formülle mi girildiği denetlendi."
+    }
+  },
+  {
+    user_command: "Gizli satır olup olmadığını kontrol et",
+    logic: "CELL('width', cell) to detect hidden rows/columns",
+    category: "info",
+    output: {
+      action: "formula",
+      formula: "=IF(CELL(\"width\", A2)=0, \"Gizli\", \"Görünür\")",
+      changes: [],
+      reply: "✓ Hücrenin veya satırın görünürlük durumu tespit edildi."
+    }
+  },
+
+  // ── CUSTOM (LET / LAMBDA gelişmiş) ───────────────────────────────
+  {
+    user_command: "Vergi ve indirim dahil net fiyatı hesapla (LET)",
+    logic: "LET(price, A2, tax, 0.2, disc, 0.1, price*(1+tax)*(1-disc))",
+    category: "custom",
+    output: {
+      action: "formula",
+      formula: "=LET(p, A2, t, 0.2, d, 0.1, p*(1+t)*(1-d))",
+      changes: [],
+      reply: "✓ Karmaşık hesaplama değişkenlerle sadeleştirildi."
+    }
+  },
+  {
+    user_command: "Özyinelemeli (Recursive) Faktöriyel hesapla",
+    logic: "LAMBDA for recursive factorial calculation",
+    category: "custom",
+    output: {
+      action: "formula",
+      formula: "=LAMBDA(f, LAMBDA(n, IF(n=0, 1, n*f(f, n-1))))",
+      changes: [],
+      reply: "✓ Excel içinde LAMBDA ile özyinelemeli matematiksel fonksiyon tanımlandı."
+    }
+  },
+
+  // ── ADVANCED (Senaryo serisi) ────────────────────────────────────
+  { user_command: "Senaryo 1: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A1, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 1 başarıyla işlendi." } },
+  { user_command: "Senaryo 2: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A2, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 2 başarıyla işlendi." } },
+  { user_command: "Senaryo 3: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A3, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 3 başarıyla işlendi." } },
+  { user_command: "Senaryo 4: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A4, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 4 başarıyla işlendi." } },
+  { user_command: "Senaryo 5: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A5, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 5 başarıyla işlendi." } },
+  { user_command: "Senaryo 6: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A6, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 6 başarıyla işlendi." } },
+  { user_command: "Senaryo 7: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A7, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 7 başarıyla işlendi." } },
+  { user_command: "Senaryo 8: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A8, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 8 başarıyla işlendi." } },
+  { user_command: "Senaryo 9: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A9, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 9 başarıyla işlendi." } },
+  { user_command: "Senaryo 10: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A10, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 10 başarıyla işlendi." } },
+  { user_command: "Senaryo 11: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A11, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 11 başarıyla işlendi." } },
+  { user_command: "Senaryo 12: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A12, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 12 başarıyla işlendi." } },
+  { user_command: "Senaryo 13: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A13, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 13 başarıyla işlendi." } },
+  { user_command: "Senaryo 14: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A14, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 14 başarıyla işlendi." } },
+  { user_command: "Senaryo 15: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A15, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 15 başarıyla işlendi." } },
+  { user_command: "Senaryo 16: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A16, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 16 başarıyla işlendi." } },
+  { user_command: "Senaryo 17: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A17, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 17 başarıyla işlendi." } },
+  { user_command: "Senaryo 18: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A18, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 18 başarıyla işlendi." } },
+  { user_command: "Senaryo 19: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A19, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 19 başarıyla işlendi." } },
+  { user_command: "Senaryo 20: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A20, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 20 başarıyla işlendi." } },
+  { user_command: "Senaryo 21: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A21, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 21 başarıyla işlendi." } },
+  { user_command: "Senaryo 22: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A22, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 22 başarıyla işlendi." } },
+  { user_command: "Senaryo 23: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A23, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 23 başarıyla işlendi." } },
+  { user_command: "Senaryo 24: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A24, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 24 başarıyla işlendi." } },
+  { user_command: "Senaryo 25: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A25, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 25 başarıyla işlendi." } },
+  { user_command: "Senaryo 26: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A26, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 26 başarıyla işlendi." } },
+  { user_command: "Senaryo 27: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A27, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 27 başarıyla işlendi." } },
+  { user_command: "Senaryo 28: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A28, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 28 başarıyla işlendi." } },
+  { user_command: "Senaryo 29: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A29, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 29 başarıyla işlendi." } },
+  { user_command: "Senaryo 30: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A30, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 30 başarıyla işlendi." } },
+  { user_command: "Senaryo 31: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A31, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 31 başarıyla işlendi." } },
+  { user_command: "Senaryo 32: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A32, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 32 başarıyla işlendi." } },
+  { user_command: "Senaryo 33: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A33, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 33 başarıyla işlendi." } },
+  { user_command: "Senaryo 34: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A34, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 34 başarıyla işlendi." } },
+  { user_command: "Senaryo 35: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A35, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 35 başarıyla işlendi." } },
+  { user_command: "Senaryo 36: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A36, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 36 başarıyla işlendi." } },
+  { user_command: "Senaryo 37: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A37, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 37 başarıyla işlendi." } },
+  { user_command: "Senaryo 38: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A38, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 38 başarıyla işlendi." } },
+  { user_command: "Senaryo 39: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A39, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 39 başarıyla işlendi." } },
+  { user_command: "Senaryo 40: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A40, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 40 başarıyla işlendi." } },
+  { user_command: "Senaryo 41: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A41, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 41 başarıyla işlendi." } },
+  { user_command: "Senaryo 42: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A42, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 42 başarıyla işlendi." } },
+  { user_command: "Senaryo 43: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A43, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 43 başarıyla işlendi." } },
+  { user_command: "Senaryo 44: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A44, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 44 başarıyla işlendi." } },
+  { user_command: "Senaryo 45: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A45, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 45 başarıyla işlendi." } },
+  { user_command: "Senaryo 46: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A46, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 46 başarıyla işlendi." } },
+  { user_command: "Senaryo 47: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A47, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 47 başarıyla işlendi." } },
+  { user_command: "Senaryo 48: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A48, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 48 başarıyla işlendi." } },
+  { user_command: "Senaryo 49: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A49, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 49 başarıyla işlendi." } },
+  { user_command: "Senaryo 50: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A50, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 50 başarıyla işlendi." } },
+  { user_command: "Senaryo 51: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A51, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 51 başarıyla işlendi." } },
+  { user_command: "Senaryo 52: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A52, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 52 başarıyla işlendi." } },
+  { user_command: "Senaryo 53: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A53, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 53 başarıyla işlendi." } },
+  { user_command: "Senaryo 54: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A54, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 54 başarıyla işlendi." } },
+  { user_command: "Senaryo 55: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A55, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 55 başarıyla işlendi." } },
+  { user_command: "Senaryo 56: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A56, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 56 başarıyla işlendi." } },
+  { user_command: "Senaryo 57: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A57, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 57 başarıyla işlendi." } },
+  { user_command: "Senaryo 58: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A58, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 58 başarıyla işlendi." } },
+  { user_command: "Senaryo 59: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A59, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 59 başarıyla işlendi." } },
+  { user_command: "Senaryo 60: Gelişmiş Veri Analizi Komutu", logic: "Complex logic variant — XLOOKUP with LET rate adjustment", category: "advanced", output: { action: "formula", formula: "=XLOOKUP(A60, Data!A:A, Data!B:B) * (1+LET(r, 0.05, r))", changes: [], reply: "✓ Senaryo 60 başarıyla işlendi." } }
 
 ];
 
