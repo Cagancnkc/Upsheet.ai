@@ -250,6 +250,23 @@ const TRANSLATIONS = {
     local_pivot: "📋 Pivot tablo oluşturmak için:\n1. Veri aralığını seçin\n2. Dosyayı indirin (İndir butonu)\n3. Excel'de: Ekle → PivotTablo\n\nAlternatif: Verinizi açıklayın, gruplama formülleri önereyim!",
     local_default: "Merhaba! Excel verinizle yardımcı olmaktan mutluluk duyarım. 🤖\n\nYapabileceklerim:\n• Veri analizi ve istatistikler\n• Formül önerileri\n• Veri temizleme ipuçları\n• Grafik önerileri",
     local_na: 'Yok',
+
+    // ── Pricing period ──────────────────────────────────────
+    weekly: 'Haftalık',
+    monthly: 'Aylık',
+    yearly: 'Yıllık',
+    save_pct: '%{pct} tasarruf',
+    most_popular: 'En Popüler',
+    discount_applied: 'İndirim uygulandı',
+    per_user: 'kullanıcı/ay',
+    users: 'kullanıcı',
+    get_started: 'Ücretsiz Başla',
+    start_now: 'Hemen Başla',
+    get_quote: 'Teklif Al',
+    free: 'Ücretsiz',
+    starter: 'Başlangıç',
+    pro: 'Profesyonel',
+    business: 'Kurumsal',
   },
 
   en: {
@@ -502,12 +519,29 @@ const TRANSLATIONS = {
     local_pivot: "📋 To create a pivot table:\n1. Select your data range\n2. Download the file (Download button)\n3. In Excel: Insert → PivotTable\n\nAlternative: Describe your data and I'll suggest grouping formulas!",
     local_default: "Hello! I'm happy to help with your Excel data. 🤖\n\nI can:\n• Analyze data and statistics\n• Suggest formulas\n• Data cleanup tips\n• Chart suggestions",
     local_na: 'N/A',
+
+    // ── Pricing period ──────────────────────────────────────
+    weekly: 'Weekly',
+    monthly: 'Monthly',
+    yearly: 'Yearly',
+    save_pct: 'Save {pct}%',
+    most_popular: 'Most Popular',
+    discount_applied: 'Discount applied',
+    per_user: 'user/month',
+    users: 'users',
+    get_started: 'Get Started Free',
+    start_now: 'Start Now',
+    get_quote: 'Get a Quote',
+    free: 'Free',
+    starter: 'Starter',
+    pro: 'Professional',
+    business: 'Business',
   }
 };
 
 // ─── Dil yönetimi ────────────────────────────────────────────────
 
-let currentLang = localStorage.getItem('lang') || 'tr';
+let currentLang = localStorage.getItem('lang') || 'en';
 
 function t(key) {
   return TRANSLATIONS[currentLang]?.[key]
@@ -530,7 +564,7 @@ function setLang(lang) {
   currentLang = lang;
   localStorage.setItem('lang', lang);
   applyTranslations();
-  updateLangButtons();
+  updateLangBtns();
   document.dispatchEvent(new CustomEvent('langchange', { detail: { lang: lang } }));
 }
 
@@ -549,10 +583,16 @@ function applyTranslations() {
     el.placeholder = t(el.getAttribute('data-i18n-placeholder'));
   });
 
+  document.querySelectorAll('[data-i18n-html]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n-html');
+    var val = t(key);
+    if (val && val !== key) el.innerHTML = val;
+  });
+
   document.documentElement.lang = currentLang;
 }
 
-function updateLangButtons() {
+function updateLangBtns() {
   document.querySelectorAll('.lang-btn').forEach(function(btn) {
     btn.classList.toggle('active', btn.dataset.lang === currentLang);
   });
@@ -560,5 +600,5 @@ function updateLangButtons() {
 
 document.addEventListener('DOMContentLoaded', function() {
   applyTranslations();
-  updateLangButtons();
+  updateLangBtns();
 });
