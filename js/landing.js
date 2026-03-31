@@ -30,17 +30,17 @@ function animateWords(words) {
 
 // ── FİYAT TABLOSU ────────────────────────────────────────────────────
 const PRICES = {
-  weekly:  { pro: 4.99,  biz: 12.99, period: '/wk', bizBase: 12.99 },
-  monthly: { pro: 14.99, biz: 39.99, period: '/mo', bizBase: 39.99 },
+  weekly:  { pro: 149,  biz: 349,  period: '/hf', bizBase: 349 },
+  monthly: { pro: 499,  biz: 1099, period: '/ay', bizBase: 1099 },
   yearly:  {
-    pro: 9.99, biz: 24.99, period: '/mo', bizBase: 24.99,
-    proOrig: 14.99, bizOrig: 39.99,
-    proNote: 'billed ₺119.88/yr', bizNote: 'billed ₺299.88/yr'
+    pro: 299, biz: 699, period: '/ay', bizBase: 699,
+    proOrig: 499, bizOrig: 1099,
+    proNote: 'yıllık ₺3.588 faturalandırılır', bizNote: 'yıllık ₺8.388 faturalandırılır'
   }
 };
 
-const BIZ_BASE = { weekly: 12.99, monthly: 39.99, yearly: 24.99 };
-const PER_USER_USD = 2.5;
+const BIZ_BASE = { weekly: 349, monthly: 1099, yearly: 699 };
+const PER_USER_USD = 80;
 let currentPeriod = 'monthly';
 let currentUsers = 5;
 
@@ -57,11 +57,11 @@ function setPeriod(period) {
   var proPeriodEl = document.getElementById('period-pro');
   var proOrigEl = document.getElementById('orig-pro');
 
-  if (proEl) proEl.textContent = p.pro.toFixed(2);
+  if (proEl) proEl.textContent = p.pro.toFixed(0);
   if (proPeriodEl) proPeriodEl.textContent = p.period;
   if (proOrigEl) {
     if (period === 'yearly' && p.proOrig) {
-      proOrigEl.textContent = '₺' + p.proOrig + '/mo';
+      proOrigEl.textContent = '₺' + p.proOrig + '/ay';
       proOrigEl.style.display = 'block';
     } else {
       proOrigEl.style.display = 'none';
@@ -104,15 +104,15 @@ function updateBizPrice(users) {
   var minusBtn     = document.getElementById('userMinus');
   var plusBtn      = document.getElementById('userPlus');
 
-  if (bizPriceEl)  bizPriceEl.textContent  = price.toFixed(2);
-  if (bizPeriodEl) bizPeriodEl.textContent = PRICES[currentPeriod]?.period || '/mo';
-  if (badgeEl)     badgeEl.textContent     = users + ' users';
+  if (bizPriceEl)  bizPriceEl.textContent  = price.toFixed(0);
+  if (bizPeriodEl) bizPeriodEl.textContent = PRICES[currentPeriod]?.period || '/ay';
+  if (badgeEl)     badgeEl.textContent     = users + ' kullanıcı';
   if (sliderEl)    sliderEl.value          = users;
 
   if (bizOrigEl) {
     var p = PRICES[currentPeriod];
     if (currentPeriod === 'yearly' && p?.bizOrig) {
-      bizOrigEl.textContent = '₺' + (p.bizOrig + extraUsers * PER_USER_USD).toFixed(2) + '/mo';
+      bizOrigEl.textContent = '₺' + (p.bizOrig + extraUsers * PER_USER_USD).toFixed(0) + '/ay';
       bizOrigEl.style.display = 'block';
     } else {
       bizOrigEl.style.display = 'none';

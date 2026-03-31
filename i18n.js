@@ -272,7 +272,7 @@
 
 // ─── Dil yönetimi ────────────────────────────────────────────────
 
-let currentLang = 'tr';
+let currentLang = localStorage.getItem('lang') || 'tr';
 
 function t(key) {
   return TRANSLATIONS[currentLang]?.[key]
