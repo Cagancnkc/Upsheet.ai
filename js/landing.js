@@ -147,8 +147,60 @@ function changeUsers(delta) {
   updateBizPrice(newVal);
 }
 
+// ── DEMO ANİMASYONU ──────────────────────────────────────────────────
+function activateStep(num) {
+  for (var i = 1; i <= 3; i++) {
+    var s = document.getElementById('step' + i);
+    var f = document.getElementById('frame' + i);
+    if (s) s.classList.toggle('active', i === num);
+    if (f) f.classList.toggle('active', i === num);
+  }
+  if (num === 2) startTypingAnim();
+}
+
+function startTypingAnim() {
+  var text = "B sütununun toplamını C1'e yaz";
+  var el = document.getElementById('typingText');
+  var ai = document.getElementById('aiBubble');
+  if (!el) return;
+  el.textContent = '';
+  if (ai) ai.classList.add('hidden');
+  var i = 0;
+  var interval = setInterval(function() {
+    if (i < text.length) {
+      el.textContent += text[i];
+      i++;
+    } else {
+      clearInterval(interval);
+      setTimeout(function() {
+        if (ai) ai.classList.remove('hidden');
+      }, 600);
+    }
+  }, 60);
+}
+
+var demoInterval;
+function startDemoLoop() {
+  var current = 1;
+  demoInterval = setInterval(function() {
+    current = current >= 3 ? 1 : current + 1;
+    activateStep(current);
+  }, 3500);
+}
+
 document.addEventListener('DOMContentLoaded', function() {
   initFlowingText();
   setPeriod('monthly');
   updateBizPrice(5);
+
+  var demoSection = document.querySelector('.lp-demo-section');
+  if (demoSection) {
+    var obs = new IntersectionObserver(function(entries) {
+      if (entries[0].isIntersecting) {
+        startDemoLoop();
+        obs.disconnect();
+      }
+    }, { threshold: 0.3 });
+    obs.observe(demoSection);
+  }
 });
