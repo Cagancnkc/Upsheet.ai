@@ -1030,7 +1030,7 @@ function sortData() {
   });
   if (header) data.unshift(header);
   buildGrid();
-  toast(`Sorted by column ${colLetter(col)}`, 'ok');
+  toast(`${colLetter(col)} sütununa göre sıralandı`, 'ok');
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -1038,20 +1038,20 @@ function sortData() {
 // ═══════════════════════════════════════════════════════════════
 function openFindReplace() {
   showModal(`
-    <h2>Find &amp; Replace</h2>
-    <p>Search in the active sheet data</p>
+    <h2>Bul &amp; Değiştir</h2>
+    <p>Aktif sayfa verisinde ara</p>
     <div class="fgroup">
-      <label class="flabel">Search Text</label>
-      <input class="finput" id="frFind" placeholder="Text to find...">
+      <label class="flabel">Aranacak Metin</label>
+      <input class="finput" id="frFind" placeholder="Aranacak metin...">
     </div>
     <div class="fgroup">
-      <label class="flabel">Replace With</label>
-      <input class="finput" id="frReplace" placeholder="Replacement text (leave empty to delete)...">
+      <label class="flabel">Değiştirilecek</label>
+      <input class="finput" id="frReplace" placeholder="Yeni metin (silmek için boş bırakın)...">
     </div>
     <div class="modal-foot">
-      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
-      <button class="btn btn-ghost" onclick="doFind()">Find</button>
-      <button class="btn btn-primary" onclick="doFindReplace()">Replace All</button>
+      <button class="btn btn-ghost" onclick="closeModal()">İptal</button>
+      <button class="btn btn-ghost" onclick="doFind()">Bul</button>
+      <button class="btn btn-primary" onclick="doFindReplace()">Tümünü Değiştir</button>
     </div>
   `);
 }
@@ -1070,7 +1070,7 @@ function doFind() {
         found++;
       }
   closeModal();
-  toast(`${found} cells found`, found ? 'ok' : 'err');
+  toast(`${found} hücre bulundu`, found ? 'ok' : 'err');
 }
 
 function doFindReplace() {
@@ -1089,7 +1089,7 @@ function doFindReplace() {
         count++;
       }
   closeModal();
-  toast(`${count} cells replaced`, 'ok');
+  toast(`${count} hücre değiştirildi`, 'ok');
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -1461,7 +1461,7 @@ Active sheet: "${activeSheet}"
 First 20 rows, 10 columns of data:
 ${sheetCtx}
 
-Give short, clear answers in English. Use standard Excel formula format for suggestions (=SUM(), =AVERAGE(), etc.).`;
+Kısa ve net Türkçe yanıtlar ver. Formül önerileri için standart Excel formatını kullan (=TOPLA(), =ORTALAMA(), =SUM(), =AVERAGE(), vb.).`;
 
   const resp = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
@@ -2002,7 +2002,7 @@ function toggleSidebar() {
   document.body.classList.toggle('sidebar-collapsed', collapsed);
   const poly = icon.querySelector('polyline');
   if (poly) poly.setAttribute('points', collapsed ? '9 18 15 12 9 6' : '15 18 9 12 15 6');
-  btn.title = collapsed ? 'Expand Sidebar' : 'Collapse Sidebar';
+  btn.title = collapsed ? 'Kenar Çubuğunu Genişlet' : 'Kenar Çubuğunu Daralt';
   localStorage.setItem('sb_collapsed', collapsed ? '1' : '0');
 }
 
