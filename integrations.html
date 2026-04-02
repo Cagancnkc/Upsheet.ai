@@ -1,1329 +1,954 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Integrations — Mocksheet</title>
-  <link rel="stylesheet" href="css/landing.css">
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Entegrasyonlar — Mocksheet</title>
+<link rel="stylesheet" href="css/landing.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:#F7F7F5;font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif;color:#111827;-webkit-font-smoothing:antialiased}
 
-    body {
-      background: #F7F7F5;
-      font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
-      color: #111827;
-      -webkit-font-smoothing: antialiased;
-    }
+.i-wrap{display:flex;min-height:100vh;padding-top:60px}
+.i-side{width:230px;background:#fff;border-right:1px solid #E5E7EB;position:fixed;top:60px;left:0;bottom:0;overflow-y:auto;padding:16px 0}
+.i-main{flex:1;margin-left:230px;padding:36px 48px;max-width:880px}
 
-    /* ── Layout ── */
-    .int-layout {
-      display: flex;
-      min-height: 100vh;
-      padding-top: 60px;
-    }
-    .int-sidebar {
-      width: 240px;
-      background: white;
-      border-right: 1px solid #E5E7EB;
-      padding: 24px 0;
-      position: fixed;
-      top: 60px;
-      left: 0;
-      bottom: 0;
-      overflow-y: auto;
-    }
-    .int-main {
-      flex: 1;
-      margin-left: 240px;
-      padding: 40px 48px;
-      max-width: 900px;
-    }
+.i-side-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#9CA3AF;padding:0 16px;margin:12px 0 6px}
+.i-nav{display:flex;flex-direction:column;gap:2px;padding:0 8px}
+.i-nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;font-size:13px;font-weight:500;color:#6B7280;cursor:pointer;border:none;background:transparent;width:100%;text-align:left;transition:all .15s}
+.i-nav-item:hover{background:#F9FAFB;color:#111827}
+.i-nav-item.active{background:#EEF2FF;color:#4F46E5;font-weight:600}
+.i-nav-icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px}
+.i-nav-icon img{width:17px;height:17px;object-fit:contain}
+.i-nav-dot{width:7px;height:7px;border-radius:50%;background:#E5E7EB;margin-left:auto;flex-shrink:0;transition:background .2s}
+.i-nav-dot.on{background:#10B981}
+.i-divider{height:1px;background:#F3F4F6;margin:10px 16px}
+.i-soon-badge{margin-left:auto;font-size:10px;background:#EEF2FF;color:#4F46E5;padding:2px 7px;border-radius:100px;font-weight:600}
 
-    /* ── Sidebar nav ── */
-    .int-nav-label {
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: #9CA3AF;
-      padding: 0 20px;
-      margin-bottom: 8px;
-    }
-    .int-nav-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 9px 20px;
-      font-size: 13px;
-      font-weight: 500;
-      color: #6B7280;
-      cursor: pointer;
-      transition: all 0.12s;
-      border: none;
-      background: transparent;
-      width: 100%;
-      text-align: left;
-      text-decoration: none;
-    }
-    .int-nav-item:hover { background: #F9FAFB; color: #111827; }
-    .int-nav-item.active { background: #EEF2FF; color: #4F46E5; font-weight: 600; }
-    .int-nav-icon {
-      width: 28px; height: 28px;
-      border-radius: 7px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
-      flex-shrink: 0;
-    }
-    .int-nav-status {
-      margin-left: auto;
-      width: 7px; height: 7px;
-      border-radius: 50%;
-      background: #D1D5DB;
-    }
-    .int-nav-status.on { background: #10B981; }
-    .int-nav-divider { height: 1px; background: #F3F4F6; margin: 12px 16px; }
+.i-page-title{font-size:22px;font-weight:800;letter-spacing:-.02em;margin-bottom:4px}
+.i-page-desc{font-size:14px;color:#6B7280;margin-bottom:28px}
 
-    /* ── Page header ── */
-    .int-page-title {
-      font-size: 24px;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-      margin-bottom: 4px;
-    }
-    .int-page-desc {
-      font-size: 14px;
-      color: #6B7280;
-      margin-bottom: 32px;
-    }
+.i-section{display:none}
+.i-section.active{display:block}
 
-    /* ── Sections ── */
-    .int-section { display: none; }
-    .int-section.active { display: block; }
+.i-card{background:#fff;border:1.5px solid #E5E7EB;border-radius:14px;overflow:hidden;margin-bottom:14px}
+.i-card-head{display:flex;align-items:center;gap:14px;padding:18px 20px}
+.i-card-logo{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:20px}
+.i-card-logo img{width:24px;height:24px;object-fit:contain}
+.i-card-meta{flex:1}
+.i-card-name{font-size:15px;font-weight:700;margin-bottom:2px}
+.i-card-sub{font-size:12px;color:#9CA3AF}
+.i-badge{font-size:11px;font-weight:600;padding:4px 12px;border-radius:100px;flex-shrink:0}
+.b-off{background:#F3F4F6;color:#9CA3AF}
+.b-on{background:#D1FAE5;color:#065F46}
+.b-soon{background:#EEF2FF;color:#4F46E5}
+.i-card-body{padding:20px;border-top:1px solid #F3F4F6}
 
-    /* ── Cards ── */
-    .int-card {
-      background: white;
-      border: 1.5px solid #E5E7EB;
-      border-radius: 16px;
-      overflow: hidden;
-      margin-bottom: 16px;
-    }
-    .int-card-header {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      padding: 20px 24px;
-      border-bottom: 1px solid #F3F4F6;
-    }
-    .int-card-logo {
-      width: 48px; height: 48px;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 24px;
-      flex-shrink: 0;
-    }
-    .int-card-meta { flex: 1; }
-    .int-card-title { font-size: 16px; font-weight: 700; margin-bottom: 2px; }
-    .int-card-subtitle { font-size: 13px; color: #6B7280; }
-    .int-badge {
-      font-size: 11px;
-      font-weight: 600;
-      padding: 4px 12px;
-      border-radius: 100px;
-    }
-    .badge-inactive { background: #F3F4F6; color: #9CA3AF; }
-    .badge-active { background: #D1FAE5; color: #065F46; }
-    .badge-error { background: #FEE2E2; color: #991B1B; }
-    .int-card-body { padding: 24px; }
+.i-form{display:flex;flex-direction:column;gap:14px}
+.i-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.i-field{display:flex;flex-direction:column;gap:5px}
+.i-field label{font-size:12px;font-weight:600;color:#374151}
+.i-field input,.i-field select{border:1.5px solid #E5E7EB;border-radius:9px;padding:9px 12px;font-size:13px;font-family:inherit;color:#111827;outline:none;background:#fff;transition:border-color .15s}
+.i-field input:focus,.i-field select:focus{border-color:#4F46E5;box-shadow:0 0 0 3px rgba(79,70,229,.07)}
+.i-hint{font-size:11px;color:#9CA3AF;line-height:1.5}
+.i-hint a{color:#4F46E5;text-decoration:none}
+.i-hint a:hover{text-decoration:underline}
 
-    /* ── Form fields ── */
-    .int-form { display: flex; flex-direction: column; gap: 16px; }
-    .int-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .int-field { display: flex; flex-direction: column; gap: 6px; }
-    .int-field label { font-size: 12px; font-weight: 600; color: #374151; }
-    .int-field input,
-    .int-field textarea,
-    .int-field select {
-      border: 1.5px solid #E5E7EB;
-      border-radius: 10px;
-      padding: 10px 14px;
-      font-size: 13px;
-      font-family: inherit;
-      color: #111827;
-      outline: none;
-      background: white;
-      transition: border-color 0.15s, box-shadow 0.15s;
-    }
-    .int-field input:focus,
-    .int-field textarea:focus,
-    .int-field select:focus {
-      border-color: #4F46E5;
-      box-shadow: 0 0 0 3px rgba(79,70,229,0.08);
-    }
-    .int-field textarea { resize: vertical; min-height: 80px; }
-    .int-field-hint { font-size: 11px; color: #9CA3AF; line-height: 1.4; }
-    .int-field-hint a { color: #4F46E5; text-decoration: none; }
-    .int-field-hint a:hover { text-decoration: underline; }
+.i-alert{padding:10px 14px;border-radius:8px;font-size:13px;font-weight:500;display:none;line-height:1.5}
+.i-alert.show{display:block}
+.i-alert.ok{background:#D1FAE5;color:#065F46}
+.i-alert.err{background:#FEE2E2;color:#991B1B}
+.i-alert.info{background:#EEF2FF;color:#3730A3}
 
-    /* ── Buttons ── */
-    .int-actions {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      flex-wrap: wrap;
-      padding-top: 4px;
-    }
-    .int-action-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 10px 18px;
-      border-radius: 10px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      border: none;
-      transition: all 0.15s;
-    }
-    .btn-dark { background: #111827; color: white; }
-    .btn-dark:hover { background: #1F2937; }
-    .btn-outline { background: white; color: #374151; border: 1.5px solid #E5E7EB; }
-    .btn-outline:hover { background: #F9FAFB; border-color: #D1D5DB; }
-    .btn-green { background: #059669; color: white; }
-    .btn-green:hover { background: #047857; }
-    .btn-notion { background: #000; color: white; }
-    .btn-notion:hover { background: #111; }
-    .int-action-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.i-btns{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.i-btn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .15s;line-height:1}
+.i-btn:disabled{opacity:.45;cursor:not-allowed}
+.btn-dark{background:#111827;color:#fff}
+.btn-dark:hover:not(:disabled){background:#1F2937}
+.btn-outline{background:#fff;color:#374151;border:1.5px solid #E5E7EB}
+.btn-outline:hover:not(:disabled){background:#F9FAFB}
+.btn-green{background:#059669;color:#fff}
+.btn-green:hover:not(:disabled){background:#047857}
+.btn-notion{background:#000;color:#fff}
+.btn-notion:hover:not(:disabled){background:#1a1a1a}
+.btn-red{background:#FEF2F2;color:#DC2626;border:1.5px solid #FECACA}
+.btn-red:hover:not(:disabled){background:#FEE2E2}
 
-    /* ── Alert ── */
-    .int-alert {
-      display: none;
-      padding: 10px 14px;
-      border-radius: 8px;
-      font-size: 13px;
-      font-weight: 500;
-      line-height: 1.4;
-    }
-    .int-alert.success { background: #D1FAE5; color: #065F46; display: flex; }
-    .int-alert.error { background: #FEE2E2; color: #991B1B; display: flex; }
-    .int-alert.info { background: #EEF2FF; color: #3730A3; display: flex; }
+.i-ov-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+.i-ov-card{background:#fff;border:1.5px solid #E5E7EB;border-radius:12px;padding:18px;cursor:pointer;transition:all .15s}
+.i-ov-card:hover{border-color:#C7D2FE;box-shadow:0 4px 16px rgba(0,0,0,.06)}
+.i-ov-card.connected{border-color:#6EE7B7;background:#F0FDF4}
+.i-ov-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;font-size:20px}
+.i-ov-icon img{width:22px;height:22px;object-fit:contain}
+.i-ov-name{font-size:13px;font-weight:700;margin-bottom:3px}
+.i-ov-st{font-size:12px;color:#9CA3AF}
+.i-ov-st.on{color:#059669;font-weight:600}
 
-    /* ── Logs table ── */
-    .int-logs-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    .int-logs-table th {
-      text-align: left;
-      padding: 10px 14px;
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: #9CA3AF;
-      border-bottom: 1px solid #F3F4F6;
-      background: #FAFAFA;
-    }
-    .int-logs-table td {
-      padding: 10px 14px;
-      border-bottom: 1px solid #F9FAFB;
-      color: #374151;
-    }
-    .int-logs-table tr:last-child td { border-bottom: none; }
-    .log-badge { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 100px; }
-    .log-success { background: #D1FAE5; color: #065F46; }
-    .log-error { background: #FEE2E2; color: #991B1B; }
-    .log-empty { text-align: center; padding: 40px; color: #9CA3AF; font-size: 14px; }
+.i-quick{background:#fff;border:1.5px solid #E5E7EB;border-radius:14px;padding:20px;margin-bottom:14px}
+.i-quick-title{font-size:14px;font-weight:700;margin-bottom:4px}
+.i-quick-sub{font-size:12px;color:#9CA3AF;margin-bottom:14px}
 
-    /* ── Overview grid ── */
-    .int-overview-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      margin-bottom: 28px;
-    }
-    .int-overview-card {
-      background: white;
-      border: 1.5px solid #E5E7EB;
-      border-radius: 12px;
-      padding: 20px;
-      cursor: pointer;
-      transition: all 0.15s;
-    }
-    .int-overview-card:hover {
-      border-color: #D1D5DB;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
-    }
-    .int-overview-card.active-card { border-color: #4F46E5; background: #FAFAFE; }
-    .int-ov-icon {
-      width: 40px; height: 40px;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-      margin-bottom: 10px;
-    }
-    .int-ov-name { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
-    .int-ov-status { font-size: 12px; color: #9CA3AF; }
-    .int-ov-status.on { color: #059669; }
+.i-table{width:100%;border-collapse:collapse;font-size:13px}
+.i-table th{text-align:left;padding:10px 14px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:#9CA3AF;border-bottom:1px solid #F3F4F6;background:#FAFAFA}
+.i-table td{padding:10px 14px;border-bottom:1px solid #F9FAFB;color:#374151;vertical-align:middle}
+.i-table tr:last-child td{border-bottom:none}
+.log-ok{background:#D1FAE5;color:#065F46;font-size:11px;font-weight:600;padding:2px 8px;border-radius:100px}
+.log-err{background:#FEE2E2;color:#991B1B;font-size:11px;font-weight:600;padding:2px 8px;border-radius:100px}
+.i-empty{text-align:center;padding:40px;color:#9CA3AF;font-size:14px}
 
-    @media (max-width: 768px) {
-      .int-sidebar { display: none; }
-      .int-main { margin-left: 0; padding: 24px 20px; }
-      .int-form-row { grid-template-columns: 1fr; }
-      .int-overview-grid { grid-template-columns: 1fr; }
-    }
-  </style>
+.i-code{background:#F9FAFB;border:1px solid #E5E7EB;border-radius:10px;padding:16px;font-size:12px;font-family:'Menlo','Monaco',monospace;line-height:1.7;overflow-x:auto;color:#374151;white-space:pre}
+
+.i-coming{text-align:center;padding:48px 24px}
+.i-coming-icon{font-size:48px;margin-bottom:16px}
+.i-coming-title{font-size:15px;font-weight:700;color:#374151;margin-bottom:8px}
+.i-coming-text{font-size:13px;color:#9CA3AF;line-height:1.6;max-width:300px;margin:0 auto 20px}
+.i-coming-chips{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.i-chip{background:#F9FAFB;border:1px solid #E5E7EB;padding:5px 12px;border-radius:100px;font-size:12px;color:#6B7280}
+
+@media(max-width:768px){
+  .i-side{display:none}
+  .i-main{margin-left:0;padding:24px 16px}
+  .i-ov-grid{grid-template-columns:1fr 1fr}
+  .i-row{grid-template-columns:1fr}
+}
+</style>
 </head>
 <body>
 
-<!-- Navbar -->
 <nav class="lp-nav">
   <a href="index.html" class="lp-nav-logo">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"
-         style="width:26px;height:26px;border-radius:5px;flex-shrink:0;">
-      <rect width="100" height="100" fill="black"/>
-      <path d="M 30 65 Q 28 40 50 28 Q 65 22 75 32 L 68 40 Q 60 33 50 37 Q 35 45 36 63 Z"
-            fill="white"/>
-    </svg>
+    <img src="images/logo.png" width="26" height="26" alt="Mocksheet">
     <span>Mocksheet</span>
   </a>
-  <div class="lp-nav-links">
-    <a href="app.html">← Back to App</a>
-  </div>
-  <a href="app.html" class="lp-nav-cta">Open App</a>
+  <a href="app.html" class="lp-nav-cta">← Uygulamaya Dön</a>
 </nav>
 
-<div class="int-layout">
+<div class="i-wrap">
 
-  <!-- ── Sidebar ── -->
-  <aside class="int-sidebar">
-    <div style="padding:0 20px 16px">
-      <div style="font-size:16px;font-weight:700;margin-bottom:2px">
-        Integrations
-      </div>
-      <div style="font-size:12px;color:#9CA3AF">Manage your connections</div>
-    </div>
+<!-- Sidebar -->
+<aside class="i-side">
+  <div style="padding:0 16px 12px">
+    <div style="font-size:15px;font-weight:700;margin-bottom:2px">Entegrasyonlar</div>
+    <div style="font-size:12px;color:#9CA3AF">Bağlantılarınızı yönetin</div>
+  </div>
 
-    <div class="int-nav-label">Connected Apps</div>
-
-    <button class="int-nav-item active" onclick="showSection('overview', this)">
-      <div class="int-nav-icon" style="background:#F3F4F6">🏠</div>
-      Overview
+  <div class="i-side-title">Aktif</div>
+  <div class="i-nav">
+    <button class="i-nav-item active" id="nav-overview" onclick="show('overview',this)">
+      <div class="i-nav-icon" style="background:#F3F4F6">🏠</div>
+      Genel Bakış
     </button>
-
-    <button class="int-nav-item" onclick="showSection('google', this)" id="nav-google">
-      <div class="int-nav-icon" style="background:#E8F5E9">📊</div>
+    <button class="i-nav-item" id="nav-gs" onclick="show('gs',this)">
+      <div class="i-nav-icon" style="background:#E8F5E9">
+        <img src="https://www.gstatic.com/images/branding/product/1x/sheets_2020q4_48dp.png"
+             onerror="this.parentElement.innerHTML='📊'">
+      </div>
       Google Sheets
-      <div class="int-nav-status" id="status-gs"></div>
+      <div class="i-nav-dot" id="dot-gs"></div>
     </button>
-
-    <button class="int-nav-item" onclick="showSection('notion', this)" id="nav-notion">
-      <div class="int-nav-icon" style="background:#F3F4F6">◻️</div>
+    <button class="i-nav-item" id="nav-notion" onclick="show('notion',this)">
+      <div class="i-nav-icon" style="background:#F3F4F6">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.png"
+             onerror="this.parentElement.innerHTML='◻️'">
+      </div>
       Notion
-      <div class="int-nav-status" id="status-notion"></div>
+      <div class="i-nav-dot" id="dot-notion"></div>
     </button>
-
-    <button class="int-nav-item" onclick="showSection('webhook', this)" id="nav-webhook">
-      <div class="int-nav-icon" style="background:#FFF0EB">⚡</div>
+    <button class="i-nav-item" id="nav-webhook" onclick="show('webhook',this)">
+      <div class="i-nav-icon" style="background:#FFF0EB">⚡</div>
       Zapier / Webhook
-      <div class="int-nav-status" id="status-webhook"></div>
+      <div class="i-nav-dot" id="dot-webhook"></div>
     </button>
+  </div>
 
-    <div class="int-nav-divider"></div>
-    <div class="int-nav-label">Yakında</div>
-
-    <button class="int-nav-item"
-            onclick="showSection('slack', this)"
-            id="nav-slack">
-      <div class="int-nav-icon" style="background:#F8F0FF">
-        <img src="https://cdn.brandfetch.io/idnrCPuv87/theme/dark/symbol.svg?c=1dxbfHSJFAPEZgFJ4J0" width="18" height="18" alt="Slack"
-             onerror="this.style.display='none';this.parentElement.textContent='💬'">
-      </div>
+  <div class="i-divider"></div>
+  <div class="i-side-title">Yakında</div>
+  <div class="i-nav">
+    <button class="i-nav-item" onclick="show('slack',this)">
+      <div class="i-nav-icon" style="background:#F8F0FF">💬</div>
       Slack
-      <span style="margin-left:auto;font-size:10px;
-                   background:#EEF2FF;color:#4F46E5;
-                   padding:2px 6px;border-radius:100px;
-                   font-weight:600">Yakında</span>
+      <span class="i-soon-badge">Yakında</span>
     </button>
-
-    <button class="int-nav-item"
-            onclick="showSection('make', this)"
-            id="nav-make">
-      <div class="int-nav-icon" style="background:#F0F7FF">
-        <img src="https://cdn.brandfetch.io/idM98PtBxS/theme/dark/symbol.svg?c=1dxbfHSJFAPEZgFJ4J0" width="18" height="18" alt="Make"
-             onerror="this.style.display='none';this.parentElement.textContent='⚙️'">
-      </div>
+    <button class="i-nav-item" onclick="show('make',this)">
+      <div class="i-nav-icon" style="background:#F0F7FF">⚙️</div>
       Make
-      <span style="margin-left:auto;font-size:10px;
-                   background:#EEF2FF;color:#4F46E5;
-                   padding:2px 6px;border-radius:100px;
-                   font-weight:600">Yakında</span>
+      <span class="i-soon-badge">Yakında</span>
     </button>
-
-    <button class="int-nav-item"
-            onclick="showSection('airtable', this)"
-            id="nav-airtable">
-      <div class="int-nav-icon" style="background:#F0FFF8">
-        <img src="https://cdn.brandfetch.io/idWBfH76xY/theme/dark/symbol.svg?c=1dxbfHSJFAPEZgFJ4J0" width="18" height="18" alt="Airtable"
-             onerror="this.style.display='none';this.parentElement.textContent='📋'">
-      </div>
+    <button class="i-nav-item" onclick="show('airtable',this)">
+      <div class="i-nav-icon" style="background:#F0FFF8">📋</div>
       Airtable
-      <span style="margin-left:auto;font-size:10px;
-                   background:#EEF2FF;color:#4F46E5;
-                   padding:2px 6px;border-radius:100px;
-                   font-weight:600">Yakında</span>
+      <span class="i-soon-badge">Yakında</span>
     </button>
-
-    <button class="int-nav-item"
-            onclick="showSection('gdrive', this)"
-            id="nav-gdrive">
-      <div class="int-nav-icon" style="background:#FFF8F0">
-        <img src="https://cdn.brandfetch.io/idVfYwCkWb/theme/dark/symbol.svg?c=1dxbfHSJFAPEZgFJ4J0" width="18" height="18" alt="Google Drive"
-             onerror="this.style.display='none';this.parentElement.textContent='📁'">
-      </div>
+    <button class="i-nav-item" onclick="show('gdrive',this)">
+      <div class="i-nav-icon" style="background:#FFF8F0">📁</div>
       Google Drive
-      <span style="margin-left:auto;font-size:10px;
-                   background:#EEF2FF;color:#4F46E5;
-                   padding:2px 6px;border-radius:100px;
-                   font-weight:600">Yakında</span>
+      <span class="i-soon-badge">Yakında</span>
     </button>
+  </div>
 
-    <div class="int-nav-divider"></div>
-    <div class="int-nav-label">More</div>
-
-    <button class="int-nav-item" onclick="showSection('logs', this)">
-      <div class="int-nav-icon" style="background:#F0FDF4">📋</div>
-      Activity Logs
+  <div class="i-divider"></div>
+  <div class="i-nav">
+    <button class="i-nav-item" id="nav-logs" onclick="show('logs',this)">
+      <div class="i-nav-icon" style="background:#F0FDF4">📋</div>
+      Aktivite Kayıtları
     </button>
-  </aside>
+  </div>
+</aside>
 
-  <!-- ── Main content ── -->
-  <main class="int-main">
+<!-- Ana içerik -->
+<main class="i-main">
 
-    <!-- OVERVIEW -->
-    <div class="int-section active" id="sec-overview">
-      <div class="int-page-title">Overview</div>
-      <div class="int-page-desc">All your connected integrations in one place.</div>
+<!-- OVERVIEW -->
+<div class="i-section active" id="sec-overview">
+  <div class="i-page-title">Genel Bakış</div>
+  <div class="i-page-desc">Tüm entegrasyonlarınız tek yerden</div>
 
-      <div class="int-overview-grid">
-        <div class="int-overview-card"
-             onclick="showSection('google', document.getElementById('nav-google'))"
-             id="ov-google">
-          <div class="int-ov-icon" style="background:#E8F5E9">
-            <img src="https://cdn.brandfetch.io/id6g_s2bND/theme/dark/symbol.svg?c=1dxbfHSJFAPEZgFJ4J0" width="24" height="24" alt="Google Sheets"
-                 onerror="this.parentElement.textContent='📊'">
-          </div>
-          <div class="int-ov-name">Google Sheets</div>
-          <div class="int-ov-status" id="ov-st-gs">Not connected</div>
-        </div>
-        <div class="int-overview-card"
-             onclick="showSection('notion', document.getElementById('nav-notion'))"
-             id="ov-notion">
-          <div class="int-ov-icon" style="background:#F3F4F6">
-            <img src="https://cdn.brandfetch.io/idRecoPDFY/theme/dark/symbol.svg?c=1dxbfHSJFAPEZgFJ4J0" width="24" height="24" alt="Notion"
-                 onerror="this.parentElement.textContent='◻️'">
-          </div>
-          <div class="int-ov-name">Notion</div>
-          <div class="int-ov-status" id="ov-st-notion">Not connected</div>
-        </div>
-        <div class="int-overview-card"
-             onclick="showSection('webhook', document.getElementById('nav-webhook'))"
-             id="ov-webhook">
-          <div class="int-ov-icon" style="background:#FFF0EB">
-            <img src="https://cdn.brandfetch.io/id6R20S1Xf/theme/dark/symbol.svg?c=1dxbfHSJFAPEZgFJ4J0" width="24" height="24" alt="Zapier"
-                 onerror="this.parentElement.textContent='⚡'">
-          </div>
-          <div class="int-ov-name">Zapier / Webhook</div>
-          <div class="int-ov-status" id="ov-st-webhook">Not connected</div>
-        </div>
-
-        <div class="int-overview-card soon"
-             style="opacity:0.6;cursor:default">
-          <div class="int-ov-icon" style="background:#F8F0FF">
-            <img src="https://cdn.brandfetch.io/idnrCPuv87/theme/dark/symbol.svg?c=1dxbfHSJFAPEZgFJ4J0" width="24" height="24" alt="Slack"
-                 onerror="this.textContent='💬'">
-          </div>
-          <div class="int-ov-name">Slack</div>
-          <div class="int-ov-status">Yakında</div>
-        </div>
-
-        <div class="int-overview-card soon"
-             style="opacity:0.6;cursor:default">
-          <div class="int-ov-icon" style="background:#F0F7FF">
-            <img src="https://cdn.brandfetch.io/idM98PtBxS/theme/dark/symbol.svg?c=1dxbfHSJFAPEZgFJ4J0" width="24" height="24" alt="Make"
-                 onerror="this.textContent='⚙️'">
-          </div>
-          <div class="int-ov-name">Make</div>
-          <div class="int-ov-status">Yakında</div>
-        </div>
-
-        <div class="int-overview-card soon"
-             style="opacity:0.6;cursor:default">
-          <div class="int-ov-icon" style="background:#F0FFF8">
-            <img src="https://cdn.brandfetch.io/idWBfH76xY/theme/dark/symbol.svg?c=1dxbfHSJFAPEZgFJ4J0" width="24" height="24" alt="Airtable"
-                 onerror="this.textContent='📋'">
-          </div>
-          <div class="int-ov-name">Airtable</div>
-          <div class="int-ov-status">Yakında</div>
-        </div>
-
-        <div class="int-overview-card soon"
-             style="opacity:0.6;cursor:default">
-          <div class="int-ov-icon" style="background:#FFF8F0">
-            <img src="https://cdn.brandfetch.io/idVfYwCkWb/theme/dark/symbol.svg?c=1dxbfHSJFAPEZgFJ4J0" width="24" height="24" alt="Google Drive"
-                 onerror="this.textContent='📁'">
-          </div>
-          <div class="int-ov-name">Google Drive</div>
-          <div class="int-ov-status">Yakında</div>
-        </div>
+  <div class="i-ov-grid">
+    <div class="i-ov-card" id="ov-gs" onclick="show('gs',document.getElementById('nav-gs'))">
+      <div class="i-ov-icon" style="background:#E8F5E9">
+        <img src="https://www.gstatic.com/images/branding/product/1x/sheets_2020q4_48dp.png"
+             onerror="this.parentElement.innerHTML='📊'">
       </div>
+      <div class="i-ov-name">Google Sheets</div>
+      <div class="i-ov-st" id="ov-st-gs">Bağlı değil</div>
+    </div>
+    <div class="i-ov-card" id="ov-notion" onclick="show('notion',document.getElementById('nav-notion'))">
+      <div class="i-ov-icon" style="background:#F3F4F6">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.png"
+             onerror="this.parentElement.innerHTML='◻️'">
+      </div>
+      <div class="i-ov-name">Notion</div>
+      <div class="i-ov-st" id="ov-st-notion">Bağlı değil</div>
+    </div>
+    <div class="i-ov-card" id="ov-webhook" onclick="show('webhook',document.getElementById('nav-webhook'))">
+      <div class="i-ov-icon" style="background:#FFF0EB">⚡</div>
+      <div class="i-ov-name">Zapier / Webhook</div>
+      <div class="i-ov-st" id="ov-st-webhook">Bağlı değil</div>
+    </div>
+  </div>
 
-      <div class="int-card">
-        <div class="int-card-header">
-          <div class="int-card-meta">
-            <div class="int-card-title">Quick Export</div>
-            <div class="int-card-subtitle">
-              Export your current sheet to any connected app
-            </div>
+  <div class="i-quick">
+    <div class="i-quick-title">⚡ Hızlı Dışa Aktar</div>
+    <div class="i-quick-sub">Mevcut sayfanızı bağlı uygulamaya aktarın</div>
+    <div class="i-btns">
+      <button class="i-btn btn-green" onclick="quickExport('gs')">📊 Google Sheets'e Aktar</button>
+      <button class="i-btn btn-notion" onclick="quickExport('notion')">◻️ Notion'a Aktar</button>
+      <button class="i-btn btn-outline" onclick="quickExport('webhook')">⚡ Webhook Tetikle</button>
+    </div>
+    <div class="i-alert" id="alert-quick" style="margin-top:12px"></div>
+  </div>
+</div>
+
+<!-- GOOGLE SHEETS -->
+<div class="i-section" id="sec-gs">
+  <div class="i-page-title">Google Sheets</div>
+  <div class="i-page-desc">Verilerinizi Google Sheets'e aktarın</div>
+
+  <div class="i-card">
+    <div class="i-card-head">
+      <div class="i-card-logo" style="background:#E8F5E9">
+        <img src="https://www.gstatic.com/images/branding/product/1x/sheets_2020q4_48dp.png"
+             onerror="this.innerHTML='📊'" width="24">
+      </div>
+      <div class="i-card-meta">
+        <div class="i-card-name">Bağlantı Ayarları</div>
+        <div class="i-card-sub">Google Sheets belgenizin URL veya ID'sini girin</div>
+      </div>
+      <span class="i-badge b-off" id="badge-gs">Bağlı değil</span>
+    </div>
+    <div class="i-card-body">
+      <div class="i-form">
+        <div class="i-field">
+          <label>Google Sheet URL veya ID *</label>
+          <input id="gs-url" type="text" placeholder="https://docs.google.com/spreadsheets/d/1BxiMV...">
+          <span class="i-hint">Tam URL veya sadece spreadsheet ID'sini yapıştırın</span>
+        </div>
+        <div class="i-row">
+          <div class="i-field">
+            <label>Sayfa / Sekme Adı</label>
+            <input id="gs-tab" type="text" placeholder="Sheet1">
+          </div>
+          <div class="i-field">
+            <label>Başlangıç Hücresi</label>
+            <input id="gs-cell" type="text" placeholder="A1" value="A1">
           </div>
         </div>
-        <div class="int-card-body">
-          <div class="int-actions">
-            <button class="int-action-btn btn-green" onclick="quickExportGS()">
-              📊 Export to Google Sheets
-            </button>
-            <button class="int-action-btn btn-notion" onclick="quickExportNotion()">
-              ◻️ Export to Notion
-            </button>
-            <button class="int-action-btn btn-outline" onclick="quickSendWebhook()">
-              ⚡ Trigger Webhook
-            </button>
-          </div>
-          <div id="alert-quick" class="int-alert" style="margin-top:12px"></div>
+        <div class="i-alert" id="alert-gs"></div>
+        <div class="i-btns">
+          <button class="i-btn btn-outline" onclick="validateGS()">🔍 URL Doğrula</button>
+          <button class="i-btn btn-dark" onclick="saveGS()">💾 Bağlantıyı Kaydet</button>
+          <button class="i-btn btn-red" id="btn-gs-disconnect" style="display:none" onclick="disconnectGS()">🗑️ Kaldır</button>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- GOOGLE SHEETS -->
-    <div class="int-section" id="sec-google">
-      <div class="int-page-title">Google Sheets</div>
-      <div class="int-page-desc">
-        Export your spreadsheet data directly to Google Sheets.
+  <div class="i-card">
+    <div class="i-card-head">
+      <div class="i-card-meta">
+        <div class="i-card-name">Veri Aktarımı</div>
+        <div class="i-card-sub">Mevcut sayfanızı CSV olarak indirin ve Sheets'e aktarın</div>
       </div>
-
-      <div class="int-card">
-        <div class="int-card-header">
-          <div class="int-card-logo" style="background:#E8F5E9">
-            <img src="https://cdn.brandfetch.io/id6g_s2bND/theme/dark/symbol.svg?c=1dxbfHSJFAPEZgFJ4J0"
-                 width="24" height="24" alt="Google Sheets"
-                 onerror="this.parentElement.textContent='📊'">
-          </div>
-          <div class="int-card-meta">
-            <div class="int-card-title">Connection Settings</div>
-            <div class="int-card-subtitle">Connect to your Google Sheets document</div>
-          </div>
-          <span class="int-badge badge-inactive" id="badge-gs">Not connected</span>
-        </div>
-        <div class="int-card-body">
-          <div class="int-form">
-            <div class="int-field">
-              <label>Google Sheets URL or ID *</label>
-              <input id="gs-url" type="text"
-                placeholder="https://docs.google.com/spreadsheets/d/1BxiMV...">
-              <span class="int-field-hint">Paste the full URL or just the spreadsheet ID</span>
-            </div>
-            <div class="int-form-row">
-              <div class="int-field">
-                <label>Sheet / Tab Name</label>
-                <input id="gs-tab" type="text" placeholder="Sheet1">
-                <span class="int-field-hint">Leave empty to use the first sheet</span>
-              </div>
-              <div class="int-field">
-                <label>Start Cell</label>
-                <input id="gs-cell" type="text" placeholder="A1" value="A1">
-              </div>
-            </div>
-            <div id="alert-gs" class="int-alert"></div>
-            <div class="int-actions">
-              <button class="int-action-btn btn-outline" onclick="testGoogleSheets()">
-                🔍 Validate URL
-              </button>
-              <button class="int-action-btn btn-dark" onclick="saveGoogleSheets()">
-                💾 Save Connection
-              </button>
-            </div>
-          </div>
-        </div>
+    </div>
+    <div class="i-card-body">
+      <p style="font-size:13px;color:#6B7280;line-height:1.6;margin-bottom:16px">
+        Verileriniz CSV formatında indirilecek. Google Sheets'te açmak için:
+        <strong>Dosya → İçe Aktar → Yükle</strong> adımlarını izleyin.
+      </p>
+      <div class="i-alert" id="alert-gs-export" style="margin-bottom:12px"></div>
+      <div class="i-btns">
+        <button class="i-btn btn-green" id="btn-gs-export" onclick="exportGS()">
+          📤 Google Sheets'e Aktar
+        </button>
       </div>
+    </div>
+  </div>
+</div>
 
-      <div class="int-card">
-        <div class="int-card-header">
-          <div class="int-card-meta">
-            <div class="int-card-title">Export Data</div>
-            <div class="int-card-subtitle">Send your current sheet to Google Sheets</div>
-          </div>
+<!-- NOTION -->
+<div class="i-section" id="sec-notion">
+  <div class="i-page-title">Notion</div>
+  <div class="i-page-desc">Satırlarınızı doğrudan Notion veritabanına aktarın</div>
+
+  <div class="i-card">
+    <div class="i-card-head">
+      <div class="i-card-logo" style="background:#F3F4F6">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.png"
+             onerror="this.innerHTML='◻️'" width="22">
+      </div>
+      <div class="i-card-meta">
+        <div class="i-card-name">Bağlantı Ayarları</div>
+        <div class="i-card-sub">Notion kimlik bilgilerinizi girin</div>
+      </div>
+      <span class="i-badge b-off" id="badge-notion">Bağlı değil</span>
+    </div>
+    <div class="i-card-body">
+      <div class="i-form">
+        <div class="i-field">
+          <label>Entegrasyon Token'ı *</label>
+          <input id="notion-token" type="password" placeholder="secret_xxxxxxxxxxxxxxxx">
+          <span class="i-hint">
+            <a href="https://www.notion.so/my-integrations" target="_blank">notion.so/my-integrations</a>
+            → Yeni entegrasyon → Internal Integration Secret'ı kopyalayın.
+            Veritabanı sayfasında ··· → Bağlantılar → Entegrasyonu ekleyin.
+          </span>
         </div>
-        <div class="int-card-body">
-          <div style="font-size:13px;color:#6B7280;margin-bottom:16px;line-height:1.6">
-            Your data will be exported as a CSV file and you'll be redirected to import
-            it into Google Sheets. For direct write access, enable the
-            <a href="https://console.cloud.google.com" target="_blank"
-               style="color:#4F46E5">Google Sheets API</a> with a service account.
-          </div>
-          <div id="alert-gs-export" class="int-alert" style="margin-bottom:12px"></div>
-          <div class="int-actions">
-            <button class="int-action-btn btn-green" id="btn-gs-export"
-                    onclick="exportGoogleSheets()">
-              📤 Export to Google Sheets
-            </button>
-          </div>
+        <div class="i-field">
+          <label>Database ID *</label>
+          <input id="notion-db" type="text" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx">
+          <span class="i-hint">
+            Notion database URL'sindeki 32 karakterlik kimlik.
+            Örnek: notion.so/workspace/<strong>abc123...</strong>?v=...
+          </span>
+        </div>
+        <div class="i-alert" id="alert-notion"></div>
+        <div class="i-btns">
+          <button class="i-btn btn-outline" onclick="testNotion()">🔍 Bağlantıyı Test Et</button>
+          <button class="i-btn btn-dark" onclick="saveNotion()">💾 Kaydet</button>
+          <button class="i-btn btn-red" id="btn-notion-disconnect" style="display:none" onclick="disconnectNotion()">🗑️ Kaldır</button>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- NOTION -->
-    <div class="int-section" id="sec-notion">
-      <div class="int-page-title">Notion</div>
-      <div class="int-page-desc">Push spreadsheet rows into a Notion database.</div>
-
-      <div class="int-card">
-        <div class="int-card-header">
-          <div class="int-card-logo" style="background:#F3F4F6">
-            <img src="https://cdn.brandfetch.io/idRecoPDFY/theme/dark/symbol.svg?c=1dxbfHSJFAPEZgFJ4J0"
-                 width="24" height="24" alt="Notion"
-                 onerror="this.parentElement.textContent='◻️'">
-          </div>
-          <div class="int-card-meta">
-            <div class="int-card-title">Connection Settings</div>
-            <div class="int-card-subtitle">Add your Notion credentials</div>
-          </div>
-          <span class="int-badge badge-inactive" id="badge-notion">Not connected</span>
-        </div>
-        <div class="int-card-body">
-          <div class="int-form">
-            <div class="int-field">
-              <label>Integration Token *</label>
-              <input id="notion-token" type="password"
-                placeholder="secret_xxxxxxxxxxxxxxxxxxxxxxxx">
-              <span class="int-field-hint">
-                Get it from
-                <a href="https://www.notion.so/my-integrations" target="_blank">
-                  notion.so/my-integrations
-                </a>
-                → New integration → Copy Internal Integration Secret
-              </span>
-            </div>
-            <div class="int-field">
-              <label>Database ID *</label>
-              <input id="notion-db" type="text"
-                placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx">
-              <span class="int-field-hint">
-                Found in your Notion database URL after the workspace name.
-                Make sure to share the database with your integration.
-              </span>
-            </div>
-            <div id="alert-notion" class="int-alert"></div>
-            <div class="int-actions">
-              <button class="int-action-btn btn-outline" onclick="testNotionConn()">
-                🔍 Test Connection
-              </button>
-              <button class="int-action-btn btn-dark" onclick="saveNotionConn()">
-                💾 Save Connection
-              </button>
-            </div>
-          </div>
-        </div>
+  <div class="i-card">
+    <div class="i-card-head">
+      <div class="i-card-meta">
+        <div class="i-card-name">Veri Aktarımı</div>
+        <div class="i-card-sub">İlk satır başlık, kalan satırlar kayıt — maksimum 100 satır</div>
       </div>
+    </div>
+    <div class="i-card-body">
+      <p style="font-size:13px;color:#6B7280;line-height:1.6;margin-bottom:16px">
+        Sütun başlıkları otomatik Notion özelliklerine dönüştürülür.
+        Sayılar ve tarihler (GG.AA.YYYY veya YYYY-AA-GG) otomatik algılanır.
+        İlk sütun başlık (title) olarak atanır.
+      </p>
+      <div class="i-alert" id="alert-notion-export" style="margin-bottom:12px"></div>
+      <div class="i-btns">
+        <button class="i-btn btn-notion" id="btn-notion-export" onclick="exportNotion()">
+          📤 Notion'a Aktar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 
-      <div class="int-card">
-        <div class="int-card-header">
-          <div class="int-card-meta">
-            <div class="int-card-title">Export Data</div>
-            <div class="int-card-subtitle">Up to 100 rows exported per operation</div>
+<!-- WEBHOOK -->
+<div class="i-section" id="sec-webhook">
+  <div class="i-page-title">Zapier / Webhook</div>
+  <div class="i-page-desc">AI aksiyonlarında herhangi bir uygulamaya veri gönderin</div>
+
+  <div class="i-card">
+    <div class="i-card-head">
+      <div class="i-card-logo" style="background:#FFF0EB">⚡</div>
+      <div class="i-card-meta">
+        <div class="i-card-name">Webhook Ayarları</div>
+        <div class="i-card-sub">HTTP endpoint'inizi yapılandırın</div>
+      </div>
+      <span class="i-badge b-off" id="badge-webhook">Aktif değil</span>
+    </div>
+    <div class="i-card-body">
+      <div class="i-form">
+        <div class="i-field">
+          <label>Webhook URL *</label>
+          <input id="wh-url" type="text" placeholder="https://hooks.zapier.com/hooks/catch/...">
+          <span class="i-hint">Zapier, Make, n8n, Pipedream veya herhangi bir HTTP POST endpoint</span>
+        </div>
+        <div class="i-row">
+          <div class="i-field">
+            <label>Tetikleyici Olay</label>
+            <select id="wh-trigger">
+              <option value="manual">Yalnızca manuel</option>
+              <option value="ai_action">Her AI aksiyonundan sonra</option>
+              <option value="export">Dosya aktarımında</option>
+              <option value="all">Tüm olaylar</option>
+            </select>
+          </div>
+          <div class="i-field">
+            <label>Gizli Anahtar (opsiyonel)</label>
+            <input id="wh-secret" type="text" placeholder="my-secret-key">
+            <span class="i-hint">X-Webhook-Secret header olarak gönderilir</span>
           </div>
         </div>
-        <div class="int-card-body">
-          <div style="font-size:13px;color:#6B7280;margin-bottom:16px;line-height:1.6">
-            Column headers from your spreadsheet will become Notion database properties.
-            Numbers and dates are detected automatically. First column becomes the title.
-          </div>
-          <div id="alert-notion-export" class="int-alert" style="margin-bottom:12px"></div>
-          <div class="int-actions">
-            <button class="int-action-btn btn-notion" id="btn-notion-export"
-                    onclick="exportNotion()">
-              📤 Export to Notion
-            </button>
-          </div>
+        <div class="i-alert" id="alert-webhook"></div>
+        <div class="i-btns">
+          <button class="i-btn btn-outline" onclick="testWebhook()">📨 Test Yükü Gönder</button>
+          <button class="i-btn btn-dark" onclick="saveWebhook()">💾 Kaydet ve Etkinleştir</button>
+          <button class="i-btn btn-red" id="btn-wh-disconnect" style="display:none" onclick="disconnectWebhook()">🗑️ Devre Dışı Bırak</button>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- WEBHOOK -->
-    <div class="int-section" id="sec-webhook">
-      <div class="int-page-title">Zapier / Webhook</div>
-      <div class="int-page-desc">Send data to any app when AI actions happen.</div>
-
-      <div class="int-card">
-        <div class="int-card-header">
-          <div class="int-card-logo" style="background:#FFF0EB">
-            <img src="https://cdn.brandfetch.io/id6R20S1Xf/theme/dark/symbol.svg?c=1dxbfHSJFAPEZgFJ4J0"
-                 width="24" height="24" alt="Zapier"
-                 onerror="this.parentElement.textContent='⚡'">
-          </div>
-          <div class="int-card-meta">
-            <div class="int-card-title">Webhook Settings</div>
-            <div class="int-card-subtitle">Configure your webhook endpoint</div>
-          </div>
-          <span class="int-badge badge-inactive" id="badge-webhook">Not connected</span>
-        </div>
-        <div class="int-card-body">
-          <div class="int-form">
-            <div class="int-field">
-              <label>Webhook URL *</label>
-              <input id="wh-url" type="text"
-                placeholder="https://hooks.zapier.com/hooks/catch/...">
-              <span class="int-field-hint">
-                Works with Zapier, Make, n8n, Pipedream, and any HTTP endpoint
-              </span>
-            </div>
-            <div class="int-form-row">
-              <div class="int-field">
-                <label>Trigger Event</label>
-                <select id="wh-trigger">
-                  <option value="manual">Manual only</option>
-                  <option value="ai_action">After every AI action</option>
-                  <option value="export">On file export</option>
-                  <option value="all">All events</option>
-                </select>
-              </div>
-              <div class="int-field">
-                <label>Secret Key (optional)</label>
-                <input id="wh-secret" type="text" placeholder="my-secret-key">
-                <span class="int-field-hint">Added as X-Webhook-Secret header</span>
-              </div>
-            </div>
-            <div id="alert-webhook" class="int-alert"></div>
-            <div class="int-actions">
-              <button class="int-action-btn btn-outline" onclick="testWebhookConn()">
-                📨 Send Test Payload
-              </button>
-              <button class="int-action-btn btn-dark" onclick="saveWebhookConn()">
-                💾 Save & Activate
-              </button>
-            </div>
-          </div>
-        </div>
+  <div class="i-card">
+    <div class="i-card-head">
+      <div class="i-card-meta">
+        <div class="i-card-name">Yük Önizlemesi</div>
+        <div class="i-card-sub">Webhook'unuza gönderilen JSON yapısı</div>
       </div>
-
-      <div class="int-card">
-        <div class="int-card-header">
-          <div class="int-card-meta">
-            <div class="int-card-title">Payload Preview</div>
-            <div class="int-card-subtitle">This is what gets sent to your webhook</div>
-          </div>
-        </div>
-        <div class="int-card-body">
-          <pre style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:10px;
-                      padding:16px;font-size:12px;line-height:1.6;
-                      overflow-x:auto;color:#374151">{
+    </div>
+    <div class="i-card-body">
+<pre class="i-code">{
   "source": "Mocksheet",
   "event": "ai_action",
-  "timestamp": "2026-03-29T12:00:00Z",
+  "timestamp": "2026-04-02T12:00:00Z",
   "data": {
     "action": "delete_rows",
-    "reply": "✓ 12 empty rows deleted",
+    "reply": "✓ 12 boş satır silindi",
     "changes_count": 12,
-    "sheet": "Sales Q1",
+    "sheet": "Satışlar",
     "rows": 247
   }
 }</pre>
+    </div>
+  </div>
+</div>
+
+<!-- SLACK -->
+<div class="i-section" id="sec-slack">
+  <div class="i-page-title">Slack</div>
+  <div class="i-page-desc">AI aksiyonlarından sonra Slack bildirimi alın</div>
+  <div class="i-card">
+    <div class="i-card-head">
+      <div class="i-card-logo" style="background:#F8F0FF">💬</div>
+      <div class="i-card-meta">
+        <div class="i-card-name">Slack Entegrasyonu</div>
+        <div class="i-card-sub">Yakında kullanılabilir</div>
+      </div>
+      <span class="i-badge b-soon">Yakında</span>
+    </div>
+    <div class="i-card-body">
+      <div class="i-coming">
+        <div class="i-coming-icon">🔔</div>
+        <div class="i-coming-title">Slack entegrasyonu geliyor</div>
+        <div class="i-coming-text">Her AI aksiyonu, anomali tespiti veya dosya aktarımında otomatik Slack bildirimi alın.</div>
+        <div class="i-coming-chips">
+          <span class="i-chip">📢 Kanal bildirimleri</span>
+          <span class="i-chip">🤖 Bot komutları</span>
+          <span class="i-chip">⚡ Anlık uyarılar</span>
         </div>
       </div>
     </div>
+  </div>
+</div>
 
-    <!-- SLACK -->
-    <div class="int-section" id="sec-slack">
-      <div class="int-page-title">Slack</div>
-      <div class="int-page-desc">
-        AI aksiyonlarından sonra Slack kanalına bildirim gönderin.
+<!-- MAKE -->
+<div class="i-section" id="sec-make">
+  <div class="i-page-title">Make</div>
+  <div class="i-page-desc">Görsel otomasyon senaryoları kurun</div>
+  <div class="i-card">
+    <div class="i-card-head">
+      <div class="i-card-logo" style="background:#F0F7FF">⚙️</div>
+      <div class="i-card-meta">
+        <div class="i-card-name">Make Entegrasyonu</div>
+        <div class="i-card-sub">Yakında kullanılabilir</div>
       </div>
-      <div class="int-card">
-        <div class="int-card-header">
-          <div class="int-card-logo" style="background:#F8F0FF">
-            <img src="https://cdn.brandfetch.io/idnrCPuv87/theme/dark/symbol.svg?c=1dxbfHSJFAPEZgFJ4J0"
-                 width="32" height="32" alt="Slack"
-                 onerror="this.parentElement.textContent='💬'">
-          </div>
-          <div class="int-card-meta">
-            <div class="int-card-title">Slack Entegrasyonu</div>
-            <div class="int-card-subtitle">Yakında kullanılabilir olacak</div>
-          </div>
-          <span class="int-badge" style="background:#EEF2FF;color:#4F46E5">Yakında</span>
-        </div>
-        <div class="int-card-body">
-          <div style="text-align:center;padding:32px 0;color:#9CA3AF">
-            <div style="font-size:48px;margin-bottom:16px">🔔</div>
-            <div style="font-size:15px;font-weight:600;color:#374151;margin-bottom:8px">
-              Slack entegrasyonu geliyor
-            </div>
-            <div style="font-size:13px;line-height:1.6;max-width:320px;margin:0 auto">
-              Her AI aksiyonu, dosya aktarımı veya anomali tespitinde
-              otomatik Slack bildirimi alın.
-            </div>
-            <div style="margin-top:20px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
-              <span style="background:#F9FAFB;border:1px solid #E5E7EB;padding:5px 12px;border-radius:100px;font-size:12px">📢 Kanal bildirimleri</span>
-              <span style="background:#F9FAFB;border:1px solid #E5E7EB;padding:5px 12px;border-radius:100px;font-size:12px">🤖 Bot komutları</span>
-              <span style="background:#F9FAFB;border:1px solid #E5E7EB;padding:5px 12px;border-radius:100px;font-size:12px">⚡ Anlık uyarılar</span>
-            </div>
-          </div>
+      <span class="i-badge b-soon">Yakında</span>
+    </div>
+    <div class="i-card-body">
+      <div class="i-coming">
+        <div class="i-coming-icon">⚙️</div>
+        <div class="i-coming-title">Make entegrasyonu geliyor</div>
+        <div class="i-coming-text">1000+ uygulama ile görsel otomasyon. Zapier'den daha güçlü, daha esnek.</div>
+        <div class="i-coming-chips">
+          <span class="i-chip">🔄 Görsel senaryo</span>
+          <span class="i-chip">📊 Veri dönüşümü</span>
         </div>
       </div>
     </div>
+  </div>
+</div>
 
-    <!-- MAKE -->
-    <div class="int-section" id="sec-make">
-      <div class="int-page-title">Make</div>
-      <div class="int-page-desc">
-        Make (eski adıyla Integromat) ile gelişmiş otomasyon senaryoları kurun.
+<!-- AIRTABLE -->
+<div class="i-section" id="sec-airtable">
+  <div class="i-page-title">Airtable</div>
+  <div class="i-page-desc">Excel verilerini Airtable'a aktarın</div>
+  <div class="i-card">
+    <div class="i-card-head">
+      <div class="i-card-logo" style="background:#F0FFF8">📋</div>
+      <div class="i-card-meta">
+        <div class="i-card-name">Airtable Entegrasyonu</div>
+        <div class="i-card-sub">Yakında kullanılabilir</div>
       </div>
-      <div class="int-card">
-        <div class="int-card-header">
-          <div class="int-card-logo" style="background:#F0F7FF">
-            <img src="https://cdn.brandfetch.io/idM98PtBxS/theme/dark/symbol.svg?c=1dxbfHSJFAPEZgFJ4J0"
-                 width="32" height="32" alt="Make"
-                 onerror="this.parentElement.textContent='⚙️'">
-          </div>
-          <div class="int-card-meta">
-            <div class="int-card-title">Make Entegrasyonu</div>
-            <div class="int-card-subtitle">Yakında kullanılabilir olacak</div>
-          </div>
-          <span class="int-badge" style="background:#EEF2FF;color:#4F46E5">Yakında</span>
-        </div>
-        <div class="int-card-body">
-          <div style="text-align:center;padding:32px 0;color:#9CA3AF">
-            <div style="font-size:48px;margin-bottom:16px">⚙️</div>
-            <div style="font-size:15px;font-weight:600;color:#374151;margin-bottom:8px">
-              Make entegrasyonu geliyor
-            </div>
-            <div style="font-size:13px;line-height:1.6;max-width:320px;margin:0 auto">
-              1000+ uygulama ile görsel otomasyon senaryoları kurun.
-              Zapier'den daha güçlü, daha esnek.
-            </div>
-            <div style="margin-top:20px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
-              <span style="background:#F9FAFB;border:1px solid #E5E7EB;padding:5px 12px;border-radius:100px;font-size:12px">🔄 Görsel senaryo editörü</span>
-              <span style="background:#F9FAFB;border:1px solid #E5E7EB;padding:5px 12px;border-radius:100px;font-size:12px">📊 Veri dönüşümü</span>
-            </div>
-          </div>
+      <span class="i-badge b-soon">Yakında</span>
+    </div>
+    <div class="i-card-body">
+      <div class="i-coming">
+        <div class="i-coming-icon">📋</div>
+        <div class="i-coming-title">Airtable entegrasyonu geliyor</div>
+        <div class="i-coming-text">Satırlar otomatik kayıt olarak oluşturulur. İki yönlü senkronizasyon destekli.</div>
+        <div class="i-coming-chips">
+          <span class="i-chip">🔗 Otomatik eşleştirme</span>
+          <span class="i-chip">🔄 İki yönlü sync</span>
         </div>
       </div>
     </div>
+  </div>
+</div>
 
-    <!-- AIRTABLE -->
-    <div class="int-section" id="sec-airtable">
-      <div class="int-page-title">Airtable</div>
-      <div class="int-page-desc">
-        Excel verilerinizi Airtable veritabanına aktarın.
+<!-- GOOGLE DRIVE -->
+<div class="i-section" id="sec-gdrive">
+  <div class="i-page-title">Google Drive</div>
+  <div class="i-page-desc">Dosyaları otomatik Drive'a kaydedin</div>
+  <div class="i-card">
+    <div class="i-card-head">
+      <div class="i-card-logo" style="background:#FFF8F0">📁</div>
+      <div class="i-card-meta">
+        <div class="i-card-name">Google Drive Entegrasyonu</div>
+        <div class="i-card-sub">Yakında kullanılabilir</div>
       </div>
-      <div class="int-card">
-        <div class="int-card-header">
-          <div class="int-card-logo" style="background:#F0FFF8">
-            <img src="https://cdn.brandfetch.io/idWBfH76xY/theme/dark/symbol.svg?c=1dxbfHSJFAPEZgFJ4J0"
-                 width="32" height="32" alt="Airtable"
-                 onerror="this.parentElement.textContent='📋'">
-          </div>
-          <div class="int-card-meta">
-            <div class="int-card-title">Airtable Entegrasyonu</div>
-            <div class="int-card-subtitle">Yakında kullanılabilir olacak</div>
-          </div>
-          <span class="int-badge" style="background:#EEF2FF;color:#4F46E5">Yakında</span>
-        </div>
-        <div class="int-card-body">
-          <div style="text-align:center;padding:32px 0;color:#9CA3AF">
-            <div style="font-size:48px;margin-bottom:16px">📋</div>
-            <div style="font-size:15px;font-weight:600;color:#374151;margin-bottom:8px">
-              Airtable entegrasyonu geliyor
-            </div>
-            <div style="font-size:13px;line-height:1.6;max-width:320px;margin:0 auto">
-              Spreadsheet verilerinizi Airtable'ın güçlü veritabanı yapısına aktarın.
-              Satırlar otomatik kayıt olarak oluşturulur.
-            </div>
-            <div style="margin-top:20px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
-              <span style="background:#F9FAFB;border:1px solid #E5E7EB;padding:5px 12px;border-radius:100px;font-size:12px">🔗 Otomatik alan eşleştirme</span>
-              <span style="background:#F9FAFB;border:1px solid #E5E7EB;padding:5px 12px;border-radius:100px;font-size:12px">🔄 İki yönlü senkronizasyon</span>
-            </div>
-          </div>
+      <span class="i-badge b-soon">Yakında</span>
+    </div>
+    <div class="i-card-body">
+      <div class="i-coming">
+        <div class="i-coming-icon">📁</div>
+        <div class="i-coming-title">Google Drive entegrasyonu geliyor</div>
+        <div class="i-coming-text">İşlenen dosyaları otomatik Drive klasörünüze kaydedin. Versiyon geçmişi dahil.</div>
+        <div class="i-coming-chips">
+          <span class="i-chip">☁️ Otomatik yedek</span>
+          <span class="i-chip">👥 Ekip paylaşımı</span>
         </div>
       </div>
     </div>
+  </div>
+</div>
 
-    <!-- GOOGLE DRIVE -->
-    <div class="int-section" id="sec-gdrive">
-      <div class="int-page-title">Google Drive</div>
-      <div class="int-page-desc">
-        Dosyalarınızı Google Drive'a otomatik kaydedin.
+<!-- LOGS -->
+<div class="i-section" id="sec-logs">
+  <div class="i-page-title">Aktivite Kayıtları</div>
+  <div class="i-page-desc">Son entegrasyon işlemleriniz</div>
+  <div class="i-card">
+    <div class="i-card-head">
+      <div class="i-card-meta">
+        <div class="i-card-name">Son Olaylar</div>
       </div>
-      <div class="int-card">
-        <div class="int-card-header">
-          <div class="int-card-logo" style="background:#FFF8F0">
-            <img src="https://cdn.brandfetch.io/idVfYwCkWb/theme/dark/symbol.svg?c=1dxbfHSJFAPEZgFJ4J0"
-                 width="32" height="32" alt="Google Drive"
-                 onerror="this.parentElement.textContent='📁'">
-          </div>
-          <div class="int-card-meta">
-            <div class="int-card-title">Google Drive Entegrasyonu</div>
-            <div class="int-card-subtitle">Yakında kullanılabilir olacak</div>
-          </div>
-          <span class="int-badge" style="background:#EEF2FF;color:#4F46E5">Yakında</span>
-        </div>
-        <div class="int-card-body">
-          <div style="text-align:center;padding:32px 0;color:#9CA3AF">
-            <div style="font-size:48px;margin-bottom:16px">📁</div>
-            <div style="font-size:15px;font-weight:600;color:#374151;margin-bottom:8px">
-              Google Drive entegrasyonu geliyor
-            </div>
-            <div style="font-size:13px;line-height:1.6;max-width:320px;margin:0 auto">
-              İşlenen Excel dosyalarını otomatik olarak Drive klasörünüze kaydedin.
-              Versiyon geçmişi ve ekip paylaşımı dahil.
-            </div>
-            <div style="margin-top:20px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
-              <span style="background:#F9FAFB;border:1px solid #E5E7EB;padding:5px 12px;border-radius:100px;font-size:12px">☁️ Otomatik yedekleme</span>
-              <span style="background:#F9FAFB;border:1px solid #E5E7EB;padding:5px 12px;border-radius:100px;font-size:12px">👥 Ekip paylaşımı</span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <button class="i-btn btn-outline" style="padding:6px 12px;font-size:12px" onclick="loadLogs()">
+        🔄 Yenile
+      </button>
     </div>
-
-    <!-- LOGS -->
-    <div class="int-section" id="sec-logs">
-      <div class="int-page-title">Activity Logs</div>
-      <div class="int-page-desc">Recent integration activity from your account.</div>
-
-      <div class="int-card">
-        <div class="int-card-header">
-          <div class="int-card-meta">
-            <div class="int-card-title">Recent Events</div>
-          </div>
-          <button class="int-action-btn btn-outline"
-                  style="padding:7px 14px;font-size:12px"
-                  onclick="loadLogs()">
-            🔄 Refresh
-          </button>
-        </div>
-        <div class="int-card-body" style="padding:0">
-          <table class="int-logs-table">
-            <thead>
-              <tr>
-                <th>Provider</th>
-                <th>Event</th>
-                <th>Status</th>
-                <th>Rows</th>
-                <th>Time</th>
-              </tr>
-            </thead>
-            <tbody id="logs-body">
-              <tr>
-                <td colspan="5" class="log-empty">Loading logs...</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
+    <div style="padding:0">
+      <table class="i-table">
+        <thead>
+          <tr>
+            <th>Sağlayıcı</th>
+            <th>Olay</th>
+            <th>Durum</th>
+            <th>Satırlar</th>
+            <th>Zaman</th>
+          </tr>
+        </thead>
+        <tbody id="logs-body">
+          <tr><td colspan="5" class="i-empty">Yükleniyor...</td></tr>
+        </tbody>
+      </table>
     </div>
+  </div>
+</div>
 
-  </main>
+</main>
 </div>
 
 <script>
-const API_URL = window.location.hostname === 'localhost'
+const API = window.location.hostname === 'localhost'
   ? 'http://localhost:3001'
   : 'https://upsheet-ai.onrender.com';
 
-// ── Auth token ────────────────────────────────────
-function getAuthToken() {
+// ── Auth ─────────────────────────────────────────
+function getToken() {
   try {
     const key = Object.keys(localStorage)
       .find(k => k.startsWith('sb-') && k.endsWith('-auth-token'));
     if (!key) return null;
-    const data = JSON.parse(localStorage.getItem(key));
-    return data?.access_token || null;
+    return JSON.parse(localStorage.getItem(key))?.access_token || null;
   } catch { return null; }
 }
 
-function authHeaders() {
-  const token = getAuthToken();
+function buildHeaders(extra) {
+  const token = getToken();
   return {
     'Content-Type': 'application/json',
-    ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+    ...(token ? { 'Authorization': 'Bearer ' + token } : {}),
+    ...(extra || {})
   };
 }
 
-// ── Section navigation ────────────────────────────
-function showSection(id, btn) {
-  document.querySelectorAll('.int-section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.int-nav-item').forEach(b => b.classList.remove('active'));
-  document.getElementById('sec-' + id)?.classList.add('active');
-  btn?.classList.add('active');
+// ── Navigation ───────────────────────────────────
+function show(id, btn) {
+  document.querySelectorAll('.i-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.i-nav-item').forEach(b => b.classList.remove('active'));
+  const sec = document.getElementById('sec-' + id);
+  if (sec) sec.classList.add('active');
+  if (btn) btn.classList.add('active');
   if (id === 'logs') loadLogs();
 }
 
-// ── Alert helper ──────────────────────────────────
+// ── Alert ────────────────────────────────────────
 function showAlert(id, msg, type) {
   const el = document.getElementById('alert-' + id);
   if (!el) return;
   el.textContent = msg;
-  el.className = 'int-alert ' + type;
-  setTimeout(() => { el.className = 'int-alert'; el.textContent = ''; }, 6000);
+  el.className = 'i-alert show ' + (type || 'err');
+  if (type !== 'info') {
+    setTimeout(() => { el.className = 'i-alert'; el.textContent = ''; }, 7000);
+  }
 }
 
-// ── Status helpers ────────────────────────────────
-function setStatus(provider, status) {
-  const dot = document.getElementById('status-' + provider);
-  if (dot) dot.className = 'int-nav-status' + (status === 'active' ? ' on' : '');
+// ── Status ───────────────────────────────────────
+function setStatus(key, connected) {
+  const badge   = document.getElementById('badge-' + key);
+  const dot     = document.getElementById('dot-' + key);
+  const ovCard  = document.getElementById('ov-' + key);
+  const ovSt    = document.getElementById('ov-st-' + key);
+  const discBtn = document.getElementById('btn-' + key + '-disconnect');
 
-  const badge = document.getElementById('badge-' + provider);
   if (badge) {
-    badge.className = 'int-badge';
-    if (status === 'active') {
-      badge.classList.add('badge-active');
-      badge.textContent = '✓ Connected';
-    } else if (status === 'error') {
-      badge.classList.add('badge-error');
-      badge.textContent = '✗ Error';
-    } else {
-      badge.classList.add('badge-inactive');
-      badge.textContent = 'Not connected';
-    }
+    badge.className = 'i-badge ' + (connected ? 'b-on' : 'b-off');
+    badge.textContent = connected ? '✓ Bağlandı' : 'Bağlı değil';
   }
-
-  const ovCard = document.getElementById('ov-' + provider);
-  const ovStatus = document.getElementById('ov-st-' + provider);
-  if (ovCard && ovStatus) {
-    if (status === 'active') {
-      ovCard.classList.add('active-card');
-      ovStatus.textContent = '✓ Connected';
-      ovStatus.className = 'int-ov-status on';
-    } else {
-      ovCard.classList.remove('active-card');
-      ovStatus.textContent = 'Not connected';
-      ovStatus.className = 'int-ov-status';
-    }
+  if (dot)    dot.className = 'i-nav-dot' + (connected ? ' on' : '');
+  if (ovCard) ovCard.className = 'i-ov-card' + (connected ? ' connected' : '');
+  if (ovSt) {
+    ovSt.className = 'i-ov-st' + (connected ? ' on' : '');
+    ovSt.textContent = connected ? '✓ Bağlandı' : 'Bağlı değil';
   }
+  if (discBtn) discBtn.style.display = connected ? 'inline-flex' : 'none';
 }
 
-// ── Load saved ────────────────────────────────────
-async function loadIntegrations() {
-  const gs = JSON.parse(localStorage.getItem('int_gs') || '{}');
-  const notion = JSON.parse(localStorage.getItem('int_notion') || '{}');
-  const webhook = JSON.parse(localStorage.getItem('int_webhook') || '{}');
+// ── LocalStorage ─────────────────────────────────
+function lsSave(key, data)  { localStorage.setItem('int_' + key, JSON.stringify(data)); }
+function lsLoad(key)        { try { return JSON.parse(localStorage.getItem('int_' + key) || '{}'); } catch { return {}; } }
+function lsRemove(key)      { localStorage.removeItem('int_' + key); }
 
-  if (gs.url) {
-    document.getElementById('gs-url').value = gs.url;
-    if (gs.tab) document.getElementById('gs-tab').value = gs.tab;
-    setStatus('gs', 'active');
-  }
-  if (notion.token) {
-    document.getElementById('notion-token').value = notion.token;
-    if (notion.dbId) document.getElementById('notion-db').value = notion.dbId;
-    setStatus('notion', 'active');
-  }
-  if (webhook.url) {
-    document.getElementById('wh-url').value = webhook.url;
-    if (webhook.trigger) document.getElementById('wh-trigger').value = webhook.trigger;
-    if (webhook.secret) document.getElementById('wh-secret').value = webhook.secret;
-    setStatus('webhook', 'active');
-  }
-
-  // Also load from API if authenticated
-  try {
-    const res = await fetch(API_URL + '/api/integrations', { headers: authHeaders() });
-    if (res.ok) {
-      const data = await res.json();
-      const map = { google_sheets: 'gs', notion: 'notion', webhook: 'webhook' };
-      data.forEach(int => {
-        if (int.status === 'active') setStatus(map[int.provider] || int.provider, 'active');
-      });
-    }
-  } catch (e) { /* offline — localStorage is the source of truth */ }
+// ── Sheet data (from sessionStorage) ─────────────
+function getSheetData() {
+  try { return JSON.parse(sessionStorage.getItem('mocksheet_current') || 'null'); }
+  catch { return null; }
 }
 
-// ── Google Sheets ─────────────────────────────────
-function testGoogleSheets() {
+// ════════════════════════════════════════════════
+//  GOOGLE SHEETS
+// ════════════════════════════════════════════════
+function validateGS() {
   const url = document.getElementById('gs-url').value.trim();
-  if (!url) { showAlert('gs', '✗ Please enter a URL or ID', 'error'); return; }
-  const match = url.match(/\/d\/([a-zA-Z0-9-_]{20,})/);
-  if (match || url.length > 20) {
-    showAlert('gs', '✓ Valid Google Sheets URL detected', 'success');
-  } else {
-    showAlert('gs', '✗ URL format seems incorrect', 'error');
-  }
+  if (!url) { showAlert('gs', '✗ URL veya ID giriniz', 'err'); return; }
+  const ok = /\/d\/([a-zA-Z0-9-_]{20,})/.test(url) || url.length >= 20;
+  showAlert('gs', ok ? '✓ Geçerli Google Sheets URL\'si' : '✗ URL formatı hatalı. Tam URL veya ID girin.', ok ? 'ok' : 'err');
 }
 
-function saveGoogleSheets() {
-  const url = document.getElementById('gs-url').value.trim();
-  if (!url) { showAlert('gs', '✗ Please enter a URL', 'error'); return; }
-  const tab = document.getElementById('gs-tab').value.trim();
-  localStorage.setItem('int_gs', JSON.stringify({ url, tab }));
-  setStatus('gs', 'active');
-  showAlert('gs', '✓ Google Sheets connection saved', 'success');
-  fetch(API_URL + '/api/integrations/save', {
-    method: 'POST', headers: authHeaders(),
-    body: JSON.stringify({ provider: 'google_sheets', config: { url, tab } })
-  }).catch(() => {});
+function saveGS() {
+  const url  = document.getElementById('gs-url').value.trim();
+  const tab  = document.getElementById('gs-tab').value.trim();
+  const cell = document.getElementById('gs-cell').value.trim() || 'A1';
+  if (!url) { showAlert('gs', '✗ URL veya ID giriniz', 'err'); return; }
+  lsSave('gs', { url, tab, cell });
+  setStatus('gs', true);
+  showAlert('gs', '✓ Google Sheets bağlantısı kaydedildi', 'ok');
 }
 
-async function exportGoogleSheets() {
-  const gs = JSON.parse(localStorage.getItem('int_gs') || '{}');
-  if (!gs.url) { showAlert('gs-export', '✗ Save connection first', 'error'); return; }
+function disconnectGS() {
+  if (!confirm('Google Sheets bağlantısını kaldırmak istiyor musunuz?')) return;
+  lsRemove('gs');
+  setStatus('gs', false);
+  document.getElementById('gs-url').value = '';
+  document.getElementById('gs-tab').value = '';
+}
 
-  const data = JSON.parse(sessionStorage.getItem('mocksheet_current') || 'null');
-  if (!data?.length) {
-    showAlert('gs-export', '✗ No data. Open the app and upload a file first.', 'error');
-    return;
-  }
+async function exportGS() {
+  const cfg = lsLoad('gs');
+  if (!cfg.url) { showAlert('gs-export', '✗ Önce bağlantıyı kaydedin', 'err'); return; }
+
+  const data = getSheetData();
+  if (!data?.length) { showAlert('gs-export', '✗ Veri yok. Uygulamada dosya yükleyin.', 'err'); return; }
 
   const btn = document.getElementById('btn-gs-export');
-  if (btn) { btn.disabled = true; btn.textContent = 'Exporting...'; }
+  btn.disabled = true; btn.textContent = '⏳ Hazırlanıyor...';
 
   try {
-    const res = await fetch(API_URL + '/api/integrations/sheets/export', {
-      method: 'POST', headers: authHeaders(),
-      body: JSON.stringify({ sheetId: gs.url, data, sheetName: gs.tab || 'Sheet1' })
+    const res = await fetch(API + '/api/integrations/sheets/export', {
+      method: 'POST', headers: buildHeaders(),
+      body: JSON.stringify({ sheetId: cfg.url, data, sheetName: cfg.tab || 'Sheet1' })
     });
-    const result = await res.json();
+    const r = await res.json();
 
-    if (result.csv) {
-      const blob = new Blob([result.csv], { type: 'text/csv;charset=utf-8;' });
+    if (r.csv) {
+      const blob = new Blob([r.csv], { type: 'text/csv;charset=utf-8;' });
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
       a.download = 'mocksheet-export.csv';
       document.body.appendChild(a); a.click(); document.body.removeChild(a);
-      showAlert('gs-export',
-        `✓ CSV downloaded (${data.length} rows). Import: File → Import → Upload`,
-        'success');
-      setTimeout(() => {
-        if (confirm('Open Google Sheets to import?'))
-          window.open(result.sheetUrl, '_blank');
-      }, 800);
+      showAlert('gs-export', `✓ ${r.rows} satır CSV indirildi. Google Sheets: Dosya → İçe Aktar → Yükle`, 'ok');
+      setTimeout(() => { if (confirm('Google Sheets\'i açmak ister misiniz?')) window.open(r.sheetUrl, '_blank'); }, 800);
     }
-  } catch (e) {
-    showAlert('gs-export', '✗ Export failed: ' + e.message, 'error');
+  } catch {
+    // Offline fallback
+    const csv = '\uFEFF' + data.map(r =>
+      (r || []).map(c => '"' + String(c || '').replace(/"/g, '""') + '"').join(',')
+    ).join('\r\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = 'export.csv';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    showAlert('gs-export', '✓ CSV indirildi', 'ok');
   } finally {
-    if (btn) { btn.disabled = false; btn.textContent = '📤 Export to Google Sheets'; }
+    btn.disabled = false; btn.textContent = '📤 Google Sheets\'e Aktar';
   }
 }
 
-// ── Notion ────────────────────────────────────────
-async function testNotionConn() {
+// ════════════════════════════════════════════════
+//  NOTION
+// ════════════════════════════════════════════════
+async function testNotion() {
   const token = document.getElementById('notion-token').value.trim();
-  const dbId = document.getElementById('notion-db').value.trim();
-  if (!token) { showAlert('notion', '✗ Enter your integration token', 'error'); return; }
-  showAlert('notion', 'Testing connection...', 'info');
+  const dbId  = document.getElementById('notion-db').value.trim();
+  if (!token) { showAlert('notion', '✗ Token giriniz', 'err'); return; }
+
+  showAlert('notion', '⏳ Test ediliyor...', 'info');
   try {
-    const res = await fetch(API_URL + '/api/integrations/notion/test', {
-      method: 'POST', headers: authHeaders(),
+    const res = await fetch(API + '/api/integrations/notion/test', {
+      method: 'POST', headers: buildHeaders(),
       body: JSON.stringify({ token, dbId })
     });
-    const data = await res.json();
-    if (data.success) {
-      showAlert('notion', '✓ Connected: ' + (data.name || 'Notion database found'), 'success');
+    const r = await res.json();
+    if (r.success) {
+      showAlert('notion', '✓ Bağlantı başarılı' + (r.dbName ? ': ' + r.dbName : ''), 'ok');
     } else {
-      showAlert('notion', '✗ ' + (data.error || 'Invalid credentials'), 'error');
+      showAlert('notion', '✗ ' + (r.error || 'Bağlantı hatası'), 'err');
     }
   } catch (e) {
-    showAlert('notion', '✗ Server unreachable. Check your connection.', 'error');
+    showAlert('notion', '✗ Sunucuya ulaşılamıyor: ' + e.message, 'err');
   }
 }
 
-function saveNotionConn() {
+function saveNotion() {
   const token = document.getElementById('notion-token').value.trim();
-  const dbId = document.getElementById('notion-db').value.trim();
-  if (!token) { showAlert('notion', '✗ Enter your token', 'error'); return; }
-  if (!dbId) { showAlert('notion', '✗ Enter your database ID', 'error'); return; }
-  localStorage.setItem('int_notion', JSON.stringify({ token, dbId }));
-  setStatus('notion', 'active');
-  showAlert('notion', '✓ Notion connection saved', 'success');
-  fetch(API_URL + '/api/integrations/save', {
-    method: 'POST', headers: authHeaders(),
-    body: JSON.stringify({ provider: 'notion', config: { token: '***', dbId } })
-  }).catch(() => {});
+  const dbId  = document.getElementById('notion-db').value.trim();
+  if (!token) { showAlert('notion', '✗ Token giriniz', 'err'); return; }
+  if (!dbId)  { showAlert('notion', '✗ Database ID giriniz', 'err'); return; }
+  lsSave('notion', { token, dbId });
+  setStatus('notion', true);
+  showAlert('notion', '✓ Notion bağlantısı kaydedildi', 'ok');
+}
+
+function disconnectNotion() {
+  if (!confirm('Notion bağlantısını kaldırmak istiyor musunuz?')) return;
+  lsRemove('notion');
+  setStatus('notion', false);
+  document.getElementById('notion-token').value = '';
+  document.getElementById('notion-db').value = '';
 }
 
 async function exportNotion() {
-  const notion = JSON.parse(localStorage.getItem('int_notion') || '{}');
-  if (!notion.token || !notion.dbId) {
-    showAlert('notion-export', '✗ Save your Notion credentials first', 'error');
-    return;
-  }
-  const data = JSON.parse(sessionStorage.getItem('mocksheet_current') || 'null');
-  if (!data || data.length < 2) {
-    showAlert('notion-export', '✗ No data. Open the app and upload a file first.', 'error');
-    return;
-  }
+  const cfg = lsLoad('notion');
+  if (!cfg.token || !cfg.dbId) { showAlert('notion-export', '✗ Önce bağlantıyı kaydedin', 'err'); return; }
 
-  const btn = document.getElementById('btn-notion-export');
-  if (btn) { btn.disabled = true; btn.textContent = 'Exporting...'; }
+  const data = getSheetData();
+  if (!data || data.length < 2) { showAlert('notion-export', '✗ Veri yok. Uygulamada dosya yükleyin.', 'err'); return; }
 
-  const headers = data[0] || [];
-  const rows = data.slice(1).filter(r => r?.some(c => c));
-  showAlert('notion-export', `Exporting ${Math.min(rows.length, 100)} rows...`, 'info');
+  const btn  = document.getElementById('btn-notion-export');
+  const hdrs = data[0] || [];
+  const rows = data.slice(1).filter(r => r?.some(c => c !== '' && c != null));
+  const cnt  = Math.min(rows.length, 100);
+
+  btn.disabled = true; btn.textContent = cnt + ' satır aktarılıyor...';
+  showAlert('notion-export', `⏳ ${cnt} satır Notion'a aktarılıyor...`, 'info');
 
   try {
-    const res = await fetch(API_URL + '/api/integrations/notion/export', {
-      method: 'POST', headers: authHeaders(),
-      body: JSON.stringify({
-        token: notion.token,
-        databaseId: notion.dbId,
-        headers,
-        rows: rows.slice(0, 100)
-      })
+    const res = await fetch(API + '/api/integrations/notion/export', {
+      method: 'POST', headers: buildHeaders(),
+      body: JSON.stringify({ token: cfg.token, databaseId: cfg.dbId, headers: hdrs, rows: rows.slice(0, 100) })
     });
-    const result = await res.json();
-    if (result.success) {
-      showAlert('notion-export',
-        `✓ ${result.count}/${result.total} rows exported to Notion`, 'success');
-      const dbUrl = `https://notion.so/${notion.dbId.replace(/-/g, '')}`;
-      setTimeout(() => {
-        if (confirm('Open Notion database?')) window.open(dbUrl, '_blank');
-      }, 800);
+    const r = await res.json();
+
+    if (r.success) {
+      showAlert('notion-export', `✓ ${r.count}/${r.total} satır Notion'a aktarıldı`, 'ok');
+      const dbUrl = 'https://notion.so/' + cfg.dbId.replace(/-/g, '');
+      setTimeout(() => { if (confirm('Notion veritabanını açmak ister misiniz?')) window.open(dbUrl, '_blank'); }, 800);
     } else {
-      showAlert('notion-export', '✗ ' + (result.error || 'Export failed'), 'error');
+      showAlert('notion-export', '✗ ' + (r.error || 'Aktarım başarısız'), 'err');
     }
   } catch (e) {
-    showAlert('notion-export', '✗ ' + e.message, 'error');
+    showAlert('notion-export', '✗ Sunucu hatası: ' + e.message, 'err');
   } finally {
-    if (btn) { btn.disabled = false; btn.textContent = '📤 Export to Notion'; }
+    btn.disabled = false; btn.textContent = '📤 Notion\'a Aktar';
   }
 }
 
-// ── Webhook ───────────────────────────────────────
-async function testWebhookConn() {
-  const url = document.getElementById('wh-url').value.trim();
-  if (!url) { showAlert('webhook', '✗ Enter a webhook URL', 'error'); return; }
+// ════════════════════════════════════════════════
+//  WEBHOOK
+// ════════════════════════════════════════════════
+async function testWebhook() {
+  const url    = document.getElementById('wh-url').value.trim();
+  const secret = document.getElementById('wh-secret').value.trim();
+  if (!url) { showAlert('webhook', '✗ URL giriniz', 'err'); return; }
 
-  const payload = {
-    source: 'Mocksheet', event: 'test',
-    timestamp: new Date().toISOString(),
-    message: 'Test webhook from Mocksheet Integrations'
-  };
-
+  showAlert('webhook', '⏳ Test yükü gönderiliyor...', 'info');
   try {
-    await fetch(API_URL + '/api/integrations/webhook/send', {
-      method: 'POST', headers: authHeaders(),
-      body: JSON.stringify({ url, event: 'test', data: payload })
+    const res = await fetch(API + '/api/integrations/webhook/send', {
+      method: 'POST', headers: buildHeaders(),
+      body: JSON.stringify({ url, secret, event: 'test', data: { message: 'Mocksheet test webhook' } })
     });
-    showAlert('webhook', '✓ Test payload sent — check your endpoint', 'success');
-  } catch (e) {
+    const r = await res.json();
+    if (r.success) {
+      showAlert('webhook', `✓ Test gönderildi (HTTP ${r.status}). Endpoint'inizi kontrol edin.`, 'ok');
+    } else {
+      showAlert('webhook', '✗ ' + (r.error || 'Gönderilemedi'), 'err');
+    }
+  } catch {
+    // CORS fallback — tarayıcıdan doğrudan
     fetch(url, {
       method: 'POST', mode: 'no-cors',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+      body: JSON.stringify({ source: 'Mocksheet', event: 'test', timestamp: new Date().toISOString() })
     });
-    showAlert('webhook', '✓ Test sent (check your Zapier/Make dashboard)', 'success');
+    showAlert('webhook', '✓ İstek gönderildi (no-cors). Zapier/Make panonuzu kontrol edin.', 'ok');
   }
 }
 
-function saveWebhookConn() {
-  const url = document.getElementById('wh-url').value.trim();
+function saveWebhook() {
+  const url     = document.getElementById('wh-url').value.trim();
   const trigger = document.getElementById('wh-trigger').value;
-  const secret = document.getElementById('wh-secret').value.trim();
-  if (!url) { showAlert('webhook', '✗ Enter a webhook URL', 'error'); return; }
-  localStorage.setItem('int_webhook', JSON.stringify({ url, trigger, secret }));
-  setStatus('webhook', 'active');
-  showAlert('webhook', '✓ Webhook activated', 'success');
-  fetch(API_URL + '/api/integrations/save', {
-    method: 'POST', headers: authHeaders(),
-    body: JSON.stringify({ provider: 'webhook', config: { url, trigger, secret } })
-  }).catch(() => {});
+  const secret  = document.getElementById('wh-secret').value.trim();
+  if (!url) { showAlert('webhook', '✗ URL giriniz', 'err'); return; }
+  lsSave('webhook', { url, trigger, secret });
+  setStatus('webhook', true);
+  showAlert('webhook', '✓ Webhook kaydedildi ve etkinleştirildi', 'ok');
 }
 
-// ── Quick actions (overview) ──────────────────────
-async function quickExportGS() {
-  const gs = JSON.parse(localStorage.getItem('int_gs') || '{}');
-  if (!gs.url) {
-    showAlert('quick', '✗ Google Sheets not connected. Go to Google Sheets tab.', 'error');
-    return;
-  }
-  showSection('google', document.getElementById('nav-google'));
-  setTimeout(exportGoogleSheets, 300);
+function disconnectWebhook() {
+  if (!confirm('Webhook\'u devre dışı bırakmak istiyor musunuz?')) return;
+  lsRemove('webhook');
+  setStatus('webhook', false);
+  document.getElementById('wh-url').value = '';
 }
 
-async function quickExportNotion() {
-  const notion = JSON.parse(localStorage.getItem('int_notion') || '{}');
-  if (!notion.token) {
-    showAlert('quick', '✗ Notion not connected. Go to Notion tab.', 'error');
-    return;
-  }
-  showSection('notion', document.getElementById('nav-notion'));
-  setTimeout(exportNotion, 300);
-}
+// ════════════════════════════════════════════════
+//  QUICK EXPORT
+// ════════════════════════════════════════════════
+async function quickExport(type) {
+  if (type === 'gs') {
+    if (!lsLoad('gs').url) { showAlert('quick', '✗ Google Sheets bağlı değil. Sol menüden ayarlayın.', 'err'); return; }
+    show('gs', document.getElementById('nav-gs'));
+    setTimeout(exportGS, 300);
 
-async function quickSendWebhook() {
-  const wh = JSON.parse(localStorage.getItem('int_webhook') || '{}');
-  if (!wh.url) {
-    showAlert('quick', '✗ Webhook not configured. Go to Zapier tab.', 'error');
-    return;
-  }
-  const data = JSON.parse(sessionStorage.getItem('mocksheet_current') || 'null');
-  try {
-    await fetch(API_URL + '/api/integrations/webhook/send', {
-      method: 'POST', headers: authHeaders(),
-      body: JSON.stringify({
-        url: wh.url,
-        event: 'manual',
-        data: { sheet_rows: data?.length || 0, timestamp: new Date().toISOString() }
-      })
-    });
-    showAlert('quick', '✓ Webhook triggered successfully', 'success');
-  } catch (e) {
-    showAlert('quick', '✗ Failed to send webhook: ' + e.message, 'error');
+  } else if (type === 'notion') {
+    if (!lsLoad('notion').token) { showAlert('quick', '✗ Notion bağlı değil. Sol menüden ayarlayın.', 'err'); return; }
+    show('notion', document.getElementById('nav-notion'));
+    setTimeout(exportNotion, 300);
+
+  } else if (type === 'webhook') {
+    const cfg = lsLoad('webhook');
+    if (!cfg.url) { showAlert('quick', '✗ Webhook ayarlı değil. Sol menüden ayarlayın.', 'err'); return; }
+    const data = getSheetData();
+    try {
+      await fetch(API + '/api/integrations/webhook/send', {
+        method: 'POST', headers: buildHeaders(),
+        body: JSON.stringify({ url: cfg.url, secret: cfg.secret, event: 'manual', data: { rows: data?.length || 0 } })
+      });
+    } catch {
+      fetch(cfg.url, { method: 'POST', mode: 'no-cors',
+        body: JSON.stringify({ source: 'Mocksheet', event: 'manual' }) });
+    }
+    showAlert('quick', '✓ Webhook tetiklendi', 'ok');
   }
 }
 
-// ── Activity Logs ─────────────────────────────────
+// ════════════════════════════════════════════════
+//  LOGS
+// ════════════════════════════════════════════════
 async function loadLogs() {
   const tbody = document.getElementById('logs-body');
-  tbody.innerHTML = '<tr><td colspan="5" class="log-empty">Loading...</td></tr>';
+  if (!tbody) return;
+  tbody.innerHTML = '<tr><td colspan="5" class="i-empty">Yükleniyor...</td></tr>';
 
   try {
-    const res = await fetch(API_URL + '/api/integrations/logs', { headers: authHeaders() });
-    if (!res.ok) throw new Error('Not authenticated');
-    const logs = await res.json();
-
-    if (!logs.length) {
-      tbody.innerHTML = '<tr><td colspan="5" class="log-empty">No activity yet</td></tr>';
+    const res = await fetch(API + '/api/integrations/logs', { headers: buildHeaders() });
+    if (res.ok) {
+      const logs = await res.json();
+      if (!logs.length) {
+        tbody.innerHTML = '<tr><td colspan="5" class="i-empty">Henüz aktivite yok. İlk aktarımı yapın!</td></tr>';
+        return;
+      }
+      tbody.innerHTML = logs.map(l => `
+        <tr>
+          <td><strong>${(l.provider || '').replace('_', ' ')}</strong></td>
+          <td>${l.event || ''}</td>
+          <td><span class="${l.status === 'success' ? 'log-ok' : 'log-err'}">${l.status === 'success' ? '✓ Başarılı' : '✗ Hata'}</span></td>
+          <td>${l.rows_affected || '—'}</td>
+          <td style="color:#9CA3AF;font-size:12px">${new Date(l.created_at).toLocaleString('tr-TR', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</td>
+        </tr>`).join('');
       return;
     }
+  } catch {}
 
-    const providerLabel = {
-      google_sheets: '📊 Google Sheets',
-      notion: '◻️ Notion',
-      webhook: '⚡ Webhook'
-    };
-
-    tbody.innerHTML = logs.map(log => `
-      <tr>
-        <td>${providerLabel[log.provider] || log.provider}</td>
-        <td>${log.event}</td>
-        <td><span class="log-badge ${log.status === 'success' ? 'log-success' : 'log-error'}">
-          ${log.status}
-        </span></td>
-        <td>${log.rows_affected || '—'}</td>
-        <td style="color:#9CA3AF">${new Date(log.created_at).toLocaleString()}</td>
-      </tr>
-    `).join('');
-  } catch (e) {
-    tbody.innerHTML = `<tr><td colspan="5" class="log-empty">
-      Sign in to view activity logs
-    </td></tr>`;
-  }
+  tbody.innerHTML = '<tr><td colspan="5" class="i-empty">Kayıtlar yüklenemedi. Giriş yapmanız gerekebilir.</td></tr>';
 }
 
-// ── Init ──────────────────────────────────────────
-window.addEventListener('DOMContentLoaded', loadIntegrations);
+// ── Init ─────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', function () {
+  const gs = lsLoad('gs');
+  if (gs.url) {
+    setStatus('gs', true);
+    document.getElementById('gs-url').value  = gs.url;
+    document.getElementById('gs-tab').value  = gs.tab || '';
+    document.getElementById('gs-cell').value = gs.cell || 'A1';
+  }
+
+  const notion = lsLoad('notion');
+  if (notion.token) {
+    setStatus('notion', true);
+    document.getElementById('notion-token').value = '••••••••••••••••';
+    document.getElementById('notion-db').value    = notion.dbId || '';
+  }
+
+  const wh = lsLoad('webhook');
+  if (wh.url) {
+    setStatus('webhook', true);
+    document.getElementById('wh-url').value     = wh.url;
+    document.getElementById('wh-trigger').value = wh.trigger || 'manual';
+    if (wh.secret) document.getElementById('wh-secret').value = wh.secret;
+  }
+});
 </script>
 </body>
 </html>
