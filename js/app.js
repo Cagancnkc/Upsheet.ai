@@ -2569,6 +2569,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const savedTheme = localStorage.getItem('theme') || 'dark';
   document.body.classList.add(savedTheme);
   updateThemeIcon();
+  setTimeout(loadUserUsage, 500);
 
   const gw = document.getElementById('gridWrap');
   if (gw) gw.addEventListener('input', () => {
@@ -3652,15 +3653,38 @@ async function sendChatMessage() {
       ? getSheetContext()
       : '';
 
+    const token = getAuthToken();
     const response = await fetch(API_URL + '/api/chat', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': 'Bearer ' + token } : {})
+      },
       body: JSON.stringify({ message, sheetContext })
     });
+
+    if (response.status === 429) {
+      const errorData = await response.json();
+      showLimitModal(errorData);
+      return;
+    }
+
+    if (response.status === 403) {
+      const errorData = await response.json();
+      if (errorData.code === 'FEATURE_NOT_AVAILABLE') {
+        handleLockedFeature(errorData.feature);
+      }
+      return;
+    }
 
     if (!response.ok) throw new Error('Server error: ' + response.status);
 
     const data = await response.json();
+
+    if (data.usage) {
+      userUsage = { ...userUsage, used: { today: data.usage.commands_used_today, this_month: data.usage.commands_used_month }, limits: { ...userUsage?.limits, ai_commands_per_month: data.usage.monthly_limit, ai_commands_per_day: data.usage.daily_limit } };
+      updateUsageUI();
+    }
 
     if (data.reply && typeof addMsg === 'function') {
       addMsg('ai', data.reply);
@@ -3708,6 +3732,147 @@ async function sendChatMessage() {
     const bar = document.getElementById('attachmentPreviewBar');
     if (bar) bar.innerHTML = '';
   }
+}
+
+// ── Auth token helper ────────────────────────────
+function getAuthToken() {
+  try {
+    const key = Object.keys(localStorage)
+      .find(k => k.startsWith('sb-') && k.endsWith('-auth-token'));
+    if (!key) return null;
+    const data = JSON.parse(localStorage.getItem(key));
+    return data?.access_token || null;
+  } catch { return null; }
+}
+
+// ── Kullanım bilgisi ─────────────────────────────
+let userUsage = null;
+let userPlan = 'free';
+
+async function loadUserUsage() {
+  const token = getAuthToken();
+  if (!token) return;
+
+  try {
+    const res = await fetch(API_URL + '/api/usage', {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    if (!res.ok) return;
+    userUsage = await res.json();
+    userPlan = userUsage.plan;
+    updateUsageUI();
+  } catch (e) {
+    console.warn('Usage yüklenemedi:', e);
+  }
+}
+
+function updateUsageUI() {
+  if (!userUsage) return;
+
+  const planColors = { free: '#6B7280', pro: '#4F46E5', business: '#059669' };
+  const badges = { free: '🆓 Ücretsiz', pro: '⭐ Pro', business: '🏢 İş Planı' };
+
+  const planEl = document.getElementById('plan-badge');
+  if (planEl) {
+    planEl.textContent = badges[userPlan] || userPlan;
+    planEl.style.background = (planColors[userPlan] || '#6B7280') + '20';
+    planEl.style.color = planColors[userPlan] || '#6B7280';
+    planEl.style.display = 'inline-flex';
+  }
+
+  const monthLimit = userUsage.limits?.ai_commands_per_month;
+  if (monthLimit) {
+    const used = userUsage.used?.this_month || 0;
+    const pct = Math.min((used / monthLimit) * 100, 100);
+
+    const usageBar = document.getElementById('usage-bar-fill');
+    const usageText = document.getElementById('usage-text');
+
+    if (usageBar) {
+      usageBar.style.width = pct + '%';
+      usageBar.style.background = pct > 80 ? '#EF4444' : pct > 60 ? '#F59E0B' : '#4F46E5';
+    }
+    if (usageText) {
+      usageText.textContent = used + ' / ' + monthLimit + ' komut';
+    }
+  }
+}
+
+function handleLockedFeature(feature) {
+  const featureNames = {
+    integrations: 'Entegrasyonlar',
+    auto_report: 'Otomatik Rapor',
+    competitor_analysis: 'Rakip Analizi',
+    accounting_formulas: 'Muhasebe Formülleri'
+  };
+  showUpgradeModal(featureNames[feature] || feature);
+}
+
+function showUpgradeModal(featureName) {
+  const existing = document.getElementById('upgradeModal');
+  if (existing) existing.remove();
+
+  const modal = document.createElement('div');
+  modal.id = 'upgradeModal';
+  modal.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)';
+
+  const planInfo = userUsage || { plan: 'free' };
+
+  modal.innerHTML = `
+    <div style="background:white;border-radius:20px;padding:40px;max-width:440px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.2);position:relative">
+      <button onclick="document.getElementById('upgradeModal').remove()" style="position:absolute;top:16px;right:16px;background:none;border:none;cursor:pointer;font-size:18px;color:#9CA3AF">✕</button>
+      <div style="font-size:48px;margin-bottom:16px">🔒</div>
+      <div style="font-size:20px;font-weight:800;margin-bottom:8px;color:#111827">${featureName} Pro Plan Gerektirir</div>
+      <div style="font-size:14px;color:#6B7280;margin-bottom:24px;line-height:1.6">
+        Şu anki planınız: <strong>${planInfo.plan === 'free' ? 'Ücretsiz' : planInfo.plan}</strong><br>
+        ${featureName} özelliğini kullanmak için Pro veya İş planına geçin.
+      </div>
+      <div style="background:#F9FAFB;border-radius:10px;padding:16px;text-align:left;margin-bottom:24px">
+        <div style="font-size:13px;font-weight:700;margin-bottom:8px;color:#4F46E5">⭐ Pro Plan — ₺499/ay</div>
+        <div style="font-size:12px;color:#6B7280;line-height:1.8">✓ 200 AI komut/ay<br>✓ Tüm entegrasyonlar<br>✓ Otomatik rapor<br>✓ Rakip analizi</div>
+      </div>
+      <div style="display:flex;gap:10px">
+        <button onclick="document.getElementById('upgradeModal').remove()" style="flex:1;padding:11px;border:1.5px solid #E5E7EB;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;background:white;color:#374151">Şimdi Değil</button>
+        <button onclick="window.location.href='index.html#pricing'" style="flex:2;padding:11px;border:none;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;background:#4F46E5;color:white">⬆️ Planı Yükselt</button>
+      </div>
+    </div>`;
+
+  document.body.appendChild(modal);
+  modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
+}
+
+function showLimitModal(errorData) {
+  const existing = document.getElementById('limitModal');
+  if (existing) existing.remove();
+
+  const isDaily = errorData.code === 'DAILY_LIMIT_REACHED';
+  const modal = document.createElement('div');
+  modal.id = 'limitModal';
+  modal.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)';
+
+  const pct = Math.min(((errorData.used || 0) / (errorData.limit || 1)) * 100, 100);
+
+  modal.innerHTML = `
+    <div style="background:white;border-radius:20px;padding:40px;max-width:440px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.2);position:relative">
+      <button onclick="document.getElementById('limitModal').remove()" style="position:absolute;top:16px;right:16px;background:none;border:none;cursor:pointer;font-size:18px;color:#9CA3AF">✕</button>
+      <div style="font-size:48px;margin-bottom:16px">${isDaily ? '⏰' : '📊'}</div>
+      <div style="font-size:20px;font-weight:800;margin-bottom:8px;color:#111827">${isDaily ? 'Günlük Limit Doldu' : 'Aylık Limit Doldu'}</div>
+      <div style="font-size:14px;color:#6B7280;margin-bottom:20px;line-height:1.6">
+        ${errorData.error}<br>
+        <strong>Kullanılan:</strong> ${errorData.used}/${errorData.limit} komut<br>
+        <strong>Sıfırlanma:</strong> ${errorData.reset}
+      </div>
+      <div style="background:#F3F4F6;border-radius:100px;height:8px;margin-bottom:24px;overflow:hidden">
+        <div style="width:${pct}%;height:100%;background:#EF4444;border-radius:100px"></div>
+      </div>
+      <div style="display:flex;gap:10px">
+        <button onclick="document.getElementById('limitModal').remove()" style="flex:1;padding:11px;border:1.5px solid #E5E7EB;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;background:white;color:#374151">Tamam</button>
+        <button onclick="window.location.href='index.html#pricing'" style="flex:2;padding:11px;border:none;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;background:#4F46E5;color:white">⬆️ Limiti Artır</button>
+      </div>
+    </div>`;
+
+  document.body.appendChild(modal);
+  modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
 }
 
 // Spin animation

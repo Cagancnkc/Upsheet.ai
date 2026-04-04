@@ -114,7 +114,9 @@ app.use(express.json({ limit: '2mb' }));
 
 const integrationsRouter = require('./routes/integrations');
 const stripeRouter = require('./routes/stripe');
-app.use('/api/integrations', integrationsRouter);
+const { checkLimit, incrementUsage, requireFeature, getOrCreateUsage } = require('./middleware/limits');
+const PLANS = require('./config/plans');
+app.use('/api/integrations', checkLimit, requireFeature('integrations'), integrationsRouter);
 app.use('/api/stripe', stripeRouter);
 
 app.get('/', (req, res) => {
@@ -125,17 +127,84 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString(), anthropic: !!process.env.ANTHROPIC_API_KEY });
 });
 
-app.post('/api/chat', async (req, res) => {
+app.post('/api/chat', checkLimit, async (req, res) => {
   try {
     const { message, sheetContext } = req.body;
     if (!message || !message.trim())
       return res.status(400).json({ error: 'Mesaj boş olamaz' });
+
     const result = await processExcelCommand(message.trim(), sheetContext || '');
-    res.json(result);
+
+    await incrementUsage(req.user.id);
+
+    const plan = req.plan;
+    const usage = req.usage;
+    const monthLimit = plan.ai_commands_per_month;
+    const remaining = monthLimit === Infinity
+      ? null
+      : Math.max(0, monthLimit - (usage.ai_commands_used_month + 1));
+
+    res.json({
+      ...result,
+      usage: {
+        plan: usage.plan,
+        commands_used_today: usage.ai_commands_used_today + 1,
+        commands_used_month: usage.ai_commands_used_month + 1,
+        daily_limit: plan.ai_commands_per_day === Infinity ? null : plan.ai_commands_per_day,
+        monthly_limit: monthLimit === Infinity ? null : monthLimit,
+        remaining_this_month: remaining
+      }
+    });
   } catch (error) {
     console.error('/api/chat hatası:', error);
     res.status(500).json({ action: 'message', changes: [], reply: 'Sunucu hatası. Lütfen tekrar deneyin.' });
   }
+});
+
+app.get('/api/usage', async (req, res) => {
+  const token = req.headers.authorization?.replace('Bearer ', '');
+  if (!token) return res.status(401).json({ error: 'Giriş gerekli' });
+
+  const { createClient } = require('@supabase/supabase-js');
+  const sb = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
+
+  const { data: { user }, error } = await sb.auth.getUser(token);
+  if (error || !user) return res.status(401).json({ error: 'Geçersiz token' });
+
+  const usage = await getOrCreateUsage(user.id);
+  const plan = PLANS[usage.plan] || PLANS.free;
+
+  res.json({
+    plan: usage.plan,
+    plan_name: plan.displayName,
+    badge: plan.badge,
+    limits: {
+      ai_commands_per_day: plan.ai_commands_per_day === Infinity ? null : plan.ai_commands_per_day,
+      ai_commands_per_month: plan.ai_commands_per_month === Infinity ? null : plan.ai_commands_per_month,
+      max_rows: plan.max_rows,
+      max_file_size_mb: plan.max_file_size_mb
+    },
+    used: {
+      today: usage.ai_commands_used_today,
+      this_month: usage.ai_commands_used_month
+    },
+    remaining: {
+      today: plan.ai_commands_per_day === Infinity
+        ? null
+        : Math.max(0, plan.ai_commands_per_day - usage.ai_commands_used_today),
+      this_month: plan.ai_commands_per_month === Infinity
+        ? null
+        : Math.max(0, plan.ai_commands_per_month - usage.ai_commands_used_month)
+    },
+    features: {
+      integrations: plan.integrations,
+      auto_report: plan.auto_report,
+      competitor_analysis: plan.competitor_analysis,
+      accounting_formulas: plan.accounting_formulas
+    },
+    subscription_status: usage.subscription_status,
+    plan_ends_at: usage.plan_ends_at
+  });
 });
 
 app.use((err, _req, res, _next) => {

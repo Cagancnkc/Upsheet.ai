@@ -155,9 +155,39 @@ router.post('/webhook',
 
       case 'checkout.session.completed': {
         const session = event.data.object;
-        console.log('✅ Ödeme tamamlandı:', session.customer_email);
-        // TODO: Supabase'de kullanıcı planını güncelle
-        // await updateUserPlan(session.metadata.userId, session.metadata.plan);
+        const { createClient } = require('@supabase/supabase-js');
+        const sb = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
+
+        const userId = session.metadata?.userId;
+        const plan = session.metadata?.plan;
+        const period = session.metadata?.period;
+
+        if (userId && plan) {
+          let planEndsAt = null;
+          const now = new Date();
+          if (period === 'weekly') {
+            planEndsAt = new Date(now.setDate(now.getDate() + 7));
+          } else if (period === 'monthly') {
+            planEndsAt = new Date(now.setMonth(now.getMonth() + 1));
+          } else if (period === 'yearly') {
+            planEndsAt = new Date(now.setFullYear(now.getFullYear() + 1));
+          }
+
+          await sb.from('user_usage').upsert({
+            user_id: userId,
+            plan: plan,
+            stripe_customer_id: session.customer,
+            stripe_subscription_id: session.subscription,
+            subscription_status: 'active',
+            subscription_period: period,
+            plan_started_at: new Date().toISOString(),
+            plan_ends_at: planEndsAt?.toISOString()
+          }, { onConflict: 'user_id' });
+
+          console.log(`✅ Plan güncellendi: ${userId} → ${plan} (${period})`);
+        } else {
+          console.log('✅ Ödeme tamamlandı:', session.customer_email);
+        }
         break;
       }
 
@@ -170,8 +200,14 @@ router.post('/webhook',
 
       case 'customer.subscription.deleted': {
         const sub = event.data.object;
-        console.log('❌ Abonelik iptal edildi:', sub.id);
-        // TODO: Kullanıcıyı free plana düşür
+        const { createClient: createClientDel } = require('@supabase/supabase-js');
+        const sbDel = createClientDel(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
+
+        await sbDel.from('user_usage')
+          .update({ plan: 'free', subscription_status: 'canceled', plan_ends_at: null })
+          .eq('stripe_subscription_id', sub.id);
+
+        console.log(`❌ Abonelik iptal: ${sub.id} → free plan`);
         break;
       }
 

@@ -338,6 +338,22 @@ body.dark .lang-btn.active { background: rgba(255,255,255,0.12); color: #fff; bo
       </div>
       <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#4a4a5a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
     </div>
+    <!-- Plan badge + kullanım barı -->
+    <div style="padding:12px 16px 8px;border-top:1px solid #E5E7EB">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <span id="plan-badge" style="display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;padding:4px 10px;border-radius:100px;background:#EEF2FF;color:#4F46E5">🆓 Ücretsiz</span>
+        <a href="index.html#pricing" style="font-size:11px;color:#4F46E5;text-decoration:none;font-weight:600">Yükselt ↗</a>
+      </div>
+      <div>
+        <div style="font-size:11px;color:#9CA3AF;margin-bottom:4px;display:flex;justify-content:space-between">
+          <span>AI Komutları</span>
+          <span id="usage-text">0 / 20</span>
+        </div>
+        <div style="background:#F3F4F6;border-radius:100px;height:5px;overflow:hidden">
+          <div id="usage-bar-fill" style="height:100%;width:0%;background:#4F46E5;border-radius:100px;transition:width .3s,background .3s"></div>
+        </div>
+      </div>
+    </div>
     <div class="sb-storage">
       <div class="sb-storage-label">Storage: 2.3 MB / 100 MB</div>
       <div class="sb-storage-bar"><div class="sb-storage-fill"></div></div>
