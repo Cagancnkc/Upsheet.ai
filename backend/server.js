@@ -113,7 +113,9 @@ app.use(cors({
 app.use(express.json({ limit: '2mb' }));
 
 const integrationsRouter = require('./routes/integrations');
+const stripeRouter = require('./routes/stripe');
 app.use('/api/integrations', integrationsRouter);
+app.use('/api/stripe', stripeRouter);
 
 app.get('/', (req, res) => {
   res.json({ status: 'ok', service: 'MockSheets API', version: '1.0.0' });

@@ -58,6 +58,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/landing.css">
+<script src="payment.js" defer></script>
 </head>
 <body>
 
@@ -773,12 +774,13 @@
           <li>✓ Rakip veri analizi</li>
           <li>✓ E-posta desteği (48s yanıt)</li>
         </ul>
-        <a href="auth.html" class="lp-btn-primary"
-           style="width:100%;justify-content:center;
-                  margin-top:auto;background:white;
-                  color:#1d1d1f;">
+        <button class="lp-btn-primary"
+                style="width:100%;justify-content:center;
+                       margin-top:auto;background:white;
+                       color:#1d1d1f;border:none;cursor:pointer;"
+                onclick="startCheckout('pro', currentPeriod)">
           Hemen Başla
-        </a>
+        </button>
       </div>
 
       <!-- BUSINESS -->
@@ -844,13 +846,20 @@
           <li>✓ Öncelikli destek (4s yanıt)</li>
         </ul>
 
-        <a href="auth.html" class="lp-btn-primary"
-           style="width:100%;justify-content:center;
-                  margin-top:auto;">
+        <button class="lp-btn-primary"
+                style="width:100%;justify-content:center;
+                       margin-top:auto;border:none;cursor:pointer;"
+                onclick="startCheckout('business', currentPeriod)">
           Teklif Al
-        </a>
+        </button>
       </div>
 
+    </div>
+
+    <div id="checkout-error"
+         style="display:none;text-align:center;margin-top:16px;
+                background:#FEE2E2;color:#991B1B;padding:12px 20px;
+                border-radius:10px;font-size:13px;font-weight:500">
     </div>
 
     <p class="lp-pricing-note">
