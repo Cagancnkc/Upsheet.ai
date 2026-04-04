@@ -30,17 +30,27 @@ function animateWords(words) {
 
 // ── FİYAT TABLOSU ────────────────────────────────────────────────────
 const PRICES = {
-  weekly:  { pro: 149,  biz: 349,  period: '/hf', bizBase: 349 },
-  monthly: { pro: 499,  biz: 1099, period: '/ay', bizBase: 1099 },
-  yearly:  {
-    pro: 299, biz: 699, period: '/ay', bizBase: 699,
-    proOrig: 499, bizOrig: 1099,
-    proNote: 'yıllık ₺3.588 faturalandırılır', bizNote: 'yıllık ₺8.388 faturalandırılır'
+  weekly: {
+    pro:     { amount: 124.75, label: '₺124,75', period: '/hf' },
+    biz:     { amount: 274.75, label: '₺274,75', period: '/hf' },
+    bizBase: 274.75
+  },
+  monthly: {
+    pro:     { amount: 499,    label: '₺499',    period: '/ay' },
+    biz:     { amount: 1099,   label: '₺1.099',  period: '/ay' },
+    bizBase: 1099
+  },
+  yearly: {
+    pro:     { amount: 2990,   label: '₺2.990',  period: '/yıl' },
+    biz:     { amount: 6990,   label: '₺6.990',  period: '/yıl' },
+    bizBase: 6990,
+    proMonthly:  249.17,
+    bizMonthly:  582.50
   }
 };
 
-const BIZ_BASE = { weekly: 349, monthly: 1099, yearly: 699 };
-const PER_USER_USD = 80;
+const BIZ_BASE = { weekly: 274.75, monthly: 1099, yearly: 6990 };
+const PER_USER_TRY = 80;
 let currentPeriod = 'monthly';
 let currentUsers = 5;
 
@@ -53,26 +63,42 @@ function setPeriod(period) {
 
   var p = PRICES[period];
 
-  var proEl = document.getElementById('price-pro');
+  var proNumEl    = document.getElementById('price-pro');
   var proPeriodEl = document.getElementById('period-pro');
-  var proOrigEl = document.getElementById('orig-pro');
+  var proOrigEl   = document.getElementById('orig-pro');
+  var proNoteEl   = document.getElementById('note-pro');
+  var freeGiftEl  = document.getElementById('yearly-gift-pro');
+  var freeGiftBiz = document.getElementById('yearly-gift-biz');
 
-  if (proEl) proEl.textContent = p.pro.toFixed(0);
-  if (proPeriodEl) proPeriodEl.textContent = p.period;
+  if (proNumEl) {
+    if (period === 'yearly')       proNumEl.textContent = '2.990';
+    else if (period === 'monthly') proNumEl.textContent = '499';
+    else                           proNumEl.textContent = '124,75';
+  }
+  if (proPeriodEl) proPeriodEl.textContent = p.pro.period;
+
+  if (proNoteEl) {
+    if (period === 'yearly') {
+      proNoteEl.textContent = '≈ ₺249/ay · 2 ay ücretsiz';
+    } else if (period === 'monthly') {
+      proNoteEl.textContent = 'Aylık faturalandırılır';
+    } else {
+      proNoteEl.textContent = 'Haftalık faturalandırılır';
+    }
+    proNoteEl.style.display = 'block';
+  }
+
   if (proOrigEl) {
-    if (period === 'yearly' && p.proOrig) {
-      proOrigEl.textContent = '₺' + p.proOrig + '/ay';
+    if (period === 'yearly') {
+      proOrigEl.textContent = 'Aylık ₺499 yerine';
       proOrigEl.style.display = 'block';
     } else {
       proOrigEl.style.display = 'none';
     }
   }
 
-  var proNoteEl = document.getElementById('pro-yearly-note');
-  if (proNoteEl) {
-    proNoteEl.textContent = period === 'yearly' ? (p.proNote || '') : '';
-    proNoteEl.style.display = period === 'yearly' ? 'block' : 'none';
-  }
+  if (freeGiftEl)  freeGiftEl.style.display  = period === 'yearly' ? 'flex' : 'none';
+  if (freeGiftBiz) freeGiftBiz.style.display = period === 'yearly' ? 'flex' : 'none';
 
   updateBizPrice(currentUsers);
 }
@@ -83,19 +109,20 @@ function updateBizPrice(users) {
 
   var base = BIZ_BASE[currentPeriod] || BIZ_BASE.monthly;
   var extraUsers = Math.max(0, users - 5);
-  var price = base + (extraUsers * PER_USER_USD);
+  var price = base + (extraUsers * PER_USER_TRY);
 
   var discountRate = 0;
   var discountLabel = '';
-  if (users >= 30)      { discountRate = 0.20; discountLabel = '20%'; }
-  else if (users >= 20) { discountRate = 0.15; discountLabel = '15%'; }
-  else if (users >= 10) { discountRate = 0.10; discountLabel = '10%'; }
+  if (users >= 30)      { discountRate = 0.20; discountLabel = '%20'; }
+  else if (users >= 20) { discountRate = 0.15; discountLabel = '%15'; }
+  else if (users >= 10) { discountRate = 0.10; discountLabel = '%10'; }
 
   if (discountRate > 0) price = price * (1 - discountRate);
 
   var bizPriceEl   = document.getElementById('price-biz');
   var bizPeriodEl  = document.getElementById('period-biz');
   var bizOrigEl    = document.getElementById('orig-biz');
+  var bizNoteEl    = document.getElementById('note-biz');
   var badgeEl      = document.getElementById('userCountBadge');
   var discountEl   = document.getElementById('userDiscount');
   var discountText = document.getElementById('discountText');
@@ -104,15 +131,32 @@ function updateBizPrice(users) {
   var minusBtn     = document.getElementById('userMinus');
   var plusBtn      = document.getElementById('userPlus');
 
-  if (bizPriceEl)  bizPriceEl.textContent  = price.toFixed(0);
-  if (bizPeriodEl) bizPeriodEl.textContent = PRICES[currentPeriod]?.period || '/ay';
+  if (bizPriceEl) {
+    var formatted = price % 1 === 0
+      ? price.toLocaleString('tr-TR')
+      : price.toFixed(2).replace('.', ',');
+    bizPriceEl.textContent = formatted;
+  }
+  if (bizPeriodEl) bizPeriodEl.textContent = PRICES[currentPeriod]?.biz?.period || '/ay';
   if (badgeEl)     badgeEl.textContent     = users + ' kullanıcı';
   if (sliderEl)    sliderEl.value          = users;
 
+  if (bizNoteEl) {
+    if (currentPeriod === 'yearly') {
+      bizNoteEl.textContent = '≈ ₺' + Math.round(price / 12).toLocaleString('tr-TR') + '/ay · 2 ay ücretsiz';
+      bizNoteEl.style.display = 'block';
+    } else if (currentPeriod === 'monthly') {
+      bizNoteEl.textContent = 'Aylık faturalandırılır';
+      bizNoteEl.style.display = 'block';
+    } else {
+      bizNoteEl.textContent = 'Haftalık faturalandırılır';
+      bizNoteEl.style.display = 'block';
+    }
+  }
+
   if (bizOrigEl) {
-    var p = PRICES[currentPeriod];
-    if (currentPeriod === 'yearly' && p?.bizOrig) {
-      bizOrigEl.textContent = '₺' + (p.bizOrig + extraUsers * PER_USER_USD).toFixed(0) + '/ay';
+    if (currentPeriod === 'yearly') {
+      bizOrigEl.textContent = 'Aylık ₺1.099 yerine';
       bizOrigEl.style.display = 'block';
     } else {
       bizOrigEl.style.display = 'none';

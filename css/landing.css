@@ -1066,3 +1066,17 @@ body {
   .lp-demo-inner { grid-template-columns: 1fr; gap: 32px; }
   .lp-blog-grid { grid-template-columns: 1fr; }
 }
+
+/* ── Yıllık "2 ay ücretsiz" animasyonu ──────── */
+#yearly-gift-pro,
+#yearly-gift-biz {
+  animation: giftPulse 2s ease-in-out infinite;
+}
+
+@keyframes giftPulse {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(5,150,105,.4); }
+  50%       { transform: scale(1.02); box-shadow: 0 0 0 6px rgba(5,150,105,0); }
+}
+
+#orig-pro, #orig-biz { transition: all .3s; }
+#note-pro, #note-biz { transition: all .2s; }
