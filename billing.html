@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fiyatlandırma — Mocksheet</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='black'/><path d='M 30 65 Q 28 40 50 28 Q 65 22 75 32 L 68 40 Q 60 33 50 37 Q 35 45 36 63 Z' fill='white'/></svg>">
+<link rel="stylesheet" href="css/landing.css">
+<style>
+  body {
+    background: #F7F7F5;
+    min-height: 100vh;
+    font-family: 'Sora', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  /* ── Üst bar ── */
+  .bill-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 32px;
+    background: white;
+    border-bottom: 1px solid #E5E7EB;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .bill-logo {
+    font-size: 18px;
+    font-weight: 800;
+    color: #111827;
+    letter-spacing: -.03em;
+    text-decoration: none;
+  }
+  .bill-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: #6B7280;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color .2s;
+  }
+  .bill-back:hover { color: #111827; }
+
+  /* ── İçerik ── */
+  .bill-wrap {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+
+  .bill-title {
+    font-size: 28px;
+    font-weight: 800;
+    color: #111827;
+    letter-spacing: -.03em;
+    text-align: center;
+    margin-bottom: 6px;
+  }
+  .bill-sub {
+    font-size: 15px;
+    color: #6B7280;
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  /* ── Mevcut plan banner ── */
+  #current-plan-banner {
+    display: none;
+    background: #EEF2FF;
+    border: 1.5px solid #C7D2FE;
+    border-radius: 12px;
+    padding: 14px 20px;
+    margin-bottom: 28px;
+    font-size: 13px;
+    color: #4338CA;
+    font-weight: 600;
+    text-align: center;
+  }
+
+  /* ── Periyot seçici ── */
+  .bill-period {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 36px;
+  }
+
+  /* ── Plan grid ── */
+  .bill-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 32px;
+  }
+  @media (max-width: 640px) {
+    .bill-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ── Plan kart ── */
+  .plan-opt {
+    background: white;
+    border: 2px solid #E5E7EB;
+    border-radius: 20px;
+    padding: 28px;
+    cursor: pointer;
+    transition: border-color .2s, box-shadow .2s, transform .15s;
+    position: relative;
+  }
+  .plan-opt:hover {
+    border-color: #C7D2FE;
+    box-shadow: 0 8px 32px rgba(79,70,229,.08);
+    transform: translateY(-2px);
+  }
+  .plan-opt.selected {
+    border-color: #4F46E5;
+    box-shadow: 0 8px 32px rgba(79,70,229,.15);
+  }
+  .plan-opt.selected-biz {
+    border-color: #059669;
+    box-shadow: 0 8px 32px rgba(5,150,105,.15);
+  }
+  .plan-opt-badge {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #4F46E5;
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 14px;
+    border-radius: 100px;
+    white-space: nowrap;
+    letter-spacing: .02em;
+  }
+  .plan-opt-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: #6B7280;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    margin-bottom: 12px;
+  }
+  .plan-opt-price {
+    display: flex;
+    align-items: baseline;
+    gap: 3px;
+    margin-bottom: 4px;
+  }
+  .plan-opt-curr {
+    font-size: 20px;
+    font-weight: 700;
+    color: #111827;
+  }
+  .plan-opt-num {
+    font-size: 40px;
+    font-weight: 800;
+    color: #111827;
+    letter-spacing: -.03em;
+    line-height: 1;
+  }
+  .plan-opt-period {
+    font-size: 14px;
+    color: #9CA3AF;
+    font-weight: 500;
+  }
+  .plan-opt-orig {
+    font-size: 12px;
+    color: #9CA3AF;
+    text-decoration: line-through;
+    margin-bottom: 2px;
+    min-height: 18px;
+  }
+  .plan-opt-note {
+    font-size: 11px;
+    color: #7C3AED;
+    font-weight: 600;
+    margin-bottom: 16px;
+    min-height: 16px;
+  }
+  .plan-opt-features {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 13px;
+    color: #374151;
+    line-height: 1.8;
+  }
+  .plan-opt-features li.dim { color: #D1D5DB; }
+
+  /* Seçim radio imitasyonu */
+  .plan-check {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid #E5E7EB;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all .2s;
+    background: white;
+    flex-shrink: 0;
+  }
+  .plan-opt.selected .plan-check {
+    border-color: #4F46E5;
+    background: #4F46E5;
+  }
+  .plan-opt.selected-biz .plan-check {
+    border-color: #059669;
+    background: #059669;
+  }
+  .plan-check::after {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: white;
+    display: none;
+  }
+  .plan-opt.selected .plan-check::after,
+  .plan-opt.selected-biz .plan-check::after { display: block; }
+
+  /* ── Checkout butonu ── */
+  .bill-cta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  .bill-checkout-btn {
+    width: 100%;
+    max-width: 420px;
+    padding: 16px 32px;
+    background: #111827;
+    color: white;
+    border: none;
+    border-radius: 100px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity .2s, transform .15s;
+    letter-spacing: -.01em;
+  }
+  .bill-checkout-btn:hover { opacity: .85; transform: translateY(-1px); }
+  .bill-checkout-btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+
+  .bill-trust {
+    font-size: 12px;
+    color: #9CA3AF;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .bill-trust span { display: flex; align-items: center; gap: 4px; }
+
+  .bill-error {
+    display: none;
+    text-align: center;
+    background: #FEE2E2;
+    color: #991B1B;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    width: 100%;
+    max-width: 420px;
+  }
+
+  /* ── Yıllık gift badge animasyonu ── */
+  .gift-badge {
+    display: none;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(135deg, #059669, #047857);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 100px;
+    width: fit-content;
+    margin-bottom: 8px;
+    letter-spacing: .02em;
+    animation: giftPulse 2s ease-in-out infinite;
+  }
+  @keyframes giftPulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(5,150,105,.4); }
+    50%       { transform: scale(1.02); box-shadow: 0 0 0 6px rgba(5,150,105,0); }
+  }
+</style>
+</head>
+<body>
+
+<!-- Üst bar -->
+<header class="bill-header">
+  <a href="index.html" class="bill-logo">Mocksheet</a>
+  <a href="app.html" class="bill-back">
+    ← Uygulamaya Dön
+  </a>
+</header>
+
+<div class="bill-wrap">
+
+  <h1 class="bill-title">Planını Seç</h1>
+  <p class="bill-sub">Tüm planlar 14 gün para iade garantisi içerir.</p>
+
+  <!-- Mevcut plan banner -->
+  <div id="current-plan-banner"></div>
+
+  <!-- Periyot seçici -->
+  <div class="bill-period">
+    <div class="lp-period-switcher">
+      <button class="lp-period-btn" data-period="weekly"  onclick="selectPeriod('weekly')">Haftalık</button>
+      <button class="lp-period-btn active" data-period="monthly" onclick="selectPeriod('monthly')">Aylık</button>
+      <button class="lp-period-btn" data-period="yearly"  onclick="selectPeriod('yearly')">
+        Yıllık <span class="lp-period-badge">-33%</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Plan kartları -->
+  <div class="bill-grid">
+
+    <!-- PRO -->
+    <div class="plan-opt selected" id="opt-pro" onclick="selectPlan('pro')">
+      <div class="plan-opt-badge">En Popüler</div>
+      <div class="plan-check"></div>
+      <div class="plan-opt-name">⭐ Pro</div>
+      <div class="gift-badge" id="gift-pro">🎁 2 AY ÜCRETSİZ</div>
+      <div class="plan-opt-orig" id="orig-pro"></div>
+      <div class="plan-opt-price">
+        <span class="plan-opt-curr">₺</span>
+        <span class="plan-opt-num" id="pro-price">499</span>
+        <span class="plan-opt-period" id="pro-period">/ay</span>
+      </div>
+      <div class="plan-opt-note" id="pro-plan-note">Aylık ödeme</div>
+      <ul class="plan-opt-features">
+        <li>✓ <strong>200</strong> AI komut/ay</li>
+        <li>✓ Gelişmiş veri temizleme</li>
+        <li>✓ KDV, vergi, maaş hesapları</li>
+        <li>✓ Otomatik rapor oluşturma</li>
+        <li>✓ Rakip veri analizi</li>
+        <li>✓ E-posta desteği</li>
+      </ul>
+    </div>
+
+    <!-- BUSINESS -->
+    <div class="plan-opt" id="opt-biz" onclick="selectPlan('business')">
+      <div class="plan-check"></div>
+      <div class="plan-opt-name">🏢 İş Planı</div>
+      <div class="gift-badge" id="gift-biz">🎁 2 AY ÜCRETSİZ</div>
+      <div class="plan-opt-orig" id="orig-biz"></div>
+      <div class="plan-opt-price">
+        <span class="plan-opt-curr">₺</span>
+        <span class="plan-opt-num" id="biz-price">1.099</span>
+        <span class="plan-opt-period" id="biz-period">/ay</span>
+      </div>
+      <div class="plan-opt-note" id="biz-plan-note">Aylık ödeme</div>
+      <ul class="plan-opt-features">
+        <li>✓ <strong>Sınırsız</strong> AI komutu</li>
+        <li>✓ Pro'daki her şey</li>
+        <li>✓ Merkezi takım panosu</li>
+        <li>✓ Kullanıcı düzeyinde izinler</li>
+        <li>✓ API erişimi ve webhook'lar</li>
+        <li>✓ Öncelikli destek (4s yanıt)</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- Checkout CTA -->
+  <div class="bill-cta">
+    <div id="checkout-error" class="bill-error"></div>
+    <button class="bill-checkout-btn" id="checkout-btn" onclick="goCheckout()">
+      Ödemeye Geç →
+    </button>
+    <div class="bill-trust">
+      <span>🔒 SSL güvenli ödeme</span>
+      <span>↩️ 14 gün iade garantisi</span>
+      <span>❌ İstediğin zaman iptal</span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const BILLING_API = window.location.hostname === 'localhost'
+  ? 'http://localhost:3001'
+  : 'https://upsheet-ai.onrender.com';
+
+const PRICES = {
+  pro: {
+    weekly:  { amount: 124.75, display: '124,75', period: '/hf' },
+    monthly: { amount: 499,    display: '499',    period: '/ay' },
+    yearly:  { amount: 2990,   display: '2.990',  period: '/yıl' }
+  },
+  business: {
+    weekly:  { amount: 274.75, display: '274,75', period: '/hf' },
+    monthly: { amount: 1099,   display: '1.099',  period: '/ay' },
+    yearly:  { amount: 6990,   display: '6.990',  period: '/yıl' }
+  }
+};
+
+let selectedPlan   = 'pro';
+let selectedPeriod = 'monthly';
+
+function selectPlan(plan) {
+  selectedPlan = plan;
+
+  document.getElementById('opt-pro').classList.remove('selected', 'selected-biz');
+  document.getElementById('opt-biz').classList.remove('selected', 'selected-biz');
+
+  if (plan === 'pro') {
+    document.getElementById('opt-pro').classList.add('selected');
+  } else {
+    document.getElementById('opt-biz').classList.add('selected-biz');
+  }
+
+  updateCheckoutBtn();
+}
+
+function selectPeriod(period) {
+  selectedPeriod = period;
+
+  document.querySelectorAll('.lp-period-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.period === period);
+  });
+
+  updatePrices();
+}
+
+function updatePrices() {
+  const pro = PRICES.pro[selectedPeriod];
+  const biz = PRICES.business[selectedPeriod];
+  const isYearly   = selectedPeriod === 'yearly';
+  const isWeekly   = selectedPeriod === 'weekly';
+
+  // Pro
+  document.getElementById('pro-price').textContent  = pro.display;
+  document.getElementById('pro-period').textContent = pro.period;
+
+  const proOrig = document.getElementById('orig-pro');
+  const proNote = document.getElementById('pro-plan-note');
+  const giftPro = document.getElementById('gift-pro');
+
+  if (isYearly) {
+    proOrig.textContent = 'Aylık ₺499 yerine';
+    proOrig.style.display = 'block';
+    proNote.textContent = '≈ ₺249/ay · 2 ay ücretsiz 🎁';
+    giftPro.style.display = 'flex';
+  } else {
+    proOrig.style.display = 'none';
+    proNote.textContent = isWeekly ? 'Haftalık faturalandırılır' : 'Aylık faturalandırılır';
+    giftPro.style.display = 'none';
+  }
+
+  // Business
+  document.getElementById('biz-price').textContent  = biz.display;
+  document.getElementById('biz-period').textContent = biz.period;
+
+  const bizOrig = document.getElementById('orig-biz');
+  const bizNote = document.getElementById('biz-plan-note');
+  const giftBiz = document.getElementById('gift-biz');
+
+  if (isYearly) {
+    bizOrig.textContent = 'Aylık ₺1.099 yerine';
+    bizOrig.style.display = 'block';
+    bizNote.textContent = '≈ ₺583/ay · 2 ay ücretsiz 🎁';
+    giftBiz.style.display = 'flex';
+  } else {
+    bizOrig.style.display = 'none';
+    bizNote.textContent = isWeekly ? 'Haftalık faturalandırılır' : 'Aylık faturalandırılır';
+    giftBiz.style.display = 'none';
+  }
+
+  updateCheckoutBtn();
+}
+
+function updateCheckoutBtn() {
+  const price = PRICES[selectedPlan][selectedPeriod];
+  const planName = selectedPlan === 'pro' ? 'Pro' : 'İş';
+  const btn = document.getElementById('checkout-btn');
+  btn.textContent = `${planName} Plan — ₺${price.display}${price.period} → Ödemeye Geç`;
+}
+
+// Kullanıcı auth token'ını al
+function getAuthToken() {
+  try {
+    const key = Object.keys(localStorage)
+      .find(k => k.startsWith('sb-') && k.endsWith('-auth-token'));
+    if (!key) return null;
+    const d = JSON.parse(localStorage.getItem(key));
+    return d?.access_token || null;
+  } catch { return null; }
+}
+
+function getCurrentUser() {
+  try {
+    const key = Object.keys(localStorage)
+      .find(k => k.startsWith('sb-') && k.endsWith('-auth-token'));
+    if (!key) return null;
+    const d = JSON.parse(localStorage.getItem(key));
+    return { id: d?.user?.id || null, email: d?.user?.email || null };
+  } catch { return null; }
+}
+
+async function goCheckout() {
+  const user = getCurrentUser();
+
+  if (!user) {
+    localStorage.setItem('pending_plan', JSON.stringify({
+      plan: selectedPlan,
+      period: selectedPeriod,
+      redirect: 'billing.html'
+    }));
+    window.location.href = 'auth.html?redirect=checkout&plan=' + selectedPlan + '&period=' + selectedPeriod;
+    return;
+  }
+
+  const btn = document.getElementById('checkout-btn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Yükleniyor...';
+
+  try {
+    const res = await fetch(BILLING_API + '/api/stripe/create-checkout-session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        plan: selectedPlan,
+        period: selectedPeriod,
+        userEmail: user.email,
+        userId: user.id
+      })
+    });
+
+    const data = await res.json();
+
+    if (data.url) {
+      window.location.href = data.url;
+    } else {
+      throw new Error(data.error || 'Checkout oluşturulamadı');
+    }
+  } catch (err) {
+    const errEl = document.getElementById('checkout-error');
+    errEl.textContent = '❌ ' + err.message;
+    errEl.style.display = 'block';
+    setTimeout(() => { errEl.style.display = 'none'; }, 5000);
+    btn.disabled = false;
+    updateCheckoutBtn();
+  }
+}
+
+// URL parametrelerini oku (örn: billing.html?plan=pro&period=monthly)
+function initFromURL() {
+  const params = new URLSearchParams(window.location.search);
+  const plan   = params.get('plan');
+  const period = params.get('period');
+
+  if (plan && PRICES[plan])                         selectPlan(plan);
+  if (period && PRICES.pro[period])  { selectPeriod(period); return; }
+
+  updatePrices();
+}
+
+// Mevcut plan banner
+function showCurrentPlan() {
+  const plan = localStorage.getItem('subscription_plan');
+  if (!plan || plan === 'free') return;
+  const names = { pro: '⭐ Pro', business: '🏢 İş Planı' };
+  const banner = document.getElementById('current-plan-banner');
+  banner.textContent = 'Mevcut planınız: ' + (names[plan] || plan) + ' · Yükseltmek veya değiştirmek için aşağıdan seçin.';
+  banner.style.display = 'block';
+}
+
+// URL'de plan/period parametresi varsa pending_plan'a bak
+function checkPendingPlan() {
+  const pending = localStorage.getItem('pending_plan');
+  if (!pending) return;
+  try {
+    const d = JSON.parse(pending);
+    if (d.plan && PRICES[d.plan]) selectPlan(d.plan);
+    if (d.period && PRICES.pro[d.period]) selectPeriod(d.period);
+    localStorage.removeItem('pending_plan');
+  } catch {}
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  showCurrentPlan();
+  checkPendingPlan();
+  initFromURL();
+});
+</script>
+</body>
+</html>
