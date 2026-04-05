@@ -3484,7 +3484,83 @@
   { user_command: 'Teorik Senaryo 147: Çok Boyutlu Tensör Operasyonu', logic: 'Higher-dimensional array manipulation', category: 'theoretical', output: { action: 'formula', formula: "=SUM(MMULT(A147:C147, TRANSPOSE(D147:F147)))", changes: [], reply: '✓ Boyut 147 için tensör daraltma işlemi gerçekleştirildi.' } },
   { user_command: 'Teorik Senaryo 148: Çok Boyutlu Tensör Operasyonu', logic: 'Higher-dimensional array manipulation', category: 'theoretical', output: { action: 'formula', formula: "=SUM(MMULT(A148:C148, TRANSPOSE(D148:F148)))", changes: [], reply: '✓ Boyut 148 için tensör daraltma işlemi gerçekleştirildi.' } },
   { user_command: 'Teorik Senaryo 149: Çok Boyutlu Tensör Operasyonu', logic: 'Higher-dimensional array manipulation', category: 'theoretical', output: { action: 'formula', formula: "=SUM(MMULT(A149:C149, TRANSPOSE(D149:F149)))", changes: [], reply: '✓ Boyut 149 için tensör daraltma işlemi gerçekleştirildi.' } },
-  { user_command: 'Teorik Senaryo 150: Çok Boyutlu Tensör Operasyonu', logic: 'Higher-dimensional array manipulation', category: 'theoretical', output: { action: 'formula', formula: "=SUM(MMULT(A150:C150, TRANSPOSE(D150:F150)))", changes: [], reply: '✓ Boyut 150 için tensör daraltma işlemi gerçekleştirildi.' } }
+  { user_command: 'Teorik Senaryo 150: Çok Boyutlu Tensör Operasyonu', logic: 'Higher-dimensional array manipulation', category: 'theoretical', output: { action: 'formula', formula: "=SUM(MMULT(A150:C150, TRANSPOSE(D150:F150)))", changes: [], reply: '✓ Boyut 150 için tensör daraltma işlemi gerçekleştirildi.' } },
+
+  // ════════════════════════════════════
+  // GELİŞMİŞ KOMUT ALGILAMA ÖRNEKLERİ
+  // ════════════════════════════════════
+
+  // Sıralama varyasyonları
+  { user_command: "a dan z ye sırala", intent: "sort", output: { action: "sort", direction: "asc", reply: "✓ A'dan Z'ye sıralandı" } },
+  { user_command: "küçükten büyüğe sırala", intent: "sort", output: { action: "sort", direction: "asc", reply: "✓ Küçükten büyüğe sıralandı" } },
+  { user_command: "büyükten küçüğe sırala", intent: "sort", output: { action: "sort", direction: "desc", reply: "✓ Büyükten küçüğe sıralandı" } },
+  { user_command: "z den a ya sırala", intent: "sort", output: { action: "sort", direction: "desc", reply: "✓ Z'den A'ya sıralandı" } },
+  { user_command: "fiyatlara göre sırala", intent: "sort", output: { action: "sort", column: "fiyat", direction: "asc", reply: "✓ Fiyata göre sıralandı" } },
+  { user_command: "tarihe göre sırala", intent: "sort", output: { action: "sort", column: "tarih", direction: "asc", reply: "✓ Tarihe göre sıralandı" } },
+  { user_command: "isme göre alfabetik sırala", intent: "sort", output: { action: "sort", column: "isim", direction: "asc", reply: "✓ İsme göre alfabetik sıralandı" } },
+
+  // Toplama varyasyonları
+  { user_command: "topla", intent: "sum", output: { action: "sum", reply: "✓ Toplam hesaplandı" } },
+  { user_command: "toplam al", intent: "sum", output: { action: "sum", reply: "✓ Toplam alındı" } },
+  { user_command: "hepsini topla", intent: "sum", output: { action: "sum", reply: "✓ Tümü toplandı" } },
+  { user_command: "b sütununu topla", intent: "sum", output: { action: "sum", column: "B", reply: "✓ B sütunu toplandı" } },
+  { user_command: "c kolonunu topla", intent: "sum", output: { action: "sum", column: "C", reply: "✓ C kolonu toplandı" } },
+  { user_command: "tutarları topla", intent: "sum", output: { action: "sum", column: "tutar", reply: "✓ Tutarlar toplandı" } },
+  { user_command: "satışları topla", intent: "sum", output: { action: "sum", column: "satış", reply: "✓ Satışlar toplandı" } },
+  { user_command: "gelirlerin toplamı ne", intent: "sum", output: { action: "sum", column: "gelir", reply: "✓ Gelirler toplandı" } },
+
+  // Silme varyasyonları
+  { user_command: "boş satırları sil", intent: "delete_empty", output: { action: "delete_rows", condition: "empty", reply: "✓ Boş satırlar silindi" } },
+  { user_command: "boşları temizle", intent: "delete_empty", output: { action: "delete_rows", condition: "empty", reply: "✓ Boş satırlar temizlendi" } },
+  { user_command: "boş olanları kaldır", intent: "delete_empty", output: { action: "delete_rows", condition: "empty", reply: "✓ Boş satırlar kaldırıldı" } },
+  { user_command: "tekrar edenleri sil", intent: "deduplicate", output: { action: "remove_duplicates", reply: "✓ Tekrarlanan satırlar silindi" } },
+  { user_command: "mükerrerleri kaldır", intent: "deduplicate", output: { action: "remove_duplicates", reply: "✓ Mükerrer kayıtlar kaldırıldı" } },
+  { user_command: "aynı olanları temizle", intent: "deduplicate", output: { action: "remove_duplicates", reply: "✓ Tekrarlar temizlendi" } },
+
+  // Renklendirme varyasyonları
+  { user_command: "negatifleri kırmızı yap", intent: "highlight_negative", output: { action: "highlight", condition: "negative", color: "#fecaca", reply: "✓ Negatif değerler kırmızıya boyandı" } },
+  { user_command: "eksileri işaretle", intent: "highlight_negative", output: { action: "highlight", condition: "negative", color: "#fecaca", reply: "✓ Eksi değerler işaretlendi" } },
+  { user_command: "sıfırdan küçük olanları kırmızıya boya", intent: "highlight_negative", output: { action: "highlight", condition: "value < 0", color: "#fecaca", reply: "✓ Negatif hücreler boyandı" } },
+  { user_command: "pozitif değerleri yeşile boya", intent: "highlight_positive", output: { action: "highlight", condition: "positive", color: "#bbf7d0", reply: "✓ Pozitif değerler yeşile boyandı" } },
+  { user_command: "en büyük 5 değeri sarıya boya", intent: "highlight_top", output: { action: "highlight", condition: "top5", color: "#fef08a", reply: "✓ En büyük 5 değer sarıya boyandı" } },
+  { user_command: "yüksek değerleri vurgula", intent: "highlight_high", output: { action: "highlight", condition: "high", color: "#fef08a", reply: "✓ Yüksek değerler vurgulandı" } },
+
+  // KDV hesaplama varyasyonları
+  { user_command: "kdv ekle", intent: "add_vat", output: { action: "update_cells", formula: "multiply", factor: 1.20, reply: "✓ %20 KDV eklendi" } },
+  { user_command: "kdv hesapla", intent: "calc_vat", output: { action: "update_cells", formula: "vat", reply: "✓ KDV hesaplandı" } },
+  { user_command: "kdv dahil fiyatları hesapla", intent: "add_vat", output: { action: "update_cells", formula: "multiply", factor: 1.20, reply: "✓ KDV dahil fiyatlar hesaplandı" } },
+  { user_command: "yüzde yirmi kdv ekle", intent: "add_vat", output: { action: "update_cells", formula: "multiply", factor: 1.20, reply: "✓ %20 KDV eklendi" } },
+  { user_command: "kdv hariç fiyat bul", intent: "remove_vat", output: { action: "update_cells", formula: "divide", factor: 1.20, reply: "✓ KDV hariç fiyatlar hesaplandı" } },
+  { user_command: "kdv tutarını ayrı göster", intent: "show_vat", output: { action: "update_cells", formula: "vat_amount", factor: 0.20, reply: "✓ KDV tutarları ayrıldı" } },
+
+  // Ortalama varyasyonları
+  { user_command: "ortalama al", intent: "average", output: { action: "average", reply: "✓ Ortalama hesaplandı" } },
+  { user_command: "ortalamasını hesapla", intent: "average", output: { action: "average", reply: "✓ Ortalama hesaplandı" } },
+  { user_command: "b sütununun ortalaması ne", intent: "average", output: { action: "average", column: "B", reply: "✓ B sütununun ortalaması hesaplandı" } },
+  { user_command: "fiyatların ortalamasını bul", intent: "average", output: { action: "average", column: "fiyat", reply: "✓ Fiyat ortalaması bulundu" } },
+
+  // Filtreleme varyasyonları
+  { user_command: "istanbul olanları göster", intent: "filter", output: { action: "filter", condition: "contains", value: "istanbul", reply: "✓ İstanbul kayıtları filtrelendi" } },
+  { user_command: "100 den büyük olanları filtrele", intent: "filter", output: { action: "filter", condition: "value > 100", reply: "✓ 100'den büyük değerler filtrelendi" } },
+  { user_command: "bu ay olanları göster", intent: "filter", output: { action: "filter", condition: "currentMonth", reply: "✓ Bu ayın kayıtları gösterildi" } },
+  { user_command: "son 30 günü göster", intent: "filter", output: { action: "filter", condition: "last30days", reply: "✓ Son 30 günün verileri gösterildi" } },
+
+  // Rapor varyasyonları
+  { user_command: "rapor oluştur", intent: "report", output: { action: "message", formula: "auto_report", reply: "📊 Rapor hazırlandı" } },
+  { user_command: "aylık rapor yap", intent: "report", output: { action: "message", formula: "monthly_report", reply: "📊 Aylık rapor hazırlandı" } },
+  { user_command: "özet çıkar", intent: "report", output: { action: "message", formula: "summary", reply: "📊 Özet rapor oluşturuldu" } },
+  { user_command: "istatistikleri göster", intent: "report", output: { action: "message", formula: "statistics", reply: "📊 İstatistikler hesaplandı" } },
+
+  // Maaş & muhasebe
+  { user_command: "net maaş hesapla", intent: "salary", output: { action: "update_cells", formula: "net_salary", reply: "✓ Net maaşlar hesaplandı" } },
+  { user_command: "sgk kesintilerini hesapla", intent: "sgk", output: { action: "update_cells", formula: "sgk_deduction", reply: "✓ SGK kesintileri hesaplandı" } },
+  { user_command: "vergi hesapla", intent: "tax", output: { action: "update_cells", formula: "income_tax", reply: "✓ Vergiler hesaplandı" } },
+  { user_command: "kıdem tazminatı hesapla", intent: "severance", output: { action: "update_cells", formula: "severance_pay", reply: "✓ Kıdem tazminatı hesaplandı" } },
+
+  // Genel yardım
+  { user_command: "ne yapabilirim", intent: "help", output: { action: "message", reply: "💡 Sıralama, filtreleme, hesaplama, renklendirme, rapor oluşturma ve daha fazlasını Türkçe komutlarla yapabilirsiniz!" } },
+  { user_command: "yardım", intent: "help", output: { action: "message", reply: "💡 Örnek komutlar: 'B sütununu topla', 'Boş satırları sil', 'KDV ekle', 'Aylık rapor yap'" } },
+  { user_command: "ne yaparsın", intent: "help", output: { action: "message", reply: "💡 Excel verilerinizi Türkçe komutlarla yönetebilirsiniz. Sıralama, hesaplama, temizleme ve raporlama yapabilirim." } }
 
 ];
 

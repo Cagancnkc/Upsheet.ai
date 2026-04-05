@@ -1561,10 +1561,44 @@ function applyAIChanges(result) {
     });
   }
 
-  // Sort action
-  if (result.action === 'sort' && typeof result.column === 'number') {
+  // Sort action — column can be number index or string name
+  if (result.action === 'sort') {
     if (changed) buildGrid();
-    sortColumn(result.column, result.direction || 'asc');
+    if (typeof result.column === 'number') {
+      sortColumn(result.column, result.direction || 'asc');
+    } else if (typeof result.column === 'string') {
+      const headers = data[0] || [];
+      let colIdx = -1;
+      if (/^[A-Za-z]$/.test(result.column)) {
+        colIdx = result.column.toUpperCase().charCodeAt(0) - 65;
+      } else {
+        colIdx = headers.findIndex(h => h && h.toString().toLowerCase().includes(result.column.toLowerCase()));
+      }
+      if (colIdx < 0) colIdx = 0;
+      sortColumn(colIdx, result.direction || 'asc');
+    } else {
+      sortColumn(0, result.direction || 'asc');
+    }
+    return;
+  }
+  // Sum action
+  if (result.action === 'sum') {
+    applySumAction(result);
+    return;
+  }
+  // Average action
+  if (result.action === 'average') {
+    applyAverageAction(result);
+    return;
+  }
+  // Transform action
+  if (result.action === 'transform') {
+    applyTransformAction(result);
+    return;
+  }
+  // Filter action — show toast (frontend filtering not yet implemented)
+  if (result.action === 'filter') {
+    if (typeof showToast === 'function') showToast(result.reply || '✓ Filtrelendi', 'success');
     return;
   }
   // Delete empty rows
@@ -1584,6 +1618,84 @@ function applyAIChanges(result) {
     buildGrid(data);
     if (typeof showToast === 'function') showToast('✓ Changes applied', 'success');
   }
+}
+
+function applySumAction(data) {
+  const sheet = sheets[activeSheet];
+  if (!sheet || !sheet.length) return;
+
+  const headers = sheet[0] || [];
+  const rows = sheet.slice(1);
+
+  let colIndex = 1;
+  if (data.column) {
+    if (/^[A-Za-z]$/.test(data.column)) {
+      colIndex = data.column.toUpperCase().charCodeAt(0) - 65;
+    } else {
+      const idx = headers.findIndex(h => h && h.toString().toLowerCase().includes(data.column.toLowerCase()));
+      if (idx >= 0) colIndex = idx;
+    }
+  }
+
+  let total = 0;
+  rows.forEach(function(row) {
+    const val = row[colIndex];
+    const num = parseFloat(String(val || '').replace(',', '.'));
+    if (!isNaN(num)) total += num;
+  });
+
+  const formatted = total.toLocaleString('tr-TR', { maximumFractionDigits: 2 });
+  if (typeof showToast === 'function') showToast((data.reply || '✓ Toplam') + ': ' + formatted, 'success');
+}
+
+function applyAverageAction(data) {
+  const sheet = sheets[activeSheet];
+  if (!sheet || !sheet.length) return;
+
+  const headers = sheet[0] || [];
+  const rows = sheet.slice(1);
+
+  let colIndex = 1;
+  if (data.column) {
+    if (/^[A-Za-z]$/.test(data.column)) {
+      colIndex = data.column.toUpperCase().charCodeAt(0) - 65;
+    } else {
+      const idx = headers.findIndex(h => h && h.toString().toLowerCase().includes(data.column.toLowerCase()));
+      if (idx >= 0) colIndex = idx;
+    }
+  }
+
+  const nums = rows
+    .map(function(r) { return parseFloat(String(r[colIndex] || '').replace(',', '.')); })
+    .filter(function(n) { return !isNaN(n); });
+
+  if (!nums.length) { if (typeof showToast === 'function') showToast('⚠️ Sayısal veri bulunamadı', 'error'); return; }
+
+  const avg = nums.reduce(function(a, b) { return a + b; }, 0) / nums.length;
+  const formatted = avg.toLocaleString('tr-TR', { maximumFractionDigits: 2 });
+  if (typeof showToast === 'function') showToast((data.reply || '✓ Ortalama') + ': ' + formatted, 'success');
+}
+
+function applyTransformAction(data) {
+  const sheet = sheets[activeSheet];
+  if (!sheet || !sheet.length) return;
+
+  const transform = data.transform;
+  let changed = 0;
+
+  for (let r = 1; r < sheet.length; r++) {
+    for (let c = 0; c < (sheet[r] || []).length; c++) {
+      const val = sheet[r][c];
+      if (typeof val === 'string' && val.trim()) {
+        if (transform === 'uppercase') { sheet[r][c] = val.toUpperCase(); changed++; }
+        else if (transform === 'lowercase') { sheet[r][c] = val.toLowerCase(); changed++; }
+        else if (transform === 'trim') { sheet[r][c] = val.trim(); changed++; }
+      }
+    }
+  }
+
+  buildGrid();
+  if (typeof showToast === 'function') showToast((data.reply || '✓ Dönüşüm tamamlandı') + ' (' + changed + ' hücre)', 'success');
 }
 
 function setCell(row, col, value) {

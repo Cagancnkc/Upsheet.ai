@@ -1,44 +1,118 @@
-function buildExcelPrompt(userCommand, examples, sheetContext) {
-  const examplesText = examples.length > 0
-    ? examples.map((ex, i) => `
-Örnek ${i + 1}:
-Komut: "${ex.command}"
-Çıktı: ${JSON.stringify(ex.output, null, 2)}`
-    ).join('\n')
-    : 'Örnek bulunamadı.';
+'use strict';
 
-  return `Sen bir Excel AI motorusun. SADECE JSON döndür.
+function buildExcelPrompt(userMessage, sheetData, ragContext) {
+  const dataPreview = buildDataPreview(sheetData);
+  const contextStr = Array.isArray(ragContext) && ragContext.length > 0
+    ? ragContext.map(r => `- ${r.user_command || r.command}: ${JSON.stringify(r.output)}`).join('\n')
+    : 'Benzer örnek bulunamadı';
 
-MEVCUT VERİ (satır,sütun bazlı — 0 indeksli):
-${sheetContext ? sheetContext.substring(0, 2000) : 'Veri yok'}
+  return `Sen Mocksheet AI asistanısın. Excel verilerini Türkçe komutlarla yönetiyorsun.
 
-BENZER KOMUT ÖRNEKLERİ:
-${examplesText}
+## GÖREV
+Kullanıcının Türkçe komutunu analiz et ve JSON formatında aksiyon üret.
 
-KULLANICI KOMUTU: "${userCommand}"
+## VERİ ÖNİZLEMESİ
+${dataPreview}
 
-ZORUNLU KURALLAR:
-1. SADECE geçerli JSON döndür — açıklama/yorum/markdown YASAK
-2. Şu alanları içermeli: action, changes, reply
-3. reply Türkçe olmalı
-4. row ve col DEĞERLERİ 0'dan başlar (0-indexed)
-5. changes HİÇBİR ZAMAN boş bırakma — gerçek hücre değerlerini hesapla ve yaz
+## BENZER ÖRNEKLER
+${contextStr}
 
-AKSİYONA GÖRE KURALLAR:
-- update_cells: mevcut veriyi kullanarak hesapla, tüm sonuçları changes:[{row,col,value}] olarak yaz
-- sort: sıralanmış her satırı changes'e yaz (row:0 başlık satırı, row:1'den itibaren sıralı veriler)
-- highlight: renklendirilecek hücreleri highlight:[{row,col,color}] olarak yaz, geçerli hex renk kullan
-- delete_rows/remove_duplicates: silinecek satırları changes'de value:"__DELETE__" ile işaretle
-- filter: koşula uymayan satırları changes'de value:"__HIDE__" ile işaretle
-- message: hesaplama yok, sadece reply döndür
+## KULLANICI KOMUTU
+"${userMessage}"
 
-JSON FORMATI:
+## KOMUT YORUMLAMA KURALLARI
+
+### Sıralama komutları:
+- "sırala", "a-z", "küçükten büyüğe" → action: "sort", direction: "asc"
+- "z-a", "büyükten küçüğe", "tersine" → action: "sort", direction: "desc"
+- Sütun adı varsa (ör: "fiyata göre") → column: "fiyat"
+
+### Toplama komutları:
+- "topla", "toplam", "sum" → action: "sum"
+- Sütun adı varsa → source_column: "..."
+- Sonuç hücresi belirtilmişse → target_cell: "..."
+
+### Silme komutları:
+- "boş satırları sil/kaldır/temizle" → action: "delete_rows", condition: "empty"
+- "tekrar/mükerrer sil" → action: "remove_duplicates"
+
+### Renklendirme komutları:
+- "kırmızı", "kırmızıya boya" → color: "#fecaca"
+- "yeşil", "yeşile boya" → color: "#bbf7d0"
+- "sarı", "sarıya boya" → color: "#fef08a"
+- "mavi", "maviye boya" → color: "#bfdbfe"
+- "negatif/eksi" → condition: "value < 0"
+- "pozitif/artı" → condition: "value > 0"
+- "en büyük N" → condition: "topN"
+
+### Hesaplama komutları:
+- "KDV ekle/%20 ekle" → action: "update_cells", formula: "multiply", factor: 1.20
+- "KDV hariç bul" → formula: "divide", factor: 1.20
+- "ortalama" → action: "average"
+
+### Filtreleme komutları:
+- "...olanları göster/filtrele" → action: "filter"
+
+### Rapor komutları:
+- "rapor", "özet", "istatistik" → action: "message"
+
+### Biçimlendirme:
+- "büyük harfe çevir" → action: "transform", transform: "uppercase"
+- "küçük harfe çevir" → action: "transform", transform: "lowercase"
+
+## YANIT FORMATI (SADECE JSON DÖN)
+
 {
-  "action": "update_cells|highlight|sort|filter|message|delete_rows|remove_duplicates",
-  "changes": [{"row": 0, "col": 0, "value": "hesaplanmış değer"}],
-  "highlight": [{"row": 0, "col": 0, "color": "#fecaca"}],
-  "reply": "Türkçe açıklama"
-}`;
+  "action": "sort|sum|delete_rows|remove_duplicates|highlight|update_cells|filter|average|transform|message",
+  "reply": "✓ Türkçe açıklama mesajı",
+  "column": "sütun adı veya harfi (varsa)",
+  "direction": "asc|desc (sıralama için)",
+  "condition": "koşul (varsa)",
+  "color": "#renk (highlight için)",
+  "formula": "formül adı (varsa)",
+  "factor": null,
+  "source_column": "kaynak sütun",
+  "target_cell": "hedef hücre",
+  "transform": "dönüşüm tipi",
+  "changes": []
+}
+
+## KURALLAR
+1. SADECE geçerli JSON döndür — başka hiçbir şey yazma
+2. reply alanı HER ZAMAN Türkçe olsun
+3. reply başarılı aksiyonlar için "✓" ile başlasın
+4. Belirsiz komutlarda akıllıca tahmin et
+5. Sütun adları veriden al (dataPreview'e bak)
+6. changes array'i her zaman boş [] olarak döndür (frontend dolduracak)
+7. Komut tamamen anlaşılamıyorsa bile en yakın aksiyonu seç`;
+}
+
+function buildDataPreview(sheetData) {
+  // sheetData array (2D) veya string olabilir
+  if (typeof sheetData === 'string') {
+    return sheetData ? sheetData.substring(0, 2000) : 'Veri yok';
+  }
+
+  if (!sheetData || !sheetData.length) {
+    return 'Veri yok';
+  }
+
+  const headers = sheetData[0] || [];
+  const rows = sheetData.slice(1, 4);
+  const totalRows = sheetData.length - 1;
+
+  let preview = `Toplam: ${totalRows} satır, ${headers.length} sütun\n`;
+  preview += `Sütunlar: ${headers.filter(Boolean).join(', ')}\n\n`;
+  preview += `İlk satırlar:\n`;
+
+  rows.forEach((row, i) => {
+    const rowData = headers.map((h, j) =>
+      `${h}: ${String(row[j] || '').slice(0, 20)}`
+    ).join(' | ');
+    preview += `  Satır ${i + 1}: ${rowData}\n`;
+  });
+
+  return preview;
 }
 
 module.exports = { buildExcelPrompt };
