@@ -36,18 +36,25 @@ ${contextStr}
 - "boş satırları sil/kaldır/temizle" → action: "delete_rows", condition: "empty"
 - "tekrar/mükerrer sil" → action: "remove_duplicates"
 
-### Renklendirme komutları:
-- "kırmızı", "kırmızıya boya" → color: "#fecaca"
-- "yeşil", "yeşile boya" → color: "#bbf7d0"
-- "sarı", "sarıya boya" → color: "#fef08a"
-- "mavi", "maviye boya" → color: "#bfdbfe"
-- "negatif/eksi" → condition: "value < 0"
-- "pozitif/artı" → condition: "value > 0"
-- "en büyük N" → condition: "topN"
+### Renklendirme komutları (action: "highlight"):
+- "kırmızı boya", "kırmızıya boya" → { "action": "highlight", "condition": "negative", "color": "#fecaca" }
+- "yeşil boya", "yeşile boya" → { "action": "highlight", "condition": "positive", "color": "#bbf7d0" }
+- "sarı boya", "sarıya boya" → { "action": "highlight", "condition": "high", "color": "#fef08a" }
+- "mavi boya" → { "action": "highlight", "condition": "positive", "color": "#bfdbfe" }
+- "negatifleri/eksileri kırmızı" → condition: "negative", color: "#fecaca"
+- "pozitifleri/artıları yeşil" → condition: "positive", color: "#bbf7d0"
+- "en büyük 5" → condition: "top5", color: "#fef08a"
+- Sütun belirtilmişse "column": "sütun adı veya harfi"
+- NOT: changes array'i [] bırak, frontend hesaplar
 
-### Hesaplama komutları:
-- "KDV ekle/%20 ekle" → action: "update_cells", formula: "multiply", factor: 1.20
-- "KDV hariç bul" → formula: "divide", factor: 1.20
+### Hesaplama komutları (action: "update_cells"):
+- "KDV ekle", "%20 ekle" → { "action": "update_cells", "formula": "multiply", "factor": 1.20 }
+- "KDV hariç bul" → { "action": "update_cells", "formula": "divide", "factor": 1.20 }
+- "net maaş hesapla" → { "action": "update_cells", "formula": "net_salary" }
+- "SGK kesintisi" → { "action": "update_cells", "formula": "sgk_deduction" }
+- "vergi hesapla" → { "action": "update_cells", "formula": "income_tax" }
+- Sütun belirtilmişse "column": "sütun adı veya harfi"
+- NOT: changes array'i [] bırak, frontend hesaplar
 - "ortalama" → action: "average"
 
 ### Filtreleme komutları:
@@ -83,7 +90,7 @@ ${contextStr}
 3. reply başarılı aksiyonlar için "✓" ile başlasın
 4. Belirsiz komutlarda akıllıca tahmin et
 5. Sütun adları veriden al (dataPreview'e bak)
-6. changes array'i her zaman boş [] olarak döndür (frontend dolduracak)
+6. changes ve highlight array'lerini her zaman boş [] döndür — frontend tüm hesaplamayı kendisi yapıyor
 7. Komut tamamen anlaşılamıyorsa bile en yakın aksiyonu seç`;
 }
 

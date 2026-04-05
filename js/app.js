@@ -1262,36 +1262,24 @@ function getSheetContext() {
   const data = sheets[activeSheet];
   if (!data) return '(Veri yok)';
 
-  // Use selected range if multi-cell selection exists
-  const useRange = selStart && selEnd &&
-    (selStart.r !== selEnd.r || selStart.c !== selEnd.c);
-  const startRow = useRange ? Math.min(selStart.r, selEnd.r) : 0;
-  const startCol = useRange ? Math.min(selStart.c, selEnd.c) : 0;
-  const endCol   = useRange ? Math.min(Math.max(selStart.c, selEnd.c), startCol + 9) : 9;
+  const headers = data[0] || [];
+  const colLetters = headers.map(function(_, i) { return String.fromCharCode(65 + i); }).join(',');
+  const totalRows = Math.max(0, data.length - 1);
+  const meta = 'Sütun harfleri: ' + colLetters + '\nToplam: ' + totalRows + ' satır, ' + headers.length + ' sütun';
 
   const rows = [];
   let count = 0;
-  const maxRows = 30;
+  const maxRows = 50;
 
-  for (let r = startRow; r < data.length && count < maxRows; r++) {
-    const row = data[r].slice(startCol, endCol + 1);
-    // Skip entirely empty rows
-    if (!row.some(function(cell) { return cell !== ''; })) continue;
-    // Compact large numbers: 1000000 → "1M", 1500 → "1.5K"
-    const formatted = row.map(function(cell) {
-      const n = parseFloat(cell);
-      if (!isNaN(n) && isFinite(n)) {
-        if (Math.abs(n) >= 1e9)  return (n / 1e9).toFixed(1).replace(/\.0$/, '') + 'B';
-        if (Math.abs(n) >= 1e6)  return (n / 1e6).toFixed(1).replace(/\.0$/, '') + 'M';
-        if (Math.abs(n) >= 1000) return (n / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
-      }
-      return cell;
-    });
-    rows.push(formatted.join(','));
+  for (let r = 0; r < data.length && count < maxRows; r++) {
+    const row = data[r].slice(0, 10);
+    // Boş veri satırlarını atla (header satırını koru)
+    if (r > 0 && !row.some(function(cell) { return cell !== '' && cell !== null && cell !== undefined; })) continue;
+    rows.push(row.join(','));
     count++;
   }
 
-  return rows.join('\n') || '(Veri yok)';
+  return meta + '\n\n' + (rows.join('\n') || '(Veri yok)');
 }
 
 function chatKeydown(e) {
@@ -1581,6 +1569,16 @@ function applyAIChanges(result) {
     }
     return;
   }
+  // Update cells action (KDV, çarpma, bölme, net maaş vb.)
+  if (result.action === 'update_cells') {
+    applyUpdateCellsAction(result);
+    return;
+  }
+  // Highlight action (renklendirme)
+  if (result.action === 'highlight') {
+    applyHighlightAction(result);
+    return;
+  }
   // Sum action
   if (result.action === 'sum') {
     applySumAction(result);
@@ -1618,6 +1616,131 @@ function applyAIChanges(result) {
     buildGrid(data);
     if (typeof showToast === 'function') showToast('✓ Changes applied', 'success');
   }
+}
+
+function applyUpdateCellsAction(data) {
+  const sheet = sheets[activeSheet];
+  if (!sheet || sheet.length < 2) return;
+
+  const headers = sheet[0] || [];
+  let colIndex = -1;
+
+  const col = data.column || data.source_column;
+  if (col) {
+    if (/^[A-Za-z]$/.test(col)) {
+      colIndex = col.toUpperCase().charCodeAt(0) - 65;
+    } else {
+      colIndex = headers.findIndex(function(h) {
+        return h && h.toString().toLowerCase().includes(col.toLowerCase());
+      });
+    }
+  }
+
+  // Sütun bulunamazsa tüm sayısal sütunları işle
+  const targetCols = colIndex >= 0 ? [colIndex]
+    : headers.map(function(_, i) { return i; }).filter(function(i) {
+        const sample = sheet.slice(1, 4).map(function(r) { return r[i]; });
+        return sample.some(function(v) { return !isNaN(parseFloat(String(v || '').replace(',', '.'))); });
+      });
+
+  let changed = 0;
+  const formula = data.formula || '';
+  const factor = parseFloat(data.factor) || 1;
+
+  for (let r = 1; r < sheet.length; r++) {
+    for (let ci = 0; ci < targetCols.length; ci++) {
+      const c = targetCols[ci];
+      const raw = sheet[r][c];
+      const num = parseFloat(String(raw || '').replace(',', '.'));
+      if (isNaN(num)) continue;
+
+      let newVal = num;
+      if (formula === 'multiply') newVal = num * factor;
+      else if (formula === 'divide') newVal = num / factor;
+      else if (formula === 'vat') newVal = num * 1.20;
+      else if (formula === 'vat_amount') newVal = num * 0.20;
+      else if (formula === 'net_salary') newVal = num * 0.85;
+      else if (formula === 'sgk_deduction') newVal = num * 0.14;
+      else if (formula === 'income_tax') newVal = num * 0.15;
+      else if (formula === 'percentage' && data.value) newVal = num * (1 + parseFloat(data.value) / 100);
+      else if (factor !== 1) newVal = num * factor;
+
+      sheet[r][c] = parseFloat(newVal.toFixed(2)).toString();
+      changed++;
+    }
+  }
+
+  buildGrid();
+  if (typeof showToast === 'function')
+    showToast((data.reply || '✓ Değerler güncellendi') + ' (' + changed + ' hücre)', 'success');
+}
+
+function applyHighlightAction(data) {
+  const sheet = sheets[activeSheet];
+  if (!sheet || !sheet.length) return;
+
+  const headers = sheet[0] || [];
+  const color = data.color || '#fef08a';
+  const condition = data.condition || '';
+
+  let targetCol = -1;
+  if (data.column) {
+    if (/^[A-Za-z]$/.test(data.column)) {
+      targetCol = data.column.toUpperCase().charCodeAt(0) - 65;
+    } else {
+      targetCol = headers.findIndex(function(h) {
+        return h && h.toString().toLowerCase().includes(data.column.toLowerCase());
+      });
+    }
+  }
+
+  // top5/top10 için önce büyük değerleri bul
+  var topValues = new Set();
+  if (/^top(\d+)$/.test(condition)) {
+    const n = parseInt(condition.replace('top', ''));
+    const allNums = [];
+    for (let r = 1; r < sheet.length; r++) {
+      const cols = targetCol >= 0 ? [targetCol] : headers.map(function(_, i) { return i; });
+      cols.forEach(function(c) {
+        const v = parseFloat(String(sheet[r][c] || '').replace(',', '.'));
+        if (!isNaN(v)) allNums.push(v);
+      });
+    }
+    allNums.sort(function(a, b) { return b - a; }).slice(0, n).forEach(function(v) { topValues.add(v); });
+  }
+
+  let highlighted = 0;
+  for (let r = 1; r < sheet.length; r++) {
+    const cols = targetCol >= 0 ? [targetCol] : headers.map(function(_, i) { return i; });
+    cols.forEach(function(c) {
+      const raw = sheet[r][c];
+      const num = parseFloat(String(raw || '').replace(',', '.'));
+      let match = false;
+
+      if (condition === 'negative' || condition === 'value < 0') match = !isNaN(num) && num < 0;
+      else if (condition === 'positive' || condition === 'value > 0') match = !isNaN(num) && num > 0;
+      else if (condition === 'high') match = !isNaN(num) && num > 0;
+      else if (/^top\d+$/.test(condition)) match = topValues.has(num);
+      else if (condition.startsWith('value >')) {
+        const threshold = parseFloat(condition.replace('value >', '').trim());
+        match = !isNaN(num) && !isNaN(threshold) && num > threshold;
+      } else if (condition.startsWith('value <')) {
+        const threshold = parseFloat(condition.replace('value <', '').trim());
+        match = !isNaN(num) && !isNaN(threshold) && num < threshold;
+      }
+
+      if (match) {
+        const meta = getCellMeta(r, c);
+        meta.bg = color;
+        setCellMeta(r, c, meta);
+        highlighted++;
+      }
+    });
+  }
+
+  buildGrid();
+  if (typeof showToast === 'function')
+    showToast((data.reply || '✓ Renklendirme tamamlandı') + ' (' + highlighted + ' hücre)', 'success');
 }
 
 function applySumAction(data) {
@@ -3818,11 +3941,8 @@ async function sendChatMessage() {
       } catch(_e) { console.warn('Webhook trigger failed:', _e); }
     }
 
-    if (applied) {
-      showToast(data.reply || 'Changes applied', 'success');
-    } else if (data.action === 'message') {
-      showToast('Response received', 'success');
-    }
+    // Her action handler kendi toast'unu çağırıyor
+    // message action için ek toast gereksiz (addMsg zaten gösteriyor)
 
   } catch (error) {
     console.error('Chat error:', error);
