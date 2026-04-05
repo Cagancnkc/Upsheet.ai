@@ -3833,7 +3833,7 @@ function showUpgradeModal(featureName) {
       </div>
       <div style="display:flex;gap:10px">
         <button onclick="document.getElementById('upgradeModal').remove()" style="flex:1;padding:11px;border:1.5px solid #E5E7EB;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;background:white;color:#374151">Şimdi Değil</button>
-        <button onclick="window.location.href='index.html#pricing'" style="flex:2;padding:11px;border:none;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;background:#4F46E5;color:white">⬆️ Planı Yükselt</button>
+        <button onclick="window.location.href='billing.html'" style="flex:2;padding:11px;border:none;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;background:#4F46E5;color:white">⬆️ Planı Yükselt</button>
       </div>
     </div>`;
 
@@ -3867,7 +3867,7 @@ function showLimitModal(errorData) {
       </div>
       <div style="display:flex;gap:10px">
         <button onclick="document.getElementById('limitModal').remove()" style="flex:1;padding:11px;border:1.5px solid #E5E7EB;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;background:white;color:#374151">Tamam</button>
-        <button onclick="window.location.href='index.html#pricing'" style="flex:2;padding:11px;border:none;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;background:#4F46E5;color:white">⬆️ Limiti Artır</button>
+        <button onclick="window.location.href='billing.html'" style="flex:2;padding:11px;border:none;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;background:#4F46E5;color:white">⬆️ Limiti Artır</button>
       </div>
     </div>`;
 
