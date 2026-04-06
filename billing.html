@@ -390,9 +390,18 @@
 </div>
 
 <script>
-const BILLING_API = window.location.hostname === 'localhost'
-  ? 'http://localhost:3001'
-  : 'https://upsheet-ai.onrender.com';
+const STRIPE_LINKS = {
+  pro: {
+    weekly:  'https://buy.stripe.com/test_00w8wOce7aCX5GQgOybMQ03',
+    monthly: 'https://buy.stripe.com/test_bJe14m5PJ4ez1qAaqabMQ07',
+    yearly:  'https://buy.stripe.com/test_00w5kC5PJ3av6KU41MbMQ01'
+  },
+  business: {
+    weekly:  'https://buy.stripe.com/test_fZu4gy0vpcL5fhq2XIbMQ02',
+    monthly: 'https://buy.stripe.com/test_9B6aEW1zt8uP3yIaqabMQ06',
+    yearly:  'https://buy.stripe.com/test_eVq5kC7XR8uP2uE0PAbMQ00'
+  }
+};
 
 const PRICES = {
   pro: {
@@ -510,7 +519,7 @@ function getCurrentUser() {
   } catch { return null; }
 }
 
-async function goCheckout() {
+function goCheckout() {
   const user = getCurrentUser();
 
   if (!user) {
@@ -523,37 +532,26 @@ async function goCheckout() {
     return;
   }
 
-  const btn = document.getElementById('checkout-btn');
-  btn.disabled = true;
-  btn.textContent = '⏳ Yükleniyor...';
-
-  try {
-    const res = await fetch(BILLING_API + '/api/stripe/create-checkout-session', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        plan: selectedPlan,
-        period: selectedPeriod,
-        userEmail: user.email,
-        userId: user.id
-      })
-    });
-
-    const data = await res.json();
-
-    if (data.url) {
-      window.location.href = data.url;
-    } else {
-      throw new Error(data.error || 'Checkout oluşturulamadı');
-    }
-  } catch (err) {
+  const link = STRIPE_LINKS[selectedPlan]?.[selectedPeriod];
+  if (!link) {
     const errEl = document.getElementById('checkout-error');
-    errEl.textContent = '❌ ' + err.message;
+    errEl.textContent = '❌ Bu plan şu an mevcut değil.';
     errEl.style.display = 'block';
     setTimeout(() => { errEl.style.display = 'none'; }, 5000);
-    btn.disabled = false;
-    updateCheckoutBtn();
+    return;
   }
+
+  const btn = document.getElementById('checkout-btn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Yönlendiriliyor...';
+
+  localStorage.setItem('pending_plan', JSON.stringify({
+    plan: selectedPlan,
+    period: selectedPeriod,
+    timestamp: Date.now()
+  }));
+
+  setTimeout(() => { window.location.href = link; }, 400);
 }
 
 // URL parametrelerini oku (örn: billing.html?plan=pro&period=monthly)

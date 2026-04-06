@@ -536,6 +536,9 @@ async function handleSignIn(e) {
       return;
     }
     if (data && data.session) {
+      setTimeout(function() {
+        if (typeof checkPendingCheckout === 'function') checkPendingCheckout();
+      }, 800);
       window.location.href = 'app.html';
     }
   } catch(err) {
@@ -604,6 +607,9 @@ async function handleSignUp(e) {
     }
 
     if (data.session) {
+      setTimeout(function() {
+        if (typeof checkPendingCheckout === 'function') checkPendingCheckout();
+      }, 800);
       window.location.href = 'app.html';
     }
   } catch(err) {
@@ -691,5 +697,6 @@ function switchForm(target) {
 </script>
 
 <script src="i18n.js"></script>
+<script src="payment.js"></script>
 </body>
 </html>

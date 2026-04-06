@@ -4,88 +4,141 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Ödeme Başarılı — Mocksheet</title>
-<link rel="stylesheet" href="landing.css">
+<link rel="icon" href="images/logo.png">
 <style>
-body { background: #F7F7F5; display: flex; align-items: center;
-       justify-content: center; min-height: 100vh; }
-.success-box {
-  background: white; border-radius: 20px; padding: 48px;
-  text-align: center; max-width: 480px; width: 90%;
-  box-shadow: 0 20px 60px rgba(0,0,0,.1);
-  border: 1.5px solid #E5E7EB;
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif;
+  background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+  min-height:100vh;
+  display:flex;align-items:center;justify-content:center;
+  padding:20px;
 }
-.success-icon { font-size: 64px; margin-bottom: 20px; }
-.success-title { font-size: 28px; font-weight: 800;
-                  letter-spacing: -.02em; margin-bottom: 12px; color: #111827; }
-.success-desc { font-size: 16px; color: #6B7280;
-                 line-height: 1.6; margin-bottom: 32px; }
-.plan-badge {
-  display: inline-block; background: #D1FAE5; color: #065F46;
-  font-size: 14px; font-weight: 700; padding: 8px 20px;
-  border-radius: 100px; margin-bottom: 28px;
+.card{
+  background:white;border-radius:24px;padding:48px 40px;
+  max-width:480px;width:100%;text-align:center;
+  box-shadow:0 32px 80px rgba(0,0,0,.25);
 }
-.btn-start {
-  display: inline-flex; align-items: center; gap: 8px;
-  background: #111827; color: white;
-  padding: 14px 32px; border-radius: 100px;
-  font-size: 15px; font-weight: 600;
-  text-decoration: none; transition: opacity .2s;
+.icon{font-size:72px;margin-bottom:20px;animation:bounce .6s ease}
+@keyframes bounce{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+.confetti{font-size:28px;margin-bottom:8px}
+.title{font-size:28px;font-weight:800;letter-spacing:-.02em;
+        margin-bottom:8px;color:#111827}
+.desc{font-size:16px;color:#6B7280;line-height:1.6;margin-bottom:28px}
+.plan-box{
+  background:linear-gradient(135deg,#EDE9FE,#DBEAFE);
+  border-radius:14px;padding:16px 20px;margin-bottom:28px;
+  border:1.5px solid #C4B5FD;
 }
-.btn-start:hover { opacity: .85; }
-.loading { color: #9CA3AF; font-size: 14px; margin-top: 16px; }
+.plan-name{font-size:18px;font-weight:800;color:#4F46E5;margin-bottom:4px}
+.plan-sub{font-size:13px;color:#6B7280}
+.features{
+  display:flex;flex-direction:column;gap:8px;
+  margin-bottom:28px;text-align:left;
+}
+.feature{
+  display:flex;align-items:center;gap:10px;
+  font-size:14px;color:#374151;
+  padding:8px 12px;background:#F9FAFB;border-radius:8px;
+}
+.feature-icon{color:#10B981;font-weight:700;flex-shrink:0}
+.btn-primary{
+  display:block;width:100%;padding:14px;
+  background:linear-gradient(135deg,#4F46E5,#7C3AED);
+  color:white;border:none;border-radius:12px;
+  font-size:15px;font-weight:700;cursor:pointer;
+  text-decoration:none;margin-bottom:10px;
+  transition:opacity .2s;
+}
+.btn-primary:hover{opacity:.9}
+.btn-secondary{
+  display:block;width:100%;padding:12px;
+  background:white;color:#4F46E5;
+  border:1.5px solid #C4B5FD;border-radius:12px;
+  font-size:14px;font-weight:600;cursor:pointer;
+  text-decoration:none;transition:background .15s;
+}
+.btn-secondary:hover{background:#F5F3FF}
+.stripe-badge{
+  margin-top:20px;font-size:12px;color:#D1D5DB;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+}
 </style>
 </head>
 <body>
-<div class="success-box">
-  <div class="success-icon">🎉</div>
-  <div class="success-title">Ödeme Başarılı!</div>
-  <div class="success-desc">
+<div class="card">
+  <div class="confetti">🎊</div>
+  <div class="icon">🎉</div>
+  <div class="title">Ödeme Başarılı!</div>
+  <div class="desc">
     Mocksheet'e hoş geldiniz.<br>
-    Hesabınız aktive edildi.
+    Hesabınız hemen aktive edildi.
   </div>
-  <div class="plan-badge" id="plan-badge">⭐ Pro Plan</div>
-  <br>
-  <a href="app.html" class="btn-start">
-    ⚡ Uygulamayı Aç
-  </a>
-  <div class="loading" id="loading-text">
-    Abonelik bilgileri kontrol ediliyor...
+
+  <div class="plan-box">
+    <div class="plan-name" id="plan-name">⭐ Pro Plan</div>
+    <div class="plan-sub" id="plan-sub">Aktif abonelik</div>
+  </div>
+
+  <div class="features">
+    <div class="feature">
+      <span class="feature-icon">✓</span>
+      <span id="feat-commands">200 AI komutu / ay</span>
+    </div>
+    <div class="feature">
+      <span class="feature-icon">✓</span>
+      Google Sheets, Notion & Zapier entegrasyonu
+    </div>
+    <div class="feature">
+      <span class="feature-icon">✓</span>
+      Otomatik rapor oluşturma
+    </div>
+    <div class="feature">
+      <span class="feature-icon">✓</span>
+      Rakip analizi & muhasebe formülleri
+    </div>
+  </div>
+
+  <a href="app.html" class="btn-primary">⚡ Uygulamayı Aç</a>
+  <a href="billing.html" class="btn-secondary">📋 Abonelik Detayları</a>
+
+  <div class="stripe-badge">
+    <span>🔒 Güvenli ödeme — Stripe altyapısı</span>
   </div>
 </div>
-<script src="payment.js"></script>
+
 <script>
-document.addEventListener('DOMContentLoaded', async () => {
-  const params = new URLSearchParams(window.location.search);
-  const sessionId = params.get('session_id');
+document.addEventListener('DOMContentLoaded', function() {
+  var pending = localStorage.getItem('pending_plan');
+  var plan = 'pro';
+  var period = 'monthly';
 
-  if (sessionId) {
-    const API = window.location.hostname === 'localhost'
-      ? 'http://localhost:3001'
-      : 'https://upsheet-ai.onrender.com';
-
+  if (pending) {
     try {
-      const res = await fetch(API + '/api/stripe/subscription/' + sessionId);
-      const data = await res.json();
-
-      if (data.plan) {
-        const planNames = {
-          pro: '⭐ Pro Plan',
-          business: '🏢 İş Planı'
-        };
-        document.getElementById('plan-badge').textContent =
-          planNames[data.plan] || data.plan;
-
-        localStorage.setItem('subscription_plan', data.plan);
-        localStorage.setItem('subscription_period', data.period);
-        if (data.customerId) {
-          localStorage.setItem('stripe_customer_id', data.customerId);
-        }
-      }
-    } catch (e) {}
-
-    document.getElementById('loading-text').textContent =
-      '✓ Hesabınız aktive edildi';
+      var data = JSON.parse(pending);
+      plan = data.plan || 'pro';
+      period = data.period || 'monthly';
+      localStorage.setItem('subscription_plan', plan);
+      localStorage.setItem('subscription_period', period);
+      localStorage.removeItem('pending_plan');
+    } catch(e) {}
   }
+
+  var planNames = {
+    pro: { name: '⭐ Pro Plan', commands: '200 AI komutu / ay' },
+    business: { name: '🏢 İş Planı', commands: 'Sınırsız AI komutu' }
+  };
+
+  var periodNames = {
+    weekly: 'Haftalık plan',
+    monthly: 'Aylık plan',
+    yearly: 'Yıllık plan — 2 ay ücretsiz 🎁'
+  };
+
+  var pInfo = planNames[plan] || planNames.pro;
+  document.getElementById('plan-name').textContent = pInfo.name;
+  document.getElementById('plan-sub').textContent = periodNames[period] || 'Aktif abonelik';
+  document.getElementById('feat-commands').textContent = pInfo.commands;
 });
 </script>
 </body>
