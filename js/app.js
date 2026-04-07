@@ -1429,8 +1429,14 @@ async function sendChat() {
     applyAISuggestions(msg, reply);
   } catch(err) {
     clearInterval(_loadTimer);
-    _loaderBubble.style.cssText = '';
-    _loaderBubble.innerHTML = `<span style="color:#f87171;">Error: ${err.message}</span>`;
+    loader.remove();
+    if (err.status === 429 && typeof showLimitModal === 'function') {
+      showLimitModal(err.data || {});
+    } else if (err.status === 403 && err.data?.code === 'FEATURE_NOT_AVAILABLE' && typeof handleLockedFeature === 'function') {
+      handleLockedFeature(err.data.feature);
+    } else {
+      if (typeof addMsg === 'function') addMsg('ai', '❌ ' + (err.message || 'Bir hata oluştu'));
+    }
   } finally {
     if (_fcSubtitle) { _fcSubtitle.textContent = 'Online'; _fcSubtitle.classList.remove('loading'); }
     if (_fcSendIcon)  _fcSendIcon.style.display  = '';
@@ -1820,6 +1826,10 @@ function applyTransformAction(data) {
   buildGrid();
   if (typeof showToast === 'function') showToast((data.reply || '✓ Dönüşüm tamamlandı') + ' (' + changed + ' hücre)', 'success');
 }
+
+// Debug helper — test an AI action manually from browser console
+// Usage: _testAction({ action: 'sort', column: 'fiyat', direction: 'asc' })
+window._testAction = function(result) { applyAIChanges(result); };
 
 function setCell(row, col, value) {
   const data = sheets[activeSheet];
