@@ -1174,5 +1174,48 @@ function queueOfflineMessage(payload) {
 }
 </style>
 
+<!-- ── FLOATING AI CHAT PANEL ─────────────────── -->
+<div id="floatingChat">
+  <button id="fcBubble" onclick="toggleFloatingChat()" title="AI Asistan">
+    <div class="fc-ping"></div>
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+      <path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.37 5.07L2 22l4.93-1.37C8.42 21.5 10.15 22 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2z" fill="currentColor" opacity=".9"/>
+    </svg>
+  </button>
+  <div id="chatPanel" style="display:none">
+    <div id="fcHeader">
+      <div class="fc-header-left">
+        <div class="fc-avatar-wrap">
+          <div class="fc-avatar">AI</div>
+          <div class="fc-online-dot"></div>
+        </div>
+        <div>
+          <div class="fc-title">Mocksheet AI</div>
+          <div class="fc-subtitle" id="fcSubtitle">Online</div>
+        </div>
+      </div>
+      <div class="fc-header-right">
+        <button class="fc-icon-btn" onclick="clearChat()" title="Sohbeti temizle">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+            <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <button class="fc-icon-btn" onclick="toggleFloatingChat()" title="Kapat">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+            <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div id="chatMsgs"></div>
+    <div class="chips" id="chatChips">
+      <span class="chip" onclick="useChipCmd('B sütununu toplam')">∑ Toplam</span>
+      <span class="chip" onclick="useChipCmd('A-Z sırala')">↕ Sırala</span>
+      <span class="chip" onclick="useChipCmd('Boş satırları sil')">🗑 Temizle</span>
+      <span class="chip" onclick="useChipCmd('Tekrarları kaldır')">✦ Tekrar</span>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

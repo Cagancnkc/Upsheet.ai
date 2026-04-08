@@ -1299,6 +1299,12 @@ function useChip(el) {
   sendChat();
 }
 
+function useChipCmd(text) {
+  const inp = document.getElementById('chatInput');
+  if (inp) { inp.value = text; inp.focus(); }
+  sendChatMessage();
+}
+
 function handleChatFile(input) {
   const files = Array.from(input.files);
   if (!files.length) return;
