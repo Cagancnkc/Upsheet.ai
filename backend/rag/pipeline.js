@@ -62,6 +62,16 @@ async function processExcelCommand(userCommand, sheetContext) {
         messages: [{ role: 'user', content: prompt }]
       });
 
+      console.log('TOKEN KULLANIMI:', {
+        input_tokens: response.usage.input_tokens,
+        output_tokens: response.usage.output_tokens,
+        total: response.usage.input_tokens + response.usage.output_tokens,
+        estimated_cost_usd: (
+          (response.usage.input_tokens * 0.0000008) +
+          (response.usage.output_tokens * 0.000004)
+        ).toFixed(6)
+      });
+
       const rawText = response.content[0]?.text || '';
       return parseAIResponse(rawText);
 
