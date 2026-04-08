@@ -1533,10 +1533,22 @@ function generateLocalReply(msg) {
   return t('local_default');
 }
 
+function refreshGrid() {
+  const d = sheets[activeSheet];
+  if (typeof buildGrid === 'function') {
+    buildGrid(d);
+    console.log('[GRID] buildGrid çağrıldı, satır:', d ? d.length : 0);
+  } else {
+    console.error('[GRID] buildGrid bulunamadı!');
+  }
+}
+
 function applyAIChanges(result) {
-  if (!result || typeof result !== 'object') return;
+  console.log('[AI] action:', result && result.action, '| activeSheet:', activeSheet);
+  if (!result || typeof result !== 'object') { console.warn('[AI] geçersiz result'); return; }
   const data = sheets[activeSheet];
-  if (!data) return;
+  if (!data) { console.error('[AI] sheets[activeSheet] yok!'); return; }
+  console.log('[AI] data satır:', data.length, '| ilk satır:', JSON.stringify(data[0] || []).slice(0, 100));
   let changed = false;
 
   if (Array.isArray(result.changes) && result.changes.length > 0) {
@@ -1563,8 +1575,9 @@ function applyAIChanges(result) {
 
   // Sort action — column can be number index or string name
   if (result.action === 'sort') {
-    if (changed) buildGrid();
+    if (changed) refreshGrid();
     if (typeof result.column === 'number') {
+      console.log('[SORT] sütun index:', result.column);
       sortColumn(result.column, result.direction || 'asc');
     } else if (typeof result.column === 'string') {
       const headers = data[0] || [];
@@ -1574,9 +1587,11 @@ function applyAIChanges(result) {
       } else {
         colIdx = headers.findIndex(h => h && h.toString().toLowerCase().includes(result.column.toLowerCase()));
       }
+      console.log('[SORT] sütun adı:', result.column, '→ index:', colIdx, '| headers:', headers.slice(0,5));
       if (colIdx < 0) colIdx = 0;
       sortColumn(colIdx, result.direction || 'asc');
     } else {
+      console.log('[SORT] sütun yok, index 0 kullanılıyor');
       sortColumn(0, result.direction || 'asc');
     }
     return;
@@ -1613,19 +1628,19 @@ function applyAIChanges(result) {
   }
   // Delete empty rows
   if (result.action === 'delete_rows') {
-    if (changed) buildGrid();
+    if (changed) refreshGrid();
     cmdCleanEmptyRows();
     return;
   }
   // Remove duplicates
   if (result.action === 'remove_duplicates') {
-    if (changed) buildGrid();
+    if (changed) refreshGrid();
     cmdRemoveDuplicates();
     return;
   }
 
   if (changed) {
-    buildGrid(data);
+    refreshGrid();
     if (typeof showToast === 'function') showToast('✓ Changes applied', 'success');
   }
 }
@@ -1682,7 +1697,8 @@ function applyUpdateCellsAction(data) {
     }
   }
 
-  buildGrid();
+  console.log('[UPDATE_CELLS] değiştirilen hücre:', changed);
+  refreshGrid();
   if (typeof showToast === 'function')
     showToast((data.reply || '✓ Değerler güncellendi') + ' (' + changed + ' hücre)', 'success');
 }
@@ -1750,7 +1766,8 @@ function applyHighlightAction(data) {
     });
   }
 
-  buildGrid();
+  console.log('[HIGHLIGHT] renklendirilen hücre:', highlighted);
+  refreshGrid();
   if (typeof showToast === 'function')
     showToast((data.reply || '✓ Renklendirme tamamlandı') + ' (' + highlighted + ' hücre)', 'success');
 }
@@ -1829,7 +1846,8 @@ function applyTransformAction(data) {
     }
   }
 
-  buildGrid();
+  console.log('[TRANSFORM] değiştirilen hücre:', changed);
+  refreshGrid();
   if (typeof showToast === 'function') showToast((data.reply || '✓ Dönüşüm tamamlandı') + ' (' + changed + ' hücre)', 'success');
 }
 
