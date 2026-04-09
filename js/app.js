@@ -1548,6 +1548,16 @@ function applyAIChanges(result) {
   if (!result || typeof result !== 'object') { console.warn('[AI] geçersiz result'); return; }
   const data = sheets[activeSheet];
   if (!data) { console.error('[AI] sheets[activeSheet] yok!'); return; }
+
+  // Veri var mı kontrolü — sadece sort/transform/update_cells için
+  const needsData = ['sort','update_cells','transform','highlight','delete_rows','remove_duplicates'];
+  const hasRealData = data.some(function(row) { return row && row.some(function(c) { return c !== '' && c !== null && c !== undefined; }); });
+  if (needsData.includes(result.action) && !hasRealData) {
+    console.warn('[AI] Sheet boş, komut uygulanamaz');
+    if (typeof showToast === 'function') showToast('⚠️ Sheet boş. Önce veri yükleyin.', 'error');
+    return;
+  }
+
   console.log('[AI] data satır:', data.length, '| ilk satır:', JSON.stringify(data[0] || []).slice(0, 100));
   let changed = false;
 
@@ -3918,9 +3928,8 @@ async function sendChatMessage() {
   if (typeof addMsg === 'function') addMsg('user', message);
 
   try {
-    const sheetContext = typeof getSheetContext === 'function'
-      ? getSheetContext()
-      : '';
+    // 2D array gönder — AI sütun adlarını daha iyi anlar
+    const sheetContext = sheets[activeSheet] || [];
 
     const token = getAuthToken();
     const response = await fetch(API_URL + '/api/chat', {
