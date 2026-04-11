@@ -97,7 +97,10 @@ const allowedOrigins = [
   'http://localhost:3000',
   'http://localhost:8080',
   'https://upsheet-ai.vercel.app',
-  process.env.FRONTEND_URL
+  'https://mocksheet.com',
+  'https://www.mocksheet.com',
+  process.env.FRONTEND_URL,
+  process.env.CLIENT_URL
 ].filter(Boolean);
 
 app.use(cors({
