@@ -1412,7 +1412,7 @@ async function sendChat() {
   try {
     let reply;
     if (typeof processAICommand === 'function') {
-      const aiResult = await processAICommand(finalMessage, getSheetContext(), activeSheet, chatHistory.slice(-8));
+      const aiResult = await processAICommand(finalMessage, sheets[activeSheet] || [], activeSheet, chatHistory.slice(-8));
       if (!aiResult || aiResult?.error === 'offline') {
         clearInterval(_loadTimer);
         loader.remove();
