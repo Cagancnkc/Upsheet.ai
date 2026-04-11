@@ -97,8 +97,8 @@ const allowedOrigins = [
   'http://localhost:3000',
   'http://localhost:8080',
   'https://upsheet-ai.vercel.app',
-  'https://mocksheet.com',
-  'https://www.mocksheet.com',
+  'https://mocksheets.com',
+  'https://www.mocksheets.com',
   process.env.FRONTEND_URL,
   process.env.CLIENT_URL
 ].filter(Boolean);
