@@ -509,7 +509,7 @@ async function handleGoogleLogin() {
       options: {
         redirectTo: window.location.hostname === 'localhost'
           ? 'http://localhost:3000/app.html'
-          : 'https://upsheet-ai.vercel.app/app.html',
+          : 'https://mocksheet.com/app.html',
         queryParams: { access_type: 'offline', prompt: 'consent' }
       }
     });
