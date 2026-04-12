@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>İletişim — Mocksheet</title>
+<title>İletişim — Mocksheets</title>
 <link rel="stylesheet" href="css/landing.css">
 <style>
 body{background:#F7F7F5}
@@ -14,13 +14,17 @@ body{background:#F7F7F5}
 .contact-card h3{font-size:15px;font-weight:700;margin-bottom:6px}
 .contact-card p{font-size:14px;color:#6B7280;margin-bottom:8px}
 .contact-card a{color:#4F46E5;text-decoration:none;font-weight:600}
+.response-times{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:8px}
+.rt-item{background:#F9FAFB;border-radius:10px;padding:12px;text-align:center}
+.rt-plan{font-size:12px;font-weight:700;color:#4F46E5;margin-bottom:4px}
+.rt-time{font-size:13px;color:#374151}
 </style>
 </head>
 <body>
 <nav class="lp-nav">
   <a href="index.html" class="lp-nav-logo">
-    <img src="images/logo.png" width="26" height="26" alt="Mocksheet">
-    <span>Mocksheet</span>
+    <img src="images/logo.png" width="26" height="26" alt="Mocksheets">
+    <span>Mocksheets</span>
   </a>
   <a href="index.html" class="lp-nav-cta">← Ana Sayfa</a>
 </nav>
@@ -41,8 +45,21 @@ body{background:#F7F7F5}
   </div>
 
   <div class="contact-card">
-    <h3>⏱️ Yanıt Süresi</h3>
-    <p>Pro plan: 48 saat içinde yanıt<br>İş planı: 4 saat içinde yanıt<br>Ücretsiz plan: 5 iş günü</p>
+    <h3>⏱️ Yanıt Süreleri</h3>
+    <div class="response-times">
+      <div class="rt-item">
+        <div class="rt-plan">🆓 Ücretsiz</div>
+        <div class="rt-time">5 iş günü</div>
+      </div>
+      <div class="rt-item">
+        <div class="rt-plan">⭐ Pro</div>
+        <div class="rt-time">48 saat</div>
+      </div>
+      <div class="rt-item">
+        <div class="rt-plan">🏢 İş</div>
+        <div class="rt-time">4 saat</div>
+      </div>
+    </div>
   </div>
 </div>
 </body>
