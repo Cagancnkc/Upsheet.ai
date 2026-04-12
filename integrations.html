@@ -859,6 +859,7 @@ body {
           <span class="chip">📊 Veri dönüşümü</span>
           <span class="chip">🔁 Döngü desteği</span>
         </div>
+        <button class="btn btn-outline" onclick="openNotifyModal('Make')" style="margin-top:16px;">🔔 Beni Haberdar Et</button>
       </div>
     </div>
   </div>
@@ -890,6 +891,7 @@ body {
           <span class="chip">🔄 İki yönlü sync</span>
           <span class="chip">🗂️ Çoklu tablo</span>
         </div>
+        <button class="btn btn-outline" onclick="openNotifyModal('Airtable')" style="margin-top:16px;">🔔 Beni Haberdar Et</button>
       </div>
     </div>
   </div>
@@ -921,6 +923,7 @@ body {
           <span class="chip">👥 Ekip paylaşımı</span>
           <span class="chip">📂 Klasör seçimi</span>
         </div>
+        <button class="btn btn-outline" onclick="openNotifyModal('Google Drive')" style="margin-top:16px;">🔔 Beni Haberdar Et</button>
       </div>
     </div>
   </div>
@@ -1379,6 +1382,47 @@ document.addEventListener('DOMContentLoaded', () => {
 
   loadLogs();
 });
+</script>
+
+<!-- Beni Haberdar Et Modal -->
+<div id="notifyModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);align-items:center;justify-content:center;">
+  <div style="background:white;border-radius:20px;padding:36px;max-width:420px;width:90%;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,0.2);position:relative;">
+    <button onclick="document.getElementById('notifyModal').style.display='none'" style="position:absolute;top:14px;right:16px;background:none;border:none;font-size:18px;cursor:pointer;color:#9CA3AF">✕</button>
+    <div style="font-size:48px;margin-bottom:14px">🔔</div>
+    <div style="font-size:20px;font-weight:800;margin-bottom:8px" id="notify-title">Yakında Geliyor!</div>
+    <div style="font-size:14px;color:#6B7280;margin-bottom:20px">Bu entegrasyon hazır olduğunda sizi haberdar edelim.</div>
+    <input type="email" id="notify-email" placeholder="E-posta adresiniz"
+           style="width:100%;padding:11px 14px;border:1.5px solid #E5E7EB;border-radius:10px;font-size:14px;margin-bottom:12px;font-family:inherit;outline:none;box-sizing:border-box;">
+    <button onclick="submitNotify()" style="width:100%;padding:12px;background:#4F46E5;color:white;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;">
+      🔔 Beni Haberdar Et
+    </button>
+    <div id="notify-success" style="display:none;margin-top:12px;color:#059669;font-size:13px;font-weight:500;">
+      ✓ Kaydedildi! Hazır olduğunda e-posta göndereceğiz.
+    </div>
+  </div>
+</div>
+<script>
+function openNotifyModal(name) {
+  document.getElementById('notify-title').textContent = name + ' — Yakında Geliyor!';
+  document.getElementById('notify-email').value = '';
+  document.getElementById('notify-success').style.display = 'none';
+  var modal = document.getElementById('notifyModal');
+  modal.style.display = 'flex';
+  modal.onclick = function(e) { if (e.target === modal) modal.style.display = 'none'; };
+}
+function submitNotify() {
+  var email = document.getElementById('notify-email').value;
+  var re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!re.test(email)) {
+    document.getElementById('notify-email').style.borderColor = '#EF4444';
+    return;
+  }
+  var list = JSON.parse(localStorage.getItem('notify_list') || '[]');
+  list.push({ email: email, date: new Date().toISOString() });
+  localStorage.setItem('notify_list', JSON.stringify(list));
+  document.getElementById('notify-success').style.display = 'block';
+  setTimeout(function() { document.getElementById('notifyModal').style.display = 'none'; }, 2000);
+}
 </script>
 </body>
 </html>

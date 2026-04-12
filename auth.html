@@ -302,27 +302,27 @@
             <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" width="18" height="18">
             <span data-i18n="auth_google">Continue with Google</span>
           </button>
-          <p id="googleMsg" style="text-align:center; font-size:11px; color:#4a4a5a;">🔒 We never see your Google password</p>
+          <p id="googleMsg" style="text-align:center; font-size:11px; color:#4a4a5a;">🔒 Google şifrenizi asla görmeyiz</p>
         </div>
 
         <!-- Divider -->
         <div style="display:flex; align-items:center; gap:12px; margin-bottom:20px;">
           <div style="flex:1; height:1px; background:#1f1f1f;"></div>
-          <span style="font-size:12px; color:#4a4a5a; font-weight:500; letter-spacing:.05em;">OR</span>
+          <span style="font-size:12px; color:#4a4a5a; font-weight:500; letter-spacing:.05em;">VEYA</span>
           <div style="flex:1; height:1px; background:#1f1f1f;"></div>
         </div>
 
         <!-- ── SIGNIN FORM ── -->
         <form id="signinForm" onsubmit="handleSignIn(event)" autocomplete="on" style="display:flex; flex-direction:column; gap:16px;">
           <div style="display:grid; gap:6px;">
-            <label class="auth-label" for="si-email" data-i18n="auth_email">Email</label>
-            <input class="auth-input" id="si-email" name="email" type="email" placeholder="you@example.com" required autocomplete="email">
+            <label class="auth-label" for="si-email" data-i18n="auth_email">E-posta</label>
+            <input class="auth-input" id="si-email" name="email" type="email" placeholder="siz@ornek.com" required autocomplete="email">
           </div>
 
           <div style="display:grid; gap:6px;">
-            <label class="auth-label" for="si-password" data-i18n="auth_password">Password</label>
+            <label class="auth-label" for="si-password" data-i18n="auth_password">Şifre</label>
             <div class="pw-wrap">
-              <input class="auth-input" id="si-password" name="password" type="password" placeholder="Your password" required autocomplete="current-password">
+              <input class="auth-input" id="si-password" name="password" type="password" placeholder="Şifreniz" required autocomplete="current-password">
               <button type="button" class="pw-toggle" onclick="togglePw('si-password', this)" aria-label="Show password">
                 <svg id="si-eye" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
               </button>
@@ -331,25 +331,25 @@
 
           <div id="siError" class="auth-error"></div>
 
-          <button type="submit" class="btn-primary-auth" id="siBtn">Sign In →</button>
+          <button type="submit" class="btn-primary-auth" id="siBtn">Giriş Yap →</button>
         </form>
 
         <!-- ── SIGNUP FORM ── -->
         <form id="signupForm" onsubmit="handleSignUp(event)" autocomplete="on" style="display:none; flex-direction:column; gap:16px;">
           <div style="display:grid; gap:6px;">
-            <label class="auth-label" for="su-name">Full Name</label>
-            <input class="auth-input" id="su-name" name="name" type="text" placeholder="Full Name" autocomplete="name">
+            <label class="auth-label" for="su-name">Ad Soyad</label>
+            <input class="auth-input" id="su-name" name="name" type="text" placeholder="Adınız Soyadınız" autocomplete="name">
           </div>
 
           <div style="display:grid; gap:6px;">
-            <label class="auth-label" for="su-email">Email</label>
-            <input class="auth-input" id="su-email" name="email" type="email" placeholder="you@example.com" required autocomplete="email">
+            <label class="auth-label" for="su-email">E-posta</label>
+            <input class="auth-input" id="su-email" name="email" type="email" placeholder="siz@ornek.com" required autocomplete="email">
           </div>
 
           <div style="display:grid; gap:6px;">
-            <label class="auth-label" for="su-password">Password</label>
+            <label class="auth-label" for="su-password">Şifre</label>
             <div class="pw-wrap">
-              <input class="auth-input" id="su-password" name="password" type="password" placeholder="At least 6 characters" required autocomplete="new-password">
+              <input class="auth-input" id="su-password" name="password" type="password" placeholder="En az 6 karakter" required autocomplete="new-password">
               <button type="button" class="pw-toggle" onclick="togglePw('su-password', this)" aria-label="Show password">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
               </button>
@@ -357,9 +357,9 @@
           </div>
 
           <div style="display:grid; gap:6px;">
-            <label class="auth-label" for="su-confirm">Confirm Password</label>
+            <label class="auth-label" for="su-confirm">Şifre Tekrar</label>
             <div class="pw-wrap">
-              <input class="auth-input" id="su-confirm" name="confirmPassword" type="password" placeholder="Re-enter your password" required autocomplete="new-password">
+              <input class="auth-input" id="su-confirm" name="confirmPassword" type="password" placeholder="Şifrenizi tekrar girin" required autocomplete="new-password">
               <button type="button" class="pw-toggle" onclick="togglePw('su-confirm', this)" aria-label="Show password">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
               </button>
@@ -369,28 +369,28 @@
           <div id="suError" class="auth-error"></div>
           <div id="suSuccess" class="auth-success"></div>
 
-          <button type="submit" class="btn-primary-auth" id="suBtn">Create Account →</button>
+          <button type="submit" class="btn-primary-auth" id="suBtn">Hesap Oluştur →</button>
         </form>
 
         <!-- ── SIGNUP SUCCESS PANEL ── -->
         <div class="signup-success-panel" id="signupSuccess">
           <div style="width:64px; height:64px; border-radius:50%; background:#f0fdf4; border:2px solid #22c55e; display:flex; align-items:center; justify-content:center; font-size:28px;">📧</div>
           <div>
-            <h2 style="font-size:20px; font-weight:700; color:white; margin-bottom:8px; font-family:'Sora',sans-serif;">Verification email sent!</h2>
-            <p style="font-size:14px; color:#6b7280; line-height:1.6;" id="successEmailMsg">Check your inbox.</p>
+            <h2 style="font-size:20px; font-weight:700; color:white; margin-bottom:8px; font-family:'Sora',sans-serif;">Doğrulama e-postası gönderildi!</h2>
+            <p style="font-size:14px; color:#6b7280; line-height:1.6;" id="successEmailMsg">Gelen kutunuzu kontrol edin.</p>
           </div>
-          <button type="button" onclick="switchForm('signin')" class="toggle-link">← Back to sign in</button>
+          <button type="button" onclick="switchForm('signin')" class="toggle-link">← Girişe geri dön</button>
         </div>
 
         <!-- Toggle link -->
         <p style="text-align:center; font-size:14px; color:#6b7280; margin-top:20px;" id="toggleRow">
-          Don't have an account? <button type="button" class="toggle-link" onclick="switchForm('signup')">Sign up</button>
+          Hesabın yok mu? <button type="button" class="toggle-link" onclick="switchForm('signup')">Kayıt ol</button>
         </p>
       </div>
 
       <!-- Footer -->
       <p style="text-align:center; font-size:11px; color:#4a4a5a; padding:0 16px;">
-        By signing up you agree to our <span style="text-decoration:underline; text-underline-offset:2px; cursor:pointer;">Privacy Policy</span>.
+        Kayıt olarak <a href="privacy.html" style="text-decoration:underline; text-underline-offset:2px; color:inherit;">Gizlilik Politikası</a>'nı ve <a href="terms.html" style="text-decoration:underline; text-underline-offset:2px; color:inherit;">Kullanım Koşulları</a>'nı kabul etmiş olursunuz.
       </p>
     </div>
   </div>
@@ -533,7 +533,7 @@ async function handleSignIn(e) {
 
   errorEl.style.display = 'none';
   btn.disabled = true;
-  btn.innerHTML = '<div class="spinner"></div> Signing in...';
+  btn.innerHTML = '<div class="spinner"></div> Giriş yapılıyor...';
 
   try {
     var { data, error } = await sb.auth.signInWithPassword({ email: email, password: password });
@@ -541,7 +541,7 @@ async function handleSignIn(e) {
       errorEl.textContent = translateError(error.message);
       errorEl.style.display = 'block';
       btn.disabled = false;
-      btn.textContent = 'Sign In →';
+      btn.textContent = 'Giriş Yap →';
       return;
     }
     if (data && data.session) {
@@ -551,10 +551,10 @@ async function handleSignIn(e) {
       window.location.href = 'app.html';
     }
   } catch(err) {
-    errorEl.textContent = 'An unexpected error occurred. Please try again.';
+    errorEl.textContent = 'Beklenmeyen bir hata oluştu. Lütfen tekrar deneyin.';
     errorEl.style.display = 'block';
     btn.disabled = false;
-    btn.textContent = 'Sign In →';
+    btn.textContent = 'Giriş Yap →';
   }
 }
 
@@ -587,7 +587,7 @@ async function handleSignUp(e) {
   }
 
   btn.disabled = true;
-  btn.innerHTML = '<div class="spinner"></div> Creating account...';
+  btn.innerHTML = '<div class="spinner"></div> Hesap oluşturuluyor...';
 
   try {
     var { data, error } = await sb.auth.signUp({
@@ -600,7 +600,7 @@ async function handleSignUp(e) {
       errorEl.textContent = translateError(error.message);
       errorEl.style.display = 'block';
       btn.disabled = false;
-      btn.textContent = 'Create Account →';
+      btn.textContent = 'Hesap Oluştur →';
       return;
     }
 
@@ -610,7 +610,7 @@ async function handleSignUp(e) {
       var panel = document.getElementById('signupSuccess');
       panel.style.display = 'flex';
       document.getElementById('successEmailMsg').innerHTML =
-        'We sent a verification link to <strong style="color:#9ca3af">' + email + '</strong>.<br>Check your inbox (and spam folder).';
+        '<strong style="color:#9ca3af">' + email + '</strong> adresine doğrulama bağlantısı gönderdik.<br>Gelen kutunuzu (ve spam klasörünü) kontrol edin.';
       document.getElementById('toggleRow').style.display = 'none';
       return;
     }
@@ -622,10 +622,10 @@ async function handleSignUp(e) {
       window.location.href = 'app.html';
     }
   } catch(err) {
-    errorEl.textContent = 'An unexpected error occurred. Please try again.';
+    errorEl.textContent = 'Beklenmeyen bir hata oluştu. Lütfen tekrar deneyin.';
     errorEl.style.display = 'block';
     btn.disabled = false;
-    btn.textContent = 'Create Account →';
+    btn.textContent = 'Hesap Oluştur →';
   }
 }
 
@@ -652,20 +652,20 @@ function switchForm(target) {
     currentForm = 'signup';
     signinForm.style.display = 'none';
     signupForm.style.display = 'flex';
-    heading.textContent    = 'Create your account';
-    subheading.textContent = 'Enter your details to get started';
-    toggleRow.innerHTML = 'Already have an account? <button type="button" class="toggle-link" onclick="switchForm(\'signin\')">Sign in</button>';
-    quote.textContent = '"847 people were on the waitlist. Now you\'re in."';
-    cite.textContent  = '— MockSheets Team';
+    heading.textContent    = 'Hesabınızı oluşturun';
+    subheading.textContent = 'Bilgilerinizi girerek başlayın';
+    toggleRow.innerHTML = 'Zaten hesabın var mı? <button type="button" class="toggle-link" onclick="switchForm(\'signin\')">Giriş yap</button>';
+    quote.textContent = '"847 kişi bekleme listesindeydi. Şimdi siz içerisindesiniz."';
+    cite.textContent  = '— MockSheets Ekibi';
   } else {
     currentForm = 'signin';
     signupForm.style.display = 'none';
     signinForm.style.display = 'flex';
-    heading.textContent    = 'Welcome back';
-    subheading.textContent = 'Sign in with your email';
-    toggleRow.innerHTML = 'Don\'t have an account? <button type="button" class="toggle-link" onclick="switchForm(\'signup\')">Sign up</button>';
-    quote.textContent = '"Monday reports now take 8 minutes."';
-    cite.textContent  = '— MockSheets user, Finance Analyst';
+    heading.textContent    = 'Tekrar hoş geldiniz';
+    subheading.textContent = 'E-posta ile giriş yapın';
+    toggleRow.innerHTML = 'Hesabın yok mu? <button type="button" class="toggle-link" onclick="switchForm(\'signup\')">Kayıt ol</button>';
+    quote.textContent = '"Pazartesi raporları artık 8 dakika sürüyor."';
+    cite.textContent  = '— MockSheets kullanıcısı, Finans Analisti';
   }
 }
 
