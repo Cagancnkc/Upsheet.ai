@@ -1089,6 +1089,17 @@ async function exportGS() {
   }
 }
 
+// ── HTTP status'a göre hata mesajı ──────────────
+function getIntegrationError(status, fallback) {
+  if (status === 401) return 'Token geçersiz. Lütfen token\'ı kontrol edin.';
+  if (status === 403) return 'Yetersiz izin. Token\'ın gerekli erişime sahip olduğundan emin olun.';
+  if (status === 404) return 'URL bulunamadı. Adresi kontrol edin.';
+  if (status === 400) return 'Hatalı istek. Girilen bilgileri kontrol edin.';
+  if (status === 429) return 'Çok fazla istek. Lütfen bekleyin.';
+  if (status >= 500)  return 'Sunucu hatası. Entegrasyon servisinde sorun var.';
+  return fallback || 'Bağlantı hatası';
+}
+
 // ════════════════════════════════════════════════
 // NOTION
 // ════════════════════════════════════════════════
@@ -1104,7 +1115,7 @@ async function testNotion() {
     });
     const data = await resp.json();
     if (data.success) showAlert('alert-notion', '✓ Bağlandı' + (data.dbName ? ': ' + data.dbName : ' — Token geçerli'), 'ok');
-    else showAlert('alert-notion', '✗ ' + (data.error || 'Geçersiz kimlik bilgileri'), 'err');
+    else showAlert('alert-notion', '✗ ' + getIntegrationError(resp.status, data.error || 'Geçersiz kimlik bilgileri'), 'err');
   } catch {
     showAlert('alert-notion', '✗ Sunucuya ulaşılamıyor. Bağlantınızı kontrol edin.', 'err');
   }
@@ -1194,7 +1205,7 @@ async function testWebhook() {
     });
     const data = await resp.json();
     if (data.success) showAlert('alert-webhook', '✓ Test yükü gönderildi — uç noktanızı kontrol edin', 'ok');
-    else showAlert('alert-webhook', '✗ ' + (data.error || 'Gönderilemedi'), 'err');
+    else showAlert('alert-webhook', '✗ ' + getIntegrationError(resp.status, data.error || 'Gönderilemedi'), 'err');
   } catch {
     try {
       await fetch(url, { method: 'POST', mode: 'no-cors',
@@ -1242,7 +1253,7 @@ async function testSlack() {
     });
     const data = await resp.json();
     if (data.success) showAlert('alert-slack', '✓ Test mesajı gönderildi — Slack kanalınızı kontrol edin', 'ok');
-    else showAlert('alert-slack', '✗ ' + (data.error || 'Gönderilemedi'), 'err');
+    else showAlert('alert-slack', '✗ ' + getIntegrationError(resp.status, data.error || 'Gönderilemedi'), 'err');
   } catch {
     showAlert('alert-slack', '✗ Sunucuya ulaşılamıyor. Bağlantınızı kontrol edin.', 'err');
   }

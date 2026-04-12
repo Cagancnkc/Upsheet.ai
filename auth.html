@@ -472,9 +472,19 @@ const sb = supabase.createClient(
   'sb_publishable_WauaqVsDx_vgHsilyJl0gg_1DvfSIzC'
 );
 
-// Redirect if already signed in
+// Redirect if already signed in (plan parametresi varsa pending_checkout kaydet)
 sb.auth.getSession().then(function({ data }) {
-  if (data && data.session) window.location.href = 'app.html';
+  if (data && data.session) {
+    var params = new URLSearchParams(window.location.search);
+    var plan   = params.get('plan');
+    var period = params.get('period') || 'monthly';
+    if (plan) {
+      localStorage.setItem('pending_checkout', JSON.stringify({
+        plan: plan, period: period, timestamp: Date.now()
+      }));
+    }
+    window.location.href = 'app.html';
+  }
 });
 
 // ── Error translation ──────────────────────────────────────────
