@@ -366,6 +366,25 @@
             </div>
           </div>
 
+          <!-- Promosyon Kodu (opsiyonel) -->
+          <div id="promo-section" style="margin-top:4px">
+            <button type="button" onclick="togglePromo()" style="background:none;border:none;cursor:pointer;font-size:12px;color:#6B7280;padding:0;display:flex;align-items:center;gap:4px;transition:color .15s;" onmouseover="this.style.color='#4F46E5'" onmouseout="this.style.color='#6B7280'">
+              <span id="promo-toggle-icon">＋</span>
+              <span>Promosyon kodun var mı?</span>
+            </button>
+            <div id="promo-input-wrap" style="display:none;margin-top:8px;">
+              <div style="position:relative">
+                <input type="text" id="promo-code-input" placeholder="Promosyon kodu (örn: MOCK100)" maxlength="20"
+                  style="width:100%;padding:10px 40px 10px 14px;border:1.5px solid #E5E7EB;border-radius:10px;font-size:13px;font-family:inherit;outline:none;transition:border .2s;text-transform:uppercase;letter-spacing:.05em;background:#1a1a2e;color:white;"
+                  oninput="this.value=this.value.toUpperCase()"
+                  onfocus="this.style.borderColor='#4F46E5'"
+                  onblur="this.style.borderColor='#E5E7EB'">
+                <div id="promo-status" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:14px;"></div>
+              </div>
+              <div id="promo-message" style="font-size:12px;margin-top:4px;padding:0 4px;display:none;"></div>
+            </div>
+          </div>
+
           <div id="suError" class="auth-error"></div>
           <div id="suSuccess" class="auth-success"></div>
 
@@ -717,5 +736,62 @@ function switchForm(target) {
 
 <script src="i18n.js"></script>
 <script src="payment.js"></script>
+<script>
+// ── Promosyon kodu ─────────────────────────────
+var VALID_PROMOS = { 'MOCK100': { description: '1 ay Claude Pro ücretsiz' } };
+
+function togglePromo() {
+  var wrap = document.getElementById('promo-input-wrap');
+  var icon = document.getElementById('promo-toggle-icon');
+  var isVisible = wrap.style.display !== 'none';
+  wrap.style.display = isVisible ? 'none' : 'block';
+  icon.textContent = isVisible ? '＋' : '－';
+  if (!isVisible) {
+    var params = new URLSearchParams(window.location.search);
+    var urlPromo = params.get('promo') || localStorage.getItem('promo_code');
+    if (urlPromo) {
+      var input = document.getElementById('promo-code-input');
+      input.value = urlPromo.toUpperCase();
+      validatePromo(urlPromo.toUpperCase());
+    }
+    setTimeout(function(){ document.getElementById('promo-code-input').focus(); }, 100);
+  }
+}
+
+function validatePromo(code) {
+  var status = document.getElementById('promo-status');
+  var message = document.getElementById('promo-message');
+  if (!code) { status.textContent = ''; message.style.display = 'none'; return; }
+  if (VALID_PROMOS[code]) {
+    status.textContent = '✅';
+    message.style.display = 'block';
+    message.style.color = '#059669';
+    message.textContent = '🎁 ' + VALID_PROMOS[code].description + ' uygulanacak!';
+    localStorage.setItem('promo_code', code);
+  } else {
+    status.textContent = '❌';
+    message.style.display = 'block';
+    message.style.color = '#DC2626';
+    message.textContent = 'Geçersiz promosyon kodu';
+    localStorage.removeItem('promo_code');
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  var input = document.getElementById('promo-code-input');
+  if (input) {
+    input.addEventListener('input', function(e) {
+      clearTimeout(window._promoTimer);
+      window._promoTimer = setTimeout(function(){ validatePromo(e.target.value.trim().toUpperCase()); }, 500);
+    });
+  }
+  // URL'de promo kodu varsa otomatik aç
+  var params = new URLSearchParams(window.location.search);
+  var urlPromo = params.get('promo') || localStorage.getItem('promo_code');
+  if (urlPromo && VALID_PROMOS[urlPromo.toUpperCase()]) {
+    setTimeout(togglePromo, 600);
+  }
+});
+</script>
 </body>
 </html>

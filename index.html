@@ -71,6 +71,38 @@
 </head>
 <body>
 
+<!-- Kampanya Banner -->
+<div id="campaign-banner" style="background:linear-gradient(90deg,#1a0533 0%,#2d0a5e 30%,#4F46E5 60%,#7C3AED 100%);color:white;padding:0;position:relative;overflow:hidden;z-index:1000;">
+  <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 20% 50%,rgba(124,58,237,0.3) 0%,transparent 60%),radial-gradient(ellipse at 80% 50%,rgba(79,70,229,0.3) 0%,transparent 60%);pointer-events:none;"></div>
+  <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.4),transparent);"></div>
+  <div style="max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:center;gap:14px;padding:10px 48px 10px 16px;position:relative;flex-wrap:wrap;">
+    <div style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:100px;padding:4px 12px 4px 8px;flex-shrink:0;">
+      <span style="font-size:16px;animation:bounce-gift 1.5s ease-in-out infinite">🎁</span>
+      <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,0.9)">İlk 100 Kullanıcı</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center;">
+      <span style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.95);letter-spacing:-.01em">Kayıt ol, <span style="color:#FFD700;font-weight:800">1 ay Claude Pro ücretsiz</span> kazan</span>
+      <span style="color:rgba(255,255,255,0.3);font-size:11px">•</span>
+      <span style="font-size:12px;font-weight:700;background:rgba(255,215,0,0.15);border:1px solid rgba(255,215,0,0.4);color:#FFD700;padding:2px 10px;border-radius:100px;letter-spacing:.05em;">PROMO: MOCK100</span>
+    </div>
+    <a href="auth.html?promo=MOCK100" style="display:inline-flex;align-items:center;gap:6px;background:white;color:#4F46E5;padding:6px 14px;border-radius:100px;font-size:12px;font-weight:700;text-decoration:none;white-space:nowrap;flex-shrink:0;transition:transform .2s;" onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform='scale(1)'">Hemen Başla <span style="font-size:10px">→</span></a>
+    <button onclick="document.getElementById('campaign-banner').style.display='none';localStorage.setItem('banner_closed','1');" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.1);border:none;color:white;width:22px;height:22px;border-radius:50%;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s;" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'">✕</button>
+  </div>
+</div>
+<style>
+@keyframes bounce-gift {
+  0%,100%{transform:translateY(0) rotate(0deg);}
+  25%{transform:translateY(-3px) rotate(-10deg);}
+  75%{transform:translateY(-3px) rotate(10deg);}
+}
+</style>
+<script>
+if(localStorage.getItem('banner_closed')==='1'){document.getElementById('campaign-banner').style.display='none';}
+var _bp=new URLSearchParams(window.location.search);
+if(_bp.get('promo')==='MOCK100'){localStorage.setItem('promo_code','MOCK100');}
+</script>
+<!-- /Kampanya Banner -->
+
 <!-- NAVBAR -->
 <nav class="lp-nav">
   <a href="index.html" class="lp-nav-logo">
@@ -105,9 +137,7 @@
   </h1>
 
   <p class="lp-hero-sub">
-    Türkçe yazın, AI sizin için yapsın.
-    KDV hesaplama, veri temizleme, aylık rapor —
-    dakikalar içinde, formülsüz.
+    Veri düzenleme 12x daha hızlı.
   </p>
 
   <div class="lp-hero-ctas">

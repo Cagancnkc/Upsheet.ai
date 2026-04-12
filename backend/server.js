@@ -117,10 +117,12 @@ app.use(express.json({ limit: '2mb' }));
 
 const integrationsRouter = require('./routes/integrations');
 const stripeRouter = require('./routes/stripe');
+const promosRouter = require('./routes/promos');
 const { checkLimit, incrementUsage, requireFeature, getOrCreateUsage } = require('./middleware/limits');
 const PLANS = require('./config/plans');
 app.use('/api/integrations', checkLimit, requireFeature('integrations'), integrationsRouter);
 app.use('/api/stripe', stripeRouter);
+app.use('/api/promos', promosRouter);
 
 app.get('/', (req, res) => {
   res.json({ status: 'ok', service: 'MockSheets API', version: '1.0.0' });
