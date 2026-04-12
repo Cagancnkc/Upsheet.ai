@@ -1544,114 +1544,126 @@ function refreshGrid() {
 }
 
 function applyAIChanges(result) {
+  const data = sheets[activeSheet];
+  if (!data || !data.length) {
+    if (typeof showToast === 'function') showToast('Önce veri yükleyin', 'error');
+    return;
+  }
   console.log('[AI] action:', result && result.action, '| activeSheet:', activeSheet);
   if (!result || typeof result !== 'object') { console.warn('[AI] geçersiz result'); return; }
-  const data = sheets[activeSheet];
-  if (!data) { console.error('[AI] sheets[activeSheet] yok!'); return; }
 
-  // Veri var mı kontrolü — sadece sort/transform/update_cells için
-  const needsData = ['sort','update_cells','transform','highlight','delete_rows','remove_duplicates'];
-  const hasRealData = data.some(function(row) { return row && row.some(function(c) { return c !== '' && c !== null && c !== undefined; }); });
-  if (needsData.includes(result.action) && !hasRealData) {
-    console.warn('[AI] Sheet boş, komut uygulanamaz');
-    if (typeof showToast === 'function') showToast('⚠️ Sheet boş. Önce veri yükleyin.', 'error');
-    return;
-  }
-
-  console.log('[AI] data satır:', data.length, '| ilk satır:', JSON.stringify(data[0] || []).slice(0, 100));
-  let changed = false;
-
+  // ── changes[] — field alias desteği (row/r, col/c/column, value/v/val) ──
   if (Array.isArray(result.changes) && result.changes.length > 0) {
     result.changes.forEach(function(ch) {
-      const r = ch.row, c = ch.col;
-      if (r === undefined || c === undefined) return;
+      const r = ch.row !== undefined ? ch.row : ch.r;
+      const c = ch.col !== undefined ? ch.col : (ch.c !== undefined ? ch.c : ch.column);
+      const v = ch.value !== undefined ? ch.value : (ch.v !== undefined ? ch.v : ch.val);
+      if (r === undefined || c === undefined || v === undefined) return;
       while (data.length <= r) data.push([]);
       while (data[r].length <= c) data[r].push('');
-      data[r][c] = ch.value !== undefined ? String(ch.value) : '';
-      changed = true;
+      data[r][c] = String(v);
     });
   }
 
+  // ── highlight[] — getCellMeta/setCellMeta kullan (cellMeta[sheet][r_c] yapısı) ──
   if (Array.isArray(result.highlight) && result.highlight.length > 0) {
     result.highlight.forEach(function(h) {
-      const r = h.row, c = h.col;
+      const r = h.row !== undefined ? h.row : h.r;
+      const c = h.col !== undefined ? h.col : h.c;
       if (r === undefined || c === undefined) return;
       const meta = getCellMeta(r, c);
-      meta.bg = h.color || '';
+      meta.bg = h.color || h.bg || '#fef08a';
       setCellMeta(r, c, meta);
-      changed = true;
     });
   }
 
-  // Sort action — column can be number index or string name
-  if (result.action === 'sort') {
-    if (changed) refreshGrid();
-    if (typeof result.column === 'number') {
-      console.log('[SORT] sütun index:', result.column);
-      sortColumn(result.column, result.direction || 'asc');
-    } else if (typeof result.column === 'string') {
+  // ── action dispatch ───────────────────────────────────────────────────────
+  switch (result.action) {
+    case 'sort': {
       const headers = data[0] || [];
-      let colIdx = -1;
-      if (/^[A-Za-z]$/.test(result.column)) {
-        colIdx = result.column.toUpperCase().charCodeAt(0) - 65;
-      } else {
-        colIdx = headers.findIndex(h => h && h.toString().toLowerCase().includes(result.column.toLowerCase()));
+      let colIdx = 0;
+      if (typeof result.column === 'number') {
+        colIdx = result.column;
+      } else if (typeof result.column === 'string') {
+        if (/^[A-Za-z]$/.test(result.column.trim())) {
+          colIdx = result.column.toUpperCase().charCodeAt(0) - 65;
+        } else {
+          const idx = headers.findIndex(function(h) {
+            return h && h.toString().toLowerCase().includes(result.column.toLowerCase());
+          });
+          if (idx >= 0) colIdx = idx;
+        }
       }
-      console.log('[SORT] sütun adı:', result.column, '→ index:', colIdx, '| headers:', headers.slice(0,5));
-      if (colIdx < 0) colIdx = 0;
       sortColumn(colIdx, result.direction || 'asc');
-    } else {
-      console.log('[SORT] sütun yok, index 0 kullanılıyor');
-      sortColumn(0, result.direction || 'asc');
+      return;
     }
-    return;
-  }
-  // Update cells action (KDV, çarpma, bölme, net maaş vb.)
-  if (result.action === 'update_cells') {
-    applyUpdateCellsAction(result);
-    return;
-  }
-  // Highlight action (renklendirme)
-  if (result.action === 'highlight') {
-    applyHighlightAction(result);
-    return;
-  }
-  // Sum action
-  if (result.action === 'sum') {
-    applySumAction(result);
-    return;
-  }
-  // Average action
-  if (result.action === 'average') {
-    applyAverageAction(result);
-    return;
-  }
-  // Transform action
-  if (result.action === 'transform') {
-    applyTransformAction(result);
-    return;
-  }
-  // Filter action — show toast (frontend filtering not yet implemented)
-  if (result.action === 'filter') {
-    if (typeof showToast === 'function') showToast(result.reply || '✓ Filtrelendi', 'success');
-    return;
-  }
-  // Delete empty rows
-  if (result.action === 'delete_rows') {
-    if (changed) refreshGrid();
-    cmdCleanEmptyRows();
-    return;
-  }
-  // Remove duplicates
-  if (result.action === 'remove_duplicates') {
-    if (changed) refreshGrid();
-    cmdRemoveDuplicates();
-    return;
+    case 'update_cells':    applyUpdateCellsAction(result); return;
+    case 'highlight':       applyHighlightAction(result);   return;
+    case 'sum':             applySumAction(result);          return;
+    case 'average':         applyAverageAction(result);      return;
+    case 'transform':       applyTransformAction(result);    return;
+    case 'delete_rows':
+      if (result.changes && result.changes.length > 0) refreshGrid();
+      cmdCleanEmptyRows();
+      return;
+    case 'remove_duplicates':
+      if (result.changes && result.changes.length > 0) refreshGrid();
+      cmdRemoveDuplicates();
+      return;
+    case 'filter': {
+      const headers2 = data[0];
+      const val = result.value || '';
+      const cond = (result.condition || '').toLowerCase();
+      let filtered = data.slice(1);
+      if (val) {
+        filtered = filtered.filter(function(row) {
+          return (row || []).some(function(cell) {
+            return String(cell != null ? cell : '').toLowerCase().includes(val.toLowerCase());
+          });
+        });
+      } else if (/[<>]/.test(cond)) {
+        const m = cond.match(/([<>]=?)\s*(\d+)/);
+        if (m) {
+          const op = m[1], th = parseFloat(m[2]);
+          filtered = filtered.filter(function(row) {
+            return (row || []).some(function(cell) {
+              const n = parseFloat(String(cell != null ? cell : ''));
+              if (isNaN(n)) return false;
+              if (op === '>')  return n > th;
+              if (op === '<')  return n < th;
+              if (op === '>=') return n >= th;
+              if (op === '<=') return n <= th;
+              return false;
+            });
+          });
+        }
+      }
+      if (!sheets[activeSheet + '_backup']) {
+        sheets[activeSheet + '_backup'] = data.slice();
+      }
+      sheets[activeSheet] = [headers2].concat(filtered);
+      refreshGrid();
+      if (typeof showToast === 'function') showToast((result.reply || '✓ Filtrelendi') + ' (' + filtered.length + ' satır)', 'success');
+      return;
+    }
+    case 'remove_filter': {
+      var backup = sheets[activeSheet + '_backup'];
+      if (backup) {
+        sheets[activeSheet] = backup;
+        delete sheets[activeSheet + '_backup'];
+        refreshGrid();
+        if (typeof showToast === 'function') showToast('✓ Filtre kaldırıldı', 'success');
+      }
+      return;
+    }
+    default:
+      break;
   }
 
-  if (changed) {
+  // changes varsa grid'i yenile
+  if (result.changes && result.changes.length > 0) {
     refreshGrid();
-    if (typeof showToast === 'function') showToast('✓ Changes applied', 'success');
+    if (typeof showToast === 'function') showToast(result.reply || '✓ Güncellendi', 'success');
   }
 }
 
