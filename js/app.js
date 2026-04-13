@@ -19,6 +19,7 @@ let activeSheet = 'Sheet1';
 let selRow = 0, selCol = 0;
 let selStart = null, selEnd = null;
 let cellMeta = {}; // {sheetName: {r_c: {bold,italic,underline,align,bg,color,fontFamily,fontSize}}}
+let isProcessing = false; // çift gönderim koruması — sendChat/sendChatMessage paylaşır
 let recentFiles = [];
 let colWidths = {};
 let rowHeights = {};
@@ -1370,9 +1371,11 @@ async function buildMessageWithAttachments(userMessage) {
 }
 
 async function sendChat() {
+  if (isProcessing) { console.log('[Guard] sendChat engellendi — işlem devam ediyor'); return; }
   const input = document.getElementById('chatInput');
   const msg = input.value.trim();
   if (!msg && !chatAttachments.length) return;
+  isProcessing = true;
   input.value = '';
   input.style.height = '34px';
 
@@ -1444,6 +1447,7 @@ async function sendChat() {
       if (typeof addMsg === 'function') addMsg('ai', '❌ ' + (err.message || 'Bir hata oluştu'));
     }
   } finally {
+    isProcessing = false;
     if (_fcSubtitle) { _fcSubtitle.textContent = 'Online'; _fcSubtitle.classList.remove('loading'); }
     if (_fcSendIcon)  _fcSendIcon.style.display  = '';
     if (_fcSpinner)   _fcSpinner.style.display   = 'none';
@@ -3281,7 +3285,8 @@ document.addEventListener('keydown', function(e) {
     var ci = document.getElementById('chatInput');
     if (ci && document.activeElement === ci && !ci.disabled) {
       e.preventDefault();
-      if (typeof sendChat === 'function') sendChat();
+      // sendChatMessage kullan — isProcessing guard zaten çift çağrıyı önler
+      if (typeof sendChatMessage === 'function') sendChatMessage();
     }
   }
 
@@ -3914,12 +3919,14 @@ function removeAttachmentChip(filename) {
 // ── MAIN SEND FUNCTION ─────────────────────────────
 
 async function sendChatMessage() {
+  if (isProcessing) { console.log('[Guard] sendChatMessage engellendi — işlem devam ediyor'); return; }
   const input = document.getElementById('chatInput');
   const sendBtn = document.getElementById('chatSendBtn');
   if (!input) return;
 
   const message = input.value.trim();
   if (!message) return;
+  isProcessing = true;
 
   // Open floating chat panel (if closed)
   if (typeof openFloatingChat === 'function') openFloatingChat();
@@ -4006,6 +4013,7 @@ async function sendChatMessage() {
       addMsg('ai', '❌ An error occurred. Please try again.');
     }
   } finally {
+    isProcessing = false;
     sendBtn.disabled = false;
     sendBtn.classList.remove('loading');
     sendBtn.innerHTML = `
