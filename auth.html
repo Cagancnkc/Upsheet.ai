@@ -68,6 +68,10 @@
       0%, 100% { opacity: 1; }
       50% { opacity: 0; }
     }
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
 
     .form-card { animation: slideUp 0.5s cubic-bezier(.16,1,.3,1) both; }
     .auth-left-content { animation: fadeIn 0.4s ease both; }
@@ -367,21 +371,28 @@
           </div>
 
           <!-- Promosyon Kodu (opsiyonel) -->
-          <div id="promo-section" style="margin-top:4px">
-            <button type="button" onclick="togglePromo()" style="background:none;border:none;cursor:pointer;font-size:12px;color:#6B7280;padding:0;display:flex;align-items:center;gap:4px;transition:color .15s;" onmouseover="this.style.color='#4F46E5'" onmouseout="this.style.color='#6B7280'">
-              <span id="promo-toggle-icon">＋</span>
+          <div id="promo-section" style="margin-top:8px">
+            <button type="button" id="promo-toggle-btn"
+                    onclick="togglePromo()"
+                    style="background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:5px;font-size:12px;color:#6B7280;padding:0;font-family:inherit;transition:color .15s;"
+                    onmouseover="this.style.color='#4F46E5'"
+                    onmouseout="this.style.color='#6B7280'">
+              <span id="promo-toggle-icon" style="font-size:13px;font-weight:700;transition:transform .2s">＋</span>
               <span>Promosyon kodun var mı?</span>
+              <span style="font-size:10px;background:#EDE9FE;color:#5B21B6;padding:1px 7px;border-radius:100px;font-weight:600">MOCK100</span>
             </button>
-            <div id="promo-input-wrap" style="display:none;margin-top:8px;">
+            <div id="promo-input-wrap" style="display:none;margin-top:8px;animation:slideDown .2s ease-out">
               <div style="position:relative">
-                <input type="text" id="promo-code-input" placeholder="Promosyon kodu (örn: MOCK100)" maxlength="20"
-                  style="width:100%;padding:10px 40px 10px 14px;border:1.5px solid #E5E7EB;border-radius:10px;font-size:13px;font-family:inherit;outline:none;transition:border .2s;text-transform:uppercase;letter-spacing:.05em;background:#1a1a2e;color:white;"
-                  oninput="this.value=this.value.toUpperCase()"
-                  onfocus="this.style.borderColor='#4F46E5'"
-                  onblur="this.style.borderColor='#E5E7EB'">
-                <div id="promo-status" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:14px;"></div>
+                <input type="text" id="promo-code-input"
+                       placeholder="Promosyon kodunu gir (örn: MOCK100)"
+                       maxlength="20" autocomplete="off"
+                       style="width:100%;padding:10px 44px 10px 14px;border:1.5px solid #E5E7EB;border-radius:10px;font-size:13px;font-family:inherit;outline:none;transition:border .2s;letter-spacing:.03em;text-transform:uppercase;box-sizing:border-box;"
+                       oninput="this.value=this.value.toUpperCase();onPromoInput(this.value)"
+                       onfocus="this.style.borderColor='#4F46E5'"
+                       onblur="this.style.borderColor=(this.value&&validPromos[this.value]?'#059669':'#E5E7EB')">
+                <div id="promo-status-icon" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:16px;pointer-events:none"></div>
               </div>
-              <div id="promo-message" style="font-size:12px;margin-top:4px;padding:0 4px;display:none;"></div>
+              <div id="promo-msg" style="font-size:12px;margin-top:5px;display:none;border-radius:6px;padding:6px 10px"></div>
             </div>
           </div>
 
@@ -738,57 +749,74 @@ function switchForm(target) {
 <script src="payment.js"></script>
 <script>
 // ── Promosyon kodu ─────────────────────────────
-var VALID_PROMOS = { 'MOCK100': { description: '1 ay Claude Pro ücretsiz' } };
+var validPromos = {
+  'MOCK100': { label: '1 ay Claude Pro ücretsiz', icon: '🎁', color: '#059669', bg: '#D1FAE5' }
+};
+var _promoTimer = null;
 
 function togglePromo() {
   var wrap = document.getElementById('promo-input-wrap');
   var icon = document.getElementById('promo-toggle-icon');
-  var isVisible = wrap.style.display !== 'none';
-  wrap.style.display = isVisible ? 'none' : 'block';
-  icon.textContent = isVisible ? '＋' : '－';
-  if (!isVisible) {
+  var open = wrap.style.display !== 'none';
+  wrap.style.display = open ? 'none' : 'block';
+  icon.textContent = open ? '＋' : '－';
+  icon.style.transform = open ? 'rotate(0deg)' : 'rotate(45deg)';
+  if (!open) {
     var params = new URLSearchParams(window.location.search);
-    var urlPromo = params.get('promo') || localStorage.getItem('promo_code');
-    if (urlPromo) {
+    var saved = params.get('promo') || localStorage.getItem('promo_code');
+    if (saved) {
       var input = document.getElementById('promo-code-input');
-      input.value = urlPromo.toUpperCase();
-      validatePromo(urlPromo.toUpperCase());
+      if (input) { input.value = saved.toUpperCase(); validatePromoCode(saved.toUpperCase()); }
     }
-    setTimeout(function(){ document.getElementById('promo-code-input').focus(); }, 100);
+    setTimeout(function(){ var inp = document.getElementById('promo-code-input'); if(inp) inp.focus(); }, 120);
   }
 }
 
-function validatePromo(code) {
-  var status = document.getElementById('promo-status');
-  var message = document.getElementById('promo-message');
-  if (!code) { status.textContent = ''; message.style.display = 'none'; return; }
-  if (VALID_PROMOS[code]) {
-    status.textContent = '✅';
-    message.style.display = 'block';
-    message.style.color = '#059669';
-    message.textContent = '🎁 ' + VALID_PROMOS[code].description + ' uygulanacak!';
-    localStorage.setItem('promo_code', code);
+function onPromoInput(val) {
+  clearTimeout(_promoTimer);
+  if (!val) { setPromoStatus('', '', '', ''); return; }
+  _promoTimer = setTimeout(function(){ validatePromoCode(val); }, 400);
+}
+
+function validatePromoCode(code) {
+  var statusEl = document.getElementById('promo-status-icon');
+  var msgEl    = document.getElementById('promo-msg');
+  var inputEl  = document.getElementById('promo-code-input');
+  if (!code) { setPromoStatus('', '', '', ''); return; }
+  var promo = validPromos[code.toUpperCase()];
+  if (promo) {
+    if (statusEl) statusEl.textContent = '✅';
+    if (msgEl) { msgEl.style.display='block'; msgEl.style.background=promo.bg; msgEl.style.color=promo.color; msgEl.innerHTML=promo.icon+' <strong>Uygulandı!</strong> '+promo.label; }
+    if (inputEl) inputEl.style.borderColor = promo.color;
+    localStorage.setItem('promo_code', code.toUpperCase());
   } else {
-    status.textContent = '❌';
-    message.style.display = 'block';
-    message.style.color = '#DC2626';
-    message.textContent = 'Geçersiz promosyon kodu';
+    if (statusEl) statusEl.textContent = '❌';
+    if (msgEl) { msgEl.style.display='block'; msgEl.style.background='#FEE2E2'; msgEl.style.color='#DC2626'; msgEl.innerHTML='✗ Geçersiz kod.'; }
+    if (inputEl) inputEl.style.borderColor = '#EF4444';
     localStorage.removeItem('promo_code');
   }
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+function setPromoStatus(icon, bg, color, msg) {
+  var s=document.getElementById('promo-status-icon');
+  var m=document.getElementById('promo-msg');
+  var i=document.getElementById('promo-code-input');
+  if(s) s.textContent=icon;
+  if(m){ m.style.display=msg?'block':'none'; m.textContent=msg; m.style.background=bg; m.style.color=color; }
+  if(i) i.style.borderColor='#E5E7EB';
+}
+
+function getActivePromoCode() {
   var input = document.getElementById('promo-code-input');
-  if (input) {
-    input.addEventListener('input', function(e) {
-      clearTimeout(window._promoTimer);
-      window._promoTimer = setTimeout(function(){ validatePromo(e.target.value.trim().toUpperCase()); }, 500);
-    });
-  }
+  if (input && input.value && validPromos[input.value.toUpperCase()]) return input.value.toUpperCase();
+  return localStorage.getItem('promo_code') || null;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
   // URL'de promo kodu varsa otomatik aç
   var params = new URLSearchParams(window.location.search);
   var urlPromo = params.get('promo') || localStorage.getItem('promo_code');
-  if (urlPromo && VALID_PROMOS[urlPromo.toUpperCase()]) {
+  if (urlPromo && validPromos[urlPromo.toUpperCase()]) {
     setTimeout(togglePromo, 600);
   }
 });
