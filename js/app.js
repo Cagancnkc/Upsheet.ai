@@ -3883,7 +3883,7 @@ function autoResizeChatInput(el) {
 }
 
 function handleChatKeydown(event) {
-  if (event.key === 'Enter' && !event.shiftKey) {
+  if (event.key === 'Enter' && !event.shiftKey && !event.ctrlKey && !event.metaKey) {
     event.preventDefault();
     sendChatMessage();
   }
