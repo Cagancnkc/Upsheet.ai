@@ -50,9 +50,7 @@ const PRICES = {
 };
 
 const BIZ_BASE = { weekly: 274.75, monthly: 1099, yearly: 6990 };
-const PER_USER_TRY = 80;
 let currentPeriod = 'monthly';
-let currentUsers = 5;
 
 function setPeriod(period) {
   currentPeriod = period;
@@ -100,58 +98,31 @@ function setPeriod(period) {
   if (freeGiftEl)  freeGiftEl.style.display  = period === 'yearly' ? 'flex' : 'none';
   if (freeGiftBiz) freeGiftBiz.style.display = period === 'yearly' ? 'flex' : 'none';
 
-  updateBizPrice(currentUsers);
+  updateBizPrice();
 }
 
-function updateBizPrice(users) {
-  users = parseInt(users);
-  currentUsers = users;
-
+function updateBizPrice() {
   var base = BIZ_BASE[currentPeriod] || BIZ_BASE.monthly;
-  var extraUsers = Math.max(0, users - 5);
-  var price = base + (extraUsers * PER_USER_TRY);
 
-  var discountRate = 0;
-  var discountLabel = '';
-  if (users >= 30)      { discountRate = 0.20; discountLabel = '%20'; }
-  else if (users >= 20) { discountRate = 0.15; discountLabel = '%15'; }
-  else if (users >= 10) { discountRate = 0.10; discountLabel = '%10'; }
-
-  if (discountRate > 0) price = price * (1 - discountRate);
-
-  var bizPriceEl   = document.getElementById('price-biz');
-  var bizPeriodEl  = document.getElementById('period-biz');
-  var bizOrigEl    = document.getElementById('orig-biz');
-  var bizNoteEl    = document.getElementById('note-biz');
-  var badgeEl      = document.getElementById('userCountBadge');
-  var discountEl   = document.getElementById('userDiscount');
-  var discountText = document.getElementById('discountText');
-  var fillEl       = document.getElementById('userBarFill');
-  var sliderEl     = document.getElementById('userSlider');
-  var minusBtn     = document.getElementById('userMinus');
-  var plusBtn      = document.getElementById('userPlus');
+  var bizPriceEl  = document.getElementById('price-biz');
+  var bizPeriodEl = document.getElementById('period-biz');
+  var bizOrigEl   = document.getElementById('orig-biz');
+  var bizNoteEl   = document.getElementById('note-biz');
 
   if (bizPriceEl) {
-    var formatted = price % 1 === 0
-      ? price.toLocaleString('tr-TR')
-      : price.toFixed(2).replace('.', ',');
-    bizPriceEl.textContent = formatted;
+    bizPriceEl.textContent = base.toLocaleString('tr-TR');
   }
   if (bizPeriodEl) bizPeriodEl.textContent = PRICES[currentPeriod]?.biz?.period || '/ay';
-  if (badgeEl)     badgeEl.textContent     = users + ' kullanıcı';
-  if (sliderEl)    sliderEl.value          = users;
 
   if (bizNoteEl) {
     if (currentPeriod === 'yearly') {
-      bizNoteEl.textContent = '≈ ₺' + Math.round(price / 12).toLocaleString('tr-TR') + '/ay · 2 ay ücretsiz';
-      bizNoteEl.style.display = 'block';
+      bizNoteEl.textContent = '≈ ₺' + Math.round(base / 12).toLocaleString('tr-TR') + '/ay · 2 ay ücretsiz';
     } else if (currentPeriod === 'monthly') {
       bizNoteEl.textContent = 'Aylık faturalandırılır';
-      bizNoteEl.style.display = 'block';
     } else {
       bizNoteEl.textContent = 'Haftalık faturalandırılır';
-      bizNoteEl.style.display = 'block';
     }
+    bizNoteEl.style.display = 'block';
   }
 
   if (bizOrigEl) {
@@ -162,33 +133,6 @@ function updateBizPrice(users) {
       bizOrigEl.style.display = 'none';
     }
   }
-
-  if (discountEl && discountText) {
-    if (discountRate > 0) {
-      discountText.textContent = discountLabel;
-      discountEl.style.display = 'block';
-    } else {
-      discountEl.style.display = 'none';
-    }
-  }
-
-  if (fillEl && sliderEl) {
-    var min = parseInt(sliderEl.min);
-    var max = parseInt(sliderEl.max);
-    var pct = ((users - min) / (max - min)) * 100;
-    fillEl.style.width = pct + '%';
-  }
-
-  if (minusBtn) minusBtn.disabled = users <= 5;
-  if (plusBtn)  plusBtn.disabled  = users >= 50;
-}
-
-function changeUsers(delta) {
-  var slider = document.getElementById('userSlider');
-  if (!slider) return;
-  var newVal = Math.min(50, Math.max(5, currentUsers + delta * 5));
-  slider.value = newVal;
-  updateBizPrice(newVal);
 }
 
 // ── DEMO ANİMASYONU ──────────────────────────────────────────────────

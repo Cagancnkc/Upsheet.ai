@@ -884,36 +884,6 @@ function copyPromoCode(){
         <!-- Alt not -->
         <div id="note-biz" style="font-size:11px;color:#6B7280;margin-top:4px;display:block">Aylık faturalandırılır</div>
 
-        <!-- Kullanıcı seçici -->
-        <div class="lp-user-selector">
-          <div class="lp-user-selector-top">
-            <span class="lp-user-label">Takım büyüklüğü</span>
-            <span class="lp-user-count-badge"
-                  id="userCountBadge">5 kullanıcı</span>
-          </div>
-          <div class="lp-user-controls">
-            <button class="lp-user-btn"
-                    onclick="changeUsers(-1)"
-                    id="userMinus">−</button>
-            <div class="lp-user-bar-wrapper">
-              <input type="range" id="userSlider"
-                     min="5" max="50" step="5" value="5"
-                     class="lp-user-slider"
-                     oninput="updateBizPrice(this.value)">
-              <div class="lp-user-bar-fill"
-                   id="userBarFill"
-                   style="width:0%"></div>
-            </div>
-            <button class="lp-user-btn"
-                    onclick="changeUsers(1)"
-                    id="userPlus">+</button>
-          </div>
-          <div class="lp-user-discount"
-               id="userDiscount"
-               style="display:none">
-            🎉 <span id="discountText"></span> indirim uygulandı!
-          </div>
-        </div>
 
         <p class="lp-price-desc"
            style="font-size:12px;color:#6B7280">
