@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MockSheets — AI Excel Assistant</title>
+<title>Mocksheets — AI Excel Assistant</title>
 <meta name="theme-color" content="#f97316">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="MockSheets">
+<meta name="apple-mobile-web-app-title" content="Mocksheets">
 <link rel="apple-touch-icon" href="/icon-192.png">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='black'/><path d='M 30 65 Q 28 40 50 28 Q 65 22 75 32 L 68 40 Q 60 33 50 37 Q 35 45 36 63 Z' fill='white'/></svg>">
-<meta name="description" content="Manage your Excel spreadsheets with AI-powered commands using MockSheets">
+<meta name="description" content="Manage your Excel spreadsheets with AI-powered commands using Mocksheets">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -245,14 +245,6 @@ body.dark .lang-btn.active { background: rgba(255,255,255,0.12); color: #fff; bo
 <body>
 
 
-<!-- ONBOARDING BANNER -->
-<div id="onboardBanner" class="hidden">
-  <span class="ob-text">⚡ AI özelliklerini etkinleştirmek için API anahtarınızı ekleyin</span>
-  <span class="ob-link" onclick="openSettings()">Ayarları Aç →</span>
-  <button id="obClose" onclick="closeOnboardBanner()" title="Kapat">
-    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-  </button>
-</div>
 
 <div id="main">
 
@@ -262,7 +254,7 @@ body.dark .lang-btn.active { background: rgba(255,255,255,0.12); color: #fff; bo
   <div class="sb-header">
     <a href="index.html" class="sb-logo">
       <span class="sb-logo-accent"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" style="width:24px;height:24px;border-radius:5px;flex-shrink:0;"><rect width="100" height="100" fill="black"/><path d="M 30 65 Q 28 40 50 28 Q 65 22 75 32 L 68 40 Q 60 33 50 37 Q 35 45 36 63 Z" fill="white"/></svg></span>
-      <span class="sb-logo-text">MockSheets</span>
+      <span class="sb-logo-text">Mocksheets</span>
     </a>
     <div id="sbCollapseBtn" onclick="toggleSidebar()" title="Kenar çubuğunu daralt">
       <svg id="sbCollapseIcon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
@@ -770,7 +762,7 @@ body.dark .lang-btn.active { background: rgba(255,255,255,0.12); color: #fff; bo
 
   <!-- STEP 1: Excel Bağla -->
   <div id="obStep1" class="ob-premium-panel">
-    <div class="ob-brand"><div class="logo-mark" style="display:inline-flex;align-items:center;gap:8px;"><div style="width:28px;height:28px;flex-shrink:0;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" style="width:100%;height:100%;border-radius:6px;"><rect width="100" height="100" fill="black"/><path d="M 30 65 Q 28 40 50 28 Q 65 22 75 32 L 68 40 Q 60 33 50 37 Q 35 45 36 63 Z" fill="white"/></svg></div><span style="font-weight:700;font-size:16px;color:#ffffff;letter-spacing:-0.3px;">MockSheets</span></div></div>
+    <div class="ob-brand"><div class="logo-mark" style="display:inline-flex;align-items:center;gap:8px;"><div style="width:28px;height:28px;flex-shrink:0;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" style="width:100%;height:100%;border-radius:6px;"><rect width="100" height="100" fill="black"/><path d="M 30 65 Q 28 40 50 28 Q 65 22 75 32 L 68 40 Q 60 33 50 37 Q 35 45 36 63 Z" fill="white"/></svg></div><span style="font-weight:700;font-size:16px;color:#ffffff;letter-spacing:-0.3px;">Mocksheets</span></div></div>
     <h1 class="ob-main-title">Excel dosyanızı bağlayın,<br>gerisini AI halletsin</h1>
     <p class="ob-main-sub">Formül yok. Makro yok. Sadece ihtiyacınızı yazın.</p>
 
@@ -818,7 +810,7 @@ body.dark .lang-btn.active { background: rgba(255,255,255,0.12); color: #fff; bo
 
 <!-- PWA INSTALL BANNER -->
 <div id="pwaBanner" style="display:none;position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:9999;background:#18181b;border:1px solid #27272a;border-radius:14px;padding:12px 20px;align-items:center;gap:12px;box-shadow:0 8px 32px rgba(0,0,0,0.5);backdrop-filter:blur(12px);white-space:nowrap;">
-  <span style="font-size:14px;color:#e4e4e7;">📱 MockSheets'i ana ekrana ekle</span>
+  <span style="font-size:14px;color:#e4e4e7;">📱 Mocksheets'i ana ekrana ekle</span>
   <button onclick="installPWA()" style="background:#f97316;color:#fff;border:none;border-radius:8px;padding:6px 16px;font-size:13px;font-weight:600;cursor:pointer;">Yükle</button>
   <button onclick="dismissPWA()" style="background:transparent;color:#71717a;border:none;font-size:16px;cursor:pointer;line-height:1;padding:2px 4px;" title="Kapat">✕</button>
 </div>
@@ -1064,7 +1056,7 @@ function queueOfflineMessage(payload) {
             </tr>
             <tr>
               <td>Fiyat (aylık)</td>
-              <td class="highlight-col">✅ Ücretsiz / ₺149</td>
+              <td class="highlight-col">✅ Ücretsiz / ₺499</td>
               <td>❌ ₺650+</td>
               <td>❌ $10+</td>
             </tr>

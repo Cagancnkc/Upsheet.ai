@@ -19,6 +19,16 @@ body{background:#F7F7F5}
 .blog-read{font-size:12px;font-weight:600;color:#4F46E5}
 @media(max-width:640px){.blog-grid{grid-template-columns:1fr}}
 </style>
+<script>
+function blogSoon(e) {
+  e.preventDefault();
+  var toast = document.getElementById('blog-toast');
+  if (!toast) return;
+  toast.style.display = 'block';
+  clearTimeout(toast._t);
+  toast._t = setTimeout(function() { toast.style.display = 'none'; }, 3000);
+}
+</script>
 </head>
 <body>
 <nav class="lp-nav">
@@ -28,34 +38,41 @@ body{background:#F7F7F5}
   </a>
   <a href="index.html" class="lp-nav-cta">← Ana Sayfa</a>
 </nav>
+
+<div id="blog-toast" style="display:none;position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+     background:#111827;color:white;padding:10px 20px;border-radius:100px;font-size:13px;
+     font-weight:600;z-index:9999;white-space:nowrap;pointer-events:none">
+  Blog yazısı yakında yayınlanacak
+</div>
+
 <div class="blog-page">
   <h1>Blog &amp; Rehberler</h1>
   <p>Excel'i daha akıllı kullanmak için ücretsiz rehberler</p>
 
   <div class="blog-grid">
-    <a href="#" class="blog-card">
+    <a href="#" class="blog-card" onclick="blogSoon(event)">
       <span class="blog-tag">Muhasebe</span>
       <h2>Excel'de KDV Hesaplama: Formülsüz Yöntem</h2>
       <p>AI ile KDV dahil ve hariç hesaplamaları nasıl yapılır? Adım adım kılavuz.</p>
-      <span class="blog-read">5 dk okuma →</span>
+      <span class="blog-read" style="color:#9CA3AF">Yakında →</span>
     </a>
-    <a href="#" class="blog-card">
+    <a href="#" class="blog-card" onclick="blogSoon(event)">
       <span class="blog-tag">Veri Yönetimi</span>
       <h2>Dağınık Excel Verilerini 10 Saniyede Temizle</h2>
       <p>Boş satırlar, tekrarlar ve format hataları için en hızlı AI komutları.</p>
-      <span class="blog-read">4 dk okuma →</span>
+      <span class="blog-read" style="color:#9CA3AF">Yakında →</span>
     </a>
-    <a href="#" class="blog-card">
+    <a href="#" class="blog-card" onclick="blogSoon(event)">
       <span class="blog-tag">Raporlama</span>
       <h2>Aylık Satış Raporunu AI ile 3 Dakikada Hazırla</h2>
       <p>Manuel raporlama sürecinizi nasıl otomatize edersiniz?</p>
-      <span class="blog-read">6 dk okuma →</span>
+      <span class="blog-read" style="color:#9CA3AF">Yakında →</span>
     </a>
-    <a href="#" class="blog-card">
+    <a href="#" class="blog-card" onclick="blogSoon(event)">
       <span class="blog-tag">İK &amp; Bordro</span>
       <h2>Net Maaş Hesaplama: SGK ve Vergi Dahil</h2>
       <p>Türkiye 2025 parametreleriyle doğru bordro hesaplama rehberi.</p>
-      <span class="blog-read">7 dk okuma →</span>
+      <span class="blog-read" style="color:#9CA3AF">Yakında →</span>
     </a>
   </div>
 </div>

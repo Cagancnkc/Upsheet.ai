@@ -7,13 +7,26 @@
 <link rel="stylesheet" href="css/landing.css">
 <style>
 body{background:#F7F7F5}
-.about-page{max-width:800px;margin:0 auto;padding:100px 24px 80px;text-align:center}
-.about-page h1{font-size:36px;font-weight:800;margin-bottom:12px;letter-spacing:-.02em}
-.about-page p{font-size:16px;line-height:1.8;color:#374151;margin-bottom:16px;max-width:600px;margin-left:auto;margin-right:auto}
-.about-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:40px 0;text-align:center}
-.about-card{background:white;border:1.5px solid #E5E7EB;border-radius:14px;padding:24px}
+.about-page{max-width:860px;margin:0 auto;padding:100px 24px 80px}
+.about-hero{text-align:center;margin-bottom:56px}
+.about-hero h1{font-size:38px;font-weight:800;margin-bottom:12px;letter-spacing:-.02em}
+.about-hero p{font-size:16px;line-height:1.8;color:#6B7280;max-width:580px;margin:0 auto}
+.about-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:32px}
+.about-card{background:white;border:1.5px solid #E5E7EB;border-radius:14px;padding:24px;text-align:center}
 .about-num{font-size:36px;font-weight:800;color:#4F46E5;margin-bottom:6px}
 .about-label{font-size:14px;color:#6B7280}
+.about-section{background:white;border:1.5px solid #E5E7EB;border-radius:16px;padding:32px;margin-bottom:20px}
+.about-section h2{font-size:20px;font-weight:800;margin-bottom:14px}
+.about-section p{font-size:15px;color:#374151;line-height:1.8;margin-bottom:10px}
+.about-section p:last-child{margin-bottom:0}
+.mission-box{background:linear-gradient(135deg,#4F46E5,#7C3AED);border-radius:16px;padding:36px;text-align:center;color:white;margin-bottom:20px}
+.mission-box h2{font-size:22px;font-weight:800;margin-bottom:12px}
+.mission-box p{font-size:15px;opacity:.9;line-height:1.7;max-width:540px;margin:0 auto}
+.tech-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.tech-item{background:white;border:1.5px solid #E5E7EB;border-radius:12px;padding:16px;text-align:center}
+.tech-item .ti{font-size:22px;margin-bottom:6px}
+.tech-item span{font-size:13px;font-weight:600;color:#374151}
+@media(max-width:640px){.about-grid,.tech-grid{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>
@@ -25,8 +38,10 @@ body{background:#F7F7F5}
   <a href="index.html" class="lp-nav-cta">← Ana Sayfa</a>
 </nav>
 <div class="about-page">
-  <h1>Mocksheet Hakkında</h1>
-  <p>Excel işlerini yapay zeka ile kolaylaştırmak için kurulduk. Formül yazmadan, makro öğrenmeden veri yönetimini herkes için erişilebilir hale getiriyoruz.</p>
+  <div class="about-hero">
+    <h1>Türkiye'nin AI Excel Asistanı</h1>
+    <p>Excel işlerini yapay zeka ile kolaylaştırmak için kurulduk. Formül yazmadan, makro öğrenmeden veri yönetimini herkes için erişilebilir hale getiriyoruz.</p>
+  </div>
 
   <div class="about-grid">
     <div class="about-card">
@@ -43,9 +58,33 @@ body{background:#F7F7F5}
     </div>
   </div>
 
-  <p>Excel'de saatler harcayan muhasebecilerden, KOBİ sahiplerine kadar herkese zaman kazandırıyoruz. Türkçe komutlarla çalışan, Türkiye'nin vergi ve muhasebe sistemini anlayan tek AI Excel asistanıyız.</p>
+  <div class="about-section">
+    <h2>Hikayemiz</h2>
+    <p>Muhasebeci bir arkadaşım her ay 3 günü sadece Excel raporlarına harcıyordu. KDV hesaplama, boş satır silme, aylık rapor hazırlama — hepsi manuel, hepsi zaman kaybı.</p>
+    <p>Bu sorunu çözmek için Mocksheet'i sıfırdan inşa ettik. Türkçe komutlarla çalışan, Türkiye'nin vergi ve muhasebe sistemini anlayan, gerçekten işe yarayan bir araç.</p>
+    <p>Excel'de saatler harcayan muhasebecilerden, KOBİ sahiplerine kadar herkese zaman kazandırıyoruz.</p>
+  </div>
 
-  <p style="margin-top:40px">
+  <div class="mission-box">
+    <h2>Misyonumuz</h2>
+    <p>Türkiye'deki her KOBİ sahibi, muhasebeci ve veri analistinin Excel'i zahmetsizce kullanabilmesini sağlamak. Teknoloji engel değil, güç olmalı.</p>
+  </div>
+
+  <div class="about-section">
+    <h2>Teknoloji Altyapımız</h2>
+    <div class="tech-grid">
+      <div class="tech-item"><div class="ti">⚡</div><span>Node.js</span></div>
+      <div class="tech-item"><div class="ti">🗄️</div><span>Supabase</span></div>
+      <div class="tech-item"><div class="ti">🤖</div><span>Claude API</span></div>
+      <div class="tech-item"><div class="ti">💳</div><span>Stripe</span></div>
+      <div class="tech-item"><div class="ti">🌐</div><span>Vercel</span></div>
+      <div class="tech-item"><div class="ti">☁️</div><span>Render</span></div>
+      <div class="tech-item"><div class="ti">🔍</div><span>RAG / AI</span></div>
+      <div class="tech-item"><div class="ti">📊</div><span>PostgreSQL</span></div>
+    </div>
+  </div>
+
+  <p style="text-align:center;margin-top:32px">
     <a href="index.html" class="lp-btn-primary">Ana Sayfaya Dön</a>
   </p>
 </div>

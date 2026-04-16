@@ -1151,7 +1151,8 @@ function saveSettings() {
   closeModal();
   updateApiStatus();
   if (apiKey) {
-    document.getElementById('onboardBanner').classList.add('hidden');
+    var _ob = document.getElementById('onboardBanner');
+    if (_ob) _ob.classList.add('hidden');
     document.body.classList.remove('with-banner');
   }
   toast(apiKey ? t('toast_api_saved') : t('toast_api_cleared'), 'ok');
@@ -2856,12 +2857,14 @@ function loadSampleData() {
 //  ONBOARDING BANNER
 // ═══════════════════════════════════════════════════════════════
 function initOnboardBanner() {
-  document.getElementById('onboardBanner').classList.add('hidden');
+  var b = document.getElementById('onboardBanner');
+  if (b) b.classList.add('hidden');
 }
 
 function closeOnboardBanner() {
   localStorage.setItem('ob_dismissed', '1');
-  document.getElementById('onboardBanner').classList.add('hidden');
+  var b = document.getElementById('onboardBanner');
+  if (b) b.classList.add('hidden');
   document.body.classList.remove('with-banner');
 }
 
