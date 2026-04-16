@@ -20,6 +20,7 @@ let selRow = 0, selCol = 0;
 let selStart = null, selEnd = null;
 let cellMeta = {}; // {sheetName: {r_c: {bold,italic,underline,align,bg,color,fontFamily,fontSize}}}
 let isProcessing = false; // çift gönderim koruması — sendChat/sendChatMessage paylaşır
+let CALL_COUNTER = 0; // debug: API çağrı sayacı
 let recentFiles = [];
 let colWidths = {};
 let rowHeights = {};
@@ -1415,6 +1416,7 @@ async function sendChat() {
   try {
     let reply;
     if (typeof processAICommand === 'function') {
+      console.warn('[CALL #' + (++CALL_COUNTER) + '] sendChat → processAICommand', new Error().stack.split('\n')[2]?.trim());
       const aiResult = await processAICommand(finalMessage, sheets[activeSheet] || [], activeSheet, chatHistory.slice(-8));
       if (!aiResult || aiResult?.error === 'offline') {
         clearInterval(_loadTimer);
@@ -3956,6 +3958,7 @@ async function sendChatMessage() {
     const sheetContext = sheets[activeSheet] || [];
 
     const token = getAuthToken();
+    console.warn('[CALL #' + (++CALL_COUNTER) + '] sendChatMessage → fetch /api/chat', new Error().stack.split('\n')[2]?.trim());
     const response = await fetch(API_URL + '/api/chat', {
       method: 'POST',
       headers: {
