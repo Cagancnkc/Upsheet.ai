@@ -1548,6 +1548,11 @@ function refreshGrid() {
 }
 
 function applyAIChanges(result) {
+  console.group('[applyAIChanges]');
+  console.log('action:', result?.action, '| reply:', result?.reply?.slice(0, 60));
+  console.log('changes:', result?.changes?.length || 0, '| full:', JSON.stringify(result)?.slice(0, 300));
+  console.groupEnd();
+
   const data = sheets[activeSheet];
   if (!data || !data.length) {
     if (typeof showToast === 'function') showToast('Önce veri yükleyin', 'error');

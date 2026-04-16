@@ -134,11 +134,12 @@ app.get('/health', (req, res) => {
 
 app.post('/api/chat', checkLimit, async (req, res) => {
   try {
-    const { message, sheetContext } = req.body;
+    const { message, sheetContext, sheetData, sheetName, history } = req.body;
     if (!message || !message.trim())
       return res.status(400).json({ error: 'Mesaj boş olamaz' });
 
-    const result = await processExcelCommand(message.trim(), sheetContext || '');
+    const sheetArr = sheetContext || sheetData || [];
+    const result = await processExcelCommand(message.trim(), sheetArr);
 
     await incrementUsage(req.user.id);
 
