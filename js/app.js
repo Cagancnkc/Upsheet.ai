@@ -1564,6 +1564,20 @@ function applyAIChanges(result) {
   console.groupEnd();
 
   const data = sheets[activeSheet];
+
+  // Supabase sistem tablosu verisi yanlışlıkla yüklenmiş mi?
+  const _headers = (data && data[0]) ? data[0] : [];
+  const _isSystemData = _headers.some(h =>
+    ['schemaname', 'tablename', 'policyname', 'grantee', 'privilege_type'].includes(
+      String(h).toLowerCase()
+    )
+  );
+  if (_isSystemData) {
+    console.error('[applyAIChanges] Sistem verisi algılandı — dosya yüklenmemiş!');
+    if (typeof showToast === 'function') showToast('⚠️ Lütfen önce bir Excel dosyası yükleyin', 'error');
+    return;
+  }
+
   if (!data || !data.length) {
     if (typeof showToast === 'function') showToast('Önce veri yükleyin', 'error');
     return;
@@ -3608,6 +3622,8 @@ async function syncFromSupabase(fileId) {
 
 // ── Load file by ID ───────────────────────────────────────────
 async function loadFileById(fileId) {
+  // Son açık dosyayı kaydet
+  if (fileId) localStorage.setItem('lastFileId', fileId);
   try {
     var db     = await openIDB();
     var cached = await idbGet(db, 'files', fileId);

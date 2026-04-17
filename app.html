@@ -854,6 +854,19 @@ sb.auth.getSession().then(({ data }) => {
   currentUser = user;
   window.currentUser = user;
   if (typeof initFileSystem === 'function') initFileSystem();
+
+  // Son açık dosyayı otomatik yükle
+  setTimeout(async () => {
+    try {
+      const lastId = localStorage.getItem('lastFileId');
+      if (lastId && typeof loadFileById === 'function') {
+        console.log('[AutoLoad] Son dosya yükleniyor:', lastId);
+        await loadFileById(lastId);
+      }
+    } catch(e) {
+      console.warn('[AutoLoad] Hata:', e.message);
+    }
+  }, 800);
 });
 
 // SIGNED_OUT event — auth sayfasına yönlendir
