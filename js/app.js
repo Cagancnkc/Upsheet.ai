@@ -1594,21 +1594,7 @@ function applyAIChanges(result) {
   // ── action dispatch ───────────────────────────────────────────────────────
   switch (result.action) {
     case 'sort': {
-      const headers = data[0] || [];
-      let colIdx = 0;
-      if (typeof result.column === 'number') {
-        colIdx = result.column;
-      } else if (typeof result.column === 'string') {
-        if (/^[A-Za-z]$/.test(result.column.trim())) {
-          colIdx = result.column.toUpperCase().charCodeAt(0) - 65;
-        } else {
-          const idx = headers.findIndex(function(h) {
-            return h && h.toString().toLowerCase().includes(result.column.toLowerCase());
-          });
-          if (idx >= 0) colIdx = idx;
-        }
-      }
-      sortColumn(colIdx, result.direction || 'asc');
+      sortColumn(result.column || result.source_column || 0, result.direction || 'asc');
       return;
     }
     case 'update_cells':    applyUpdateCellsAction(result); return;
@@ -1616,10 +1602,15 @@ function applyAIChanges(result) {
     case 'sum':             applySumAction(result);          return;
     case 'average':         applyAverageAction(result);      return;
     case 'transform':       applyTransformAction(result);    return;
-    case 'delete_rows':
-      if (result.changes && result.changes.length > 0) refreshGrid();
-      cmdCleanEmptyRows();
+    case 'delete_rows': {
+      const cond = (result.condition || '').toLowerCase();
+      if (cond.includes('duplicate') || cond.includes('tekrar')) {
+        cmdRemoveDuplicates();
+      } else {
+        cmdCleanEmptyRows();
+      }
       return;
+    }
     case 'remove_duplicates':
       if (result.changes && result.changes.length > 0) refreshGrid();
       cmdRemoveDuplicates();
@@ -1707,8 +1698,12 @@ function applyUpdateCellsAction(data) {
       });
 
   let changed = 0;
-  const formula = data.formula || '';
-  const factor = parseFloat(data.factor) || 1;
+  // Formula alias normalize
+  let formula = (data.formula || '').toLowerCase()
+    .replace('add_vat', 'vat').replace('kdv', 'vat');
+  // KDV factor'ı her zaman 1.20 zorla
+  let factor = parseFloat(data.factor) || 1;
+  if (formula === 'multiply' && (factor === 1.18 || factor === 0)) factor = 1.20;
 
   for (let r = 1; r < sheet.length; r++) {
     for (let ci = 0; ci < targetCols.length; ci++) {
@@ -1781,8 +1776,8 @@ function applyHighlightAction(data) {
       const num = parseFloat(String(raw || '').replace(',', '.'));
       let match = false;
 
-      if (condition === 'negative' || condition === 'value < 0') match = !isNaN(num) && num < 0;
-      else if (condition === 'positive' || condition === 'value > 0') match = !isNaN(num) && num > 0;
+      if (condition === 'negative' || condition === 'value < 0' || condition === 'negatif' || condition === 'isnegative') match = !isNaN(num) && num < 0;
+      else if (condition === 'positive' || condition === 'value > 0' || condition === 'pozitif' || condition === 'ispositive') match = !isNaN(num) && num > 0;
       else if (condition === 'high') match = !isNaN(num) && num > 0;
       else if (/^top\d+$/.test(condition)) match = topValues.has(num);
       else if (condition.startsWith('value >')) {
@@ -1907,18 +1902,45 @@ function highlightCell(row, col, color) {
 
 function sortColumn(col, direction) {
   const data = sheets[activeSheet];
-  if (!data) return;
-  const hasHeader = data[0] && data[0][col] && isNaN(parseFloat(data[0][col]));
-  const header = hasHeader ? data.shift() : null;
-  data.sort(function(a, b) {
-    const va = parseFloat(a[col]), vb = parseFloat(b[col]);
-    if (!isNaN(va) && !isNaN(vb)) return direction === 'desc' ? vb - va : va - vb;
-    const cmp = String(a[col] || '').localeCompare(String(b[col] || ''), 'en');
-    return direction === 'desc' ? -cmp : cmp;
+  if (!data || data.length < 2) return;
+
+  const headers = data[0] || [];
+
+  // col string ise → index'e çevir
+  let colIdx = col;
+  if (typeof col === 'string') {
+    if (/^[A-Za-z]$/.test(col.trim())) {
+      colIdx = col.toUpperCase().charCodeAt(0) - 65;
+    } else {
+      let idx = headers.findIndex(function(h) {
+        return h && h.toString().toLowerCase() === col.toLowerCase();
+      });
+      if (idx < 0) idx = headers.findIndex(function(h) {
+        return h && h.toString().toLowerCase().includes(col.toLowerCase());
+      });
+      colIdx = idx >= 0 ? idx : 0;
+    }
+  }
+
+  const dir = direction || 'asc';
+  const rows = data.slice(1).filter(function(r) {
+    return r && r.some(function(c) { return c !== '' && c !== null && c !== undefined; });
   });
-  if (header) data.unshift(header);
-  buildGrid();
-  toast(tpl('toast_sorted_tpl', {col: colLetter(col)}), 'ok');
+
+  rows.sort(function(a, b) {
+    const va = String(a[colIdx] ?? '').replace(/[,₺$\s%]/g, '');
+    const vb = String(b[colIdx] ?? '').replace(/[,₺$\s%]/g, '');
+    const na = parseFloat(va), nb = parseFloat(vb);
+    if (!isNaN(na) && !isNaN(nb)) return dir === 'asc' ? na - nb : nb - na;
+    const cmp = va.toLowerCase().localeCompare(vb.toLowerCase(), 'tr', { sensitivity: 'base' });
+    return dir === 'asc' ? cmp : -cmp;
+  });
+
+  sheets[activeSheet] = [headers].concat(rows);
+  buildGrid(sheets[activeSheet]);
+  const dirText = dir === 'asc' ? '↑ küçükten büyüğe' : '↓ büyükten küçüğe';
+  if (typeof showToast === 'function') showToast('✓ Sıralandı: ' + dirText, 'success');
+  console.log('[sortColumn] col:', colIdx, 'dir:', dir, 'rows:', rows.length);
 }
 
 function deleteEmptyRows() { cmdCleanEmptyRows(); }
@@ -2223,16 +2245,20 @@ function cmdSumSelection() {
 
 function cmdCleanEmptyRows() {
   const data = sheets[activeSheet];
-  let removed = 0;
-  for (let r = data.length - 1; r >= 0; r--) {
-    if (data[r].every(c => c === '')) {
-      data.splice(r, 1);
-      removed++;
-    }
-  }
-  while (data.length < ROWS) data.push(Array(COLS).fill(''));
-  buildGrid();
+  if (!data || data.length < 2) return;
+  const headers = data[0];
+  const before = data.length - 1;
+  const rows = data.slice(1).filter(function(row) {
+    return row && row.some(function(c) {
+      return c !== null && c !== undefined && String(c).trim() !== '';
+    });
+  });
+  sheets[activeSheet] = [headers].concat(rows);
+  while (sheets[activeSheet].length < ROWS) sheets[activeSheet].push(Array(COLS).fill(''));
+  const removed = before - rows.length;
+  buildGrid(sheets[activeSheet]);
   toast(removed ? tpl('toast_empty_removed_tpl', {count: removed}) : t('toast_no_empty_rows'), removed ? 'ok' : 'err');
+  console.log('[cmdCleanEmptyRows] silindi:', removed, 'kalan:', rows.length);
 }
 
 function cmdRemoveDuplicates() {
