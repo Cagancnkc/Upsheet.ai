@@ -28,6 +28,7 @@ function getSystemPrompt() {
 ## AKSİYON ÖRNEKLERİ
 
 ### sort — Sıralama
+Eğer sütun belirtilmemişse ilk sütunu (index 0) kullan. ASLA sütun sorma.
 Tetikleyici: "sırala", "a-z", "z-a", "küçükten büyüğe", "büyükten küçüğe", "fiyata göre", "tarihe göre"
 {"action":"sort","reply":"✓ Fiyata göre artan sıralandı","column":"fiyat","direction":"asc","changes":[]}
 
