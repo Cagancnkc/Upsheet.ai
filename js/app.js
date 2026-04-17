@@ -57,6 +57,11 @@ function buildGrid(data) {
     console.warn('buildGrid: invalid data', data);
     return;
   }
+  console.log('%c[buildGrid]', 'color:green;font-weight:bold',
+    '| rows:', data.length,
+    '| headers:', data[0]?.slice(0, 5),
+    '| row1:', data[1]?.slice(0, 5)
+  );
   const grid = document.getElementById('grid');
   grid.innerHTML = '';
   const meta = getCellMeta();
@@ -2244,6 +2249,10 @@ function cmdSumSelection() {
 }
 
 function cmdCleanEmptyRows() {
+  console.log('%c[cmdCleanEmptyRows]', 'color:orange;font-weight:bold',
+    '| activeSheet:', activeSheet,
+    '| rows:', sheets[activeSheet]?.length
+  );
   const data = sheets[activeSheet];
   if (!data || data.length < 2) return;
   const headers = data[0];
