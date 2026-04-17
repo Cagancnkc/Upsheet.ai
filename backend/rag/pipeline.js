@@ -7,7 +7,7 @@ const anthropic = new Anthropic({
 
 // System prompt — sabit, her çağrıda aynı → cache'lenir
 function getSystemPrompt() {
-  return `Sen Mocksheet AI asistanısın. Kullanıcının Türkçe Excel komutunu analiz edip SADECE geçerli JSON döndürürsün.
+  return `Sen Mocksheets AI asistanısın. Kullanıcının Türkçe Excel komutunu analiz edip SADECE geçerli JSON döndürürsün.
 
 ## YANIT FORMATI — SADECE JSON, BAŞKA HİÇBİR ŞEY YAZMA
 

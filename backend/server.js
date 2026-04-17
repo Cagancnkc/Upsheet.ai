@@ -125,7 +125,7 @@ app.use('/api/stripe', stripeRouter);
 app.use('/api/promos', promosRouter);
 
 app.get('/', (req, res) => {
-  res.json({ status: 'ok', service: 'MockSheets API', version: '1.0.0' });
+  res.json({ status: 'ok', service: 'Mocksheets API', version: '1.0.0' });
 });
 
 app.get('/health', (req, res) => {
@@ -211,6 +211,21 @@ app.get('/api/usage', async (req, res) => {
     subscription_status: usage.subscription_status,
     plan_ends_at: usage.plan_ends_at
   });
+});
+
+// ── Test endpoint (auth'suz, geliştirme/debug) ───────────────────────────────
+app.post('/api/test-chat', async (req, res) => {
+  try {
+    const { message, sheetContext } = req.body;
+    if (!message) return res.status(400).json({ error: 'message gerekli' });
+    const result = await processExcelCommand(
+      message,
+      sheetContext || [['Ad', 'Fiyat'], ['Masa', '100'], ['Sandalye', '50']]
+    );
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 app.use((err, _req, res, _next) => {
