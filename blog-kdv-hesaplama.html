@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Excel'de KDV Hesaplama: Formülsüz Yöntem — Mocksheets</title>
+<meta name="description" content="AI ile KDV dahil ve hariç hesaplamaları nasıl yapılır? Türkiye %20 KDV oranı için adım adım kılavuz.">
+<link rel="stylesheet" href="css/landing.css">
+<style>
+body{background:#F7F7F5}
+.blog-page{max-width:720px;margin:0 auto;padding:100px 24px 80px}
+.blog-meta{display:flex;gap:12px;align-items:center;margin-bottom:24px;flex-wrap:wrap}
+.blog-tag{font-size:12px;font-weight:600;background:#EDE9FE;color:#5B21B6;padding:3px 10px;border-radius:100px}
+.blog-date{font-size:13px;color:#9CA3AF}
+.blog-readtime{font-size:13px;color:#9CA3AF}
+h1{font-size:36px;font-weight:800;letter-spacing:-.02em;line-height:1.2;margin-bottom:16px}
+.blog-lead{font-size:18px;color:#4B5563;line-height:1.7;margin-bottom:32px;border-left:3px solid #4F46E5;padding-left:16px}
+h2{font-size:22px;font-weight:700;margin:32px 0 12px}
+p{font-size:15px;color:#374151;line-height:1.8;margin-bottom:16px}
+.code-block{background:#1E1E2E;color:#CDD6F4;padding:16px 20px;border-radius:10px;font-family:monospace;font-size:14px;margin:16px 0;overflow-x:auto}
+.tip{background:#EDE9FE;border-left:4px solid #7C3AED;padding:14px 16px;border-radius:0 10px 10px 0;margin:20px 0;font-size:14px;color:#374151}
+.cta-box{background:linear-gradient(135deg,#4F46E5,#7C3AED);color:white;padding:28px;border-radius:16px;text-align:center;margin:40px 0}
+.cta-box h3{font-size:20px;font-weight:800;margin-bottom:8px}
+.cta-box p{font-size:14px;opacity:.9;margin-bottom:16px;color:white}
+.cta-btn{display:inline-block;background:white;color:#4F46E5;padding:10px 24px;border-radius:100px;font-weight:700;font-size:14px;text-decoration:none}
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}
+table th{background:#F3F4F6;padding:10px 14px;text-align:left;font-weight:600;border:1px solid #E5E7EB}
+table td{padding:10px 14px;border:1px solid #E5E7EB;color:#374151}
+</style>
+</head>
+<body>
+<nav class="lp-nav">
+  <a href="index.html" class="lp-nav-logo">
+    <img src="images/logo.png" width="26" height="26" alt="Mocksheets">
+    <span>Mocksheets</span>
+  </a>
+  <a href="blog.html" class="lp-nav-cta">← Blog</a>
+</nav>
+
+<div class="blog-page">
+  <div class="blog-meta">
+    <span class="blog-tag">Muhasebe</span>
+    <span class="blog-date">Nisan 2026</span>
+    <span class="blog-readtime">5 dk okuma</span>
+  </div>
+
+  <h1>Excel'de KDV Hesaplama:<br>Formülsüz Yöntem</h1>
+
+  <div class="blog-lead">
+    Türkiye'de KDV oranı %20. Her fiyata KDV eklemek veya çıkarmak için
+    artık formül yazmana gerek yok — Mocksheets bunu tek komutla yapıyor.
+  </div>
+
+  <h2>Yöntem 1: Manuel Formül (Eski Yöntem)</h2>
+  <p>Excel'de KDV eklemek için genellikle şu formülü kullanırsınız:</p>
+  <div class="code-block">=B2*1.20</div>
+  <p>Bu yöntemin sorunları: Her hücre için ayrı formül, büyük tablolarda yavaş,
+  hata yapma riski yüksek, formülü anlamayan çalışanlar kullanamaz.</p>
+
+  <h2>Yöntem 2: Mocksheets ile AI Komutu (Yeni Yöntem)</h2>
+  <p>Mocksheets'te tek yapmanız gereken chat barına yazmak:</p>
+  <div class="code-block">Fiyatlara KDV ekle</div>
+  <p>Sonuç: Tüm fiyat sütunu 2 saniyede güncellenir. 127 satır, 127 formül — otomatik.</p>
+
+  <div class="tip">
+    💡 <strong>İpucu:</strong> "B sütununa KDV ekle" veya "Fiyat kolonunu KDV dahil göster"
+    gibi daha spesifik komutlar da çalışır.
+  </div>
+
+  <h2>KDV Hesaplama Tablosu</h2>
+  <table>
+    <tr><th>İşlem</th><th>Formül</th><th>Mocksheets Komutu</th></tr>
+    <tr><td>KDV ekle (%20)</td><td>=B2*1.20</td><td>"KDV ekle"</td></tr>
+    <tr><td>KDV çıkar</td><td>=B2/1.20</td><td>"KDV hariç fiyatı bul"</td></tr>
+    <tr><td>Sadece KDV tutarı</td><td>=B2*0.20</td><td>"KDV tutarını hesapla"</td></tr>
+  </table>
+
+  <h2>Büyük Tablolarda Fark</h2>
+  <p>500 satırlık bir fiyat listesinde KDV eklemek manuel yöntemle 15-20 dakika sürer.
+  Mocksheets ile aynı işlem 3 saniye. Aylık 50+ rapor hazırlayan bir muhasebeci için
+  bu haftada saatlerce zaman tasarrufu demek.</p>
+
+  <div class="cta-box">
+    <h3>Hemen deneyin — ücretsiz</h3>
+    <p>Excel dosyanızı yükleyin, "KDV ekle" yazın. İşte bu kadar.</p>
+    <a href="auth.html" class="cta-btn">Ücretsiz Başla →</a>
+  </div>
+</div>
+</body>
+</html>

@@ -7,17 +7,41 @@
 <link rel="stylesheet" href="css/landing.css">
 <style>
 body{background:#F7F7F5}
-.contact-page{max-width:600px;margin:0 auto;padding:100px 24px 80px}
-.contact-page h1{font-size:32px;font-weight:800;margin-bottom:8px;letter-spacing:-.02em}
-.contact-page p{font-size:15px;color:#6B7280;margin-bottom:32px;line-height:1.6}
-.contact-card{background:white;border:1.5px solid #E5E7EB;border-radius:14px;padding:28px;margin-bottom:14px}
-.contact-card h3{font-size:15px;font-weight:700;margin-bottom:6px}
-.contact-card p{font-size:14px;color:#6B7280;margin-bottom:8px}
-.contact-card a{color:#4F46E5;text-decoration:none;font-weight:600}
-.response-times{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:8px}
-.rt-item{background:#F9FAFB;border-radius:10px;padding:12px;text-align:center}
-.rt-plan{font-size:12px;font-weight:700;color:#4F46E5;margin-bottom:4px}
-.rt-time{font-size:13px;color:#374151}
+.contact-page{max-width:860px;margin:0 auto;padding:100px 24px 80px}
+.contact-hero{text-align:center;margin-bottom:48px}
+.contact-hero h1{font-size:36px;font-weight:800;letter-spacing:-.02em;margin-bottom:12px}
+.contact-hero p{font-size:16px;color:#6B7280;line-height:1.7}
+.contact-grid{display:grid;grid-template-columns:1fr 1.6fr;gap:24px;align-items:start}
+.contact-card{background:white;border:1.5px solid #E5E7EB;border-radius:16px;padding:28px}
+.contact-card h3{font-size:16px;font-weight:700;margin-bottom:16px}
+.contact-info-item{display:flex;gap:12px;align-items:flex-start;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid #F3F4F6}
+.contact-info-item:last-of-type{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.contact-icon{font-size:20px;flex-shrink:0;margin-top:2px}
+.contact-label{font-size:12px;color:#9CA3AF;font-weight:500;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}
+.contact-value{font-size:14px;color:#374151;font-weight:500}
+.contact-value a{color:#4F46E5;text-decoration:none}
+.response-table{width:100%;border-collapse:collapse;margin-top:16px;font-size:13px}
+.response-table td{padding:8px 12px;border:1px solid #F3F4F6}
+.response-table tr:first-child td{background:#F9FAFB;font-weight:600}
+.form-card{background:white;border:1.5px solid #E5E7EB;border-radius:16px;padding:28px}
+.form-card h3{font-size:16px;font-weight:700;margin-bottom:20px}
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-size:13px;font-weight:500;color:#374151;margin-bottom:6px}
+.form-group input,.form-group textarea,.form-group select{
+  width:100%;padding:10px 14px;border:1.5px solid #E5E7EB;
+  border-radius:10px;font-size:14px;font-family:inherit;
+  outline:none;transition:border .2s;box-sizing:border-box;
+  background:white;color:#111827}
+.form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:#4F46E5}
+.form-group textarea{resize:vertical;min-height:120px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.submit-btn{width:100%;padding:13px;background:#4F46E5;color:white;border:none;
+  border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;
+  font-family:inherit;transition:opacity .2s;margin-top:4px}
+.submit-btn:hover{opacity:.87}
+.success-msg{display:none;background:#D1FAE5;color:#065F46;padding:14px;
+  border-radius:10px;font-size:14px;font-weight:500;text-align:center;margin-top:12px}
+@media(max-width:640px){.contact-grid{grid-template-columns:1fr}.form-row{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -28,39 +52,125 @@ body{background:#F7F7F5}
   </a>
   <a href="index.html" class="lp-nav-cta">← Ana Sayfa</a>
 </nav>
+
 <div class="contact-page">
-  <h1>İletişim</h1>
-  <p>Sorularınız, önerileriniz veya destek talepleriniz için aşağıdaki kanallardan bize ulaşabilirsiniz.</p>
-
-  <div class="contact-card">
-    <h3>📧 E-posta Desteği</h3>
-    <p>Genel sorular ve destek için:</p>
-    <a href="mailto:info@mocksheets.com">info@mocksheets.com</a>
+  <div class="contact-hero">
+    <h1>Merhaba, nasıl yardımcı olabiliriz?</h1>
+    <p>Sorularınız, önerileriniz veya destek talepleriniz için buradayız.<br>En kısa sürede yanıt vereceğiz.</p>
   </div>
 
-  <div class="contact-card">
-    <h3>💳 Ödeme ve Abonelik</h3>
-    <p>Fatura ve ödeme sorunları için:</p>
-    <a href="mailto:billing@mocksheets.com">billing@mocksheets.com</a>
-  </div>
+  <div class="contact-grid">
+    <!-- Sol: İletişim Bilgileri -->
+    <div class="contact-card">
+      <h3>İletişim Kanalları</h3>
 
-  <div class="contact-card">
-    <h3>⏱️ Yanıt Süreleri</h3>
-    <div class="response-times">
-      <div class="rt-item">
-        <div class="rt-plan">🆓 Ücretsiz</div>
-        <div class="rt-time">5 iş günü</div>
+      <div class="contact-info-item">
+        <div class="contact-icon">📧</div>
+        <div>
+          <div class="contact-label">Genel Destek</div>
+          <div class="contact-value"><a href="mailto:info@mocksheets.com">info@mocksheets.com</a></div>
+        </div>
       </div>
-      <div class="rt-item">
-        <div class="rt-plan">⭐ Pro</div>
-        <div class="rt-time">48 saat</div>
+
+      <div class="contact-info-item">
+        <div class="contact-icon">💳</div>
+        <div>
+          <div class="contact-label">Ödeme &amp; Abonelik</div>
+          <div class="contact-value"><a href="mailto:billing@mocksheets.com">billing@mocksheets.com</a></div>
+        </div>
       </div>
-      <div class="rt-item">
-        <div class="rt-plan">🏢 İş</div>
-        <div class="rt-time">4 saat</div>
+
+      <div class="contact-info-item">
+        <div class="contact-icon">💼</div>
+        <div>
+          <div class="contact-label">İş Birliği</div>
+          <div class="contact-value"><a href="mailto:info@mocksheets.com">info@mocksheets.com</a></div>
+        </div>
+      </div>
+
+      <h3 style="margin-top:20px;margin-bottom:12px">Yanıt Süreleri</h3>
+      <table class="response-table">
+        <tr><td>Plan</td><td>Yanıt Süresi</td></tr>
+        <tr><td>🆓 Ücretsiz</td><td>5 iş günü</td></tr>
+        <tr><td>⭐ Pro</td><td>48 saat</td></tr>
+        <tr><td>🏢 İş</td><td>4 saat</td></tr>
+      </table>
+    </div>
+
+    <!-- Sağ: İletişim Formu -->
+    <div class="form-card">
+      <h3>Mesaj Gönder</h3>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Adınız</label>
+          <input type="text" id="contact-name" placeholder="Adınız Soyadınız">
+        </div>
+        <div class="form-group">
+          <label>E-posta</label>
+          <input type="email" id="contact-email" placeholder="ornek@sirket.com">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Konu</label>
+        <select id="contact-subject">
+          <option value="">Konu seçin...</option>
+          <option value="teknik">Teknik Destek</option>
+          <option value="odeme">Ödeme / Abonelik</option>
+          <option value="oneri">Özellik Önerisi</option>
+          <option value="isbirligi">İş Birliği</option>
+          <option value="diger">Diğer</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Mesajınız</label>
+        <textarea id="contact-message" placeholder="Nasıl yardımcı olabiliriz?"></textarea>
+      </div>
+
+      <button class="submit-btn" onclick="submitContactForm()">
+        Gönder →
+      </button>
+
+      <div class="success-msg" id="contact-success">
+        ✓ Mesajınız alındı! En kısa sürede yanıt vereceğiz.
       </div>
     </div>
   </div>
 </div>
+
+<script>
+function submitContactForm() {
+  var name = document.getElementById('contact-name').value.trim();
+  var email = document.getElementById('contact-email').value.trim();
+  var subject = document.getElementById('contact-subject').value;
+  var message = document.getElementById('contact-message').value.trim();
+
+  if (!name || !email || !message) {
+    alert('Lütfen ad, e-posta ve mesaj alanlarını doldurun.');
+    return;
+  }
+
+  var re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!re.test(email)) {
+    alert('Geçerli bir e-posta adresi girin.');
+    return;
+  }
+
+  var subjectText = subject ? '[' + subject.toUpperCase() + '] ' : '';
+  var mailSubject = encodeURIComponent(subjectText + 'Mocksheets İletişim: ' + name);
+  var mailBody = encodeURIComponent(
+    message + '\n\n---\nGönderen: ' + name + '\nE-posta: ' + email
+  );
+  window.location.href = 'mailto:info@mocksheets.com?subject=' + mailSubject + '&body=' + mailBody;
+
+  document.getElementById('contact-success').style.display = 'block';
+  document.getElementById('contact-name').value = '';
+  document.getElementById('contact-email').value = '';
+  document.getElementById('contact-message').value = '';
+  document.getElementById('contact-subject').value = '';
+}
+</script>
 </body>
 </html>
