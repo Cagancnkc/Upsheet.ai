@@ -1551,9 +1551,11 @@ function refreshGrid() {
 }
 
 function applyAIChanges(result) {
-  console.group('[applyAIChanges]');
-  console.log('action:', result?.action, '| reply:', result?.reply?.slice(0, 60));
-  console.log('changes:', result?.changes?.length || 0, '| full:', JSON.stringify(result)?.slice(0, 300));
+  console.group('%c[applyAIChanges]', 'color:#4F46E5;font-weight:bold');
+  console.log('result:', JSON.stringify(result));
+  console.log('activeSheet:', activeSheet);
+  console.log('sheets[activeSheet] rows:', sheets[activeSheet]?.length);
+  console.log('sheets[activeSheet][0]:', sheets[activeSheet]?.[0]);
   console.groupEnd();
 
   const data = sheets[activeSheet];

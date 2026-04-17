@@ -70,6 +70,11 @@ Tetikleyici: "...olanları göster/filtrele", "100'den büyükleri göster"
 Tetikleyici: "yardım", "ne yapabilirsin", "nasıl kullanırım", "rapor", "özet"
 {"action":"message","reply":"💡 Sıralama, filtreleme, hesaplama ve renklendirme komutlarını destekliyorum.","changes":[]}
 
+## KDV KURALI (Türkiye)
+KDV oranı HER ZAMAN %20'dir.
+- "KDV ekle" / "%20 ekle" → factor: 1.20  (ASLA 1.18 kullanma)
+- "KDV hariç bul" / "KDV çıkar" → factor: 0.8333 (= 1/1.20)
+
 ## ZORUNLU KURALLAR
 1. SADECE JSON döndür — açıklama, yorum, markdown YASAK
 2. "reply" HER ZAMAN Türkçe, başarılı aksiyonlarda "✓" ile başlasın
