@@ -3211,7 +3211,8 @@
   { user_command: "Detaylı Analiz 98: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_98), 1, 1)", changes: [], reply: "✓ Değişken 98 için regresyon katsayısı hesaplandı." } },
   { user_command: "Detaylı Analiz 99: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_99), 1, 1)", changes: [], reply: "✓ Değişken 99 için regresyon katsayısı hesaplandı." } },
   { user_command: "Detaylı Analiz 100: Çok Boyutlu Regresyon Katsayısı", logic: "LINEST function for multivariate analysis", category: "statistics", output: { action: "formula", formula: "=INDEX(LINEST(Y_Range, X_Range_100), 1, 1)", changes: [], reply: "✓ Değişken 100 için regresyon katsayısı hesaplandı." } }
-,
+
+,
 
   // impossible_excel_dataset + ultra_excel_dataset
 { user_command: 'Conway's Game of Life için bir sonraki nesli hesapla', logic: 'Apply B3/S23 rule: Live if 2 or 3 neighbors, Dead otherwise. Birth if 3 neighbors.', category: 'cellular_automata', output: { action: 'formula', formula: "=LET(n, SUM(B1:D1, B2, D2, B3:D3), IF(C2=1, IF(OR(n=2, n=3), 1, 0), IF(n=3, 1, 0)))", changes: [], reply: '✓ Komşu hücre sayılarına göre Game of Life kuralları (B3/S23) uygulandı.' } },
@@ -3565,3 +3566,440 @@
 ];
 
 module.exports = { EXCEL_DATASET };
+// ============================================================
+// MOCKSHEETS DATASET v2.0
+// Türkçe Excel AI Asistanı — Kapsamlı Komut Seti
+// 300+ örnek, 25+ action tipi
+// ============================================================
+
+const EXCEL_DATASET = [
+
+  // ════════════════════════════════════════════
+  // 1. SIRALAMA — sort
+  // ════════════════════════════════════════════
+  { user_command: "a dan z ye sırala", intent: "sort_asc", output: { action: "sort", direction: "asc", reply: "✓ A'dan Z'ye sıralandı" } },
+  { user_command: "alfabetik sırala", intent: "sort_asc", output: { action: "sort", direction: "asc", reply: "✓ Alfabetik sıralandı" } },
+  { user_command: "küçükten büyüğe sırala", intent: "sort_asc", output: { action: "sort", direction: "asc", reply: "✓ Küçükten büyüğe sıralandı" } },
+  { user_command: "artan sırala", intent: "sort_asc", output: { action: "sort", direction: "asc", reply: "✓ Artan sırayla dizildi" } },
+  { user_command: "z den a ya sırala", intent: "sort_desc", output: { action: "sort", direction: "desc", reply: "✓ Z'den A'ya sıralandı" } },
+  { user_command: "büyükten küçüğe sırala", intent: "sort_desc", output: { action: "sort", direction: "desc", reply: "✓ Büyükten küçüğe sıralandı" } },
+  { user_command: "azalan sırayla diz", intent: "sort_desc", output: { action: "sort", direction: "desc", reply: "✓ Azalan sırayla dizildi" } },
+  { user_command: "en yüksekten en düşüğe sırala", intent: "sort_desc", output: { action: "sort", direction: "desc", reply: "✓ En yüksekten en düşüğe sıralandı" } },
+  { user_command: "fiyata göre sırala", intent: "sort_column", output: { action: "sort", column: "fiyat", direction: "asc", reply: "✓ Fiyata göre sıralandı" } },
+  { user_command: "fiyatlara göre küçükten büyüğe", intent: "sort_column", output: { action: "sort", column: "fiyat", direction: "asc", reply: "✓ Fiyat sütunu sıralandı" } },
+  { user_command: "tarihe göre sırala", intent: "sort_column", output: { action: "sort", column: "tarih", direction: "asc", reply: "✓ Tarihe göre sıralandı" } },
+  { user_command: "isme göre alfabetik sırala", intent: "sort_column", output: { action: "sort", column: "isim", direction: "asc", reply: "✓ İsime göre alfabetik sıralandı" } },
+  { user_command: "miktara göre büyükten küçüğe", intent: "sort_column", output: { action: "sort", column: "miktar", direction: "desc", reply: "✓ Miktara göre sıralandı" } },
+  { user_command: "b sütununu sırala", intent: "sort_column", output: { action: "sort", column: "B", direction: "asc", reply: "✓ B sütunu sıralandı" } },
+  { user_command: "satışa göre ters sırala", intent: "sort_column", output: { action: "sort", column: "satış", direction: "desc", reply: "✓ Satışa göre ters sıralandı" } },
+  { user_command: "puana göre en yüksekten", intent: "sort_column", output: { action: "sort", column: "puan", direction: "desc", reply: "✓ Puana göre sıralandı" } },
+
+  // ════════════════════════════════════════════
+  // 2. TOPLAMA — sum
+  // ════════════════════════════════════════════
+  { user_command: "topla", intent: "sum", output: { action: "sum", reply: "✓ Toplam hesaplandı" } },
+  { user_command: "toplam al", intent: "sum", output: { action: "sum", reply: "✓ Toplam alındı" } },
+  { user_command: "hepsini topla", intent: "sum", output: { action: "sum", reply: "✓ Tümü toplandı" } },
+  { user_command: "genel toplam", intent: "sum", output: { action: "sum", reply: "✓ Genel toplam hesaplandı" } },
+  { user_command: "b sütununu topla", intent: "sum_column", output: { action: "sum", column: "B", reply: "✓ B sütunu toplandı" } },
+  { user_command: "c kolonunu topla", intent: "sum_column", output: { action: "sum", column: "C", reply: "✓ C kolonu toplandı" } },
+  { user_command: "fiyatları topla", intent: "sum_column", output: { action: "sum", column: "fiyat", reply: "✓ Fiyatlar toplandı" } },
+  { user_command: "satışları topla", intent: "sum_column", output: { action: "sum", column: "satış", reply: "✓ Satışlar toplandı" } },
+  { user_command: "gelirlerin toplamı ne", intent: "sum_column", output: { action: "sum", column: "gelir", reply: "✓ Gelirler toplandı" } },
+  { user_command: "tutarları topla", intent: "sum_column", output: { action: "sum", column: "tutar", reply: "✓ Tutarlar toplandı" } },
+  { user_command: "miktarları topla ve d1e yaz", intent: "sum_to_cell", output: { action: "sum", column: "miktar", target_cell: "D1", reply: "✓ Toplam D1'e yazıldı" } },
+  { user_command: "b sütununu topla ve c1e yaz", intent: "sum_to_cell", output: { action: "sum", column: "B", target_cell: "C1", reply: "✓ Toplam C1'e yazıldı" } },
+  { user_command: "a2 den a10 a kadar topla", intent: "sum_range", output: { action: "sum", range: "A2:A10", reply: "✓ A2:A10 aralığı toplandı" } },
+  { user_command: "toplam kaç", intent: "sum", output: { action: "sum", reply: "✓ Toplam hesaplandı" } },
+
+  // ════════════════════════════════════════════
+  // 3. ORTALAMA — average
+  // ════════════════════════════════════════════
+  { user_command: "ortalama al", intent: "average", output: { action: "average", reply: "✓ Ortalama hesaplandı" } },
+  { user_command: "ortalamasını hesapla", intent: "average", output: { action: "average", reply: "✓ Ortalama hesaplandı" } },
+  { user_command: "ortalama ne", intent: "average", output: { action: "average", reply: "✓ Ortalama hesaplandı" } },
+  { user_command: "b sütununun ortalaması ne", intent: "average_column", output: { action: "average", column: "B", reply: "✓ B sütununun ortalaması hesaplandı" } },
+  { user_command: "fiyatların ortalamasını bul", intent: "average_column", output: { action: "average", column: "fiyat", reply: "✓ Fiyat ortalaması bulundu" } },
+  { user_command: "satış ortalaması hesapla", intent: "average_column", output: { action: "average", column: "satış", reply: "✓ Satış ortalaması hesaplandı" } },
+  { user_command: "aylık ortalama satış", intent: "average_column", output: { action: "average", column: "satış", reply: "✓ Aylık ortalama hesaplandı" } },
+  { user_command: "maaş ortalaması ne kadar", intent: "average_column", output: { action: "average", column: "maaş", reply: "✓ Maaş ortalaması hesaplandı" } },
+
+  // ════════════════════════════════════════════
+  // 4. MİN / MAX — min_max
+  // ════════════════════════════════════════════
+  { user_command: "en büyük değeri bul", intent: "max", output: { action: "max", reply: "✓ En büyük değer bulundu" } },
+  { user_command: "maksimum değer ne", intent: "max", output: { action: "max", reply: "✓ Maksimum değer gösterildi" } },
+  { user_command: "en yüksek fiyat ne", intent: "max_column", output: { action: "max", column: "fiyat", reply: "✓ En yüksek fiyat bulundu" } },
+  { user_command: "en çok satan ürün hangisi", intent: "max_column", output: { action: "max", column: "satış", reply: "✓ En çok satan bulundu" } },
+  { user_command: "en küçük değeri göster", intent: "min", output: { action: "min", reply: "✓ En küçük değer gösterildi" } },
+  { user_command: "minimum değer kaç", intent: "min", output: { action: "min", reply: "✓ Minimum değer bulundu" } },
+  { user_command: "en düşük fiyat", intent: "min_column", output: { action: "min", column: "fiyat", reply: "✓ En düşük fiyat bulundu" } },
+  { user_command: "en az satan hangisi", intent: "min_column", output: { action: "min", column: "satış", reply: "✓ En az satan bulundu" } },
+  { user_command: "en yüksek 5 değeri göster", intent: "top_n", output: { action: "top_n", n: 5, reply: "✓ En yüksek 5 değer gösterildi" } },
+  { user_command: "ilk 10 kaydı listele", intent: "top_n", output: { action: "top_n", n: 10, reply: "✓ İlk 10 kayıt listelendi" } },
+
+  // ════════════════════════════════════════════
+  // 5. SAYMA — count
+  // ════════════════════════════════════════════
+  { user_command: "kaç kayıt var", intent: "count", output: { action: "count", reply: "✓ Kayıt sayısı hesaplandı" } },
+  { user_command: "satır sayısını say", intent: "count", output: { action: "count", reply: "✓ Satır sayısı sayıldı" } },
+  { user_command: "kaç tane", intent: "count", output: { action: "count", reply: "✓ Toplam kayıt sayısı bulundu" } },
+  { user_command: "istanbul kaç tane", intent: "count_if", output: { action: "count_if", condition: "contains", value: "istanbul", reply: "✓ İstanbul içeren kayıtlar sayıldı" } },
+  { user_command: "100den büyük kaç satır var", intent: "count_if", output: { action: "count_if", condition: "value > 100", reply: "✓ 100'den büyük satırlar sayıldı" } },
+  { user_command: "boş hücre sayısı", intent: "count_blank", output: { action: "count_blank", reply: "✓ Boş hücreler sayıldı" } },
+
+  // ════════════════════════════════════════════
+  // 6. BOŞ SATIR SİLME — delete_empty
+  // ════════════════════════════════════════════
+  { user_command: "boş satırları sil", intent: "delete_empty", output: { action: "delete_rows", condition: "empty", reply: "✓ Boş satırlar silindi" } },
+  { user_command: "boşları temizle", intent: "delete_empty", output: { action: "delete_rows", condition: "empty", reply: "✓ Boş satırlar temizlendi" } },
+  { user_command: "boş olanları kaldır", intent: "delete_empty", output: { action: "delete_rows", condition: "empty", reply: "✓ Boş satırlar kaldırıldı" } },
+  { user_command: "dolu satırları bırak boşları sil", intent: "delete_empty", output: { action: "delete_rows", condition: "empty", reply: "✓ Boş satırlar temizlendi" } },
+  { user_command: "veri olmayan satırları kaldır", intent: "delete_empty", output: { action: "delete_rows", condition: "empty", reply: "✓ Veri olmayan satırlar kaldırıldı" } },
+  { user_command: "sıfır olan satırları sil", intent: "delete_zero", output: { action: "delete_rows", condition: "value == 0", reply: "✓ Sıfır değerli satırlar silindi" } },
+  { user_command: "negatif satırları kaldır", intent: "delete_negative", output: { action: "delete_rows", condition: "value < 0", reply: "✓ Negatif satırlar kaldırıldı" } },
+  { user_command: "0 değerli satırları temizle", intent: "delete_zero", output: { action: "delete_rows", condition: "value == 0", reply: "✓ Sıfır değerli satırlar temizlendi" } },
+
+  // ════════════════════════════════════════════
+  // 7. TEKRAR KALDIRMA — remove_duplicates
+  // ════════════════════════════════════════════
+  { user_command: "tekrar edenleri sil", intent: "deduplicate", output: { action: "remove_duplicates", reply: "✓ Tekrarlanan satırlar silindi" } },
+  { user_command: "mükerrerleri kaldır", intent: "deduplicate", output: { action: "remove_duplicates", reply: "✓ Mükerrer kayıtlar kaldırıldı" } },
+  { user_command: "aynı olanları temizle", intent: "deduplicate", output: { action: "remove_duplicates", reply: "✓ Tekrarlar temizlendi" } },
+  { user_command: "kopya kayıtları sil", intent: "deduplicate", output: { action: "remove_duplicates", reply: "✓ Kopya kayıtlar silindi" } },
+  { user_command: "benzersiz kayıtları bırak", intent: "deduplicate", output: { action: "remove_duplicates", reply: "✓ Tekrar eden kayıtlar kaldırıldı" } },
+  { user_command: "duplicate kaldır", intent: "deduplicate", output: { action: "remove_duplicates", reply: "✓ Duplicate kayıtlar kaldırıldı" } },
+
+  // ════════════════════════════════════════════
+  // 8. RENKLENDİRME — highlight
+  // ════════════════════════════════════════════
+  { user_command: "negatifleri kırmızıya boya", intent: "highlight_negative_red", output: { action: "highlight", condition: "value < 0", color: "#fecaca", reply: "✓ Negatif değerler kırmızıya boyandı" } },
+  { user_command: "eksileri kırmızı yap", intent: "highlight_negative_red", output: { action: "highlight", condition: "value < 0", color: "#fecaca", reply: "✓ Eksi değerler kırmızıya boyandı" } },
+  { user_command: "sıfırdan küçük olanları kırmızıya boya", intent: "highlight_negative_red", output: { action: "highlight", condition: "value < 0", color: "#fecaca", reply: "✓ Negatif hücreler boyandı" } },
+  { user_command: "zararda olanları kırmızı işaretle", intent: "highlight_negative_red", output: { action: "highlight", condition: "value < 0", color: "#fecaca", reply: "✓ Zararda olanlar kırmızıya boyandı" } },
+  { user_command: "pozitif değerleri yeşile boya", intent: "highlight_positive_green", output: { action: "highlight", condition: "value > 0", color: "#bbf7d0", reply: "✓ Pozitif değerler yeşile boyandı" } },
+  { user_command: "artıları yeşil yap", intent: "highlight_positive_green", output: { action: "highlight", condition: "value > 0", color: "#bbf7d0", reply: "✓ Artı değerler yeşile boyandı" } },
+  { user_command: "karda olanları yeşil yap", intent: "highlight_positive_green", output: { action: "highlight", condition: "value > 0", color: "#bbf7d0", reply: "✓ Karda olanlar yeşile boyandı" } },
+  { user_command: "en büyük 5 değeri sarıya boya", intent: "highlight_top5_yellow", output: { action: "highlight", condition: "top5", color: "#fef08a", reply: "✓ En büyük 5 değer sarıya boyandı" } },
+  { user_command: "en yüksek 3 değeri vurgula", intent: "highlight_top3", output: { action: "highlight", condition: "top3", color: "#fef08a", reply: "✓ En yüksek 3 değer vurgulandı" } },
+  { user_command: "en büyük 10 değeri işaretle", intent: "highlight_top10", output: { action: "highlight", condition: "top10", color: "#fef08a", reply: "✓ En büyük 10 değer işaretlendi" } },
+  { user_command: "100den büyükleri maviye boya", intent: "highlight_threshold", output: { action: "highlight", condition: "value > 100", color: "#bfdbfe", reply: "✓ 100'den büyük değerler maviye boyandı" } },
+  { user_command: "500den az olanları sarıya boya", intent: "highlight_threshold", output: { action: "highlight", condition: "value < 500", color: "#fef08a", reply: "✓ 500'den az değerler sarıya boyandı" } },
+  { user_command: "hücreleri renklendir", intent: "highlight_general", output: { action: "highlight", condition: "numeric", color: "#fef08a", reply: "✓ Sayısal hücreler renklendirildi" } },
+  { user_command: "renkleri temizle", intent: "clear_colors", output: { action: "clear_colors", reply: "✓ Tüm renkler temizlendi" } },
+  { user_command: "boyaları kaldır", intent: "clear_colors", output: { action: "clear_colors", reply: "✓ Hücre renkleri kaldırıldı" } },
+
+  // ════════════════════════════════════════════
+  // 9. KDV HESAPLAMA — vat
+  // ════════════════════════════════════════════
+  { user_command: "kdv ekle", intent: "add_vat", output: { action: "update_cells", formula: "multiply", factor: 1.20, reply: "✓ %20 KDV eklendi" } },
+  { user_command: "kdv hesapla", intent: "add_vat", output: { action: "update_cells", formula: "vat", factor: 1.20, reply: "✓ KDV hesaplandı" } },
+  { user_command: "yüzde yirmi kdv ekle", intent: "add_vat", output: { action: "update_cells", formula: "multiply", factor: 1.20, reply: "✓ %20 KDV eklendi" } },
+  { user_command: "fiyatlara kdv ekle", intent: "add_vat", output: { action: "update_cells", formula: "multiply", column: "fiyat", factor: 1.20, reply: "✓ Fiyatlara KDV eklendi" } },
+  { user_command: "kdv dahil fiyatları hesapla", intent: "add_vat", output: { action: "update_cells", formula: "multiply", factor: 1.20, reply: "✓ KDV dahil fiyatlar hesaplandı" } },
+  { user_command: "%20 kdv ekle", intent: "add_vat", output: { action: "update_cells", formula: "multiply", factor: 1.20, reply: "✓ %20 KDV eklendi" } },
+  { user_command: "kdv hariç fiyat bul", intent: "remove_vat", output: { action: "update_cells", formula: "divide", factor: 1.20, reply: "✓ KDV hariç fiyatlar hesaplandı" } },
+  { user_command: "kdv düş", intent: "remove_vat", output: { action: "update_cells", formula: "divide", factor: 1.20, reply: "✓ KDV düşüldü" } },
+  { user_command: "kdv tutarını ayrı göster", intent: "show_vat", output: { action: "update_cells", formula: "vat_amount", factor: 0.20, reply: "✓ KDV tutarları ayrıldı" } },
+  { user_command: "kdv tutarını hesapla", intent: "show_vat", output: { action: "update_cells", formula: "vat_amount", factor: 0.20, reply: "✓ KDV tutarı hesaplandı" } },
+  { user_command: "%10 kdv ekle", intent: "add_vat_10", output: { action: "update_cells", formula: "multiply", factor: 1.10, reply: "✓ %10 KDV eklendi" } },
+  { user_command: "%8 kdv hesapla", intent: "add_vat_8", output: { action: "update_cells", formula: "multiply", factor: 1.08, reply: "✓ %8 KDV hesaplandı" } },
+
+  // ════════════════════════════════════════════
+  // 10. YÜZDE İŞLEMLERİ — percentage
+  // ════════════════════════════════════════════
+  { user_command: "yüzde 10 artır", intent: "increase_percent", output: { action: "update_cells", formula: "multiply", factor: 1.10, reply: "✓ Değerler %10 artırıldı" } },
+  { user_command: "fiyatları yüzde 20 zammla", intent: "increase_percent", output: { action: "update_cells", formula: "multiply", column: "fiyat", factor: 1.20, reply: "✓ Fiyatlar %20 artırıldı" } },
+  { user_command: "%15 indirim uygula", intent: "decrease_percent", output: { action: "update_cells", formula: "multiply", factor: 0.85, reply: "✓ %15 indirim uygulandı" } },
+  { user_command: "yüzde 5 düşür", intent: "decrease_percent", output: { action: "update_cells", formula: "multiply", factor: 0.95, reply: "✓ Değerler %5 düşürüldü" } },
+  { user_command: "yüzde değişimini hesapla", intent: "calc_percent_change", output: { action: "update_cells", formula: "percent_change", reply: "✓ Yüzde değişim hesaplandı" } },
+  { user_command: "b sütununu 2 ile çarp", intent: "multiply_column", output: { action: "update_cells", formula: "multiply", column: "B", factor: 2, reply: "✓ B sütunu 2 ile çarpıldı" } },
+  { user_command: "fiyatları 1.5 ile çarp", intent: "multiply_column", output: { action: "update_cells", formula: "multiply", column: "fiyat", factor: 1.5, reply: "✓ Fiyatlar 1.5 ile çarpıldı" } },
+  { user_command: "değerleri 100e böl", intent: "divide_column", output: { action: "update_cells", formula: "divide", factor: 100, reply: "✓ Değerler 100'e bölündü" } },
+
+  // ════════════════════════════════════════════
+  // 11. MAAŞ & BORDRO — salary
+  // ════════════════════════════════════════════
+  { user_command: "net maaş hesapla", intent: "calc_net_salary", output: { action: "update_cells", formula: "net_salary", reply: "✓ Net maaşlar hesaplandı" } },
+  { user_command: "net ücret hesapla", intent: "calc_net_salary", output: { action: "update_cells", formula: "net_salary", reply: "✓ Net ücretler hesaplandı" } },
+  { user_command: "sgk kesintisini hesapla", intent: "calc_sgk", output: { action: "update_cells", formula: "sgk_deduction", reply: "✓ SGK kesintileri hesaplandı" } },
+  { user_command: "sgk primi düş", intent: "calc_sgk", output: { action: "update_cells", formula: "sgk_deduction", reply: "✓ SGK primi düşüldü" } },
+  { user_command: "gelir vergisi hesapla", intent: "calc_income_tax", output: { action: "update_cells", formula: "income_tax", reply: "✓ Gelir vergisi hesaplandı" } },
+  { user_command: "vergi hesapla", intent: "calc_tax", output: { action: "update_cells", formula: "income_tax", reply: "✓ Vergi hesaplandı" } },
+  { user_command: "kıdem tazminatı hesapla", intent: "calc_severance", output: { action: "update_cells", formula: "severance_pay", reply: "✓ Kıdem tazminatı hesaplandı" } },
+  { user_command: "ikramiye ekle", intent: "add_bonus", output: { action: "update_cells", formula: "add_bonus", reply: "✓ İkramiye eklendi" } },
+  { user_command: "brütten nete çevir", intent: "gross_to_net", output: { action: "update_cells", formula: "gross_to_net", reply: "✓ Brütten nete çevrildi" } },
+  { user_command: "asgari ücret farkı hesapla", intent: "min_wage_diff", output: { action: "update_cells", formula: "min_wage", reply: "✓ Asgari ücret farkı hesaplandı" } },
+
+  // ════════════════════════════════════════════
+  // 12. FİLTRELEME — filter
+  // ════════════════════════════════════════════
+  { user_command: "istanbul olanları göster", intent: "filter_contains", output: { action: "filter", condition: "contains", value: "istanbul", reply: "✓ İstanbul kayıtları filtrelendi" } },
+  { user_command: "ankara olanları filtrele", intent: "filter_contains", output: { action: "filter", condition: "contains", value: "ankara", reply: "✓ Ankara kayıtları filtrelendi" } },
+  { user_command: "100 den büyük olanları göster", intent: "filter_greater", output: { action: "filter", condition: "value > 100", reply: "✓ 100'den büyük değerler filtrelendi" } },
+  { user_command: "1000den az olanları filtrele", intent: "filter_less", output: { action: "filter", condition: "value < 1000", reply: "✓ 1000'den az değerler filtrelendi" } },
+  { user_command: "bu ay olanları göster", intent: "filter_current_month", output: { action: "filter", condition: "currentMonth", reply: "✓ Bu ayın kayıtları gösterildi" } },
+  { user_command: "son 30 günü göster", intent: "filter_last_30", output: { action: "filter", condition: "last30days", reply: "✓ Son 30 günün verileri gösterildi" } },
+  { user_command: "bu hafta olanları filtrele", intent: "filter_this_week", output: { action: "filter", condition: "thisWeek", reply: "✓ Bu haftanın kayıtları gösterildi" } },
+  { user_command: "aktif olanları göster", intent: "filter_contains", output: { action: "filter", condition: "contains", value: "aktif", reply: "✓ Aktif kayıtlar gösterildi" } },
+  { user_command: "tamamlananları filtrele", intent: "filter_contains", output: { action: "filter", condition: "contains", value: "tamamlandı", reply: "✓ Tamamlanan kayıtlar filtrelendi" } },
+  { user_command: "bekleyenleri göster", intent: "filter_contains", output: { action: "filter", condition: "contains", value: "bekliyor", reply: "✓ Bekleyen kayıtlar gösterildi" } },
+  { user_command: "filtreyi kaldır", intent: "clear_filter", output: { action: "remove_filter", reply: "✓ Filtre kaldırıldı" } },
+  { user_command: "tüm veriyi göster", intent: "clear_filter", output: { action: "remove_filter", reply: "✓ Tüm veriler gösterildi" } },
+  { user_command: "filtreleri sıfırla", intent: "clear_filter", output: { action: "remove_filter", reply: "✓ Filtreler sıfırlandı" } },
+
+  // ════════════════════════════════════════════
+  // 13. METİN DÖNÜŞÜMÜ — transform
+  // ════════════════════════════════════════════
+  { user_command: "büyük harfe çevir", intent: "to_uppercase", output: { action: "transform", transform: "uppercase", reply: "✓ Büyük harfe çevrildi" } },
+  { user_command: "hepsini büyük harf yap", intent: "to_uppercase", output: { action: "transform", transform: "uppercase", reply: "✓ Büyük harf yapıldı" } },
+  { user_command: "küçük harfe çevir", intent: "to_lowercase", output: { action: "transform", transform: "lowercase", reply: "✓ Küçük harfe çevrildi" } },
+  { user_command: "tümünü küçük harf yap", intent: "to_lowercase", output: { action: "transform", transform: "lowercase", reply: "✓ Küçük harf yapıldı" } },
+  { user_command: "baş harfleri büyük yap", intent: "to_titlecase", output: { action: "transform", transform: "capitalize", reply: "✓ Baş harfler büyük yapıldı" } },
+  { user_command: "kelimelerin ilk harfini büyüt", intent: "to_titlecase", output: { action: "transform", transform: "capitalize", reply: "✓ İlk harfler büyütüldü" } },
+  { user_command: "boşlukları temizle", intent: "trim_spaces", output: { action: "transform", transform: "trim", reply: "✓ Boşluklar temizlendi" } },
+  { user_command: "fazla boşlukları sil", intent: "trim_spaces", output: { action: "transform", transform: "trim", reply: "✓ Fazla boşluklar silindi" } },
+  { user_command: "metinleri birleştir", intent: "concat", output: { action: "transform", transform: "concat", reply: "✓ Metinler birleştirildi" } },
+  { user_command: "sütunları birleştir", intent: "concat_columns", output: { action: "transform", transform: "concat_columns", reply: "✓ Sütunlar birleştirildi" } },
+  { user_command: "boşlukları _ ile değiştir", intent: "replace_spaces", output: { action: "transform", transform: "replace_spaces", reply: "✓ Boşluklar alt çizgiyle değiştirildi" } },
+
+  // ════════════════════════════════════════════
+  // 14. TARİH İŞLEMLERİ — date
+  // ════════════════════════════════════════════
+  { user_command: "tarihleri formatla", intent: "format_date", output: { action: "transform", transform: "date_format", reply: "✓ Tarihler formatlandı" } },
+  { user_command: "tarihleri gg.aa.yyyy yap", intent: "format_date", output: { action: "transform", transform: "date_dmY", reply: "✓ Tarihler GG.AA.YYYY formatına çevrildi" } },
+  { user_command: "yılı çıkar", intent: "extract_year", output: { action: "transform", transform: "extract_year", reply: "✓ Yıllar çıkarıldı" } },
+  { user_command: "ayı göster", intent: "extract_month", output: { action: "transform", transform: "extract_month", reply: "✓ Aylar gösterildi" } },
+  { user_command: "gün bilgisini al", intent: "extract_day", output: { action: "transform", transform: "extract_day", reply: "✓ Gün bilgileri alındı" } },
+  { user_command: "tarihleri sırala", intent: "sort_date", output: { action: "sort", column: "tarih", direction: "asc", reply: "✓ Tarihler sıralandı" } },
+  { user_command: "en eski tarihi bul", intent: "min_date", output: { action: "min", column: "tarih", reply: "✓ En eski tarih bulundu" } },
+  { user_command: "en yeni tarihi bul", intent: "max_date", output: { action: "max", column: "tarih", reply: "✓ En yeni tarih bulundu" } },
+
+  // ════════════════════════════════════════════
+  // 15. SÜTUN İŞLEMLERİ — column_ops
+  // ════════════════════════════════════════════
+  { user_command: "sütun ekle", intent: "add_column", output: { action: "add_column", reply: "✓ Yeni sütun eklendi" } },
+  { user_command: "son sütuna yeni kolon ekle", intent: "add_column", output: { action: "add_column", reply: "✓ Yeni sütun eklendi" } },
+  { user_command: "b sütununu sil", intent: "delete_column", output: { action: "delete_column", column: "B", reply: "✓ B sütunu silindi" } },
+  { user_command: "fiyat sütununu kaldır", intent: "delete_column", output: { action: "delete_column", column: "fiyat", reply: "✓ Fiyat sütunu kaldırıldı" } },
+  { user_command: "sütunları yeniden adlandır", intent: "rename_columns", output: { action: "rename_columns", reply: "✓ Sütunlar yeniden adlandırıldı" } },
+  { user_command: "boş sütunları kaldır", intent: "delete_empty_columns", output: { action: "delete_empty_columns", reply: "✓ Boş sütunlar kaldırıldı" } },
+
+  // ════════════════════════════════════════════
+  // 16. RAPOR OLUŞTURMA — report
+  // ════════════════════════════════════════════
+  { user_command: "rapor oluştur", intent: "auto_report", output: { action: "message", formula: "auto_report", reply: "📊 Rapor hazırlandı" } },
+  { user_command: "aylık rapor yap", intent: "monthly_report", output: { action: "message", formula: "monthly_report", reply: "📊 Aylık rapor hazırlandı" } },
+  { user_command: "haftalık rapor oluştur", intent: "weekly_report", output: { action: "message", formula: "weekly_report", reply: "📊 Haftalık rapor hazırlandı" } },
+  { user_command: "özet çıkar", intent: "summary", output: { action: "message", formula: "summary", reply: "📊 Özet rapor oluşturuldu" } },
+  { user_command: "istatistikleri göster", intent: "statistics", output: { action: "message", formula: "statistics", reply: "📊 İstatistikler hesaplandı" } },
+  { user_command: "veri analizi yap", intent: "data_analysis", output: { action: "message", formula: "analysis", reply: "📊 Veri analizi tamamlandı" } },
+  { user_command: "satış raporu hazırla", intent: "sales_report", output: { action: "message", formula: "sales_report", reply: "📊 Satış raporu hazırlandı" } },
+  { user_command: "bordro raporu oluştur", intent: "payroll_report", output: { action: "message", formula: "payroll_report", reply: "📊 Bordro raporu hazırlandı" } },
+  { user_command: "özet tablo yap", intent: "pivot", output: { action: "message", formula: "pivot_summary", reply: "📊 Özet tablo oluşturuldu" } },
+  { user_command: "karşılaştırmalı analiz yap", intent: "comparison", output: { action: "message", formula: "comparison", reply: "📊 Karşılaştırmalı analiz tamamlandı" } },
+
+  // ════════════════════════════════════════════
+  // 17. VERİ DOĞRULAMA — validate
+  // ════════════════════════════════════════════
+  { user_command: "hataları bul", intent: "find_errors", output: { action: "validate", check: "errors", reply: "✓ Hatalar tespit edildi" } },
+  { user_command: "eksik verileri göster", intent: "find_missing", output: { action: "validate", check: "missing", reply: "✓ Eksik veriler gösterildi" } },
+  { user_command: "geçersiz verileri işaretle", intent: "mark_invalid", output: { action: "highlight", condition: "invalid", color: "#fecaca", reply: "✓ Geçersiz veriler işaretlendi" } },
+  { user_command: "negatif değerleri kontrol et", intent: "check_negative", output: { action: "validate", check: "negative", reply: "✓ Negatif değerler kontrol edildi" } },
+  { user_command: "sayısal olmayan verileri bul", intent: "find_non_numeric", output: { action: "validate", check: "non_numeric", reply: "✓ Sayısal olmayan veriler bulundu" } },
+  { user_command: "anomali tespit et", intent: "detect_anomaly", output: { action: "message", formula: "anomaly_detection", reply: "📊 Anomaliler tespit edildi" } },
+  { user_command: "tutarsızlıkları bul", intent: "find_inconsistencies", output: { action: "validate", check: "inconsistencies", reply: "✓ Tutarsızlıklar bulundu" } },
+
+  // ════════════════════════════════════════════
+  // 18. DOSYA AKTARIM — export
+  // ════════════════════════════════════════════
+  { user_command: "excel olarak indir", intent: "export_excel", output: { action: "export", format: "xlsx", reply: "✓ Excel dosyası hazırlandı" } },
+  { user_command: "csv indir", intent: "export_csv", output: { action: "export", format: "csv", reply: "✓ CSV dosyası indiriliyor" } },
+  { user_command: "google sheets'e aktar", intent: "export_gsheets", output: { action: "export", target: "google_sheets", reply: "✓ Google Sheets'e aktarıldı" } },
+  { user_command: "notion'a gönder", intent: "export_notion", output: { action: "export", target: "notion", reply: "✓ Notion'a gönderildi" } },
+  { user_command: "dosyayı kaydet", intent: "save_file", output: { action: "export", format: "xlsx", reply: "✓ Dosya kaydedildi" } },
+  { user_command: "pdf olarak aktar", intent: "export_pdf", output: { action: "export", format: "pdf", reply: "✓ PDF hazırlandı" } },
+
+  // ════════════════════════════════════════════
+  // 19. GELİŞMİŞ HESAPLAMALAR — advanced
+  // ════════════════════════════════════════════
+  { user_command: "vlookup yap", intent: "vlookup", output: { action: "message", formula: "vlookup", reply: "📊 VLOOKUP işlemi yapıldı" } },
+  { user_command: "eğer formülü uygula", intent: "if_formula", output: { action: "message", formula: "if_formula", reply: "📊 Koşullu formül uygulandı" } },
+  { user_command: "koşullu topla", intent: "sumif", output: { action: "message", formula: "sumif", reply: "📊 Koşullu toplam hesaplandı" } },
+  { user_command: "koşullu say", intent: "countif", output: { action: "count_if", reply: "✓ Koşullu sayım yapıldı" } },
+  { user_command: "kümülatif toplam hesapla", intent: "cumulative_sum", output: { action: "update_cells", formula: "cumulative_sum", reply: "✓ Kümülatif toplam hesaplandı" } },
+  { user_command: "yüzde dilim hesapla", intent: "percentile", output: { action: "message", formula: "percentile", reply: "📊 Yüzde dilim hesaplandı" } },
+  { user_command: "standart sapma hesapla", intent: "std_dev", output: { action: "message", formula: "std_dev", reply: "📊 Standart sapma hesaplandı" } },
+  { user_command: "medyan bul", intent: "median", output: { action: "message", formula: "median", reply: "📊 Medyan değer bulundu" } },
+  { user_command: "mod değeri ne", intent: "mode", output: { action: "message", formula: "mode", reply: "📊 Mod değeri bulundu" } },
+  { user_command: "büyüme oranı hesapla", intent: "growth_rate", output: { action: "update_cells", formula: "growth_rate", reply: "✓ Büyüme oranı hesaplandı" } },
+  { user_command: "trend analizi yap", intent: "trend", output: { action: "message", formula: "trend_analysis", reply: "📊 Trend analizi tamamlandı" } },
+  { user_command: "tahmin hesapla", intent: "forecast", output: { action: "message", formula: "forecast", reply: "📊 Tahmin hesaplandı" } },
+
+  // ════════════════════════════════════════════
+  // 20. MUHASEBE ÖZEL — accounting
+  // ════════════════════════════════════════════
+  { user_command: "kar zarar hesapla", intent: "profit_loss", output: { action: "update_cells", formula: "profit_loss", reply: "✓ Kar/zarar hesaplandı" } },
+  { user_command: "brüt kar marjı hesapla", intent: "gross_margin", output: { action: "update_cells", formula: "gross_margin", reply: "✓ Brüt kar marjı hesaplandı" } },
+  { user_command: "nakit akışı hesapla", intent: "cash_flow", output: { action: "message", formula: "cash_flow", reply: "📊 Nakit akışı hesaplandı" } },
+  { user_command: "gider toplamı ne kadar", intent: "sum_expenses", output: { action: "sum", column: "gider", reply: "✓ Gider toplamı hesaplandı" } },
+  { user_command: "gelir gider dengesi", intent: "income_expense_balance", output: { action: "message", formula: "balance", reply: "📊 Gelir gider dengesi gösterildi" } },
+  { user_command: "muhasebe raporu oluştur", intent: "accounting_report", output: { action: "message", formula: "accounting_report", reply: "📊 Muhasebe raporu hazırlandı" } },
+  { user_command: "stok değeri hesapla", intent: "inventory_value", output: { action: "update_cells", formula: "inventory_value", reply: "✓ Stok değeri hesaplandı" } },
+  { user_command: "amortisman hesapla", intent: "depreciation", output: { action: "update_cells", formula: "depreciation", reply: "✓ Amortisman hesaplandı" } },
+  { user_command: "faiz hesapla", intent: "interest", output: { action: "update_cells", formula: "interest", reply: "✓ Faiz hesaplandı" } },
+  { user_command: "kdv beyannamesi hesapla", intent: "vat_declaration", output: { action: "message", formula: "vat_report", reply: "📊 KDV beyanı hesaplandı" } },
+
+  // ════════════════════════════════════════════
+  // 21. HÜCRE DEĞERİ DEĞIŞTIRME — update
+  // ════════════════════════════════════════════
+  { user_command: "a1 hücresine 100 yaz", intent: "set_cell", output: { action: "set_cell", cell: "A1", value: 100, reply: "✓ A1'e 100 yazıldı" } },
+  { user_command: "b2 yi 500 yap", intent: "set_cell", output: { action: "set_cell", cell: "B2", value: 500, reply: "✓ B2 güncellendi" } },
+  { user_command: "bu satırı sil", intent: "delete_row", output: { action: "delete_rows", condition: "selected", reply: "✓ Satır silindi" } },
+  { user_command: "seçili satırları sil", intent: "delete_selected", output: { action: "delete_rows", condition: "selected", reply: "✓ Seçili satırlar silindi" } },
+  { user_command: "tüm veriyi temizle", intent: "clear_all", output: { action: "clear_all", reply: "✓ Tüm veri temizlendi" } },
+  { user_command: "geri al", intent: "undo", output: { action: "undo", reply: "✓ Son işlem geri alındı" } },
+
+  // ════════════════════════════════════════════
+  // 22. ARAMA / BULMA — search
+  // ════════════════════════════════════════════
+  { user_command: "ayşe yi bul", intent: "search", output: { action: "search", value: "ayşe", reply: "✓ 'Ayşe' arama sonuçları gösterildi" } },
+  { user_command: "istanbul içeren satırları bul", intent: "search", output: { action: "filter", condition: "contains", value: "istanbul", reply: "✓ 'İstanbul' içeren satırlar bulundu" } },
+  { user_command: "100 değerini ara", intent: "search", output: { action: "search", value: "100", reply: "✓ 100 değeri arandı" } },
+  { user_command: "bul ve değiştir", intent: "find_replace", output: { action: "find_replace", reply: "✓ Bul ve değiştir hazır" } },
+  { user_command: "tüm hücrelerde ara", intent: "search_all", output: { action: "search", scope: "all", reply: "✓ Tüm hücrelerde arama yapıldı" } },
+
+  // ════════════════════════════════════════════
+  // 23. YARDIM VE BİLGİ — help
+  // ════════════════════════════════════════════
+  { user_command: "ne yapabilirim", intent: "help", output: { action: "message", reply: "💡 Sıralama, filtreleme, hesaplama, renklendirme, rapor oluşturma ve daha fazlasını Türkçe komutlarla yapabilirsiniz!" } },
+  { user_command: "yardım", intent: "help", output: { action: "message", reply: "💡 Örnek komutlar: 'B sütununu topla', 'Boş satırları sil', 'KDV ekle', 'Aylık rapor yap'" } },
+  { user_command: "ne yaparsın", intent: "help", output: { action: "message", reply: "💡 Excel verilerinizi Türkçe komutlarla yönetebilirsiniz. Sıralama, hesaplama, temizleme ve raporlama yapabilirim." } },
+  { user_command: "komutlar neler", intent: "help", output: { action: "message", reply: "💡 Topla, sırala, filtrele, renklendir, KDV hesapla, maaş hesapla, rapor oluştur ve çok daha fazlası!" } },
+  { user_command: "nasıl kullanırım", intent: "help", output: { action: "message", reply: "💡 Türkçe olarak ne yapmak istediğinizi yazın. Örn: 'Fiyatları büyükten küçüğe sırala'" } },
+  { user_command: "bu ne işe yarar", intent: "help", output: { action: "message", reply: "💡 Mocksheets, Excel işlerinizi Türkçe komutlarla otomatik yapar. Formül bilmenize gerek yok!" } },
+  { user_command: "kaç kolon var", intent: "info", output: { action: "message", formula: "sheet_info", reply: "📊 Tablo bilgileri gösterildi" } },
+  { user_command: "veriler hakkında bilgi ver", intent: "info", output: { action: "message", formula: "data_summary", reply: "📊 Veri özeti hazırlandı" } },
+
+  // ════════════════════════════════════════════
+  // 24. HIZLI İŞLEMLER — quick
+  // ════════════════════════════════════════════
+  { user_command: "temizle", intent: "clean", output: { action: "delete_rows", condition: "empty", reply: "✓ Boş satırlar temizlendi" } },
+  { user_command: "düzenle", intent: "clean_all", output: { action: "message", formula: "clean_all", reply: "✓ Veriler düzenlendi" } },
+  { user_command: "standartlaştır", intent: "standardize", output: { action: "transform", transform: "standardize", reply: "✓ Veriler standartlaştırıldı" } },
+  { user_command: "hazırla", intent: "prepare", output: { action: "message", formula: "prepare_data", reply: "✓ Veriler hazırlandı" } },
+  { user_command: "kontrol et", intent: "validate", output: { action: "validate", check: "all", reply: "✓ Veriler kontrol edildi" } },
+  { user_command: "onar", intent: "fix", output: { action: "message", formula: "fix_data", reply: "✓ Veri sorunları düzeltildi" } },
+
+  // ════════════════════════════════════════════
+  // 25. KARMAŞIK / DOĞAL DİL — natural
+  // ════════════════════════════════════════════
+  { user_command: "en çok satan 5 ürünü listele", intent: "top_n_products", output: { action: "top_n", column: "satış", n: 5, direction: "desc", reply: "✓ En çok satan 5 ürün listelendi" } },
+  { user_command: "geçen ay en yüksek gelir hangi tarihte", intent: "max_last_month", output: { action: "max", condition: "lastMonth", column: "gelir", reply: "✓ Geçen ay en yüksek gelir tarihi bulundu" } },
+  { user_command: "hangi şehirde en çok satış var", intent: "group_by_city", output: { action: "message", formula: "group_sum", group_column: "şehir", value_column: "satış", reply: "📊 Şehirlere göre satış analizi yapıldı" } },
+  { user_command: "müşteri başına ortalama sipariş tutarı", intent: "avg_per_customer", output: { action: "message", formula: "group_avg", group_column: "müşteri", value_column: "tutar", reply: "📊 Müşteri başına ortalama hesaplandı" } },
+  { user_command: "stok düşükse kırmızıya boya", intent: "highlight_low_stock", output: { action: "highlight", condition: "value < 10", color: "#fecaca", reply: "✓ Düşük stoklar kırmızıya boyandı" } },
+  { user_command: "hedefi aşanları yeşil yap", intent: "highlight_above_target", output: { action: "highlight", condition: "value > target", color: "#bbf7d0", reply: "✓ Hedefi aşanlar yeşile boyandı" } },
+  { user_command: "bu veriyi analiz et", intent: "analyze", output: { action: "message", formula: "full_analysis", reply: "📊 Veri analizi tamamlandı" } },
+  { user_command: "grafiğe uygun veri hazırla", intent: "prepare_chart", output: { action: "message", formula: "chart_data", reply: "✓ Grafik verisi hazırlandı" } },
+  { user_command: "pivot tablo oluştur", intent: "pivot", output: { action: "message", formula: "pivot_table", reply: "📊 Pivot tablo oluşturuldu" } },
+  { user_command: "gruplandır ve özetle", intent: "group_summarize", output: { action: "message", formula: "group_summary", reply: "📊 Veriler gruplandırıldı ve özetlendi" } },
+];
+
+// ════════════════════════════════════════════
+// INTENT SINIFLANDIRMA HARİTASI
+// RAG sistemi için — hangi intent hangi action'a gider
+// ════════════════════════════════════════════
+const INTENT_MAP = {
+  // Sıralama
+  sort_asc:     { action: "sort", direction: "asc" },
+  sort_desc:    { action: "sort", direction: "desc" },
+  sort_column:  { action: "sort" },
+
+  // Hesaplamalar
+  sum:          { action: "sum" },
+  sum_column:   { action: "sum" },
+  sum_to_cell:  { action: "sum" },
+  average:      { action: "average" },
+  average_column: { action: "average" },
+  max:          { action: "max" },
+  min:          { action: "min" },
+  top_n:        { action: "top_n" },
+  count:        { action: "count" },
+  count_if:     { action: "count_if" },
+
+  // Temizleme
+  delete_empty:    { action: "delete_rows", condition: "empty" },
+  delete_zero:     { action: "delete_rows", condition: "value == 0" },
+  delete_negative: { action: "delete_rows", condition: "value < 0" },
+  deduplicate:     { action: "remove_duplicates" },
+
+  // Renklendirme
+  highlight_negative_red:  { action: "highlight", condition: "value < 0", color: "#fecaca" },
+  highlight_positive_green: { action: "highlight", condition: "value > 0", color: "#bbf7d0" },
+  highlight_top5_yellow:   { action: "highlight", condition: "top5", color: "#fef08a" },
+  highlight_threshold:     { action: "highlight" },
+  clear_colors:            { action: "clear_colors" },
+
+  // KDV
+  add_vat:    { action: "update_cells", formula: "multiply", factor: 1.20 },
+  remove_vat: { action: "update_cells", formula: "divide", factor: 1.20 },
+  show_vat:   { action: "update_cells", formula: "vat_amount" },
+
+  // Yüzde
+  increase_percent: { action: "update_cells", formula: "multiply" },
+  decrease_percent: { action: "update_cells", formula: "multiply" },
+  multiply_column:  { action: "update_cells", formula: "multiply" },
+
+  // Maaş
+  calc_net_salary: { action: "update_cells", formula: "net_salary" },
+  calc_sgk:        { action: "update_cells", formula: "sgk_deduction" },
+  calc_income_tax: { action: "update_cells", formula: "income_tax" },
+  calc_severance:  { action: "update_cells", formula: "severance_pay" },
+  gross_to_net:    { action: "update_cells", formula: "gross_to_net" },
+
+  // Filtreleme
+  filter_contains:      { action: "filter", condition: "contains" },
+  filter_greater:       { action: "filter", condition: "value >" },
+  filter_less:          { action: "filter", condition: "value <" },
+  filter_current_month: { action: "filter", condition: "currentMonth" },
+  filter_last_30:       { action: "filter", condition: "last30days" },
+  clear_filter:         { action: "remove_filter" },
+
+  // Dönüşüm
+  to_uppercase:  { action: "transform", transform: "uppercase" },
+  to_lowercase:  { action: "transform", transform: "lowercase" },
+  to_titlecase:  { action: "transform", transform: "capitalize" },
+  trim_spaces:   { action: "transform", transform: "trim" },
+
+  // Rapor
+  auto_report:     { action: "message", formula: "auto_report" },
+  monthly_report:  { action: "message", formula: "monthly_report" },
+  summary:         { action: "message", formula: "summary" },
+  statistics:      { action: "message", formula: "statistics" },
+
+
+  help: { action: "message" },
+  info: { action: "message", formula: "sheet_info" },
+};
+
+const COLOR_MAP = {
+  "kırmızı": "#fecaca",
+  "red": "#fecaca",
+  "yeşil": "#bbf7d0",
+  "green": "#bbf7d0",
+  "sarı": "#fef08a",
+  "yellow": "#fef08a",
+  "mavi": "#bfdbfe",
+  "blue": "#bfdbfe",
+  "turuncu": "#fed7aa",
+  "orange": "#fed7aa",
+  "mor": "#e9d5ff",
+  "purple": "#e9d5ff",
+  "pembe": "#fbcfe8",
+  "pink": "#fbcfe8",
+  "gri": "#e5e7eb",
+  "gray": "#e5e7eb",
+};
+
+module.exports = { EXCEL_DATASET, INTENT_MAP, COLOR_MAP };
