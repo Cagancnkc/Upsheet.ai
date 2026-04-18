@@ -49,10 +49,13 @@ Tetikleyici: "ortalama", "ortalamasını hesapla", "ortalama değer"
 {"action":"average","reply":"✓ Ortalama hesaplandı","column":"fiyat","changes":[]}
 
 ### highlight — Renklendirme
-Tetikleyici: "kırmızı yap/boya", "yeşile boya", "sarıya boya", "negatifleri işaretle", "en büyük 5'i vurgula"
-Renk eşleme: kırmızı=#fecaca | yeşil=#bbf7d0 | sarı=#fef08a | mavi=#bfdbfe | turuncu=#fed7aa
+Tetikleyici: "kırmızı yap/boya", "yeşile boya", "sarıya boya", "boyat", "renklendir", "işaretle", "negatifleri işaretle", "eksileri işaretle", "en büyük X'i vurgula"
+Renk eşleme: kırmızı=#fecaca | yeşil=#bbf7d0 | sarı=#fef08a | mavi=#bfdbfe | turuncu=#fed7aa | mor=#e9d5ff
+Koşul eşleme: negatif/eksi/minus → "value < 0" | pozitif/artı → "value > 0" | sıfır/zero → "value == 0"
 {"action":"highlight","reply":"✓ Negatif değerler kırmızıya boyandı","condition":"value < 0","color":"#fecaca","changes":[]}
 {"action":"highlight","reply":"✓ En büyük 5 değer vurgulandı","condition":"top5","color":"#fef08a","changes":[]}
+{"action":"highlight","reply":"✓ Eksi değerler işaretlendi","condition":"eksi","color":"#fecaca","changes":[]}
+{"action":"highlight","reply":"✓ Sıfır değerler sarıya boyandı","condition":"value == 0","color":"#fef08a","changes":[]}
 
 ### update_cells — Hesaplama/Güncelleme
 Tetikleyici: "KDV ekle", "%20 ekle", "net maaş hesapla", "çarp", "böl", "SGK kesintisi"

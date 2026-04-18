@@ -1787,6 +1787,13 @@ function applyHighlightAction(data) {
     allNums.sort(function(a, b) { return b - a; }).slice(0, n).forEach(function(v) { topValues.add(v); });
   }
 
+  // Mevcut sheet'teki tüm bg renklerini sıfırla (bold/italic/diğer meta korunur)
+  if (cellMeta[activeSheet]) {
+    Object.keys(cellMeta[activeSheet]).forEach(function(key) {
+      if (cellMeta[activeSheet][key]) delete cellMeta[activeSheet][key].bg;
+    });
+  }
+
   let highlighted = 0;
   for (let r = 1; r < sheet.length; r++) {
     const cols = targetCol >= 0 ? [targetCol] : headers.map(function(_, i) { return i; });
@@ -1795,9 +1802,10 @@ function applyHighlightAction(data) {
       const num = parseFloat(String(raw || '').replace(',', '.'));
       let match = false;
 
-      if (condition === 'negative' || condition === 'value < 0' || condition === 'negatif' || condition === 'isnegative') match = !isNaN(num) && num < 0;
-      else if (condition === 'positive' || condition === 'value > 0' || condition === 'pozitif' || condition === 'ispositive') match = !isNaN(num) && num > 0;
+      if (condition === 'negative' || condition === 'value < 0' || condition === 'negatif' || condition === 'isnegative' || condition === 'eksi' || condition === 'minus') match = !isNaN(num) && num < 0;
+      else if (condition === 'positive' || condition === 'value > 0' || condition === 'pozitif' || condition === 'ispositive' || condition === 'artı') match = !isNaN(num) && num > 0;
       else if (condition === 'high') match = !isNaN(num) && num > 0;
+      else if (condition === 'sıfır' || condition === 'zero' || condition === 'value == 0') match = !isNaN(num) && num === 0;
       else if (/^top\d+$/.test(condition)) match = topValues.has(num);
       else if (condition.startsWith('value >')) {
         const threshold = parseFloat(condition.replace('value >', '').trim());
