@@ -242,6 +242,62 @@ body.dark .rf-item-name{color:#e2e2e2;}
 .tb-select{height:26px;border:1px solid #e2e8f0;border-radius:5px;font-size:12px;font-family:'Inter',sans-serif;color:#475569;padding:0 5px;background:#fff;outline:none;cursor:pointer;}
 .tb-color{width:26px;height:26px;border-radius:5px;border:1px solid #e2e8f0;padding:3px;cursor:pointer;background:#fff;}
 
+/* ── EXPORT BUTTON ──────────────────────────── */
+.export-wrapper{position:relative;display:inline-flex;align-items:stretch;}
+.export-main-btn{
+  border-radius:6px 0 0 6px !important;
+  color:#059669 !important;font-weight:500 !important;
+  border:1px solid #d1fae5 !important;border-right:none !important;
+  background:rgba(5,150,105,0.04) !important;
+  gap:5px !important;padding:4px 10px !important;
+  transition:background .15s,box-shadow .15s !important;
+}
+.export-main-btn:hover{background:rgba(5,150,105,0.1) !important;box-shadow:0 1px 6px rgba(5,150,105,0.2) !important;}
+.export-arrow{
+  border-radius:0 6px 6px 0 !important;
+  border:1px solid #d1fae5 !important;border-left:1px solid #a7f3d0 !important;
+  background:rgba(5,150,105,0.04) !important;
+  color:#059669 !important;
+  padding:0 7px !important;min-width:unset !important;
+  transition:background .15s !important;
+}
+.export-arrow:hover{background:rgba(5,150,105,0.12) !important;}
+.export-arrow svg{transition:transform .2s ease;}
+.export-arrow.open svg{transform:rotate(180deg);}
+#export-dropdown{
+  display:none;position:absolute;top:calc(100% + 6px);right:0;
+  background:#fff;border:1.5px solid #E5E7EB;border-radius:12px;
+  box-shadow:0 8px 32px rgba(0,0,0,0.13);min-width:230px;z-index:9999;overflow:hidden;
+  opacity:0;transform:translateY(-6px);
+  transition:opacity .18s ease,transform .18s ease;
+  pointer-events:none;
+}
+#export-dropdown.open{opacity:1;transform:translateY(0);pointer-events:auto;}
+.exp-header{
+  font-size:10px;font-weight:600;color:#9CA3AF;letter-spacing:.05em;
+  padding:8px 16px 4px;text-transform:uppercase;
+}
+.exp-item{
+  display:flex;align-items:center;gap:10px;
+  width:100%;padding:9px 16px;
+  border:none;background:none;cursor:pointer;font-size:13px;color:#374151;
+  text-align:left;transition:background .12s;
+}
+.exp-item:hover{background:#F0FDF4;}
+.exp-item span{flex:1;}
+.exp-item small{
+  font-size:10px;color:#6EE7B7;font-weight:600;
+  background:rgba(5,150,105,0.08);padding:2px 6px;border-radius:4px;letter-spacing:.02em;
+}
+.exp-divider{height:1px;background:#F3F4F6;margin:4px 0;}
+body.dark #export-dropdown{background:#1a1a1a;border-color:#2a2a2a;box-shadow:0 8px 32px rgba(0,0,0,0.5);}
+body.dark .exp-item{color:#e2e8f0;}
+body.dark .exp-item:hover{background:rgba(5,150,105,0.12);}
+body.dark .exp-header{color:#4b5563;}
+body.dark .exp-divider{background:#2a2a2a;}
+body.dark .export-main-btn{border-color:rgba(52,211,153,0.25) !important;border-right:none !important;background:rgba(5,150,105,0.08) !important;}
+body.dark .export-arrow{border-color:rgba(52,211,153,0.25) !important;border-left-color:rgba(52,211,153,0.15) !important;background:rgba(5,150,105,0.08) !important;}
+
 /* ── FORMULA BAR ────────────────────────────── */
 #formulaBar{
   height:30px;background:#fff;border-bottom:1px solid #e2e8f0;

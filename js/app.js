@@ -4746,14 +4746,22 @@ function doGenerateFormula(data) {
 function toggleExportMenu(e) {
   e.stopPropagation();
   const menu = document.getElementById('export-dropdown');
-  const isOpen = menu.style.display === 'block';
-  document.querySelectorAll('[id$="-dropdown"]').forEach(m => m.style.display = 'none');
-  menu.style.display = isOpen ? 'none' : 'block';
+  const btn = document.getElementById('exportArrowBtn');
+  const isOpen = menu.classList.contains('open');
+  document.querySelectorAll('[id$="-dropdown"]').forEach(m => { m.style.display = ''; m.classList.remove('open'); });
+  document.querySelectorAll('.export-arrow').forEach(b => b.classList.remove('open'));
+  if (!isOpen) {
+    menu.style.display = 'block';
+    requestAnimationFrame(() => menu.classList.add('open'));
+    btn && btn.classList.add('open');
+  }
 }
 
 document.addEventListener('click', () => {
   const menu = document.getElementById('export-dropdown');
-  if (menu) menu.style.display = 'none';
+  if (menu) { menu.classList.remove('open'); menu.style.display = ''; }
+  const btn = document.getElementById('exportArrowBtn');
+  if (btn) btn.classList.remove('open');
 });
 
 function exportToGSheets() {
