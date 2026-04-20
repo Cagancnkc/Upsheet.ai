@@ -232,6 +232,29 @@
 body.dark .lang-switcher { background: rgba(255,255,255,0.06); }
 body.dark .lang-btn { color: #9ca3af; }
 body.dark .lang-btn.active { background: rgba(255,255,255,0.12); color: #fff; box-shadow: 0 1px 4px rgba(0,0,0,0.4); }
+.export-wrapper { display:inline-flex; align-items:stretch; }
+.export-main-btn { border-radius:5px 0 0 5px !important; }
+.export-arrow {
+  border-radius:0 5px 5px 0 !important;
+  border-left:1px solid #e2e8f0 !important;
+  padding:0 8px !important;
+  font-size:10px !important;
+  min-width:unset !important;
+}
+.exp-item {
+  display:flex; align-items:center; gap:10px;
+  width:100%; padding:10px 16px;
+  background:white; border:none; cursor:pointer;
+  font-size:13px; font-family:inherit; color:#374151;
+  text-align:left; transition:background .12s;
+}
+.exp-item:hover { background:#F9FAFB; }
+.exp-item span { flex:1; }
+.exp-item small {
+  font-size:11px; color:#9CA3AF;
+  background:#F3F4F6; padding:2px 6px; border-radius:4px;
+}
+.exp-divider { height:1px; background:#F3F4F6; margin:4px 0; }
 </style>
 <!-- Microsoft Clarity -->
 <script type="text/javascript">
@@ -412,6 +435,22 @@ body.dark .lang-btn.active { background: rgba(255,255,255,0.12); color: #fff; bo
       </svg>
       <span>Entegrasyonlar</span>
     </button>
+    <div class="tb-sep"></div>
+    <div class="export-wrapper" style="position:relative;display:inline-flex;align-items:stretch;">
+      <button class="tb-btn export-main-btn" onclick="downloadFile()" title="Excel olarak indir">
+        📥 Dışa Aktar
+      </button>
+      <button class="export-arrow tb-btn" onclick="toggleExportMenu(event)" title="Dışa aktarma seçenekleri">▼</button>
+      <div id="export-dropdown" style="display:none;position:absolute;top:calc(100% + 6px);right:0;background:white;border:1.5px solid #E5E7EB;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,0.12);min-width:220px;z-index:9999;overflow:hidden;">
+        <button class="exp-item" onclick="downloadFile()">📥 <span>Excel olarak indir</span><small>.xlsx</small></button>
+        <button class="exp-item" onclick="downloadCSV()">📄 <span>CSV olarak indir</span><small>.csv</small></button>
+        <div class="exp-divider"></div>
+        <button class="exp-item" onclick="exportToGSheets()"><img src="https://www.gstatic.com/images/branding/product/1x/sheets_2020q4_48dp.png" width="16" height="16" style="border-radius:3px"><span>Google Sheets'e Aktar</span></button>
+        <button class="exp-item" onclick="exportToNotion()"><img src="https://upload.wikimedia.org/wikipedia/commons/e/e9/Notion-logo.svg" width="16" height="16"><span>Notion'a Gönder</span></button>
+        <button class="exp-item" onclick="triggerWebhook()"><img src="https://upload.wikimedia.org/wikipedia/commons/f/fd/Zapier_logo.svg" width="16" height="16"><span>Zapier Webhook</span></button>
+        <button class="exp-item" onclick="exportToSlack()"><img src="https://upload.wikimedia.org/wikipedia/commons/d/d5/Slack_icon_2019.svg" width="16" height="16"><span>Slack'e Gönder</span></button>
+      </div>
+    </div>
     <div style="flex:1"></div>
     <span style="font-size:11px;color:#94a3b8;margin-right:4px;" id="selectionInfo"></span>
   </div>

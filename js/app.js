@@ -1680,6 +1680,31 @@ function applyAIChanges(result) {
       }
       return;
     }
+    case 'sentiment_analysis': doSentimentAnalysis(result); return;
+    case 'classify':           doClassify(result);          return;
+    case 'explain':            doExplain(result);           return;
+    case 'anomaly_detection':  doAnomalyDetection(result);  return;
+    case 'forecast':           doForecast(result);          return;
+    case 'heatmap':            doHeatmap(result);           return;
+    case 'extract':            doExtract(result);           return;
+    case 'group_by':           doGroupBy(result);           return;
+    case 'compare':            doCompare(result);           return;
+    case 'batch_ai':           doBatchAI(result);           return;
+    case 'clean_data':         doCleanData(result);         return;
+    case 'generate_formula':   doGenerateFormula(result);   return;
+    case 'clear_colors': {
+      const sheet = sheets[activeSheet];
+      if (sheet) {
+        for (let r = 0; r < sheet.length; r++) {
+          for (let c = 0; c < (sheet[r] || []).length; c++) {
+            highlightCell(r, c, '');
+          }
+        }
+        buildGrid(sheet);
+      }
+      if (typeof showToast === 'function') showToast(result.reply || '✓ Renkler temizlendi', 'success');
+      return;
+    }
     default:
       break;
   }
@@ -4295,5 +4320,488 @@ document.addEventListener('langchange', function() {
   if (typeof renderSheetTabs === 'function') renderSheetTabs();
   if (typeof updateThemeIcon === 'function') updateThemeIcon();
 });
+
+// ═══════════════════════════════════════════════════════════════
+//  YENİ AI ACTION HANDLER'LAR — v2 özellikler
+// ═══════════════════════════════════════════════════════════════
+
+function findTextColumn(headers) {
+  const keywords = ['yorum', 'açıklama', 'not', 'metin', 'feedback', 'comment', 'description', 'text', 'görüş', 'şikayet'];
+  const idx = (headers || []).findIndex(h => keywords.some(k => String(h).toLowerCase().includes(k)));
+  return idx >= 0 ? idx : (headers || []).findIndex(h => h);
+}
+
+function findNumericColumn(rows) {
+  const headers = rows[0] || [];
+  for (let ci = 0; ci < headers.length; ci++) {
+    const numCount = rows.slice(1).filter(r => {
+      const v = parseFloat(String((r || [])[ci] || '').replace(/[,₺$€\s]/g, ''));
+      return !isNaN(v);
+    }).length;
+    if (numCount > (rows.length - 1) * 0.5) return ci;
+  }
+  return -1;
+}
+
+// ── DUYGU ANALİZİ ─────────────────────────────────────────────
+async function doSentimentAnalysis(data) {
+  const rows = sheets[activeSheet];
+  if (!rows || rows.length < 2) return;
+
+  const textCol = findTextColumn(rows[0]);
+  if (textCol === -1) { showToast('⚠️ Metin sütunu bulunamadı', 'error'); return; }
+
+  const texts = rows.slice(1).map(r => (r || [])[textCol]).filter(Boolean).slice(0, 50);
+  if (!texts.length) { showToast('⚠️ Analiz edilecek metin yok', 'error'); return; }
+
+  showToast('⏳ Duygu analizi yapılıyor...', 'info');
+
+  let labels;
+  try {
+    const token = getAuthToken();
+    const res = await fetch(API_URL + '/api/sentiment', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...(token ? { 'Authorization': 'Bearer ' + token } : {}) },
+      body: JSON.stringify({ texts })
+    });
+    if (res.ok) {
+      const result = await res.json();
+      labels = result.labels;
+    }
+  } catch (e) { /* fallback below */ }
+
+  if (!labels) {
+    const pos = ['iyi', 'güzel', 'harika', 'mükemmel', 'teşekkür', 'memnun', 'süper', 'beğendim', 'sevdim', 'başarılı'];
+    const neg = ['kötü', 'berbat', 'korkunç', 'rezalet', 'sorun', 'hata', 'bozuk', 'çalışmıyor', 'iade', 'şikayet'];
+    labels = texts.map(t => {
+      const txt = String(t).toLowerCase();
+      const p = pos.filter(w => txt.includes(w)).length;
+      const n = neg.filter(w => txt.includes(w)).length;
+      return p > n ? 'Pozitif' : n > p ? 'Negatif' : 'Nötr';
+    });
+  }
+
+  const newCol = (rows[0] || []).length;
+  rows[0][newCol] = 'Duygu';
+  labels.forEach((label, i) => {
+    if (!rows[i + 1]) return;
+    rows[i + 1][newCol] = label;
+    const color = label === 'Pozitif' ? '#bbf7d0' : label === 'Negatif' ? '#fecaca' : '#fef08a';
+    highlightCell(i + 1, newCol, color);
+  });
+  buildGrid(rows);
+  showToast((data.reply || '✓ Duygu analizi tamamlandı') + ' (' + labels.length + ' satır)', 'success');
+}
+
+// ── KATEGORİ SINIFLANDIRMA ────────────────────────────────────
+function doClassify(data) {
+  const rows = sheets[activeSheet];
+  if (!rows || rows.length < 2) return;
+
+  const categories = Array.isArray(data.categories) ? data.categories : [];
+  if (!categories.length) {
+    showToast('⚠️ Kategori belirtilmedi. Örn: "giderleri personel kira araç olarak sınıfla"', 'info');
+    return;
+  }
+
+  const newCol = (rows[0] || []).length;
+  rows[0][newCol] = 'Kategori';
+  let classified = 0;
+
+  rows.slice(1).forEach((row, i) => {
+    const txt = (row || []).join(' ').toLowerCase();
+    let matched = 'Diğer';
+    for (const cat of categories) {
+      if (txt.includes(cat.toLowerCase())) { matched = cat; break; }
+    }
+    rows[i + 1][newCol] = matched;
+    classified++;
+  });
+
+  buildGrid(rows);
+  showToast((data.reply || '✓ Sınıflandırıldı') + ' (' + classified + ' satır, ' + categories.length + ' kategori)', 'success');
+}
+
+// ── AÇIKLAMA ──────────────────────────────────────────────────
+function doExplain(data) {
+  const formulaName = (data.formula_name || '').toLowerCase();
+  const explanations = {
+    vlookup:     'DÜŞEYARA (VLOOKUP) — Tabloda bir değer arar ve aynı satırdan başka sütunu döndürür. Örn: ürün koduna göre fiyat bul. Sözdizimi: =DÜŞEYARA(aranan; tablo; sütun; 0)',
+    sumif:       'ETOPLA (SUMIF) — Belirli koşulu karşılayan hücreleri toplar. Örn: sadece İstanbul satışlarını topla. Sözdizimi: =ETOPLA(aralık; kriter; toplam_aralığı)',
+    if:          'EĞER (IF) — Koşul doğruysa bir değer, yanlışsa başka bir değer. Sözdizimi: =EĞER(koşul; doğruysa; yanlışsa)',
+    countif:     'EĞERSAY (COUNTIF) — Koşula uyan hücreleri sayar. Sözdizimi: =EĞERSAY(aralık; kriter)',
+    index_match: 'İNDİS+KAÇINCI (INDEX+MATCH) — DÜŞEYARA\'dan güçlü, herhangi bir sütunda arayabilir. Sözdizimi: =İNDİS(döndürülecek; KAÇINCI(aranan; arama_sütunu; 0))',
+    sumifs:      'ÇOKETOPLA (SUMIFS) — Birden fazla koşula göre toplar. Sözdizimi: =ÇOKETOPLA(toplam; aralık1; kriter1; aralık2; kriter2)',
+    pivot:       'Pivot Tablo — Büyük verileri kategorilere göre özetler. Veri > Özet Tablo menüsünden oluşturulur.'
+  };
+  const text = explanations[formulaName] || 'Bu işlev seçili veriler üzerinde çalışır. Daha spesifik soru sormak için örn: "vlookup açıkla", "sumif nedir" diyebilirsiniz.';
+  addMsg('ai', '💡 ' + text);
+  showToast(data.reply || '✓ Açıklama hazırlandı', 'success');
+}
+
+// ── ANOMALİ TESPİTİ ──────────────────────────────────────────
+function doAnomalyDetection(data) {
+  const rows = sheets[activeSheet];
+  if (!rows || rows.length < 3) return;
+
+  let count = 0;
+  (rows[0] || []).forEach((header, ci) => {
+    const vals = rows.slice(1).map(r => parseFloat(String((r || [])[ci] || '').replace(/[,₺$€\s]/g, ''))).filter(n => !isNaN(n));
+    if (vals.length < 3) return;
+
+    const mean = vals.reduce((a, b) => a + b, 0) / vals.length;
+    const std = Math.sqrt(vals.map(v => Math.pow(v - mean, 2)).reduce((a, b) => a + b, 0) / vals.length);
+    if (std === 0) return;
+
+    rows.slice(1).forEach((row, ri) => {
+      const v = parseFloat(String((row || [])[ci] || '').replace(/[,₺$€\s]/g, ''));
+      if (!isNaN(v) && Math.abs((v - mean) / std) > 2.5) {
+        highlightCell(ri + 1, ci, data.color || '#fecaca');
+        count++;
+      }
+    });
+  });
+
+  buildGrid(rows);
+  showToast((data.reply || '✓ Anomali tespiti tamamlandı') + ' (' + count + ' aykırı değer)', count > 0 ? 'success' : 'info');
+}
+
+// ── FORECAST ──────────────────────────────────────────────────
+function doForecast(data) {
+  const rows = sheets[activeSheet];
+  if (!rows || rows.length < 3) return;
+
+  const periods = parseInt(data.periods) || 3;
+  const numCol = findNumericColumn(rows);
+  if (numCol === -1) { showToast('⚠️ Sayısal sütun bulunamadı', 'error'); return; }
+
+  const vals = rows.slice(1).map(r => parseFloat(String((r || [])[numCol] || '').replace(/[,₺$€\s]/g, ''))).filter(n => !isNaN(n));
+  if (vals.length < 2) { showToast('⚠️ Tahmin için yeterli veri yok', 'error'); return; }
+
+  const n = vals.length;
+  const xMean = (n - 1) / 2;
+  const yMean = vals.reduce((a, b) => a + b, 0) / n;
+  let num = 0, den = 0;
+  vals.forEach((v, i) => { num += (i - xMean) * (v - yMean); den += Math.pow(i - xMean, 2); });
+  const slope = den !== 0 ? num / den : 0;
+  const intercept = yMean - slope * xMean;
+
+  const forecasts = [];
+  for (let p = 0; p < periods; p++) {
+    const fVal = Math.round((intercept + slope * (n + p)) * 100) / 100;
+    forecasts.push(fVal);
+    const newRow = new Array((rows[0] || []).length).fill('');
+    newRow[0] = 'Tahmin ' + (p + 1);
+    newRow[numCol] = fVal;
+    rows.push(newRow);
+    highlightCell(rows.length - 1, numCol, '#bfdbfe');
+  }
+
+  buildGrid(rows);
+  showToast((data.reply || '✓ Tahmin hesaplandı') + ': ' + forecasts.map(v => Number(v).toLocaleString('tr-TR')).join(', '), 'success');
+}
+
+// ── ISIL HARİTA ───────────────────────────────────────────────
+function doHeatmap(data) {
+  const rows = sheets[activeSheet];
+  if (!rows || rows.length < 2) return;
+
+  const colors = ['#bfdbfe', '#ddd6fe', '#fef08a', '#fed7aa', '#fecaca'];
+  let count = 0;
+
+  (rows[0] || []).forEach((header, ci) => {
+    const valRows = rows.slice(1).map((r, ri) => ({
+      v: parseFloat(String((r || [])[ci] || '').replace(/[,₺$€\s]/g, '')),
+      ri
+    })).filter(x => !isNaN(x.v));
+
+    if (valRows.length < 2) return;
+    const mn = Math.min(...valRows.map(x => x.v));
+    const mx = Math.max(...valRows.map(x => x.v));
+    const range = mx - mn || 1;
+
+    valRows.forEach(({ v, ri }) => {
+      const idx = Math.min(Math.floor(((v - mn) / range) * colors.length), colors.length - 1);
+      highlightCell(ri + 1, ci, colors[idx]);
+      count++;
+    });
+  });
+
+  buildGrid(rows);
+  showToast((data.reply || '✓ Isıl harita uygulandı') + ' (' + count + ' hücre)', 'success');
+}
+
+// ── METİN ÇIKARIMI ────────────────────────────────────────────
+function doExtract(data) {
+  const rows = sheets[activeSheet];
+  if (!rows || rows.length < 2) return;
+
+  const type = data.type || 'email';
+  const patterns = {
+    email:  /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/,
+    phone:  /(\+?90|0)?[\s\-]?[2-5]\d{2}[\s\-]?\d{3}[\s\-]?\d{2}[\s\-]?\d{2}/,
+    tc_id:  /\b[1-9]\d{10}\b/,
+    number: /-?\d+(?:[.,]\d+)?/,
+    date:   /\b\d{1,2}[.\/-]\d{1,2}[.\/-]\d{2,4}\b/
+  };
+  const labels = { email: 'E-posta', phone: 'Telefon', tc_id: 'TC Kimlik', number: 'Sayı', date: 'Tarih', city: 'Şehir', name_split: 'Ad', tax_id: 'Vergi No' };
+  const newCol = (rows[0] || []).length;
+  rows[0][newCol] = labels[type] || 'Çıkarılan';
+  let count = 0;
+
+  if (type === 'name_split') {
+    rows[0][newCol] = 'Ad';
+    rows[0][newCol + 1] = 'Soyad';
+    rows.slice(1).forEach((row, i) => {
+      const parts = String((row || [])[0] || '').trim().split(/\s+/);
+      rows[i + 1][newCol] = parts[0] || '';
+      rows[i + 1][newCol + 1] = parts.slice(1).join(' ') || '';
+      if (parts.length > 1) count++;
+    });
+  } else {
+    const pat = patterns[type];
+    rows.slice(1).forEach((row, i) => {
+      const text = (row || []).join(' ');
+      const m = pat ? text.match(pat) : null;
+      rows[i + 1][newCol] = m ? m[0] : '';
+      if (m) count++;
+    });
+  }
+
+  buildGrid(rows);
+  showToast((data.reply || '✓ Çıkarım yapıldı') + ' (' + count + ' bulunan)', 'success');
+}
+
+// ── GRUPLAMA ──────────────────────────────────────────────────
+function doGroupBy(data) {
+  const rows = sheets[activeSheet];
+  if (!rows || rows.length < 2) return;
+
+  const colName = String(data.column || '').toLowerCase();
+  const headers = rows[0] || [];
+  const groupCol = headers.findIndex(h => String(h).toLowerCase().includes(colName));
+
+  if (groupCol === -1) {
+    showToast('⚠️ "' + (data.column || '') + '" sütunu bulunamadı', 'error');
+    return;
+  }
+
+  const groups = {};
+  rows.slice(1).forEach(row => {
+    const key = String((row || [])[groupCol] || 'Diğer');
+    if (!groups[key]) groups[key] = { count: 0, sum: 0 };
+    groups[key].count++;
+    for (let ci = 0; ci < (row || []).length; ci++) {
+      if (ci === groupCol) continue;
+      const n = parseFloat(String(row[ci] || '').replace(/[,₺$€\s]/g, ''));
+      if (!isNaN(n)) { groups[key].sum += n; break; }
+    }
+  });
+
+  const lines = Object.entries(groups)
+    .sort((a, b) => b[1].sum - a[1].sum)
+    .slice(0, 15)
+    .map(([k, v]) => k + ': ' + Number(v.sum).toLocaleString('tr-TR') + ' (' + v.count + ' kayıt)');
+
+  addMsg('ai', '📊 <strong>Gruplama Sonuçları:</strong><br>' + lines.join('<br>'));
+  showToast((data.reply || '✓ Gruplama tamamlandı') + ' (' + Object.keys(groups).length + ' grup)', 'success');
+}
+
+// ── KARŞILAŞTIRMA ─────────────────────────────────────────────
+function doCompare(data) {
+  const rows = sheets[activeSheet];
+  if (!rows || rows.length < 2) return;
+
+  const colToIdx = s => /^[A-Z]$/i.test(s) ? s.toUpperCase().charCodeAt(0) - 65 : (rows[0] || []).findIndex(h => String(h).toLowerCase().includes(String(s).toLowerCase()));
+  const ci1 = colToIdx(data.column1 || 'B');
+  const ci2 = colToIdx(data.column2 || 'C');
+
+  if (ci1 === -1 || ci2 === -1) {
+    showToast('⚠️ Karşılaştırılacak sütunlar bulunamadı. "A ve B sütununu karşılaştır" gibi deneyin', 'error');
+    return;
+  }
+
+  const newCol = (rows[0] || []).length;
+  rows[0][newCol] = 'Fark';
+  rows[0][newCol + 1] = '%Değişim';
+  let up = 0, down = 0;
+
+  rows.slice(1).forEach((row, i) => {
+    const v1 = parseFloat(String((row || [])[ci1] || '').replace(/[,₺$€\s]/g, ''));
+    const v2 = parseFloat(String((row || [])[ci2] || '').replace(/[,₺$€\s]/g, ''));
+    if (!isNaN(v1) && !isNaN(v2)) {
+      const diff = v2 - v1;
+      const pct = v1 !== 0 ? Math.round((diff / Math.abs(v1)) * 100) : 0;
+      rows[i + 1][newCol] = Math.round(diff * 100) / 100;
+      rows[i + 1][newCol + 1] = pct + '%';
+      if (diff > 0) { highlightCell(i + 1, newCol, '#bbf7d0'); up++; }
+      else if (diff < 0) { highlightCell(i + 1, newCol, '#fecaca'); down++; }
+    }
+  });
+
+  buildGrid(rows);
+  showToast('✓ Karşılaştırma: ' + up + ' artış, ' + down + ' düşüş', 'success');
+}
+
+// ── TOPLU AI İŞLEMİ ──────────────────────────────────────────
+async function doBatchAI(data) {
+  const rows = sheets[activeSheet];
+  if (!rows || rows.length < 2) return;
+
+  const task = data.task || 'summarize';
+  const textCol = findTextColumn(rows[0]);
+  const srcCol = textCol >= 0 ? textCol : 0;
+  const taskLabels = { summarize: 'Özet', translate: 'Çeviri', generate_description: 'Açıklama', classify: 'Kategori', extract_keywords: 'Anahtar Kelimeler' };
+  const newCol = (rows[0] || []).length;
+  rows[0][newCol] = taskLabels[task] || 'AI Sonuç';
+
+  const maxRows = 20;
+  let processed = 0;
+  showToast('⏳ Toplu işlem başladı (max ' + maxRows + ' satır)...', 'info');
+
+  const token = getAuthToken();
+  const headers = { 'Content-Type': 'application/json', ...(token ? { 'Authorization': 'Bearer ' + token } : {}) };
+
+  for (let i = 1; i < Math.min(rows.length, maxRows + 1); i++) {
+    const text = String((rows[i] || [])[srcCol] || '');
+    if (!text.trim()) continue;
+    try {
+      const res = await fetch(API_URL + '/api/batch-ai', { method: 'POST', headers, body: JSON.stringify({ task, text }) });
+      if (res.ok) {
+        const r = await res.json();
+        rows[i][newCol] = r.result || '';
+        processed++;
+        if (processed % 5 === 0) buildGrid(rows);
+      }
+    } catch (e) { /* skip row */ }
+  }
+
+  buildGrid(rows);
+  showToast((data.reply || '✓ Toplu işlem tamamlandı') + ' (' + processed + ' satır)', 'success');
+}
+
+// ── GELİŞMİŞ VERİ TEMİZLEME ─────────────────────────────────
+function doCleanData(data) {
+  const rows = sheets[activeSheet];
+  if (!rows || rows.length < 2) return;
+
+  const check = data.check || 'trim';
+  let changes = 0;
+
+  rows.slice(1).forEach((row, ri) => {
+    (row || []).forEach((cell, ci) => {
+      let val = String(cell != null ? cell : '');
+      let newVal = val;
+
+      if (check === 'trim' || check === 'all') {
+        newVal = newVal.trim().replace(/\s+/g, ' ');
+      }
+      if (check === 'currency' || check === 'all') {
+        newVal = newVal.replace(/[₺$€£]/g, '').trim();
+      }
+      if (check === 'punctuation') {
+        newVal = newVal.replace(/[.,;:!?'"()\[\]{}]/g, '').trim();
+      }
+      if (check === 'phones') {
+        const digits = val.replace(/\D/g, '');
+        if (digits.length === 10) newVal = '0' + digits;
+        else if (digits.length === 11 && digits[0] === '0') newVal = digits;
+      }
+      if (check === 'fill_empty' && !newVal.trim()) {
+        newVal = '-';
+      }
+
+      if (newVal !== val) { rows[ri + 1][ci] = newVal; changes++; }
+    });
+  });
+
+  buildGrid(rows);
+  showToast((data.reply || '✓ Veri temizlendi') + ' (' + changes + ' değişiklik)', 'success');
+}
+
+// ── FORMÜL ÜRETİCİ ────────────────────────────────────────────
+function doGenerateFormula(data) {
+  const rows = sheets[activeSheet];
+  const headers = rows ? (rows[0] || []) : [];
+  const ft = (data.formula_type || 'sum').toLowerCase();
+  const h0 = headers[0] || 'A';
+  const h1 = headers[1] || 'B';
+  const h2 = headers[2] || 'C';
+
+  const templates = {
+    vlookup:     '=DÜŞEYARA(A2; $' + h2 + '$2:$' + h2 + '$100; 2; 0)\n💡 ' + h0 + ' sütunundaki değeri tablo ' + h2 + '\'de arar',
+    sumif:       '=ETOPLA(' + h0 + ':' + h0 + '; "kriter"; ' + h1 + ':' + h1 + ')\n💡 ' + h0 + ' kriterine göre ' + h1 + ' toplar',
+    if:          '=EĞER(' + h1 + '2>100; "Yüksek"; EĞER(' + h1 + '2>50; "Orta"; "Düşük"))\n💡 Değere göre etiket atar',
+    countif:     '=EĞERSAY(' + h0 + ':' + h0 + '; "değer")\n💡 Kritere uyan kayıt sayar',
+    index_match: '=İNDİS(' + h2 + ':' + h2 + '; KAÇINCI(A2; ' + h0 + ':' + h0 + '; 0))\n💡 VLOOKUP\'tan güçlü, herhangi sütunda arar',
+    sumifs:      '=ÇOKETOPLA(' + h2 + ':' + h2 + '; ' + h0 + ':' + h0 + '; "kriter1"; ' + h1 + ':' + h1 + '; "kriter2")\n💡 Çoklu koşula göre toplar',
+    average:     '=ORTALAMA(' + h1 + '2:' + h1 + '100)\n💡 ' + h1 + ' sütununun ortalaması'
+  };
+
+  const formula = templates[ft] || '=TOPLA(' + h1 + '2:' + h1 + '100)\n💡 ' + h1 + ' sütununu toplar';
+  addMsg('ai', '📋 <strong>Formül önerisi:</strong><br><code>' + formula.replace(/\n/g, '</code><br>') + '</code>');
+  showToast(data.reply || '✓ Formül oluşturuldu', 'success');
+}
+
+function toggleExportMenu(e) {
+  e.stopPropagation();
+  const menu = document.getElementById('export-dropdown');
+  const isOpen = menu.style.display === 'block';
+  document.querySelectorAll('[id$="-dropdown"]').forEach(m => m.style.display = 'none');
+  menu.style.display = isOpen ? 'none' : 'block';
+}
+
+document.addEventListener('click', () => {
+  const menu = document.getElementById('export-dropdown');
+  if (menu) menu.style.display = 'none';
+});
+
+function exportToGSheets() {
+  document.getElementById('export-dropdown').style.display = 'none';
+  const cfg = JSON.parse(localStorage.getItem('int_gs') || '{}');
+  if (!cfg.url) {
+    if (confirm('Google Sheets bağlantısı kurulmamış. Entegrasyonlar sayfasına git?'))
+      window.open('integrations.html', '_blank');
+    return;
+  }
+  if (typeof exportGS === 'function') exportGS();
+  else toast('Google Sheets entegrasyonu yükleniyor...', 'info');
+}
+
+function exportToNotion() {
+  document.getElementById('export-dropdown').style.display = 'none';
+  const cfg = JSON.parse(localStorage.getItem('int_notion') || '{}');
+  if (!cfg.token) {
+    if (confirm('Notion bağlantısı kurulmamış. Entegrasyonlar sayfasına git?'))
+      window.open('integrations.html', '_blank');
+    return;
+  }
+  if (typeof exportNotion === 'function') exportNotion();
+  else toast('Notion entegrasyonu yükleniyor...', 'info');
+}
+
+function triggerWebhook() {
+  document.getElementById('export-dropdown').style.display = 'none';
+  const cfg = JSON.parse(localStorage.getItem('int_webhook') || '{}');
+  if (!cfg.url) {
+    if (confirm('Webhook kurulmamış. Entegrasyonlar sayfasına git?'))
+      window.open('integrations.html', '_blank');
+    return;
+  }
+  if (typeof quickExport === 'function') quickExport('webhook');
+  else toast('Webhook tetiklendi', 'ok');
+}
+
+function exportToSlack() {
+  document.getElementById('export-dropdown').style.display = 'none';
+  const cfg = JSON.parse(localStorage.getItem('int_slack') || '{}');
+  if (!cfg.url) {
+    if (confirm('Slack bağlantısı kurulmamış. Entegrasyonlar sayfasına git?'))
+      window.open('integrations.html', '_blank');
+    return;
+  }
+  if (typeof quickExport === 'function') quickExport('slack');
+  else toast("Slack'e gönderildi", 'ok');
+}
 
 /* cache bust Sat Mar 14 19:03:28 TSS 2026 */
