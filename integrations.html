@@ -312,6 +312,16 @@ body {
   .ov-grid { grid-template-columns: 1fr 1fr; }
   .form-row { grid-template-columns: 1fr; }
 }
+@keyframes slideIn  { from{opacity:0;transform:translateX(20px)} to{opacity:1;transform:translateX(0)} }
+@keyframes spin     { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+@keyframes shake    { 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-6px)} 40%,80%{transform:translateX(6px)} }
+@keyframes fadeInUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+.int-card {
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+  animation: fadeInUp .4s ease forwards;
+}
+.int-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(79,70,229,.10); }
+.int-card.error { animation: shake .4s ease; border-color: #FCA5A5 !important; }
 </style>
 <!-- Microsoft Clarity -->
 <script type="text/javascript">

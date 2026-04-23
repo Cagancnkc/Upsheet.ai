@@ -2,26 +2,32 @@
 const express = require('express');
 const router = express.Router();
 const fetch = require('node-fetch');
-// ── Google Sheets: CSV download ──────────────────
+// ── Google Sheets: CSV export (JSON response) ────
 router.post('/sheets/export', async (req, res) => {
-  const { sheetData, fileName } = req.body;
-  if (!sheetData?.length) {
+  const { sheetId, data, sheetName } = req.body;
+  if (!data?.length) {
     return res.status(400).json({ error: 'Dışa aktarılacak veri yok' });
   }
 
-  const csv = sheetData.map(row =>
+  const match = sheetId ? sheetId.match(/\/d\/([a-zA-Z0-9-_]+)/) : null;
+  const id = match ? match[1] : (sheetId || '').trim();
+
+  const csv = '\uFEFF' + data.map(row =>
     (row || []).map(cell => {
       const str = String(cell ?? '');
       return str.includes(',') || str.includes('"') || str.includes('\n')
         ? `"${str.replace(/"/g, '""')}"`
         : str;
     }).join(',')
-  ).join('\n');
+  ).join('\r\n');
 
-  const bom = '\uFEFF';
-  res.setHeader('Content-Type', 'text/csv; charset=utf-8');
-  res.setHeader('Content-Disposition', `attachment; filename="${fileName || 'mocksheets-export'}.csv"`);
-  res.send(bom + csv);
+  res.json({
+    success: true,
+    csv,
+    sheetUrl: id ? 'https://docs.google.com/spreadsheets/d/' + id : null,
+    rows: data.length,
+    sheetId: id || null
+  });
 });
 
 // ── Google Sheets: URL test ───────────────────────
