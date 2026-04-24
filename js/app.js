@@ -4016,34 +4016,23 @@ function removeAttachmentChip(filename) {
 
 async function sendChatMessage() {
   if (isProcessing) { console.log('[Guard] sendChatMessage engellendi — işlem devam ediyor'); return; }
-  const input = document.getElementById('chatInput');
-  const sendBtn = document.getElementById('chatSendBtn');
+  const input = document.getElementById('chat-input');
+  const sendBtn = document.getElementById('chat-send');
   if (!input) return;
 
   const message = input.value.trim();
   if (!message) return;
   isProcessing = true;
 
-  // Open floating chat panel (if closed)
-  if (typeof openFloatingChat === 'function') openFloatingChat();
-
   input.value = '';
-  autoResizeChatInput(input);
   sendBtn.disabled = true;
-  sendBtn.classList.add('loading');
-  sendBtn.innerHTML = `
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-         style="animation:spin 0.8s linear infinite">
-      <circle cx="12" cy="12" r="10" stroke="currentColor"
-              stroke-width="3" stroke-dasharray="31.4"
-              stroke-dashoffset="10"/>
-    </svg>
-  `;
+  sendBtn.textContent = '…';
 
-  if (typeof addMsg === 'function') addMsg('user', message);
+  addMessage(message, 'user');
+  showTyping();
+  showProgress();
 
   try {
-    // 2D array gönder — AI sütun adlarını daha iyi anlar
     const sheetContext = sheets[activeSheet] || [];
 
     const token = getAuthToken();
@@ -4059,12 +4048,14 @@ async function sendChatMessage() {
 
     if (response.status === 429) {
       const errorData = await response.json();
+      hideTyping(); hideProgress();
       showLimitModal(errorData);
       return;
     }
 
     if (response.status === 403) {
       const errorData = await response.json();
+      hideTyping(); hideProgress();
       if (errorData.code === 'FEATURE_NOT_AVAILABLE') {
         handleLockedFeature(errorData.feature);
       }
@@ -4080,17 +4071,17 @@ async function sendChatMessage() {
       updateUsageUI();
     }
 
-    if (data.reply && typeof addMsg === 'function') {
-      addMsg('ai', data.reply);
+    hideTyping();
+    hideProgress();
+
+    if (data.reply) {
+      addMessage(data.reply, 'ai');
     }
 
-    let applied = false;
     if (data.action && data.action !== 'message') {
       if (typeof applyAIChanges === 'function') {
         applyAIChanges(data);
-        applied = true;
       }
-      // Webhook tetikle
       try {
         const _wh = JSON.parse(localStorage.getItem('int_webhook') || '{}');
         if (_wh.url && (_wh.trigger === 'ai_action' || _wh.trigger === 'all')) {
@@ -4100,30 +4091,89 @@ async function sendChatMessage() {
       } catch(_e) { console.warn('Webhook trigger failed:', _e); }
     }
 
-    // Her action handler kendi toast'unu çağırıyor
-    // message action için ek toast gereksiz (addMsg zaten gösteriyor)
-
   } catch (error) {
     console.error('Chat error:', error);
+    hideTyping();
+    hideProgress();
     showToast('Connection error. Please try again.', 'error');
-    if (typeof addMsg === 'function') {
-      addMsg('ai', '❌ An error occurred. Please try again.');
-    }
+    addMessage('❌ An error occurred. Please try again.', 'ai');
   } finally {
     isProcessing = false;
     sendBtn.disabled = false;
-    sendBtn.classList.remove('loading');
-    sendBtn.innerHTML = `
-      <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-        <path fill-rule="evenodd" clip-rule="evenodd"
-          d="M8.707 1.396a1 1 0 0 0-1.414 0L2.22 6.47 1.69 7l1.06 1.06.53-.53L7 3.56V14.25a.75.75 0 0 0 1.5 0V3.56l3.72 3.97.53.53L13.81 7l-.53-.53-4.573-5.074z"
-          fill="currentColor"/>
-      </svg>
-    `;
+    sendBtn.textContent = '↑';
     chatAttachments = [];
-    const bar = document.getElementById('attachmentPreviewBar');
-    if (bar) bar.innerHTML = '';
   }
+}
+
+// ── Chat Bar expand/collapse ──────────────────────────
+function expandChat() {
+  const bar = document.getElementById('chat-bar');
+  const msgs = document.getElementById('chat-messages');
+  if (bar) bar.className = 'expanded';
+  if (msgs) msgs.style.display = 'flex';
+}
+
+function collapseChat() {
+  const bar = document.getElementById('chat-bar');
+  const msgs = document.getElementById('chat-messages');
+  if (bar) bar.className = 'collapsed';
+  if (msgs) msgs.style.display = 'none';
+}
+
+document.addEventListener('click', (e) => {
+  const bar = document.getElementById('chat-bar');
+  if (bar && !bar.contains(e.target)) collapseChat();
+});
+
+function useChip(text) {
+  const input = document.getElementById('chat-input');
+  if (input) { input.value = text; input.focus(); expandChat(); }
+}
+
+function addMessage(text, type) {
+  const msgs = document.getElementById('chat-messages');
+  if (!msgs) return;
+  expandChat();
+  if (type === 'user') {
+    const el = document.createElement('div');
+    el.className = 'msg-user';
+    el.textContent = text;
+    msgs.appendChild(el);
+  } else {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'msg-ai';
+    wrapper.innerHTML = `<div class="msg-ai-avatar">M</div><div class="msg-ai-bubble">${text}</div>`;
+    msgs.appendChild(wrapper);
+  }
+  msgs.scrollTop = msgs.scrollHeight;
+  while (msgs.children.length > 20) msgs.removeChild(msgs.firstChild);
+}
+
+function showTyping() {
+  const msgs = document.getElementById('chat-messages');
+  if (!msgs) return;
+  const el = document.createElement('div');
+  el.className = 'msg-ai msg-typing';
+  el.id = 'typing-indicator';
+  el.innerHTML = `<div class="msg-ai-avatar">M</div><div class="msg-ai-bubble"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>`;
+  msgs.appendChild(el);
+  msgs.scrollTop = msgs.scrollHeight;
+  expandChat();
+}
+
+function hideTyping() {
+  const el = document.getElementById('typing-indicator');
+  if (el) el.remove();
+}
+
+function showProgress() {
+  const p = document.getElementById('chat-progress');
+  if (p) p.classList.add('active');
+}
+
+function hideProgress() {
+  const p = document.getElementById('chat-progress');
+  if (p) p.classList.remove('active');
 }
 
 // ── Auth token helper ────────────────────────────

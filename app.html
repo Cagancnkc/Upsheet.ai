@@ -75,145 +75,176 @@
   to   { opacity: 0; transform: translateY(8px) scale(0.95); }
 }
 
-/* ── YENİ CHAT BAR ── */
-.chat-input-area {
+/* ── CHAT BAR ── */
+#chat-bar {
   position: fixed;
-  bottom: 20px;
-  right: 24px;
-  width: 360px;
-  z-index: 999;
-  background: #fff;
-  border-radius: 16px;
-  border: 1px solid #E5E7EB;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.12);
-  padding: 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  bottom: 0; left: 0; right: 0;
+  background: rgba(255,255,255,0.97);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid #E5E7EB;
+  box-shadow: 0 -4px 24px rgba(0,0,0,0.06);
+  z-index: 100;
+  transition: height .25s cubic-bezier(.4,0,.2,1);
+  overflow: hidden;
+}
+#chat-bar.collapsed { height: 64px; }
+#chat-bar.expanded  { height: 320px; }
+
+#chat-progress {
+  height: 2px;
+  background: linear-gradient(90deg, #6366F1, #8B5CF6, #6366F1);
+  background-size: 200% 100%;
+  width: 0%;
+  transition: width .3s ease;
+  animation: progressShimmer 1.5s infinite;
+}
+#chat-progress.active { width: 100%; }
+@keyframes progressShimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
 
-/* Suggested actions — 2 kolon grid */
-.quick-actions {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  padding-bottom: 4px;
+#chat-chips {
+  display: flex; gap: 6px;
+  padding: 0 16px 10px;
+  overflow-x: auto; scrollbar-width: none;
 }
-.quick-chip {
-  text-align: left;
-  border: 1px solid #D1D5DB;
-  border-radius: 12px;
-  padding: 12px 14px;
-  font-size: 13px;
-  background: #fff;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  transition: background 0.15s;
-}
-.quick-chip:hover { background: #F3F4F6; }
-.quick-chip .chip-title { font-weight: 600; color: #111827; }
-.quick-chip .chip-sub   { color: #6B7280; font-size: 12px; }
-
-/* Attachment previews */
-.attachment-preview-bar { display: flex; gap: 12px; flex-wrap: wrap; overflow-x: auto; }
-.attachment-chip { display: flex; flex-direction: column; gap: 4px; }
-.attachment-chip-thumb {
-  width: 80px; height: 64px; border-radius: 8px;
-  background: #E5E7EB; border: 1px solid #D1D5DB;
-  display: flex; align-items: center; justify-content: center;
-  overflow: hidden; position: relative;
-}
-.attachment-chip-thumb img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1); }
-.attachment-chip-thumb .file-ext { font-size: 11px; color: #6B7280; text-align: center; padding: 4px; }
-.attachment-chip-remove {
-  position: absolute; top: -6px; right: -6px; width: 18px; height: 18px;
-  border-radius: 50%; background: #fff; border: 1px solid #D1D5DB;
-  cursor: pointer; font-size: 11px; display: flex; align-items: center; justify-content: center;
-  color: #374151;
-}
-.attachment-chip-remove:hover { background: #FEE2E2; border-color: #EF4444; color: #EF4444; }
-.attachment-chip-name { font-size: 11px; color: #6B7280; max-width: 80px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-
-/* Textarea wrapper */
-.chat-textarea-wrap { position: relative; width: 100%; }
-
-/* Textarea */
-.chat-textarea {
-  width: 100%;
-  box-sizing: border-box;
-  min-height: 44px;
-  max-height: 120px;
-  border: 1.5px solid #E5E7EB;
-  border-radius: 12px;
-  background: #F9FAFB;
-  padding: 10px 14px 44px 14px;
-  font-size: 13px;
+#chat-chips::-webkit-scrollbar { display: none; }
+.chat-chip {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 5px 12px;
+  background: #F3F4F6; border: 1px solid #E5E7EB;
+  border-radius: 20px; font-size: 12px; color: #6B7280;
+  cursor: pointer; white-space: nowrap;
+  transition: all .15s;
+  animation: chipFadeIn .3s ease forwards; opacity: 0;
   font-family: inherit;
-  color: #1A1A1A !important;
-  resize: none;
-  outline: none;
-  overflow-y: auto;
-  line-height: 1.5;
-  caret-color: #4F46E5;
-  transition: border-color 0.15s, background 0.15s;
 }
-.chat-textarea::placeholder {
-  color: #9B9B9B !important;
-  opacity: 1;
+.chat-chip:hover {
+  background: #EEF2FF; border-color: #A5B4FC; color: #6366F1;
+  transform: translateY(-1px);
 }
-.chat-textarea:focus {
-  border-color: #4F46E5;
-  background: #fff;
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(79,70,229,0.1);
+@keyframes chipFadeIn {
+  from { opacity:0; transform:translateY(4px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+.chat-chip:nth-child(1) { animation-delay: .05s; }
+.chat-chip:nth-child(2) { animation-delay: .10s; }
+.chat-chip:nth-child(3) { animation-delay: .15s; }
+.chat-chip:nth-child(4) { animation-delay: .20s; }
+.chat-chip:nth-child(5) { animation-delay: .25s; }
+.chat-chip:nth-child(6) { animation-delay: .30s; }
+
+#chat-input-wrapper {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 16px; height: 64px; position: relative;
+  box-sizing: border-box;
 }
 
-/* Chat input row */
-.chat-input-row {
-  background: #F9FAFB;
-  border: 1.5px solid #E5E7EB;
-  border-radius: 10px;
-  padding: 6px 6px 6px 12px;
+#chat-spark {
+  position: absolute; left: 28px; font-size: 16px;
+  pointer-events: none; transition: opacity .2s;
+  animation: sparkPulse 2s ease infinite;
+  z-index: 2;
 }
-.chat-input-row:focus-within {
-  background: #FFFFFF;
-  border-color: #4F46E5;
-}
-.chat-input-row:focus-within .chat-textarea {
-  color: #1A1A1A !important;
+@keyframes sparkPulse {
+  0%,100% { opacity:1; transform:scale(1); }
+  50% { opacity:.6; transform:scale(1.15); }
 }
 
-/* Sol-alt: attach butonu */
-.chat-bottom-left { position: absolute; bottom: 8px; left: 8px; }
-.chat-attach-btn {
-  display: flex; align-items: center; justify-content: center;
-  width: 32px; height: 32px;
-  border-radius: 8px 8px 6px 8px;
-  border: 1.5px solid #D1D5DB;
-  background: #fff;
-  cursor: pointer; color: #6B7280;
-  transition: all 0.15s;
+#chat-input {
+  flex: 1; height: 42px;
+  padding: 0 52px 0 40px;
+  border: 1.5px solid #E5E7EB; border-radius: 12px;
+  background: #F9FAFB; font-size: 14px; color: #374151;
+  outline: none; font-family: inherit;
+  transition: border-color .15s, box-shadow .15s, background .15s;
 }
-.chat-attach-btn:hover { background: #F3F4F6; border-color: #374151; color: #111827; }
-.chat-attach-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+#chat-input:focus {
+  border-color: #6366F1; background: #fff;
+  box-shadow: 0 0 0 3px rgba(99,102,241,0.10);
+}
+#chat-input::placeholder { color: #9CA3AF; }
 
-/* Sağ-alt: send butonu */
-.chat-bottom-right { position: absolute; bottom: 8px; right: 8px; }
-.chat-send-btn {
-  display: flex; align-items: center; justify-content: center;
-  width: 32px; height: 32px;
-  border-radius: 50%;
-  border: none;
-  background: #111827;
-  color: #fff;
+#chat-send {
+  width: 40px; height: 40px; flex-shrink: 0;
+  background: linear-gradient(135deg, #6366F1, #8B5CF6);
+  border: none; border-radius: 10px;
+  color: white; font-size: 18px; line-height: 1;
   cursor: pointer;
-  transition: background 0.15s;
+  transition: transform .15s, box-shadow .15s;
+  display: flex; align-items: center; justify-content: center;
 }
-.chat-send-btn:hover:not(:disabled) { background: #374151; }
-.chat-send-btn:disabled { background: #D1D5DB; cursor: not-allowed; }
-.chat-send-btn.loading { background: #374151; cursor: not-allowed; }
+#chat-send:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(99,102,241,0.35);
+}
+#chat-send:active { transform: scale(0.97); }
+#chat-send:disabled {
+  background: #E5E7EB; color: #9CA3AF;
+  transform: none; box-shadow: none; cursor: not-allowed;
+}
+
+#chat-messages {
+  height: calc(320px - 64px - 40px);
+  overflow-y: auto; padding: 12px 16px;
+  display: none; flex-direction: column; gap: 8px;
+  scrollbar-width: thin; scrollbar-color: #E5E7EB transparent;
+}
+.msg-user {
+  align-self: flex-end;
+  background: linear-gradient(135deg, #6366F1, #8B5CF6);
+  color: white; padding: 8px 14px;
+  border-radius: 16px 16px 4px 16px;
+  font-size: 13px; max-width: 75%; line-height: 1.5;
+  animation: msgIn .2s ease;
+}
+.msg-ai {
+  align-self: flex-start;
+  display: flex; gap: 8px; align-items: flex-start;
+  max-width: 80%; animation: msgIn .2s ease;
+}
+.msg-ai-avatar {
+  width: 24px; height: 24px; flex-shrink: 0;
+  background: linear-gradient(135deg, #6366F1, #8B5CF6);
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; color: white;
+}
+.msg-ai-bubble {
+  background: #F9FAFB; border: 1px solid #E5E7EB;
+  padding: 8px 14px;
+  border-radius: 4px 16px 16px 16px;
+  font-size: 13px; color: #374151; line-height: 1.5;
+}
+@keyframes msgIn {
+  from { opacity:0; transform:translateY(6px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+.msg-typing .msg-ai-bubble {
+  display: flex; align-items: center; gap: 3px; padding: 10px 14px;
+}
+.typing-dot {
+  width: 6px; height: 6px;
+  background: #9CA3AF; border-radius: 50%;
+  animation: typingBounce 1.2s infinite;
+}
+.typing-dot:nth-child(2) { animation-delay: .2s; }
+.typing-dot:nth-child(3) { animation-delay: .4s; }
+@keyframes typingBounce {
+  0%,60%,100% { transform:translateY(0); }
+  30% { transform:translateY(-4px); }
+}
+
+#grid-container { padding-bottom: 72px; }
+
+@media (max-width: 768px) {
+  #chat-bar.expanded { height: 70vh; }
+  #chat-messages { height: calc(70vh - 64px - 40px); }
+  #chat-input { font-size: 16px; }
+  .chat-chip { font-size: 11px; padding: 4px 10px; }
+  #chat-send { width: 36px; height: 36px; }
+}
 
 /* ── DİL SEÇİCİ ── */
 .lang-switcher {
@@ -503,53 +534,30 @@ body.dark .lang-btn.active { background: rgba(255,255,255,0.12); color: #fff; bo
     <span id="stCount" style="display:none"></span>
   </div>
 
-  <!-- Yeni chat bar -->
-  <div class="chat-input-area">
-
-    <!-- Attachment previews -->
-    <div class="attachment-preview-bar" id="attachmentPreviewBar"></div>
-
-    <!-- Textarea wrapper (relative — butonlar içinde absolute) -->
-    <div class="chat-textarea-wrap">
-      <textarea
-        id="chatInput"
-        class="chat-textarea"
-        data-i18n-placeholder="app_chat_placeholder"
-        placeholder="Komut yazın... (örn. B sütununu topla ve C1'e yaz)"
-        rows="1"
-        onkeydown="handleChatKeydown(event)"
-        oninput="autoResizeChatInput(this)"
-      ></textarea>
-
-      <!-- Sol-alt: dosya ekle -->
-      <div class="chat-bottom-left">
-        <button class="chat-attach-btn"
-                onclick="document.getElementById('chatFileInput').click()"
-                title="Dosya ekle">
-          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" style="transform:rotate(-45deg)">
-            <path fill-rule="evenodd" clip-rule="evenodd"
-              d="M10.86 1.71a2.57 2.57 0 0 0-1.82.75L2.79 8.7a3.5 3.5 0 1 0 4.95 4.95l6.24-6.24 1.06 1.06-6.24 6.24a5 5 0 1 1-7.07-7.07L8 1.39A4.07 4.07 0 1 1 13.76 7l-6.3 6.24a2.5 2.5 0 1 1-3.53-3.54l5.76-5.75 1.06 1.06-5.76 5.75a1 1 0 1 0 1.41 1.42L12.7 6a2.07 2.07 0 0 0-1.84-3.5z"
-              fill="currentColor"/>
-          </svg>
-        </button>
-        <input type="file" id="chatFileInput" style="display:none"
-               accept=".xlsx,.xls,.csv,.txt,.json"
-               multiple onchange="handleChatAttachment(this)">
-      </div>
-
-      <!-- Sağ-alt: gönder -->
-      <div class="chat-bottom-right">
-        <button class="chat-send-btn" id="chatSendBtn"
-                onclick="sendChatMessage()" title="Gönder (Enter)">
-          <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-            <path fill-rule="evenodd" clip-rule="evenodd"
-              d="M8.707 1.396a1 1 0 0 0-1.414 0L2.22 6.47 1.69 7l1.06 1.06.53-.53L7 3.56V14.25a.75.75 0 0 0 1.5 0V3.56l3.72 3.97.53.53L13.81 7l-.53-.53-4.573-5.074z"
-              fill="currentColor"/>
-          </svg>
-        </button>
-      </div>
+  <!-- CHAT BAR -->
+  <div id="chat-bar" class="collapsed">
+    <div id="chat-progress"></div>
+    <div id="chat-chips">
+      <button class="chat-chip" onclick="useChip('KDV ekle')">💰 KDV Ekle</button>
+      <button class="chat-chip" onclick="useChip('fiyata göre sırala')">🔄 Sırala</button>
+      <button class="chat-chip" onclick="useChip('boş satırları sil')">🗑️ Boşları Sil</button>
+      <button class="chat-chip" onclick="useChip('aylık rapor oluştur')">📊 Rapor</button>
+      <button class="chat-chip" onclick="useChip('negatifleri kırmızıya boya')">🔴 Renklendir</button>
+      <button class="chat-chip" onclick="useChip('tekrar edenleri sil')">✨ Tekrar Sil</button>
     </div>
-
+    <div id="chat-input-wrapper">
+      <span id="chat-spark">✨</span>
+      <input
+        id="chat-input"
+        type="text"
+        placeholder="Ne yapmak istersiniz? 'KDV ekle', 'sırala', 'renklendir'..."
+        autocomplete="off"
+        onkeydown="if(event.key==='Enter'&&!event.shiftKey)sendChatMessage()"
+        onfocus="expandChat()"
+      />
+      <button id="chat-send" onclick="sendChatMessage()" title="Gönder (Enter)">↑</button>
+    </div>
+    <div id="chat-messages"></div>
   </div>
 
 </div>
@@ -1217,7 +1225,7 @@ function queueOfflineMessage(payload) {
 </style>
 
 <!-- ── FLOATING AI CHAT PANEL ─────────────────── -->
-<div id="floatingChat">
+<div id="floatingChat" style="display:none">
   <button id="fcBubble" onclick="toggleFloatingChat()" title="AI Asistan">
     <div class="fc-ping"></div>
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
