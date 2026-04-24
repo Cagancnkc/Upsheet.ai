@@ -22,7 +22,15 @@ function getSystemPrompt() {
   "formula": "formül_adı (varsa)",
   "factor": sayı_veya_null,
   "source_column": "kaynak_sütun (varsa)",
-  "transform": "uppercase|lowercase|trim (varsa)"
+  "transform": "uppercase|lowercase|trim (varsa)",
+  "periods": sayı,
+  "type": "string (extract tipi için)",
+  "categories": ["dizi (classify için)"],
+  "formula_type": "vlookup|sumif|if|index_match|countif",
+  "task": "summarize|translate|classify|generate_description|extract_keywords",
+  "check": "trim|case|currency|phones|dates",
+  "column1": "string",
+  "column2": "string"
 }
 
 ## AKSİYON ÖRNEKLERİ
@@ -74,6 +82,77 @@ Tetikleyici: "...olanları göster/filtrele", "100'den büyükleri göster"
 Tetikleyici: "yardım", "ne yapabilirsin", "nasıl kullanırım", "rapor", "özet"
 {"action":"message","reply":"💡 Sıralama, filtreleme, hesaplama ve renklendirme komutlarını destekliyorum.","changes":[]}
 
+### sentiment_analysis — Duygu analizi
+Tetikleyici: "duygu analizi", "sentiment", "pozitif mi negatif mi", "yorum analiz", "duyguları belirle", "olumlu olumsuz"
+{"action":"sentiment_analysis","reply":"📊 Duygu analizi yapıldı","changes":[]}
+{"action":"sentiment_analysis","column":"B","reply":"📊 B sütunu yorumları analiz edildi","changes":[]}
+
+### classify — Kategori sınıflandırma
+Tetikleyici: "kategorilere ayır", "sınıflandır", "etiketle", "türlere göre", "gruplara ayır", "öncelik belirle"
+categories[] varsa çıkar: "personel kira araç" → ["Personel","Kira","Araç"]
+{"action":"classify","categories":["Personel","Kira","Araç"],"reply":"📊 Giderler kategorilendi","changes":[]}
+{"action":"classify","categories":["Yüksek","Orta","Düşük"],"reply":"📊 Öncelik seviyeleri belirlendi","changes":[]}
+
+### explain — Formül/veri açıklama
+Tetikleyici: "açıkla", "ne işe yarıyor", "nasıl kullanılır", "ne demek", "vlookup nedir", "sumif açıkla"
+formula_name: "vlookup" | "sumif" | "if" | "countif" | "index_match"
+{"action":"explain","formula_name":"vlookup","reply":"💡 VLOOKUP formülü açıklandı","changes":[]}
+{"action":"explain","reply":"💡 Hücre içeriği açıklandı","changes":[]}
+
+### anomaly_detection — Anomali tespiti
+Tetikleyici: "anomali tespit et", "olağandışı değerleri bul", "aykırı değer", "outlier", "beklenmedik değer"
+{"action":"anomaly_detection","color":"#fecaca","reply":"📊 Anomaliler tespit edildi","changes":[]}
+{"action":"anomaly_detection","column":"satış","reply":"📊 Satış anomalileri kontrol edildi","changes":[]}
+
+### forecast — Tahmin/Öngörü
+Tetikleyici: "tahmin", "öngör", "forecast", "projeksiyon", "gelecek ay", "gelecek 3 ay"
+periods: "gelecek ay"→1, "3 ay"→3, "6 ay"→6, "yıllık"→12
+{"action":"forecast","periods":3,"reply":"📊 3 aylık tahmin hazırlandı","changes":[]}
+{"action":"forecast","periods":1,"column":"satış","reply":"📊 Satış tahmini hesaplandı","changes":[]}
+
+### heatmap — Isıl harita
+Tetikleyici: "ısıl harita", "heatmap", "renk skalası", "koşullu biçimlendirme", "değerlere göre renk"
+{"action":"heatmap","reply":"📊 Isıl harita oluşturuldu","changes":[]}
+
+### extract — Metin çıkarımı
+Tetikleyici: "çıkar", "ayıkla", "bul" + e-posta/telefon/ad/şehir/tarih/sayı/tc
+type eşleme: e-posta→email | telefon→phone | ad soyad ayır→name_split | şehir→city | tarih→date | sayı→number | tc kimlik→tc_id
+{"action":"extract","type":"email","reply":"✓ E-posta adresleri çıkarıldı","changes":[]}
+{"action":"extract","type":"name_split","reply":"✓ Ad ve soyad ayrıldı","changes":[]}
+{"action":"extract","type":"phone","reply":"✓ Telefon numaraları çıkarıldı","changes":[]}
+
+### group_by — Gruplandırma
+Tetikleyici: "göre grupla", "bazında göster", "başına sipariş", "her bölgenin toplamı"
+{"action":"group_by","column":"şehir","reply":"📊 Şehre göre gruplandırıldı","changes":[]}
+{"action":"group_by","column":"kategori","aggregate":"sum","reply":"📊 Kategoriye göre gruplandırıldı","changes":[]}
+
+### compare — Karşılaştırma
+Tetikleyici: "karşılaştır", "fark nerede", "değişim ne", "bu ay geçen ay", "yıldan yıla"
+{"action":"compare","column1":"B","column2":"C","reply":"📊 B ve C sütunları karşılaştırıldı","changes":[]}
+{"action":"compare","type":"yoy","reply":"📊 Yıllık karşılaştırma yapıldı","changes":[]}
+
+### batch_ai — Toplu AI işlemi
+Tetikleyici: "her satır için", "toplu işlem", "tüm satırlara", "her kayıt için", "açıklamaları çevir"
+task: summarize | translate | generate_description | classify | extract_keywords
+{"action":"batch_ai","task":"summarize","reply":"📊 Her satır için özet oluşturuldu","changes":[]}
+{"action":"batch_ai","task":"translate","target_lang":"tr","reply":"✓ Açıklamalar Türkçeye çevrildi","changes":[]}
+
+### clean_data — Gelişmiş veri temizleme
+Tetikleyici: "tutarsızlık", "formatla", "standartlaştır", "boş değerleri doldur", "para sembolü kaldır"
+check: trim | case | currency | phones | dates | fill_empty | punctuation
+{"action":"clean_data","check":"currency","reply":"✓ Para birimi sembolleri kaldırıldı","changes":[]}
+{"action":"clean_data","check":"phones","reply":"✓ Telefon numaraları formatlandı","changes":[]}
+
+### generate_formula — Formül üreticisi
+Tetikleyici: "formül yaz", "formül oluştur", "vlookup yaz", "sumif hazırla", "formül öner"
+formula_type: vlookup | sumif | if | index_match | countif | sumifs | average
+{"action":"generate_formula","formula_type":"vlookup","reply":"✓ VLOOKUP formülü oluşturuldu","changes":[]}
+{"action":"generate_formula","formula_type":"sumif","reply":"✓ SUMIF formülü oluşturuldu","changes":[]}
+
+### clear_colors — Renk temizleme
+Tetikleyici: "renkleri temizle", "boyamayı kaldır", "renklendirmeyi sıfırla", "renkler kalsın"
+{"action":"clear_colors","reply":"✓ Hücre renkleri temizlendi","changes":[]}
+
 ## KDV KURALI (Türkiye)
 KDV oranı HER ZAMAN %20'dir.
 - "KDV ekle" / "%20 ekle" → factor: 1.20  (ASLA 1.18 kullanma)
@@ -91,12 +170,18 @@ KDV oranı HER ZAMAN %20'dir.
 // RAG context — sık değişmez → cache'lenir
 function getRagContext(ragContext) {
   if (!ragContext || ragContext.length === 0) {
-    return 'ÖRNEK KOMUTLAR: Sıralama, toplama, silme, renklendirme, hesaplama komutlarını destekliyorum.';
+    return 'Benzer örnek bulunamadı.';
   }
-  return 'BENZER ÖRNEKLER:\n' +
-    ragContext.map(r =>
-      `- "${r.user_command || r.command}" → ${JSON.stringify(r.output)}`
-    ).join('\n');
+
+  const lines = ragContext.slice(0, 5).map((ex, i) => {
+    const sim = ex.similarity ? ` (benzerlik: ${(ex.similarity * 100).toFixed(0)}%)` : '';
+    const output = typeof ex.output === 'string'
+      ? ex.output
+      : JSON.stringify(ex.output);
+    return `${i + 1}. Komut: "${ex.command}"${sim}\n   Aksiyon: ${output}`;
+  });
+
+  return `BENZER KOMUT ÖRNEKLERİ (en yakın ${ragContext.length} örnek):\n${lines.join('\n')}\n\nBu örnekleri referans al. Aynı pattern varsa aynı action döndür.`;
 }
 
 // Kullanıcı promptu — her çağrıda değişir → cache'lenmez
@@ -188,6 +273,7 @@ function parseAIResponse(rawText) {
 }
 
 async function processExcelCommand(userCommand, sheetContext) {
+  console.log('[Pipeline] Komut:', userCommand?.slice(0, 80));
   let lastError = null;
 
   for (let attempt = 1; attempt <= 3; attempt++) {

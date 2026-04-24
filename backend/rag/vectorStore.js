@@ -10,9 +10,9 @@ async function insertCommand(command, embedding) {
     .from('excel_commands')
     .insert({
       user_command: command.user_command,
-      logic: command.logic,
-      output: command.output,
-      category: command.category,
+      logic:        command.logic || '',
+      output:       JSON.stringify(command.output || {}),
+      category:     command.category || 'genel',
       embedding
     });
   if (error) throw error;
@@ -22,7 +22,7 @@ async function insertCommand(command, embedding) {
 async function searchSimilar(queryEmbedding, limit = 5) {
   const { data, error } = await supabase.rpc('search_commands', {
     query_embedding: queryEmbedding,
-    match_threshold: 0.6,
+    match_threshold: 0.5,
     match_count: limit
   });
   if (error) throw error;
