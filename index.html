@@ -149,6 +149,36 @@
 .int-dot{width:8px;height:8px;border-radius:50%;background:#D1D5DB;cursor:pointer;transition:all .2s}
 .int-dot.active{width:24px;border-radius:4px;background:#6366F1}
 @media(max-width:768px){.int-arrow{display:none}.int-card:not(.active){display:none}.int-carousel-track{gap:0}}
+
+/* ── FİYATLANDIRMA ── */
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;max-width:960px;margin:0 auto;padding:0 20px;align-items:start}
+.plan-card{background:white;border:1.5px solid #E5E7EB;border-radius:20px;padding:32px 28px;position:relative;transition:transform .2s ease,box-shadow .2s ease}
+.plan-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,.08)}
+.plan-card.popular{border:2px solid transparent;background:linear-gradient(white,white) padding-box,linear-gradient(135deg,#6366F1,#8B5CF6,#EC4899) border-box;transform:scale(1.04);box-shadow:0 20px 60px rgba(99,102,241,.18)}
+.plan-card.popular:hover{transform:scale(1.04) translateY(-4px)}
+.popular-badge{position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#6366F1,#8B5CF6);color:white;font-size:11px;font-weight:700;padding:4px 16px;border-radius:20px;white-space:nowrap;box-shadow:0 4px 12px rgba(99,102,241,.35);letter-spacing:.03em}
+.plan-name{font-size:14px;font-weight:600;color:#6B7280;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
+.plan-price{font-size:42px;font-weight:800;color:#111827;line-height:1;margin-bottom:4px}
+.plan-price sup{font-size:18px;font-weight:600;vertical-align:super}
+.plan-price-sub{font-size:13px;color:#9CA3AF;margin-bottom:20px}
+.plan-divider{height:1px;background:#F3F4F6;margin:20px 0}
+.plan-feature{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:#374151;margin-bottom:10px;line-height:1.4}
+.plan-feature .check{color:#10B981;font-size:14px;flex-shrink:0;margin-top:1px}
+.plan-feature .cross{color:#D1D5DB;font-size:14px;flex-shrink:0;margin-top:1px}
+.plan-cta{display:block;width:100%;padding:13px;border-radius:12px;font-size:14px;font-weight:700;text-align:center;cursor:pointer;text-decoration:none;margin-top:24px;transition:all .2s;font-family:inherit;border:none;box-sizing:border-box}
+.plan-cta.outline{background:transparent;border:1.5px solid #E5E7EB;color:#374151}
+.plan-cta.outline:hover{border-color:#6366F1;color:#6366F1}
+.plan-cta.gradient{background:linear-gradient(135deg,#6366F1,#8B5CF6);color:white;box-shadow:0 4px 14px rgba(99,102,241,.35)}
+.plan-cta.gradient:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(99,102,241,.4)}
+.pricing-toggle{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:40px}
+.toggle-track{width:52px;height:28px;background:#E5E7EB;border-radius:14px;position:relative;cursor:pointer;transition:background .2s}
+.toggle-track.active{background:#6366F1}
+.toggle-thumb{position:absolute;top:3px;left:3px;width:22px;height:22px;background:white;border-radius:50%;transition:transform .2s;box-shadow:0 2px 4px rgba(0,0,0,.15)}
+.toggle-track.active .toggle-thumb{transform:translateX(24px)}
+.toggle-label{font-size:14px;font-weight:500;color:#374151;cursor:pointer}
+.toggle-label.active{color:#6366F1;font-weight:700}
+.save-badge{background:#D1FAE5;color:#065F46;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px}
+@media(max-width:768px){.pricing-grid{grid-template-columns:1fr;max-width:380px}.plan-card.popular{transform:scale(1)}.plan-card.popular:hover{transform:translateY(-4px)}}
 </style>
 <script>
 (function(){
@@ -772,143 +802,70 @@ function copyPromoCode(){
       <span class="lp-gradient-text">sürpriz yok.</span>
     </h2>
 
-    <!-- Periyot seçici -->
-    <div class="lp-period-switcher">
-      <button class="lp-period-btn"
-              data-period="weekly"
-              onclick="setPeriod('weekly')">
-        Haftalık
-      </button>
-      <button class="lp-period-btn active"
-              data-period="monthly"
-              onclick="setPeriod('monthly')">
-        Aylık
-      </button>
-      <button class="lp-period-btn"
-              data-period="yearly"
-              onclick="setPeriod('yearly')">
-        Yıllık
-        <span class="lp-period-badge">-33%</span>
-      </button>
+    <!-- Fiyatlandırma Toggle -->
+    <div class="pricing-toggle">
+      <span class="toggle-label" id="label-monthly">Aylık</span>
+      <div class="toggle-track" id="pricingToggle" onclick="togglePricing()">
+        <div class="toggle-thumb"></div>
+      </div>
+      <span class="toggle-label" id="label-yearly">Yıllık <span class="save-badge">-33%</span></span>
     </div>
 
-    <div class="lp-pricing-grid">
+    <!-- Plan Kartları -->
+    <div class="pricing-grid">
 
-      <!-- STARTER -->
-      <div class="lp-price-card">
-        <div class="lp-price-plan">Başlangıç</div>
-        <div class="lp-price-amount">
-          <span class="lp-price-num"
-                id="price-starter">Ücretsiz</span>
-          <span class="lp-price-period"
-                id="period-starter"></span>
-        </div>
-        <p class="lp-price-desc">
-          Mocksheets'i keşfetmek için ideal.
-        </p>
-        <ul class="lp-price-features">
-          <li>✓ Ayda <strong>20 AI komutu</strong></li>
-          <li>✓ Temel veri temizleme</li>
-          <li>✓ Tekrar eden ve boş satırları sil</li>
-          <li>✓ CSV ve Excel (.xlsx) desteği</li>
-          <li>✓ Sırala ve filtrele</li>
-          <li class="dim">✗ Muhasebe formülleri</li>
-          <li class="dim">✗ Otomatik rapor oluşturma</li>
-          <li class="dim">✗ Rakip analizi</li>
-        </ul>
-        <a href="auth.html" class="lp-btn-ghost"
-           style="width:100%;justify-content:center;
-                  margin-top:auto;">
-          Ücretsiz Başla
-        </a>
+      <!-- BAŞLANGIÇ -->
+      <div class="plan-card">
+        <div class="plan-name">Başlangıç</div>
+        <div class="plan-price">Ücretsiz</div>
+        <div class="plan-price-sub">Sonsuza kadar ücretsiz</div>
+        <div class="plan-divider"></div>
+        <div class="plan-feature"><span class="check">✓</span><span>Ayda <b>20 AI komutu</b></span></div>
+        <div class="plan-feature"><span class="check">✓</span><span>Temel veri temizleme</span></div>
+        <div class="plan-feature"><span class="check">✓</span><span>CSV ve Excel desteği</span></div>
+        <div class="plan-feature"><span class="check">✓</span><span>Sırala ve filtrele</span></div>
+        <div class="plan-feature"><span class="cross">✗</span><span>KDV ve bordro hesaplama</span></div>
+        <div class="plan-feature"><span class="cross">✗</span><span>Google Sheets entegrasyonu</span></div>
+        <div class="plan-feature"><span class="cross">✗</span><span>Otomatik rapor oluşturma</span></div>
+        <a href="auth.html" class="plan-cta outline">Ücretsiz Başla →</a>
       </div>
 
       <!-- PRO -->
-      <div class="lp-price-card lp-price-featured">
-        <div class="lp-price-badge">En Popüler</div>
-        <div class="lp-price-plan">Pro</div>
-        <!-- 2 ay ücretsiz badge -->
-        <div id="yearly-gift-pro" style="display:none;align-items:center;gap:6px;background:linear-gradient(135deg,#059669,#047857);color:white;font-size:11px;font-weight:700;padding:5px 12px;border-radius:100px;width:fit-content;margin-bottom:10px;letter-spacing:.02em">
-          🎁 2 AY ÜCRETSİZ
-        </div>
-        <!-- Orijinal fiyat -->
-        <div id="orig-pro" style="display:none;font-size:12px;color:rgba(255,255,255,0.5);text-decoration:line-through;margin-bottom:4px"></div>
-        <div class="lp-price-amount">
-          <span class="lp-price-curr">₺</span>
-          <span class="lp-price-num" id="price-pro">499</span>
-          <span class="lp-price-period" id="period-pro">/ay</span>
-        </div>
-        <!-- Alt not -->
-        <div id="note-pro" style="font-size:11px;color:rgba(255,255,255,0.45);margin-top:4px;display:block">Aylık faturalandırılır</div>
-        <p class="lp-price-desc"
-           style="color:rgba(255,255,255,0.5)">
-          Profesyonel kullanım için ihtiyacınız olan her şey.
-        </p>
-        <ul class="lp-price-features">
-          <li>✓ Ayda <strong>200 AI komutu</strong></li>
-          <li>✓ Gelişmiş veri temizleme ve dönüştürme</li>
-          <li>✓ KDV, vergi ve maaş hesaplamaları</li>
-          <li>✓ Otomatik aylık ve haftalık raporlar</li>
-          <li>✓ Koşullu biçimlendirme</li>
-          <li>✓ VLOOKUP, SUMIF, IF formülleri</li>
-          <li>✓ Rakip veri analizi</li>
-          <li>✓ E-posta desteği (48s yanıt)</li>
-        </ul>
-        <button class="lp-btn-primary"
-                style="width:100%;justify-content:center;
-                       margin-top:auto;background:white;
-                       color:#1d1d1f;border:none;cursor:pointer;"
-                onclick="startCheckout('pro', currentPeriod)">
-          Hemen Başla
-        </button>
+      <div class="plan-card popular">
+        <div class="popular-badge">⭐ En Popüler</div>
+        <div class="plan-name">Pro</div>
+        <div class="plan-price"><sup>₺</sup><span id="pro-price">349</span></div>
+        <div class="plan-price-sub" id="pro-sub">/ ay — aylık faturalandırılır</div>
+        <div class="plan-divider"></div>
+        <div class="plan-feature"><span class="check">✓</span><span><b>200 AI komutu</b> / ay</span></div>
+        <div class="plan-feature"><span class="check">✓</span><span>KDV, SGK, bordro hesaplama</span></div>
+        <div class="plan-feature"><span class="check">✓</span><span>Google Sheets entegrasyonu</span></div>
+        <div class="plan-feature"><span class="check">✓</span><span>Notion entegrasyonu</span></div>
+        <div class="plan-feature"><span class="check">✓</span><span>Otomatik rapor oluşturma</span></div>
+        <div class="plan-feature"><span class="check">✓</span><span>Öncelikli destek (48 saat)</span></div>
+        <div class="plan-feature"><span class="check">✓</span><span>Gelişmiş veri analizi</span></div>
+        <a href="auth.html?plan=pro" class="plan-cta gradient">Pro'ya Geç →</a>
       </div>
 
-      <!-- BUSINESS -->
-      <div class="lp-price-card lp-price-business">
-        <div class="lp-price-plan">İş</div>
-        <!-- 2 ay ücretsiz badge -->
-        <div id="yearly-gift-biz" style="display:none;align-items:center;gap:6px;background:linear-gradient(135deg,#059669,#047857);color:white;font-size:11px;font-weight:700;padding:5px 12px;border-radius:100px;width:fit-content;margin-bottom:10px;letter-spacing:.02em">
-          🎁 2 AY ÜCRETSİZ
-        </div>
-        <!-- Orijinal fiyat -->
-        <div id="orig-biz" style="display:none;font-size:12px;color:#9CA3AF;text-decoration:line-through;margin-bottom:4px"></div>
-        <div class="lp-price-amount">
-          <span class="lp-price-curr">₺</span>
-          <span class="lp-price-num" id="price-biz">1.099</span>
-          <span class="lp-price-period" id="period-biz">/ay</span>
-        </div>
-        <!-- Alt not -->
-        <div id="note-biz" style="font-size:11px;color:#6B7280;margin-top:4px;display:block">Aylık faturalandırılır</div>
-        <p style="font-size:13px;color:#6B7280;margin:4px 0 0;line-height:1.5">+₺80 kullanıcı başına · 10+ için %10, 20+ için %15, 30+ için %20 indirim</p>
-
-        <ul class="lp-price-features">
-          <li>✓ <strong>Sınırsız</strong> AI komutu</li>
-          <li>✓ Pro'daki her şey</li>
-          <li>✓ Merkezi takım panosu</li>
-          <li>✓ Kullanıcı düzeyinde izinler</li>
-          <li>✓ Toplu işlem (10.000+ satır)</li>
-          <li>✓ Özel muhasebe şablonları</li>
-          <li>✓ API erişimi ve webhook'lar</li>
-          <li>✓ Öncelikli destek (4s yanıt)</li>
-        </ul>
-
-        <button class="lp-btn-primary"
-                style="width:100%;justify-content:center;
-                       margin-top:auto;border:none;cursor:pointer;"
-                onclick="startCheckout('business', currentPeriod)">
-          Teklif Al
-        </button>
+      <!-- İŞ -->
+      <div class="plan-card">
+        <div class="plan-name">İş</div>
+        <div class="plan-price"><sup>₺</sup><span id="is-price">899</span></div>
+        <div class="plan-price-sub" id="is-sub">/ ay — aylık faturalandırılır</div>
+        <div class="plan-divider"></div>
+        <div class="plan-feature"><span class="check">✓</span><span><b>Sınırsız</b> AI komutu</span></div>
+        <div class="plan-feature"><span class="check">✓</span><span>Pro'daki her şey dahil</span></div>
+        <div class="plan-feature"><span class="check">✓</span><span>Zapier &amp; Webhook entegrasyonu</span></div>
+        <div class="plan-feature"><span class="check">✓</span><span>Ekip üyeleri — <b>+₺80/kullanıcı</b></span></div>
+        <div class="plan-feature"><span class="check">✓</span><span>Özel AI model eğitimi</span></div>
+        <div class="plan-feature"><span class="check">✓</span><span>SLA garantisi &amp; 4 saat destek</span></div>
+        <div class="plan-feature"><span class="check">✓</span><span>Muhasebe entegrasyonları</span></div>
+        <a href="auth.html?plan=business" class="plan-cta outline">İş Planı Başla →</a>
       </div>
 
     </div>
 
-    <div id="checkout-error"
-         style="display:none;text-align:center;margin-top:16px;
-                background:#FEE2E2;color:#991B1B;padding:12px 20px;
-                border-radius:10px;font-size:13px;font-weight:500">
-    </div>
-
-    <p class="lp-pricing-note">
+    <p class="lp-pricing-note" style="text-align:center;margin-top:32px;font-size:13px;color:#9CA3AF">
       ✓ Kredi kartı gerekmez &nbsp;·&nbsp;
       ✓ 14 gün para iade garantisi &nbsp;·&nbsp;
       ✓ İstediğin zaman iptal
@@ -1039,6 +996,31 @@ function copyPromoCode(){
 })();
 </script>
 <script>
+/* ── FİYATLANDIRMA TOGGLE ── */
+var PRICES = {
+  monthly: { pro: 349, is: 899, proSub: '/ ay \u2014 aylık faturalandırılır', isSub: '/ ay \u2014 aylık faturalandırılır' },
+  yearly:  { pro: 233, is: 599, proSub: '/ ay \u2014 yıllık faturalandırılır (₺2.799/yıl)', isSub: '/ ay \u2014 yıllık faturalandırılır (₺7.199/yıl)' }
+};
+var pricingIsYearly = false;
+function togglePricing() {
+  pricingIsYearly = !pricingIsYearly;
+  var toggle = document.getElementById('pricingToggle');
+  var labelM = document.getElementById('label-monthly');
+  var labelY = document.getElementById('label-yearly');
+  if (toggle) toggle.classList.toggle('active', pricingIsYearly);
+  if (labelM) labelM.classList.toggle('active', !pricingIsYearly);
+  if (labelY) labelY.classList.toggle('active', pricingIsYearly);
+  var p = pricingIsYearly ? PRICES.yearly : PRICES.monthly;
+  var proPrice = document.getElementById('pro-price');
+  var proSub = document.getElementById('pro-sub');
+  var isPrice = document.getElementById('is-price');
+  var isSub = document.getElementById('is-sub');
+  if (proPrice) proPrice.textContent = p.pro;
+  if (proSub) proSub.textContent = p.proSub;
+  if (isPrice) isPrice.textContent = p.is;
+  if (isSub) isSub.textContent = p.isSub;
+}
+
 /* ── ENTEGRASYON CAROUSEL ── */
 let intActiveIndex = 0;
 function selectIntCard(index) {
