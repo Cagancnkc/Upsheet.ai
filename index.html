@@ -179,6 +179,20 @@
 .toggle-label.active{color:#6366F1;font-weight:700}
 .save-badge{background:#D1FAE5;color:#065F46;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px}
 @media(max-width:768px){.pricing-grid{grid-template-columns:1fr;max-width:380px}.plan-card.popular{transform:scale(1)}.plan-card.popular:hover{transform:translateY(-4px)}}
+
+/* ── CANLI DEMO ── */
+@keyframes cursorBlink{0%,100%{opacity:1}50%{opacity:0}}
+@keyframes cellFadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.demo-step-dot{width:8px;height:8px;border-radius:50%;background:#D1D5DB;cursor:pointer;transition:all .3s}
+.demo-step-dot.active{width:24px;border-radius:4px;background:#6366F1}
+.demo-table{width:100%;border-collapse:collapse;font-size:12px;font-family:inherit}
+.demo-table th{background:#F9FAFB;border:1px solid #E5E7EB;padding:8px 12px;text-align:left;font-weight:600;color:#6B7280;font-size:11px}
+.demo-table td{border:1px solid #F3F4F6;padding:7px 12px;color:#374151;transition:background .4s ease;animation:cellFadeIn .3s ease}
+.demo-table tr:hover td{background:#F9FAFB}
+.cell-red{background:#FEE2E2 !important;color:#991B1B}
+.cell-green{background:#D1FAE5 !important;color:#065F46}
+.cell-yellow{background:#FEF9C3 !important}
+.cell-empty{color:#D1D5DB;font-style:italic}
 </style>
 <script>
 (function(){
@@ -338,117 +352,62 @@ function copyPromoCode(){
 </section>
 
 <!-- DEMO -->
-<section class="lp-demo-section">
-  <div class="lp-container">
-    <div class="lp-demo-inner">
+<section id="demo" style="padding:80px 20px;background:#F9FAFB;">
+  <div style="max-width:900px;margin:0 auto;text-align:center;">
+    <div style="display:inline-flex;align-items:center;gap:8px;background:#EEF2FF;color:#6366F1;padding:6px 16px;border-radius:20px;font-size:12px;font-weight:700;margin-bottom:16px;letter-spacing:.04em">
+      ▶ CANLI DEMO
+    </div>
+    <h2 style="font-size:clamp(28px,5vw,42px);font-weight:800;color:#111827;margin:0 0 12px">
+      Görmek inanmaktır.
+    </h2>
+    <p style="font-size:16px;color:#6B7280;margin:0 0 48px">
+      Gerçek bir Mocksheets oturumu — sıfırdan mükemmele 8 saniyede.
+    </p>
 
-      <div class="lp-demo-text">
-        <span class="lp-marquee-label">Canlı Demo</span>
-        <h2 class="lp-section-title" style="text-align:left;margin-bottom:16px">
-          Görmek inanmaktır.
-        </h2>
-        <p style="font-size:16px;color:#6B7280;line-height:1.7;margin-bottom:28px">
-          Kullanıcılarımız aynı işi yapmak için
-          artık formül değil, kelime yazıyor.
-          İşte gerçek bir oturum:
-        </p>
-
-        <div class="lp-demo-steps">
-          <div class="lp-demo-step-item active" id="step1" onclick="activateStep(1)">
-            <div class="lp-step-num">1</div>
-            <div>
-              <div class="lp-step-title">Dosyayı yükle</div>
-              <div class="lp-step-desc">Excel veya CSV — sürükle bırak</div>
-            </div>
-          </div>
-          <div class="lp-demo-step-item" id="step2" onclick="activateStep(2)">
-            <div class="lp-step-num">2</div>
-            <div>
-              <div class="lp-step-title">Türkçe yaz</div>
-              <div class="lp-step-desc">"B sütununu topla ve C1'e yaz"</div>
-            </div>
-          </div>
-          <div class="lp-demo-step-item" id="step3" onclick="activateStep(3)">
-            <div class="lp-step-num">3</div>
-            <div>
-              <div class="lp-step-title">AI halleder</div>
-              <div class="lp-step-desc">Sonuç anında spreadsheet'e yansır</div>
-            </div>
-          </div>
+    <div id="demoContainer" style="background:white;border:1.5px solid #E5E7EB;border-radius:20px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.10);max-width:860px;margin:0 auto;">
+      <!-- Toolbar -->
+      <div style="background:#F9FAFB;border-bottom:1px solid #E5E7EB;padding:12px 20px;display:flex;align-items:center;gap:12px;">
+        <div style="display:flex;gap:6px">
+          <div style="width:12px;height:12px;border-radius:50%;background:#FF5F57"></div>
+          <div style="width:12px;height:12px;border-radius:50%;background:#FEBC2E"></div>
+          <div style="width:12px;height:12px;border-radius:50%;background:#28C840"></div>
         </div>
+        <div style="flex:1;background:white;border:1px solid #E5E7EB;border-radius:8px;padding:5px 12px;font-size:12px;color:#9CA3AF;text-align:left;">mocksheets.com/app</div>
+        <div id="demoStepBadge" style="font-size:11px;font-weight:700;background:#EEF2FF;color:#6366F1;padding:3px 10px;border-radius:20px;">1 / 5</div>
       </div>
 
-      <!-- Animasyonlu mockup -->
-      <div class="lp-demo-mockup">
-        <div class="lp-mockup-bar">
-          <span class="lp-mockup-dot r"></span>
-          <span class="lp-mockup-dot y"></span>
-          <span class="lp-mockup-dot g"></span>
-          <span class="lp-mockup-title">Mocksheets — AI Excel</span>
-        </div>
-        <div class="lp-demo-mockup-body">
-
-          <!-- Step 1: Tablo -->
-          <div class="lp-demo-frame active" id="frame1">
-            <div class="lp-demo-table">
-              <div class="lp-dt-row header">
-                <span>Ürün</span><span>Adet</span><span>Fiyat</span><span>Toplam</span>
-              </div>
-              <div class="lp-dt-row">
-                <span>Laptop</span><span>3</span><span>₺12.500</span><span>₺37.500</span>
-              </div>
-              <div class="lp-dt-row">
-                <span>Mouse</span><span>15</span><span>₺450</span><span>₺6.750</span>
-              </div>
-              <div class="lp-dt-row highlight-row">
-                <span>Klavye</span><span>8</span><span>₺780</span><span>₺6.240</span>
-              </div>
-              <div class="lp-dt-row empty-row">
-                <span>—</span><span></span><span></span><span></span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Step 2: Chat komutu -->
-          <div class="lp-demo-frame" id="frame2">
-            <div class="lp-demo-chat-anim">
-              <div class="lp-dca-label">AI Asistan</div>
-              <div class="lp-dca-bubble user typing" id="typingBubble">
-                <span id="typingText"></span><span class="lp-cursor">|</span>
-              </div>
-              <div class="lp-dca-bubble ai hidden" id="aiBubble">
-                ✓ B sütunu toplamı hesaplandı → <strong>₺50.490</strong>
-              </div>
-            </div>
-          </div>
-
-          <!-- Step 3: Sonuç -->
-          <div class="lp-demo-frame" id="frame3">
-            <div class="lp-demo-table">
-              <div class="lp-dt-row header">
-                <span>Ürün</span><span>Adet</span><span>Fiyat</span><span>Toplam</span>
-              </div>
-              <div class="lp-dt-row">
-                <span>Laptop</span><span>3</span><span>₺12.500</span><span>₺37.500</span>
-              </div>
-              <div class="lp-dt-row">
-                <span>Mouse</span><span>15</span><span>₺450</span><span>₺6.750</span>
-              </div>
-              <div class="lp-dt-row">
-                <span>Klavye</span><span>8</span><span>₺780</span><span>₺6.240</span>
-              </div>
-              <div class="lp-dt-row result-row">
-                <span><strong>TOPLAM</strong></span><span></span><span></span>
-                <span class="result-val"><strong>₺50.490</strong> ✓</span>
-              </div>
-            </div>
-            <div class="lp-demo-success">
-              🤖 AI: Toplam hesaplandı ve D5'e yazıldı
-            </div>
-          </div>
-
-        </div>
+      <!-- Spreadsheet Grid -->
+      <div style="padding:0;overflow:hidden">
+        <div id="demoGrid" style="overflow-x:auto;min-height:280px"></div>
       </div>
+
+      <!-- Chat Bar -->
+      <div style="border-top:1px solid #E5E7EB;padding:14px 20px;background:white;display:flex;align-items:center;gap:12px;">
+        <span style="font-size:16px">✨</span>
+        <div id="demoChatInput" style="flex:1;height:38px;background:#F9FAFB;border:1.5px solid #E5E7EB;border-radius:10px;padding:0 14px;font-size:13px;color:#374151;display:flex;align-items:center;font-family:inherit;transition:border-color .2s;">
+          <span id="demoTypedText" style="color:#9CA3AF">Ne yapmak istersiniz?</span>
+          <span id="demoCursor" style="display:inline-block;width:2px;height:16px;background:#6366F1;margin-left:2px;animation:cursorBlink 1s infinite;"></span>
+        </div>
+        <button style="width:38px;height:38px;background:linear-gradient(135deg,#6366F1,#8B5CF6);border:none;border-radius:10px;color:white;font-size:16px;cursor:pointer;flex-shrink:0;">↑</button>
+      </div>
+
+      <!-- Progress Bar -->
+      <div style="height:3px;background:#F3F4F6">
+        <div id="demoProgress" style="height:100%;width:0%;background:linear-gradient(90deg,#6366F1,#8B5CF6);transition:width .5s ease;"></div>
+      </div>
+    </div>
+
+    <!-- Step İndikatörleri -->
+    <div style="display:flex;justify-content:center;gap:8px;margin-top:24px">
+      <div class="demo-step-dot active" data-step="0"></div>
+      <div class="demo-step-dot" data-step="1"></div>
+      <div class="demo-step-dot" data-step="2"></div>
+      <div class="demo-step-dot" data-step="3"></div>
+      <div class="demo-step-dot" data-step="4"></div>
+    </div>
+
+    <div id="demoStepDesc" style="margin-top:16px;font-size:14px;color:#6B7280;min-height:24px;">
+      📂 Boş spreadsheet açılıyor...
     </div>
   </div>
 </section>
@@ -996,6 +955,124 @@ function copyPromoCode(){
 })();
 </script>
 <script>
+/* ── CANLI DEMO ── */
+var DEMO_DATA = {
+  messy: [
+    ['ürün','Adet','FİYAT','toplam','not'],
+    ['  Laptop  ','3','12500','','iyi'],
+    ['','','','',''],
+    ['mouse','15','450 TL','6750','eksik stok'],
+    ['KLAVYE','8','₺780','6240',''],
+    ['Monitör','','3200','','bekliyor'],
+    ['','','','',''],
+    ['usb hub','25','120','-3000','iade'],
+    ['kulaklık','6','890 lira','5340','']
+  ],
+  clean: [
+    ['Ürün','Adet','Fiyat (₺)','Toplam (₺)','Durum'],
+    ['Laptop','3','12.500','37.500','Stokta'],
+    ['Monitör','5','3.200','16.000','Bekliyor'],
+    ['Klavye','8','780','6.240','Stokta'],
+    ['Kulaklık','6','890','5.340','Stokta'],
+    ['Mouse','15','450','6.750','Düşük Stok'],
+    ['USB Hub','25','120','3.000','Stokta']
+  ]
+};
+var demoStep = 0, demoTimer = null, demoTypeTimer = null;
+var DEMO_STEPS = [
+  { desc: '📂 Boş spreadsheet açılıyor...', progress: 0 },
+  { desc: '📥 Karışık Excel dosyası yüklendi — tutarsız format, boş satırlar, hatalı değerler', progress: 20 },
+  { desc: '💬 Komut giriliyor: "Veriyi temizle, sırala ve negatif değerleri kırmızıya boya"', progress: 40 },
+  { desc: '🤖 AI işliyor — boş satırlar siliniyor, formatlar düzeltiliyor, sıralanıyor...', progress: 70 },
+  { desc: '✅ Tamamlandı! 3 boş satır silindi, 7 format hatası düzeltildi, 1 negatif değer işaretlendi', progress: 100 }
+];
+var DEMO_PROMPT = 'Veriyi temizle, sırala ve negatif değerleri kırmızıya boya';
+function buildDemoGrid(data, highlights) {
+  var grid = document.getElementById('demoGrid');
+  if (!grid) return;
+  var html = '<table class="demo-table"><thead><tr>';
+  data[0].forEach(function(h) { html += '<th>' + (h || '') + '</th>'; });
+  html += '</tr></thead><tbody>';
+  data.slice(1).forEach(function(row, ri) {
+    var isEmpty = row.every(function(c) { return !c || !String(c).trim(); });
+    html += '<tr' + (isEmpty ? ' style="opacity:.3"' : '') + '>';
+    row.forEach(function(cell, ci) {
+      var cls = '';
+      if (!cell || !String(cell).trim()) cls = 'cell-empty';
+      if (highlights) {
+        if (highlights.red && highlights.red.indexOf(ri + ',' + ci) > -1) cls = 'cell-red';
+        if (highlights.green && highlights.green.indexOf(ri + ',' + ci) > -1) cls = 'cell-green';
+      }
+      html += '<td class="' + cls + '">' + (cell || '—') + '</td>';
+    });
+    html += '</tr>';
+  });
+  html += '</tbody></table>';
+  grid.innerHTML = html;
+}
+function updateDemoStep(step) {
+  demoStep = step;
+  var badge = document.getElementById('demoStepBadge');
+  var desc = document.getElementById('demoStepDesc');
+  var progress = document.getElementById('demoProgress');
+  var input = document.getElementById('demoChatInput');
+  var typedText = document.getElementById('demoTypedText');
+  var dots = document.querySelectorAll('.demo-step-dot');
+  if (badge) badge.textContent = (step + 1) + ' / 5';
+  if (desc) desc.textContent = DEMO_STEPS[step].desc;
+  if (progress) progress.style.width = DEMO_STEPS[step].progress + '%';
+  dots.forEach(function(d, i) { d.classList.toggle('active', i === step); });
+  if (step === 0) {
+    buildDemoGrid([['','','','',''],['','','','',''],['','','','',''],['','','','','']], null);
+  } else if (step === 1) {
+    buildDemoGrid(DEMO_DATA.messy, null);
+  } else if (step === 2) {
+    buildDemoGrid(DEMO_DATA.messy, null);
+    if (typedText) {
+      typedText.style.color = '#374151';
+      var i = 0;
+      typedText.textContent = '';
+      clearInterval(demoTypeTimer);
+      demoTypeTimer = setInterval(function() {
+        if (i < DEMO_PROMPT.length) { typedText.textContent += DEMO_PROMPT[i++]; }
+        else { clearInterval(demoTypeTimer); }
+      }, 35);
+    }
+    if (input) { input.style.borderColor = '#6366F1'; input.style.boxShadow = '0 0 0 3px rgba(99,102,241,.1)'; }
+  } else if (step === 3) {
+    if (typedText) { typedText.textContent = '⏳ AI işliyor'; typedText.style.color = '#9CA3AF'; }
+    if (input) { input.style.borderColor = '#E5E7EB'; input.style.boxShadow = 'none'; }
+    buildDemoGrid(DEMO_DATA.messy, null);
+  } else if (step === 4) {
+    buildDemoGrid(DEMO_DATA.clean, { red: ['4,2','4,3','4,4'], green: ['0,2','0,3','0,4'] });
+    if (typedText) { typedText.textContent = '✓ Tamamlandı'; typedText.style.color = '#10B981'; }
+    if (input) { input.style.borderColor = '#10B981'; input.style.boxShadow = '0 0 0 3px rgba(16,185,129,.1)'; }
+  }
+}
+function startDemoLoop() {
+  updateDemoStep(0);
+  demoTimer = setInterval(function() {
+    var next = (demoStep + 1) % 5;
+    if (next === 0) {
+      var t = document.getElementById('demoTypedText');
+      var inp = document.getElementById('demoChatInput');
+      if (t) { t.textContent = 'Ne yapmak istersiniz?'; t.style.color = '#9CA3AF'; }
+      if (inp) { inp.style.borderColor = '#E5E7EB'; inp.style.boxShadow = 'none'; }
+    }
+    updateDemoStep(next);
+  }, 2200);
+}
+document.addEventListener('DOMContentLoaded', function() {
+  startDemoLoop();
+  document.querySelectorAll('.demo-step-dot').forEach(function(dot) {
+    dot.addEventListener('click', function() {
+      clearInterval(demoTimer);
+      updateDemoStep(parseInt(dot.dataset.step));
+      startDemoLoop();
+    });
+  });
+});
+
 /* ── FİYATLANDIRMA TOGGLE ── */
 var PRICES = {
   monthly: { pro: 349, is: 899, proSub: '/ ay \u2014 aylık faturalandırılır', isSub: '/ ay \u2014 aylık faturalandırılır' },
