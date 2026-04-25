@@ -193,6 +193,10 @@
 .cell-green{background:#D1FAE5 !important;color:#065F46}
 .cell-yellow{background:#FEF9C3 !important}
 .cell-empty{color:#D1D5DB;font-style:italic}
+@keyframes pricePulse {
+  0%,100% { transform:scale(1); box-shadow:0 0 0 0 rgba(220,38,38,0.3); }
+  50% { transform:scale(1.05); box-shadow:0 0 0 4px rgba(220,38,38,0); }
+}
 </style>
 <script>
 (function(){
@@ -793,7 +797,11 @@ function copyPromoCode(){
       <div class="plan-card popular">
         <div class="popular-badge">⭐ En Popüler</div>
         <div class="plan-name">Pro</div>
-        <div class="plan-price"><sup>₺</sup><span id="pro-price">349</span></div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+          <span style="font-size:16px;color:#9CA3AF;text-decoration:line-through">₺599</span>
+          <span style="background:#FEF2F2;color:#DC2626;font-size:11px;font-weight:700;padding:3px 8px;border-radius:20px;animation:pricePulse 2s infinite">🔥 %88 İndirim</span>
+        </div>
+        <div class="plan-price"><sup>₺</sup><span id="pro-price">69</span></div>
         <div class="plan-price-sub" id="pro-sub">/ ay — aylık faturalandırılır</div>
         <div class="plan-divider"></div>
         <div class="plan-feature"><span class="check">✓</span><span><b>200 AI komutu</b> / ay</span></div>
@@ -809,7 +817,7 @@ function copyPromoCode(){
       <!-- İŞ -->
       <div class="plan-card">
         <div class="plan-name">İş</div>
-        <div class="plan-price"><sup>₺</sup><span id="is-price">899</span></div>
+        <div class="plan-price"><sup>₺</sup><span id="is-price">149</span></div>
         <div class="plan-price-sub" id="is-sub">/ ay — aylık faturalandırılır</div>
         <div class="plan-divider"></div>
         <div class="plan-feature"><span class="check">✓</span><span><b>Sınırsız</b> AI komutu</span></div>
@@ -1075,8 +1083,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
 /* ── FİYATLANDIRMA TOGGLE ── */
 var PRICES = {
-  monthly: { pro: 349, is: 899, proSub: '/ ay \u2014 aylık faturalandırılır', isSub: '/ ay \u2014 aylık faturalandırılır' },
-  yearly:  { pro: 233, is: 599, proSub: '/ ay \u2014 yıllık faturalandırılır (₺2.799/yıl)', isSub: '/ ay \u2014 yıllık faturalandırılır (₺7.199/yıl)' }
+  monthly: { pro: 69, is: 149, proSub: '/ ay \u2014 aylık faturalandırılır', isSub: '/ ay \u2014 aylık faturalandırılır' },
+  yearly:  { pro: 46, is: 99, proSub: '/ ay \u2014 yıllık faturalandırılır (₺552/yıl)', isSub: '/ ay \u2014 yıllık faturalandırılır (₺1.188/yıl)' }
 };
 var pricingIsYearly = false;
 function togglePricing() {
