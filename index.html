@@ -116,6 +116,39 @@
 @keyframes banner-pulse{0%,100%{transform:scale(1);opacity:.5}50%{transform:scale(1.15);opacity:.8}}
 @keyframes gift-bounce{0%,100%{transform:translateY(0) rotate(-5deg)}50%{transform:translateY(-4px) rotate(5deg)}}
 @keyframes twinkle{0%,100%{opacity:.2;transform:scale(.8)}50%{opacity:.8;transform:scale(1.2)}}
+
+/* ── ENTEGRASYON 3D CAROUSEL ── */
+.int-carousel-section{position:relative;padding:40px 0 60px;overflow:hidden}
+.int-carousel-track{display:flex;align-items:center;justify-content:center;gap:20px;perspective:1200px;min-height:360px;padding:20px 0}
+.int-card{flex-shrink:0;width:240px;cursor:pointer;transition:all .4s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d}
+.int-card:not(.active){transform:scale(.82) rotateY(12deg);opacity:.55;filter:blur(.5px)}
+.int-card.active~.int-card:not(.active){transform:scale(.82) rotateY(-12deg)}
+.int-card.active{transform:scale(1.05) rotateY(0deg);opacity:1;filter:none;z-index:10}
+.int-card-inner{background:white;border:1.5px solid #E5E7EB;border-radius:20px;padding:28px 24px;text-align:center;box-shadow:0 4px 6px rgba(0,0,0,.04),0 20px 40px rgba(0,0,0,.08);position:relative;overflow:hidden;transition:box-shadow .3s ease}
+.int-card.active .int-card-inner{box-shadow:0 0 0 2px rgba(99,102,241,.2),0 20px 60px rgba(99,102,241,.15)}
+.int-card-glow{position:absolute;top:-30px;right:-30px;width:100px;height:100px;background:var(--glow);border-radius:50%;opacity:.06;filter:blur(20px);transition:opacity .3s}
+.int-card.active .int-card-glow{opacity:.14}
+.int-card-logo{width:48px;height:48px;object-fit:contain;margin:0 auto 14px;display:block;filter:drop-shadow(0 2px 6px rgba(0,0,0,.12))}
+.int-card-title{font-size:16px;font-weight:700;color:#111827;margin:0 0 6px}
+.int-card-desc{font-size:12px;color:#6B7280;line-height:1.5;margin:0 0 14px}
+.int-card-badge{display:inline-block;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;margin-bottom:12px}
+.int-card-badge.connected{background:#D1FAE5;color:#065F46}
+.int-card-badge.available{background:#EEF2FF;color:#4338CA}
+.int-card-badge.soon{background:#F3F4F6;color:#6B7280}
+.int-card-features{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.int-card-features span{font-size:10px;background:#F9FAFB;border:1px solid #E5E7EB;border-radius:8px;padding:3px 8px;color:#374151}
+.int-card-btn{display:inline-block;padding:8px 20px;background:linear-gradient(135deg,#6366F1,#8B5CF6);color:white;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;transition:all .2s;font-family:inherit}
+.int-card-btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(99,102,241,.35)}
+.soon-btn{background:#F3F4F6;color:#6B7280}
+.soon-btn:hover{background:#E5E7EB;box-shadow:none;transform:none}
+.int-arrow{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;background:white;border:1.5px solid #E5E7EB;border-radius:50%;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,.08);transition:all .2s;z-index:20}
+.int-arrow:hover{background:#6366F1;color:white;border-color:#6366F1;transform:translateY(-50%) scale(1.05)}
+.int-arrow-left{left:16px}
+.int-arrow-right{right:16px}
+.int-dots{display:flex;justify-content:center;gap:8px;margin-top:24px}
+.int-dot{width:8px;height:8px;border-radius:50%;background:#D1D5DB;cursor:pointer;transition:all .2s}
+.int-dot.active{width:24px;border-radius:4px;background:#6366F1}
+@media(max-width:768px){.int-arrow{display:none}.int-card:not(.active){display:none}.int-carousel-track{gap:0}}
 </style>
 <script>
 (function(){
@@ -551,131 +584,95 @@ function copyPromoCode(){
       </p>
     </div>
 
-    <div class="lp-int-logos">
-      <div class="lp-int-logo-item">
-        <div class="lp-int-logo-icon" style="background:#E8F5E9">
-          <img src="https://www.gstatic.com/images/branding/product/1x/sheets_2020q4_48dp.png"
-               width="28" height="28" alt="Google Sheets"
-               onerror="this.parentElement.textContent='📊'">
-        </div>
-        <span>Google Sheets</span>
-      </div>
-      <div class="lp-int-logo-item">
-        <div class="lp-int-logo-icon" style="background:#F3F4F6">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.png"
-               width="26" height="26" alt="Notion"
-               onerror="this.parentElement.textContent='◻️'">
-        </div>
-        <span>Notion</span>
-      </div>
-      <div class="lp-int-logo-item">
-        <div class="lp-int-logo-icon" style="background:#FFF0EB">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/f/fd/Zapier_logo.svg"
-               width="28" height="28" alt="Zapier"
-               onerror="this.parentElement.textContent='⚡'">
-        </div>
-        <span>Zapier</span>
-      </div>
-      <div class="lp-int-logo-item">
-        <div class="lp-int-logo-icon" style="background:#F8F0FF">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/d/d5/Slack_icon_2019.svg"
-               width="28" height="28" alt="Slack"
-               onerror="this.parentElement.textContent='💬'">
-        </div>
-        <span>Slack</span>
-        <span class="lp-int-soon">Yakında</span>
-      </div>
-      <div class="lp-int-logo-item">
-        <div class="lp-int-logo-icon" style="background:#F0FFF8">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/4/4b/Airtable_Logo.svg"
-               width="28" height="28" alt="Airtable"
-               onerror="this.parentElement.textContent='📋'">
-        </div>
-        <span>Airtable</span>
-        <span class="lp-int-soon">Yakında</span>
-      </div>
-      <div class="lp-int-logo-item">
-        <div class="lp-int-logo-icon" style="background:#F0F7FF">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/7/7e/Make_%28software%29_Logo.svg"
-               width="28" height="28" alt="Make"
-               onerror="this.parentElement.textContent='⚙️'">
-        </div>
-        <span>Make</span>
-        <span class="lp-int-soon">Yakında</span>
-      </div>
-    </div>
+    <!-- ENTEGRASYON CAROUSEL -->
+    <div class="int-carousel-section">
+      <div class="int-carousel-track" id="intTrack">
 
-    <div class="lp-int-cards">
-
-      <div class="lp-int-card">
-        <div class="lp-int-card-icon">📊</div>
-        <h3>Google Sheets'e Aktar</h3>
-        <p>Tek tıkla herhangi bir Google Sheets belgesine dışa aktarın.
-        Verileriniz tam olarak ekibinizin ihtiyaç duyduğu yerde.</p>
-        <div class="lp-int-demo">
-          <div class="lp-int-demo-step">
-            <span class="step-num">1</span>
-            <span>Google Sheets URL'nizi yapıştırın</span>
-          </div>
-          <div class="lp-int-demo-step">
-            <span class="step-num">2</span>
-            <span>Dışa Aktar'a tıklayın</span>
-          </div>
-          <div class="lp-int-demo-step success">
-            <span class="step-num">✓</span>
-            <span>Veriler saniyeler içinde aktarıldı</span>
+        <div class="int-card" data-index="0" onclick="selectIntCard(0)">
+          <div class="int-card-inner">
+            <div class="int-card-glow" style="--glow:#0F9D58"></div>
+            <img src="https://www.gstatic.com/images/branding/product/1x/sheets_2020q4_48dp.png" class="int-card-logo" alt="Google Sheets">
+            <h3 class="int-card-title">Google Sheets</h3>
+            <p class="int-card-desc">Tek tıkla dışa aktar.<br>Veriler anında senkronize.</p>
+            <div class="int-card-badge connected">✓ Bağlı</div>
+            <div class="int-card-features"><span>↑ Dışa Aktar</span><span>⟳ Senkronize</span><span>📋 Tablo</span></div>
+            <a href="integrations.html" class="int-card-btn">Bağla →</a>
           </div>
         </div>
-      </div>
 
-      <div class="lp-int-card">
-        <div class="lp-int-card-icon">◻️</div>
-        <h3>Notion ile Senkronize Et</h3>
-        <p>Herhangi bir tabloyu Notion veritabanına gönderin.
-        Satırlar sayfalara dönüşür — otomatik olarak yapılandırılır.</p>
-        <div class="lp-int-demo">
-          <div class="lp-int-demo-step">
-            <span class="step-num">1</span>
-            <span>Notion token'ınızı ekleyin</span>
-          </div>
-          <div class="lp-int-demo-step">
-            <span class="step-num">2</span>
-            <span>Veritabanınızı seçin</span>
-          </div>
-          <div class="lp-int-demo-step success">
-            <span class="step-num">✓</span>
-            <span>100 satır anında dışa aktarıldı</span>
+        <div class="int-card" data-index="1" onclick="selectIntCard(1)">
+          <div class="int-card-inner">
+            <div class="int-card-glow" style="--glow:#000000"></div>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.png" class="int-card-logo" alt="Notion">
+            <h3 class="int-card-title">Notion</h3>
+            <p class="int-card-desc">Satırları sayfalara dönüştür.<br>Otomatik veritabanı.</p>
+            <div class="int-card-badge connected">✓ Bağlı</div>
+            <div class="int-card-features"><span>📄 Sayfalar</span><span>🗄️ Veritabanı</span><span>⟳ Senkron</span></div>
+            <a href="integrations.html" class="int-card-btn">Bağla →</a>
           </div>
         </div>
+
+        <div class="int-card" data-index="2" onclick="selectIntCard(2)">
+          <div class="int-card-inner">
+            <div class="int-card-glow" style="--glow:#FF4A00"></div>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/f/fd/Zapier_logo.svg" class="int-card-logo" alt="Zapier">
+            <h3 class="int-card-title">Zapier</h3>
+            <p class="int-card-desc">5000+ uygulamaya bağlan.<br>Otomasyon tek tıkla.</p>
+            <div class="int-card-badge available">Kullanılabilir</div>
+            <div class="int-card-features"><span>⚡ Webhook</span><span>🔄 Otomasyon</span><span>🔗 5000+ App</span></div>
+            <a href="integrations.html" class="int-card-btn">Bağla →</a>
+          </div>
+        </div>
+
+        <div class="int-card" data-index="3" onclick="selectIntCard(3)">
+          <div class="int-card-inner">
+            <div class="int-card-glow" style="--glow:#4A154B"></div>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/d/d5/Slack_icon_2019.svg" class="int-card-logo" alt="Slack">
+            <h3 class="int-card-title">Slack</h3>
+            <p class="int-card-desc">AI aksiyonlarında bildirim al.<br>Ekibinizi haberdar edin.</p>
+            <div class="int-card-badge soon">Yakında</div>
+            <div class="int-card-features"><span>🔔 Bildirim</span><span>💬 Mesaj</span><span>👥 Ekip</span></div>
+            <button class="int-card-btn soon-btn" onclick="notifyMe('slack')">Haber Ver →</button>
+          </div>
+        </div>
+
+        <div class="int-card" data-index="4" onclick="selectIntCard(4)">
+          <div class="int-card-inner">
+            <div class="int-card-glow" style="--glow:#FCB400"></div>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/4/4b/Airtable_Logo.svg" class="int-card-logo" alt="Airtable">
+            <h3 class="int-card-title">Airtable</h3>
+            <p class="int-card-desc">Veritabanına aktar.<br>Grid view'a dönüştür.</p>
+            <div class="int-card-badge soon">Yakında</div>
+            <div class="int-card-features"><span>🗃️ Veritabanı</span><span>📊 Grid</span><span>🔗 API</span></div>
+            <button class="int-card-btn soon-btn" onclick="notifyMe('airtable')">Haber Ver →</button>
+          </div>
+        </div>
+
+        <div class="int-card" data-index="5" onclick="selectIntCard(5)">
+          <div class="int-card-inner">
+            <div class="int-card-glow" style="--glow:#6D00CC"></div>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/7/7e/Make_%28software%29_Logo.svg" class="int-card-logo" alt="Make">
+            <h3 class="int-card-title">Make</h3>
+            <p class="int-card-desc">Görsel otomasyon kur.<br>Sürükle bırak akışlar.</p>
+            <div class="int-card-badge soon">Yakında</div>
+            <div class="int-card-features"><span>🎨 Görsel</span><span>⚙️ Otomasyon</span><span>🔄 Akış</span></div>
+            <button class="int-card-btn soon-btn" onclick="notifyMe('make')">Haber Ver →</button>
+          </div>
+        </div>
+
       </div>
 
-      <div class="lp-int-card">
-        <div class="lp-int-card-icon">⚡</div>
-        <h3>Zapier ile Otomatize Et</h3>
-        <p>Her AI aksiyonu bir webhook tetikleyebilir.
-        Tek satır kod yazmadan 5.000+ uygulamaya bağlanın.</p>
-        <div class="lp-int-demo">
-          <div class="lp-int-demo-step">
-            <span class="step-num">1</span>
-            <span>Zapier webhook URL'nizi yapıştırın</span>
-          </div>
-          <div class="lp-int-demo-step">
-            <span class="step-num">2</span>
-            <span>Tetikleyicinizi seçin</span>
-          </div>
-          <div class="lp-int-demo-step success">
-            <span class="step-num">✓</span>
-            <span>Her AI aksiyonunda Slack bildirildi</span>
-          </div>
-        </div>
+      <button class="int-arrow int-arrow-left" onclick="moveCarousel(-1)">‹</button>
+      <button class="int-arrow int-arrow-right" onclick="moveCarousel(1)">›</button>
+
+      <div class="int-dots">
+        <span class="int-dot active" onclick="selectIntCard(0)"></span>
+        <span class="int-dot" onclick="selectIntCard(1)"></span>
+        <span class="int-dot" onclick="selectIntCard(2)"></span>
+        <span class="int-dot" onclick="selectIntCard(3)"></span>
+        <span class="int-dot" onclick="selectIntCard(4)"></span>
+        <span class="int-dot" onclick="selectIntCard(5)"></span>
       </div>
-
-    </div>
-
-    <div style="text-align:center;margin-top:40px">
-      <a href="integrations.html" class="lp-btn-primary">
-        Entegrasyonları Ücretsiz Dene →
-      </a>
     </div>
 
   </div>
@@ -1040,6 +1037,40 @@ function copyPromoCode(){
     });
   });
 })();
+</script>
+<script>
+/* ── ENTEGRASYON CAROUSEL ── */
+let intActiveIndex = 0;
+function selectIntCard(index) {
+  document.querySelectorAll('.int-card').forEach(function(card, i) {
+    card.classList.toggle('active', i === index);
+  });
+  document.querySelectorAll('.int-dot').forEach(function(dot, i) {
+    dot.classList.toggle('active', i === index);
+  });
+  intActiveIndex = index;
+}
+function moveCarousel(dir) {
+  var cards = document.querySelectorAll('.int-card');
+  var next = intActiveIndex + dir;
+  if (next < 0) next = cards.length - 1;
+  if (next >= cards.length) next = 0;
+  selectIntCard(next);
+}
+function notifyMe(app) {
+  var names = { slack: 'Slack', airtable: 'Airtable', make: 'Make' };
+  var email = prompt((names[app] || app) + ' hazır olduğunda haber verelim. E-posta adresiniz:');
+  if (email && email.indexOf('@') > -1) {
+    alert('✓ Teşekkürler! ' + (names[app] || app) + ' hazır olduğunda ' + email + ' adresine haber vereceğiz.');
+  }
+}
+document.addEventListener('DOMContentLoaded', function() {
+  selectIntCard(0);
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowLeft') moveCarousel(-1);
+    if (e.key === 'ArrowRight') moveCarousel(1);
+  });
+});
 </script>
 </body>
 </html>
