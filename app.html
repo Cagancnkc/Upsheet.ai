@@ -281,6 +281,28 @@ body.dark .lang-switcher { background: rgba(255,255,255,0.06); }
 body.dark .lang-btn { color: #9ca3af; }
 body.dark .lang-btn.active { background: rgba(255,255,255,0.12); color: #fff; box-shadow: 0 1px 4px rgba(0,0,0,0.4); }
 /* export styles now in css/style.css */
+/* ── TEMPLATE PANEL ── */
+#templatePanel { display:flex; flex-direction:column; height:100%; background:white; }
+.tmpl-category { margin-bottom:4px; }
+.tmpl-cat-header { display:flex; align-items:center; justify-content:space-between; padding:7px 8px; border-radius:8px; cursor:pointer; font-size:11px; font-weight:700; color:#374151; text-transform:uppercase; letter-spacing:0.05em; transition:background .12s; user-select:none; }
+.tmpl-cat-header:hover { background:#F3F4F6; }
+.tmpl-cat-left { display:flex; align-items:center; gap:6px; }
+.tmpl-cat-badge { font-size:10px; background:#EEF2FF; color:#6366F1; padding:1px 6px; border-radius:10px; font-weight:700; }
+.tmpl-cat-arrow { font-size:10px; color:#9CA3AF; transition:transform .2s; }
+.tmpl-cat-arrow.open { transform:rotate(90deg); }
+.tmpl-items { overflow:hidden; transition:max-height .25s ease; max-height:0; }
+.tmpl-items.open { max-height:600px; }
+.tmpl-item { display:flex; align-items:flex-start; gap:8px; padding:7px 8px 7px 16px; border-radius:8px; cursor:pointer; transition:background .12s; border-left:2px solid transparent; margin-bottom:1px; }
+.tmpl-item:hover { background:#F5F3FF; border-left-color:#A5B4FC; }
+.tmpl-item.active { background:#EEF2FF; border-left-color:#6366F1; }
+.tmpl-item-icon { font-size:16px; flex-shrink:0; margin-top:1px; }
+.tmpl-item-text { flex:1; min-width:0; }
+.tmpl-item-name { font-size:12px; font-weight:600; color:#111827; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.tmpl-item-desc { font-size:10px; color:#9CA3AF; margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.tmpl-new-badge { font-size:9px; background:#FEF3C7; color:#92400E; padding:1px 5px; border-radius:6px; flex-shrink:0; margin-top:2px; font-weight:700; }
+.sidebar-tabs { display:flex; border-bottom:1px solid #E5E7EB; padding:0 8px; background:white; flex-shrink:0; }
+.sidebar-tab { padding:8px 12px; font-size:12px; font-weight:600; cursor:pointer; border-bottom:2px solid transparent; color:#6B7280; transition:all .15s; white-space:nowrap; }
+.sidebar-tab.active { color:#6366F1; border-bottom-color:#6366F1; }
 </style>
 <!-- Microsoft Clarity -->
 <script type="text/javascript">
@@ -310,6 +332,13 @@ body.dark .lang-btn.active { background: rgba(255,255,255,0.12); color: #fff; bo
     </div>
   </div>
 
+  <!-- Sidebar Sekme Bar -->
+  <div class="sidebar-tabs">
+    <div class="sidebar-tab active" id="tabSheets" onclick="switchSidebarTab('sheets')">📄 Sayfalar</div>
+    <div class="sidebar-tab" id="tabTemplates" onclick="switchSidebarTab('templates')">📋 Şablonlar</div>
+  </div>
+
+  <div id="sheetsPanel">
   <div class="sb-scroll">
     <!-- FILES -->
     <div class="sb-group">
@@ -365,6 +394,28 @@ body.dark .lang-btn.active { background: rgba(255,255,255,0.12); color: #fff; bo
       <div id="vhList"><div id="vhEmpty" style="font-size:12px;color:#4a4a5a;font-style:italic;padding:4px 10px;">Henüz işlem yok</div></div>
     </div>
   </div>
+  </div><!-- #sheetsPanel -->
+
+  <!-- TEMPLATE PANEL -->
+  <div id="templatePanel" style="display:none;flex-direction:column;flex:1;overflow:hidden">
+    <!-- Arama -->
+    <div style="padding:12px 12px 8px">
+      <div style="position:relative">
+        <input id="templateSearch" placeholder="Şablon ara..."
+          oninput="filterTemplates(this.value)"
+          style="width:100%;box-sizing:border-box;padding:8px 12px 8px 32px;border:1.5px solid #E5E7EB;border-radius:10px;font-size:12px;background:#F9FAFB;color:#374151;outline:none;font-family:inherit;transition:border-color .15s"
+          onfocus="this.style.borderColor='#6366F1'" onblur="this.style.borderColor='#E5E7EB'">
+        <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:12px;color:#9CA3AF">🔍</span>
+      </div>
+    </div>
+    <!-- Boş Tablo -->
+    <div style="padding:0 12px 10px">
+      <button onclick="loadTemplate('blank')" style="width:100%;padding:8px;background:linear-gradient(135deg,#6366F1,#8B5CF6);color:white;border:none;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit"
+        onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">+ Boş Tablo Oluştur</button>
+    </div>
+    <!-- Kategori Listesi -->
+    <div id="templateList" style="overflow-y:auto;flex:1;padding:0 8px 16px"></div>
+  </div><!-- #templatePanel -->
 
   <div class="sb-footer">
     <div id="settingsMenu" class="settings-menu" style="display:none">

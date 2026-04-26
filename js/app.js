@@ -4863,3 +4863,552 @@ function exportToSlack() {
 }
 
 /* cache bust Sat Mar 14 19:03:28 TSS 2026 */
+
+// ════════════════════════════════════════════════════════
+// TEMPLATE SİSTEMİ
+// ════════════════════════════════════════════════════════
+
+const TEMPLATES = {
+  "💰 Muhasebe & Finans": [
+    {
+      id: "kdv_takip",
+      icon: "🧾",
+      name: "KDV Takip Tablosu",
+      desc: "Aylık KDV beyannamesi için",
+      isNew: true,
+      data: [
+        ["Fatura No", "Tarih", "Müşteri/Tedarikçi", "Matrah (₺)", "KDV Oranı (%)", "KDV Tutarı (₺)", "Toplam (₺)", "Tür"],
+        ["FAT-001", "01.01.2026", "ABC Ltd.", "10000", "20", "2000", "12000", "Satış"],
+        ["FAT-002", "05.01.2026", "XYZ A.Ş.", "5000", "20", "1000", "6000", "Satış"],
+        ["FAT-003", "10.01.2026", "Tedarikçi A", "8000", "20", "1600", "9600", "Alış"],
+        ["", "", "", "", "", "", "", ""],
+        ["", "", "TOPLAM", "=TOPLA(D2:D4)", "", "=TOPLA(F2:F4)", "=TOPLA(G2:G4)", ""],
+      ]
+    },
+    {
+      id: "gelir_gider",
+      icon: "📊",
+      name: "Gelir Gider Tablosu",
+      desc: "Aylık kar/zarar takibi",
+      data: [
+        ["Kategori", "Açıklama", "Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Toplam"],
+        ["GELİR", "Ürün Satışları", "45000", "52000", "48000", "61000", "55000", "67000", ""],
+        ["GELİR", "Hizmet Gelirleri", "12000", "14000", "11000", "15000", "16000", "18000", ""],
+        ["GELİR", "Diğer Gelirler", "2000", "1500", "3000", "2500", "1800", "2200", ""],
+        ["GİDER", "Personel Giderleri", "25000", "25000", "26000", "26000", "27000", "27000", ""],
+        ["GİDER", "Kira", "8000", "8000", "8000", "8000", "8000", "8000", ""],
+        ["GİDER", "Elektrik/Su/Isınma", "1200", "1300", "1100", "900", "800", "950", ""],
+        ["GİDER", "Pazarlama", "3500", "4000", "3800", "5000", "4200", "5500", ""],
+        ["GİDER", "Diğer Giderler", "2300", "2100", "2500", "2800", "2400", "2600", ""],
+        ["", "NET KAR/ZARAR", "", "", "", "", "", "", ""],
+      ]
+    },
+    {
+      id: "nakit_akis",
+      icon: "💵",
+      name: "Nakit Akış Tablosu",
+      desc: "Haftalık nakit akışı takibi",
+      data: [
+        ["Tarih", "Açıklama", "Giriş (₺)", "Çıkış (₺)", "Bakiye (₺)", "Kategori", "Not"],
+        ["01.01.2026", "Açılış Bakiyesi", "50000", "", "50000", "Açılış", ""],
+        ["02.01.2026", "Müşteri Tahsilatı", "15000", "", "", "Tahsilat", "ABC Ltd."],
+        ["03.01.2026", "Kira Ödemesi", "", "8000", "", "Gider", "Ocak kirası"],
+        ["05.01.2026", "Tedarikçi Ödemesi", "", "12000", "", "Ödeme", "XYZ A.Ş."],
+        ["08.01.2026", "Satış Geliri", "22000", "", "", "Gelir", ""],
+        ["10.01.2026", "SGK Ödemesi", "", "5500", "", "Yasal", "Aralık SGK"],
+        ["", "", "", "", "", "", ""],
+      ]
+    },
+    {
+      id: "cari_hesap",
+      icon: "🏦",
+      name: "Cari Hesap Takibi",
+      desc: "Müşteri/tedarikçi borç alacak",
+      data: [
+        ["Firma Adı", "Tarih", "Belge No", "Borç (₺)", "Alacak (₺)", "Bakiye (₺)", "Vade", "Durum"],
+        ["ABC Ltd.", "05.01.2026", "FAT-001", "", "12000", "", "05.02.2026", "Açık"],
+        ["XYZ A.Ş.", "10.01.2026", "FAT-002", "8000", "", "", "10.02.2026", "Vadeli"],
+        ["DEF Koll.", "15.01.2026", "FAT-003", "", "5500", "", "15.03.2026", "Açık"],
+        ["GHI Ltd.", "20.01.2026", "FAT-004", "3000", "", "", "Ödenmiş", "Kapalı"],
+        ["", "", "", "", "", "", "", ""],
+        ["", "", "TOPLAM", "", "", "", "", ""],
+      ]
+    },
+    {
+      id: "banka_mutabakat",
+      icon: "🏧",
+      name: "Banka Mutabakat",
+      desc: "Banka hesap mutabakatı",
+      data: [
+        ["Tarih", "Açıklama", "Banka Hareketi (₺)", "Muhasebe Kaydı (₺)", "Fark (₺)", "Açıklama"],
+        ["01.01.2026", "Açılış", "125000", "125000", "0", "Eşleşti"],
+        ["05.01.2026", "Havale Girişi", "15000", "15000", "0", "Eşleşti"],
+        ["08.01.2026", "EFT Çıkışı", "-8000", "-8000", "0", "Eşleşti"],
+        ["12.01.2026", "Faiz Geliri", "250", "", "", "Kayıt Eksik"],
+        ["15.01.2026", "Çek Tahsilatı", "22000", "22000", "0", "Eşleşti"],
+        ["", "", "", "", "", ""],
+      ]
+    },
+  ],
+
+  "👥 Bordro & İK": [
+    {
+      id: "maas_bordro",
+      icon: "💼",
+      name: "Maaş Bordro Tablosu",
+      desc: "2026 parametreli bordro",
+      isNew: true,
+      data: [
+        ["Ad Soyad", "Pozisyon", "Brüt Maaş (₺)", "SGK İşçi (%15)", "İşsizlik (%1)", "GV Matrahı", "Gelir Vergisi", "Damga Vergisi", "Net Maaş (₺)"],
+        ["Ahmet Yılmaz", "Müdür", "45000", "6750", "450", "37800", "5670", "426.6", ""],
+        ["Ayşe Kaya", "Uzman", "28000", "4200", "280", "23520", "3528", "265.7", ""],
+        ["Mehmet Demir", "Asistan", "20000", "3000", "200", "16800", "2520", "189.8", ""],
+        ["Fatma Şahin", "Muhasebe", "22000", "3300", "220", "18480", "2772", "208.8", ""],
+        ["Ali Çelik", "Satış", "18000", "2700", "180", "15120", "2268", "170.9", ""],
+        ["", "", "", "", "", "", "", "", ""],
+        ["TOPLAM", "", "", "", "", "", "", "", ""],
+      ]
+    },
+    {
+      id: "izin_takip",
+      icon: "🏖️",
+      name: "İzin Takip Tablosu",
+      desc: "Yıllık izin hakkı ve kullanım",
+      data: [
+        ["Ad Soyad", "Kıdem (Yıl)", "İzin Hakkı (Gün)", "Kullanılan", "Kalan", "Planlanan Tarih", "Onay Durumu"],
+        ["Ahmet Yılmaz", "8", "20", "5", "15", "15.07.2026", "Onaylandı"],
+        ["Ayşe Kaya", "3", "14", "0", "14", "10.08.2026", "Bekliyor"],
+        ["Mehmet Demir", "1", "14", "3", "11", "", ""],
+        ["Fatma Şahin", "5", "14", "7", "7", "01.09.2026", "Onaylandı"],
+        ["Ali Çelik", "12", "20", "10", "10", "", ""],
+        ["", "", "", "", "", "", ""],
+      ]
+    },
+    {
+      id: "kidem_ihbar",
+      icon: "📋",
+      name: "Kıdem & İhbar Hesaplama",
+      desc: "İşten çıkış tazminat tablosu",
+      data: [
+        ["Ad Soyad", "İşe Giriş", "İşten Çıkış", "Kıdem (Yıl)", "Günlük Ücret (₺)", "Kıdem Tazminatı (₺)", "İhbar Süresi (Gün)", "İhbar Tazminatı (₺)"],
+        ["Ahmet Yılmaz", "15.03.2018", "15.03.2026", "8", "1500", "", "56", ""],
+        ["Ayşe Kaya", "01.06.2021", "01.06.2026", "5", "933", "", "42", ""],
+        ["Mehmet Demir", "10.01.2019", "10.01.2026", "7", "666", "", "56", ""],
+        ["", "", "", "", "", "", "", ""],
+      ]
+    },
+    {
+      id: "personel_liste",
+      icon: "👤",
+      name: "Personel Listesi",
+      desc: "Çalışan bilgileri ve iletişim",
+      data: [
+        ["Sicil No", "Ad Soyad", "TC Kimlik", "Pozisyon", "Departman", "İşe Giriş", "Telefon", "E-posta", "SGK Statüsü"],
+        ["001", "Ahmet Yılmaz", "", "Müdür", "Yönetim", "15.03.2018", "0532 xxx xxxx", "ahmet@firma.com", "Aktif"],
+        ["002", "Ayşe Kaya", "", "Uzman", "Muhasebe", "01.06.2021", "0541 xxx xxxx", "ayse@firma.com", "Aktif"],
+        ["003", "Mehmet Demir", "", "Asistan", "Satış", "10.01.2019", "0551 xxx xxxx", "mehmet@firma.com", "Aktif"],
+        ["", "", "", "", "", "", "", "", ""],
+      ]
+    },
+    {
+      id: "fazla_mesai",
+      icon: "⏰",
+      name: "Fazla Mesai Takibi",
+      desc: "Aylık fazla mesai hesaplama",
+      data: [
+        ["Ad Soyad", "Normal Saat", "Fazla Mesai (Saat)", "FM Oranı", "Saatlik Ücret (₺)", "FM Ücreti (₺)", "Hafta Tatili (Saat)", "HT Ücreti (₺)", "Toplam (₺)"],
+        ["Ahmet Yılmaz", "160", "12", "1.5", "281.25", "", "8", "", ""],
+        ["Ayşe Kaya", "160", "6", "1.5", "175.00", "", "0", "", ""],
+        ["Mehmet Demir", "160", "20", "1.5", "125.00", "", "16", "", ""],
+        ["", "", "", "", "", "", "", "", ""],
+        ["TOPLAM", "", "", "", "", "", "", "", ""],
+      ]
+    },
+  ],
+
+  "📦 Satış & Stok": [
+    {
+      id: "satis_takip",
+      icon: "📈",
+      name: "Satış Takip Tablosu",
+      desc: "Günlük/aylık satış raporu",
+      data: [
+        ["Sipariş No", "Tarih", "Müşteri", "Ürün", "Miktar", "Birim Fiyat (₺)", "İndirim (%)", "KDV (%)", "Toplam (₺)", "Durum"],
+        ["SP-001", "05.01.2026", "ABC Ltd.", "Laptop", "3", "35000", "5", "20", "", "Teslim Edildi"],
+        ["SP-002", "08.01.2026", "XYZ A.Ş.", "Mouse", "50", "450", "0", "20", "", "Hazırlanıyor"],
+        ["SP-003", "12.01.2026", "DEF Koll.", "Monitör", "10", "8500", "10", "20", "", "Kargoda"],
+        ["SP-004", "15.01.2026", "GHI Ltd.", "Klavye", "25", "780", "0", "20", "", "Bekliyor"],
+        ["", "", "", "", "", "", "", "", "", ""],
+        ["TOPLAM", "", "", "", "", "", "", "", "", ""],
+      ]
+    },
+    {
+      id: "stok_kart",
+      icon: "📦",
+      name: "Stok Kartı",
+      desc: "Ürün giriş/çıkış takibi",
+      isNew: true,
+      data: [
+        ["Ürün Kodu", "Ürün Adı", "Kategori", "Birim", "Açılış Stok", "Giriş", "Çıkış", "Mevcut Stok", "Min. Stok", "Birim Maliyet (₺)", "Stok Değeri (₺)", "Durum"],
+        ["PRD-001", "Laptop Dell", "Elektronik", "Adet", "10", "5", "8", "", "3", "35000", "", ""],
+        ["PRD-002", "Mouse Logitech", "Çevre Birimleri", "Adet", "50", "30", "45", "", "10", "450", "", ""],
+        ["PRD-003", "Monitör Samsung", "Elektronik", "Adet", "15", "0", "12", "", "5", "8500", "", ""],
+        ["PRD-004", "USB Hub", "Aksesuar", "Adet", "100", "50", "80", "", "20", "120", "", ""],
+        ["PRD-005", "Kulaklık", "Elektronik", "Adet", "25", "10", "28", "", "5", "890", "", ""],
+        ["", "", "", "", "", "", "", "", "", "", "", ""],
+      ]
+    },
+    {
+      id: "fiyat_listesi",
+      icon: "🏷️",
+      name: "Fiyat Listesi",
+      desc: "Ürün fiyat ve maliyet tablosu",
+      data: [
+        ["Ürün Kodu", "Ürün Adı", "Kategori", "Maliyet (₺)", "Kar Marjı (%)", "KDV Hariç (₺)", "KDV (%)", "Satış Fiyatı (₺)", "İndirimli Fiyat (₺)", "İndirim (%)"],
+        ["PRD-001", "Laptop Dell", "Elektronik", "28000", "25", "", "20", "", "", "10"],
+        ["PRD-002", "Mouse Logitech", "Çevre Birimleri", "320", "40", "", "20", "", "", "0"],
+        ["PRD-003", "Monitör Samsung", "Elektronik", "6500", "30", "", "20", "", "", "5"],
+        ["PRD-004", "USB Hub", "Aksesuar", "75", "60", "", "20", "", "", "0"],
+        ["", "", "", "", "", "", "", "", "", ""],
+      ]
+    },
+    {
+      id: "satis_hedef",
+      icon: "🎯",
+      name: "Satış Hedef Takibi",
+      desc: "Satış temsilcisi performansı",
+      data: [
+        ["Satış Temsilcisi", "Bölge", "Ocak Hedef", "Ocak Gerçek", "Ocak %", "Şubat Hedef", "Şubat Gerçek", "Şubat %", "Mart Hedef", "Mart Gerçek", "Mart %", "Q1 Toplam"],
+        ["Ali Çelik", "İstanbul", "150000", "162000", "", "160000", "145000", "", "170000", "178000", "", ""],
+        ["Fatma Şahin", "Ankara", "120000", "118000", "", "125000", "132000", "", "130000", "127000", "", ""],
+        ["Hasan Kurt", "İzmir", "100000", "95000", "", "105000", "110000", "", "110000", "108000", "", ""],
+        ["Zeynep Ar", "Bursa", "80000", "88000", "", "85000", "79000", "", "90000", "92000", "", ""],
+        ["", "", "", "", "", "", "", "", "", "", "", ""],
+        ["TOPLAM", "", "", "", "", "", "", "", "", "", "", ""],
+      ]
+    },
+    {
+      id: "tedarikci",
+      icon: "🚚",
+      name: "Tedarikçi Takibi",
+      desc: "Tedarikçi sipariş ve ödeme",
+      data: [
+        ["Tedarikçi", "Ürün", "Sipariş Tarihi", "Teslim Tarihi", "Miktar", "Birim Fiyat (₺)", "Toplam (₺)", "Ödeme Vadesi", "Ödeme Durumu", "Not"],
+        ["Tedarikçi A", "Laptop", "01.01.2026", "15.01.2026", "10", "28000", "280000", "30 Gün", "Ödendi", ""],
+        ["Tedarikçi B", "Mouse", "05.01.2026", "12.01.2026", "100", "320", "32000", "15 Gün", "Bekliyor", ""],
+        ["Tedarikçi C", "Monitör", "10.01.2026", "25.01.2026", "15", "6500", "97500", "45 Gün", "Kısmi", ""],
+        ["", "", "", "", "", "", "", "", "", ""],
+      ]
+    },
+  ],
+
+  "📋 Proje Yönetimi": [
+    {
+      id: "proje_takvim",
+      icon: "📅",
+      name: "Proje Takvimi",
+      desc: "Görev ve milestone takibi",
+      isNew: true,
+      data: [
+        ["Görev No", "Görev Adı", "Proje", "Sorumlu", "Başlangıç", "Bitiş", "Süre (Gün)", "Tamamlanma (%)", "Öncelik", "Durum", "Not"],
+        ["G-001", "Gereksinim Analizi", "Proje A", "Ahmet Y.", "01.01.2026", "07.01.2026", "7", "100", "Yüksek", "Tamamlandı", ""],
+        ["G-002", "Tasarım", "Proje A", "Ayşe K.", "08.01.2026", "20.01.2026", "13", "75", "Yüksek", "Devam Ediyor", ""],
+        ["G-003", "Geliştirme", "Proje A", "Mehmet D.", "21.01.2026", "15.02.2026", "26", "20", "Yüksek", "Bekliyor", ""],
+        ["G-004", "Test", "Proje A", "Fatma Ş.", "16.02.2026", "28.02.2026", "13", "0", "Orta", "Bekliyor", ""],
+        ["G-005", "Yayına Alma", "Proje A", "Ali Ç.", "01.03.2026", "05.03.2026", "5", "0", "Yüksek", "Bekliyor", ""],
+        ["", "", "", "", "", "", "", "", "", "", ""],
+      ]
+    },
+    {
+      id: "butce_takip",
+      icon: "💰",
+      name: "Proje Bütçe Takibi",
+      desc: "Bütçe vs gerçekleşen gider",
+      data: [
+        ["Kategori", "Bütçe (₺)", "Ocak Harcama", "Şubat Harcama", "Mart Harcama", "Toplam Harcama", "Kalan Bütçe", "Kullanım (%)"],
+        ["Personel", "500000", "45000", "46000", "47000", "", "", ""],
+        ["Yazılım Lisansları", "50000", "15000", "0", "5000", "", "", ""],
+        ["Donanım", "80000", "35000", "20000", "0", "", "", ""],
+        ["Danışmanlık", "120000", "30000", "30000", "30000", "", "", ""],
+        ["Pazarlama", "75000", "10000", "15000", "12000", "", "", ""],
+        ["Diğer", "30000", "2000", "3000", "1500", "", "", ""],
+        ["TOPLAM", "", "", "", "", "", "", ""],
+      ]
+    },
+    {
+      id: "risk_matrisi",
+      icon: "⚠️",
+      name: "Risk Matrisi",
+      desc: "Proje risk değerlendirmesi",
+      data: [
+        ["Risk No", "Risk Tanımı", "Kategori", "Olasılık (1-5)", "Etki (1-5)", "Risk Skoru", "Seviye", "Sorumlu", "Aksiyon", "Durum"],
+        ["R-001", "Geç teslim", "Zaman", "3", "4", "", "", "Ahmet Y.", "Takvim sıkıştırması", "Açık"],
+        ["R-002", "Bütçe aşımı", "Maliyet", "2", "5", "", "", "Ayşe K.", "Haftalık takip", "İzleniyor"],
+        ["R-003", "Kaynak yetersizliği", "İnsan", "3", "3", "", "", "Fatma Ş.", "Yedek kaynak", "Açık"],
+        ["R-004", "Teknik sorun", "Teknik", "2", "4", "", "", "Mehmet D.", "Test süreci", "Kapalı"],
+        ["", "", "", "", "", "", "", "", "", ""],
+      ]
+    },
+    {
+      id: "toplanti_tutanak",
+      icon: "📝",
+      name: "Toplantı Tutanağı",
+      desc: "Aksiyon maddeleri takibi",
+      data: [
+        ["Toplantı Tarihi", "Konu", "Katılımcılar", "Aksiyon Maddesi", "Sorumlu", "Termin", "Durum", "Not"],
+        ["15.01.2026", "Sprint Planlaması", "Ahmet, Ayşe, Mehmet", "API entegrasyonu tamamla", "Mehmet D.", "22.01.2026", "Devam Ediyor", ""],
+        ["15.01.2026", "Sprint Planlaması", "Ahmet, Ayşe, Mehmet", "UI tasarımları hazırla", "Ayşe K.", "20.01.2026", "Tamamlandı", ""],
+        ["15.01.2026", "Sprint Planlaması", "Ahmet, Ayşe, Mehmet", "Test senaryoları yaz", "Fatma Ş.", "25.01.2026", "Bekliyor", ""],
+        ["", "", "", "", "", "", "", ""],
+      ]
+    },
+  ],
+
+  "📊 Veri Analizi": [
+    {
+      id: "satis_analiz",
+      icon: "📉",
+      name: "Satış Trend Analizi",
+      desc: "Aylık satış karşılaştırması",
+      data: [
+        ["Ay", "2024 Satış (₺)", "2025 Satış (₺)", "2026 Satış (₺)", "2024-25 Değişim (%)", "2025-26 Değişim (%)", "En Yüksek Yıl"],
+        ["Ocak", "125000", "148000", "175000", "", "", ""],
+        ["Şubat", "118000", "135000", "162000", "", "", ""],
+        ["Mart", "142000", "168000", "195000", "", "", ""],
+        ["Nisan", "155000", "172000", "210000", "", "", ""],
+        ["Mayıs", "168000", "185000", "225000", "", "", ""],
+        ["Haziran", "175000", "198000", "240000", "", "", ""],
+        ["", "", "", "", "", "", ""],
+        ["TOPLAM", "", "", "", "", "", ""],
+      ]
+    },
+    {
+      id: "musteri_analiz",
+      icon: "👥",
+      name: "Müşteri RFM Analizi",
+      desc: "Recency/Frequency/Monetary",
+      isNew: true,
+      data: [
+        ["Müşteri ID", "Müşteri Adı", "Son Alışveriş", "Alışveriş Sayısı", "Toplam Harcama (₺)", "R Skoru", "F Skoru", "M Skoru", "RFM Skoru", "Segment"],
+        ["M001", "ABC Ltd.", "15.01.2026", "24", "285000", "", "", "", "", ""],
+        ["M002", "XYZ A.Ş.", "08.01.2026", "18", "192000", "", "", "", "", ""],
+        ["M003", "DEF Koll.", "20.12.2025", "8", "75000", "", "", "", "", ""],
+        ["M004", "GHI Ltd.", "05.11.2025", "3", "28000", "", "", "", "", ""],
+        ["M005", "JKL A.Ş.", "01.10.2025", "1", "8500", "", "", "", "", ""],
+        ["", "", "", "", "", "", "", "", "", ""],
+      ]
+    },
+    {
+      id: "kpi_dashboard",
+      icon: "🎯",
+      name: "KPI Dashboard",
+      desc: "Temel performans göstergeleri",
+      data: [
+        ["KPI Adı", "Hedef", "Gerçekleşen", "Tamamlanma (%)", "Durum", "Trend", "Önceki Dönem", "Değişim (%)"],
+        ["Aylık Gelir (₺)", "500000", "487000", "", "", "▼", "520000", ""],
+        ["Yeni Müşteri", "50", "63", "", "", "▲", "45", ""],
+        ["Müşteri Memnuniyeti", "90", "87", "", "", "▼", "88", ""],
+        ["Ortalama Sipariş (₺)", "8500", "9200", "", "", "▲", "7800", ""],
+        ["Müşteri Kayıp Oranı (%)", "5", "3.2", "", "", "▲", "4.1", ""],
+        ["Net Kar Marjı (%)", "25", "22.5", "", "", "▼", "24", ""],
+        ["", "", "", "", "", "", "", ""],
+      ]
+    },
+    {
+      id: "anket_analiz",
+      icon: "📋",
+      name: "Anket Sonuç Analizi",
+      desc: "Müşteri/çalışan anket verileri",
+      data: [
+        ["Soru", "Çok İyi (5)", "İyi (4)", "Orta (3)", "Kötü (2)", "Çok Kötü (1)", "Toplam", "Ortalama", "NPS"],
+        ["Ürün kalitesi", "45", "32", "15", "5", "3", "", "", ""],
+        ["Hizmet hızı", "38", "28", "22", "8", "4", "", "", ""],
+        ["Fiyat/Performans", "28", "35", "25", "10", "2", "", "", ""],
+        ["Müşteri desteği", "52", "24", "14", "6", "4", "", "", ""],
+        ["Teslimat süreci", "40", "30", "18", "8", "4", "", "", ""],
+        ["", "", "", "", "", "", "", "", ""],
+      ]
+    },
+  ],
+
+  "🏢 Genel İşletme": [
+    {
+      id: "toplanti_takvim",
+      icon: "📅",
+      name: "Toplantı Takvimi",
+      desc: "Haftalık toplantı programı",
+      data: [
+        ["Tarih", "Saat", "Toplantı Adı", "Organizatör", "Katılımcılar", "Yer/Platform", "Süre (Dk)", "Gündem", "Durum"],
+        ["Pazartesi 19.01", "09:00", "Haftalık Ekip Toplantısı", "Ahmet Y.", "Tüm Ekip", "Zoom", "60", "Haftalık durum", "Planlandı"],
+        ["Salı 20.01", "14:00", "Müşteri Görüşmesi", "Fatma Ş.", "Satış Ekibi, ABC Ltd.", "Ofis", "90", "Yeni teklif", "Planlandı"],
+        ["Çarşamba 21.01", "10:00", "Sprint Review", "Mehmet D.", "Teknik Ekip", "Teams", "60", "Sprint değerlendirme", "Planlandı"],
+        ["Perşembe 22.01", "15:00", "Bütçe Değerlendirme", "Ayşe K.", "Yönetim", "Toplantı Odası", "120", "Q1 bütçe", "Planlandı"],
+        ["", "", "", "", "", "", "", "", ""],
+      ]
+    },
+    {
+      id: "gider_takip",
+      icon: "💳",
+      name: "Gider Takip Formu",
+      desc: "Departman bazlı gider takibi",
+      data: [
+        ["Tarih", "Çalışan", "Departman", "Gider Türü", "Açıklama", "Tutar (₺)", "KDV", "Toplam (₺)", "Belge No", "Onay Durumu"],
+        ["05.01.2026", "Ahmet Yılmaz", "Satış", "Ulaşım", "Müşteri ziyareti", "250", "20", "300", "GID-001", "Onaylandı"],
+        ["08.01.2026", "Ayşe Kaya", "Muhasebe", "Kırtasiye", "Ofis malzemeleri", "180", "20", "216", "GID-002", "Onaylandı"],
+        ["10.01.2026", "Mehmet Demir", "Teknik", "Yazılım", "Lisans yenileme", "1500", "20", "1800", "GID-003", "Bekliyor"],
+        ["", "", "", "", "", "", "", "", "", ""],
+        ["TOPLAM", "", "", "", "", "", "", "", "", ""],
+      ]
+    },
+    {
+      id: "iletisim_listesi",
+      icon: "📞",
+      name: "İletişim Listesi",
+      desc: "Firma ve kişi rehberi",
+      data: [
+        ["Ad Soyad / Firma", "Unvan", "Telefon", "E-posta", "Şehir", "Kategori", "Son İletişim", "Not"],
+        ["ABC Ltd. — Mehmet Bey", "Satın Alma Müdürü", "0212 xxx xxxx", "mehmet@abc.com", "İstanbul", "Müşteri", "15.01.2026", "VIP"],
+        ["XYZ A.Ş. — Ayşe Hanım", "Genel Müdür", "0312 xxx xxxx", "ayse@xyz.com", "Ankara", "Müşteri", "08.01.2026", ""],
+        ["Tedarikçi A", "Satış Temsilcisi", "0232 xxx xxxx", "satis@tedarikci.com", "İzmir", "Tedarikçi", "12.01.2026", ""],
+        ["", "", "", "", "", "", "", ""],
+      ]
+    },
+  ],
+};
+
+function renderTemplatePanel() {
+  const list = document.getElementById('templateList');
+  if (!list) return;
+
+  let html = '';
+  Object.entries(TEMPLATES).forEach(([catName, items]) => {
+    const catId = catName.replace(/\s+/g, '_').replace(/[^\w]/g, '');
+    html += `
+      <div class="tmpl-category" id="cat_${catId}">
+        <div class="tmpl-cat-header" onclick="toggleCategory('${catId}')">
+          <div class="tmpl-cat-left">
+            <span>${catName}</span>
+            <span class="tmpl-cat-badge">${items.length}</span>
+          </div>
+          <span class="tmpl-cat-arrow open" id="arrow_${catId}">›</span>
+        </div>
+        <div class="tmpl-items open" id="items_${catId}">
+    `;
+    items.forEach(item => {
+      html += `
+        <div class="tmpl-item" id="tmpl_${item.id}"
+             onclick="loadTemplate('${item.id}')"
+             title="${item.desc}">
+          <span class="tmpl-item-icon">${item.icon}</span>
+          <div class="tmpl-item-text">
+            <div class="tmpl-item-name">${item.name}</div>
+            <div class="tmpl-item-desc">${item.desc}</div>
+          </div>
+          ${item.isNew ? '<span class="tmpl-new-badge">YENİ</span>' : ''}
+        </div>
+      `;
+    });
+    html += `</div></div>`;
+  });
+
+  list.innerHTML = html;
+}
+
+function toggleCategory(catId) {
+  const items = document.getElementById('items_' + catId);
+  const arrow = document.getElementById('arrow_' + catId);
+  if (!items) return;
+  const isOpen = items.classList.contains('open');
+  items.classList.toggle('open', !isOpen);
+  if (arrow) arrow.classList.toggle('open', !isOpen);
+}
+
+function loadTemplate(id) {
+  if (id === 'blank') {
+    const blankData = [];
+    for (let r = 0; r < 20; r++) blankData.push(new Array(10).fill(''));
+    const sheetName = 'Yeni Tablo';
+    sheets[sheetName] = blankData;
+    activeSheet = sheetName;
+    buildGrid(blankData);
+    if (typeof addMessage === 'function') addMessage('✓ Boş tablo oluşturuldu. Düzenlemeye başlayabilirsiniz.', 'ai');
+    if (typeof showToast === 'function') showToast('✓ Boş tablo oluşturuldu', 'success');
+    return;
+  }
+
+  let found = null;
+  Object.values(TEMPLATES).forEach(items => {
+    const item = items.find(t => t.id === id);
+    if (item) found = item;
+  });
+  if (!found) return;
+
+  document.querySelectorAll('.tmpl-item').forEach(el => el.classList.remove('active'));
+  const activeEl = document.getElementById('tmpl_' + id);
+  if (activeEl) activeEl.classList.add('active');
+
+  const sheetName = found.name;
+  sheets[sheetName] = found.data.map(row => [...row]);
+  activeSheet = sheetName;
+  buildGrid(sheets[sheetName]);
+
+  if (typeof showToast === 'function') showToast(`✓ "${found.name}" şablonu yüklendi`, 'success');
+  if (typeof addMessage === 'function') addMessage(
+    `📋 **${found.name}** şablonu yüklendi.\n\n${found.desc}\n\nAI komutlarıyla düzenleyebilirsiniz. Örn: "KDV hesapla", "Topla", "Sırala"`,
+    'ai'
+  );
+}
+
+function filterTemplates(query) {
+  const q = query.toLowerCase().trim();
+  if (!q) {
+    document.querySelectorAll('.tmpl-item').forEach(el => el.style.display = '');
+    document.querySelectorAll('.tmpl-category').forEach(el => el.style.display = '');
+    return;
+  }
+  Object.entries(TEMPLATES).forEach(([catName, items]) => {
+    const catId = catName.replace(/\s+/g, '_').replace(/[^\w]/g, '');
+    let catHasMatch = false;
+    items.forEach(item => {
+      const el = document.getElementById('tmpl_' + item.id);
+      if (!el) return;
+      const matches = item.name.toLowerCase().includes(q) ||
+                      item.desc.toLowerCase().includes(q) ||
+                      catName.toLowerCase().includes(q);
+      el.style.display = matches ? '' : 'none';
+      if (matches) catHasMatch = true;
+    });
+    const catEl = document.getElementById('cat_' + catId);
+    if (catEl) catEl.style.display = catHasMatch ? '' : 'none';
+    if (catHasMatch) {
+      const itemsEl = document.getElementById('items_' + catId);
+      const arrowEl = document.getElementById('arrow_' + catId);
+      if (itemsEl) itemsEl.classList.add('open');
+      if (arrowEl) arrowEl.classList.add('open');
+    }
+  });
+}
+
+function switchSidebarTab(tab) {
+  const sheetsPanel = document.getElementById('sheetsPanel');
+  const templatePanel = document.getElementById('templatePanel');
+  const tabSheets = document.getElementById('tabSheets');
+  const tabTemplates = document.getElementById('tabTemplates');
+
+  if (tab === 'templates') {
+    if (sheetsPanel) sheetsPanel.style.display = 'none';
+    if (templatePanel) { templatePanel.style.display = 'flex'; }
+    if (tabSheets) tabSheets.classList.remove('active');
+    if (tabTemplates) tabTemplates.classList.add('active');
+    renderTemplatePanel();
+  } else {
+    if (sheetsPanel) sheetsPanel.style.display = '';
+    if (templatePanel) templatePanel.style.display = 'none';
+    if (tabSheets) tabSheets.classList.add('active');
+    if (tabTemplates) tabTemplates.classList.remove('active');
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  renderTemplatePanel();
+});
