@@ -1142,6 +1142,8 @@ function toggleTheme() {
     localStorage.setItem('theme', 'dark');
   }
   updateThemeIcon();
+  const list = document.getElementById('templateList');
+  if (list) { list.dataset.rendered = ''; renderTemplatePanel(); }
 }
 
 function updateThemeIcon() {
@@ -5278,27 +5280,30 @@ const TEMPLATES = {
 
 function renderTemplatePanel() {
   const list = document.getElementById('templateList');
-  if (!list) return;
+  if (!list || list.dataset.rendered) return;
+  list.dataset.rendered = '1';
 
   let html = '';
-  Object.entries(TEMPLATES).forEach(([catName, items]) => {
-    const catId = catName.replace(/\s+/g, '_').replace(/[^\w]/g, '');
+  const entries = Object.entries(TEMPLATES);
+  entries.forEach(([catName, items], catIndex) => {
+    const catId = 'cat_' + catIndex;
+    const isFirst = catIndex === 0;
     html += `
-      <div class="tmpl-category" id="cat_${catId}">
+      <div class="tmpl-category" id="${catId}">
         <div class="tmpl-cat-header" onclick="toggleCategory('${catId}')">
           <div class="tmpl-cat-left">
             <span>${catName}</span>
             <span class="tmpl-cat-badge">${items.length}</span>
           </div>
-          <span class="tmpl-cat-arrow open" id="arrow_${catId}">›</span>
+          <span class="tmpl-cat-arrow ${isFirst ? 'open' : ''}" id="arrow_${catId}">›</span>
         </div>
-        <div class="tmpl-items open" id="items_${catId}">
+        <div class="tmpl-items ${isFirst ? 'open' : ''}" id="items_${catId}">
     `;
     items.forEach(item => {
       html += `
         <div class="tmpl-item" id="tmpl_${item.id}"
              onclick="loadTemplate('${item.id}')"
-             title="${item.desc}">
+             title="${item.name} — ${item.desc}">
           <span class="tmpl-item-icon">${item.icon}</span>
           <div class="tmpl-item-text">
             <div class="tmpl-item-name">${item.name}</div>
@@ -5309,6 +5314,7 @@ function renderTemplatePanel() {
       `;
     });
     html += `</div></div>`;
+    if (catIndex < entries.length - 1) html += `<div class="tmpl-cat-divider"></div>`;
   });
 
   list.innerHTML = html;
@@ -5364,10 +5370,11 @@ function filterTemplates(query) {
   if (!q) {
     document.querySelectorAll('.tmpl-item').forEach(el => el.style.display = '');
     document.querySelectorAll('.tmpl-category').forEach(el => el.style.display = '');
+    document.querySelectorAll('.tmpl-cat-divider').forEach(el => el.style.display = '');
     return;
   }
-  Object.entries(TEMPLATES).forEach(([catName, items]) => {
-    const catId = catName.replace(/\s+/g, '_').replace(/[^\w]/g, '');
+  Object.entries(TEMPLATES).forEach(([catName, items], catIndex) => {
+    const catId = 'cat_' + catIndex;
     let catHasMatch = false;
     items.forEach(item => {
       const el = document.getElementById('tmpl_' + item.id);
@@ -5378,7 +5385,7 @@ function filterTemplates(query) {
       el.style.display = matches ? '' : 'none';
       if (matches) catHasMatch = true;
     });
-    const catEl = document.getElementById('cat_' + catId);
+    const catEl = document.getElementById(catId);
     if (catEl) catEl.style.display = catHasMatch ? '' : 'none';
     if (catHasMatch) {
       const itemsEl = document.getElementById('items_' + catId);
@@ -5387,6 +5394,7 @@ function filterTemplates(query) {
       if (arrowEl) arrowEl.classList.add('open');
     }
   });
+  document.querySelectorAll('.tmpl-cat-divider').forEach(el => el.style.display = q ? 'none' : '');
 }
 
 function switchSidebarTab(tab) {
@@ -5397,13 +5405,13 @@ function switchSidebarTab(tab) {
 
   if (tab === 'templates') {
     if (sheetsPanel) sheetsPanel.style.display = 'none';
-    if (templatePanel) { templatePanel.style.display = 'flex'; }
+    if (templatePanel) templatePanel.classList.add('visible');
     if (tabSheets) tabSheets.classList.remove('active');
     if (tabTemplates) tabTemplates.classList.add('active');
     renderTemplatePanel();
   } else {
     if (sheetsPanel) sheetsPanel.style.display = '';
-    if (templatePanel) templatePanel.style.display = 'none';
+    if (templatePanel) templatePanel.classList.remove('visible');
     if (tabSheets) tabSheets.classList.add('active');
     if (tabTemplates) tabTemplates.classList.remove('active');
   }
