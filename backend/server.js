@@ -228,6 +228,65 @@ app.post('/api/test-chat', async (req, res) => {
   }
 });
 
+// ── Sentiment Analysis Endpoint ──────────────────────────────────────────────
+app.post('/api/sentiment', checkLimit, async (req, res) => {
+  try {
+    const { texts } = req.body;
+    if (!texts || !texts.length) return res.status(400).json({ error: 'Metin gerekli' });
+
+    const limited = texts.slice(0, 50);
+    const response = await client.messages.create({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 500,
+      messages: [{
+        role: 'user',
+        content: `Aşağıdaki metinlerin her biri için duygu analizi yap.
+Sadece JSON array döndür: ["Pozitif", "Negatif", "Nötr", ...]
+Sıra korunmalı. Başka açıklama yazma.
+
+Metinler:
+${limited.map((t, i) => `${i + 1}. ${String(t).slice(0, 200)}`).join('\n')}`
+      }]
+    });
+
+    const raw = response.content[0].text.trim();
+    const match = raw.match(/\[[\s\S]*\]/);
+    const labels = match ? JSON.parse(match[0]) : limited.map(() => 'Nötr');
+    res.json({ labels });
+  } catch (e) {
+    console.error('/api/sentiment hatası:', e.message);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// ── Batch AI Endpoint ─────────────────────────────────────────────────────────
+app.post('/api/batch-ai', checkLimit, async (req, res) => {
+  try {
+    const { task, text } = req.body;
+    if (!text) return res.status(400).json({ error: 'Metin gerekli' });
+
+    const prompts = {
+      summarize:            `Şu metni 1-2 cümleyle özetle (Türkçe, sadece özeti yaz): "${String(text).slice(0, 500)}"`,
+      translate:            `Şu metni Türkçeye çevir, sadece çeviriyi yaz: "${String(text).slice(0, 500)}"`,
+      generate_description: `Şu ürün için kısa açıklama yaz (max 50 kelime, Türkçe): "${String(text).slice(0, 300)}"`,
+      classify:             `Şu metni bir kategoriye yerleştir. Sadece kategori adını yaz (max 3 kelime): "${String(text).slice(0, 300)}"`,
+      extract_keywords:     `Şu metinden 3-5 anahtar kelime çıkar. Virgülle ayır, başka bir şey yazma: "${String(text).slice(0, 500)}"`
+    };
+
+    const prompt = prompts[task] || prompts.summarize;
+    const response = await client.messages.create({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 200,
+      messages: [{ role: 'user', content: prompt }]
+    });
+
+    res.json({ result: response.content[0].text.trim() });
+  } catch (e) {
+    console.error('/api/batch-ai hatası:', e.message);
+    res.status(500).json({ error: e.message });
+  }
+});
+
 app.use((err, _req, res, _next) => {
   console.error(err);
   res.status(500).json({ error: err.message });
