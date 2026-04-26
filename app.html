@@ -326,41 +326,180 @@ body.dark {
   --tmpl-tab-text: #6B7280;
   --tmpl-divider: #2d2d44;
 }
-/* ── SIDEBAR SEKME BAR ── */
-.sidebar-tabs { display:flex; border-bottom:1px solid var(--tmpl-border); padding:0; background:var(--tmpl-header-bg); flex-shrink:0; position:sticky; top:0; z-index:5; }
-.sidebar-tab { flex:1; padding:11px 8px; font-size:11px; font-weight:600; cursor:pointer; border-bottom:2px solid transparent; color:var(--tmpl-tab-text); transition:all .15s; white-space:nowrap; text-align:center; letter-spacing:0.02em; text-transform:uppercase; }
-.sidebar-tab:hover { color:var(--tmpl-tab-active); background:var(--tmpl-hover); }
-.sidebar-tab.active { color:var(--tmpl-tab-active); border-bottom-color:var(--tmpl-tab-active); background:var(--tmpl-bg); }
-/* ── TEMPLATE PANEL ── */
-#templatePanel { display:none; flex-direction:column; height:100%; background:var(--tmpl-bg); overflow:hidden; }
-#templatePanel.visible { display:flex; }
-.tmpl-search-wrap { padding:12px 10px 8px; background:var(--tmpl-header-bg); border-bottom:1px solid var(--tmpl-divider); flex-shrink:0; }
-.tmpl-search-input { width:100%; box-sizing:border-box; padding:7px 10px 7px 30px; border:1px solid var(--tmpl-search-border); border-radius:8px; font-size:12px; background:var(--tmpl-search-bg); color:var(--tmpl-text); outline:none; font-family:inherit; transition:border-color .15s, box-shadow .15s; }
-.tmpl-search-input:focus { border-color:var(--tmpl-tab-active); box-shadow:0 0 0 2px rgba(99,102,241,0.12); }
-.tmpl-search-input::placeholder { color:var(--tmpl-text-hint); }
-.tmpl-blank-btn { display:flex; align-items:center; gap:6px; width:calc(100% - 20px); box-sizing:border-box; padding:8px 10px; margin:8px 10px 4px; background:transparent; border:1px dashed var(--tmpl-border); border-radius:8px; font-size:11px; font-weight:600; color:var(--tmpl-text-muted); cursor:pointer; font-family:inherit; transition:all .15s; text-align:left; flex-shrink:0; }
-.tmpl-blank-btn:hover { border-color:var(--tmpl-tab-active); color:var(--tmpl-tab-active); background:var(--tmpl-hover); }
-#templateList { overflow-y:auto; flex:1; padding:6px 6px 20px; scrollbar-width:thin; scrollbar-color:var(--tmpl-border) transparent; }
-#templateList::-webkit-scrollbar { width:4px; }
-#templateList::-webkit-scrollbar-thumb { background:var(--tmpl-border); border-radius:4px; }
-.tmpl-category { margin-bottom:2px; }
-.tmpl-cat-header { display:flex; align-items:center; justify-content:space-between; padding:6px 8px; border-radius:6px; cursor:pointer; font-size:10px; font-weight:700; color:var(--tmpl-cat-text); text-transform:uppercase; letter-spacing:0.06em; transition:background .12s; user-select:none; margin-top:4px; }
-.tmpl-cat-header:hover { background:var(--tmpl-hover); }
-.tmpl-cat-left { display:flex; align-items:center; gap:5px; }
-.tmpl-cat-badge { font-size:9px; background:var(--tmpl-badge-bg); color:var(--tmpl-badge-text); padding:1px 5px; border-radius:8px; font-weight:700; }
-.tmpl-cat-arrow { font-size:9px; color:var(--tmpl-text-hint); transition:transform .2s; line-height:1; }
-.tmpl-cat-arrow.open { transform:rotate(90deg); }
-.tmpl-items { overflow:hidden; transition:max-height .25s ease; max-height:0; }
-.tmpl-items.open { max-height:800px; }
-.tmpl-item { display:flex; align-items:center; gap:8px; padding:6px 8px 6px 12px; border-radius:7px; cursor:pointer; transition:background .12s, border-left-color .12s; border-left:2px solid transparent; margin-bottom:1px; }
-.tmpl-item:hover { background:var(--tmpl-hover); border-left-color:var(--tmpl-hover-border); }
-.tmpl-item.active { background:var(--tmpl-active-bg); border-left-color:var(--tmpl-active-border); }
-.tmpl-item-icon { font-size:14px; flex-shrink:0; width:22px; text-align:center; }
-.tmpl-item-text { flex:1; min-width:0; }
-.tmpl-item-name { font-size:12px; font-weight:500; color:var(--tmpl-text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; line-height:1.3; }
-.tmpl-item-desc { font-size:10px; color:var(--tmpl-text-muted); margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; line-height:1.3; }
-.tmpl-new-badge { font-size:8px; background:var(--tmpl-new-bg); color:var(--tmpl-new-text); padding:1px 4px; border-radius:4px; flex-shrink:0; font-weight:700; letter-spacing:0.04em; }
-.tmpl-cat-divider { height:1px; background:var(--tmpl-divider); margin:6px 8px; }
+/* ══════════════════════════════════════════
+   MOCKSHEETS SIDEBAR — Professional Dark UI
+   ══════════════════════════════════════════ */
+#appSidebar {
+  width: 240px; min-width: 240px; height: 100vh;
+  background: #0f0f14;
+  border-right: 1px solid rgba(255,255,255,0.06);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+  transition: width 0.25s cubic-bezier(0.4,0,0.2,1), min-width 0.25s cubic-bezier(0.4,0,0.2,1);
+  flex-shrink: 0; position: relative; z-index: 20;
+}
+#appSidebar.collapsed { width: 56px; min-width: 56px; }
+
+.sb-logo { display:flex; align-items:center; gap:10px; padding:16px 12px 12px;
+  border-bottom:1px solid rgba(255,255,255,0.06); flex-shrink:0; }
+.sb-logo-icon { width:28px; height:28px;
+  background:linear-gradient(135deg,#6366F1,#8B5CF6);
+  border-radius:7px; display:flex; align-items:center; justify-content:center;
+  font-size:13px; font-weight:800; color:white; flex-shrink:0; letter-spacing:-0.5px; }
+.sb-logo-text { font-size:14px; font-weight:700; color:#F9FAFB;
+  letter-spacing:-0.2px; white-space:nowrap; flex:1; overflow:hidden; }
+.sb-collapse-btn { background:transparent; border:none;
+  color:rgba(255,255,255,0.25); cursor:pointer; padding:4px; border-radius:5px;
+  display:flex; align-items:center; transition:color .15s, background .15s; flex-shrink:0; }
+.sb-collapse-btn:hover { color:rgba(255,255,255,0.7); background:rgba(255,255,255,0.06); }
+
+.sb-new-wrap { padding:10px 10px 4px; flex-shrink:0; }
+.sb-new-btn { display:flex; align-items:center; gap:7px; width:100%; padding:8px 12px;
+  background:rgba(99,102,241,0.12); border:1px solid rgba(99,102,241,0.25);
+  border-radius:8px; color:#A5B4FC; font-size:12px; font-weight:600; cursor:pointer;
+  font-family:inherit; transition:all .15s; white-space:nowrap; }
+.sb-new-btn:hover { background:rgba(99,102,241,0.22); border-color:rgba(99,102,241,0.45); color:#C7D2FE; }
+
+.sb-search-wrap { padding:6px 10px; flex-shrink:0; }
+.sb-search-inner { position:relative; }
+.sb-search-icon { position:absolute; left:9px; top:50%; transform:translateY(-50%);
+  color:rgba(255,255,255,0.2); pointer-events:none; }
+.sb-search-input { width:100%; box-sizing:border-box; padding:6px 8px 6px 28px;
+  background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.07);
+  border-radius:7px; color:rgba(255,255,255,0.75); font-size:12px;
+  font-family:inherit; outline:none; transition:border-color .15s, background .15s; }
+.sb-search-input::placeholder { color:rgba(255,255,255,0.2); }
+.sb-search-input:focus { border-color:rgba(99,102,241,0.45); background:rgba(99,102,241,0.06); }
+
+.sb-nav { flex:1; overflow-y:auto; padding:4px 0 8px;
+  scrollbar-width:thin; scrollbar-color:rgba(255,255,255,0.06) transparent; }
+.sb-nav::-webkit-scrollbar { width:3px; }
+.sb-nav::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.07); border-radius:3px; }
+
+.sb-section { padding:2px 0; }
+.sb-section-label { font-size:9px; font-weight:700; color:rgba(255,255,255,0.2);
+  text-transform:uppercase; letter-spacing:0.1em; padding:8px 14px 3px; white-space:nowrap; }
+.sb-divider { height:1px; background:rgba(255,255,255,0.05); margin:3px 10px; }
+
+.sb-item { display:flex; align-items:center; gap:9px; padding:7px 10px 7px 12px;
+  margin:1px 6px; border-radius:7px; cursor:pointer;
+  transition:background .12s, color .12s; color:rgba(255,255,255,0.55);
+  font-size:12.5px; font-weight:500; user-select:none; }
+.sb-item:hover { background:rgba(255,255,255,0.07); color:rgba(255,255,255,0.9); }
+.sb-item.active { background:rgba(99,102,241,0.18); color:#A5B4FC; }
+.sb-item-icon { flex-shrink:0; display:flex; align-items:center; opacity:0.65; }
+.sb-item:hover .sb-item-icon { opacity:1; }
+.sb-item-label { flex:1; white-space:nowrap; overflow:hidden; }
+.sb-item-badge { font-size:9px; font-weight:700; padding:2px 6px; border-radius:5px;
+  background:rgba(99,102,241,0.2); color:#A5B4FC; }
+.sb-item-badge-green { font-size:9px; font-weight:700; padding:2px 6px; border-radius:5px;
+  background:rgba(16,185,129,0.12); color:#6EE7B7; }
+.sb-item-count { font-size:10px; color:rgba(255,255,255,0.25); margin-right:2px; }
+.sb-item-hint { font-size:10px; color:rgba(255,255,255,0.18);
+  background:rgba(255,255,255,0.05); padding:1px 5px; border-radius:4px; }
+.sb-item-arrow { color:rgba(255,255,255,0.25); transition:transform .2s; flex-shrink:0; }
+.sb-item-expandable.open .sb-item-arrow { transform:rotate(180deg); }
+
+.sb-add-sheet { display:flex; align-items:center; gap:6px;
+  padding:5px 10px 5px 12px; margin:1px 6px; background:transparent; border:none;
+  color:rgba(255,255,255,0.25); font-size:11px; cursor:pointer; border-radius:6px;
+  font-family:inherit; transition:all .12s; width:calc(100% - 12px); text-align:left; }
+.sb-add-sheet:hover { color:rgba(255,255,255,0.55); background:rgba(255,255,255,0.04); }
+
+.sb-sheet-tab { display:flex; align-items:center; gap:8px;
+  padding:6px 10px 6px 12px; margin:1px 6px; border-radius:7px; cursor:pointer;
+  font-size:12px; color:rgba(255,255,255,0.5); transition:all .12s;
+  white-space:nowrap; overflow:hidden; }
+.sb-sheet-tab:hover { background:rgba(255,255,255,0.06); color:rgba(255,255,255,0.85); }
+.sb-sheet-tab.active { background:rgba(99,102,241,0.16); color:#C7D2FE; }
+.sb-sheet-tab-icon { font-size:12px; flex-shrink:0; opacity:0.5; }
+.sb-sheet-tab-name { flex:1; overflow:hidden; text-overflow:ellipsis; }
+.sb-sheet-tab-close { opacity:0; font-size:14px; line-height:1;
+  color:rgba(255,255,255,0.35); padding:0 2px; transition:opacity .12s; flex-shrink:0; }
+.sb-sheet-tab:hover .sb-sheet-tab-close { opacity:1; }
+
+.sb-sub-section { max-height:0; overflow:hidden;
+  transition:max-height 0.3s cubic-bezier(0.4,0,0.2,1); padding:0 6px; }
+.sb-sub-section.open { max-height:1400px; }
+
+.sb-tmpl-cat { display:flex; align-items:center; justify-content:space-between;
+  padding:5px 8px; margin:2px 0 1px; border-radius:6px; cursor:pointer;
+  font-size:11px; font-weight:600; color:rgba(255,255,255,0.35);
+  transition:all .12s; user-select:none; }
+.sb-tmpl-cat:hover { background:rgba(255,255,255,0.04); color:rgba(255,255,255,0.6); }
+.sb-cat-arrow { color:rgba(255,255,255,0.18); transition:transform .2s; flex-shrink:0; }
+.sb-cat-arrow.open { transform:rotate(180deg); }
+.sb-tmpl-items { max-height:0; overflow:hidden; transition:max-height .25s ease; }
+.sb-tmpl-items.open { max-height:500px; }
+.sb-tmpl-item { display:flex; align-items:center; gap:6px;
+  padding:5px 8px 5px 16px; border-radius:5px; cursor:pointer; font-size:11.5px;
+  color:rgba(255,255,255,0.4); transition:all .12s;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.sb-tmpl-item:hover { background:rgba(255,255,255,0.06); color:rgba(255,255,255,0.82); }
+.sb-tmpl-item.active { background:rgba(99,102,241,0.14); color:#A5B4FC; }
+.sb-new-badge { font-size:8px; background:rgba(245,158,11,0.18); color:#FCD34D;
+  padding:1px 4px; border-radius:3px; font-weight:700; letter-spacing:0.04em;
+  flex-shrink:0; margin-left:auto; }
+
+.sb-toggle { width:30px; height:17px; background:rgba(255,255,255,0.1);
+  border-radius:9px; position:relative; cursor:pointer; transition:background .2s; flex-shrink:0; }
+.sb-toggle.on { background:rgba(99,102,241,0.55); }
+.sb-toggle-thumb { position:absolute; top:2px; left:2px; width:13px; height:13px;
+  background:white; border-radius:50%; transition:transform .2s;
+  box-shadow:0 1px 3px rgba(0,0,0,0.35); }
+.sb-toggle.on .sb-toggle-thumb { transform:translateX(13px); }
+
+.sb-user { display:flex; align-items:center; gap:9px; padding:11px 12px;
+  border-top:1px solid rgba(255,255,255,0.06); cursor:pointer;
+  transition:background .15s; flex-shrink:0; }
+.sb-user:hover { background:rgba(255,255,255,0.04); }
+.sb-user-avatar { width:28px; height:28px; border-radius:7px;
+  background:linear-gradient(135deg,#6366F1,#8B5CF6);
+  display:flex; align-items:center; justify-content:center;
+  font-size:12px; font-weight:700; color:white; flex-shrink:0; }
+.sb-user-name { font-size:12px; font-weight:600; color:rgba(255,255,255,0.82);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.sb-user-plan { font-size:10px; color:rgba(255,255,255,0.28); white-space:nowrap; }
+.sb-user-info { flex:1; min-width:0; }
+.sb-user-menu-btn { background:transparent; border:none; color:rgba(255,255,255,0.25);
+  cursor:pointer; padding:3px; border-radius:4px; display:flex; transition:all .12s; flex-shrink:0; }
+.sb-user-menu-btn:hover { color:rgba(255,255,255,0.65); background:rgba(255,255,255,0.06); }
+
+/* COLLAPSED STATE */
+#appSidebar.collapsed .sb-logo-text,
+#appSidebar.collapsed .sb-new-btn span:last-child,
+#appSidebar.collapsed .sb-search-wrap,
+#appSidebar.collapsed .sb-section-label,
+#appSidebar.collapsed .sb-item-label,
+#appSidebar.collapsed .sb-item-badge,
+#appSidebar.collapsed .sb-item-badge-green,
+#appSidebar.collapsed .sb-item-count,
+#appSidebar.collapsed .sb-item-hint,
+#appSidebar.collapsed .sb-item-arrow,
+#appSidebar.collapsed .sb-add-sheet span,
+#appSidebar.collapsed .sb-sheet-tab-name,
+#appSidebar.collapsed .sb-sheet-tab-close,
+#appSidebar.collapsed .sb-sub-section,
+#appSidebar.collapsed .sb-tmpl-cat,
+#appSidebar.collapsed .sb-user-info,
+#appSidebar.collapsed .sb-user-menu-btn,
+#appSidebar.collapsed .sb-toggle { display:none; }
+#appSidebar.collapsed .sb-item { justify-content:center; padding:9px; margin:1px 4px; }
+#appSidebar.collapsed .sb-item-icon { opacity:0.7; }
+#appSidebar.collapsed .sb-logo { justify-content:center; padding:14px 8px; }
+#appSidebar.collapsed .sb-new-btn { justify-content:center; padding:8px; }
+#appSidebar.collapsed .sb-collapse-btn { display:none; }
+#appSidebar.collapsed .sb-user { justify-content:center; padding:11px 8px; }
+#appSidebar.collapsed .sb-sheet-tab { justify-content:center; padding:8px; }
+#appSidebar.collapsed .sb-sheet-tab-icon { opacity:0.7; }
+#appSidebar.collapsed .sb-divider { margin:3px 8px; }
+#appSidebar.collapsed .sb-item[data-tooltip] { position:relative; }
+#appSidebar.collapsed .sb-item[data-tooltip]:hover::after {
+  content:attr(data-tooltip); position:absolute; left:calc(100% + 8px); top:50%;
+  transform:translateY(-50%); background:#1a1a2e; color:rgba(255,255,255,0.88);
+  font-size:11px; font-weight:500; padding:5px 10px; border-radius:6px;
+  white-space:nowrap; pointer-events:none; opacity:1; z-index:100;
+  border:1px solid rgba(255,255,255,0.08); box-shadow:0 4px 12px rgba(0,0,0,0.4); }
 </style>
 <!-- Microsoft Clarity -->
 <script type="text/javascript">
@@ -378,144 +517,203 @@ body.dark {
 <div id="main">
 
 <!-- SIDEBAR -->
-<div id="sidebar">
-  <!-- Header: logo + collapse -->
-  <div class="sb-header">
-    <a href="index.html" class="sb-logo">
-      <span class="sb-logo-accent"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" style="width:24px;height:24px;border-radius:5px;flex-shrink:0;"><rect width="100" height="100" fill="black"/><path d="M 30 65 Q 28 40 50 28 Q 65 22 75 32 L 68 40 Q 60 33 50 37 Q 35 45 36 63 Z" fill="white"/></svg></span>
-      <span class="sb-logo-text">Mocksheets</span>
-    </a>
-    <div id="sbCollapseBtn" onclick="toggleSidebar()" title="Kenar çubuğunu daralt">
-      <svg id="sbCollapseIcon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-    </div>
-  </div>
+<aside id="appSidebar">
 
-  <!-- Sidebar Sekme Bar -->
-  <div class="sidebar-tabs">
-    <div class="sidebar-tab active" id="tabSheets" onclick="switchSidebarTab('sheets')">📄 Sayfalar</div>
-    <div class="sidebar-tab" id="tabTemplates" onclick="switchSidebarTab('templates')">📋 Şablonlar</div>
-  </div>
-
-  <div id="sheetsPanel">
-  <div class="sb-scroll">
-    <!-- FILES -->
-    <div class="sb-group">
-      <div class="sb-label">Dosyalar</div>
-      <div class="sb-new" onclick="newFile()" title="Yeni Dosya">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Yeni Dosya
-      </div>
-      <div class="sb-new" onclick="triggerUpload()" title="Dosya Yükle">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-        <span data-i18n="app_upload">Dosya Yükle</span>
-      </div>
-      <div id="recentFiles"></div>
-    </div>
-
-    <!-- SHEETS -->
-    <div class="sb-group">
-      <div class="sb-label">Sayfalar</div>
-      <div id="sbSheetList"></div>
-      <div class="sb-new" style="margin-top:4px" onclick="addSheet()" title="Yeni Sayfa">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Yeni Sayfa
-      </div>
-    </div>
-
-    <!-- TOOLS -->
-    <div class="sb-group">
-      <div class="sb-label">Araçlar</div>
-      <div class="sb-item" onclick="openFindReplace()" title="Bul &amp; Değiştir">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        Bul &amp; Değiştir
-      </div>
-      <div class="sb-item" onclick="sortData()" title="Sırala">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-        Sırala
-      </div>
-      <div class="sb-item" onclick="clearHighlights()" title="Temizle">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>
-        Temizle
-      </div>
-      <div class="sb-item" onclick="showCompareModal()" title="Rakip Analizi">
-        📊 Rakip Analizi
-      </div>
-      <div class="sb-item" onclick="window.open('integrations.html','_blank')" title="Entegrasyonlar">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-        Entegrasyonlar
-      </div>
-    </div>
-
-    <!-- VERSION HISTORY -->
-    <div class="sb-group">
-      <div class="sb-label">Geçmiş</div>
-      <div id="vhList"><div id="vhEmpty" style="font-size:12px;color:#4a4a5a;font-style:italic;padding:4px 10px;">Henüz işlem yok</div></div>
-    </div>
-  </div>
-  </div><!-- #sheetsPanel -->
-
-  <!-- TEMPLATE PANEL -->
-  <div id="templatePanel">
-    <!-- Arama -->
-    <div class="tmpl-search-wrap">
-      <div style="position:relative">
-        <span style="position:absolute;left:9px;top:50%;transform:translateY(-50%);font-size:11px;color:var(--tmpl-text-hint);pointer-events:none">🔍</span>
-        <input id="templateSearch" class="tmpl-search-input" placeholder="Şablon ara..." oninput="filterTemplates(this.value)" autocomplete="off">
-      </div>
-    </div>
-    <!-- Boş Tablo -->
-    <button class="tmpl-blank-btn" onclick="loadTemplate('blank')">
-      <span style="font-size:14px">＋</span>
-      <span>Boş Tablo Oluştur</span>
+  <!-- LOGO -->
+  <div class="sb-logo">
+    <div class="sb-logo-icon">M</div>
+    <span class="sb-logo-text">Mocksheets</span>
+    <button class="sb-collapse-btn" onclick="toggleSidebar()" title="Collapse sidebar">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>
     </button>
-    <!-- Kategori Listesi -->
-    <div id="templateList"></div>
-  </div><!-- #templatePanel -->
+  </div>
 
-  <div class="sb-footer">
-    <div id="settingsMenu" class="settings-menu" style="display:none">
-      <div class="settings-header">
-        <span>⚙️ Ayarlar</span>
-        <button onclick="closeSettings()">✕</button>
-      </div>
-      <div class="settings-item" onclick="toggleTheme()">
-        <span id="themeToggleBtn">🌙 Karanlık Mod</span>
-      </div>
-      <div class="settings-divider"></div>
-      <div class="settings-item" onclick="logOut()" style="color:#ef4444;">
-        <span>🚪 Çıkış Yap</span>
-      </div>
-    </div>
-    <div class="user-row" onclick="openSettings()">
-      <div class="avatar">EA</div>
-      <div class="user-info-sb">
-        <div class="user-name-sb">User</div>
-        <div class="user-role-sb">⚡ AI Pro</div>
-      </div>
-      <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#4a4a5a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-    </div>
-    <!-- Plan badge + kullanım barı -->
-    <div style="padding:12px 16px 8px;border-top:1px solid #E5E7EB">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-        <span id="plan-badge" style="display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;padding:4px 10px;border-radius:100px;background:#EEF2FF;color:#4F46E5">🆓 Ücretsiz</span>
-        <a href="billing.html" style="font-size:11px;color:#4F46E5;text-decoration:none;font-weight:600">Yükselt ↗</a>
-      </div>
-      <div>
-        <div style="font-size:11px;color:#9CA3AF;margin-bottom:4px;display:flex;justify-content:space-between">
-          <span>AI Komutları</span>
-          <span id="usage-text">0 / 20</span>
-        </div>
-        <div style="background:#F3F4F6;border-radius:100px;height:5px;overflow:hidden">
-          <div id="usage-bar-fill" style="height:100%;width:0%;background:#4F46E5;border-radius:100px;transition:width .3s,background .3s"></div>
-        </div>
-      </div>
-    </div>
-    <div class="sb-storage">
-      <div class="sb-storage-label">Storage: 2.3 MB / 100 MB</div>
-      <div class="sb-storage-bar"><div class="sb-storage-fill"></div></div>
+  <!-- NEW TABLE BUTTON -->
+  <div class="sb-new-wrap">
+    <button class="sb-new-btn" onclick="loadTemplate('blank')">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      <span>New Table</span>
+    </button>
+  </div>
+
+  <!-- SEARCH -->
+  <div class="sb-search-wrap">
+    <div class="sb-search-inner">
+      <svg class="sb-search-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input id="sidebarSearch" class="sb-search-input" placeholder="Search..." autocomplete="off" oninput="handleSidebarSearch(this.value)">
     </div>
   </div>
-</div>
+
+  <!-- SCROLLABLE NAV -->
+  <nav class="sb-nav" id="sbNav">
+
+    <!-- SECTION: MY SHEETS -->
+    <div class="sb-section">
+      <div class="sb-section-label">My Sheets</div>
+      <div id="sheetListContainer"></div>
+      <button class="sb-add-sheet" onclick="addSheet()">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        <span>Add Sheet</span>
+      </button>
+    </div>
+
+    <div class="sb-divider"></div>
+
+    <!-- SECTION: TOOLS -->
+    <div class="sb-section">
+      <div class="sb-section-label">Tools</div>
+
+      <div class="sb-item" data-tooltip="AI Commands" onclick="focusChatInput()">
+        <span class="sb-item-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>
+        <span class="sb-item-label">AI Commands</span>
+        <span class="sb-item-badge">Pro</span>
+      </div>
+
+      <div class="sb-item sb-item-expandable" id="tmplTrigger" data-tooltip="Templates" onclick="toggleSbSection('tmplSection', this)">
+        <span class="sb-item-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg></span>
+        <span class="sb-item-label">Templates</span>
+        <span class="sb-item-count">26</span>
+        <svg class="sb-item-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+
+      <div id="tmplSection" class="sb-sub-section">
+
+        <div class="sb-tmpl-cat" onclick="toggleTmplCat('cat_finance')">
+          <span>💰 Accounting &amp; Finance</span>
+          <svg class="sb-cat-arrow open" id="catarrow_finance" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="sb-tmpl-items open" id="cat_finance">
+          <div class="sb-tmpl-item" onclick="loadTemplate('kdv_takip')">🧾 VAT Tracking</div>
+          <div class="sb-tmpl-item" onclick="loadTemplate('gelir_gider')">📊 Income &amp; Expense</div>
+          <div class="sb-tmpl-item" onclick="loadTemplate('nakit_akis')">💵 Cash Flow</div>
+          <div class="sb-tmpl-item" onclick="loadTemplate('cari_hesap')">🏦 Current Account</div>
+          <div class="sb-tmpl-item" onclick="loadTemplate('banka_mutabakat')">🏧 Bank Reconciliation</div>
+        </div>
+
+        <div class="sb-tmpl-cat" onclick="toggleTmplCat('cat_hr')">
+          <span>👥 Payroll &amp; HR</span>
+          <svg class="sb-cat-arrow" id="catarrow_hr" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="sb-tmpl-items" id="cat_hr">
+          <div class="sb-tmpl-item" onclick="loadTemplate('maas_bordro')">💼 Payroll Table <span class="sb-new-badge">NEW</span></div>
+          <div class="sb-tmpl-item" onclick="loadTemplate('izin_takip')">🏖️ Leave Tracking</div>
+          <div class="sb-tmpl-item" onclick="loadTemplate('kidem_ihbar')">📋 Severance Calc</div>
+          <div class="sb-tmpl-item" onclick="loadTemplate('personel_liste')">👤 Staff List</div>
+          <div class="sb-tmpl-item" onclick="loadTemplate('fazla_mesai')">⏰ Overtime</div>
+        </div>
+
+        <div class="sb-tmpl-cat" onclick="toggleTmplCat('cat_sales')">
+          <span>📦 Sales &amp; Inventory</span>
+          <svg class="sb-cat-arrow" id="catarrow_sales" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="sb-tmpl-items" id="cat_sales">
+          <div class="sb-tmpl-item" onclick="loadTemplate('satis_takip')">📈 Sales Tracker</div>
+          <div class="sb-tmpl-item" onclick="loadTemplate('stok_kart')">📦 Stock Card <span class="sb-new-badge">NEW</span></div>
+          <div class="sb-tmpl-item" onclick="loadTemplate('fiyat_listesi')">🏷️ Price List</div>
+          <div class="sb-tmpl-item" onclick="loadTemplate('satis_hedef')">🎯 Sales Target</div>
+          <div class="sb-tmpl-item" onclick="loadTemplate('tedarikci')">🚚 Supplier Tracking</div>
+        </div>
+
+        <div class="sb-tmpl-cat" onclick="toggleTmplCat('cat_project')">
+          <span>📋 Project Management</span>
+          <svg class="sb-cat-arrow" id="catarrow_project" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="sb-tmpl-items" id="cat_project">
+          <div class="sb-tmpl-item" onclick="loadTemplate('proje_takvim')">📅 Project Timeline <span class="sb-new-badge">NEW</span></div>
+          <div class="sb-tmpl-item" onclick="loadTemplate('butce_takip')">💰 Budget Tracker</div>
+          <div class="sb-tmpl-item" onclick="loadTemplate('risk_matrisi')">⚠️ Risk Matrix</div>
+          <div class="sb-tmpl-item" onclick="loadTemplate('toplanti_tutanak')">📝 Meeting Notes</div>
+        </div>
+
+        <div class="sb-tmpl-cat" onclick="toggleTmplCat('cat_analytics')">
+          <span>📊 Data Analytics</span>
+          <svg class="sb-cat-arrow" id="catarrow_analytics" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="sb-tmpl-items" id="cat_analytics">
+          <div class="sb-tmpl-item" onclick="loadTemplate('satis_analiz')">📉 Sales Trend</div>
+          <div class="sb-tmpl-item" onclick="loadTemplate('musteri_analiz')">👥 Customer RFM <span class="sb-new-badge">NEW</span></div>
+          <div class="sb-tmpl-item" onclick="loadTemplate('kpi_dashboard')">🎯 KPI Dashboard</div>
+          <div class="sb-tmpl-item" onclick="loadTemplate('anket_analiz')">📋 Survey Analysis</div>
+        </div>
+
+        <div class="sb-tmpl-cat" onclick="toggleTmplCat('cat_general')">
+          <span>🏢 General Business</span>
+          <svg class="sb-cat-arrow" id="catarrow_general" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="sb-tmpl-items" id="cat_general">
+          <div class="sb-tmpl-item" onclick="loadTemplate('toplanti_takvim')">📅 Meeting Schedule</div>
+          <div class="sb-tmpl-item" onclick="loadTemplate('gider_takip')">💳 Expense Tracker</div>
+          <div class="sb-tmpl-item" onclick="loadTemplate('iletisim_listesi')">📞 Contact List</div>
+        </div>
+
+      </div><!-- /tmplSection -->
+
+      <div class="sb-item" data-tooltip="Export" onclick="toggleExportMenu(event)">
+        <span class="sb-item-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span>
+        <span class="sb-item-label">Export</span>
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+
+      <div class="sb-item" data-tooltip="Integrations" onclick="window.location.href='integrations.html'">
+        <span class="sb-item-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="2" width="9" height="9" rx="2"/><rect x="13" y="2" width="9" height="9" rx="2"/><rect x="2" y="13" width="9" height="9" rx="2"/><rect x="13" y="13" width="9" height="9" rx="2"/></svg></span>
+        <span class="sb-item-label">Integrations</span>
+        <span class="sb-item-badge-green">Live</span>
+      </div>
+
+    </div><!-- /tools section -->
+
+    <div class="sb-divider"></div>
+
+    <!-- SECTION: PREFERENCES -->
+    <div class="sb-section">
+      <div class="sb-section-label">Preferences</div>
+
+      <div class="sb-item" data-tooltip="Dark Mode" onclick="toggleDarkMode()">
+        <span class="sb-item-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg></span>
+        <span class="sb-item-label">Dark Mode</span>
+        <div class="sb-toggle" id="darkToggle"><div class="sb-toggle-thumb"></div></div>
+      </div>
+
+      <div class="sb-item" data-tooltip="Shortcuts" onclick="showKeyboardShortcuts()">
+        <span class="sb-item-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M8 12h.01M12 12h.01M16 12h.01M7 16h10"/></svg></span>
+        <span class="sb-item-label">Shortcuts</span>
+        <span class="sb-item-hint">⌘K</span>
+      </div>
+
+    </div>
+
+  </nav><!-- /sb-nav -->
+
+  <!-- USER PROFILE (bottom) -->
+  <div class="sb-user" onclick="openSettings()">
+    <div class="sb-user-avatar" id="sbAvatar">U</div>
+    <div class="sb-user-info">
+      <div class="sb-user-name" id="sbUserName">User</div>
+      <div class="sb-user-plan" id="sbUserPlan">Free Plan</div>
+    </div>
+    <button class="sb-user-menu-btn" title="Profile menu">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+    </button>
+  </div>
+
+  <!-- settings menu (hidden, triggered by user profile click) -->
+  <div id="settingsMenu" class="settings-menu" style="display:none">
+    <div class="settings-header">
+      <span>⚙️ Settings</span>
+      <button onclick="closeSettings()">✕</button>
+    </div>
+    <div class="settings-item" onclick="toggleTheme()">
+      <span id="themeToggleBtn">🌙 Dark Mode</span>
+    </div>
+    <div class="settings-divider"></div>
+    <div class="settings-item" onclick="logOut()" style="color:#ef4444;">
+      <span>🚪 Log Out</span>
+    </div>
+  </div>
+
+</aside>
 
 <!-- CONTENT -->
 <div id="content">

@@ -679,6 +679,7 @@ function renderSheetTabs() {
     item.addEventListener('contextmenu', e => showSheetCtx(e, name));
     sbList.appendChild(item);
   });
+  renderSheetList();
 }
 
 function switchSheet(name) {
@@ -2384,14 +2385,9 @@ function deleteSheetDirect(name) {
 }
 
 function toggleSidebar() {
-  const sb = document.getElementById('sidebar');
-  const icon = document.getElementById('sbCollapseIcon');
-  const btn = document.getElementById('sbCollapseBtn');
+  const sb = document.getElementById('appSidebar');
+  if (!sb) return;
   const collapsed = sb.classList.toggle('collapsed');
-  document.body.classList.toggle('sidebar-collapsed', collapsed);
-  const poly = icon.querySelector('polyline');
-  if (poly) poly.setAttribute('points', collapsed ? '9 18 15 12 9 6' : '15 18 9 12 15 6');
-  btn.title = collapsed ? 'Kenar Çubuğunu Genişlet' : 'Kenar Çubuğunu Daralt';
   localStorage.setItem('sb_collapsed', collapsed ? '1' : '0');
 }
 
@@ -2399,6 +2395,7 @@ function init() {
   try { const s = localStorage.getItem('recent_files'); if (s) recentFiles = JSON.parse(s); } catch(e) {}
   renderRecentFiles();
   renderSheetTabs();
+  renderSheetList();
   buildGrid();
   if (!loadChatHistory()) addWelcomeMsg();
   updateApiStatus();
@@ -2406,6 +2403,7 @@ function init() {
   checkEmptyState();
   renderVersionHistory();
   loadHistory();
+  updateSidebarUser();
   if (localStorage.getItem('sb_collapsed') === '1') toggleSidebar();
   // Focus first cell
   setTimeout(() => focusCell(0, 0), 100);
@@ -5397,26 +5395,100 @@ function filterTemplates(query) {
   document.querySelectorAll('.tmpl-cat-divider').forEach(el => el.style.display = q ? 'none' : '');
 }
 
-function switchSidebarTab(tab) {
-  const sheetsPanel = document.getElementById('sheetsPanel');
-  const templatePanel = document.getElementById('templatePanel');
-  const tabSheets = document.getElementById('tabSheets');
-  const tabTemplates = document.getElementById('tabTemplates');
+function switchSidebarTab() {} // no-op: single-panel sidebar
 
-  if (tab === 'templates') {
-    if (sheetsPanel) sheetsPanel.style.display = 'none';
-    if (templatePanel) templatePanel.classList.add('visible');
-    if (tabSheets) tabSheets.classList.remove('active');
-    if (tabTemplates) tabTemplates.classList.add('active');
-    renderTemplatePanel();
-  } else {
-    if (sheetsPanel) sheetsPanel.style.display = '';
-    if (templatePanel) templatePanel.classList.remove('visible');
-    if (tabSheets) tabSheets.classList.add('active');
-    if (tabTemplates) tabTemplates.classList.remove('active');
-  }
+// ── Sidebar New Functions ────────────────────────────────────────
+
+function toggleSbSection(id, triggerEl) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.classList.toggle('open');
+  if (triggerEl) triggerEl.classList.toggle('open');
+}
+
+function toggleTmplCat(catId) {
+  const items = document.getElementById(catId);
+  const key = catId.replace('cat_', '');
+  const arrow = document.getElementById('catarrow_' + key);
+  if (!items) return;
+  items.classList.toggle('open');
+  if (arrow) arrow.classList.toggle('open');
+}
+
+function handleSidebarSearch(query) {
+  const q = query.toLowerCase().trim();
+  document.querySelectorAll('.sb-sheet-tab').forEach(el => {
+    const name = el.querySelector('.sb-sheet-tab-name')?.textContent || '';
+    el.style.display = !q || name.toLowerCase().includes(q) ? '' : 'none';
+  });
+  document.querySelectorAll('.sb-tmpl-item').forEach(el => {
+    const text = el.textContent.toLowerCase();
+    const matches = !q || text.includes(q);
+    el.style.display = matches ? '' : 'none';
+    if (matches && q) {
+      el.closest('.sb-tmpl-items')?.classList.add('open');
+      const catId = el.closest('.sb-tmpl-items')?.id;
+      if (catId) {
+        document.getElementById('catarrow_' + catId.replace('cat_', ''))?.classList.add('open');
+      }
+      document.getElementById('tmplSection')?.classList.add('open');
+      document.getElementById('tmplTrigger')?.classList.add('open');
+    }
+  });
+}
+
+function renderSheetList() {
+  const container = document.getElementById('sheetListContainer');
+  if (!container) return;
+  let html = '';
+  Object.keys(sheets || {}).forEach(name => {
+    const isActive = name === activeSheet;
+    const safeName = name.replace(/'/g, "\\'");
+    html += `<div class="sb-sheet-tab ${isActive ? 'active' : ''}" onclick="switchSheet('${safeName}')">
+      <span class="sb-sheet-tab-icon">📄</span>
+      <span class="sb-sheet-tab-name">${name}</span>
+      <span class="sb-sheet-tab-close" onclick="event.stopPropagation();deleteSheetDirect('${safeName}')">×</span>
+    </div>`;
+  });
+  container.innerHTML = html;
+}
+
+function updateSidebarUser() {
+  try {
+    const key = Object.keys(localStorage).find(k => k.startsWith('sb-') && k.endsWith('-auth-token'));
+    if (!key) return;
+    const session = JSON.parse(localStorage.getItem(key));
+    const email = session?.user?.email || '';
+    if (!email) return;
+    const name = email.split('@')[0];
+    const avatar = document.getElementById('sbAvatar');
+    const nameEl = document.getElementById('sbUserName');
+    if (avatar) avatar.textContent = name[0].toUpperCase();
+    if (nameEl) nameEl.textContent = name;
+  } catch(e) {}
+}
+
+function toggleDarkMode() {
+  toggleTheme();
+  const isDark = document.body.classList.contains('dark');
+  const toggle = document.getElementById('darkToggle');
+  if (toggle) toggle.classList.toggle('on', isDark);
+}
+
+function focusChatInput() {
+  const input = document.getElementById('chat-input') ||
+                document.querySelector('input[placeholder*="komut"]') ||
+                document.querySelector('input[placeholder*="command"]');
+  if (input) { input.focus(); if (typeof expandChat === 'function') expandChat(); }
+}
+
+function showKeyboardShortcuts() {
+  alert('Keyboard Shortcuts\n\nEnter — Send command\nEscape — Close chat\nCtrl+Z — Undo\nCtrl+S — Save\nCtrl+E — Export');
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  renderTemplatePanel();
+  const isDark = document.body.classList.contains('dark') ||
+                 localStorage.getItem('theme') === 'dark';
+  const toggle = document.getElementById('darkToggle');
+  if (toggle && isDark) toggle.classList.add('on');
 });
