@@ -1,4 +1,4 @@
-// ── AKAN YAZI EFEKTİ (scroll-triggered) ──────────────────────────
+// ── AKAN YAZI EFEKTİ (scroll-triggered) ─────────────────────────
 
 function initFlowingText() {
   var section = document.querySelector('.lp-flowing-text');
