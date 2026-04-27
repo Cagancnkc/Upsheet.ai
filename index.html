@@ -1082,10 +1082,6 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 /* ── FİYATLANDIRMA TOGGLE ── */
-var PRICES = {
-  monthly: { pro: 69, is: 149, proSub: '/ ay \u2014 aylık faturalandırılır', isSub: '/ ay \u2014 aylık faturalandırılır' },
-  yearly:  { pro: 46, is: 99, proSub: '/ ay \u2014 yıllık faturalandırılır (₺552/yıl)', isSub: '/ ay \u2014 yıllık faturalandırılır (₺1.188/yıl)' }
-};
 var pricingIsYearly = false;
 function togglePricing() {
   pricingIsYearly = !pricingIsYearly;
@@ -1095,15 +1091,23 @@ function togglePricing() {
   if (toggle) toggle.classList.toggle('active', pricingIsYearly);
   if (labelM) labelM.classList.toggle('active', !pricingIsYearly);
   if (labelY) labelY.classList.toggle('active', pricingIsYearly);
-  var p = pricingIsYearly ? PRICES.yearly : PRICES.monthly;
   var proPrice = document.getElementById('pro-price');
-  var proSub = document.getElementById('pro-sub');
-  var isPrice = document.getElementById('is-price');
-  var isSub = document.getElementById('is-sub');
-  if (proPrice) proPrice.textContent = p.pro;
-  if (proSub) proSub.textContent = p.proSub;
-  if (isPrice) isPrice.textContent = p.is;
-  if (isSub) isSub.textContent = p.isSub;
+  var proSub   = document.getElementById('pro-sub');
+  var isPrice  = document.getElementById('is-price');
+  var isSub    = document.getElementById('is-sub');
+  if (pricingIsYearly) {
+    var py = PRICES.yearly;
+    if (proPrice) proPrice.textContent = '\u20ba' + py.proMonthly.toFixed(2).replace('.', ',');
+    if (proSub)   proSub.textContent   = '/ ay \u2014 y\u0131ll\u0131k faturaland\u0131r\u0131l\u0131r (' + py.pro.label + '/y\u0131l)';
+    if (isPrice)  isPrice.textContent  = '\u20ba' + py.bizMonthly.toFixed(2).replace('.', ',');
+    if (isSub)    isSub.textContent    = '/ ay \u2014 y\u0131ll\u0131k faturaland\u0131r\u0131l\u0131r (' + py.biz.label + '/y\u0131l)';
+  } else {
+    var pm = PRICES.monthly;
+    if (proPrice) proPrice.textContent = pm.pro.label;
+    if (proSub)   proSub.textContent   = '/ ay \u2014 ayl\u0131k faturaland\u0131r\u0131l\u0131r';
+    if (isPrice)  isPrice.textContent  = pm.biz.label;
+    if (isSub)    isSub.textContent    = '/ ay \u2014 ayl\u0131k faturaland\u0131r\u0131l\u0131r';
+  }
 }
 
 /* ── ENTEGRASYON CAROUSEL ── */
