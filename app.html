@@ -500,6 +500,40 @@ body.dark {
   font-size:11px; font-weight:500; padding:5px 10px; border-radius:6px;
   white-space:nowrap; pointer-events:none; opacity:1; z-index:100;
   border:1px solid rgba(255,255,255,0.08); box-shadow:0 4px 12px rgba(0,0,0,0.4); }
+
+/* ── PDF Modal ── */
+@keyframes pdfFadeIn { from{opacity:0} to{opacity:1} }
+@keyframes pdfSlideUp {
+  from{opacity:0;transform:translate(-50%,-48%)}
+  to{opacity:1;transform:translate(-50%,-50%)}
+}
+@keyframes pdfShimmer {
+  0%{background-position:200% 0} 100%{background-position:-200% 0}
+}
+@keyframes pdfSpin { to{transform:rotate(360deg)} }
+.step-dot {
+  width:8px;height:8px;border-radius:50%;
+  background:rgba(255,255,255,0.15);flex-shrink:0;transition:all .3s;
+}
+.pdf-step.active .step-dot {
+  background:#6366F1;box-shadow:0 0 8px rgba(99,102,241,0.5);
+  animation:pdfSpin 1s linear infinite;border-radius:2px;
+}
+.pdf-step.done .step-dot { background:#10B981;animation:none;border-radius:50%; }
+.pdf-step.active span { color:rgba(255,255,255,0.85) !important; }
+.pdf-step.done span  { color:#6EE7B7 !important; }
+#pdfPreviewTable th {
+  background:rgba(99,102,241,0.15);color:#A5B4FC;padding:6px 10px;
+  font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;
+  border-bottom:1px solid rgba(255,255,255,0.08);white-space:nowrap;
+}
+#pdfPreviewTable td {
+  padding:5px 10px;color:rgba(255,255,255,0.7);font-size:11px;
+  border-bottom:1px solid rgba(255,255,255,0.04);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px;
+}
+#pdfPreviewTable tr:last-child td { border-bottom:none; }
+#pdfPreviewTable tr:hover td { background:rgba(255,255,255,0.03); }
 </style>
 <!-- Microsoft Clarity -->
 <script type="text/javascript">
@@ -764,6 +798,19 @@ body.dark {
         <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
       </svg>
       <span>Entegrasyonlar</span>
+    </button>
+    <div class="tb-sep"></div>
+    <button onclick="openPdfModal()" style="
+      display:inline-flex;align-items:center;gap:6px;
+      padding:7px 14px;
+      background:rgba(239,68,68,0.1);
+      border:1px solid rgba(239,68,68,0.25);
+      border-radius:8px;color:#FCA5A5;
+      font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;
+      transition:all .15s;
+    " onmouseover="this.style.background='rgba(239,68,68,0.18)'"
+       onmouseout="this.style.background='rgba(239,68,68,0.1)'">
+      📄 PDF Yükle
     </button>
     <div class="tb-sep"></div>
     <div class="export-wrapper">
@@ -1584,6 +1631,166 @@ function queueOfflineMessage(payload) {
       <span class="chip" onclick="useChipCmd('A-Z sırala')">↕ Sırala</span>
       <span class="chip" onclick="useChipCmd('Boş satırları sil')">🗑 Temizle</span>
       <span class="chip" onclick="useChipCmd('Tekrarları kaldır')">✦ Tekrar</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- PDF UPLOAD MODAL                        -->
+<!-- ═══════════════════════════════════════ -->
+<div id="pdfModal" style="display:none">
+  <div id="pdfBackdrop" onclick="closePdfModal()"
+       style="position:fixed;inset:0;background:rgba(0,0,0,0.7);
+              backdrop-filter:blur(4px);z-index:1000;
+              animation:pdfFadeIn .2s ease"></div>
+  <div id="pdfCard" style="
+    position:fixed;top:50%;left:50%;
+    transform:translate(-50%,-50%);z-index:1001;
+    width:min(520px,95vw);background:#0f0f14;
+    border:1px solid rgba(255,255,255,0.1);border-radius:20px;
+    box-shadow:0 24px 64px rgba(0,0,0,0.6);overflow:hidden;
+    animation:pdfSlideUp .25s cubic-bezier(0.4,0,0.2,1);
+  ">
+    <div style="padding:20px 24px 16px;border-bottom:1px solid rgba(255,255,255,0.07);
+                display:flex;align-items:center;gap:12px;">
+      <div style="width:36px;height:36px;border-radius:10px;
+                  background:linear-gradient(135deg,#6366F1,#8B5CF6);
+                  display:flex;align-items:center;justify-content:center;
+                  font-size:18px;flex-shrink:0;">📄</div>
+      <div>
+        <div style="font-size:15px;font-weight:700;color:#F9FAFB">PDF'den Veri Çıkar</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px">
+          Fatura, bordro, rapor — AI otomatik analiz eder
+        </div>
+      </div>
+      <button onclick="closePdfModal()" style="
+        margin-left:auto;background:transparent;border:none;
+        color:rgba(255,255,255,0.3);cursor:pointer;
+        width:28px;height:28px;border-radius:6px;
+        display:flex;align-items:center;justify-content:center;
+        font-size:18px;transition:all .15s;
+      " onmouseover="this.style.background='rgba(255,255,255,0.08)';this.style.color='rgba(255,255,255,0.8)'"
+         onmouseout="this.style.background='transparent';this.style.color='rgba(255,255,255,0.3)'">×</button>
+    </div>
+
+    <div style="padding:20px 24px">
+      <!-- DROP ZONE -->
+      <div id="pdfDropZone"
+           ondragover="pdfDragOver(event)" ondragleave="pdfDragLeave(event)" ondrop="pdfDrop(event)"
+           onclick="document.getElementById('pdfFileInput').click()"
+           style="border:2px dashed rgba(99,102,241,0.3);border-radius:14px;
+                  padding:32px 20px;text-align:center;cursor:pointer;
+                  transition:all .2s;background:rgba(99,102,241,0.03);"
+           onmouseover="this.style.borderColor='rgba(99,102,241,0.6)';this.style.background='rgba(99,102,241,0.07)'"
+           onmouseout="this.style.borderColor='rgba(99,102,241,0.3)';this.style.background='rgba(99,102,241,0.03)'">
+        <div style="font-size:40px;margin-bottom:12px;opacity:0.7">📄</div>
+        <div style="font-size:14px;font-weight:600;color:rgba(255,255,255,0.8);margin-bottom:6px">
+          PDF dosyasını buraya sürükleyin
+        </div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.35);margin-bottom:16px">veya tıklayarak seçin</div>
+        <div style="display:inline-flex;align-items:center;gap:6px;
+                    background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.3);
+                    color:#A5B4FC;padding:7px 16px;border-radius:8px;
+                    font-size:12px;font-weight:600;">📁 Dosya Seç</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.2);margin-top:12px">
+          Maksimum 10MB · Fatura, bordro, rapor, banka ekstresi
+        </div>
+      </div>
+      <input type="file" id="pdfFileInput" accept=".pdf" style="display:none" onchange="pdfFileSelected(this)">
+
+      <!-- FILE SELECTED -->
+      <div id="pdfFileInfo" style="display:none">
+        <div style="display:flex;align-items:center;gap:12px;
+                    background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);
+                    border-radius:12px;padding:14px 16px;">
+          <div style="width:40px;height:40px;border-radius:10px;
+                      background:rgba(239,68,68,0.15);
+                      display:flex;align-items:center;justify-content:center;
+                      font-size:20px;flex-shrink:0;">📕</div>
+          <div style="flex:1;min-width:0">
+            <div id="pdfFileName" style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.85);
+                                         white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">dosya.pdf</div>
+            <div id="pdfFileMeta" style="font-size:11px;color:rgba(255,255,255,0.35);margin-top:3px">Hazır</div>
+          </div>
+          <button onclick="resetPdfModal()" style="background:transparent;border:none;
+            color:rgba(255,255,255,0.3);cursor:pointer;font-size:16px;padding:4px;
+            border-radius:5px;transition:all .12s;"
+            onmouseover="this.style.color='rgba(255,255,255,0.7)'"
+            onmouseout="this.style.color='rgba(255,255,255,0.3)'">×</button>
+        </div>
+      </div>
+
+      <!-- PROCESSING -->
+      <div id="pdfProcessing" style="display:none">
+        <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);
+                    border-radius:12px;padding:20px;">
+          <div style="height:3px;background:rgba(255,255,255,0.08);border-radius:3px;
+                      overflow:hidden;margin-bottom:16px;">
+            <div id="pdfProgressBar" style="height:100%;width:0%;
+              background:linear-gradient(90deg,#6366F1,#8B5CF6,#6366F1);
+              background-size:200% 100%;border-radius:3px;transition:width .5s ease;
+              animation:pdfShimmer 1.5s infinite;"></div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div class="pdf-step" id="step1" style="display:flex;align-items:center;gap:10px;font-size:12px;color:rgba(255,255,255,0.4);">
+              <div class="step-dot"></div><span>PDF okunuyor ve metin çıkarılıyor</span>
+            </div>
+            <div class="pdf-step" id="step2" style="display:flex;align-items:center;gap:10px;font-size:12px;color:rgba(255,255,255,0.4);">
+              <div class="step-dot"></div><span>AI yapıyı analiz ediyor</span>
+            </div>
+            <div class="pdf-step" id="step3" style="display:flex;align-items:center;gap:10px;font-size:12px;color:rgba(255,255,255,0.4);">
+              <div class="step-dot"></div><span>Tablo formatına dönüştürülüyor</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUCCESS -->
+      <div id="pdfSuccess" style="display:none">
+        <div style="background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.2);
+                    border-radius:12px;padding:20px;text-align:center;">
+          <div style="font-size:36px;margin-bottom:10px">✅</div>
+          <div style="font-size:14px;font-weight:700;color:#6EE7B7;margin-bottom:6px">Başarıyla Çıkarıldı!</div>
+          <div id="pdfSuccessInfo" style="font-size:12px;color:rgba(255,255,255,0.5)">Veriler hazır</div>
+          <div id="pdfPreviewWrap" style="margin-top:14px;background:rgba(255,255,255,0.03);
+               border:1px solid rgba(255,255,255,0.07);border-radius:8px;overflow:hidden;
+               max-height:180px;overflow-y:auto;text-align:left;">
+            <table id="pdfPreviewTable" style="width:100%;border-collapse:collapse;font-size:11px;"></table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ERROR -->
+      <div id="pdfError" style="display:none">
+        <div style="background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.2);
+                    border-radius:12px;padding:20px;text-align:center;">
+          <div style="font-size:32px;margin-bottom:10px">❌</div>
+          <div style="font-size:13px;font-weight:600;color:#FCA5A5;margin-bottom:6px">Çıkarım Başarısız</div>
+          <div id="pdfErrorMsg" style="font-size:12px;color:rgba(255,255,255,0.4)">Hata oluştu</div>
+          <button onclick="resetPdfModal()" style="margin-top:14px;padding:7px 20px;
+            background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);
+            border-radius:8px;color:#FCA5A5;font-size:12px;font-weight:600;cursor:pointer;
+            font-family:inherit;transition:all .15s;">Tekrar Dene</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="pdfFooter" style="padding:14px 24px 20px;border-top:1px solid rgba(255,255,255,0.07);
+                                display:flex;align-items:center;gap:10px;justify-content:flex-end;">
+      <button onclick="closePdfModal()" style="padding:9px 20px;background:transparent;
+        border:1px solid rgba(255,255,255,0.12);border-radius:9px;
+        color:rgba(255,255,255,0.6);font-size:13px;font-weight:600;cursor:pointer;
+        font-family:inherit;transition:all .15s;"
+        onmouseover="this.style.background='rgba(255,255,255,0.06)'"
+        onmouseout="this.style.background='transparent'">İptal</button>
+      <button id="pdfExtractBtn" onclick="extractPdf()" style="padding:9px 22px;
+        background:linear-gradient(135deg,#6366F1,#8B5CF6);border:none;border-radius:9px;
+        color:white;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;
+        transition:all .15s;opacity:0.4;pointer-events:none;">📄 PDF'i Analiz Et</button>
+      <button id="pdfImportBtn" onclick="importPdfToSheet()" style="display:none;padding:9px 22px;
+        background:linear-gradient(135deg,#10B981,#059669);border:none;border-radius:9px;
+        color:white;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s;">
+        ✓ Tabloya Aktar</button>
     </div>
   </div>
 </div>
