@@ -28,26 +28,6 @@ function animateWords(words) {
   });
 }
 
-// ── FİYAT TABLOSU ────────────────────────────────────────────────────
-const PRICES = {
-  weekly: {
-    pro:     { amount: 124.75, label: '₺124,75', period: '/hf' },
-    biz:     { amount: 274.75, label: '₺274,75', period: '/hf' },
-    bizBase: 274.75
-  },
-  monthly: {
-    pro:     { amount: 499,    label: '₺499',    period: '/ay' },
-    biz:     { amount: 1099,   label: '₺1.099',  period: '/ay' },
-    bizBase: 1099
-  },
-  yearly: {
-    pro:     { amount: 2990,   label: '₺2.990',  period: '/yıl' },
-    biz:     { amount: 6990,   label: '₺6.990',  period: '/yıl' },
-    bizBase: 6990,
-    proMonthly:  249.17,
-    bizMonthly:  582.50
-  }
-};
 
 const BIZ_BASE = { weekly: 274.75, monthly: 1099, yearly: 6990 };
 let currentPeriod = 'monthly';
