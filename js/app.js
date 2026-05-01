@@ -5545,11 +5545,53 @@ function updateSidebarUser() {
     const email = session?.user?.email || '';
     if (!email) return;
     const name = email.split('@')[0];
+    const initial = name[0].toUpperCase();
+
     const avatar = document.getElementById('sbAvatar');
     const nameEl = document.getElementById('sbUserName');
-    if (avatar) avatar.textContent = name[0].toUpperCase();
+    if (avatar) avatar.textContent = initial;
     if (nameEl) nameEl.textContent = name;
+
+    // dropdown
+    const udAvatar = document.getElementById('sbUdAvatar');
+    const udName = document.getElementById('sbUdName');
+    const udEmail = document.getElementById('sbUdEmail');
+    if (udAvatar) udAvatar.textContent = initial;
+    if (udName) udName.textContent = name;
+    if (udEmail) udEmail.textContent = email;
+
+    // plan dot + upgrade visibility
+    const planMeta = session?.user?.user_metadata;
+    const planRaw = planMeta?.plan || localStorage.getItem('user_plan') || 'free';
+    const planLower = planRaw.toLowerCase();
+    const dot = document.getElementById('sbPlanDot');
+    const planLabel = document.getElementById('sbPlanLabel');
+    const upgradeWrap = document.getElementById('sbUpgradeWrap');
+    const udUpgrade = document.getElementById('sbUdUpgrade');
+    const dotClass = planLower.includes('business') ? 'business' : planLower.includes('pro') ? 'pro' : 'free';
+    const planDisplay = planLower.includes('business') ? 'Business Plan' : planLower.includes('pro') ? 'Pro Plan' : 'Free Plan';
+    if (dot) dot.className = 'sb-plan-dot ' + dotClass;
+    if (planLabel) planLabel.textContent = planDisplay;
+    const isBusiness = planLower.includes('business');
+    if (upgradeWrap) upgradeWrap.style.display = isBusiness ? 'none' : '';
+    if (udUpgrade) udUpgrade.style.display = isBusiness ? 'none' : '';
   } catch(e) {}
+}
+
+function toggleUserMenu() {
+  const dd = document.getElementById('userDropdown');
+  if (!dd) return;
+  const isOpen = dd.style.display !== 'none';
+  dd.style.display = isOpen ? 'none' : 'block';
+  if (!isOpen) {
+    setTimeout(() => document.addEventListener('click', _closeUserMenuOutside, {once: true}), 0);
+  }
+}
+
+function _closeUserMenuOutside(e) {
+  const dd = document.getElementById('userDropdown');
+  const wrap = document.querySelector('.sb-user-wrap');
+  if (dd && wrap && !wrap.contains(e.target)) dd.style.display = 'none';
 }
 
 function toggleDarkMode() {
