@@ -344,7 +344,7 @@
       <div class="plan-opt-orig" id="orig-pro"></div>
       <div class="plan-opt-price">
         <span class="plan-opt-curr">₺</span>
-        <span class="plan-opt-num" id="pro-price">499</span>
+        <span class="plan-opt-num" id="pro-price">69</span>
         <span class="plan-opt-period" id="pro-period">/ay</span>
       </div>
       <div class="plan-opt-note" id="pro-plan-note">Aylık ödeme</div>
@@ -366,7 +366,7 @@
       <div class="plan-opt-orig" id="orig-biz"></div>
       <div class="plan-opt-price">
         <span class="plan-opt-curr">₺</span>
-        <span class="plan-opt-num" id="biz-price">1.099</span>
+        <span class="plan-opt-num" id="biz-price">149</span>
         <span class="plan-opt-period" id="biz-period">/ay</span>
       </div>
       <div class="plan-opt-note" id="biz-plan-note">Aylık ödeme</div>
@@ -413,14 +413,14 @@ const STRIPE_LINKS = {
 
 const PRICES = {
   pro: {
-    weekly:  { amount: 124.75, display: '124,75', period: '/hf' },
-    monthly: { amount: 499,    display: '499',    period: '/ay' },
-    yearly:  { amount: 2990,   display: '2.990',  period: '/yıl' }
+    weekly:  { amount: 17,   display: '17',    period: '/hf' },
+    monthly: { amount: 69,   display: '69',    period: '/ay' },
+    yearly:  { amount: 2990, display: '2.990', period: '/yıl' }
   },
   business: {
-    weekly:  { amount: 274.75, display: '274,75', period: '/hf' },
-    monthly: { amount: 1099,   display: '1.099',  period: '/ay' },
-    yearly:  { amount: 6990,   display: '6.990',  period: '/yıl' }
+    weekly:  { amount: 36,   display: '36',    period: '/hf' },
+    monthly: { amount: 149,  display: '149',   period: '/ay' },
+    yearly:  { amount: 6990, display: '6.990', period: '/yıl' }
   }
 };
 
@@ -467,7 +467,7 @@ function updatePrices() {
   const giftPro = document.getElementById('gift-pro');
 
   if (isYearly) {
-    proOrig.textContent = 'Aylık ₺499 yerine';
+    proOrig.textContent = 'Aylık ₺69 yerine';
     proOrig.style.display = 'block';
     proNote.textContent = '≈ ₺249/ay · 2 ay ücretsiz 🎁';
     giftPro.style.display = 'flex';
@@ -486,7 +486,7 @@ function updatePrices() {
   const giftBiz = document.getElementById('gift-biz');
 
   if (isYearly) {
-    bizOrig.textContent = 'Aylık ₺1.099 yerine';
+    bizOrig.textContent = 'Aylık ₺149 yerine';
     bizOrig.style.display = 'block';
     bizNote.textContent = '≈ ₺583/ay · 2 ay ücretsiz 🎁';
     giftBiz.style.display = 'flex';
