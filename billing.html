@@ -415,12 +415,12 @@ const PRICES = {
   pro: {
     weekly:  { amount: 17,   display: '17',    period: '/hf' },
     monthly: { amount: 69,   display: '69',    period: '/ay' },
-    yearly:  { amount: 2990, display: '2.990', period: '/yıl' }
+    yearly:  { amount: 588,  display: '588',   period: '/yıl' }
   },
   business: {
     weekly:  { amount: 36,   display: '36',    period: '/hf' },
     monthly: { amount: 149,  display: '149',   period: '/ay' },
-    yearly:  { amount: 6990, display: '6.990', period: '/yıl' }
+    yearly:  { amount: 1068, display: '1.068', period: '/yıl' }
   }
 };
 
@@ -469,7 +469,7 @@ function updatePrices() {
   if (isYearly) {
     proOrig.textContent = 'Aylık ₺69 yerine';
     proOrig.style.display = 'block';
-    proNote.textContent = '≈ ₺249/ay · 2 ay ücretsiz 🎁';
+    proNote.textContent = '≈ ₺49/ay · 2 ay ücretsiz 🎁';
     giftPro.style.display = 'flex';
   } else {
     proOrig.style.display = 'none';
@@ -488,7 +488,7 @@ function updatePrices() {
   if (isYearly) {
     bizOrig.textContent = 'Aylık ₺149 yerine';
     bizOrig.style.display = 'block';
-    bizNote.textContent = '≈ ₺583/ay · 2 ay ücretsiz 🎁';
+    bizNote.textContent = '≈ ₺89/ay · 2 ay ücretsiz 🎁';
     giftBiz.style.display = 'flex';
   } else {
     bizOrig.style.display = 'none';
