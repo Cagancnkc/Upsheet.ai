@@ -5493,218 +5493,234 @@ document.addEventListener('DOMContentLoaded', () => {
   if (toggle && isDark) toggle.classList.add('on');
 });
 
-// ════════════════════════════════════════════
-// PDF EXTRACT FEATURE
-// ════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
+//  PDF IMPORT FEATURE
+// ═══════════════════════════════════════════════════════════════
 
-let pdfExtractedData = null;
-let pdfCurrentFile   = null;
+let _pdfData = null;
+let _pdfSelectedId = null;
 
 function openPdfModal() {
-  const modal = document.getElementById('pdfModal');
-  if (modal) modal.style.display = 'block';
-  resetPdfModal();
+  document.getElementById('pdfModal').classList.add('open');
+  _pdfResetStep1();
 }
 
 function closePdfModal() {
-  const modal = document.getElementById('pdfModal');
-  if (modal) modal.style.display = 'none';
-  pdfExtractedData = null;
-  pdfCurrentFile   = null;
+  document.getElementById('pdfModal').classList.remove('open');
+  _pdfData = null;
+  _pdfSelectedId = null;
 }
 
-function resetPdfModal() {
-  pdfExtractedData = null;
-  pdfCurrentFile   = null;
-
-  _pdfShow('pdfDropZone');
-  _pdfHide('pdfFileInfo');
-  _pdfHide('pdfProcessing');
-  _pdfHide('pdfSuccess');
-  _pdfHide('pdfError');
-  _pdfShow('pdfFooter');
-
-  const extractBtn = document.getElementById('pdfExtractBtn');
-  const importBtn  = document.getElementById('pdfImportBtn');
-  if (extractBtn) {
-    extractBtn.style.display  = '';
-    extractBtn.style.opacity  = '0.4';
-    extractBtn.style.pointerEvents = 'none';
-  }
-  if (importBtn) importBtn.style.display = 'none';
-
-  const fileInput = document.getElementById('pdfFileInput');
-  if (fileInput) fileInput.value = '';
-
-  ['step1','step2','step3'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.className = 'pdf-step';
-  });
-  const bar = document.getElementById('pdfProgressBar');
-  if (bar) bar.style.width = '0%';
+function pdfModalClickOutside(e) {
+  if (e.target === document.getElementById('pdfModal')) closePdfModal();
 }
 
-function _pdfShow(id) { const el = document.getElementById(id); if (el) el.style.display = ''; }
-function _pdfHide(id) { const el = document.getElementById(id); if (el) el.style.display = 'none'; }
+function pdfGoBack() { _pdfResetStep1(); }
+
+function _pdfResetStep1() {
+  _pdfData = null;
+  _pdfSelectedId = null;
+  document.getElementById('pdfStep1').style.display = '';
+  document.getElementById('pdfStep2').style.display = 'none';
+  document.getElementById('pdfUploadProgress').style.display = 'none';
+  document.getElementById('pdfUploadError').style.display = 'none';
+  document.getElementById('pdfImportBtn').style.display = 'none';
+  document.getElementById('pdfBackBtn').style.display = 'none';
+  document.getElementById('pdfProgressFill').style.width = '0%';
+  document.getElementById('pdfFileInput').value = '';
+  document.getElementById('pdfModalTitle').textContent = 'PDF\'ten Veri İçe Aktar';
+}
 
 function pdfDragOver(e) {
   e.preventDefault();
-  const dz = document.getElementById('pdfDropZone');
-  if (dz) { dz.style.borderColor='rgba(99,102,241,0.8)'; dz.style.background='rgba(99,102,241,0.10)'; }
+  document.getElementById('pdfDropZone').classList.add('dragover');
 }
+
 function pdfDragLeave(e) {
-  const dz = document.getElementById('pdfDropZone');
-  if (dz) { dz.style.borderColor='rgba(99,102,241,0.3)'; dz.style.background='rgba(99,102,241,0.03)'; }
+  document.getElementById('pdfDropZone').classList.remove('dragover');
 }
+
 function pdfDrop(e) {
   e.preventDefault();
-  pdfDragLeave(e);
+  document.getElementById('pdfDropZone').classList.remove('dragover');
   const file = e.dataTransfer.files[0];
-  if (file && file.type === 'application/pdf') setPdfFile(file);
-  else showPdfError('Sadece PDF dosyaları destekleniyor.');
+  if (file) _pdfProcessFile(file);
 }
 
-function pdfFileSelected(input) {
-  const file = input.files[0];
-  if (file) setPdfFile(file);
+function pdfFileSelected(e) {
+  const file = e.target.files[0];
+  if (file) _pdfProcessFile(file);
 }
 
-function setPdfFile(file) {
-  if (file.size > 10 * 1024 * 1024) { showPdfError('Dosya boyutu 10MB\'ı geçemez.'); return; }
-  pdfCurrentFile = file;
-  _pdfHide('pdfDropZone');
-  _pdfShow('pdfFileInfo');
-  const nameEl = document.getElementById('pdfFileName');
-  const metaEl = document.getElementById('pdfFileMeta');
-  if (nameEl) nameEl.textContent = file.name;
-  if (metaEl) metaEl.textContent = (file.size / 1024).toFixed(0) + ' KB · Yüklemeye hazır';
-  const btn = document.getElementById('pdfExtractBtn');
-  if (btn) { btn.style.opacity = '1'; btn.style.pointerEvents = 'auto'; }
-}
+async function _pdfProcessFile(file) {
+  if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
+    _pdfShowUploadError('Lütfen geçerli bir PDF dosyası seçin.');
+    return;
+  }
+  const sizeMB = file.size / (1024 * 1024);
+  if (sizeMB > 30) {
+    _pdfShowUploadError(`Dosya çok büyük: ${sizeMB.toFixed(1)}MB. Maksimum boyut 30MB'tır.`);
+    return;
+  }
 
-async function extractPdf() {
-  if (!pdfCurrentFile) return;
+  document.getElementById('pdfUploadProgress').style.display = '';
+  document.getElementById('pdfUploadError').style.display = 'none';
+  document.getElementById('pdfProgressLabel').textContent = 'PDF analiz ediliyor... (Claude görsel olarak tarayıyor)';
 
-  _pdfHide('pdfFileInfo');
-  _pdfHide('pdfDropZone');
-  _pdfShow('pdfProcessing');
-
-  const importBtn  = document.getElementById('pdfImportBtn');
-  const extractBtn = document.getElementById('pdfExtractBtn');
-  if (extractBtn) extractBtn.style.display = 'none';
-  if (importBtn)  importBtn.style.display  = 'none';
-
-  await _pdfSetStep('step1', 'active');
-  const bar = document.getElementById('pdfProgressBar');
-  if (bar) bar.style.width = '30%';
+  let prog = 0;
+  const progInterval = setInterval(() => {
+    prog = Math.min(prog + Math.random() * 6, 88);
+    document.getElementById('pdfProgressFill').style.width = prog + '%';
+  }, 500);
 
   try {
+    const token = getAuthToken();
     const formData = new FormData();
-    formData.append('pdf', pdfCurrentFile);
+    formData.append('pdf', file);
 
-    await _pdfSetStep('step2', 'active', 800);
-    if (bar) bar.style.width = '65%';
-
-    const authKey = Object.keys(localStorage).find(
-      k => k.startsWith('sb-') && k.endsWith('-auth-token')
-    );
-    const token = authKey ? JSON.parse(localStorage.getItem(authKey))?.access_token : null;
-    const headers = {};
-    if (token) headers['Authorization'] = 'Bearer ' + token;
-
-    const response = await fetch(API_URL + '/api/pdf/extract', {
-      method: 'POST', headers, body: formData
+    const res = await fetch(API_URL + '/api/pdf/extract', {
+      method: 'POST',
+      headers: token ? { 'Authorization': 'Bearer ' + token } : {},
+      body: formData
     });
 
-    await _pdfSetStep('step3', 'active', 400);
-    if (bar) bar.style.width = '90%';
+    clearInterval(progInterval);
+    document.getElementById('pdfProgressFill').style.width = '100%';
 
-    const result = await response.json();
-    if (!response.ok) throw new Error(result.error || 'Sunucu hatası');
-    if (!result.success) throw new Error(result.error || 'Çıkarım başarısız');
+    if (res.status === 401) { window.location.href = 'auth.html'; return; }
+    if (res.status === 413) { _pdfShowUploadError('Dosya boyutu sunucu limitini aşıyor. Daha küçük bir PDF deneyin.'); return; }
+    if (res.status === 429 || res.status === 403) {
+      const d = await res.json().catch(() => ({}));
+      _pdfShowUploadError(d.error || 'Aylık AI kullanım limitine ulaştınız.');
+      return;
+    }
+    if (!res.ok) {
+      const d = await res.json().catch(() => ({}));
+      _pdfShowUploadError(d.error || 'PDF analiz hatası. Lütfen tekrar deneyin.');
+      return;
+    }
 
-    await new Promise(r => setTimeout(r, 400));
-    if (bar) bar.style.width = '100%';
-    ['step1','step2','step3'].forEach(id => _pdfStepDone(id));
-    pdfExtractedData = result;
-    await new Promise(r => setTimeout(r, 300));
-    showPdfSuccess(result);
+    const data = await res.json();
+    if (data.error) { _pdfShowUploadError(data.error); return; }
+
+    _pdfData = data;
+    _pdfShowStep2(data);
 
   } catch (err) {
-    console.error('[PDF Extract]', err);
-    showPdfError(err.message || 'Bilinmeyen hata oluştu');
+    clearInterval(progInterval);
+    _pdfShowUploadError('Sunucuya bağlanılamadı: ' + err.message);
   }
 }
 
-async function _pdfSetStep(id, state, delay = 0) {
-  if (delay) await new Promise(r => setTimeout(r, delay));
-  const el = document.getElementById(id);
-  if (el) el.className = 'pdf-step ' + state;
-}
-function _pdfStepDone(id) {
-  const el = document.getElementById(id);
-  if (el) el.className = 'pdf-step done';
+function _pdfShowUploadError(msg) {
+  document.getElementById('pdfUploadProgress').style.display = 'none';
+  const el = document.getElementById('pdfUploadError');
+  el.textContent = msg;
+  el.style.display = '';
 }
 
-function showPdfSuccess(result) {
-  _pdfHide('pdfProcessing');
-  _pdfShow('pdfSuccess');
-  const info = document.getElementById('pdfSuccessInfo');
-  if (info) {
-    info.textContent =
-      `${result.rows?.length || 0} satır, ${result.headers?.length || 0} sütun çıkarıldı` +
-      (result.pages ? ` · ${result.pages} sayfa PDF` : '') +
-      (result.document_type ? ` · ${result.document_type}` : '');
+function _pdfShowStep2(data) {
+  document.getElementById('pdfStep1').style.display = 'none';
+  document.getElementById('pdfStep2').style.display = '';
+  document.getElementById('pdfBackBtn').style.display = '';
+  document.getElementById('pdfModalTitle').textContent = 'Tabloyu Seçin ve Önizleyin';
+
+  const sum = data.document_summary || {};
+  document.getElementById('pdfDocType').textContent = '📄 ' + (sum.type || 'belge').toUpperCase();
+
+  const pagesEl = document.getElementById('pdfDocPages');
+  pagesEl.textContent = sum.page_count ? sum.page_count + ' sayfa' : '';
+  pagesEl.style.display = sum.page_count ? '' : 'none';
+
+  const qEl = document.getElementById('pdfDocQuality');
+  const qMap = { 'yüksek': ['pdf-badge-q-high', '✓ Yüksek Kalite'], 'orta': ['pdf-badge-q-mid', '~ Orta Kalite'], 'düşük': ['pdf-badge-q-low', '⚠ Düşük Kalite'] };
+  const [qCls, qTxt] = qMap[data.extraction_quality] || qMap['orta'];
+  qEl.className = 'pdf-badge ' + qCls;
+  qEl.textContent = qTxt;
+
+  document.getElementById('pdfDocDesc').textContent = sum.description || '';
+
+  if (data.warnings && data.warnings.length > 0) {
+    document.getElementById('pdfWarningsList').innerHTML = data.warnings.map(w => `<li>${w}</li>`).join('');
+    document.getElementById('pdfWarningsBox').style.display = '';
+  } else {
+    document.getElementById('pdfWarningsBox').style.display = 'none';
   }
-  const table = document.getElementById('pdfPreviewTable');
-  if (table && result.headers && result.rows) {
-    let html = '<thead><tr>';
-    result.headers.slice(0, 6).forEach(h => { html += `<th>${h || ''}</th>`; });
-    html += '</tr></thead><tbody>';
-    result.rows.slice(0, 8).forEach(row => {
-      html += '<tr>';
-      (row || []).slice(0, 6).forEach(cell => {
-        html += `<td title="${String(cell||'').replace(/"/g,"'")}">${cell || ''}</td>`;
-      });
-      html += '</tr>';
+
+  const tables = data.tables || [];
+
+  if (tables.length === 0) {
+    document.getElementById('pdfNoTableMsg').style.display = '';
+    document.getElementById('pdfTableSelector').style.display = 'none';
+    document.getElementById('pdfTablePreview').style.display = 'none';
+    return;
+  }
+
+  document.getElementById('pdfNoTableMsg').style.display = 'none';
+  document.getElementById('pdfImportBtn').style.display = '';
+
+  if (tables.length > 1) {
+    const list = document.getElementById('pdfTableList');
+    list.innerHTML = tables.map((t, i) => `
+      <label class="pdf-table-radio${i === 0 ? ' selected' : ''}" onclick="pdfSelectTable(${t.id}, this)">
+        <input type="radio" name="pdfTableChoice" value="${t.id}" ${i === 0 ? 'checked' : ''}>
+        <div>
+          <div class="pdf-table-radio-label">${t.title}</div>
+          <div class="pdf-table-radio-meta">${t.row_count} satır · ${t.col_count} sütun${t.page ? ' · Sayfa ' + t.page : ''}</div>
+        </div>
+      </label>
+    `).join('');
+    document.getElementById('pdfTableSelector').style.display = '';
+  } else {
+    document.getElementById('pdfTableSelector').style.display = 'none';
+  }
+
+  _pdfSelectedId = tables[0].id;
+  _pdfRenderPreview(tables[0]);
+}
+
+function pdfSelectTable(id, labelEl) {
+  _pdfSelectedId = id;
+  document.querySelectorAll('.pdf-table-radio').forEach(el => el.classList.remove('selected'));
+  if (labelEl) labelEl.classList.add('selected');
+  const table = (_pdfData.tables || []).find(t => t.id === id);
+  if (table) _pdfRenderPreview(table);
+}
+
+function _pdfRenderPreview(table) {
+  document.getElementById('pdfPreviewMeta').textContent =
+    `(${table.row_count} satır, ${table.col_count} sütun — ilk 10 satır)`;
+
+  const headers = table.headers || [];
+  const rows = (table.rows || []).slice(0, 10);
+
+  let html = '<thead><tr>' + headers.map(h => `<th>${h}</th>`).join('') + '</tr></thead><tbody>';
+  html += rows.map(row =>
+    '<tr>' + headers.map((_, i) => `<td>${row[i] ?? ''}</td>`).join('') + '</tr>'
+  ).join('');
+  html += '</tbody>';
+  document.getElementById('pdfPreviewTable').innerHTML = html;
+  document.getElementById('pdfTablePreview').style.display = '';
+}
+
+function pdfImport() {
+  if (!_pdfData || _pdfSelectedId === null) return;
+  const table = (_pdfData.tables || []).find(t => t.id === _pdfSelectedId);
+  if (!table) { toast('Tablo bulunamadı.', 'err'); return; }
+
+  const gridData = [table.headers, ...table.rows];
+  const newRows = Math.max(ROWS, gridData.length);
+  const grid = Array.from({ length: newRows }, () => Array(COLS).fill(''));
+  gridData.forEach((row, r) => {
+    (row || []).forEach((cell, c) => {
+      if (c < COLS) grid[r][c] = String(cell ?? '');
     });
-    html += '</tbody>';
-    table.innerHTML = html;
-  }
-  const importBtn = document.getElementById('pdfImportBtn');
-  if (importBtn) importBtn.style.display = '';
-}
+  });
 
-function showPdfError(msg) {
-  _pdfHide('pdfProcessing');
-  _pdfHide('pdfFileInfo');
-  _pdfHide('pdfDropZone');
-  _pdfShow('pdfError');
-  const msgEl = document.getElementById('pdfErrorMsg');
-  if (msgEl) msgEl.textContent = msg;
-}
-
-function importPdfToSheet() {
-  if (!pdfExtractedData?.headers || !pdfExtractedData?.rows) return;
-  const { headers, rows, title, document_type } = pdfExtractedData;
-  const sheetData = [headers, ...rows];
-  const sheetName = (title || pdfCurrentFile?.name || 'PDF Import')
-    .replace(/\.pdf$/i, '').slice(0, 30);
-  sheets[sheetName] = sheetData;
-  activeSheet = sheetName;
-  buildGrid(sheetData);
-  if (typeof renderSheetList === 'function') renderSheetList();
+  sheets[activeSheet] = grid;
+  addHistory('file', `PDF'ten "${table.title}" tablosu içe aktarıldı`);
+  buildGrid(grid);
   closePdfModal();
-  if (typeof showToast === 'function') {
-    showToast(`✓ "${sheetName}" aktarıldı — ${rows.length} satır, ${headers.length} sütun`, 'success');
-  }
-  if (typeof addMessage === 'function') {
-    addMessage(
-      `📄 **${sheetName}** PDF'den başarıyla aktarıldı.\n\n` +
-      `• ${rows.length} satır, ${headers.length} sütun\n` +
-      `• Belge türü: ${document_type || 'genel'}\n\n` +
-      `Şimdi AI komutları kullanabilirsiniz. Örn: "Topla", "KDV hesapla", "Sırala"`,
-      'ai'
-    );
-  }
+  toast(`✓ "${table.title}" aktarıldı — ${table.row_count} satır, ${table.col_count} sütun`, 'ok');
 }
+

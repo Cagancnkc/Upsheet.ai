@@ -1,96 +1,160 @@
 'use strict';
 const express = require('express');
-const router  = express.Router();
 const multer  = require('multer');
-const pdfParse = require('pdf-parse');
 const Anthropic = require('@anthropic-ai/sdk');
+const { checkLimit, incrementUsage } = require('../middleware/limits');
 
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+const router = express.Router();
 
 const upload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 10 * 1024 * 1024 },
+  limits: { fileSize: 30 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
-    if (file.mimetype === 'application/pdf') cb(null, true);
-    else cb(new Error('Sadece PDF dosyası yüklenebilir'), false);
+    if (file.mimetype !== 'application/pdf') {
+      return cb(new Error('Sadece PDF dosyaları kabul edilir'), false);
+    }
+    cb(null, true);
   }
 });
 
-router.post('/extract', upload.single('pdf'), async (req, res) => {
-  if (!req.file) return res.status(400).json({ error: 'PDF dosyası gerekli' });
+const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+
+const PDF_SYSTEM_PROMPT = `Sen bir PDF belge analiz uzmanısın. Görevin: verilen PDF belgesini görsel olarak analiz etmek, içindeki tabloları ve yapılandırılmış verileri tespit etmek ve bunları JSON formatında çıkarmaktır.
+
+ZORUNLU KURALLAR:
+1. Yanıtın SADECE geçerli bir JSON nesnesi olmalı. Markdown, açıklama veya \`\`\` işareti KESİNLİKLE YASAK.
+2. Tablo verilerini SATIR SATIR çıkar. Başlık satırı (headers) ayrı, veri satırları (rows) ayrı olmalı.
+3. Hücre değerlerini TAM OLARAK al — sayılar, tarihler, para birimleri orijinal formatlarıyla korunmalı.
+4. Birden fazla tablo tespit edilirse HEPSİNİ listele; birini seçme, hepsini döndür.
+5. Tablo bulunamazsa "tables" alanını boş dizi [] olarak bırak.
+
+JSON ŞEMASI (bu yapıya TAM OLARAK uy):
+{
+  "document_summary": {
+    "type": "fatura|rapor|tablo|form|bordro|stok|banka|diğer",
+    "page_count": <sayı>,
+    "language": "tr|en|diğer",
+    "description": "<Belgenin 1-2 cümlelik Türkçe özeti>"
+  },
+  "tables": [
+    {
+      "id": 1,
+      "title": "<Tablo başlığı veya 'Tablo 1'>",
+      "page": <sayfa numarası veya null>,
+      "row_count": <veri satırı sayısı>,
+      "col_count": <sütun sayısı>,
+      "headers": ["Sütun1", "Sütun2"],
+      "rows": [["değer1", "değer2"], ["değer1", "değer2"]],
+      "notes": "<varsa not, yoksa null>"
+    }
+  ],
+  "extraction_quality": "yüksek|orta|düşük",
+  "warnings": ["<varsa uyarılar>"]
+}`;
+
+function parsePdfResponse(rawText) {
+  let jsonStr = rawText.trim();
+  const fenceMatch = jsonStr.match(/```(?:json)?\s*([\s\S]*?)```/);
+  if (fenceMatch) jsonStr = fenceMatch[1].trim();
+  const objMatch = jsonStr.match(/\{[\s\S]*\}/);
+  if (objMatch) jsonStr = objMatch[0];
 
   try {
-    const pdfData = await pdfParse(req.file.buffer);
-    const rawText = pdfData.text?.trim();
+    const parsed = JSON.parse(jsonStr);
 
-    if (!rawText || rawText.length < 10) {
-      return res.status(422).json({ error: 'PDF içeriği okunamadı. Taranmış görsel PDF olabilir.' });
+    if (!parsed.document_summary) {
+      parsed.document_summary = { type: 'diğer', page_count: null, language: 'tr', description: '' };
     }
+    if (!Array.isArray(parsed.tables)) parsed.tables = [];
+    if (!parsed.extraction_quality) parsed.extraction_quality = 'orta';
+    if (!Array.isArray(parsed.warnings)) parsed.warnings = [];
 
-    const prompt = `Aşağıdaki PDF metninden yapılandırılmış tablo verisi çıkar.
+    parsed.tables = parsed.tables.map((t, i) => ({
+      id: t.id ?? (i + 1),
+      title: t.title || `Tablo ${i + 1}`,
+      page: t.page ?? null,
+      row_count: Array.isArray(t.rows) ? t.rows.length : 0,
+      col_count: Array.isArray(t.headers) ? t.headers.length : 0,
+      headers: Array.isArray(t.headers) ? t.headers.map(String) : [],
+      rows: Array.isArray(t.rows) ? t.rows.map(r => (Array.isArray(r) ? r : [r]).map(String)) : [],
+      notes: t.notes ?? null
+    }));
 
-PDF METNİ:
-${rawText.slice(0, 8000)}
-
-GÖREV:
-Bu metni analiz et ve içindeki tablo/liste/veri yapısını tespit et.
-Fatura, bordro, stok listesi, satış raporu, banka ekstresi vb. olabilir.
-
-YANIT FORMATI — SADECE JSON:
-{
-  "document_type": "fatura|bordro|stok|rapor|banka|genel",
-  "title": "Belge başlığı",
-  "headers": ["Sütun1", "Sütun2", "Sütun3"],
-  "rows": [
-    ["değer1", "değer2", "değer3"],
-    ["değer1", "değer2", "değer3"]
-  ],
-  "summary": {
-    "total_rows": 5,
-    "key_info": "Önemli bilgiler (toplam tutar, tarih, firma adı vb.)"
+    return parsed;
+  } catch (e) {
+    console.error('[PDF] JSON parse failed:', e.message);
+    return {
+      error: 'PDF analiz sonucu okunamadı. Lütfen tekrar deneyin.',
+      document_summary: null,
+      tables: [],
+      extraction_quality: 'düşük',
+      warnings: ['Yanıt ayrıştırma hatası']
+    };
   }
 }
 
-Eğer birden fazla tablo varsa en önemli/büyük olanı al.
-Boş satırları dahil etme.
-Para birimi sembollerini koru (₺, $, €).
-Tarih formatlarını koru.
-SADECE JSON döndür, başka açıklama yazma.`;
+router.post('/extract', checkLimit, upload.single('pdf'), async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: 'PDF dosyası gerekli' });
+  }
 
+  const fileSizeMB = req.file.size / (1024 * 1024);
+  const base64 = req.file.buffer.toString('base64');
+
+  try {
     const response = await anthropic.messages.create({
-      model: 'claude-haiku-4-5-20251001',
-      max_tokens: 4000,
-      messages: [{ role: 'user', content: prompt }]
+      model: 'claude-sonnet-4-6',
+      max_tokens: 4096,
+      system: [
+        {
+          type: 'text',
+          text: PDF_SYSTEM_PROMPT,
+          cache_control: { type: 'ephemeral' }
+        }
+      ],
+      messages: [{
+        role: 'user',
+        content: [
+          {
+            type: 'document',
+            source: {
+              type: 'base64',
+              media_type: 'application/pdf',
+              data: base64
+            }
+          },
+          {
+            type: 'text',
+            text: 'Bu PDF belgesini analiz et ve tüm tabloları JSON formatında çıkar. Sistem promptundaki JSON şemasına tam olarak uy.'
+          }
+        ]
+      }]
     });
 
-    const raw = response.content[0].text.trim();
-    const jsonStr = raw.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+    const result = parsePdfResponse(response.content[0].text);
 
-    let parsed;
-    try {
-      parsed = JSON.parse(jsonStr);
-    } catch (e) {
-      const lines = rawText.split('\n').filter(l => l.trim()).slice(0, 100);
-      parsed = {
-        document_type: 'genel',
-        title: req.file.originalname,
-        headers: ['İçerik'],
-        rows: lines.map(l => [l.trim()]),
-        summary: { total_rows: lines.length, key_info: 'Ham metin olarak aktarıldı' }
-      };
+    if (!result.error) {
+      await incrementUsage(req.user.id);
     }
 
-    res.json({
-      success: true,
-      filename: req.file.originalname,
-      pages: pdfData.numpages,
-      ...parsed
-    });
-
+    res.json(result);
   } catch (err) {
-    console.error('[PDF Extract Error]', err.message);
-    res.status(500).json({ error: 'PDF işlenirken hata: ' + err.message });
+    console.error('[PDF] Claude API error:', err.message);
+    res.status(500).json({ error: 'AI analiz hatası: ' + (err.message || 'Bilinmeyen hata') });
   }
+});
+
+// Multer hata yakalayıcı
+router.use((err, req, res, next) => {
+  if (err.code === 'LIMIT_FILE_SIZE') {
+    return res.status(413).json({
+      error: `Dosya çok büyük. Maksimum boyut 30MB'tır. Dosyanız: ${(req.file?.size / (1024*1024) || 0).toFixed(1)}MB`
+    });
+  }
+  if (err.message === 'Sadece PDF dosyaları kabul edilir') {
+    return res.status(400).json({ error: err.message });
+  }
+  next(err);
 });
 
 module.exports = router;
