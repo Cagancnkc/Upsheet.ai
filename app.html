@@ -1420,7 +1420,7 @@ body.light .sb-upgrade-btn{background:linear-gradient(135deg,rgba(99,102,241,0.1
 <div id="resizeLine"></div>
 
 <!-- ONBOARDING OVERLAY — 2-step Excel connect flow -->
-<div id="onboardOverlay" style="display:flex; position:fixed; inset:0; z-index:99999; background:rgba(9,9,11,0.85); backdrop-filter:blur(20px); align-items:center; justify-content:center;">
+<div id="onboardOverlay" style="display:none; position:fixed; inset:0; z-index:99999; background:rgba(9,9,11,0.85); backdrop-filter:blur(20px); align-items:center; justify-content:center;">
 
   <!-- STEP 1: Excel Bağla -->
   <div id="obStep1" class="ob-premium-panel">
@@ -1498,6 +1498,11 @@ sb.auth.getSession().then(({ data }) => {
   if (!data.session) {
     location.href = 'auth.html';
     return;
+  }
+  // Show onboarding overlay only for first-time users
+  if (localStorage.getItem('onboarded') !== 'true') {
+    var ov = document.getElementById('onboardOverlay');
+    if (ov) ov.style.display = 'flex';
   }
   // Kullanıcı bilgilerini sidebar'a yaz
   const user = data.session.user;
