@@ -4814,7 +4814,7 @@ document.addEventListener('click', () => {
   if (btn) btn.classList.remove('open');
 });
 
-function exportToGSheets() {
+async function exportToGSheets() {
   document.getElementById('export-dropdown').style.display = 'none';
   const cfg = JSON.parse(localStorage.getItem('int_gs') || '{}');
   if (!cfg.url) {
@@ -4822,11 +4822,33 @@ function exportToGSheets() {
       window.open('integrations.html', '_blank');
     return;
   }
-  if (typeof exportGS === 'function') exportGS();
-  else toast('Google Sheets entegrasyonu yükleniyor...', 'info');
+  const data = sheets[activeSheet];
+  let lastRow = 0;
+  for (let r = 0; r < ROWS; r++) { if (data[r].some(c => c !== '')) lastRow = r + 1; }
+  const exportData = data.slice(0, Math.max(lastRow, 1));
+  toast('Google Sheets\'e aktarılıyor...', 'info');
+  try {
+    const token = getAuthToken();
+    const resp = await fetch(API_URL + '/api/integrations/sheets/export', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      body: JSON.stringify({ sheetId: cfg.url, data: exportData, sheetName: cfg.tab || 'Sheet1' })
+    });
+    if (!resp.ok) throw new Error('Sunucu hatası: ' + resp.status);
+    const result = await resp.json();
+    const blob = new Blob([result.csv], { type: 'text/csv;charset=utf-8;' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = (cfg.tab || 'mocksheet') + '.csv';
+    a.click();
+    URL.revokeObjectURL(a.href);
+    toast(`CSV indirildi (${result.rows} satır). Google Sheets'te: Dosya → İçe Aktar`, 'ok');
+  } catch (err) {
+    toast('Google Sheets aktarımı başarısız: ' + err.message, 'err');
+  }
 }
 
-function exportToNotion() {
+async function exportToNotion() {
   document.getElementById('export-dropdown').style.display = 'none';
   const cfg = JSON.parse(localStorage.getItem('int_notion') || '{}');
   if (!cfg.token) {
@@ -4834,11 +4856,34 @@ function exportToNotion() {
       window.open('integrations.html', '_blank');
     return;
   }
-  if (typeof exportNotion === 'function') exportNotion();
-  else toast('Notion entegrasyonu yükleniyor...', 'info');
+  const data = sheets[activeSheet];
+  let lastRow = 0;
+  for (let r = 0; r < ROWS; r++) { if (data[r].some(c => c !== '')) lastRow = r + 1; }
+  const rows = data.slice(1, Math.max(lastRow, 1));
+  const headers = data[0];
+  if (!rows.length) { toast('Aktarılacak veri yok', 'err'); return; }
+  toast(`${rows.length} satır Notion'a aktarılıyor...`, 'info');
+  try {
+    const token = getAuthToken();
+    const resp = await fetch(API_URL + '/api/integrations/notion/export', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      body: JSON.stringify({ token: cfg.token, databaseId: cfg.dbId, headers, rows })
+    });
+    const result = await resp.json();
+    if (result.success || result.count > 0) {
+      toast(`${result.count}/${result.total} satır Notion'a aktarıldı`, 'ok');
+      if (confirm('Notion veritabanını aç?'))
+        window.open('https://www.notion.so/' + cfg.dbId.replace(/-/g, ''), '_blank');
+    } else {
+      toast('Notion aktarımı başarısız: ' + (result.error || ''), 'err');
+    }
+  } catch (err) {
+    toast('Notion aktarımı başarısız: ' + err.message, 'err');
+  }
 }
 
-function triggerWebhook() {
+async function triggerWebhook() {
   document.getElementById('export-dropdown').style.display = 'none';
   const cfg = JSON.parse(localStorage.getItem('int_webhook') || '{}');
   if (!cfg.url) {
@@ -4846,11 +4891,26 @@ function triggerWebhook() {
       window.open('integrations.html', '_blank');
     return;
   }
-  if (typeof quickExport === 'function') quickExport('webhook');
-  else toast('Webhook tetiklendi', 'ok');
+  const data = sheets[activeSheet];
+  let lastRow = 0;
+  for (let r = 0; r < ROWS; r++) { if (data[r].some(c => c !== '')) lastRow = r + 1; }
+  try {
+    const token = getAuthToken();
+    const resp = await fetch(API_URL + '/api/integrations/webhook/send', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      body: JSON.stringify({ url: cfg.url, event: 'manual_export', secret: cfg.secret,
+        data: { rows: lastRow, sheet: activeSheet } })
+    });
+    const result = await resp.json();
+    if (result.success) toast('Webhook başarıyla tetiklendi', 'ok');
+    else toast('Webhook gönderilemedi: ' + (result.error || ''), 'err');
+  } catch (err) {
+    toast('Webhook tetiklenemedi: ' + err.message, 'err');
+  }
 }
 
-function exportToSlack() {
+async function exportToSlack() {
   document.getElementById('export-dropdown').style.display = 'none';
   const cfg = JSON.parse(localStorage.getItem('int_slack') || '{}');
   if (!cfg.url) {
@@ -4858,8 +4918,32 @@ function exportToSlack() {
       window.open('integrations.html', '_blank');
     return;
   }
-  if (typeof quickExport === 'function') quickExport('slack');
-  else toast("Slack'e gönderildi", 'ok');
+  const data = sheets[activeSheet];
+  let lastRow = 0;
+  for (let r = 0; r < ROWS; r++) { if (data[r].some(c => c !== '')) lastRow = r + 1; }
+  const previewRows = data.slice(0, Math.min(lastRow, 6));
+  const csvPreview = previewRows.map(r => r.filter((_, i) => r.some(c => c !== '') && i < 8).join('\t')).join('\n');
+  try {
+    const token = getAuthToken();
+    const resp = await fetch(API_URL + '/api/integrations/slack/notify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      body: JSON.stringify({
+        webhookUrl: cfg.url,
+        title: '📊 Mocksheet Dışa Aktarım',
+        message: `Veriler Mocksheet'ten gönderildi.\n\`\`\`\n${csvPreview}\n\`\`\``,
+        fields: [
+          { label: 'Sayfa', value: activeSheet || 'Sheet1' },
+          { label: 'Satır sayısı', value: String(lastRow > 0 ? lastRow - 1 : 0) }
+        ]
+      })
+    });
+    const result = await resp.json();
+    if (result.success) toast("Slack'e veri özeti gönderildi", 'ok');
+    else toast("Slack gönderilemedi: " + (result.error || ''), 'err');
+  } catch (err) {
+    toast("Slack gönderilemedi: " + err.message, 'err');
+  }
 }
 
 /* cache bust Sat Mar 14 19:03:28 TSS 2026 */
