@@ -29,7 +29,7 @@ function animateWords(words) {
 }
 
 
-const BIZ_BASE = { monthly: 1099, yearly: 6990 };
+const BIZ_BASE = { monthly: 149, yearly: 6990 };
 let currentPeriod = 'monthly';
 
 function setPeriod(period) {
@@ -98,7 +98,7 @@ function updateBizPrice() {
 
   if (bizOrigEl) {
     if (currentPeriod === 'yearly') {
-      bizOrigEl.textContent = 'Aylık ₺1.099 yerine';
+      bizOrigEl.textContent = 'Aylık ₺149 yerine';
       bizOrigEl.style.display = 'block';
     } else {
       bizOrigEl.style.display = 'none';
