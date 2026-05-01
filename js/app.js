@@ -1153,8 +1153,16 @@ function saveSettings() {
 
 function updateApiStatus() {
   const el = document.getElementById('apiKeyStatus');
-  if (!el) return;
-  el.innerHTML = `<span style="color:#16a34a;">● Connected</span>`;
+  if (el) el.innerHTML = `<span style="color:#f59e0b;">● Connecting…</span>`;
+  fetch(API_URL + '/health', { method: 'GET' })
+    .then(r => {
+      if (el) el.innerHTML = r.ok
+        ? `<span style="color:#16a34a;">● Connected</span>`
+        : `<span style="color:#f59e0b;">● Limited</span>`;
+    })
+    .catch(() => {
+      if (el) el.innerHTML = `<span style="color:#ef4444;">● Offline — yeniden dene</span>`;
+    });
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -4107,7 +4115,10 @@ function collapseChat() {
 
 document.addEventListener('click', (e) => {
   const bar = document.getElementById('chat-bar');
-  if (bar && !bar.contains(e.target)) collapseChat();
+  const input = document.getElementById('chat-input');
+  if (bar && !bar.contains(e.target) && document.activeElement !== input) {
+    collapseChat();
+  }
 });
 
 function useChip(text) {
