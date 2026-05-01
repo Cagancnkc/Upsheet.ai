@@ -664,21 +664,6 @@ function renderSheetTabs() {
   addBtn.onclick = addSheet;
   tabs.appendChild(addBtn);
 
-  // ── Sidebar sheet list ──────────────────────
-  const sbList = document.getElementById('sbSheetList');
-  sbList.innerHTML = '';
-  Object.keys(sheets).forEach(name => {
-    const count = sheetCellCount(name);
-    const item = document.createElement('div');
-    item.className = 'sb-item' + (name === activeSheet ? ' active' : '');
-    item.innerHTML = `
-      <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
-      <span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${name}</span>
-      <span class="badge">${count}</span>`;
-    item.onclick = () => switchSheet(name);
-    item.addEventListener('contextmenu', e => showSheetCtx(e, name));
-    sbList.appendChild(item);
-  });
   renderSheetList();
 }
 
