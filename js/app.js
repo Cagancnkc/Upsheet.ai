@@ -899,7 +899,7 @@ function handleFile(e) {
 }
 
 function downloadFile() {
-  const fileName = document.getElementById('fileNameInput').value || 'ExcelAI.xlsx';
+  const fileName = document.getElementById('fileNameInput')?.value || 'mocksheets-export.xlsx';
   const wb = XLSX.utils.book_new();
   Object.entries(sheets).forEach(([name, data]) => {
     const ws = XLSX.utils.aoa_to_sheet(data);
@@ -917,7 +917,7 @@ function downloadFile() {
 }
 
 function downloadCSV() {
-  const baseName = (document.getElementById('fileNameInput').value || 'ExcelAI')
+  const baseName = (document.getElementById('fileNameInput')?.value || 'mocksheets-export')
     .replace(/\.(xlsx?|csv)$/i, '');
   const fileName = baseName + '.csv';
   const data = sheets[activeSheet];
@@ -5843,4 +5843,30 @@ function pdfImport() {
   closePdfModal();
   toast(`✓ "${table.title}" aktarıldı — ${table.row_count} satır, ${table.col_count} sütun`, 'ok');
 }
+
+// ── Toolbar: file rename ─────────────────────────────────────
+function renameFile(name) {
+  if (!name.trim()) return;
+  const saved = document.getElementById('tbSaved');
+  if (saved) {
+    saved.classList.add('visible');
+    setTimeout(() => saved.classList.remove('visible'), 2000);
+  }
+}
+
+// ── Toolbar: keyboard shortcuts ──────────────────────────────
+document.addEventListener('keydown', (e) => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'e') {
+    e.preventDefault();
+    downloadFile();
+  }
+  if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+    e.preventDefault();
+    const saved = document.getElementById('tbSaved');
+    if (saved) {
+      saved.classList.add('visible');
+      setTimeout(() => saved.classList.remove('visible'), 2000);
+    }
+  }
+});
 
