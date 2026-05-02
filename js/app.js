@@ -5523,11 +5523,11 @@ function renderSheetList() {
   let html = '';
   Object.keys(sheets || {}).forEach(name => {
     const isActive = name === activeSheet;
-    const safeName = name.replace(/'/g, "\\'");
-    html += `<div class="sb-sheet-tab ${isActive ? 'active' : ''}" onclick="switchSheet('${safeName}')">
+    const escapedName = name.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+    html += `<div class="sb-sheet-tab ${isActive ? 'active' : ''}" data-sheet="${escapedName}" onclick="switchSheet(this.dataset.sheet)">
       <span class="sb-sheet-tab-icon">📄</span>
       <span class="sb-sheet-tab-name">${name}</span>
-      <span class="sb-sheet-tab-close" onclick="event.stopPropagation();deleteSheetDirect('${safeName}')">×</span>
+      <span class="sb-sheet-tab-close" onclick="event.stopPropagation();deleteSheetDirect(this.closest('.sb-sheet-tab').dataset.sheet)">×</span>
     </div>`;
   });
   container.innerHTML = html;
