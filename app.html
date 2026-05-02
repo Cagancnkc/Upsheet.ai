@@ -491,6 +491,11 @@ body.dark {
 #appSidebar.collapsed .sb-logo { justify-content:center; padding:14px 8px; }
 #appSidebar.collapsed .sb-new-btn { justify-content:center; padding:8px; }
 #appSidebar.collapsed .sb-collapse-btn { display:none; }
+.sb-expand-btn { display:none; background:none; border:none; cursor:pointer; color:rgba(255,255,255,0.35); padding:4px; border-radius:6px; transition:color 0.15s,background 0.15s; }
+.sb-expand-btn:hover { color:rgba(255,255,255,0.75); background:rgba(255,255,255,0.08); }
+#appSidebar.collapsed .sb-expand-btn { display:flex; align-items:center; justify-content:center; }
+body.light .sb-expand-btn { color:rgba(0,0,0,0.3); }
+body.light .sb-expand-btn:hover { color:#374151; background:rgba(0,0,0,0.06); }
 #appSidebar.collapsed .sb-user { justify-content:center; padding:11px 8px; }
 #appSidebar.collapsed .sb-sheet-tab { justify-content:center; padding:8px; }
 #appSidebar.collapsed .sb-sheet-tab-icon { opacity:0.7; }
@@ -796,8 +801,11 @@ body.light .sb-upgrade-btn{background:linear-gradient(135deg,rgba(99,102,241,0.1
   <div class="sb-logo">
     <div class="sb-logo-icon">M</div>
     <span class="sb-logo-text">Mocksheets</span>
-    <button class="sb-collapse-btn" onclick="toggleSidebar()" title="Collapse sidebar">
+    <button class="sb-collapse-btn" onclick="toggleSidebar()" title="Küçült">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <button class="sb-expand-btn" onclick="toggleSidebar()" title="Genişlet">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
     </button>
   </div>
 
