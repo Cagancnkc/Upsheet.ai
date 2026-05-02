@@ -58,14 +58,43 @@ body.dark .rf-item-name{color:#e2e2e2;}
 #content{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
 
 /* ── TOOLBAR ────────────────────────────────── */
-#toolbar{
-  height:38px;background:#fff;border-bottom:1px solid #e2e8f0;
-  display:flex;align-items:center;padding:0 12px;gap:2px;flex-shrink:0;
+#appToolbar{
+  height:48px;background:#fff;border-bottom:1px solid #E5E7EB;
+  display:flex;align-items:center;padding:0 12px;gap:8px;flex-shrink:0;
+  position:relative;z-index:10;
 }
-.tb-btn{display:flex;align-items:center;justify-content:center;padding:4px 7px;border-radius:5px;cursor:pointer;color:#475569;border:none;background:transparent;font-size:12px;font-family:'Inter',sans-serif;transition:.1s;height:26px;}
-.tb-btn:hover{background:#f1f5f9;color:#0f172a;}
+/* 3-zone layout */
+.tb-left{display:flex;align-items:center;gap:6px;flex:1;min-width:0;}
+.tb-center{display:flex;align-items:center;gap:3px;}
+.tb-right{display:flex;align-items:center;gap:6px;flex-shrink:0;}
+
+/* File name */
+.tb-file-icon{font-size:16px;flex-shrink:0;}
+.tb-filename{
+  border:none;outline:none;background:transparent;
+  font-size:13px;font-weight:600;color:#111827;font-family:'Inter',sans-serif;
+  max-width:180px;padding:3px 6px;border-radius:5px;transition:background .15s;
+}
+.tb-filename:hover{background:#F3F4F6;}
+.tb-filename:focus{background:#EEF2FF;color:#4338CA;}
+.tb-saved{
+  font-size:10px;color:#10B981;font-weight:500;white-space:nowrap;
+  opacity:0;transition:opacity .3s;
+}
+.tb-saved.visible{opacity:1;}
+
+/* Buttons */
+.tb-btn{display:flex;align-items:center;justify-content:center;gap:5px;padding:5px 10px;border-radius:7px;cursor:pointer;color:#374151;border:none;background:transparent;font-size:12px;font-weight:500;font-family:'Inter',sans-serif;transition:all .15s;height:30px;white-space:nowrap;}
+.tb-btn:hover{background:#F3F4F6;color:#111827;}
+.tb-btn:active{background:#E5E7EB;transform:scale(0.97);}
 .tb-btn.on{background:#f5f3ff;color:#7c3aed;}
-.tb-sep{width:1px;height:18px;background:#e2e8f0;margin:0 3px;}
+.tb-icon-only{padding:5px 8px;}
+.tb-btn-red{color:#EF4444;}
+.tb-btn-red:hover{background:#FEF2F2 !important;color:#DC2626 !important;}
+.tb-sep{width:1px;height:20px;background:#E5E7EB;margin:0 4px;flex-shrink:0;}
+.tb-sel-info{font-size:11px;color:#94a3b8;}
+
+/* Legacy selects/colors (kept for other uses) */
 .tb-select{height:26px;border:1px solid #e2e8f0;border-radius:5px;font-size:12px;font-family:'Inter',sans-serif;color:#475569;padding:0 5px;background:#fff;outline:none;cursor:pointer;}
 .tb-color{width:26px;height:26px;border-radius:5px;border:1px solid #e2e8f0;padding:3px;cursor:pointer;background:#fff;}
 
@@ -1278,8 +1307,8 @@ body.with-banner #main{height:calc(100vh - 36px);}
 }
 
 /* Toolbar button hover lift */
-#toolbar .btn{transition:transform .15s,box-shadow .15s;}
-#toolbar .btn:hover{
+#appToolbar .btn{transition:transform .15s,box-shadow .15s;}
+#appToolbar .btn:hover{
   transform:translateY(-1px);
   box-shadow:0 2px 8px rgba(0,0,0,0.28);
 }
@@ -1340,9 +1369,14 @@ body.dark .settings-item:hover{background:#2a2a2a;}
 body.dark .settings-divider{background:#2a2a2a;}
 
 /* ── DARK MODE — Toolbar ────────────────────────────────────── */
-body.dark #toolbar{background:#111118;border-bottom-color:rgba(255,255,255,0.07);}
+body.dark #appToolbar{background:#16213e;border-bottom-color:rgba(255,255,255,0.07);}
 body.dark .tb-btn{color:#9ca3af;}
 body.dark .tb-btn:hover{background:rgba(255,255,255,0.06);color:#e2e2e2;}
+body.dark .tb-filename{color:rgba(255,255,255,0.85);}
+body.dark .tb-filename:hover{background:rgba(255,255,255,0.06);}
+body.dark .tb-sep{background:rgba(255,255,255,0.08);}
+body.dark .tb-btn-red{color:#FCA5A5;}
+body.dark .tb-btn-red:hover{background:rgba(239,68,68,0.12) !important;}
 body.dark .tb-btn.on{background:rgba(99,102,241,0.15);color:#a5b4fc;}
 body.dark .tb-sep{background:rgba(255,255,255,0.08);}
 body.dark .tb-select{background:#111118;border-color:rgba(255,255,255,0.1);color:#9ca3af;}

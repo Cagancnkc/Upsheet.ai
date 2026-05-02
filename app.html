@@ -1052,94 +1052,131 @@ body.light .sb-upgrade-btn{background:linear-gradient(135deg,rgba(99,102,241,0.1
 <div id="content">
 
   <!-- TOOLBAR -->
-  <div id="toolbar">
-    <select class="tb-select" style="width:80px" onchange="applyFont(this.value)" id="fontFamilySelect">
-      <option>Inter</option><option>Arial</option><option>Times New Roman</option><option>Courier New</option><option>Georgia</option>
-    </select>
-    <select class="tb-select" style="width:46px" onchange="applyFontSize(this.value)" id="fontSizeSelect">
-      <option>10</option><option>11</option><option selected>12</option><option>13</option><option>14</option><option>16</option><option>18</option><option>20</option><option>24</option>
-    </select>
-    <div class="tb-sep"></div>
-    <button class="tb-btn" id="tbBold" title="Kalın (Ctrl+B)" onclick="toggleFormat('bold')"><b>B</b></button>
-    <button class="tb-btn" id="tbItalic" title="İtalik (Ctrl+I)" onclick="toggleFormat('italic')"><i>I</i></button>
-    <button class="tb-btn" id="tbUnderline" title="Altı Çizili (Ctrl+U)" onclick="toggleFormat('underline')"><u>U</u></button>
-    <div class="tb-sep"></div>
-    <button class="tb-btn" title="Sola Hizala" onclick="applyAlign('left')">
-      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="13" y1="18" x2="3" y2="18"/></svg>
-    </button>
-    <button class="tb-btn" title="Ortala" onclick="applyAlign('center')">
-      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="10" x2="6" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="18" y1="18" x2="6" y2="18"/></svg>
-    </button>
-    <button class="tb-btn" title="Sağa Hizala" onclick="applyAlign('right')">
-      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" y1="10" x2="7" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="21" y1="18" x2="11" y2="18"/></svg>
-    </button>
-    <div class="tb-sep"></div>
-    <button class="tb-btn" title="Seçili hücreleri birleştir" onclick="mergeCells()">⊞ Birleştir</button>
-    <div class="tb-sep"></div>
-    <input type="color" class="tb-color" title="Hücre Rengi" id="bgColorPicker" value="#ffffff" onchange="setCellBgColor(this.value)">
-    <input type="color" class="tb-color" title="Yazı Rengi" id="textColorPicker" value="#0f172a" onchange="setTextColor(this.value)">
-    <div class="tb-sep"></div>
-    <button class="tb-btn" title="Filtre Ekle" onclick="addFilter()">
-      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
-      Filtrele
-    </button>
-    <div class="tb-sep"></div>
-    <button class="tb-btn" id="tbChartBtn" title="Grafik Ekle" onclick="toggleChartBuilder()" style="color:#7c3aed;font-weight:500;gap:5px;padding:4px 10px;border:1px solid #e9d5ff;border-radius:6px;">
-      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-      Grafik Ekle
-    </button>
-    <div class="tb-sep"></div>
-    <button class="tb-btn" id="tbFreezeBtn" title="Üst satırı dondur / çöz" onclick="toggleFreeze()">❄ Dondur</button>
-    <div class="tb-sep"></div>
-    <button class="tb-btn" onclick="window.open('integrations.html','_blank')" title="Entegrasyonlar">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
-        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
-      </svg>
-      <span>Entegrasyonlar</span>
-    </button>
-    <div class="tb-sep"></div>
-    <button onclick="openPdfModal()" style="
-      display:inline-flex;align-items:center;gap:6px;
-      padding:7px 14px;
-      background:rgba(239,68,68,0.1);
-      border:1px solid rgba(239,68,68,0.25);
-      border-radius:8px;color:#FCA5A5;
-      font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;
-      transition:all .15s;
-    " onmouseover="this.style.background='rgba(239,68,68,0.18)'"
-       onmouseout="this.style.background='rgba(239,68,68,0.1)'">
-      📄 PDF Yükle
-    </button>
-    <div class="tb-sep"></div>
-    <div class="export-wrapper">
-      <button class="tb-btn export-main-btn" onclick="downloadFile()" title="Excel olarak indir">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        Dışa Aktar
+  <div id="appToolbar">
+
+    <!-- LEFT: File name -->
+    <div class="tb-left">
+      <div class="tb-file-icon">📊</div>
+      <input
+        id="fileNameInput"
+        class="tb-filename"
+        value="Untitled Spreadsheet"
+        onblur="renameFile(this.value)"
+        onkeydown="if(event.key==='Enter') this.blur()"
+        title="Yeniden adlandırmak için tıkla"
+      />
+      <span class="tb-saved" id="tbSaved">✓ Kaydedildi</span>
+    </div>
+
+    <!-- CENTER: Action buttons -->
+    <div class="tb-center">
+
+      <!-- Upload -->
+      <button class="tb-btn" onclick="document.getElementById('fileInput').click()" title="Dosya Yükle">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="17 8 12 3 7 8"/>
+          <line x1="12" y1="3" x2="12" y2="15"/>
+        </svg>
+        <span>Yükle</span>
       </button>
-      <button class="export-arrow tb-btn" id="exportArrowBtn" onclick="toggleExportMenu(event)" title="Dışa aktarma seçenekleri">
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+
+      <!-- PDF Upload -->
+      <button class="tb-btn tb-btn-red" onclick="openPdfModal()" title="PDF İçe Aktar">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+        </svg>
+        <span>PDF</span>
       </button>
-      <div id="export-dropdown">
-        <div class="exp-header">İndir</div>
-        <button class="exp-item" onclick="downloadFile()">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
-          <span>Excel olarak indir</span><small>.xlsx</small>
+
+      <div class="tb-sep"></div>
+
+      <!-- Undo -->
+      <button class="tb-btn tb-icon-only" onclick="undo()" title="Geri Al (Ctrl+Z)">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 14 4 9 9 4"/>
+          <path d="M20 20v-7a4 4 0 0 0-4-4H4"/>
+        </svg>
+      </button>
+
+      <!-- Sort -->
+      <button class="tb-btn" onclick="useChip('A\'dan Z\'ye sırala')" title="Sırala">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="8" y1="6" x2="21" y2="6"/>
+          <line x1="8" y1="12" x2="16" y2="12"/>
+          <line x1="8" y1="18" x2="11" y2="18"/>
+          <polyline points="3 8 5 6 7 8"/>
+          <line x1="5" y1="6" x2="5" y2="18"/>
+        </svg>
+        <span>Sırala</span>
+      </button>
+
+      <!-- Filter -->
+      <button class="tb-btn" onclick="useChip('Filtrele')" title="Filtrele">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+        </svg>
+        <span>Filtrele</span>
+      </button>
+
+      <!-- Clean -->
+      <button class="tb-btn" onclick="useChip('Boş satırları sil')" title="Veriyi temizle">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="3 6 5 6 21 6"/>
+          <path d="M19 6l-1 14H6L5 6"/>
+          <path d="M10 11v6M14 11v6"/>
+        </svg>
+        <span>Temizle</span>
+      </button>
+
+      <div class="tb-sep"></div>
+
+      <!-- Integrations -->
+      <button class="tb-btn" onclick="window.open('integrations.html','_blank')" title="Entegrasyonlar">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="2" width="9" height="9" rx="2"/>
+          <rect x="13" y="2" width="9" height="9" rx="2"/>
+          <rect x="2" y="13" width="9" height="9" rx="2"/>
+          <rect x="13" y="13" width="9" height="9" rx="2"/>
+        </svg>
+        <span>Entegrasyonlar</span>
+      </button>
+
+    </div>
+
+    <!-- RIGHT: Export + Selection info -->
+    <div class="tb-right">
+      <span class="tb-sel-info" id="selectionInfo"></span>
+
+      <div class="export-wrapper">
+        <button class="tb-btn export-main-btn" onclick="downloadFile()" title="Excel olarak indir">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Dışa Aktar
         </button>
-        <button class="exp-item" onclick="downloadCSV()">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-          <span>CSV olarak indir</span><small>.csv</small>
+        <button class="export-arrow tb-btn" id="exportArrowBtn" onclick="toggleExportMenu(event)" title="Dışa aktarma seçenekleri">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </button>
-        <div class="exp-divider"></div>
-        <div class="exp-header">Entegrasyon</div>
-        <button class="exp-item" onclick="exportToGSheets()"><img src="https://www.gstatic.com/images/branding/product/1x/sheets_2020q4_48dp.png" width="16" height="16" style="border-radius:3px"><span>Google Sheets'e Aktar</span></button>
-        <button class="exp-item" onclick="exportToNotion()"><img src="https://upload.wikimedia.org/wikipedia/commons/e/e9/Notion-logo.svg" width="16" height="16"><span>Notion'a Gönder</span></button>
-        <button class="exp-item" onclick="triggerWebhook()"><img src="https://upload.wikimedia.org/wikipedia/commons/f/fd/Zapier_logo.svg" width="16" height="16"><span>Zapier Webhook</span></button>
-        <button class="exp-item" onclick="exportToSlack()"><img src="https://upload.wikimedia.org/wikipedia/commons/d/d5/Slack_icon_2019.svg" width="16" height="16"><span>Slack'e Gönder</span></button>
+        <div id="export-dropdown">
+          <div class="exp-header">İndir</div>
+          <button class="exp-item" onclick="downloadFile()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+            <span>Excel olarak indir</span><small>.xlsx</small>
+          </button>
+          <button class="exp-item" onclick="downloadCSV()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <span>CSV olarak indir</span><small>.csv</small>
+          </button>
+          <div class="exp-divider"></div>
+          <div class="exp-header">Entegrasyon</div>
+          <button class="exp-item" onclick="exportToGSheets()"><img src="https://www.gstatic.com/images/branding/product/1x/sheets_2020q4_48dp.png" width="16" height="16" style="border-radius:3px"><span>Google Sheets'e Aktar</span></button>
+          <button class="exp-item" onclick="exportToNotion()"><img src="https://upload.wikimedia.org/wikipedia/commons/e/e9/Notion-logo.svg" width="16" height="16"><span>Notion'a Gönder</span></button>
+          <button class="exp-item" onclick="triggerWebhook()"><img src="https://upload.wikimedia.org/wikipedia/commons/f/fd/Zapier_logo.svg" width="16" height="16"><span>Zapier Webhook</span></button>
+          <button class="exp-item" onclick="exportToSlack()"><img src="https://upload.wikimedia.org/wikipedia/commons/d/d5/Slack_icon_2019.svg" width="16" height="16"><span>Slack'e Gönder</span></button>
+        </div>
       </div>
     </div>
-    <div style="flex:1"></div>
-    <span style="font-size:11px;color:#94a3b8;margin-right:4px;" id="selectionInfo"></span>
+
   </div>
 
   <!-- Hidden elements kept for JS compatibility -->
