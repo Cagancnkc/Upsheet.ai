@@ -4098,32 +4098,30 @@ async function sendChatMessage() {
   }
 }
 
-// ── Chat Bar expand/collapse ──────────────────────────
+// ── Chat Bar ──────────────────────────────────────────
 function expandChat() {
-  const bar = document.getElementById('chat-bar');
-  const msgs = document.getElementById('chat-messages');
-  if (bar) bar.className = 'expanded';
-  if (msgs) msgs.style.display = 'flex';
+  document.getElementById('chat-messages')?.classList.add('has-messages');
 }
 
 function collapseChat() {
-  const bar = document.getElementById('chat-bar');
-  const msgs = document.getElementById('chat-messages');
-  if (bar) bar.className = 'collapsed';
-  if (msgs) msgs.style.display = 'none';
+  // Fixed floating bar — collapse yok
 }
 
-document.addEventListener('click', (e) => {
-  const bar = document.getElementById('chat-bar');
-  const input = document.getElementById('chat-input');
-  if (bar && !bar.contains(e.target) && document.activeElement !== input) {
-    collapseChat();
+function handleChatInput(value) {
+  const chips = document.getElementById('chat-chips');
+  const sendBtn = document.getElementById('chat-send');
+  if (value.trim().length > 0) {
+    chips?.classList.add('hidden');
+    sendBtn?.classList.add('active');
+  } else {
+    chips?.classList.remove('hidden');
+    sendBtn?.classList.remove('active');
   }
-});
+}
 
 function useChip(text) {
   const input = document.getElementById('chat-input');
-  if (input) { input.value = text; input.focus(); expandChat(); }
+  if (input) { input.value = text; input.focus(); handleChatInput(text); }
 }
 
 function addMessage(text, type) {
