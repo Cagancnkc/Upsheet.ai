@@ -5868,5 +5868,8 @@ document.addEventListener('keydown', (e) => {
       setTimeout(() => saved.classList.remove('visible'), 2000);
     }
   }
+  if ((e.ctrlKey || e.metaKey) && e.key === 'b') { e.preventDefault(); toggleFormat('bold'); }
+  if ((e.ctrlKey || e.metaKey) && e.key === 'i') { e.preventDefault(); toggleFormat('italic'); }
+  if ((e.ctrlKey || e.metaKey) && e.key === 'u') { e.preventDefault(); toggleFormat('underline'); }
 });
 
