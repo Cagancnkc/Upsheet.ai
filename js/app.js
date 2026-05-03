@@ -507,9 +507,9 @@ function updateToolbarState() {
   const meta = getCellMeta();
   const key = selRow + '_' + selCol;
   const m = meta[key] || {};
-  document.getElementById('tbBold').classList.toggle('on', !!m.bold);
-  document.getElementById('tbItalic').classList.toggle('on', !!m.italic);
-  document.getElementById('tbUnderline').classList.toggle('on', !!m.underline);
+  document.getElementById('tbBold')?.classList.toggle('on', !!m.bold);
+  document.getElementById('tbItalic')?.classList.toggle('on', !!m.italic);
+  document.getElementById('tbUnderline')?.classList.toggle('on', !!m.underline);
 }
 
 function mergeCells() {
