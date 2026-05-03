@@ -1090,22 +1090,20 @@ body.light .sb-upgrade-btn{background:linear-gradient(135deg,rgba(99,102,241,0.1
     <div class="tb-center">
 
       <!-- Upload -->
-      <button class="tb-btn" onclick="document.getElementById('fileInput').click()" title="Dosya Yükle">
+      <button class="tb-btn tb-icon-only" onclick="document.getElementById('fileInput').click()" title="Dosya Yükle">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
           <polyline points="17 8 12 3 7 8"/>
           <line x1="12" y1="3" x2="12" y2="15"/>
         </svg>
-        <span>Yükle</span>
       </button>
 
       <!-- PDF Upload -->
-      <button class="tb-btn tb-btn-red" onclick="openPdfModal()" title="PDF İçe Aktar">
+      <button class="tb-btn tb-icon-only tb-btn-red" onclick="openPdfModal()" title="PDF İçe Aktar">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
           <polyline points="14 2 14 8 20 8"/>
         </svg>
-        <span>PDF</span>
       </button>
 
       <div class="tb-sep"></div>
@@ -1119,7 +1117,7 @@ body.light .sb-upgrade-btn{background:linear-gradient(135deg,rgba(99,102,241,0.1
       </button>
 
       <!-- Sort -->
-      <button class="tb-btn" onclick="useChip('A\'dan Z\'ye sırala')" title="Sırala">
+      <button class="tb-btn tb-icon-only" onclick="useChip('A\'dan Z\'ye sırala')" title="Sırala">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <line x1="8" y1="6" x2="21" y2="6"/>
           <line x1="8" y1="12" x2="16" y2="12"/>
@@ -1127,39 +1125,35 @@ body.light .sb-upgrade-btn{background:linear-gradient(135deg,rgba(99,102,241,0.1
           <polyline points="3 8 5 6 7 8"/>
           <line x1="5" y1="6" x2="5" y2="18"/>
         </svg>
-        <span>Sırala</span>
       </button>
 
       <!-- Filter -->
-      <button class="tb-btn" onclick="useChip('Filtrele')" title="Filtrele">
+      <button class="tb-btn tb-icon-only" onclick="useChip('Filtrele')" title="Filtrele">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
         </svg>
-        <span>Filtrele</span>
       </button>
 
       <!-- Clean -->
-      <button class="tb-btn" onclick="useChip('Boş satırları sil')" title="Veriyi temizle">
+      <button class="tb-btn tb-icon-only" onclick="useChip('Boş satırları sil')" title="Veriyi temizle">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="3 6 5 6 21 6"/>
           <path d="M19 6l-1 14H6L5 6"/>
           <path d="M10 11v6M14 11v6"/>
         </svg>
-        <span>Temizle</span>
       </button>
 
       <div class="tb-sep"></div>
 
-      <!-- Integrations -->
-      <button class="tb-btn" onclick="window.open('integrations.html','_blank')" title="Entegrasyonlar">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="2" y="2" width="9" height="9" rx="2"/>
-          <rect x="13" y="2" width="9" height="9" rx="2"/>
-          <rect x="2" y="13" width="9" height="9" rx="2"/>
-          <rect x="13" y="13" width="9" height="9" rx="2"/>
-        </svg>
-        <span>Entegrasyonlar</span>
-      </button>
+      <!-- Integrations logo carousel -->
+      <div id="tb-int-carousel" class="tb-int-glass" onclick="window.open('integrations.html','_blank')" title="Entegrasyonlar">
+        <div class="tb-int-track">
+          <img class="tb-int-logo" src="https://www.gstatic.com/images/branding/product/1x/sheets_2020q4_48dp.png" alt="Google Sheets">
+          <img class="tb-int-logo" src="https://upload.wikimedia.org/wikipedia/commons/e/e9/Notion-logo.svg" alt="Notion">
+          <img class="tb-int-logo" src="https://upload.wikimedia.org/wikipedia/commons/d/d5/Slack_icon_2019.svg" alt="Slack">
+          <img class="tb-int-logo" src="https://upload.wikimedia.org/wikipedia/commons/f/fd/Zapier_logo.svg" alt="Zapier">
+        </div>
+      </div>
 
     </div>
 
@@ -1170,7 +1164,7 @@ body.light .sb-upgrade-btn{background:linear-gradient(135deg,rgba(99,102,241,0.1
       <div class="export-wrapper">
         <button class="tb-btn export-main-btn" onclick="downloadFile()" title="Excel olarak indir">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Dışa Aktar
+          İndir
         </button>
         <button class="export-arrow tb-btn" id="exportArrowBtn" onclick="toggleExportMenu(event)" title="Dışa aktarma seçenekleri">
           <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
@@ -1185,12 +1179,6 @@ body.light .sb-upgrade-btn{background:linear-gradient(135deg,rgba(99,102,241,0.1
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
             <span>CSV olarak indir</span><small>.csv</small>
           </button>
-          <div class="exp-divider"></div>
-          <div class="exp-header">Entegrasyon</div>
-          <button class="exp-item" onclick="exportToGSheets()"><img src="https://www.gstatic.com/images/branding/product/1x/sheets_2020q4_48dp.png" width="16" height="16" style="border-radius:3px"><span>Google Sheets'e Aktar</span></button>
-          <button class="exp-item" onclick="exportToNotion()"><img src="https://upload.wikimedia.org/wikipedia/commons/e/e9/Notion-logo.svg" width="16" height="16"><span>Notion'a Gönder</span></button>
-          <button class="exp-item" onclick="triggerWebhook()"><img src="https://upload.wikimedia.org/wikipedia/commons/f/fd/Zapier_logo.svg" width="16" height="16"><span>Zapier Webhook</span></button>
-          <button class="exp-item" onclick="exportToSlack()"><img src="https://upload.wikimedia.org/wikipedia/commons/d/d5/Slack_icon_2019.svg" width="16" height="16"><span>Slack'e Gönder</span></button>
         </div>
       </div>
     </div>
@@ -2074,5 +2062,19 @@ function queueOfflineMessage(payload) {
   </div>
 </div>
 
+<script>
+(function() {
+  var logos = document.querySelectorAll('.tb-int-logo');
+  if (!logos.length) return;
+  var idx = 0;
+  function showNext() {
+    logos.forEach(function(l) { l.classList.remove('active'); });
+    logos[idx].classList.add('active');
+    idx = (idx + 1) % logos.length;
+  }
+  showNext();
+  setInterval(showNext, 2000);
+})();
+</script>
 </body>
 </html>
