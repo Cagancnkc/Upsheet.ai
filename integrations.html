@@ -10,8 +10,8 @@
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
-  background: #F7F7F5;
-  color: #111827;
+  background: #09090F;
+  color: #F1F5F9;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -21,24 +21,31 @@ body {
   height: 58px;
   display: flex; align-items: center; justify-content: space-between;
   padding: 0 24px;
-  background: rgba(255,255,255,0.92);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid #E5E7EB;
+  background: rgba(9,9,15,0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
 }
 .nav-logo {
   display: flex; align-items: center; gap: 8px;
   font-size: 15px; font-weight: 700;
-  text-decoration: none; color: #111827;
+  text-decoration: none; color: #F1F5F9;
 }
 .nav-logo img { width: 24px; height: 24px; border-radius: 5px; }
 .nav-back {
   display: inline-flex; align-items: center; gap: 6px;
-  font-size: 13px; font-weight: 500; color: #6B7280;
+  font-size: 13px; font-weight: 500; color: #94A3B8;
   text-decoration: none; padding: 7px 14px;
-  border: 1.5px solid #E5E7EB; border-radius: 8px;
-  background: white; transition: all .15s;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  background: rgba(255,255,255,0.04);
+  transition: all .15s;
 }
-.nav-back:hover { border-color: #111827; color: #111827; }
+.nav-back:hover {
+  border-color: rgba(255,255,255,0.2);
+  color: #F1F5F9;
+  background: rgba(255,255,255,0.07);
+}
 
 /* ── Layout ── */
 .layout {
@@ -50,17 +57,17 @@ body {
 /* ── Sidebar ── */
 .sidebar {
   width: 240px;
-  background: white;
-  border-right: 1px solid #E5E7EB;
+  background: #0D0D18;
+  border-right: 1px solid rgba(255,255,255,0.06);
   position: fixed;
   top: 58px; left: 0; bottom: 0;
   overflow-y: auto;
   padding: 20px 0;
 }
 .sb-section-title {
-  font-size: 11px; font-weight: 700;
-  text-transform: uppercase; letter-spacing: .07em;
-  color: #9CA3AF;
+  font-size: 10px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .1em;
+  color: rgba(255,255,255,0.25);
   padding: 0 16px 8px;
 }
 .sb-nav {
@@ -71,30 +78,46 @@ body {
   display: flex; align-items: center; gap: 10px;
   padding: 9px 10px;
   border-radius: 8px;
-  font-size: 13px; font-weight: 500; color: #6B7280;
+  font-size: 13px; font-weight: 500; color: #64748B;
   cursor: pointer; border: none; background: transparent;
   width: 100%; text-align: left;
   transition: all .12s;
   text-decoration: none;
+  position: relative;
 }
-.sb-item:hover { background: #F9FAFB; color: #111827; }
-.sb-item.active { background: #EEF2FF; color: #4F46E5; font-weight: 600; }
+.sb-item:hover { background: rgba(255,255,255,0.04); color: #CBD5E1; }
+.sb-item.active {
+  background: rgba(99,102,241,0.12);
+  color: #818CF8;
+  font-weight: 600;
+}
+.sb-item.active::before {
+  content: '';
+  position: absolute; left: 0; top: 20%; bottom: 20%;
+  width: 2px; border-radius: 2px;
+  background: #6366F1;
+}
 .sb-icon {
   width: 30px; height: 30px;
   border-radius: 8px;
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0; overflow: hidden; font-size: 16px;
+  background: rgba(255,255,255,0.06);
 }
 .sb-icon img { width: 18px; height: 18px; object-fit: contain; }
 .sb-dot {
   width: 7px; height: 7px; border-radius: 50%;
-  background: #D1D5DB; margin-left: auto; flex-shrink: 0;
+  background: rgba(255,255,255,0.15); margin-left: auto; flex-shrink: 0;
 }
-.sb-dot.on { background: #10B981; }
-.sb-divider { height: 1px; background: #F3F4F6; margin: 8px 16px; }
+.sb-dot.on {
+  background: #10B981;
+  box-shadow: 0 0 0 0 rgba(16,185,129,0.4);
+  animation: dotPulse 2s ease-in-out infinite;
+}
+.sb-divider { height: 1px; background: rgba(255,255,255,0.05); margin: 8px 16px; }
 .sb-soon {
   margin-left: auto; font-size: 10px; font-weight: 600;
-  background: #EEF2FF; color: #4F46E5;
+  background: rgba(99,102,241,0.15); color: #818CF8;
   padding: 2px 7px; border-radius: 100px;
 }
 
@@ -107,87 +130,133 @@ body {
 
 /* ── Sections ── */
 .section { display: none; }
-.section.active { display: block; }
+.section.active { display: block; animation: fadeInUp .25s ease forwards; }
 
 .page-title {
   font-size: 22px; font-weight: 800;
   letter-spacing: -.02em; margin-bottom: 4px;
+  color: #F8FAFC;
+  display: flex; align-items: center; gap: 10px;
 }
 .page-desc {
-  font-size: 14px; color: #6B7280;
+  font-size: 14px; color: #475569;
   margin-bottom: 28px; line-height: 1.5;
 }
 
 /* ── Cards ── */
 .card {
-  background: white;
-  border: 1.5px solid #E5E7EB;
-  border-radius: 14px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
   overflow: hidden;
   margin-bottom: 14px;
+  transition: border-color .2s, box-shadow .2s;
 }
-.card.connected { border-color: #6EE7B7; }
+.card.connected {
+  border-color: rgba(16,185,129,0.25);
+  box-shadow: 0 0 0 1px rgba(16,185,129,0.06) inset;
+}
 
 .card-head {
   display: flex; align-items: center; gap: 14px;
   padding: 18px 20px;
+  background: rgba(255,255,255,0.02);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
 }
 .card-logo {
   width: 48px; height: 48px;
   border-radius: 12px;
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0; overflow: hidden;
+  background: rgba(255,255,255,0.06);
 }
 .card-logo img { width: 28px; height: 28px; object-fit: contain; }
 .card-logo .emoji { font-size: 22px; }
 .card-info { flex: 1; }
-.card-name { font-size: 15px; font-weight: 700; margin-bottom: 2px; }
-.card-sub { font-size: 12px; color: #9CA3AF; line-height: 1.4; }
+.card-name { font-size: 15px; font-weight: 700; margin-bottom: 2px; color: #F1F5F9; }
+.card-sub { font-size: 12px; color: #475569; line-height: 1.4; }
 
 .badge {
   font-size: 11px; font-weight: 600;
   padding: 4px 12px; border-radius: 100px;
+  display: inline-flex; align-items: center; gap: 5px;
+  white-space: nowrap;
 }
-.b-off { background: #F3F4F6; color: #9CA3AF; }
-.b-on { background: #D1FAE5; color: #065F46; }
-.b-err { background: #FEE2E2; color: #991B1B; }
-.b-soon { background: #EEF2FF; color: #4F46E5; }
+.b-off { background: rgba(255,255,255,0.06); color: #64748B; }
+.b-on  {
+  background: rgba(16,185,129,0.15); color: #34D399;
+}
+.b-on::before {
+  content: '';
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #10B981;
+  box-shadow: 0 0 0 0 rgba(16,185,129,0.5);
+  animation: dotPulse 2s ease-in-out infinite;
+  flex-shrink: 0;
+}
+.b-err  { background: rgba(239,68,68,0.15); color: #F87171; }
+.b-soon { background: rgba(99,102,241,0.15); color: #818CF8; }
 
-.card-body { padding: 20px; border-top: 1px solid #F3F4F6; }
+.card-body { padding: 20px; }
 
 /* ── Form ── */
 .form { display: flex; flex-direction: column; gap: 14px; }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .field { display: flex; flex-direction: column; gap: 5px; }
-.field label { font-size: 12px; font-weight: 600; color: #374151; }
+.field label { font-size: 12px; font-weight: 600; color: #94A3B8; }
 .field input, .field select, .field textarea {
-  border: 1.5px solid #E5E7EB;
+  border: 1px solid rgba(255,255,255,0.1);
   border-radius: 9px; padding: 9px 12px;
   font-size: 13px; font-family: inherit;
-  color: #111827; outline: none; background: white;
+  color: #F1F5F9;
+  background: rgba(255,255,255,0.04);
+  outline: none;
   transition: border-color .15s, box-shadow .15s;
 }
+.field input::placeholder, .field textarea::placeholder { color: #334155; }
 .field input:focus, .field select:focus, .field textarea:focus {
-  border-color: #4F46E5;
-  box-shadow: 0 0 0 3px rgba(79,70,229,.07);
+  border-color: #6366F1;
+  box-shadow: 0 0 0 3px rgba(99,102,241,0.12);
 }
+.field select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748B' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 28px;
+}
+.field select option { background: #1a1a2a; color: #F1F5F9; }
 .field textarea { resize: vertical; min-height: 70px; }
-.hint { font-size: 11px; color: #9CA3AF; line-height: 1.5; }
-.hint a { color: #4F46E5; text-decoration: none; }
-.hint a:hover { text-decoration: underline; }
-.hint strong { color: #374151; }
+.hint { font-size: 11px; color: #475569; line-height: 1.5; }
+.hint a { color: #6366F1; text-decoration: none; }
+.hint a:hover { color: #818CF8; text-decoration: underline; }
+.hint strong { color: #64748B; }
+.hint code { color: #94A3B8; font-family: 'Menlo','Monaco',monospace; font-size: 10px; }
 
 /* ── Alert ── */
 .alert {
-  padding: 10px 14px; border-radius: 8px;
+  padding: 10px 14px; border-radius: 10px;
   font-size: 13px; font-weight: 500;
   display: none; align-items: flex-start; gap: 8px;
-  line-height: 1.5;
+  line-height: 1.5; border: 1px solid transparent;
 }
 .alert.show { display: flex; }
-.alert.ok  { background: #D1FAE5; color: #065F46; }
-.alert.err { background: #FEE2E2; color: #991B1B; }
-.alert.info { background: #EEF2FF; color: #3730A3; }
+.alert.ok  {
+  background: rgba(16,185,129,0.1);
+  color: #34D399;
+  border-color: rgba(16,185,129,0.2);
+}
+.alert.err {
+  background: rgba(239,68,68,0.1);
+  color: #F87171;
+  border-color: rgba(239,68,68,0.2);
+}
+.alert.info {
+  background: rgba(99,102,241,0.1);
+  color: #A5B4FC;
+  border-color: rgba(99,102,241,0.2);
+}
 
 /* ── Buttons ── */
 .btns { display: flex; gap: 8px; flex-wrap: wrap; padding-top: 4px; }
@@ -197,19 +266,68 @@ body {
   font-size: 13px; font-weight: 600; font-family: inherit;
   cursor: pointer; border: none; transition: all .15s;
 }
-.btn:disabled { opacity: .45; cursor: not-allowed; }
-.btn-dark    { background: #111827; color: white; }
-.btn-dark:hover:not(:disabled) { background: #1F2937; }
-.btn-outline { background: white; color: #374151; border: 1.5px solid #E5E7EB; }
-.btn-outline:hover:not(:disabled) { background: #F9FAFB; border-color: #D1D5DB; }
-.btn-green   { background: #059669; color: white; }
-.btn-green:hover:not(:disabled) { background: #047857; }
-.btn-notion  { background: #000; color: white; }
-.btn-notion:hover:not(:disabled) { background: #1a1a1a; }
-.btn-slack   { background: #4A154B; color: white; }
-.btn-slack:hover:not(:disabled) { background: #3b1040; }
-.btn-red     { background: #EF4444; color: white; }
-.btn-red:hover:not(:disabled) { background: #DC2626; }
+.btn:disabled { opacity: .35; cursor: not-allowed; }
+
+.btn-dark {
+  background: linear-gradient(135deg, #6366F1, #8B5CF6);
+  color: white;
+  box-shadow: 0 2px 8px rgba(99,102,241,0.25);
+}
+.btn-dark:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(99,102,241,0.4);
+}
+
+.btn-outline {
+  background: rgba(255,255,255,0.05);
+  color: #CBD5E1;
+  border: 1px solid rgba(255,255,255,0.12);
+}
+.btn-outline:hover:not(:disabled) {
+  background: rgba(255,255,255,0.09);
+  border-color: rgba(255,255,255,0.2);
+  color: #F1F5F9;
+}
+
+.btn-green {
+  background: #059669;
+  color: white;
+}
+.btn-green:hover:not(:disabled) {
+  background: #10B981;
+  box-shadow: 0 4px 12px rgba(16,185,129,0.3);
+  transform: translateY(-1px);
+}
+
+.btn-notion {
+  background: rgba(255,255,255,0.08);
+  color: #F1F5F9;
+  border: 1px solid rgba(255,255,255,0.12);
+}
+.btn-notion:hover:not(:disabled) {
+  background: rgba(255,255,255,0.14);
+  border-color: rgba(255,255,255,0.2);
+}
+
+.btn-slack {
+  background: #4A154B;
+  color: white;
+}
+.btn-slack:hover:not(:disabled) {
+  background: #611564;
+  box-shadow: 0 4px 12px rgba(74,21,75,0.5);
+  transform: translateY(-1px);
+}
+
+.btn-red {
+  background: rgba(239,68,68,0.1);
+  color: #F87171;
+  border: 1px solid rgba(239,68,68,0.2);
+}
+.btn-red:hover:not(:disabled) {
+  background: rgba(239,68,68,0.18);
+  border-color: rgba(239,68,68,0.35);
+}
 
 /* ── Overview grid ── */
 .ov-grid {
@@ -217,93 +335,141 @@ body {
   gap: 12px; margin-bottom: 20px;
 }
 .ov-card {
-  background: white; border: 1.5px solid #E5E7EB;
-  border-radius: 12px; padding: 18px;
-  cursor: pointer; transition: all .15s;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px; padding: 18px;
+  cursor: pointer; transition: all .2s;
 }
-.ov-card:hover { border-color: #D1D5DB; box-shadow: 0 4px 16px rgba(0,0,0,.06); }
-.ov-card.connected { border-color: #6EE7B7; background: #F0FDF4; }
+.ov-card:hover {
+  border-color: rgba(99,102,241,0.3);
+  box-shadow: 0 8px 24px rgba(99,102,241,0.1);
+  transform: translateY(-2px);
+}
+.ov-card.connected {
+  border-color: rgba(16,185,129,0.25);
+  background: rgba(16,185,129,0.04);
+}
+.ov-card.connected:hover {
+  border-color: rgba(16,185,129,0.4);
+  box-shadow: 0 8px 24px rgba(16,185,129,0.1);
+}
 .ov-icon {
   width: 40px; height: 40px; border-radius: 10px;
   display: flex; align-items: center; justify-content: center;
   margin-bottom: 10px; overflow: hidden; font-size: 18px;
+  background: rgba(255,255,255,0.06);
 }
 .ov-icon img { width: 24px; height: 24px; object-fit: contain; }
-.ov-name { font-size: 13px; font-weight: 700; margin-bottom: 3px; }
-.ov-st { font-size: 12px; color: #9CA3AF; }
-.ov-st.on { color: #059669; font-weight: 600; }
+.ov-name { font-size: 13px; font-weight: 700; margin-bottom: 3px; color: #E2E8F0; }
+.ov-st { font-size: 12px; color: #475569; }
+.ov-st.on { color: #34D399; font-weight: 600; }
 
 /* ── Quick export ── */
 .quick {
-  background: white; border: 1.5px solid #E5E7EB;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
   border-radius: 14px; padding: 20px; margin-bottom: 14px;
 }
-.quick-title { font-size: 14px; font-weight: 700; margin-bottom: 3px; }
-.quick-sub   { font-size: 12px; color: #9CA3AF; margin-bottom: 14px; }
+.quick-title { font-size: 14px; font-weight: 700; margin-bottom: 3px; color: #F1F5F9; }
+.quick-sub   { font-size: 12px; color: #475569; margin-bottom: 14px; }
 
 /* ── Progress ── */
-.progress-wrap { background: #F3F4F6; border-radius: 100px; height: 6px; overflow: hidden; }
-.progress-bar  { height: 100%; background: linear-gradient(90deg,#4F46E5,#7C3AED); border-radius: 100px; transition: width .3s; }
+.progress-wrap {
+  background: rgba(255,255,255,0.06);
+  border-radius: 100px; height: 5px; overflow: hidden;
+}
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #6366F1, #8B5CF6);
+  border-radius: 100px; transition: width .3s;
+  box-shadow: 0 0 8px rgba(99,102,241,0.5);
+}
 
 /* ── Logs ── */
 .logs-table { width: 100%; border-collapse: collapse; font-size: 13px; }
 .logs-table th {
   text-align: left; padding: 10px 14px;
-  font-size: 11px; font-weight: 600;
-  text-transform: uppercase; letter-spacing: .06em;
-  color: #9CA3AF; border-bottom: 1px solid #F3F4F6; background: #FAFAFA;
+  font-size: 10px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .08em;
+  color: #334155;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  background: rgba(255,255,255,0.03);
 }
-.logs-table td { padding: 10px 14px; border-bottom: 1px solid #F9FAFB; color: #374151; vertical-align: middle; }
+.logs-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  color: #94A3B8; vertical-align: middle;
+}
 .logs-table tr:last-child td { border-bottom: none; }
-.log-ok  { background: #D1FAE5; color: #065F46; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 100px; }
-.log-err { background: #FEE2E2; color: #991B1B; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 100px; }
-.empty   { text-align: center; padding: 40px; color: #9CA3AF; font-size: 14px; }
+.logs-table tr:hover td { background: rgba(255,255,255,0.02); }
+.log-ok  {
+  background: rgba(16,185,129,0.12); color: #34D399;
+  font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 100px;
+}
+.log-err {
+  background: rgba(239,68,68,0.12); color: #F87171;
+  font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 100px;
+}
+.empty   { text-align: center; padding: 40px; color: #334155; font-size: 14px; }
 
 /* ── Code ── */
 .code-block {
-  background: #1E1E1E; color: #D4D4D4;
-  border-radius: 10px; padding: 16px;
+  background: #0D1117; color: #C9D1D9;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px; padding: 18px;
   font-size: 12px; font-family: 'Menlo','Monaco','Consolas',monospace;
-  line-height: 1.7; overflow-x: auto;
+  line-height: 1.8; overflow-x: auto;
 }
-.code-block .key { color: #9CDCFE; }
-.code-block .str { color: #CE9178; }
-.code-block .num { color: #B5CEA8; }
+.code-block .key { color: #79C0FF; }
+.code-block .str { color: #A5D6FF; }
+.code-block .num { color: #F2CC60; }
 
 /* ── Steps ── */
-.steps { display: flex; flex-direction: column; gap: 12px; margin-top: 4px; }
+.steps { display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
 .step {
   display: flex; align-items: flex-start; gap: 12px;
-  padding: 12px 14px; background: #F9FAFB;
-  border-radius: 10px; border: 1px solid #F3F4F6;
+  padding: 12px 14px;
+  background: rgba(255,255,255,0.03);
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.06);
 }
 .step-num {
   width: 24px; height: 24px; border-radius: 50%;
-  background: #4F46E5; color: white;
+  background: linear-gradient(135deg, #6366F1, #8B5CF6);
+  color: white;
   font-size: 12px; font-weight: 700;
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0; margin-top: 1px;
 }
-.step-text { font-size: 13px; color: #374151; line-height: 1.5; }
-.step-text strong { color: #111827; }
-.step-text a { color: #4F46E5; text-decoration: none; }
-.step-text a:hover { text-decoration: underline; }
+.step-text { font-size: 13px; color: #64748B; line-height: 1.5; }
+.step-text strong { color: #94A3B8; }
+.step-text a { color: #6366F1; text-decoration: none; }
+.step-text a:hover { color: #818CF8; text-decoration: underline; }
 
 /* ── Coming soon ── */
 .coming { text-align: center; padding: 48px 24px; }
-.coming-icon  { font-size: 44px; margin-bottom: 14px; }
-.coming-title { font-size: 15px; font-weight: 700; color: #374151; margin-bottom: 8px; }
-.coming-text  { font-size: 13px; color: #9CA3AF; line-height: 1.6; max-width: 300px; margin: 0 auto 18px; }
+.coming-icon  { font-size: 44px; margin-bottom: 14px; opacity: .7; }
+.coming-title { font-size: 15px; font-weight: 700; color: #94A3B8; margin-bottom: 8px; }
+.coming-text  { font-size: 13px; color: #334155; line-height: 1.6; max-width: 300px; margin: 0 auto 18px; }
 .chips { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
-.chip  { background: #F9FAFB; border: 1px solid #E5E7EB; padding: 5px 12px; border-radius: 100px; font-size: 12px; color: #6B7280; }
+.chip  {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  padding: 5px 12px; border-radius: 100px;
+  font-size: 12px; color: #475569;
+}
 
 /* ── Info box ── */
 .info-box {
-  background: #EEF2FF; border: 1px solid #C7D2FE;
+  background: rgba(99,102,241,0.08);
+  border: 1px solid rgba(99,102,241,0.2);
   border-radius: 10px; padding: 14px 16px;
-  font-size: 13px; color: #3730A3; line-height: 1.6;
+  font-size: 13px; color: #A5B4FC; line-height: 1.6;
 }
-.info-box strong { color: #1E1B4B; }
+.info-box strong { color: #C7D2FE; }
+.info-box a { color: #818CF8; text-decoration: none; }
+.info-box a:hover { color: #A5B4FC; text-decoration: underline; }
+.info-box code { font-family: 'Menlo','Monaco',monospace; font-size: 11px; color: #94A3B8; }
 
 @media (max-width: 900px) { .ov-grid { grid-template-columns: repeat(2,1fr); } }
 @media (max-width: 768px) {
@@ -312,16 +478,26 @@ body {
   .ov-grid { grid-template-columns: 1fr 1fr; }
   .form-row { grid-template-columns: 1fr; }
 }
+
+@keyframes dotPulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(16,185,129,0.4); }
+  50%      { box-shadow: 0 0 0 4px rgba(16,185,129,0); }
+}
 @keyframes slideIn  { from{opacity:0;transform:translateX(20px)} to{opacity:1;transform:translateX(0)} }
 @keyframes spin     { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
 @keyframes shake    { 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-6px)} 40%,80%{transform:translateX(6px)} }
-@keyframes fadeInUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+@keyframes fadeInUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+
 .int-card {
   transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
-  animation: fadeInUp .4s ease forwards;
+  animation: fadeInUp .35s ease forwards;
 }
-.int-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(79,70,229,.10); }
-.int-card.error { animation: shake .4s ease; border-color: #FCA5A5 !important; }
+.int-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 40px rgba(99,102,241,0.12);
+  border-color: rgba(99,102,241,0.2) !important;
+}
+.int-card.error { animation: shake .4s ease; border-color: rgba(239,68,68,0.4) !important; }
 </style>
 <!-- Microsoft Clarity -->
 <script type="text/javascript">
@@ -348,14 +524,14 @@ body {
 <!-- Sidebar -->
 <aside class="sidebar">
   <div style="padding:0 16px 14px">
-    <div style="font-size:15px;font-weight:800;margin-bottom:2px">🔗 Entegrasyonlar</div>
-    <div style="font-size:12px;color:#9CA3AF">Bağlantılarınızı yönetin</div>
+    <div style="font-size:15px;font-weight:800;margin-bottom:2px;color:#F1F5F9">🔗 Entegrasyonlar</div>
+    <div style="font-size:12px;color:#334155">Bağlantılarınızı yönetin</div>
   </div>
 
   <div class="sb-section-title">Genel Bakış</div>
   <div class="sb-nav">
     <button class="sb-item active" onclick="show('overview',this)">
-      <div class="sb-icon" style="background:#F3F4F6">🏠</div>
+      <div class="sb-icon">🏠</div>
       Genel Bakış
     </button>
   </div>
@@ -364,7 +540,7 @@ body {
   <div class="sb-section-title">Aktif Entegrasyonlar</div>
   <div class="sb-nav">
     <button class="sb-item" onclick="show('gs',this)" id="nav-gs">
-      <div class="sb-icon" style="background:#E8F5E9">
+      <div class="sb-icon">
         <img src="https://upload.wikimedia.org/wikipedia/commons/a/ae/Google_Sheets_2020_Logo.svg" alt="GS"
              onerror="this.parentElement.innerHTML='<span>📊</span>'">
       </div>
@@ -372,15 +548,15 @@ body {
       <div class="sb-dot" id="dot-gs"></div>
     </button>
     <button class="sb-item" onclick="show('notion',this)" id="nav-notion">
-      <div class="sb-icon" style="background:#F3F4F6">
+      <div class="sb-icon">
         <img src="https://upload.wikimedia.org/wikipedia/commons/e/e9/Notion-logo.svg" alt="Notion"
-             onerror="this.parentElement.innerHTML='<span>◻️</span>'">
+             onerror="this.parentElement.innerHTML='<span>◻️</span>'" style="filter:invert(1)">
       </div>
       Notion
       <div class="sb-dot" id="dot-notion"></div>
     </button>
     <button class="sb-item" onclick="show('webhook',this)" id="nav-webhook">
-      <div class="sb-icon" style="background:#FFF3EB">
+      <div class="sb-icon">
         <img src="https://upload.wikimedia.org/wikipedia/commons/f/fd/Zapier_logo.svg" alt="Zapier"
              onerror="this.parentElement.innerHTML='<span>⚡</span>'">
       </div>
@@ -388,7 +564,7 @@ body {
       <div class="sb-dot" id="dot-webhook"></div>
     </button>
     <button class="sb-item" onclick="show('slack',this)" id="nav-slack">
-      <div class="sb-icon" style="background:#F8F0FF">
+      <div class="sb-icon">
         <img src="https://upload.wikimedia.org/wikipedia/commons/d/d5/Slack_icon_2019.svg" alt="Slack"
              onerror="this.parentElement.innerHTML='<span>💬</span>'">
       </div>
@@ -401,7 +577,7 @@ body {
   <div class="sb-section-title">Yakında</div>
   <div class="sb-nav">
     <button class="sb-item" onclick="show('make',this)">
-      <div class="sb-icon" style="background:#F0F7FF">
+      <div class="sb-icon">
         <img src="https://upload.wikimedia.org/wikipedia/commons/7/7e/Make_%28software%29_Logo.svg" alt="Make"
              onerror="this.parentElement.innerHTML='<span>⚙️</span>'">
       </div>
@@ -409,7 +585,7 @@ body {
       <span class="sb-soon">Yakında</span>
     </button>
     <button class="sb-item" onclick="show('airtable',this)">
-      <div class="sb-icon" style="background:#F0FFF8">
+      <div class="sb-icon">
         <img src="https://upload.wikimedia.org/wikipedia/commons/4/4b/Airtable_Logo.svg" alt="Airtable"
              onerror="this.parentElement.innerHTML='<span>📋</span>'">
       </div>
@@ -417,7 +593,7 @@ body {
       <span class="sb-soon">Yakında</span>
     </button>
     <button class="sb-item" onclick="show('gdrive',this)">
-      <div class="sb-icon" style="background:#FFF8F0">
+      <div class="sb-icon">
         <img src="https://upload.wikimedia.org/wikipedia/commons/1/12/Google_Drive_icon_%282020%29.svg" alt="Drive"
              onerror="this.parentElement.innerHTML='<span>📁</span>'">
       </div>
@@ -429,7 +605,7 @@ body {
   <div class="sb-divider"></div>
   <div class="sb-nav">
     <button class="sb-item" onclick="show('logs',this)">
-      <div class="sb-icon" style="background:#F0FDF4">📋</div>
+      <div class="sb-icon">📋</div>
       Aktivite Kayıtları
     </button>
   </div>
@@ -445,7 +621,7 @@ body {
 
   <div class="ov-grid">
     <div class="ov-card" id="ov-gs" onclick="show('gs',document.getElementById('nav-gs'))">
-      <div class="ov-icon" style="background:#E8F5E9">
+      <div class="ov-icon">
         <img src="https://upload.wikimedia.org/wikipedia/commons/a/ae/Google_Sheets_2020_Logo.svg"
              alt="GS" onerror="this.parentElement.textContent='📊'">
       </div>
@@ -453,15 +629,15 @@ body {
       <div class="ov-st" id="ov-st-gs">Bağlı değil</div>
     </div>
     <div class="ov-card" id="ov-notion" onclick="show('notion',document.getElementById('nav-notion'))">
-      <div class="ov-icon" style="background:#F3F4F6">
+      <div class="ov-icon">
         <img src="https://upload.wikimedia.org/wikipedia/commons/e/e9/Notion-logo.svg"
-             alt="Notion" onerror="this.parentElement.textContent='◻️'">
+             alt="Notion" onerror="this.parentElement.textContent='◻️'" style="filter:invert(1)">
       </div>
       <div class="ov-name">Notion</div>
       <div class="ov-st" id="ov-st-notion">Bağlı değil</div>
     </div>
     <div class="ov-card" id="ov-webhook" onclick="show('webhook',document.getElementById('nav-webhook'))">
-      <div class="ov-icon" style="background:#FFF3EB">
+      <div class="ov-icon">
         <img src="https://upload.wikimedia.org/wikipedia/commons/f/fd/Zapier_logo.svg"
              alt="Zapier" onerror="this.parentElement.textContent='⚡'">
       </div>
@@ -469,7 +645,7 @@ body {
       <div class="ov-st" id="ov-st-webhook">Bağlı değil</div>
     </div>
     <div class="ov-card" id="ov-slack" onclick="show('slack',document.getElementById('nav-slack'))">
-      <div class="ov-icon" style="background:#F8F0FF">
+      <div class="ov-icon">
         <img src="https://upload.wikimedia.org/wikipedia/commons/d/d5/Slack_icon_2019.svg"
              alt="Slack" onerror="this.parentElement.textContent='💬'">
       </div>
@@ -507,15 +683,14 @@ body {
 <div class="section" id="sec-gs">
   <div class="page-title">
     <img src="https://upload.wikimedia.org/wikipedia/commons/a/ae/Google_Sheets_2020_Logo.svg"
-         width="26" height="26" alt="" style="vertical-align:middle;margin-right:8px"
-         onerror="this.style.display='none'">
+         width="26" height="26" alt="" onerror="this.style.display='none'">
     Google Sheets
   </div>
   <div class="page-desc">Excel verilerinizi doğrudan Google Sheets belgesine aktarın.</div>
 
-  <div class="card">
+  <div class="card int-card">
     <div class="card-head">
-      <div class="card-logo" style="background:#E8F5E9">
+      <div class="card-logo">
         <img src="https://upload.wikimedia.org/wikipedia/commons/a/ae/Google_Sheets_2020_Logo.svg"
              alt="Google Sheets" onerror="this.parentElement.innerHTML='<span class=emoji>📊</span>'">
       </div>
@@ -529,7 +704,7 @@ body {
       <div class="form">
         <div class="info-box">
           <strong>📌 Nasıl bulunur?</strong> Google Sheets'i açın → URL'den kopyalayın:<br>
-          <code style="font-size:11px;opacity:.8">https://docs.google.com/spreadsheets/d/<strong>1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgVE2upms</strong>/edit</code>
+          <code>https://docs.google.com/spreadsheets/d/<strong>1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgVE2upms</strong>/edit</code>
         </div>
         <div class="field">
           <label>Google Sheet URL veya ID *</label>
@@ -557,7 +732,7 @@ body {
     </div>
   </div>
 
-  <div class="card">
+  <div class="card int-card">
     <div class="card-head">
       <div class="card-info">
         <div class="card-name">Veri Aktarımı</div>
@@ -581,7 +756,7 @@ body {
       </div>
       <div class="alert" id="alert-gs-exp" style="margin:14px 0"></div>
       <div id="gs-progress" style="display:none;margin-bottom:12px">
-        <div style="font-size:12px;color:#6B7280;margin-bottom:6px">Hazırlanıyor...</div>
+        <div style="font-size:12px;color:#475569;margin-bottom:6px">Hazırlanıyor...</div>
         <div class="progress-wrap"><div class="progress-bar" id="gs-pbar" style="width:0%"></div></div>
       </div>
       <div class="btns">
@@ -595,17 +770,16 @@ body {
 <div class="section" id="sec-notion">
   <div class="page-title">
     <img src="https://upload.wikimedia.org/wikipedia/commons/e/e9/Notion-logo.svg"
-         width="24" height="24" alt="" style="vertical-align:middle;margin-right:8px"
-         onerror="this.style.display='none'">
+         width="24" height="24" alt="" style="filter:invert(1)" onerror="this.style.display='none'">
     Notion
   </div>
   <div class="page-desc">Spreadsheet satırlarını Notion veritabanına aktarın.</div>
 
-  <div class="card">
+  <div class="card int-card">
     <div class="card-head">
-      <div class="card-logo" style="background:#F3F4F6">
+      <div class="card-logo">
         <img src="https://upload.wikimedia.org/wikipedia/commons/e/e9/Notion-logo.svg"
-             alt="Notion" onerror="this.parentElement.innerHTML='<span class=emoji>◻️</span>'">
+             alt="Notion" style="filter:invert(1)" onerror="this.parentElement.innerHTML='<span class=emoji>◻️</span>'">
       </div>
       <div class="card-info">
         <div class="card-name">Bağlantı Ayarları</div>
@@ -648,7 +822,7 @@ body {
     </div>
   </div>
 
-  <div class="card">
+  <div class="card int-card">
     <div class="card-head">
       <div class="card-info">
         <div class="card-name">Veri Aktarımı</div>
@@ -663,7 +837,7 @@ body {
       </div>
       <div class="alert" id="alert-notion-exp" style="margin-bottom:12px"></div>
       <div id="notion-progress" style="display:none;margin-bottom:12px">
-        <div style="font-size:12px;color:#6B7280;margin-bottom:6px" id="notion-progress-text">Aktarılıyor...</div>
+        <div style="font-size:12px;color:#475569;margin-bottom:6px" id="notion-progress-text">Aktarılıyor...</div>
         <div class="progress-wrap"><div class="progress-bar" id="notion-pbar" style="width:0%"></div></div>
       </div>
       <div class="btns">
@@ -677,15 +851,14 @@ body {
 <div class="section" id="sec-webhook">
   <div class="page-title">
     <img src="https://upload.wikimedia.org/wikipedia/commons/f/fd/Zapier_logo.svg"
-         width="24" height="24" alt="" style="vertical-align:middle;margin-right:8px"
-         onerror="this.style.display='none'">
+         width="24" height="24" alt="" onerror="this.style.display='none'">
     Zapier / Webhook
   </div>
   <div class="page-desc">Her AI aksiyonunda otomatik olarak herhangi bir uygulamaya veri gönderin.</div>
 
-  <div class="card">
+  <div class="card int-card">
     <div class="card-head">
-      <div class="card-logo" style="background:#FFF3EB">
+      <div class="card-logo">
         <img src="https://upload.wikimedia.org/wikipedia/commons/f/fd/Zapier_logo.svg"
              alt="Zapier" onerror="this.parentElement.innerHTML='<span class=emoji>⚡</span>'">
       </div>
@@ -733,7 +906,7 @@ body {
     </div>
   </div>
 
-  <div class="card">
+  <div class="card int-card">
     <div class="card-head">
       <div class="card-info">
         <div class="card-name">Gönderilen Veri Yapısı</div>
@@ -761,15 +934,14 @@ body {
 <div class="section" id="sec-slack">
   <div class="page-title">
     <img src="https://upload.wikimedia.org/wikipedia/commons/d/d5/Slack_icon_2019.svg"
-         width="24" height="24" alt="" style="vertical-align:middle;margin-right:8px"
-         onerror="this.style.display='none'">
+         width="24" height="24" alt="" onerror="this.style.display='none'">
     Slack
   </div>
   <div class="page-desc">AI aksiyonlarından sonra Slack kanalınıza otomatik bildirim gönderin.</div>
 
-  <div class="card">
+  <div class="card int-card">
     <div class="card-head">
-      <div class="card-logo" style="background:#F8F0FF">
+      <div class="card-logo">
         <img src="https://upload.wikimedia.org/wikipedia/commons/d/d5/Slack_icon_2019.svg"
              alt="Slack" onerror="this.parentElement.innerHTML='<span class=emoji>💬</span>'">
       </div>
@@ -819,7 +991,7 @@ body {
     </div>
   </div>
 
-  <div class="card">
+  <div class="card int-card">
     <div class="card-head">
       <div class="card-info">
         <div class="card-name">Slack Mesaj Önizlemesi</div>
@@ -827,16 +999,16 @@ body {
       </div>
     </div>
     <div class="card-body">
-      <div style="background:#1a1a2e;border-radius:10px;padding:16px;font-family:monospace">
+      <div style="background:#1a1a2e;border-radius:12px;padding:16px;font-family:monospace;border:1px solid rgba(255,255,255,0.06)">
         <div style="color:#E8912D;font-size:13px;font-weight:700;margin-bottom:8px">🤖 Mocksheet Bildirimi</div>
         <div style="color:#D4D4D4;font-size:12px;line-height:1.6">
           <div>✅ <strong style="color:#9CDCFE">AI Aksiyonu Tamamlandı</strong></div>
-          <div style="margin-top:6px;padding:8px;background:rgba(255,255,255,.05);border-radius:6px;border-left:3px solid #4F46E5">
+          <div style="margin-top:6px;padding:8px;background:rgba(255,255,255,.05);border-radius:6px;border-left:3px solid #6366F1">
             <div>📋 <strong>Sayfa:</strong> Satışlar Q1</div>
             <div>⚡ <strong>İşlem:</strong> Boş satırlar silindi</div>
             <div>📊 <strong>Etkilenen satır:</strong> 12</div>
           </div>
-          <div style="margin-top:6px;color:#6B7280;font-size:11px">📅 03 Nis 2026 12:00 • Mocksheet</div>
+          <div style="margin-top:6px;color:#475569;font-size:11px">📅 03 Nis 2026 12:00 • Mocksheet</div>
         </div>
       </div>
     </div>
@@ -847,9 +1019,9 @@ body {
 <div class="section" id="sec-make">
   <div class="page-title">Make</div>
   <div class="page-desc">Görsel otomasyon senaryoları kurun.</div>
-  <div class="card">
+  <div class="card int-card">
     <div class="card-head">
-      <div class="card-logo" style="background:#F0F7FF">
+      <div class="card-logo">
         <img src="https://upload.wikimedia.org/wikipedia/commons/7/7e/Make_%28software%29_Logo.svg"
              alt="Make" onerror="this.parentElement.innerHTML='<span class=emoji>⚙️</span>'">
       </div>
@@ -879,9 +1051,9 @@ body {
 <div class="section" id="sec-airtable">
   <div class="page-title">Airtable</div>
   <div class="page-desc">Excel verilerini Airtable veritabanına aktarın.</div>
-  <div class="card">
+  <div class="card int-card">
     <div class="card-head">
-      <div class="card-logo" style="background:#F0FFF8">
+      <div class="card-logo">
         <img src="https://upload.wikimedia.org/wikipedia/commons/4/4b/Airtable_Logo.svg"
              alt="Airtable" onerror="this.parentElement.innerHTML='<span class=emoji>📋</span>'">
       </div>
@@ -911,9 +1083,9 @@ body {
 <div class="section" id="sec-gdrive">
   <div class="page-title">Google Drive</div>
   <div class="page-desc">Dosyaları otomatik Drive klasörünüze kaydedin.</div>
-  <div class="card">
+  <div class="card int-card">
     <div class="card-head">
-      <div class="card-logo" style="background:#FFF8F0">
+      <div class="card-logo">
         <img src="https://upload.wikimedia.org/wikipedia/commons/1/12/Google_Drive_icon_%282020%29.svg"
              alt="Google Drive" onerror="this.parentElement.innerHTML='<span class=emoji>📁</span>'">
       </div>
@@ -1354,7 +1526,7 @@ function loadLogs() {
   ];
   const rows = providers.filter(p => lsLoad(p.key)).map(p => `
     <tr>
-      <td><strong>${p.name}</strong></td>
+      <td><strong style="color:#E2E8F0">${p.name}</strong></td>
       <td>Bağlı</td>
       <td><span class="log-ok">✓ Aktif</span></td>
       <td>—</td>
@@ -1406,18 +1578,18 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 
 <!-- Beni Haberdar Et Modal -->
-<div id="notifyModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);align-items:center;justify-content:center;">
-  <div style="background:white;border-radius:20px;padding:36px;max-width:420px;width:90%;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,0.2);position:relative;">
-    <button onclick="document.getElementById('notifyModal').style.display='none'" style="position:absolute;top:14px;right:16px;background:none;border:none;font-size:18px;cursor:pointer;color:#9CA3AF">✕</button>
+<div id="notifyModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);align-items:center;justify-content:center;">
+  <div style="background:#111118;border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:36px;max-width:420px;width:90%;text-align:center;box-shadow:0 32px 80px rgba(0,0,0,0.6);position:relative;">
+    <button onclick="document.getElementById('notifyModal').style.display='none'" style="position:absolute;top:14px;right:16px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:6px;width:28px;height:28px;font-size:14px;cursor:pointer;color:#64748B;display:flex;align-items:center;justify-content:center;">✕</button>
     <div style="font-size:48px;margin-bottom:14px">🔔</div>
-    <div style="font-size:20px;font-weight:800;margin-bottom:8px" id="notify-title">Yakında Geliyor!</div>
-    <div style="font-size:14px;color:#6B7280;margin-bottom:20px">Bu entegrasyon hazır olduğunda sizi haberdar edelim.</div>
+    <div style="font-size:20px;font-weight:800;margin-bottom:8px;color:#F1F5F9" id="notify-title">Yakında Geliyor!</div>
+    <div style="font-size:14px;color:#475569;margin-bottom:20px">Bu entegrasyon hazır olduğunda sizi haberdar edelim.</div>
     <input type="email" id="notify-email" placeholder="E-posta adresiniz"
-           style="width:100%;padding:11px 14px;border:1.5px solid #E5E7EB;border-radius:10px;font-size:14px;margin-bottom:12px;font-family:inherit;outline:none;box-sizing:border-box;">
-    <button onclick="submitNotify()" style="width:100%;padding:12px;background:#4F46E5;color:white;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;">
+           style="width:100%;padding:11px 14px;border:1px solid rgba(255,255,255,0.1);border-radius:10px;font-size:14px;margin-bottom:12px;font-family:inherit;outline:none;box-sizing:border-box;background:rgba(255,255,255,0.05);color:#F1F5F9;">
+    <button onclick="submitNotify()" style="width:100%;padding:12px;background:linear-gradient(135deg,#6366F1,#8B5CF6);color:white;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;box-shadow:0 4px 16px rgba(99,102,241,0.3);">
       🔔 Beni Haberdar Et
     </button>
-    <div id="notify-success" style="display:none;margin-top:12px;color:#059669;font-size:13px;font-weight:500;">
+    <div id="notify-success" style="display:none;margin-top:12px;color:#34D399;font-size:13px;font-weight:500;">
       ✓ Kaydedildi! Hazır olduğunda e-posta göndereceğiz.
     </div>
   </div>
