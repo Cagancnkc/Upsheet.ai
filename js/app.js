@@ -4797,6 +4797,11 @@ function toggleExportMenu(e) {
   if (!isOpen) {
     renderIntegrationShortcuts();
     menu.style.display = 'block';
+    if (btn) {
+      const r = btn.getBoundingClientRect();
+      menu.style.top  = (r.bottom + 6) + 'px';
+      menu.style.right = (window.innerWidth - r.right) + 'px';
+    }
     requestAnimationFrame(() => menu.classList.add('open'));
     btn && btn.classList.add('open');
   }
