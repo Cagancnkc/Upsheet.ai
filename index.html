@@ -797,14 +797,10 @@ function copyPromoCode(){
       <div class="plan-card popular">
         <div class="popular-badge">⭐ En Popüler</div>
         <div class="plan-name">Pro</div>
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
-          <span style="font-size:16px;color:#9CA3AF;text-decoration:line-through">₺599</span>
-          <span style="background:#FEF2F2;color:#DC2626;font-size:11px;font-weight:700;padding:3px 8px;border-radius:20px;animation:pricePulse 2s infinite">🔥 %88 İndirim</span>
-        </div>
-        <div class="plan-price"><sup>₺</sup><span id="pro-price">69</span></div>
+        <div class="plan-price"><sup>₺</sup><span id="pro-price">99</span></div>
         <div class="plan-price-sub" id="pro-sub">/ ay — aylık faturalandırılır</div>
         <div class="plan-divider"></div>
-        <div class="plan-feature"><span class="check">✓</span><span><b>200 AI komutu</b> / ay</span></div>
+        <div class="plan-feature"><span class="check">✓</span><span><b>500 AI komutu</b> / ay</span></div>
         <div class="plan-feature"><span class="check">✓</span><span>KDV, SGK, bordro hesaplama</span></div>
         <div class="plan-feature"><span class="check">✓</span><span>Google Sheets entegrasyonu</span></div>
         <div class="plan-feature"><span class="check">✓</span><span>Notion entegrasyonu</span></div>
@@ -814,14 +810,10 @@ function copyPromoCode(){
         <a href="auth.html?plan=pro" class="plan-cta gradient">Pro'ya Geç →</a>
       </div>
 
-      <!-- İŞ -->
+      <!-- BUSINESS -->
       <div class="plan-card">
-        <div class="plan-name">İş</div>
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
-          <span style="font-size:16px;color:#9CA3AF;text-decoration:line-through">₺899</span>
-          <span style="background:#FEF2F2;color:#DC2626;font-size:11px;font-weight:700;padding:3px 8px;border-radius:20px;animation:pricePulse 2s infinite">🔥 %83 İndirim</span>
-        </div>
-        <div class="plan-price"><sup>₺</sup><span id="is-price">149</span></div>
+        <div class="plan-name">Business</div>
+        <div class="plan-price"><sup>₺</sup><span id="is-price">249</span></div>
         <div class="plan-price-sub" id="is-sub">/ ay — aylık faturalandırılır</div>
         <div class="plan-divider"></div>
         <div class="plan-feature"><span class="check">✓</span><span><b>Sınırsız</b> AI komutu</span></div>
@@ -1089,16 +1081,16 @@ document.addEventListener('DOMContentLoaded', function() {
 var pricingIsYearly = false;
 var PRICES = {
   monthly: {
-    pro:     { amount: 69,     label: '₺69',     period: '/ay' },
-    biz:     { amount: 149,    label: '₺149',    period: '/ay' },
-    bizBase: 149
+    pro:     { amount: 99,     label: '₺99',     period: '/ay' },
+    biz:     { amount: 249,    label: '₺249',    period: '/ay' },
+    bizBase: 249
   },
   yearly: {
-    pro:     { amount: 2990,   label: '₺2.990',  period: '/yıl' },
-    biz:     { amount: 6990,   label: '₺6.990',  period: '/yıl' },
-    bizBase: 6990,
-    proMonthly:  249.17,
-    bizMonthly:  582.50
+    pro:     { amount: 792,    label: '₺792',    period: '/yıl' },
+    biz:     { amount: 1992,   label: '₺1.992',  period: '/yıl' },
+    bizBase: 1992,
+    proMonthly:  66,
+    bizMonthly:  166
   }
 };
 
@@ -1116,15 +1108,15 @@ function togglePricing() {
   var isSub    = document.getElementById('is-sub');
   if (pricingIsYearly) {
     var py = PRICES.yearly;
-    if (proPrice) proPrice.textContent = '\u20ba' + py.proMonthly.toFixed(2).replace('.', ',');
+    if (proPrice) proPrice.textContent = py.proMonthly;
     if (proSub)   proSub.textContent   = '/ ay \u2014 y\u0131ll\u0131k faturaland\u0131r\u0131l\u0131r (' + py.pro.label + '/y\u0131l)';
-    if (isPrice)  isPrice.textContent  = '\u20ba' + py.bizMonthly.toFixed(2).replace('.', ',');
+    if (isPrice)  isPrice.textContent  = py.bizMonthly;
     if (isSub)    isSub.textContent    = '/ ay \u2014 y\u0131ll\u0131k faturaland\u0131r\u0131l\u0131r (' + py.biz.label + '/y\u0131l)';
   } else {
     var pm = PRICES.monthly;
-    if (proPrice) proPrice.textContent = pm.pro.label;
+    if (proPrice) proPrice.textContent = pm.pro.amount;
     if (proSub)   proSub.textContent   = '/ ay \u2014 ayl\u0131k faturaland\u0131r\u0131l\u0131r';
-    if (isPrice)  isPrice.textContent  = pm.biz.label;
+    if (isPrice)  isPrice.textContent  = pm.biz.amount;
     if (isSub)    isSub.textContent    = '/ ay \u2014 ayl\u0131k faturaland\u0131r\u0131l\u0131r';
   }
 }

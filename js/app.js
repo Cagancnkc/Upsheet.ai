@@ -1,4 +1,27 @@
 ﻿// ═══════════════════════════════════════════════════════════════
+//  PLAN LIMITS
+// ═══════════════════════════════════════════════════════════════
+function checkCommandLimit() {
+  try {
+    var plan = JSON.parse(localStorage.getItem('mocksheets_plan'))?.plan || 'free';
+    var limits = { free: 20, pro: 500, business: Infinity };
+    var limit = limits[plan] !== undefined ? limits[plan] : 20;
+    var key = 'mocksheets_usage_' + new Date().toISOString().slice(0, 7);
+    var usage = parseInt(localStorage.getItem(key) || '0');
+    if (usage >= limit) {
+      showToast(
+        '⚠️ Aylık ' + limit + ' komut limitine ulaştınız.' +
+        (plan === 'free' ? ' <a href="index.html#pricing" style="color:#A5B4FC">Pro\'ya geç →</a>' : ''),
+        'error'
+      );
+      return false;
+    }
+    localStorage.setItem(key, String(usage + 1));
+    return true;
+  } catch { return true; }
+}
+
+// ═══════════════════════════════════════════════════════════════
 //  PERF UTILITIES — debounce & throttle
 // ═══════════════════════════════════════════════════════════════
 function debounce(fn, delay) {
@@ -1374,6 +1397,7 @@ async function buildMessageWithAttachments(userMessage) {
 }
 
 async function sendChat() {
+  if (!checkCommandLimit()) return;
   if (isProcessing) { console.log('[Guard] sendChat engellendi — işlem devam ediyor'); return; }
   const input = document.getElementById('chatInput');
   const msg = input.value.trim();
