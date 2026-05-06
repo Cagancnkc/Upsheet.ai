@@ -4795,6 +4795,7 @@ function toggleExportMenu(e) {
   document.querySelectorAll('[id$="-dropdown"]').forEach(m => { m.style.display = ''; m.classList.remove('open'); });
   document.querySelectorAll('.export-arrow').forEach(b => b.classList.remove('open'));
   if (!isOpen) {
+    renderIntegrationShortcuts();
     menu.style.display = 'block';
     requestAnimationFrame(() => menu.classList.add('open'));
     btn && btn.classList.add('open');
@@ -4807,6 +4808,36 @@ document.addEventListener('click', () => {
   const btn = document.getElementById('exportArrowBtn');
   if (btn) btn.classList.remove('open');
 });
+
+function closeExportMenu() {
+  const menu = document.getElementById('export-dropdown');
+  const btn  = document.getElementById('exportArrowBtn');
+  if (menu) menu.classList.remove('open');
+  if (btn)  btn.classList.remove('open');
+  setTimeout(() => { if (menu && !menu.classList.contains('open')) menu.style.display = ''; }, 200);
+}
+
+function renderIntegrationShortcuts() {
+  const el = document.getElementById('exp-integrations-section');
+  if (!el) return;
+  const configs = [
+    { key: 'int_gs',      name: 'Google Sheets', fn: 'exportToGSheets',
+      icon: '<img src="https://upload.wikimedia.org/wikipedia/commons/a/ae/Google_Sheets_2020_Logo.svg" width="14" height="14" style="object-fit:contain">' },
+    { key: 'int_notion',  name: 'Notion',        fn: 'exportToNotion',
+      icon: '<img src="https://upload.wikimedia.org/wikipedia/commons/e/e9/Notion-logo.svg" width="13" height="13" style="filter:invert(.7);object-fit:contain">' },
+    { key: 'int_slack',   name: 'Slack',         fn: 'exportToSlack',
+      icon: '<img src="https://upload.wikimedia.org/wikipedia/commons/d/d5/Slack_icon_2019.svg" width="13" height="13" style="object-fit:contain">' },
+    { key: 'int_webhook', name: 'Webhook',       fn: 'triggerWebhook',
+      icon: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#6366F1" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>' }
+  ];
+  const connected = configs.filter(c => { try { return !!JSON.parse(localStorage.getItem(c.key)); } catch { return false; } });
+  if (!connected.length) { el.innerHTML = ''; el.style.display = 'none'; return; }
+  el.style.display = '';
+  el.innerHTML = '<div class="exp-separator"></div><div class="exp-header">Entegrasyonlara Aktar</div>' +
+    connected.map(c =>
+      `<button class="exp-item" onclick="${c.fn}()"><span class="exp-int-icon">${c.icon}</span><span>${c.name}'a Aktar</span></button>`
+    ).join('');
+}
 
 async function exportToGSheets() {
   document.getElementById('export-dropdown').style.display = 'none';
