@@ -4790,33 +4790,40 @@ function doGenerateFormula(data) {
 function toggleExportMenu(e) {
   if (e) e.stopPropagation();
   const menu = document.getElementById('export-dropdown');
-  const btn = document.getElementById('exportArrowBtn');
+  const btn  = document.getElementById('exportArrowBtn');
   if (!menu) return;
-  const isOpen = menu.classList.contains('open');
-  if (isOpen) {
+
+  if (menu.classList.contains('open')) {
     menu.classList.remove('open');
-    btn && btn.classList.remove('open');
+    if (btn) btn.classList.remove('open');
     setTimeout(() => { if (!menu.classList.contains('open')) menu.style.display = ''; }, 200);
-  } else {
-    renderIntegrationShortcuts();
-    if (btn) {
-      const r = btn.getBoundingClientRect();
-      menu.style.top   = (r.bottom + 6) + 'px';
-      menu.style.right = (window.innerWidth - r.right) + 'px';
-    }
-    menu.style.display = 'block';
-    requestAnimationFrame(() => {
-      menu.classList.add('open');
-      btn && btn.classList.add('open');
-    });
+    return;
   }
+
+  renderIntegrationShortcuts();
+
+  // position before showing
+  if (btn) {
+    const r = btn.getBoundingClientRect();
+    menu.style.top   = (r.bottom + 6) + 'px';
+    menu.style.right = Math.max(0, window.innerWidth - r.right) + 'px';
+    menu.style.left  = '';
+  }
+
+  menu.style.display = 'block';
+  void menu.offsetHeight; // force reflow so CSS transition fires
+  menu.classList.add('open');
+  if (btn) btn.classList.add('open');
 }
 
-document.addEventListener('click', (e) => {
-  if (e.target.closest('#export-dropdown') || e.target.closest('.export-wrapper')) return;
-  const menu = document.getElementById('export-dropdown');
-  if (menu) { menu.classList.remove('open'); menu.style.display = ''; }
-  const btn = document.getElementById('exportArrowBtn');
+document.addEventListener('click', function(e) {
+  if (e.target.closest && (e.target.closest('#export-dropdown') || e.target.closest('.export-wrapper'))) return;
+  var menu = document.getElementById('export-dropdown');
+  if (menu && menu.classList.contains('open')) {
+    menu.classList.remove('open');
+    menu.style.display = '';
+  }
+  var btn = document.getElementById('exportArrowBtn');
   if (btn) btn.classList.remove('open');
 });
 
