@@ -330,4 +330,254 @@ router.post('/slack/notify', async (req, res) => {
   }
 });
 
+// ── Airtable: Token test ─────────────────────────
+router.post('/airtable/test', async (req, res) => {
+  const { token, baseId, tableName } = req.body;
+  if (!token) return res.status(400).json({ error: 'Personal Access Token giriniz' });
+  if (!baseId) return res.status(400).json({ error: 'Base ID giriniz' });
+
+  try {
+    const tbl = (tableName || 'Table 1').trim();
+    const url = `https://api.airtable.com/v0/${baseId.trim()}/${encodeURIComponent(tbl)}?maxRecords=1`;
+    const r = await fetch(url, {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    if (r.status === 401 || r.status === 403) return res.status(400).json({ error: 'Geçersiz token veya erişim reddedildi' });
+    if (r.status === 404) return res.status(400).json({ error: 'Base veya tablo bulunamadı. Base ID ve tablo adını kontrol edin.' });
+    if (!r.ok) return res.status(400).json({ error: `HTTP ${r.status}` });
+    const data = await r.json();
+    res.json({ success: true, message: `✅ Bağlantı başarılı! Tablo: ${tbl}`, recordCount: data.records?.length || 0 });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ── Airtable: Export ─────────────────────────────
+router.post('/airtable/export', async (req, res) => {
+  const { token, baseId, tableName, headers, rows } = req.body;
+  if (!token) return res.status(400).json({ error: 'Token gerekli' });
+  if (!baseId) return res.status(400).json({ error: 'Base ID gerekli' });
+  if (!headers?.length || !rows?.length) return res.status(400).json({ error: 'Veri yok' });
+
+  const tbl = encodeURIComponent((tableName || 'Table 1').trim());
+  const url = `https://api.airtable.com/v0/${baseId.trim()}/${tbl}`;
+  const toExport = rows.slice(0, 50);
+  let count = 0;
+  const errors = [];
+
+  for (const row of toExport) {
+    try {
+      const fields = {};
+      headers.forEach((h, i) => { if (h?.trim()) fields[h.trim()] = String(row?.[i] ?? ''); });
+      const r = await fetch(url, {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fields })
+      });
+      if (r.ok) count++;
+      else { const e = await r.json().catch(() => ({})); errors.push(e.error?.message || 'Satır hatası'); }
+      await new Promise(resolve => setTimeout(resolve, 200));
+    } catch (e) { errors.push(e.message); }
+  }
+
+  res.json({ success: count > 0, count, total: toExport.length, errors: errors.slice(0, 5) });
+});
+
+// ── Make: Webhook tetikle ────────────────────────
+router.post('/make/trigger', async (req, res) => {
+  const { url, event, data } = req.body;
+  if (!url) return res.status(400).json({ error: 'Webhook URL gerekli' });
+
+  try {
+    const parsed = new URL(url);
+    if (!['http:', 'https:'].includes(parsed.protocol)) return res.status(400).json({ error: 'Geçersiz URL' });
+  } catch { return res.status(400).json({ error: 'Geçersiz URL formatı' }); }
+
+  const payload = { source: 'Mocksheets', event: event || 'manual', timestamp: new Date().toISOString(), data: data || {} };
+
+  try {
+    const controller = new AbortController();
+    const tid = setTimeout(() => controller.abort(), 10000);
+    const r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'User-Agent': 'Mocksheets-Make/1.0' }, body: JSON.stringify(payload), signal: controller.signal });
+    clearTimeout(tid);
+    res.json({ success: true, status: r.status, message: `✅ Make senaryosu tetiklendi (HTTP ${r.status})` });
+  } catch (err) {
+    if (err.name === 'AbortError') return res.status(408).json({ error: 'Zaman aşımı' });
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ── Google Drive: OAuth2 URL üret ───────────────
+router.get('/drive/auth', (req, res) => {
+  const clientId = process.env.GOOGLE_CLIENT_ID;
+  if (!clientId) return res.status(500).json({ error: 'Google OAuth yapılandırılmamış' });
+
+  const redirectUri = (process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 3001}`) + '/api/integrations/drive/callback';
+  const scope = 'https://www.googleapis.com/auth/drive.file';
+  const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${encodeURIComponent(scope)}&access_type=offline&prompt=consent`;
+  res.json({ url });
+});
+
+// ── Google Drive: OAuth2 callback ───────────────
+router.get('/drive/callback', async (req, res) => {
+  const { code, error } = req.query;
+  if (error || !code) {
+    return res.send(`<script>window.opener.postMessage({type:'drive_auth',error:'${error || 'cancelled'}'},'*');window.close();</script>`);
+  }
+
+  const clientId = process.env.GOOGLE_CLIENT_ID;
+  const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+  const redirectUri = (process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 3001}`) + '/api/integrations/drive/callback';
+
+  try {
+    const r = await fetch('https://oauth2.googleapis.com/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ code, client_id: clientId, client_secret: clientSecret, redirect_uri: redirectUri, grant_type: 'authorization_code' })
+    });
+    const token = await r.json();
+    if (token.access_token) {
+      res.send(`<script>window.opener.postMessage({type:'drive_auth',token:${JSON.stringify(token.access_token)}},'*');window.close();</script>`);
+    } else {
+      res.send(`<script>window.opener.postMessage({type:'drive_auth',error:'Token alınamadı'},'*');window.close();</script>`);
+    }
+  } catch (err) {
+    res.send(`<script>window.opener.postMessage({type:'drive_auth',error:'${err.message}'},'*');window.close();</script>`);
+  }
+});
+
+// ── Google Drive: CSV yükle ──────────────────────
+router.post('/drive/upload', async (req, res) => {
+  const { token, fileName, csv } = req.body;
+  if (!token) return res.status(400).json({ error: 'Access token gerekli' });
+  if (!csv) return res.status(400).json({ error: 'Veri yok' });
+
+  const name = (fileName || 'Mocksheets_Export') + '.csv';
+  const metadata = JSON.stringify({ name, mimeType: 'text/csv' });
+  const boundary = '-------mocksheets_boundary';
+  const body = `--${boundary}\r\nContent-Type: application/json\r\n\r\n${metadata}\r\n--${boundary}\r\nContent-Type: text/csv\r\n\r\n${csv}\r\n--${boundary}--`;
+
+  try {
+    const r = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': `multipart/related; boundary="${boundary}"` },
+      body
+    });
+    if (!r.ok) { const e = await r.json().catch(() => ({})); return res.status(400).json({ error: e.error?.message || `HTTP ${r.status}` }); }
+    const file = await r.json();
+    res.json({ success: true, fileId: file.id, fileName: name, message: `✅ "${name}" Drive'a yüklendi` });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ── Microsoft Teams: Test ────────────────────────
+router.post('/teams/test', async (req, res) => {
+  const { webhookUrl } = req.body;
+  if (!webhookUrl) return res.status(400).json({ error: 'Webhook URL giriniz' });
+
+  const payload = {
+    '@type': 'MessageCard',
+    '@context': 'http://schema.org/extensions',
+    summary: 'Mocksheets Bağlantı Testi',
+    themeColor: '6264A7',
+    sections: [{ activityTitle: '🔗 Mocksheets Bağlantı Testi', activitySubtitle: 'Teams entegrasyonu başarıyla kuruldu!', facts: [{ name: 'Zaman', value: new Date().toLocaleString('tr-TR') }, { name: 'Kaynak', value: 'Mocksheets' }] }]
+  };
+
+  try {
+    const r = await fetch(webhookUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+    const text = await r.text();
+    if (r.ok || text === '1') res.json({ success: true });
+    else res.status(400).json({ error: 'Teams hatası: ' + text });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ── Microsoft Teams: Bildirim gönder ────────────
+router.post('/teams/notify', async (req, res) => {
+  const { webhookUrl, title, message, fields } = req.body;
+  if (!webhookUrl) return res.status(400).json({ error: 'Webhook URL gerekli' });
+
+  const facts = (fields || []).map(f => ({ name: f.label, value: f.value }));
+  facts.push({ name: 'Zaman', value: new Date().toLocaleString('tr-TR') });
+
+  const payload = {
+    '@type': 'MessageCard',
+    '@context': 'http://schema.org/extensions',
+    summary: title || 'Mocksheets Bildirimi',
+    themeColor: '6264A7',
+    sections: [{ activityTitle: title || 'Mocksheets Bildirimi', activityText: message || '', facts }]
+  };
+
+  try {
+    const r = await fetch(webhookUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+    const text = await r.text();
+    res.json({ success: r.ok || text === '1' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ── Trello: Board test ───────────────────────────
+router.post('/trello/test', async (req, res) => {
+  const { apiKey, token, boardId } = req.body;
+  if (!apiKey || !token) return res.status(400).json({ error: 'API Key ve Token gerekli' });
+  if (!boardId) return res.status(400).json({ error: 'Board ID gerekli' });
+
+  try {
+    const r = await fetch(`https://api.trello.com/1/boards/${boardId.trim()}?key=${apiKey}&token=${token}`);
+    if (r.status === 401) return res.status(400).json({ error: 'Geçersiz API Key veya Token' });
+    if (r.status === 404) return res.status(400).json({ error: 'Board bulunamadı' });
+    if (!r.ok) return res.status(400).json({ error: `HTTP ${r.status}` });
+    const data = await r.json();
+    res.json({ success: true, boardName: data.name, message: `✅ Board bulundu: ${data.name}` });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ── Trello: Export ───────────────────────────────
+router.post('/trello/export', async (req, res) => {
+  const { apiKey, token, boardId, listName, headers, rows } = req.body;
+  if (!apiKey || !token || !boardId) return res.status(400).json({ error: 'API Key, Token ve Board ID gerekli' });
+  if (!rows?.length) return res.status(400).json({ error: 'Veri yok' });
+
+  try {
+    const listsRes = await fetch(`https://api.trello.com/1/boards/${boardId.trim()}/lists?key=${apiKey}&token=${token}`);
+    if (!listsRes.ok) return res.status(400).json({ error: 'Listeler alınamadı' });
+    const lists = await listsRes.json();
+
+    const targetList = listName
+      ? lists.find(l => l.name.toLowerCase() === listName.toLowerCase()) || lists[0]
+      : lists[0];
+    if (!targetList) return res.status(400).json({ error: 'Uygun liste bulunamadı' });
+
+    const toExport = rows.slice(0, 30);
+    let count = 0;
+    const errors = [];
+
+    for (const row of toExport) {
+      try {
+        const cardName = String(row?.[0] ?? '').trim() || 'Kart';
+        const desc = headers && headers.length > 1
+          ? headers.slice(1).map((h, i) => `${h}: ${row?.[i + 1] ?? ''}`).join('\n')
+          : '';
+        const r = await fetch(`https://api.trello.com/1/cards?key=${apiKey}&token=${token}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: cardName, desc, idList: targetList.id })
+        });
+        if (r.ok) count++;
+        else { const e = await r.json().catch(() => ({})); errors.push(e.message || 'Kart hatası'); }
+        await new Promise(resolve => setTimeout(resolve, 150));
+      } catch (e) { errors.push(e.message); }
+    }
+
+    res.json({ success: count > 0, count, total: toExport.length, listName: targetList.name, errors: errors.slice(0, 5) });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 module.exports = router;

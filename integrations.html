@@ -451,12 +451,13 @@ body {
         y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
     })(window, document, "clarity", "script", "w9w9hcd4ac");
 </script>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 </head>
 <body>
 
 <nav class="int-nav">
   <a href="index.html" class="nav-logo">
-    <img src="images/logo-wordmark.png" alt="Mocksheets" style="height:96px;width:auto;object-fit:contain">
+    <img src="images/logo-wordmark.png" alt="Mocksheets" style="height:96px;width:auto;object-fit:contain;mix-blend-mode:multiply;background:transparent">
   </a>
   <a href="app.html" class="nav-back">← Uygulamaya Dön</a>
 </nav>
@@ -475,12 +476,8 @@ body {
         <span class="int-stat-label">Bağlı</span>
       </div>
       <div class="int-stat">
-        <span class="int-stat-num">4</span>
+        <span class="int-stat-num">10</span>
         <span class="int-stat-label">Kullanılabilir</span>
-      </div>
-      <div class="int-stat">
-        <span class="int-stat-num">4</span>
-        <span class="int-stat-label">Yakında</span>
       </div>
     </div>
 
@@ -505,6 +502,7 @@ body {
         <img src="https://upload.wikimedia.org/wikipedia/commons/d/d5/Slack_icon_2019.svg" width="12" height="12" alt="" style="filter:invert(1)" onerror="this.style.display='none'">
         Slack
       </button>
+      <button class="btn btn-outline btn-sm" onclick="quickExport('excel')">📗 Excel İndir</button>
     </div>
     <div class="alert-quick-wrap">
       <div class="alert" id="alert-quick" style="display:inline-flex;margin-top:8px"></div>
@@ -512,7 +510,7 @@ body {
   </section>
 
   <!-- ── Available Integrations ── -->
-  <div class="int-section-label">Kullanılabilir (4)</div>
+  <div class="int-section-label">Kullanılabilir (10)</div>
   <div class="int-grid" id="intGrid">
 
     <!-- Google Sheets -->
@@ -802,112 +800,331 @@ body {
       </div>
     </div>
 
-  </div><!-- /int-grid -->
-
-  <!-- ── Coming Soon ── -->
-  <div class="int-section-label">Yakında (4)</div>
-  <div class="int-grid" id="soonGrid">
 
     <!-- Airtable -->
-    <div class="int-card int-card-soon" data-name="Airtable" style="animation-delay:0ms">
-      <div class="int-card-top">
+    <div class="int-card" data-name="Airtable" data-key="airtable">
+      <div class="int-card-top" onclick="toggleCard('airtable')">
         <div class="int-card-header">
-          <div class="int-logo" style="background:rgba(252,180,0,0.12)">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/4/4b/Airtable_Logo.svg" alt="Airtable"
+          <div class="int-logo" style="background:rgba(24,191,255,0.12)">
+            <img src="images/integrations/airtable.svg" alt="Airtable" width="28" height="28"
                  onerror="this.parentElement.innerHTML='<span class=em>📋</span>'">
           </div>
           <div class="int-card-meta">
             <div class="int-card-name">Airtable</div>
-            <div class="int-card-desc">İki yönlü senkronizasyon</div>
+            <div class="int-card-desc">Tabloyu Airtable'a aktar</div>
           </div>
-          <span class="int-badge badge-soon">🔒 Yakında</span>
+          <span class="int-badge badge-connect" id="badge-airtable">Bağla →</span>
+          <span class="int-chevron">▼</span>
         </div>
       </div>
-      <div class="coming-inner">
-        <div class="chips">
-          <span class="chip">🔗 Alan eşleştirme</span>
-          <span class="chip">🔄 İki yönlü sync</span>
-          <span class="chip">🗂️ Çoklu tablo</span>
+      <div class="int-pills">
+        <span class="int-pill">REST API</span>
+        <span class="int-pill">Max 50 satır</span>
+        <span class="int-pill">PAT</span>
+      </div>
+      <div class="int-form-wrap" id="form-airtable">
+        <div class="int-form-inner">
+          <div class="form">
+            <div class="info-box">
+              <strong>📌 Kurulum:</strong><br>
+              1. <a href="https://airtable.com/create/tokens" target="_blank">airtable.com/create/tokens</a> → Personal Access Token oluşturun<br>
+              2. Base URL'nden Base ID'yi kopyalayın: <code>airtable.com/<strong>appXXXXXXXXXXXXXX</strong>/...</code>
+            </div>
+            <div class="field">
+              <label>Personal Access Token *</label>
+              <input id="airtable-token" type="password" placeholder="patXXXXXXXXXXXXXXXX...">
+              <span class="hint">airtable.com/create/tokens adresinden oluşturun</span>
+            </div>
+            <div class="form-row">
+              <div class="field">
+                <label>Base ID *</label>
+                <input id="airtable-base" type="text" placeholder="appXXXXXXXXXXXXXX">
+              </div>
+              <div class="field">
+                <label>Tablo Adı</label>
+                <input id="airtable-table" type="text" placeholder="Table 1">
+              </div>
+            </div>
+            <div class="alert" id="alert-airtable"></div>
+            <div class="btns">
+              <button class="btn btn-outline" onclick="testAirtable()">🔍 Bağlantıyı Test Et</button>
+              <button class="btn btn-dark" onclick="saveAirtable()">💾 Kaydet</button>
+              <button class="btn btn-red" id="btn-airtable-disc" style="display:none" onclick="disconnectAirtable()">🗑️ Kaldır</button>
+            </div>
+            <div style="border-top:1px solid var(--border);padding-top:16px;margin-top:4px">
+              <div class="alert" id="alert-airtable-exp" style="margin-bottom:12px"></div>
+              <div id="airtable-progress" style="display:none;margin-bottom:12px">
+                <div style="font-size:12px;color:#475569;margin-bottom:6px" id="airtable-progress-text">Aktarılıyor...</div>
+                <div class="progress-wrap"><div class="progress-bar" id="airtable-pbar" style="width:0%"></div></div>
+              </div>
+              <div class="btns">
+                <button class="btn btn-green" id="btn-airtable-exp" onclick="exportAirtable()">📤 Airtable'a Aktar</button>
+              </div>
+            </div>
+          </div>
         </div>
-        <button class="btn btn-outline btn-sm" onclick="openNotifyModal('Airtable')">🔔 Haber Ver</button>
       </div>
     </div>
 
     <!-- Make -->
-    <div class="int-card int-card-soon" data-name="Make" style="animation-delay:60ms">
-      <div class="int-card-top">
+    <div class="int-card" data-name="Make" data-key="make">
+      <div class="int-card-top" onclick="toggleCard('make')">
         <div class="int-card-header">
           <div class="int-logo" style="background:rgba(109,0,204,0.15)">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/7/7e/Make_%28software%29_Logo.svg" alt="Make"
+            <img src="images/integrations/make.svg" alt="Make" width="28" height="28"
                  onerror="this.parentElement.innerHTML='<span class=em>⚙️</span>'">
           </div>
           <div class="int-card-meta">
             <div class="int-card-name">Make</div>
             <div class="int-card-desc">Görsel otomasyon senaryoları</div>
           </div>
-          <span class="int-badge badge-soon">🔒 Yakında</span>
+          <span class="int-badge badge-connect" id="badge-make">Bağla →</span>
+          <span class="int-chevron">▼</span>
         </div>
       </div>
-      <div class="coming-inner">
-        <div class="chips">
-          <span class="chip">🔄 Görsel editör</span>
-          <span class="chip">📊 Veri dönüşümü</span>
-          <span class="chip">🔁 Döngü desteği</span>
+      <div class="int-pills">
+        <span class="int-pill">Webhook</span>
+        <span class="int-pill">Senaryo Tetikle</span>
+        <span class="int-pill">Otomasyon</span>
+      </div>
+      <div class="int-form-wrap" id="form-make">
+        <div class="int-form-inner">
+          <div class="form">
+            <div class="info-box">
+              <strong>📌 Kurulum:</strong> Make → Senaryo oluştur → Webhooks modülü ekle → <strong>Custom webhook</strong> → URL'yi kopyalayın
+            </div>
+            <div class="field">
+              <label>Make Webhook URL *</label>
+              <input id="make-url" type="text" placeholder="https://hook.eu2.make.com/...">
+              <span class="hint">Make senaryonuzdaki Webhook modülünden alın</span>
+            </div>
+            <div class="field">
+              <label>Tetikleyici Olay</label>
+              <select id="make-trigger">
+                <option value="manual">Yalnızca manuel</option>
+                <option value="ai_action">Her AI aksiyonundan sonra</option>
+                <option value="export">Dosya aktarımında</option>
+                <option value="all">Tüm olaylar</option>
+              </select>
+            </div>
+            <div class="alert" id="alert-make"></div>
+            <div class="btns">
+              <button class="btn btn-outline" onclick="testMake()">📨 Test Yükü Gönder</button>
+              <button class="btn btn-dark" onclick="saveMake()">💾 Kaydet</button>
+              <button class="btn btn-red" id="btn-make-disc" style="display:none" onclick="disconnectMake()">🗑️ Kaldır</button>
+            </div>
+          </div>
         </div>
-        <button class="btn btn-outline btn-sm" onclick="openNotifyModal('Make')">🔔 Haber Ver</button>
       </div>
     </div>
 
     <!-- Google Drive -->
-    <div class="int-card int-card-soon" data-name="Google Drive" style="animation-delay:120ms">
-      <div class="int-card-top">
+    <div class="int-card" data-name="Google Drive" data-key="drive">
+      <div class="int-card-top" onclick="toggleCard('drive')">
         <div class="int-card-header">
           <div class="int-logo" style="background:rgba(66,133,244,0.12)">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/1/12/Google_Drive_icon_%282020%29.svg" alt="Drive"
+            <img src="images/integrations/googledrive.svg" alt="Drive" width="28" height="28"
                  onerror="this.parentElement.innerHTML='<span class=em>📁</span>'">
           </div>
           <div class="int-card-meta">
             <div class="int-card-name">Google Drive</div>
-            <div class="int-card-desc">Dosyaları otomatik kaydet</div>
+            <div class="int-card-desc">Dosyaları Drive'a kaydet</div>
           </div>
-          <span class="int-badge badge-soon">🔒 Yakında</span>
+          <span class="int-badge badge-connect" id="badge-drive">Bağla →</span>
+          <span class="int-chevron">▼</span>
         </div>
       </div>
-      <div class="coming-inner">
-        <div class="chips">
-          <span class="chip">☁️ Otomatik yedek</span>
-          <span class="chip">👥 Ekip paylaşımı</span>
-          <span class="chip">📂 Klasör seçimi</span>
+      <div class="int-pills">
+        <span class="int-pill">OAuth2</span>
+        <span class="int-pill">CSV Yükle</span>
+        <span class="int-pill">Otomatik Yedek</span>
+      </div>
+      <div class="int-form-wrap" id="form-drive">
+        <div class="int-form-inner">
+          <div class="form">
+            <div class="info-box">
+              <strong>📌 Kurulum:</strong> Google hesabınızla giriş yapın. Dosyalarınız Drive'a CSV olarak yüklenir. Backend'de <code>GOOGLE_CLIENT_ID</code> ve <code>GOOGLE_CLIENT_SECRET</code> env değişkenleri gereklidir.
+            </div>
+            <div class="field">
+              <label>Dosya Adı</label>
+              <input id="drive-filename" type="text" placeholder="Mocksheets_Export">
+              <span class="hint">Drive'a kaydedilecek dosya adı (.csv uzantısı otomatik eklenir)</span>
+            </div>
+            <div class="alert" id="alert-drive"></div>
+            <div class="btns">
+              <button class="btn btn-outline" id="btn-drive-auth" onclick="authDrive()">🔐 Google ile Bağlan</button>
+              <button class="btn btn-red" id="btn-drive-disc" style="display:none" onclick="disconnectDrive()">🗑️ Bağlantıyı Kes</button>
+            </div>
+            <div style="border-top:1px solid var(--border);padding-top:16px;margin-top:4px">
+              <div class="alert" id="alert-drive-exp" style="margin-bottom:12px"></div>
+              <div class="btns">
+                <button class="btn btn-green" id="btn-drive-exp" onclick="exportDrive()">📤 Drive'a Yükle</button>
+              </div>
+            </div>
+          </div>
         </div>
-        <button class="btn btn-outline btn-sm" onclick="openNotifyModal('Google Drive')">🔔 Haber Ver</button>
       </div>
     </div>
 
     <!-- Microsoft Excel -->
-    <div class="int-card int-card-soon" data-name="Microsoft Excel" style="animation-delay:180ms">
-      <div class="int-card-top">
+    <div class="int-card" data-name="Microsoft Excel" data-key="excel">
+      <div class="int-card-top" onclick="toggleCard('excel')">
         <div class="int-card-header">
           <div class="int-logo" style="background:rgba(33,115,70,0.15)">
-            <span class="em" style="font-size:26px">📗</span>
+            <img src="images/integrations/microsoftexcel.svg" alt="Excel" width="28" height="28"
+                 onerror="this.parentElement.innerHTML='<span class=em>📗</span>'">
           </div>
           <div class="int-card-meta">
             <div class="int-card-name">Microsoft Excel</div>
-            <div class="int-card-desc">Excel dosyası aktar / al</div>
+            <div class="int-card-desc">Excel dosyası indir (.xlsx)</div>
           </div>
-          <span class="int-badge badge-soon">🔒 Yakında</span>
+          <span class="int-badge badge-connected" id="badge-excel">✓ Hazır</span>
+          <span class="int-chevron">▼</span>
         </div>
       </div>
-      <div class="coming-inner">
-        <div class="chips">
-          <span class="chip">📁 .xlsx Aktar</span>
-          <span class="chip">🔄 OneDrive Sync</span>
-          <span class="chip">📊 Formül desteği</span>
+      <div class="int-pills">
+        <span class="int-pill">.xlsx İndir</span>
+        <span class="int-pill">Offline</span>
+        <span class="int-pill">Kurulum Gerekmez</span>
+      </div>
+      <div class="int-form-wrap" id="form-excel">
+        <div class="int-form-inner">
+          <div class="form">
+            <div class="info-box">
+              <strong>📌 Nasıl çalışır?</strong> Mevcut tablo verileriniz direkt olarak .xlsx dosyası olarak indirilir. Kurulum veya hesap bağlantısı gerekmez.
+            </div>
+            <div class="field">
+              <label>Dosya Adı</label>
+              <input id="excel-filename" type="text" placeholder="Mocksheets_Export">
+              <span class="hint">İndirilen dosyanın adı (.xlsx otomatik eklenir)</span>
+            </div>
+            <div class="alert" id="alert-excel"></div>
+            <div class="btns">
+              <button class="btn btn-green" onclick="exportExcel()">📥 Excel İndir (.xlsx)</button>
+            </div>
+          </div>
         </div>
-        <button class="btn btn-outline btn-sm" onclick="openNotifyModal('Microsoft Excel')">🔔 Haber Ver</button>
       </div>
     </div>
 
-  </div><!-- /soonGrid -->
+    <!-- Microsoft Teams -->
+    <div class="int-card" data-name="Microsoft Teams" data-key="teams">
+      <div class="int-card-top" onclick="toggleCard('teams')">
+        <div class="int-card-header">
+          <div class="int-logo" style="background:rgba(98,100,167,0.2)">
+            <img src="images/integrations/microsoftteams.svg" alt="Teams" width="28" height="28"
+                 onerror="this.parentElement.innerHTML='<span class=em>💼</span>'">
+          </div>
+          <div class="int-card-meta">
+            <div class="int-card-name">Microsoft Teams</div>
+            <div class="int-card-desc">Kanala bildirim gönder</div>
+          </div>
+          <span class="int-badge badge-connect" id="badge-teams">Bağla →</span>
+          <span class="int-chevron">▼</span>
+        </div>
+      </div>
+      <div class="int-pills">
+        <span class="int-pill">Bildirimler</span>
+        <span class="int-pill">Incoming Webhook</span>
+        <span class="int-pill">MessageCard</span>
+      </div>
+      <div class="int-form-wrap" id="form-teams">
+        <div class="int-form-inner">
+          <div class="form">
+            <div class="info-box">
+              <strong>📌 Kurulum:</strong><br>
+              1. Teams kanalına sağ tıklayın → <strong>Connectors</strong><br>
+              2. <strong>Incoming Webhook</strong> → Yapılandır → URL'yi kopyalayın
+            </div>
+            <div class="field">
+              <label>Teams Webhook URL *</label>
+              <input id="teams-url" type="text" placeholder="https://your-org.webhook.office.com/webhookb2/...">
+              <span class="hint">Teams kanalı → Connectors → Incoming Webhook URL'si</span>
+            </div>
+            <div class="alert" id="alert-teams"></div>
+            <div class="btns">
+              <button class="btn btn-outline" onclick="testTeams()">📨 Test Mesajı Gönder</button>
+              <button class="btn btn-dark" onclick="saveTeams()">💾 Kaydet</button>
+              <button class="btn btn-red" id="btn-teams-disc" style="display:none" onclick="disconnectTeams()">🗑️ Kaldır</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Trello -->
+    <div class="int-card" data-name="Trello" data-key="trello">
+      <div class="int-card-top" onclick="toggleCard('trello')">
+        <div class="int-card-header">
+          <div class="int-logo" style="background:rgba(0,82,204,0.15)">
+            <img src="images/integrations/trello.svg" alt="Trello" width="28" height="28"
+                 onerror="this.parentElement.innerHTML='<span class=em>📌</span>'">
+          </div>
+          <div class="int-card-meta">
+            <div class="int-card-name">Trello</div>
+            <div class="int-card-desc">Satırları Trello kartına aktar</div>
+          </div>
+          <span class="int-badge badge-connect" id="badge-trello">Bağla →</span>
+          <span class="int-chevron">▼</span>
+        </div>
+      </div>
+      <div class="int-pills">
+        <span class="int-pill">Kart Oluştur</span>
+        <span class="int-pill">Max 30 satır</span>
+        <span class="int-pill">REST API</span>
+      </div>
+      <div class="int-form-wrap" id="form-trello">
+        <div class="int-form-inner">
+          <div class="form">
+            <div class="info-box">
+              <strong>📌 Kurulum:</strong><br>
+              1. <a href="https://trello.com/power-ups/admin" target="_blank">trello.com/power-ups/admin</a> → API Key alın<br>
+              2. API Key sayfasında → <strong>Token oluştur</strong> → İzin verin
+            </div>
+            <div class="form-row">
+              <div class="field">
+                <label>API Key *</label>
+                <input id="trello-key" type="text" placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx">
+              </div>
+              <div class="field">
+                <label>Token *</label>
+                <input id="trello-token" type="password" placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx...">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="field">
+                <label>Board ID *</label>
+                <input id="trello-board" type="text" placeholder="Pano URL'sindeki ID">
+                <span class="hint">trello.com/b/<strong>abcd1234</strong>/pano-adi</span>
+              </div>
+              <div class="field">
+                <label>Liste Adı</label>
+                <input id="trello-list" type="text" placeholder="To Do">
+                <span class="hint">Boş bırakırsanız ilk liste kullanılır</span>
+              </div>
+            </div>
+            <div class="alert" id="alert-trello"></div>
+            <div class="btns">
+              <button class="btn btn-outline" onclick="testTrello()">🔍 Board'u Doğrula</button>
+              <button class="btn btn-dark" onclick="saveTrello()">💾 Kaydet</button>
+              <button class="btn btn-red" id="btn-trello-disc" style="display:none" onclick="disconnectTrello()">🗑️ Kaldır</button>
+            </div>
+            <div style="border-top:1px solid var(--border);padding-top:16px;margin-top:4px">
+              <div class="alert" id="alert-trello-exp" style="margin-bottom:12px"></div>
+              <div id="trello-progress" style="display:none;margin-bottom:12px">
+                <div style="font-size:12px;color:#475569;margin-bottom:6px" id="trello-progress-text">Aktarılıyor...</div>
+                <div class="progress-wrap"><div class="progress-bar" id="trello-pbar" style="width:0%"></div></div>
+              </div>
+              <div class="btns">
+                <button class="btn btn-green" id="btn-trello-exp" onclick="exportTrello()">📤 Trello'ya Aktar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /int-grid -->
 
   <!-- ── Activity Logs ── -->
   <div class="int-logs">
@@ -976,7 +1193,7 @@ function setStatus(provider, connected, label) {
 }
 
 function updateHeroStats() {
-  const n = ['int_gs','int_notion','int_webhook','int_slack'].filter(k => lsLoad(k)).length;
+  const n = ['int_gs','int_notion','int_webhook','int_slack','int_airtable','int_make','int_drive','int_teams','int_trello'].filter(k => lsLoad(k)).length;
   const el = document.getElementById('stat-connected');
   if (el) el.textContent = n;
 }
@@ -1315,6 +1532,9 @@ async function quickExport(provider) {
       else showAlert(alertId, '✗ Slack gönderilemedi: ' + (data.error || ''), 'err');
     } catch { showAlert(alertId, '✗ Sunucuya ulaşılamıyor', 'err'); }
   }
+  if (provider === 'excel') {
+    return exportExcel();
+  }
 }
 
 // ════════════════════════════════════════════════
@@ -1323,10 +1543,15 @@ async function quickExport(provider) {
 function loadLogs() {
   const tbody = document.getElementById('logs-body');
   const providers = [
-    { key: 'int_gs',      name: 'Google Sheets' },
-    { key: 'int_notion',  name: 'Notion' },
-    { key: 'int_webhook', name: 'Webhook' },
-    { key: 'int_slack',   name: 'Slack' }
+    { key: 'int_gs',       name: 'Google Sheets' },
+    { key: 'int_notion',   name: 'Notion' },
+    { key: 'int_webhook',  name: 'Webhook' },
+    { key: 'int_slack',    name: 'Slack' },
+    { key: 'int_airtable', name: 'Airtable' },
+    { key: 'int_make',     name: 'Make' },
+    { key: 'int_drive',    name: 'Google Drive' },
+    { key: 'int_teams',    name: 'Microsoft Teams' },
+    { key: 'int_trello',   name: 'Trello' }
   ];
   const rows = providers.filter(p => lsLoad(p.key)).map(p => `
     <tr>
@@ -1337,6 +1562,312 @@ function loadLogs() {
       <td>Aktif</td>
     </tr>`).join('');
   tbody.innerHTML = rows || '<tr><td colspan="5" class="empty">Henüz aktivite yok</td></tr>';
+}
+
+// ════════════════════════════════════════════════
+// AIRTABLE
+// ════════════════════════════════════════════════
+async function testAirtable() {
+  const token     = document.getElementById('airtable-token').value.trim();
+  const baseId    = document.getElementById('airtable-base').value.trim();
+  const tableName = document.getElementById('airtable-table').value.trim();
+  if (!token || !baseId) return showAlert('alert-airtable', '✗ Token ve Base ID gerekli', 'err');
+  showAlert('alert-airtable', 'Bağlantı test ediliyor...', 'info');
+  try {
+    const resp = await fetch(API + '/api/integrations/airtable/test', {
+      method: 'POST', headers: buildHeaders(),
+      body: JSON.stringify({ token, baseId, tableName: tableName || 'Table 1' })
+    });
+    const data = await resp.json();
+    if (data.success) showAlert('alert-airtable', '✓ ' + (data.message || 'Bağlantı başarılı'), 'ok');
+    else showAlert('alert-airtable', '✗ ' + getIntegrationError(resp.status, data.error), 'err');
+  } catch { showAlert('alert-airtable', '✗ Sunucuya ulaşılamıyor', 'err'); }
+}
+
+function saveAirtable() {
+  const token     = document.getElementById('airtable-token').value.trim();
+  const baseId    = document.getElementById('airtable-base').value.trim();
+  const tableName = document.getElementById('airtable-table').value.trim() || 'Table 1';
+  if (!token) return showAlert('alert-airtable', '✗ Token gerekli', 'err');
+  if (!baseId) return showAlert('alert-airtable', '✗ Base ID gerekli', 'err');
+  lsSave('int_airtable', { token, baseId, tableName });
+  setStatus('airtable', true);
+  document.getElementById('btn-airtable-disc').style.display = '';
+  showAlert('alert-airtable', '✓ Airtable bağlantısı kaydedildi', 'ok');
+}
+
+function disconnectAirtable() {
+  lsRemove('int_airtable');
+  document.getElementById('airtable-token').value = '';
+  document.getElementById('airtable-base').value  = '';
+  document.getElementById('airtable-table').value = '';
+  document.getElementById('btn-airtable-disc').style.display = 'none';
+  setStatus('airtable', false);
+  hideAlert('alert-airtable');
+}
+
+async function exportAirtable() {
+  const cfg = lsLoad('int_airtable');
+  if (!cfg) return showAlert('alert-airtable-exp', '✗ Önce bağlantıyı kaydedin', 'err');
+  const sheet = getSheetData();
+  if (!sheet?.data?.length) return showAlert('alert-airtable-exp', '✗ Veri yok. Uygulamayı açın ve dosya yükleyin.', 'err');
+
+  const headers = sheet.data[0];
+  const rows    = sheet.data.slice(1);
+  if (!rows.length) return showAlert('alert-airtable-exp', '✗ Aktarılacak satır yok', 'err');
+
+  const btn  = document.getElementById('btn-airtable-exp');
+  const prog = document.getElementById('airtable-progress');
+  const pbar = document.getElementById('airtable-pbar');
+  const ptxt = document.getElementById('airtable-progress-text');
+  btn.disabled = true;
+  prog.style.display = '';
+  ptxt.textContent = rows.length + ' satır aktarılıyor...';
+
+  try {
+    let pct = 10;
+    const tick = setInterval(() => { pct = Math.min(pct + 4, 85); pbar.style.width = pct + '%'; }, 400);
+    const resp = await fetch(API + '/api/integrations/airtable/export', {
+      method: 'POST', headers: buildHeaders(),
+      body: JSON.stringify({ token: cfg.token, baseId: cfg.baseId, tableName: cfg.tableName, headers, rows })
+    });
+    clearInterval(tick);
+    pbar.style.width = '100%';
+    const data = await resp.json();
+    if (data.success || data.count > 0) {
+      showAlert('alert-airtable-exp', `✓ ${data.count}/${data.total} satır Airtable'a aktarıldı` + (data.errors?.length ? ` (${data.errors.length} hata)` : ''), 'ok');
+    } else {
+      showAlert('alert-airtable-exp', '✗ ' + (data.error || data.errors?.[0] || 'Aktarım başarısız'), 'err');
+    }
+  } catch (err) {
+    showAlert('alert-airtable-exp', '✗ Sunucuya ulaşılamıyor: ' + err.message, 'err');
+  } finally {
+    btn.disabled = false; btn.textContent = '📤 Airtable\'a Aktar';
+    setTimeout(() => { prog.style.display = 'none'; pbar.style.width = '0%'; }, 1500);
+  }
+}
+
+// ════════════════════════════════════════════════
+// MAKE
+// ════════════════════════════════════════════════
+async function testMake() {
+  const url = document.getElementById('make-url').value.trim();
+  if (!url) return showAlert('alert-make', '✗ Webhook URL girin', 'err');
+  showAlert('alert-make', 'Test yükü gönderiliyor...', 'info');
+  try {
+    const resp = await fetch(API + '/api/integrations/make/trigger', {
+      method: 'POST', headers: buildHeaders(),
+      body: JSON.stringify({ url, event: 'test', data: { message: 'Mocksheet test payload', timestamp: new Date().toISOString() } })
+    });
+    const data = await resp.json();
+    if (data.success) showAlert('alert-make', '✓ ' + (data.message || 'Test yükü gönderildi'), 'ok');
+    else showAlert('alert-make', '✗ ' + getIntegrationError(resp.status, data.error || 'Gönderilemedi'), 'err');
+  } catch { showAlert('alert-make', '✗ Sunucuya ulaşılamıyor', 'err'); }
+}
+
+function saveMake() {
+  const url     = document.getElementById('make-url').value.trim();
+  const trigger = document.getElementById('make-trigger').value;
+  if (!url) return showAlert('alert-make', '✗ Webhook URL girin', 'err');
+  lsSave('int_make', { url, trigger });
+  setStatus('make', true, '✓ Aktif');
+  document.getElementById('btn-make-disc').style.display = '';
+  showAlert('alert-make', '✓ Make webhook etkinleştirildi', 'ok');
+}
+
+function disconnectMake() {
+  lsRemove('int_make');
+  document.getElementById('make-url').value = '';
+  document.getElementById('btn-make-disc').style.display = 'none';
+  setStatus('make', false, 'Bağla →');
+  hideAlert('alert-make');
+}
+
+// ════════════════════════════════════════════════
+// GOOGLE DRIVE
+// ════════════════════════════════════════════════
+async function authDrive() {
+  showAlert('alert-drive', 'OAuth2 sayfası açılıyor...', 'info');
+  try {
+    const resp = await fetch(API + '/api/integrations/drive/auth', { headers: buildHeaders() });
+    const data = await resp.json();
+    if (!data.url) return showAlert('alert-drive', '✗ ' + (data.error || 'OAuth yapılandırılmamış'), 'err');
+    window.open(data.url, 'driveAuth', 'width=500,height=620,scrollbars=yes');
+  } catch { showAlert('alert-drive', '✗ Sunucuya ulaşılamıyor', 'err'); }
+}
+
+function disconnectDrive() {
+  lsRemove('int_drive');
+  document.getElementById('btn-drive-auth').style.display = '';
+  document.getElementById('btn-drive-disc').style.display = 'none';
+  setStatus('drive', false);
+  hideAlert('alert-drive');
+}
+
+async function exportDrive() {
+  const cfg = lsLoad('int_drive');
+  if (!cfg?.token) return showAlert('alert-drive-exp', '✗ Önce Google hesabınızla bağlanın', 'err');
+  const sheet = getSheetData();
+  if (!sheet?.data?.length) return showAlert('alert-drive-exp', '✗ Veri yok. Uygulamayı açın ve dosya yükleyin.', 'err');
+
+  const btn = document.getElementById('btn-drive-exp');
+  btn.disabled = true; btn.textContent = 'Yükleniyor...';
+
+  const csv = '\uFEFF' + sheet.data.map(row =>
+    (row || []).map(cell => {
+      const s = String(cell ?? '');
+      return s.includes(',') || s.includes('"') ? `"${s.replace(/"/g,'""')}"` : s;
+    }).join(',')
+  ).join('\r\n');
+
+  const fileName = document.getElementById('drive-filename').value.trim() || cfg.fileName || 'Mocksheets_Export';
+
+  try {
+    const resp = await fetch(API + '/api/integrations/drive/upload', {
+      method: 'POST', headers: buildHeaders(),
+      body: JSON.stringify({ token: cfg.token, fileName, csv })
+    });
+    const data = await resp.json();
+    if (data.success) showAlert('alert-drive-exp', '✓ ' + (data.message || 'Drive\'a yüklendi'), 'ok');
+    else showAlert('alert-drive-exp', '✗ ' + (data.error || 'Yükleme başarısız'), 'err');
+  } catch (err) {
+    showAlert('alert-drive-exp', '✗ ' + err.message, 'err');
+  } finally {
+    btn.disabled = false; btn.textContent = '📤 Drive\'a Yükle';
+  }
+}
+
+// ════════════════════════════════════════════════
+// MICROSOFT EXCEL
+// ════════════════════════════════════════════════
+function exportExcel() {
+  const sheet = getSheetData();
+  if (!sheet?.data?.length) return showAlert('alert-excel', '✗ Veri yok. Uygulamayı açın ve dosya yükleyin.', 'err');
+  if (typeof XLSX === 'undefined') return showAlert('alert-excel', '✗ SheetJS kütüphanesi yüklenemedi', 'err');
+
+  const ws = XLSX.utils.aoa_to_sheet(sheet.data);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, sheet.name || 'Sheet1');
+  const fileName = (document.getElementById('excel-filename').value.trim() || 'Mocksheets_Export') + '.xlsx';
+  XLSX.writeFile(wb, fileName);
+  showAlert('alert-excel', `✓ "${fileName}" indirildi (${sheet.data.length} satır)`, 'ok');
+}
+
+// ════════════════════════════════════════════════
+// MICROSOFT TEAMS
+// ════════════════════════════════════════════════
+async function testTeams() {
+  const url = document.getElementById('teams-url').value.trim();
+  if (!url) return showAlert('alert-teams', '✗ Teams webhook URL girin', 'err');
+  showAlert('alert-teams', 'Test mesajı gönderiliyor...', 'info');
+  try {
+    const resp = await fetch(API + '/api/integrations/teams/test', {
+      method: 'POST', headers: buildHeaders(),
+      body: JSON.stringify({ webhookUrl: url })
+    });
+    const data = await resp.json();
+    if (data.success) showAlert('alert-teams', '✓ Test mesajı gönderildi — Teams kanalınızı kontrol edin', 'ok');
+    else showAlert('alert-teams', '✗ ' + getIntegrationError(resp.status, data.error || 'Gönderilemedi'), 'err');
+  } catch { showAlert('alert-teams', '✗ Sunucuya ulaşılamıyor', 'err'); }
+}
+
+function saveTeams() {
+  const url = document.getElementById('teams-url').value.trim();
+  if (!url) return showAlert('alert-teams', '✗ Webhook URL girin', 'err');
+  lsSave('int_teams', { url });
+  setStatus('teams', true);
+  document.getElementById('btn-teams-disc').style.display = '';
+  showAlert('alert-teams', '✓ Teams entegrasyonu etkinleştirildi', 'ok');
+}
+
+function disconnectTeams() {
+  lsRemove('int_teams');
+  document.getElementById('teams-url').value = '';
+  document.getElementById('btn-teams-disc').style.display = 'none';
+  setStatus('teams', false);
+  hideAlert('alert-teams');
+}
+
+// ════════════════════════════════════════════════
+// TRELLO
+// ════════════════════════════════════════════════
+async function testTrello() {
+  const apiKey  = document.getElementById('trello-key').value.trim();
+  const token   = document.getElementById('trello-token').value.trim();
+  const boardId = document.getElementById('trello-board').value.trim();
+  if (!apiKey || !token || !boardId) return showAlert('alert-trello', '✗ API Key, Token ve Board ID gerekli', 'err');
+  showAlert('alert-trello', 'Board doğrulanıyor...', 'info');
+  try {
+    const resp = await fetch(API + '/api/integrations/trello/test', {
+      method: 'POST', headers: buildHeaders(),
+      body: JSON.stringify({ apiKey, token, boardId })
+    });
+    const data = await resp.json();
+    if (data.success) showAlert('alert-trello', '✓ ' + (data.message || 'Board bulundu'), 'ok');
+    else showAlert('alert-trello', '✗ ' + getIntegrationError(resp.status, data.error), 'err');
+  } catch { showAlert('alert-trello', '✗ Sunucuya ulaşılamıyor', 'err'); }
+}
+
+function saveTrello() {
+  const apiKey   = document.getElementById('trello-key').value.trim();
+  const token    = document.getElementById('trello-token').value.trim();
+  const boardId  = document.getElementById('trello-board').value.trim();
+  const listName = document.getElementById('trello-list').value.trim();
+  if (!apiKey || !token) return showAlert('alert-trello', '✗ API Key ve Token gerekli', 'err');
+  if (!boardId)          return showAlert('alert-trello', '✗ Board ID gerekli', 'err');
+  lsSave('int_trello', { apiKey, token, boardId, listName });
+  setStatus('trello', true);
+  document.getElementById('btn-trello-disc').style.display = '';
+  showAlert('alert-trello', '✓ Trello bağlantısı kaydedildi', 'ok');
+}
+
+function disconnectTrello() {
+  lsRemove('int_trello');
+  ['trello-key','trello-token','trello-board','trello-list'].forEach(id => { document.getElementById(id).value = ''; });
+  document.getElementById('btn-trello-disc').style.display = 'none';
+  setStatus('trello', false);
+  hideAlert('alert-trello');
+}
+
+async function exportTrello() {
+  const cfg = lsLoad('int_trello');
+  if (!cfg) return showAlert('alert-trello-exp', '✗ Önce bağlantıyı kaydedin', 'err');
+  const sheet = getSheetData();
+  if (!sheet?.data?.length) return showAlert('alert-trello-exp', '✗ Veri yok. Uygulamayı açın ve dosya yükleyin.', 'err');
+
+  const headers = sheet.data[0];
+  const rows    = sheet.data.slice(1);
+  if (!rows.length) return showAlert('alert-trello-exp', '✗ Aktarılacak satır yok', 'err');
+
+  const btn  = document.getElementById('btn-trello-exp');
+  const prog = document.getElementById('trello-progress');
+  const pbar = document.getElementById('trello-pbar');
+  const ptxt = document.getElementById('trello-progress-text');
+  btn.disabled = true;
+  prog.style.display = '';
+  ptxt.textContent = Math.min(rows.length, 30) + ' satır aktarılıyor...';
+
+  try {
+    let pct = 10;
+    const tick = setInterval(() => { pct = Math.min(pct + 5, 85); pbar.style.width = pct + '%'; }, 400);
+    const resp = await fetch(API + '/api/integrations/trello/export', {
+      method: 'POST', headers: buildHeaders(),
+      body: JSON.stringify({ apiKey: cfg.apiKey, token: cfg.token, boardId: cfg.boardId, listName: cfg.listName, headers, rows })
+    });
+    clearInterval(tick);
+    pbar.style.width = '100%';
+    const data = await resp.json();
+    if (data.success || data.count > 0) {
+      showAlert('alert-trello-exp', `✓ ${data.count}/${data.total} kart "${data.listName || 'liste'}"ye eklendi` + (data.errors?.length ? ` (${data.errors.length} hata)` : ''), 'ok');
+    } else {
+      showAlert('alert-trello-exp', '✗ ' + (data.error || data.errors?.[0] || 'Aktarım başarısız'), 'err');
+    }
+  } catch (err) {
+    showAlert('alert-trello-exp', '✗ Sunucuya ulaşılamıyor: ' + err.message, 'err');
+  } finally {
+    btn.disabled = false; btn.textContent = '📤 Trello\'ya Aktar';
+    setTimeout(() => { prog.style.display = 'none'; pbar.style.width = '0%'; }, 1500);
+  }
 }
 
 // ════════════════════════════════════════════════
@@ -1412,9 +1943,65 @@ document.addEventListener('DOMContentLoaded', () => {
     setStatus('slack', true);
   }
 
+  const airtable = lsLoad('int_airtable');
+  if (airtable) {
+    document.getElementById('airtable-token').value = airtable.token || '';
+    document.getElementById('airtable-base').value  = airtable.baseId || '';
+    document.getElementById('airtable-table').value = airtable.tableName || '';
+    document.getElementById('btn-airtable-disc').style.display = '';
+    setStatus('airtable', true);
+  }
+
+  const make = lsLoad('int_make');
+  if (make) {
+    document.getElementById('make-url').value     = make.url || '';
+    document.getElementById('make-trigger').value = make.trigger || 'manual';
+    document.getElementById('btn-make-disc').style.display = '';
+    setStatus('make', true, '✓ Aktif');
+  }
+
+  const drive = lsLoad('int_drive');
+  if (drive) {
+    document.getElementById('btn-drive-auth').style.display = 'none';
+    document.getElementById('btn-drive-disc').style.display = '';
+    document.getElementById('drive-filename').value = drive.fileName || '';
+    setStatus('drive', true);
+  }
+
+  const teams = lsLoad('int_teams');
+  if (teams) {
+    document.getElementById('teams-url').value = teams.url || '';
+    document.getElementById('btn-teams-disc').style.display = '';
+    setStatus('teams', true);
+  }
+
+  const trello = lsLoad('int_trello');
+  if (trello) {
+    document.getElementById('trello-key').value   = trello.apiKey || '';
+    document.getElementById('trello-token').value = trello.token || '';
+    document.getElementById('trello-board').value = trello.boardId || '';
+    document.getElementById('trello-list').value  = trello.listName || '';
+    document.getElementById('btn-trello-disc').style.display = '';
+    setStatus('trello', true);
+  }
+
   updateHeroStats();
   loadLogs();
   applyPaywalls();
+
+  window.addEventListener('message', (e) => {
+    if (e.data?.type === 'drive_auth') {
+      if (e.data.token) {
+        lsSave('int_drive', { token: e.data.token, fileName: document.getElementById('drive-filename').value.trim() || 'Mocksheets_Export' });
+        document.getElementById('btn-drive-auth').style.display = 'none';
+        document.getElementById('btn-drive-disc').style.display = '';
+        setStatus('drive', true);
+        showAlert('alert-drive', '✓ Google Drive bağlandı', 'ok');
+      } else {
+        showAlert('alert-drive', '✗ Bağlantı başarısız: ' + (e.data.error || 'İptal edildi'), 'err');
+      }
+    }
+  });
 });
 </script>
 
