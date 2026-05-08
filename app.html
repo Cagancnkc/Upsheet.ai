@@ -830,8 +830,6 @@ body.light .sb-upgrade-btn{background:linear-gradient(135deg,rgba(99,102,241,0.1
 
   <!-- LOGO -->
   <div class="sb-logo">
-    <img src="images/logo.png" class="sb-logo-icon" alt="Mocksheets">
-    <img src="images/logo-wordmark.png" class="sb-logo-text" style="height:56px;width:auto;object-fit:contain;" alt="Mocksheets">
     <button class="sb-collapse-btn" onclick="toggleSidebar()" title="Küçült">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>
     </button>
@@ -844,7 +842,7 @@ body.light .sb-upgrade-btn{background:linear-gradient(135deg,rgba(99,102,241,0.1
   <div class="sb-new-wrap">
     <button class="sb-new-btn" onclick="loadTemplate('blank')">
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-      <span>New Table</span>
+      <span>Yeni Tablo</span>
     </button>
   </div>
 
@@ -854,7 +852,7 @@ body.light .sb-upgrade-btn{background:linear-gradient(135deg,rgba(99,102,241,0.1
       <svg class="sb-search-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
         <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
       </svg>
-      <input id="sidebarSearch" class="sb-search-input" placeholder="Search..." autocomplete="off" oninput="handleSidebarSearch(this.value)">
+      <input id="sidebarSearch" class="sb-search-input" placeholder="Ara..." autocomplete="off" oninput="handleSidebarSearch(this.value)">
     </div>
   </div>
 
@@ -863,11 +861,11 @@ body.light .sb-upgrade-btn{background:linear-gradient(135deg,rgba(99,102,241,0.1
 
     <!-- SECTION: MY SHEETS -->
     <div class="sb-section">
-      <div class="sb-section-label">My Sheets</div>
+      <div class="sb-section-label">Sayfalarım</div>
       <div id="sheetListContainer"></div>
       <button class="sb-add-sheet" onclick="addSheet()">
         <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        <span>Add Sheet</span>
+        <span>Sayfa Ekle</span>
       </button>
     </div>
 
@@ -875,17 +873,17 @@ body.light .sb-upgrade-btn{background:linear-gradient(135deg,rgba(99,102,241,0.1
 
     <!-- SECTION: TOOLS -->
     <div class="sb-section">
-      <div class="sb-section-label">Tools</div>
+      <div class="sb-section-label">Araçlar</div>
 
-      <div class="sb-item" data-tooltip="AI Commands" onclick="focusChatInput()">
+      <div class="sb-item" data-tooltip="AI Komutları" onclick="focusChatInput()">
         <span class="sb-item-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>
-        <span class="sb-item-label">AI Commands</span>
+        <span class="sb-item-label">AI Komutları</span>
         <span class="sb-item-badge">Pro</span>
       </div>
 
-      <div class="sb-item sb-item-expandable open" id="tmplTrigger" data-tooltip="Templates" onclick="toggleSbSection('tmplSection', this)">
+      <div class="sb-item sb-item-expandable open" id="tmplTrigger" data-tooltip="Şablonlar" onclick="toggleSbSection('tmplSection', this)">
         <span class="sb-item-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg></span>
-        <span class="sb-item-label">Templates</span>
+        <span class="sb-item-label">Şablonlar</span>
         <span class="sb-item-count">26</span>
         <svg class="sb-item-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
       </div>
@@ -893,84 +891,84 @@ body.light .sb-upgrade-btn{background:linear-gradient(135deg,rgba(99,102,241,0.1
       <div id="tmplSection" class="sb-sub-section open">
 
         <div class="sb-tmpl-cat" onclick="toggleTmplCat('cat_finance')">
-          <span>💰 Accounting &amp; Finance</span>
+          <span>💰 Muhasebe &amp; Finans</span>
           <svg class="sb-cat-arrow open" id="catarrow_finance" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
         </div>
         <div class="sb-tmpl-items open" id="cat_finance">
-          <div class="sb-tmpl-item" onclick="loadTemplate('kdv_takip')">🧾 VAT Tracking</div>
-          <div class="sb-tmpl-item" onclick="loadTemplate('gelir_gider')">📊 Income &amp; Expense</div>
-          <div class="sb-tmpl-item" onclick="loadTemplate('nakit_akis')">💵 Cash Flow</div>
-          <div class="sb-tmpl-item" onclick="loadTemplate('cari_hesap')">🏦 Current Account</div>
-          <div class="sb-tmpl-item" onclick="loadTemplate('banka_mutabakat')">🏧 Bank Reconciliation</div>
+          <div class="sb-tmpl-item" onclick="loadTemplate('kdv_takip')">🧾 KDV Takibi</div>
+          <div class="sb-tmpl-item" onclick="loadTemplate('gelir_gider')">📊 Gelir &amp; Gider</div>
+          <div class="sb-tmpl-item" onclick="loadTemplate('nakit_akis')">💵 Nakit Akışı</div>
+          <div class="sb-tmpl-item" onclick="loadTemplate('cari_hesap')">🏦 Cari Hesap</div>
+          <div class="sb-tmpl-item" onclick="loadTemplate('banka_mutabakat')">🏧 Banka Mutabakatı</div>
         </div>
 
         <div class="sb-tmpl-cat" onclick="toggleTmplCat('cat_hr')">
-          <span>👥 Payroll &amp; HR</span>
+          <span>👥 Bordro &amp; İK</span>
           <svg class="sb-cat-arrow" id="catarrow_hr" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
         </div>
         <div class="sb-tmpl-items" id="cat_hr">
-          <div class="sb-tmpl-item" onclick="loadTemplate('maas_bordro')">💼 Payroll Table <span class="sb-new-badge">NEW</span></div>
-          <div class="sb-tmpl-item" onclick="loadTemplate('izin_takip')">🏖️ Leave Tracking</div>
-          <div class="sb-tmpl-item" onclick="loadTemplate('kidem_ihbar')">📋 Severance Calc</div>
-          <div class="sb-tmpl-item" onclick="loadTemplate('personel_liste')">👤 Staff List</div>
-          <div class="sb-tmpl-item" onclick="loadTemplate('fazla_mesai')">⏰ Overtime</div>
+          <div class="sb-tmpl-item" onclick="loadTemplate('maas_bordro')">💼 Bordro Tablosu <span class="sb-new-badge">YENİ</span></div>
+          <div class="sb-tmpl-item" onclick="loadTemplate('izin_takip')">🏖️ İzin Takibi</div>
+          <div class="sb-tmpl-item" onclick="loadTemplate('kidem_ihbar')">📋 Kıdem Tazminatı</div>
+          <div class="sb-tmpl-item" onclick="loadTemplate('personel_liste')">👤 Personel Listesi</div>
+          <div class="sb-tmpl-item" onclick="loadTemplate('fazla_mesai')">⏰ Fazla Mesai</div>
         </div>
 
         <div class="sb-tmpl-cat" onclick="toggleTmplCat('cat_sales')">
-          <span>📦 Sales &amp; Inventory</span>
+          <span>📦 Satış &amp; Stok</span>
           <svg class="sb-cat-arrow" id="catarrow_sales" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
         </div>
         <div class="sb-tmpl-items" id="cat_sales">
-          <div class="sb-tmpl-item" onclick="loadTemplate('satis_takip')">📈 Sales Tracker</div>
-          <div class="sb-tmpl-item" onclick="loadTemplate('stok_kart')">📦 Stock Card <span class="sb-new-badge">NEW</span></div>
-          <div class="sb-tmpl-item" onclick="loadTemplate('fiyat_listesi')">🏷️ Price List</div>
-          <div class="sb-tmpl-item" onclick="loadTemplate('satis_hedef')">🎯 Sales Target</div>
-          <div class="sb-tmpl-item" onclick="loadTemplate('tedarikci')">🚚 Supplier Tracking</div>
+          <div class="sb-tmpl-item" onclick="loadTemplate('satis_takip')">📈 Satış Takibi</div>
+          <div class="sb-tmpl-item" onclick="loadTemplate('stok_kart')">📦 Stok Kartı <span class="sb-new-badge">YENİ</span></div>
+          <div class="sb-tmpl-item" onclick="loadTemplate('fiyat_listesi')">🏷️ Fiyat Listesi</div>
+          <div class="sb-tmpl-item" onclick="loadTemplate('satis_hedef')">🎯 Satış Hedefi</div>
+          <div class="sb-tmpl-item" onclick="loadTemplate('tedarikci')">🚚 Tedarikçi Takibi</div>
         </div>
 
         <div class="sb-tmpl-cat" onclick="toggleTmplCat('cat_project')">
-          <span>📋 Project Management</span>
+          <span>📋 Proje Yönetimi</span>
           <svg class="sb-cat-arrow" id="catarrow_project" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
         </div>
         <div class="sb-tmpl-items" id="cat_project">
-          <div class="sb-tmpl-item" onclick="loadTemplate('proje_takvim')">📅 Project Timeline <span class="sb-new-badge">NEW</span></div>
-          <div class="sb-tmpl-item" onclick="loadTemplate('butce_takip')">💰 Budget Tracker</div>
-          <div class="sb-tmpl-item" onclick="loadTemplate('risk_matrisi')">⚠️ Risk Matrix</div>
-          <div class="sb-tmpl-item" onclick="loadTemplate('toplanti_tutanak')">📝 Meeting Notes</div>
+          <div class="sb-tmpl-item" onclick="loadTemplate('proje_takvim')">📅 Proje Zaman Çizelgesi <span class="sb-new-badge">YENİ</span></div>
+          <div class="sb-tmpl-item" onclick="loadTemplate('butce_takip')">💰 Bütçe Takibi</div>
+          <div class="sb-tmpl-item" onclick="loadTemplate('risk_matrisi')">⚠️ Risk Matrisi</div>
+          <div class="sb-tmpl-item" onclick="loadTemplate('toplanti_tutanak')">📝 Toplantı Tutanağı</div>
         </div>
 
         <div class="sb-tmpl-cat" onclick="toggleTmplCat('cat_analytics')">
-          <span>📊 Data Analytics</span>
+          <span>📊 Veri Analizi</span>
           <svg class="sb-cat-arrow" id="catarrow_analytics" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
         </div>
         <div class="sb-tmpl-items" id="cat_analytics">
-          <div class="sb-tmpl-item" onclick="loadTemplate('satis_analiz')">📉 Sales Trend</div>
-          <div class="sb-tmpl-item" onclick="loadTemplate('musteri_analiz')">👥 Customer RFM <span class="sb-new-badge">NEW</span></div>
-          <div class="sb-tmpl-item" onclick="loadTemplate('kpi_dashboard')">🎯 KPI Dashboard</div>
-          <div class="sb-tmpl-item" onclick="loadTemplate('anket_analiz')">📋 Survey Analysis</div>
+          <div class="sb-tmpl-item" onclick="loadTemplate('satis_analiz')">📉 Satış Trendi</div>
+          <div class="sb-tmpl-item" onclick="loadTemplate('musteri_analiz')">👥 Müşteri RFM <span class="sb-new-badge">YENİ</span></div>
+          <div class="sb-tmpl-item" onclick="loadTemplate('kpi_dashboard')">🎯 KPI Gösterge Paneli</div>
+          <div class="sb-tmpl-item" onclick="loadTemplate('anket_analiz')">📋 Anket Analizi</div>
         </div>
 
         <div class="sb-tmpl-cat" onclick="toggleTmplCat('cat_general')">
-          <span>🏢 General Business</span>
+          <span>🏢 Genel İşletme</span>
           <svg class="sb-cat-arrow" id="catarrow_general" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
         </div>
         <div class="sb-tmpl-items" id="cat_general">
-          <div class="sb-tmpl-item" onclick="loadTemplate('toplanti_takvim')">📅 Meeting Schedule</div>
-          <div class="sb-tmpl-item" onclick="loadTemplate('gider_takip')">💳 Expense Tracker</div>
-          <div class="sb-tmpl-item" onclick="loadTemplate('iletisim_listesi')">📞 Contact List</div>
+          <div class="sb-tmpl-item" onclick="loadTemplate('toplanti_takvim')">📅 Toplantı Takvimi</div>
+          <div class="sb-tmpl-item" onclick="loadTemplate('gider_takip')">💳 Gider Takibi</div>
+          <div class="sb-tmpl-item" onclick="loadTemplate('iletisim_listesi')">📞 İletişim Listesi</div>
         </div>
 
       </div><!-- /tmplSection -->
 
-      <div class="sb-item" data-tooltip="Export" onclick="toggleExportMenu(event)">
+      <div class="sb-item" data-tooltip="Dışa Aktar" onclick="toggleExportMenu(event)">
         <span class="sb-item-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span>
-        <span class="sb-item-label">Export</span>
+        <span class="sb-item-label">Dışa Aktar</span>
         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
       </div>
 
-      <div class="sb-item" data-tooltip="Integrations" onclick="window.location.href='integrations.html'">
+      <div class="sb-item" data-tooltip="Entegrasyonlar" onclick="window.location.href='integrations.html'">
         <span class="sb-item-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="2" width="9" height="9" rx="2"/><rect x="13" y="2" width="9" height="9" rx="2"/><rect x="2" y="13" width="9" height="9" rx="2"/><rect x="13" y="13" width="9" height="9" rx="2"/></svg></span>
-        <span class="sb-item-label">Integrations</span>
+        <span class="sb-item-label">Entegrasyonlar</span>
         <span class="sb-item-badge-green">Live</span>
       </div>
 
@@ -980,17 +978,17 @@ body.light .sb-upgrade-btn{background:linear-gradient(135deg,rgba(99,102,241,0.1
 
     <!-- SECTION: PREFERENCES -->
     <div class="sb-section">
-      <div class="sb-section-label">Preferences</div>
+      <div class="sb-section-label">Tercihler</div>
 
-      <div class="sb-item" data-tooltip="Dark Mode" onclick="toggleDarkMode()">
+      <div class="sb-item" data-tooltip="Karanlık Mod" onclick="toggleDarkMode()">
         <span class="sb-item-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg></span>
-        <span class="sb-item-label">Dark Mode</span>
+        <span class="sb-item-label">Karanlık Mod</span>
         <div class="sb-toggle" id="darkToggle"><div class="sb-toggle-thumb"></div></div>
       </div>
 
-      <div class="sb-item" data-tooltip="Shortcuts" onclick="showKeyboardShortcuts()">
+      <div class="sb-item" data-tooltip="Kısayollar" onclick="showKeyboardShortcuts()">
         <span class="sb-item-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M8 12h.01M12 12h.01M16 12h.01M7 16h10"/></svg></span>
-        <span class="sb-item-label">Shortcuts</span>
+        <span class="sb-item-label">Kısayollar</span>
         <span class="sb-item-hint">⌘K</span>
       </div>
 
@@ -1003,7 +1001,7 @@ body.light .sb-upgrade-btn{background:linear-gradient(135deg,rgba(99,102,241,0.1
     <div class="sb-upgrade-wrap" id="sbUpgradeWrap">
       <button class="sb-upgrade-btn" onclick="window.location.href='index.html#pricing'">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-        <span>Upgrade to Pro</span>
+        <span>Pro'ya Geç</span>
       </button>
     </div>
     <div class="sb-user" onclick="toggleUserMenu()">
@@ -1030,16 +1028,16 @@ body.light .sb-upgrade-btn{background:linear-gradient(135deg,rgba(99,102,241,0.1
       <div class="sb-ud-divider"></div>
       <button class="sb-ud-item" onclick="window.location.href='index.html#pricing'" id="sbUdUpgrade">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-        Upgrade Plan
+        Planı Yükselt
       </button>
       <button class="sb-ud-item" onclick="showKeyboardShortcuts()">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M8 12h.01M12 12h.01M16 12h.01M7 16h10"/></svg>
-        Keyboard Shortcuts
+        Klavye Kısayolları
       </button>
       <div class="sb-ud-divider"></div>
       <button class="sb-ud-item danger" onclick="logOut()">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-        Log Out
+        Çıkış Yap
       </button>
     </div>
   </div>
