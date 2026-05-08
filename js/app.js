@@ -4875,13 +4875,23 @@ function renderIntegrationShortcuts() {
   const el = document.getElementById('exp-integrations-section');
   if (!el) return;
   const configs = [
-    { key: 'int_gs',      name: 'Google Sheets', fn: 'exportToGSheets',
+    { key: 'int_gs',       name: 'Google Sheets',    fn: 'exportToGSheets',
       icon: '<img src="https://upload.wikimedia.org/wikipedia/commons/a/ae/Google_Sheets_2020_Logo.svg" width="14" height="14" style="object-fit:contain">' },
-    { key: 'int_notion',  name: 'Notion',        fn: 'exportToNotion',
+    { key: 'int_notion',   name: 'Notion',            fn: 'exportToNotion',
       icon: '<img src="https://upload.wikimedia.org/wikipedia/commons/e/e9/Notion-logo.svg" width="13" height="13" style="filter:invert(.7);object-fit:contain">' },
-    { key: 'int_slack',   name: 'Slack',         fn: 'exportToSlack',
+    { key: 'int_slack',    name: 'Slack',             fn: 'exportToSlack',
       icon: '<img src="https://upload.wikimedia.org/wikipedia/commons/d/d5/Slack_icon_2019.svg" width="13" height="13" style="object-fit:contain">' },
-    { key: 'int_webhook', name: 'Webhook',       fn: 'triggerWebhook',
+    { key: 'int_airtable', name: 'Airtable',          fn: 'exportToAirtable',
+      icon: '<img src="https://upload.wikimedia.org/wikipedia/commons/4/4b/Airtable_Logo.svg" width="13" height="13" style="object-fit:contain">' },
+    { key: 'int_teams',    name: 'Microsoft Teams',   fn: 'exportToTeams',
+      icon: '<img src="https://upload.wikimedia.org/wikipedia/commons/c/c9/Microsoft_Office_Teams_%282018%E2%80%93present%29.svg" width="13" height="13" style="object-fit:contain">' },
+    { key: 'int_trello',   name: 'Trello',            fn: 'exportToTrello',
+      icon: '<img src="https://upload.wikimedia.org/wikipedia/en/8/8c/Trello_logo.svg" width="13" height="13" style="object-fit:contain">' },
+    { key: 'int_make',     name: 'Make',              fn: 'triggerMake',
+      icon: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M8 12h8M12 8v8"/></svg>' },
+    { key: 'int_drive',    name: 'Google Drive',      fn: 'exportToDrive',
+      icon: '<img src="https://upload.wikimedia.org/wikipedia/commons/1/12/Google_Drive_icon_%282020%29.svg" width="13" height="13" style="object-fit:contain">' },
+    { key: 'int_webhook',  name: 'Webhook',           fn: 'triggerWebhook',
       icon: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#6366F1" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>' }
   ];
   const connected = configs.filter(c => { try { return !!JSON.parse(localStorage.getItem(c.key)); } catch { return false; } });
@@ -4905,12 +4915,54 @@ async function exportToGSheets() {
   let lastRow = 0;
   for (let r = 0; r < ROWS; r++) { if (data[r].some(c => c !== '')) lastRow = r + 1; }
   const exportData = data.slice(0, Math.max(lastRow, 1));
-  toast('Google Sheets\'e aktarılıyor...', 'info');
+  const authToken = getAuthToken();
+
+  // Google OAuth token varsa doğrudan Sheets API ile yaz
+  if (cfg.tokens?.access_token) {
+    toast('Google Sheets\'e yazılıyor...', 'info');
+    try {
+      const resp = await fetch(API_URL + '/api/integrations/sheets/write', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
+        body: JSON.stringify({
+          accessToken: cfg.tokens.access_token,
+          refreshToken: cfg.tokens.refresh_token,
+          tokenExpiry: cfg.tokens.expiry_date,
+          sheetId: cfg.url,
+          sheetName: cfg.tab || 'Sheet1',
+          startCell: cfg.cell || 'A1',
+          data: exportData
+        })
+      });
+      const result = await resp.json();
+      if (result.newAccessToken) {
+        const updated = JSON.parse(localStorage.getItem('int_gs') || '{}');
+        updated.tokens = { ...updated.tokens, access_token: result.newAccessToken };
+        localStorage.setItem('int_gs', JSON.stringify(updated));
+      }
+      if (result.success) {
+        toast(`${result.rows} satır Google Sheets'e yazıldı`, 'ok');
+        if (confirm('Google Sheets\'i aç?')) window.open(result.sheetUrl, '_blank');
+      } else if (result.code === 'TOKEN_EXPIRED') {
+        const updated = JSON.parse(localStorage.getItem('int_gs') || '{}');
+        delete updated.tokens;
+        localStorage.setItem('int_gs', JSON.stringify(updated));
+        toast('Google token süresi doldu. Entegrasyonlar sayfasından tekrar bağlanın.', 'err');
+      } else {
+        toast('Google Sheets yazma hatası: ' + (result.error || ''), 'err');
+      }
+    } catch (err) {
+      toast('Google Sheets aktarımı başarısız: ' + err.message, 'err');
+    }
+    return;
+  }
+
+  // Token yoksa CSV fallback
+  toast('Google Sheets\'e aktarılıyor (CSV)...', 'info');
   try {
-    const token = getAuthToken();
     const resp = await fetch(API_URL + '/api/integrations/sheets/export', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
       body: JSON.stringify({ sheetId: cfg.url, data: exportData, sheetName: cfg.tab || 'Sheet1' })
     });
     if (!resp.ok) throw new Error('Sunucu hatası: ' + resp.status);
@@ -4921,7 +4973,7 @@ async function exportToGSheets() {
     a.download = (cfg.tab || 'mocksheet') + '.csv';
     a.click();
     URL.revokeObjectURL(a.href);
-    toast(`CSV indirildi (${result.rows} satır). Google Sheets'te: Dosya → İçe Aktar`, 'ok');
+    toast(`CSV indirildi (${result.rows} satır). Doğrudan yazmak için Entegrasyonlar'dan Google ile bağlanın.`, 'ok');
   } catch (err) {
     toast('Google Sheets aktarımı başarısız: ' + err.message, 'err');
   }
@@ -5022,6 +5074,155 @@ async function exportToSlack() {
     else toast("Slack gönderilemedi: " + (result.error || ''), 'err');
   } catch (err) {
     toast("Slack gönderilemedi: " + err.message, 'err');
+  }
+}
+
+async function exportToAirtable() {
+  document.getElementById('export-dropdown').style.display = 'none';
+  const cfg = JSON.parse(localStorage.getItem('int_airtable') || 'null');
+  if (!cfg?.token) {
+    if (confirm('Airtable bağlantısı kurulmamış. Entegrasyonlar sayfasına git?')) window.open('integrations.html', '_blank');
+    return;
+  }
+  const data = sheets[activeSheet];
+  let lastRow = 0;
+  for (let r = 0; r < ROWS; r++) { if (data[r].some(c => c !== '')) lastRow = r + 1; }
+  if (lastRow < 2) { toast('Aktarılacak veri yok (en az 1 başlık + 1 satır gerekli)', 'err'); return; }
+  const headers = data[0];
+  const rows = data.slice(1, lastRow);
+  toast(`${rows.length} satır Airtable'a aktarılıyor...`, 'info');
+  try {
+    const token = getAuthToken();
+    const resp = await fetch(API_URL + '/api/integrations/airtable/export', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      body: JSON.stringify({ token: cfg.token, baseId: cfg.baseId, tableName: cfg.tableName, headers, rows })
+    });
+    const result = await resp.json();
+    if (result.success || result.count > 0) toast(`${result.count}/${result.total} satır Airtable'a aktarıldı`, 'ok');
+    else toast('Airtable aktarımı başarısız: ' + (result.error || ''), 'err');
+  } catch (err) {
+    toast('Airtable aktarımı başarısız: ' + err.message, 'err');
+  }
+}
+
+async function exportToTeams() {
+  document.getElementById('export-dropdown').style.display = 'none';
+  const cfg = JSON.parse(localStorage.getItem('int_teams') || 'null');
+  if (!cfg?.url) {
+    if (confirm('Microsoft Teams bağlantısı kurulmamış. Entegrasyonlar sayfasına git?')) window.open('integrations.html', '_blank');
+    return;
+  }
+  const data = sheets[activeSheet];
+  let lastRow = 0;
+  for (let r = 0; r < ROWS; r++) { if (data[r].some(c => c !== '')) lastRow = r + 1; }
+  const previewRows = data.slice(0, Math.min(lastRow, 6));
+  const tablePreview = previewRows.map(r => r.filter((_, i) => i < 6).join(' | ')).join('\n');
+  try {
+    const token = getAuthToken();
+    const resp = await fetch(API_URL + '/api/integrations/teams/notify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      body: JSON.stringify({
+        webhookUrl: cfg.url,
+        title: '📊 Mocksheet Dışa Aktarım',
+        message: `Veriler Mocksheet'ten gönderildi:\n\n${tablePreview}`,
+        fields: [
+          { label: 'Sayfa', value: activeSheet || 'Sheet1' },
+          { label: 'Toplam satır', value: String(lastRow > 0 ? lastRow - 1 : 0) }
+        ]
+      })
+    });
+    const result = await resp.json();
+    if (result.success) toast("Teams'e veri özeti gönderildi", 'ok');
+    else toast("Teams gönderilemedi: " + (result.error || ''), 'err');
+  } catch (err) {
+    toast("Teams gönderilemedi: " + err.message, 'err');
+  }
+}
+
+async function exportToTrello() {
+  document.getElementById('export-dropdown').style.display = 'none';
+  const cfg = JSON.parse(localStorage.getItem('int_trello') || 'null');
+  if (!cfg?.apiKey || !cfg?.token) {
+    if (confirm('Trello bağlantısı kurulmamış. Entegrasyonlar sayfasına git?')) window.open('integrations.html', '_blank');
+    return;
+  }
+  const data = sheets[activeSheet];
+  let lastRow = 0;
+  for (let r = 0; r < ROWS; r++) { if (data[r].some(c => c !== '')) lastRow = r + 1; }
+  if (lastRow < 2) { toast('Aktarılacak veri yok', 'err'); return; }
+  const headers = data[0];
+  const rows = data.slice(1, lastRow);
+  toast(`${rows.length} satır Trello'ya kart olarak aktarılıyor...`, 'info');
+  try {
+    const token = getAuthToken();
+    const resp = await fetch(API_URL + '/api/integrations/trello/export', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      body: JSON.stringify({ apiKey: cfg.apiKey, token: cfg.token, boardId: cfg.boardId, listName: cfg.listName, headers, rows })
+    });
+    const result = await resp.json();
+    if (result.success || result.count > 0) toast(`${result.count}/${result.total} kart Trello'ya aktarıldı (Liste: ${result.listName || cfg.listName || 'ilk liste'})`, 'ok');
+    else toast('Trello aktarımı başarısız: ' + (result.error || ''), 'err');
+  } catch (err) {
+    toast('Trello aktarımı başarısız: ' + err.message, 'err');
+  }
+}
+
+async function triggerMake() {
+  document.getElementById('export-dropdown').style.display = 'none';
+  const cfg = JSON.parse(localStorage.getItem('int_make') || 'null');
+  if (!cfg?.url) {
+    if (confirm('Make bağlantısı kurulmamış. Entegrasyonlar sayfasına git?')) window.open('integrations.html', '_blank');
+    return;
+  }
+  const data = sheets[activeSheet];
+  let lastRow = 0;
+  for (let r = 0; r < ROWS; r++) { if (data[r].some(c => c !== '')) lastRow = r + 1; }
+  try {
+    const token = getAuthToken();
+    const resp = await fetch(API_URL + '/api/integrations/make/trigger', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      body: JSON.stringify({ url: cfg.url, event: 'manual_export', data: { rows: lastRow, sheet: activeSheet, source: 'Mocksheets' } })
+    });
+    const result = await resp.json();
+    if (result.success) toast('Make senaryosu tetiklendi', 'ok');
+    else toast('Make tetiklenemedi: ' + (result.error || ''), 'err');
+  } catch (err) {
+    toast('Make tetiklenemedi: ' + err.message, 'err');
+  }
+}
+
+async function exportToDrive() {
+  document.getElementById('export-dropdown').style.display = 'none';
+  const cfg = JSON.parse(localStorage.getItem('int_drive') || 'null');
+  if (!cfg?.token) {
+    if (confirm('Google Drive bağlantısı kurulmamış. Entegrasyonlar sayfasına git?')) window.open('integrations.html', '_blank');
+    return;
+  }
+  const data = sheets[activeSheet];
+  let lastRow = 0;
+  for (let r = 0; r < ROWS; r++) { if (data[r].some(c => c !== '')) lastRow = r + 1; }
+  const exportData = data.slice(0, Math.max(lastRow, 1));
+  const csv = '\uFEFF' + exportData.map(row => row.map(cell => {
+    const s = String(cell ?? '');
+    return s.includes(',') || s.includes('"') || s.includes('\n') ? `"${s.replace(/"/g, '""')}"` : s;
+  }).join(',')).join('\r\n');
+  toast("Google Drive'a yükleniyor...", 'info');
+  try {
+    const token = getAuthToken();
+    const resp = await fetch(API_URL + '/api/integrations/drive/upload', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      body: JSON.stringify({ token: cfg.token, fileName: cfg.fileName || 'Mocksheets_Export', csv })
+    });
+    const result = await resp.json();
+    if (result.success) toast(`"${result.fileName}" Google Drive'a yüklendi`, 'ok');
+    else toast("Drive yükleme başarısız: " + (result.error || ''), 'err');
+  } catch (err) {
+    toast("Drive yükleme başarısız: " + err.message, 'err');
   }
 }
 

@@ -2,6 +2,18 @@
 const express = require('express');
 const router = express.Router();
 const fetch = require('node-fetch');
+
+// Exponential backoff — harici API rate limit (429/503) durumunda retry
+async function fetchWithRetry(url, options, maxRetries = 3) {
+  for (let i = 0; i <= maxRetries; i++) {
+    const r = await fetch(url, options);
+    if (r.status !== 429 && r.status !== 503) return r;
+    if (i === maxRetries) return r;
+    const delay = parseInt(r.headers.get('Retry-After') || '0') * 1000
+      || Math.min(1000 * Math.pow(2, i), 10000);
+    await new Promise(res => setTimeout(res, delay));
+  }
+}
 // ── Google Sheets: CSV export (JSON response) ────
 router.post('/sheets/export', async (req, res) => {
   const { sheetId, data, sheetName } = req.body;
@@ -214,7 +226,7 @@ router.post('/notion/export', async (req, res) => {
         }
       });
 
-      const pageRes = await fetch('https://api.notion.com/v1/pages', {
+      const pageRes = await fetchWithRetry('https://api.notion.com/v1/pages', {
         method: 'POST',
         headers: {
           'Authorization': 'Bearer ' + token,
@@ -369,7 +381,7 @@ router.post('/airtable/export', async (req, res) => {
     try {
       const fields = {};
       headers.forEach((h, i) => { if (h?.trim()) fields[h.trim()] = String(row?.[i] ?? ''); });
-      const r = await fetch(url, {
+      const r = await fetchWithRetry(url, {
         method: 'POST',
         headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
         body: JSON.stringify({ fields })
@@ -563,7 +575,7 @@ router.post('/trello/export', async (req, res) => {
         const desc = headers && headers.length > 1
           ? headers.slice(1).map((h, i) => `${h}: ${row?.[i + 1] ?? ''}`).join('\n')
           : '';
-        const r = await fetch(`https://api.trello.com/1/cards?key=${apiKey}&token=${token}`, {
+        const r = await fetchWithRetry(`https://api.trello.com/1/cards?key=${apiKey}&token=${token}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ name: cardName, desc, idList: targetList.id })
@@ -577,6 +589,124 @@ router.post('/trello/export', async (req, res) => {
     res.json({ success: count > 0, count, total: toExport.length, listName: targetList.name, errors: errors.slice(0, 5) });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+});
+
+// ── Google Sheets: OAuth2 URL üret ──────────────
+router.get('/sheets/auth', (req, res) => {
+  const clientId = process.env.GOOGLE_CLIENT_ID;
+  if (!clientId) return res.status(500).json({ error: 'Google OAuth yapılandırılmamış. GOOGLE_CLIENT_ID eksik.' });
+
+  const redirectUri = (process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 3001}`)
+    + '/api/integrations/sheets/callback';
+  const scopes = [
+    'https://www.googleapis.com/auth/spreadsheets',
+    'https://www.googleapis.com/auth/drive.file'
+  ].join(' ');
+
+  const url = 'https://accounts.google.com/o/oauth2/v2/auth'
+    + `?client_id=${clientId}`
+    + `&redirect_uri=${encodeURIComponent(redirectUri)}`
+    + `&response_type=code`
+    + `&scope=${encodeURIComponent(scopes)}`
+    + `&access_type=offline`
+    + `&prompt=consent`;
+
+  res.json({ url });
+});
+
+// ── Google Sheets: OAuth2 callback ──────────────
+router.get('/sheets/callback', async (req, res) => {
+  const { code, error } = req.query;
+  if (error || !code) {
+    return res.send(
+      `<script>window.opener?.postMessage({type:'sheets_auth',error:'${error || 'cancelled'}'},'*');window.close();</script>`
+    );
+  }
+
+  const clientId = process.env.GOOGLE_CLIENT_ID;
+  const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+  const redirectUri = (process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 3001}`)
+    + '/api/integrations/sheets/callback';
+
+  try {
+    const r = await fetch('https://oauth2.googleapis.com/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ code, client_id: clientId, client_secret: clientSecret, redirect_uri: redirectUri, grant_type: 'authorization_code' })
+    });
+    const tokens = await r.json();
+    if (tokens.access_token) {
+      res.send(
+        `<script>window.opener?.postMessage({type:'sheets_auth',tokens:${JSON.stringify(tokens)}},'*');window.close();</script>`
+      );
+    } else {
+      res.send(
+        `<script>window.opener?.postMessage({type:'sheets_auth',error:'Token alınamadı: ${tokens.error_description || tokens.error || ''}'},'*');window.close();</script>`
+      );
+    }
+  } catch (err) {
+    res.send(
+      `<script>window.opener?.postMessage({type:'sheets_auth',error:'${err.message}'},'*');window.close();</script>`
+    );
+  }
+});
+
+// ── Google Sheets: Gerçek yazma (Sheets API v4) ─
+router.post('/sheets/write', async (req, res) => {
+  const { accessToken, refreshToken, tokenExpiry, sheetId, sheetName, startCell, data } = req.body;
+
+  if (!accessToken && !refreshToken) {
+    return res.status(400).json({ error: 'Google token gerekli. Önce "Google ile Bağlan" butonuna tıklayın.' });
+  }
+  if (!data?.length) return res.status(400).json({ error: 'Dışa aktarılacak veri yok' });
+
+  let { google } = require('googleapis');
+  const redirectUri = (process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 3001}`)
+    + '/api/integrations/sheets/callback';
+
+  const oauth2Client = new google.auth.OAuth2(
+    process.env.GOOGLE_CLIENT_ID,
+    process.env.GOOGLE_CLIENT_SECRET,
+    redirectUri
+  );
+  oauth2Client.setCredentials({ access_token: accessToken, refresh_token: refreshToken, expiry_date: tokenExpiry });
+
+  let newAccessToken = null;
+  oauth2Client.on('tokens', (t) => { if (t.access_token) newAccessToken = t.access_token; });
+
+  const match = sheetId ? sheetId.match(/\/d\/([a-zA-Z0-9-_]+)/) : null;
+  const spreadsheetId = match ? match[1] : (sheetId || '').trim();
+  if (!spreadsheetId) return res.status(400).json({ error: 'Geçersiz Google Sheets URL veya ID' });
+
+  const tab = sheetName || 'Sheet1';
+  const cell = startCell || 'A1';
+  const sheets = google.sheets({ version: 'v4', auth: oauth2Client });
+
+  try {
+    await sheets.spreadsheets.values.clear({ spreadsheetId, range: tab });
+    await sheets.spreadsheets.values.update({
+      spreadsheetId,
+      range: `${tab}!${cell}`,
+      valueInputOption: 'USER_ENTERED',
+      requestBody: { values: data.map(row => (row || []).map(cell => cell ?? '')) }
+    });
+
+    const sheetUrl = `https://docs.google.com/spreadsheets/d/${spreadsheetId}`;
+    res.json({
+      success: true,
+      rows: data.length,
+      cols: data[0]?.length || 0,
+      sheetUrl,
+      message: `✅ ${data.length} satır Google Sheets'e yazıldı`,
+      ...(newAccessToken ? { newAccessToken } : {})
+    });
+  } catch (err) {
+    const status = err.code || err.status;
+    if (status === 401) return res.status(401).json({ error: 'Google token süresi dolmuş. Lütfen tekrar bağlanın.', code: 'TOKEN_EXPIRED' });
+    if (status === 403) return res.status(403).json({ error: "Yetersiz izin. Spreadsheet'e yazma erişiminiz yok.", code: 'PERMISSION_DENIED' });
+    if (status === 404) return res.status(404).json({ error: "Spreadsheet bulunamadı. URL veya ID'yi kontrol edin." });
+    res.status(500).json({ error: 'Google Sheets yazma hatası: ' + err.message });
   }
 });
 

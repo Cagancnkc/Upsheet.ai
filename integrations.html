@@ -565,19 +565,29 @@ body {
             </div>
 
             <div style="border-top:1px solid var(--border);padding-top:16px;margin-top:4px">
-              <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:10px">Veri Aktarımı</div>
-              <div class="steps">
-                <div class="step"><div class="step-num">1</div><div class="step-text">Yukarıya URL'nizi girin ve <strong>Kaydet</strong>'e tıklayın</div></div>
-                <div class="step"><div class="step-num">2</div><div class="step-text">Aşağıdaki butona tıklayın — veriler <strong>CSV formatında</strong> indirilecek</div></div>
-                <div class="step"><div class="step-num">3</div><div class="step-text">Google Sheets'te: <strong>Dosya → İçe Aktar → Yükle</strong></div></div>
+              <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:10px">Google Hesabıyla Doğrudan Yaz</div>
+              <div id="gs-oauth-section">
+                <div class="steps" id="gs-steps-noauth">
+                  <div class="step"><div class="step-num">1</div><div class="step-text">URL'nizi girin ve <strong>Kaydet</strong>'e tıklayın</div></div>
+                  <div class="step"><div class="step-num">2</div><div class="step-text"><strong>Google ile Bağlan</strong>'a tıklayın — veriler doğrudan Sheet'e yazılır</div></div>
+                </div>
+                <div class="alert" id="alert-gs-oauth" style="margin:10px 0 0"></div>
+                <div class="btns" style="margin-top:10px">
+                  <button class="btn btn-dark" id="btn-gs-auth" onclick="authGSheets()">🔗 Google ile Bağlan</button>
+                  <div id="gs-connected-row" style="display:none;align-items:center;gap:10px">
+                    <span style="font-size:13px;color:#22C55E;font-weight:600">✓ Google bağlı</span>
+                    <button class="btn btn-red" onclick="disconnectGSAuth()">Bağlantıyı Kes</button>
+                  </div>
+                </div>
               </div>
               <div class="alert" id="alert-gs-exp" style="margin:12px 0"></div>
               <div id="gs-progress" style="display:none;margin-bottom:12px">
-                <div style="font-size:12px;color:#475569;margin-bottom:6px">Hazırlanıyor...</div>
+                <div style="font-size:12px;color:#475569;margin-bottom:6px" id="gs-progress-label">Hazırlanıyor...</div>
                 <div class="progress-wrap"><div class="progress-bar" id="gs-pbar" style="width:0%"></div></div>
               </div>
               <div class="btns">
-                <button class="btn btn-green" id="btn-gs-exp" onclick="exportGS()">📤 Google Sheets'e Aktar</button>
+                <button class="btn btn-green" id="btn-gs-exp" onclick="exportGS()">📤 Google Sheets'e Yaz</button>
+                <button class="btn btn-outline" id="btn-gs-csv" onclick="exportGScsv()" style="font-size:12px">⬇ CSV İndir</button>
               </div>
             </div>
           </div>
@@ -1149,7 +1159,7 @@ body {
 <script>
 const API = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
   ? 'http://localhost:3001'
-  : 'https://upsheet-backend.onrender.com';
+  : 'https://upsheet-ai.onrender.com';
 
 // ── Helpers ──────────────────────────────────────
 function getToken() {
@@ -1238,7 +1248,8 @@ function saveGS() {
   if (!url) return showAlert('alert-gs', '✗ Lütfen URL veya ID girin', 'err');
   const tab  = document.getElementById('gs-tab').value.trim();
   const cell = document.getElementById('gs-cell').value.trim() || 'A1';
-  lsSave('int_gs', { url, tab, cell });
+  const existing = lsLoad('int_gs') || {};
+  lsSave('int_gs', { ...existing, url, tab, cell }); // OAuth token korunur
   setStatus('gs', true);
   document.getElementById('btn-gs-disc').style.display = '';
   showAlert('alert-gs', '✓ Google Sheets bağlantısı kaydedildi', 'ok');
@@ -1252,44 +1263,130 @@ function disconnectGS() {
   document.getElementById('btn-gs-disc').style.display = 'none';
   setStatus('gs', false);
   hideAlert('alert-gs');
+  updateGSAuthUI();
+}
+
+function disconnectGSAuth() {
+  const existing = lsLoad('int_gs') || {};
+  delete existing.tokens;
+  if (Object.keys(existing).length) lsSave('int_gs', existing);
+  updateGSAuthUI();
+  showAlert('alert-gs-oauth', 'Google bağlantısı kesildi. URL bilgileri korundu.', 'ok');
+}
+
+function updateGSAuthUI() {
+  const cfg = lsLoad('int_gs');
+  const hasTokens = !!cfg?.tokens?.access_token;
+  const authBtn = document.getElementById('btn-gs-auth');
+  const connRow = document.getElementById('gs-connected-row');
+  const expBtn = document.getElementById('btn-gs-exp');
+  if (authBtn) authBtn.style.display = hasTokens ? 'none' : '';
+  if (connRow) connRow.style.display = hasTokens ? 'flex' : 'none';
+  if (expBtn) expBtn.textContent = hasTokens ? '📤 Google Sheets\'e Yaz' : '📤 Doğrudan Yaz (Bağlantı Yok)';
+}
+
+async function authGSheets() {
+  showAlert('alert-gs-oauth', 'Google OAuth sayfası açılıyor...', 'info');
+  try {
+    const resp = await fetch(API + '/api/integrations/sheets/auth', { headers: buildHeaders() });
+    const data = await resp.json();
+    if (!data.url) return showAlert('alert-gs-oauth', '✗ ' + (data.error || 'OAuth yapılandırılmamış'), 'err');
+    window.open(data.url, 'sheetsAuth', 'width=520,height=640,scrollbars=yes,resizable=yes');
+  } catch {
+    showAlert('alert-gs-oauth', '✗ Sunucuya ulaşılamıyor', 'err');
+  }
 }
 
 async function exportGS() {
   const cfg = lsLoad('int_gs');
-  if (!cfg) return showAlert('alert-gs-exp', '✗ Önce bağlantıyı kaydedin', 'err');
+  if (!cfg) return showAlert('alert-gs-exp', '✗ Önce URL girin ve Kaydet\'e tıklayın', 'err');
   const sheet = getSheetData();
   if (!sheet?.data?.length) return showAlert('alert-gs-exp', '✗ Veri yok. Uygulamayı açın ve dosya yükleyin.', 'err');
 
   const btn = document.getElementById('btn-gs-exp');
   const prog = document.getElementById('gs-progress');
   const pbar = document.getElementById('gs-pbar');
-  btn.disabled = true; btn.textContent = 'Hazırlanıyor...';
+  const label = document.getElementById('gs-progress-label');
+  btn.disabled = true; btn.textContent = 'Yazılıyor...';
   prog.style.display = '';
 
+  if (cfg.tokens?.access_token) {
+    // Gerçek Google Sheets API yazma
+    try {
+      if (label) label.textContent = 'Google Sheets\'e yazılıyor...';
+      pbar.style.width = '40%';
+      const resp = await fetch(API + '/api/integrations/sheets/write', {
+        method: 'POST', headers: buildHeaders(),
+        body: JSON.stringify({
+          accessToken: cfg.tokens.access_token,
+          refreshToken: cfg.tokens.refresh_token,
+          tokenExpiry: cfg.tokens.expiry_date,
+          sheetId: cfg.url,
+          sheetName: cfg.tab || 'Sheet1',
+          startCell: cfg.cell || 'A1',
+          data: sheet.data
+        })
+      });
+      pbar.style.width = '90%';
+      const result = await resp.json();
+      if (result.newAccessToken) {
+        const updated = lsLoad('int_gs') || {};
+        updated.tokens = { ...updated.tokens, access_token: result.newAccessToken };
+        lsSave('int_gs', updated);
+      }
+      pbar.style.width = '100%';
+      if (result.success) {
+        showAlert('alert-gs-exp', `✓ ${result.rows} satır Google Sheets'e yazıldı`, 'ok');
+        if (confirm('Google Sheets\'i aç?')) window.open(result.sheetUrl, '_blank');
+      } else if (result.code === 'TOKEN_EXPIRED') {
+        const updated = lsLoad('int_gs') || {};
+        delete updated.tokens;
+        lsSave('int_gs', updated);
+        updateGSAuthUI();
+        showAlert('alert-gs-exp', '✗ Google token süresi doldu. Lütfen tekrar bağlanın.', 'err');
+      } else {
+        showAlert('alert-gs-exp', '✗ ' + (result.error || 'Yazma başarısız'), 'err');
+      }
+    } catch (err) {
+      showAlert('alert-gs-exp', '✗ Sunucuya ulaşılamıyor: ' + err.message, 'err');
+    } finally {
+      btn.disabled = false; btn.textContent = '📤 Google Sheets\'e Yaz';
+      setTimeout(() => { prog.style.display = 'none'; pbar.style.width = '0%'; }, 1000);
+    }
+    return;
+  }
+
+  // Token yoksa CSV fallback
+  showAlert('alert-gs-exp', 'ℹ Google hesabı bağlı değil. Önce Google ile bağlanın veya CSV indirin.', 'info');
+  btn.disabled = false; btn.textContent = '📤 Doğrudan Yaz (Bağlantı Yok)';
+  prog.style.display = 'none';
+}
+
+async function exportGScsv() {
+  const cfg = lsLoad('int_gs');
+  const sheet = getSheetData();
+  if (!sheet?.data?.length) return showAlert('alert-gs-exp', '✗ Veri yok', 'err');
+
+  const btn = document.getElementById('btn-gs-csv');
+  btn.disabled = true; btn.textContent = 'İndiriliyor...';
   try {
-    pbar.style.width = '30%';
     const resp = await fetch(API + '/api/integrations/sheets/export', {
       method: 'POST', headers: buildHeaders(),
-      body: JSON.stringify({ sheetId: cfg.url, data: sheet.data, sheetName: cfg.tab || 'Sheet1' })
+      body: JSON.stringify({ sheetId: cfg?.url, data: sheet.data, sheetName: cfg?.tab || 'Sheet1' })
     });
-    pbar.style.width = '70%';
     if (!resp.ok) throw new Error('Sunucu hatası: ' + resp.status);
     const result = await resp.json();
-    pbar.style.width = '100%';
-
     const blob = new Blob([result.csv], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = (cfg.tab || 'mocksheet') + '.csv';
+    link.download = (cfg?.tab || 'mocksheet') + '.csv';
     link.click();
-
+    URL.revokeObjectURL(link.href);
     showAlert('alert-gs-exp', `✓ CSV indirildi (${result.rows} satır). Google Sheets'te: Dosya → İçe Aktar → Yükle`, 'ok');
-    if (confirm('İçe aktarmak için Google Sheets\'i aç?')) window.open(result.sheetUrl, '_blank');
   } catch (err) {
-    showAlert('alert-gs-exp', '✗ Dışa aktarım başarısız: ' + err.message, 'err');
+    showAlert('alert-gs-exp', '✗ ' + err.message, 'err');
   } finally {
-    btn.disabled = false; btn.textContent = '📤 Google Sheets\'e Aktar';
-    setTimeout(() => { prog.style.display = 'none'; pbar.style.width = '0%'; }, 1000);
+    btn.disabled = false; btn.textContent = '⬇ CSV İndir';
   }
 }
 
@@ -1989,6 +2086,8 @@ document.addEventListener('DOMContentLoaded', () => {
   loadLogs();
   applyPaywalls();
 
+  updateGSAuthUI();
+
   window.addEventListener('message', (e) => {
     if (e.data?.type === 'drive_auth') {
       if (e.data.token) {
@@ -1999,6 +2098,18 @@ document.addEventListener('DOMContentLoaded', () => {
         showAlert('alert-drive', '✓ Google Drive bağlandı', 'ok');
       } else {
         showAlert('alert-drive', '✗ Bağlantı başarısız: ' + (e.data.error || 'İptal edildi'), 'err');
+      }
+    }
+    if (e.data?.type === 'sheets_auth') {
+      if (e.data.tokens?.access_token) {
+        const existing = lsLoad('int_gs') || {};
+        lsSave('int_gs', { ...existing, tokens: e.data.tokens });
+        setStatus('gs', true);
+        updateGSAuthUI();
+        hideAlert('alert-gs-oauth');
+        showAlert('alert-gs-exp', '✓ Google hesabıyla bağlandı! Artık doğrudan yazabilirsiniz.', 'ok');
+      } else {
+        showAlert('alert-gs-oauth', '✗ Bağlantı başarısız: ' + (e.data.error || 'İptal edildi'), 'err');
       }
     }
   });
