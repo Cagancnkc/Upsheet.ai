@@ -884,7 +884,7 @@ body.light .sb-upgrade-btn{background:linear-gradient(135deg,rgba(99,102,241,0.1
       <div class="sb-item sb-item-expandable open" id="tmplTrigger" data-tooltip="Şablonlar" onclick="toggleSbSection('tmplSection', this)">
         <span class="sb-item-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg></span>
         <span class="sb-item-label">Şablonlar</span>
-        <span class="sb-item-count">26</span>
+        <span class="sb-item-count">38</span>
         <svg class="sb-item-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
       </div>
 
@@ -900,6 +900,8 @@ body.light .sb-upgrade-btn{background:linear-gradient(135deg,rgba(99,102,241,0.1
           <div class="sb-tmpl-item" onclick="loadTemplate('nakit_akis')">💵 Nakit Akışı</div>
           <div class="sb-tmpl-item" onclick="loadTemplate('cari_hesap')">🏦 Cari Hesap</div>
           <div class="sb-tmpl-item" onclick="loadTemplate('banka_mutabakat')">🏧 Banka Mutabakatı</div>
+          <div class="sb-tmpl-item" onclick="loadTemplate('fatura_takip')">🗂️ Fatura Takip <span class="sb-new-badge">YENİ</span></div>
+          <div class="sb-tmpl-item" onclick="loadTemplate('aylik_butce')">📆 Aylık Bütçe Planı <span class="sb-new-badge">YENİ</span></div>
         </div>
 
         <div class="sb-tmpl-cat" onclick="toggleTmplCat('cat_hr')">
@@ -907,11 +909,13 @@ body.light .sb-upgrade-btn{background:linear-gradient(135deg,rgba(99,102,241,0.1
           <svg class="sb-cat-arrow" id="catarrow_hr" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
         </div>
         <div class="sb-tmpl-items" id="cat_hr">
-          <div class="sb-tmpl-item" onclick="loadTemplate('maas_bordro')">💼 Bordro Tablosu <span class="sb-new-badge">YENİ</span></div>
+          <div class="sb-tmpl-item" onclick="loadTemplate('maas_bordro')">💼 Bordro Tablosu</div>
           <div class="sb-tmpl-item" onclick="loadTemplate('izin_takip')">🏖️ İzin Takibi</div>
           <div class="sb-tmpl-item" onclick="loadTemplate('kidem_ihbar')">📋 Kıdem Tazminatı</div>
           <div class="sb-tmpl-item" onclick="loadTemplate('personel_liste')">👤 Personel Listesi</div>
           <div class="sb-tmpl-item" onclick="loadTemplate('fazla_mesai')">⏰ Fazla Mesai</div>
+          <div class="sb-tmpl-item" onclick="loadTemplate('ise_alim')">🎯 İşe Alım Süreci <span class="sb-new-badge">YENİ</span></div>
+          <div class="sb-tmpl-item" onclick="loadTemplate('performans_degerlendirme')">⭐ Performans Değerlendirme <span class="sb-new-badge">YENİ</span></div>
         </div>
 
         <div class="sb-tmpl-cat" onclick="toggleTmplCat('cat_sales')">
@@ -920,10 +924,12 @@ body.light .sb-upgrade-btn{background:linear-gradient(135deg,rgba(99,102,241,0.1
         </div>
         <div class="sb-tmpl-items" id="cat_sales">
           <div class="sb-tmpl-item" onclick="loadTemplate('satis_takip')">📈 Satış Takibi</div>
-          <div class="sb-tmpl-item" onclick="loadTemplate('stok_kart')">📦 Stok Kartı <span class="sb-new-badge">YENİ</span></div>
+          <div class="sb-tmpl-item" onclick="loadTemplate('stok_kart')">📦 Stok Kartı</div>
           <div class="sb-tmpl-item" onclick="loadTemplate('fiyat_listesi')">🏷️ Fiyat Listesi</div>
           <div class="sb-tmpl-item" onclick="loadTemplate('satis_hedef')">🎯 Satış Hedefi</div>
           <div class="sb-tmpl-item" onclick="loadTemplate('tedarikci')">🚚 Tedarikçi Takibi</div>
+          <div class="sb-tmpl-item" onclick="loadTemplate('siparis_yonetim')">🛒 Sipariş Yönetimi <span class="sb-new-badge">YENİ</span></div>
+          <div class="sb-tmpl-item" onclick="loadTemplate('depo_envanter')">🏭 Depo Envanter <span class="sb-new-badge">YENİ</span></div>
         </div>
 
         <div class="sb-tmpl-cat" onclick="toggleTmplCat('cat_project')">
@@ -931,10 +937,12 @@ body.light .sb-upgrade-btn{background:linear-gradient(135deg,rgba(99,102,241,0.1
           <svg class="sb-cat-arrow" id="catarrow_project" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
         </div>
         <div class="sb-tmpl-items" id="cat_project">
-          <div class="sb-tmpl-item" onclick="loadTemplate('proje_takvim')">📅 Proje Zaman Çizelgesi <span class="sb-new-badge">YENİ</span></div>
+          <div class="sb-tmpl-item" onclick="loadTemplate('proje_takvim')">📅 Proje Zaman Çizelgesi</div>
           <div class="sb-tmpl-item" onclick="loadTemplate('butce_takip')">💰 Bütçe Takibi</div>
           <div class="sb-tmpl-item" onclick="loadTemplate('risk_matrisi')">⚠️ Risk Matrisi</div>
           <div class="sb-tmpl-item" onclick="loadTemplate('toplanti_tutanak')">📝 Toplantı Tutanağı</div>
+          <div class="sb-tmpl-item" onclick="loadTemplate('yapilacaklar')">✅ Yapılacaklar Listesi <span class="sb-new-badge">YENİ</span></div>
+          <div class="sb-tmpl-item" onclick="loadTemplate('sprint_backlog')">🚀 Sprint Backlog <span class="sb-new-badge">YENİ</span></div>
         </div>
 
         <div class="sb-tmpl-cat" onclick="toggleTmplCat('cat_analytics')">
@@ -943,9 +951,11 @@ body.light .sb-upgrade-btn{background:linear-gradient(135deg,rgba(99,102,241,0.1
         </div>
         <div class="sb-tmpl-items" id="cat_analytics">
           <div class="sb-tmpl-item" onclick="loadTemplate('satis_analiz')">📉 Satış Trendi</div>
-          <div class="sb-tmpl-item" onclick="loadTemplate('musteri_analiz')">👥 Müşteri RFM <span class="sb-new-badge">YENİ</span></div>
+          <div class="sb-tmpl-item" onclick="loadTemplate('musteri_analiz')">👥 Müşteri RFM</div>
           <div class="sb-tmpl-item" onclick="loadTemplate('kpi_dashboard')">🎯 KPI Gösterge Paneli</div>
           <div class="sb-tmpl-item" onclick="loadTemplate('anket_analiz')">📋 Anket Analizi</div>
+          <div class="sb-tmpl-item" onclick="loadTemplate('urun_karlilik')">📊 Ürün Karlılık Analizi <span class="sb-new-badge">YENİ</span></div>
+          <div class="sb-tmpl-item" onclick="loadTemplate('sikayet_takip')">📢 Müşteri Şikayet Takibi <span class="sb-new-badge">YENİ</span></div>
         </div>
 
         <div class="sb-tmpl-cat" onclick="toggleTmplCat('cat_general')">
@@ -956,6 +966,8 @@ body.light .sb-upgrade-btn{background:linear-gradient(135deg,rgba(99,102,241,0.1
           <div class="sb-tmpl-item" onclick="loadTemplate('toplanti_takvim')">📅 Toplantı Takvimi</div>
           <div class="sb-tmpl-item" onclick="loadTemplate('gider_takip')">💳 Gider Takibi</div>
           <div class="sb-tmpl-item" onclick="loadTemplate('iletisim_listesi')">📞 İletişim Listesi</div>
+          <div class="sb-tmpl-item" onclick="loadTemplate('vardiya_plani')">🕐 Vardiya Planı <span class="sb-new-badge">YENİ</span></div>
+          <div class="sb-tmpl-item" onclick="loadTemplate('arac_takip')">🚗 Araç Takibi <span class="sb-new-badge">YENİ</span></div>
         </div>
 
       </div><!-- /tmplSection -->
