@@ -705,6 +705,7 @@ function addSheet(name) {
   activeSheet = sheetName;
   buildGrid(sheets[activeSheet]);
   renderSheetTabs();
+  saveData();
 }
 
 function renameSheet(oldName) {
@@ -2410,6 +2411,7 @@ function toggleSidebar() {
 
 function init() {
   try { const s = localStorage.getItem('recent_files'); if (s) recentFiles = JSON.parse(s); } catch(e) {}
+  loadAutoSave();
   renderRecentFiles();
   renderSheetTabs();
   renderSheetList();
