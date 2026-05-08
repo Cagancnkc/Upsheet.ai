@@ -924,18 +924,28 @@ function handleFile(e) {
 
 function downloadFile() {
   const fileName = document.getElementById('fileNameInput')?.value || 'mocksheets-export.xlsx';
+  const finalName = fileName.endsWith('.xlsx') ? fileName : fileName + '.xlsx';
   const wb = XLSX.utils.book_new();
   Object.entries(sheets).forEach(([name, data]) => {
     const ws = XLSX.utils.aoa_to_sheet(data);
     XLSX.utils.book_append_sheet(wb, ws, name);
   });
-  XLSX.writeFile(wb, fileName.endsWith('.xlsx') ? fileName : fileName + '.xlsx');
-  toast(tpl('toast_downloaded_tpl', {name: fileName}), 'ok');
+  const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+  const blob = new Blob([wbout], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = finalName;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  toast(tpl('toast_downloaded_tpl', {name: finalName}), 'ok');
   // Export webhook
   try {
     const _wh = JSON.parse(localStorage.getItem('int_webhook') || '{}');
     if (_wh.url && (_wh.trigger === 'export' || _wh.trigger === 'all')) {
-      fetch(API_URL + '/api/integrations/webhook/send', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url: _wh.url, event: 'export', data: { filename: fileName, rows: (sheets[activeSheet] || []).length, format: 'xlsx', timestamp: new Date().toISOString() } }) }).catch(() => {});
+      fetch(API_URL + '/api/integrations/webhook/send', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url: _wh.url, event: 'export', data: { filename: finalName, rows: (sheets[activeSheet] || []).length, format: 'xlsx', timestamp: new Date().toISOString() } }) }).catch(() => {});
     }
   } catch(_e) {}
 }
