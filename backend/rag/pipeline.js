@@ -31,7 +31,7 @@ function getSystemPrompt() {
 Tetikleyici: sırala, a-z, z-a, küçükten büyüğe, büyükten küçüğe, fiyata göre, tarihe göre
 {"action":"sort","direction":"asc","column":"fiyat","reply":"✓ Fiyata göre sıralandı","changes":[]}
 
-### delete_rows → Silme
+### delete_rows → Satır silme
 Tetikleyici: boş satırları sil, boşları temizle, veri olmayan kaldır
 {"action":"delete_rows","condition":"empty","reply":"✓ Boş satırlar silindi","changes":[]}
 
@@ -40,37 +40,93 @@ Tetikleyici: tekrar edenleri sil, mükerrerleri kaldır, aynı olanları temizle
 {"action":"remove_duplicates","reply":"✓ Tekrarlanan satırlar kaldırıldı","changes":[]}
 
 ### sum → Toplama
-Tetikleyici: topla, toplam al, toplamını bul
+Tetikleyici: topla, toplam al, toplamını bul, sum hesapla
 {"action":"sum","column":"B","reply":"✓ B sütunu toplandı","changes":[]}
 
 ### average → Ortalama
-Tetikleyici: ortalama, ortalamasını hesapla
+Tetikleyici: ortalama, ortalamasını hesapla, mean
 {"action":"average","column":"fiyat","reply":"✓ Fiyat ortalaması hesaplandı","changes":[]}
 
+### count_if → Koşullu sayma
+Tetikleyici: kaç tane, say, adet bul, kaç kişi, kaç ürün, kaç kayıt
+{"action":"count_if","condition":"value > 0","column":"fiyat","reply":"✓ 12 kayıt sayıldı","changes":[]}
+
+### max → Maksimum değer
+Tetikleyici: en yüksek, en büyük, maksimum, en pahalı, en fazla, zirve
+{"action":"max","column":"fiyat","reply":"✓ En yüksek fiyat: 1250","changes":[]}
+
+### min → Minimum değer
+Tetikleyici: en düşük, en küçük, minimum, en ucuz, en az, dip
+{"action":"min","column":"fiyat","reply":"✓ En düşük fiyat: 45","changes":[]}
+
 ### highlight → Renklendirme
-Tetikleyici: kırmızıya boya, yeşile boya, sarıya boya, vurgula, işaretle
+Tetikleyici: kırmızıya boya, yeşile boya, sarıya boya, vurgula, işaretle, renklendir
 Renkler: negatif/eksi=#fecaca, pozitif/artı=#bbf7d0, sarı=#fef08a, mavi=#bfdbfe
 {"action":"highlight","condition":"value < 0","color":"#fecaca","reply":"✓ Negatifler kırmızıya boyandı","changes":[]}
 
 ### update_cells → Hesaplama/Güncelleme
-Tetikleyici: KDV ekle, çarp, böl, artır, indir, maaş hesapla
+Tetikleyici: KDV ekle, çarp, böl, artır, indir, maaş hesapla, güncelle
 KDV KURALI: HER ZAMAN factor:1.20 (%20), ASLA 1.18 kullanma!
 {"action":"update_cells","formula":"multiply","factor":1.20,"reply":"✓ %20 KDV eklendi","changes":[]}
 
 ### transform → Metin dönüşümü
-Tetikleyici: büyük harfe çevir, küçük harfe çevir, boşlukları temizle
+Tetikleyici: büyük harfe çevir, küçük harfe çevir, boşlukları temizle, trim
 {"action":"transform","transform":"uppercase","reply":"✓ Büyük harfe çevrildi","changes":[]}
 
 ### filter → Filtreleme
-Tetikleyici: göster, filtrele, listele (belirli değer veya koşulla)
+Tetikleyici: göster, filtrele, listele (belirli değer veya koşulla), bul
 {"action":"filter","condition":"contains","value":"istanbul","reply":"✓ İstanbul kayıtları filtrelendi","changes":[]}
 
 ### remove_filter → Filtre kaldır
-Tetikleyici: filtreyi kaldır, tüm veriyi göster, sıfırla
+Tetikleyici: filtreyi kaldır, tüm veriyi göster, sıfırla, temizle
 {"action":"remove_filter","reply":"✓ Filtre kaldırıldı","changes":[]}
 
+### generate_formula → Excel formülü oluştur
+Tetikleyici: formül yaz, Excel formülü oluştur, hesaplama formülü, fonksiyon yaz
+{"action":"generate_formula","formula":"=SUMIF(A:A,\"Aktif\",B:B)","target_column":"C","reply":"✓ Formül oluşturuldu","changes":[]}
+
+### extract → Veri çıkarma
+Tetikleyici: e-posta çıkar, telefon bul, IBAN çıkar, tarih ayıkla, plaka bul, tutarları çıkar
+{"action":"extract","type":"email","column":"açıklama","reply":"✓ E-postalar çıkarıldı","changes":[]}
+
+### group_by → Gruplama
+Tetikleyici: grupla, kategoriye göre ayır, bölümlere ayır, şehre göre grupla, segmentle
+{"action":"group_by","column":"şehir","reply":"✓ Şehre göre gruplandı","changes":[]}
+
+### classify → Sınıflandırma/Etiketleme
+Tetikleyici: sınıflandır, etiketle, ABC analizi, risk seviyesi, kategori ata, VIP normal pasif
+{"action":"classify","column":"satış","categories":["Yüksek","Orta","Düşük"],"reply":"✓ Sınıflandırma yapıldı","changes":[]}
+
+### sentiment_analysis → Duygu analizi
+Tetikleyici: duygu analizi, yorum analiz et, pozitif negatif sınıfla, memnuniyet skoru, anket analizi
+{"action":"sentiment_analysis","column":"yorum","reply":"📊 Duygu analizi tamamlandı","changes":[]}
+
+### anomaly_detection → Anomali tespiti
+Tetikleyici: anomali tespit et, aykırı değer bul, beklenmedik değerleri işaretle, outlier, sapan veri
+{"action":"anomaly_detection","column":"tutar","method":"zscore","reply":"📊 Anomaliler tespit edildi","changes":[]}
+
+### forecast → Tahmin/Projeksiyon
+Tetikleyici: tahmin et, öngör, gelecek ay/çeyrek/yıl, projeksiyon, hareketli ortalama ile tahmin
+{"action":"forecast","column":"satış","periods":3,"reply":"📊 3 aylık tahmin hesaplandı","changes":[]}
+
+### heatmap → Isıl harita/Renk skalası
+Tetikleyici: heatmap, ısıl harita, renk skalası uygula, yoğunluk haritası, renklendirme yap
+{"action":"heatmap","column":"performans","reply":"📊 Isıl harita oluşturuldu","changes":[]}
+
+### compare → Karşılaştırma
+Tetikleyici: karşılaştır, kıyasla, farkını bul, bu yıl geçen yıl, hedef vs gerçekleşen, plan fiili
+{"action":"compare","col1":"hedef","col2":"gerçekleşen","reply":"📊 Karşılaştırma yapıldı","changes":[]}
+
+### clean_data → Veri temizleme
+Tetikleyici: verileri temizle, hataları düzelt, boşlukları doldur, standartlaştır, normalize et
+{"action":"clean_data","reply":"✓ Veriler temizlendi","changes":[]}
+
+### batch_ai → Toplu AI işlemi
+Tetikleyici: her satır için, tüm kayıtlara uygula, toplu işlem yap, batch, her hücreye uygula
+{"action":"batch_ai","instruction":"Her satırdaki ürün açıklamasını özetle","reply":"📊 Toplu işlem başlatıldı","changes":[]}
+
 ### message → Sadece bilgi ver
-Tetikleyici: yardım, ne yapabilirsin, rapor, analiz
+Tetikleyici: yardım, ne yapabilirsin, rapor, analiz (işlem gerektirmeyen sorular)
 {"action":"message","reply":"📊 Veri analizi tamamlandı","changes":[]}
 
 ## ZORUNLU KURALLAR

@@ -442,6 +442,92 @@ body {
   z-index:10;animation:paywallFadeIn .2s ease;
 }
 @keyframes paywallFadeIn { from{opacity:0} to{opacity:1} }
+
+/* ── Otomasyon Kuralları ── */
+.auto-section { margin-top: 56px; }
+.auto-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+.auto-header-left { display:flex; align-items:center; gap:12px; }
+.auto-badge {
+  display:inline-flex; align-items:center; gap:5px;
+  background:rgba(99,102,241,0.12); border:1px solid rgba(99,102,241,0.25);
+  color:#818CF8; font-size:11px; font-weight:700; padding:3px 10px; border-radius:100px;
+}
+.auto-list { display:flex; flex-direction:column; gap:10px; margin-bottom:16px; }
+.auto-rule-card {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:12px; padding:14px 18px;
+  display:flex; align-items:center; gap:14px;
+}
+.auto-rule-card.disabled { opacity:.5; }
+.auto-toggle { position:relative; width:38px; height:22px; flex-shrink:0; }
+.auto-toggle input { opacity:0; width:0; height:0; position:absolute; }
+.auto-toggle-slider {
+  position:absolute; inset:0; cursor:pointer;
+  background:rgba(255,255,255,0.1); border-radius:100px; transition:.2s;
+}
+.auto-toggle-slider::after {
+  content:''; position:absolute; width:16px; height:16px;
+  left:3px; top:3px; background:#fff; border-radius:50%; transition:.2s;
+}
+.auto-toggle input:checked + .auto-toggle-slider { background:var(--accent); }
+.auto-toggle input:checked + .auto-toggle-slider::after { transform:translateX(16px); }
+.auto-rule-info { flex:1; min-width:0; }
+.auto-rule-name { font-size:13px; font-weight:600; color:var(--text); margin-bottom:3px; }
+.auto-rule-meta { font-size:11px; color:var(--muted); display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.auto-rule-tag {
+  background:rgba(255,255,255,0.06); border:1px solid var(--border);
+  padding:2px 7px; border-radius:6px; font-size:10px; font-weight:600;
+  color:rgba(255,255,255,0.4);
+}
+.auto-rule-actions { display:flex; gap:6px; flex-shrink:0; }
+.auto-rule-actions button {
+  background:rgba(255,255,255,0.05); border:1px solid var(--border);
+  border-radius:8px; padding:5px 10px; font-size:11px; color:var(--muted);
+  cursor:pointer; transition:.15s;
+}
+.auto-rule-actions button:hover { background:rgba(255,255,255,0.1); color:var(--text); }
+.auto-rule-actions .btn-danger:hover { background:rgba(239,68,68,0.12); color:#F87171; border-color:rgba(239,68,68,0.3); }
+.auto-empty {
+  text-align:center; padding:36px; color:var(--muted); font-size:14px;
+  background:var(--bg-card); border:1px dashed var(--border); border-radius:12px;
+}
+.auto-suggest-banner {
+  background:linear-gradient(135deg,rgba(99,102,241,0.12),rgba(139,92,246,0.08));
+  border:1px solid rgba(99,102,241,0.2); border-radius:12px;
+  padding:14px 18px; display:flex; align-items:center; gap:14px; margin-bottom:16px;
+}
+.auto-suggest-banner.hidden { display:none; }
+.auto-suggest-icon { font-size:22px; flex-shrink:0; }
+.auto-suggest-text { flex:1; }
+.auto-suggest-title { font-size:13px; font-weight:700; color:#A5B4FC; margin-bottom:2px; }
+.auto-suggest-desc  { font-size:12px; color:var(--muted); }
+.auto-suggest-actions { display:flex; gap:8px; flex-shrink:0; }
+
+/* ── Modal ── */
+.auto-modal-overlay {
+  display:none; position:fixed; inset:0; z-index:9998;
+  background:rgba(0,0,0,0.75); backdrop-filter:blur(8px);
+  align-items:center; justify-content:center;
+}
+.auto-modal-overlay.open { display:flex; }
+.auto-modal {
+  background:#111827; border:1px solid rgba(255,255,255,0.1);
+  border-radius:20px; padding:32px; max-width:500px; width:94%;
+  position:relative; max-height:90vh; overflow-y:auto;
+}
+.auto-modal h3 { font-size:17px; font-weight:700; margin-bottom:20px; }
+.auto-modal .field { margin-bottom:14px; }
+.auto-modal label { display:block; font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; margin-bottom:6px; }
+.auto-modal input, .auto-modal select, .auto-modal textarea {
+  width:100%; padding:9px 12px; background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.1); border-radius:9px;
+  font-size:13px; color:var(--text); font-family:inherit; outline:none;
+}
+.auto-modal input:focus, .auto-modal select, .auto-modal select:focus { border-color:var(--accent); }
+.auto-modal select option { background:#111827; }
+.auto-modal .row2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.auto-modal .modal-actions { display:flex; gap:10px; margin-top:20px; }
+.auto-modal .modal-actions button { flex:1; }
 </style>
 <!-- Microsoft Clarity -->
 <script type="text/javascript">
@@ -1154,6 +1240,121 @@ body {
     </table>
   </div>
 
+  <!-- ── Otomasyon Kuralları ── -->
+  <div class="auto-section">
+    <div class="int-section-label">Otomasyon Kuralları</div>
+
+    <!-- AI öneri banner (gizli, JS tarafından gösterilir) -->
+    <div class="auto-suggest-banner hidden" id="auto-suggest-banner">
+      <div class="auto-suggest-icon">✨</div>
+      <div class="auto-suggest-text">
+        <div class="auto-suggest-title" id="auto-suggest-title">Akıllı kural önerileri hazır</div>
+        <div class="auto-suggest-desc" id="auto-suggest-desc">Tablonuza uygun otomasyon şablonları tespit edildi.</div>
+      </div>
+      <div class="auto-suggest-actions">
+        <button class="btn btn-outline btn-sm" onclick="dismissSuggestion()">Hayır</button>
+        <button class="btn btn-sm" style="background:var(--accent);color:#fff" onclick="applySuggestions()">Yükle</button>
+      </div>
+    </div>
+
+    <!-- Kural listesi -->
+    <div class="auto-list" id="auto-list">
+      <div class="auto-empty" id="auto-empty">Henüz otomasyon kuralı yok. İlk kuralı eklemek için aşağıdaki butonu kullanın.</div>
+    </div>
+
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+      <button class="btn btn-sm" style="background:var(--accent);color:#fff" onclick="openAutoModal()">+ Yeni Kural</button>
+      <div class="auto-badge" id="auto-active-badge" style="display:none">
+        <span style="width:6px;height:6px;background:#818CF8;border-radius:50%;display:inline-block"></span>
+        <span id="auto-active-count">0</span> aktif kural
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Otomasyon Kural Modal ── -->
+  <div class="auto-modal-overlay" id="auto-modal-overlay" onclick="if(event.target===this)closeAutoModal()">
+    <div class="auto-modal">
+      <button onclick="closeAutoModal()" style="position:absolute;top:14px;right:16px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:6px;width:28px;height:28px;font-size:14px;cursor:pointer;color:#64748B">✕</button>
+      <h3 id="auto-modal-title">Yeni Otomasyon Kuralı</h3>
+
+      <div class="field">
+        <label>Kural Adı</label>
+        <input type="text" id="auto-name" placeholder="ör. Stok Düşük → Sipariş Ver">
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label>Entegrasyon</label>
+          <select id="auto-integration">
+            <option value="make">Make</option>
+            <option value="slack">Slack</option>
+            <option value="webhook">Webhook / Zapier</option>
+            <option value="teams">Microsoft Teams</option>
+            <option value="notion">Notion</option>
+            <option value="airtable">Airtable</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Bekleme Süresi</label>
+          <select id="auto-throttle">
+            <option value="900">15 dakika</option>
+            <option value="3600" selected>1 saat</option>
+            <option value="21600">6 saat</option>
+            <option value="86400">1 gün</option>
+            <option value="0">Süre sınırı yok</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">Koşul</div>
+      <div class="row2">
+        <div class="field">
+          <label>Sütun</label>
+          <input type="text" id="auto-col" placeholder="ör. Stok Miktarı">
+        </div>
+        <div class="field">
+          <label>Operatör</label>
+          <select id="auto-op">
+            <option value="less_than">Küçüktür (&lt;)</option>
+            <option value="greater_than">Büyüktür (&gt;)</option>
+            <option value="equals">Eşittir</option>
+            <option value="not_equals">Eşit değil</option>
+            <option value="contains">İçerir</option>
+            <option value="is_empty">Boş</option>
+            <option value="date_is_today">Tarihi bugün</option>
+            <option value="date_passed">Tarihi geçmiş</option>
+            <option value="changed">Değer değişti</option>
+          </select>
+        </div>
+      </div>
+      <div class="field" id="auto-value-wrap">
+        <label>Eşik Değer</label>
+        <input type="text" id="auto-value" placeholder="ör. 5">
+      </div>
+
+      <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:14px 0 10px">Aksiyon</div>
+      <div class="field">
+        <label>Olay Adı (event)</label>
+        <input type="text" id="auto-event" placeholder="ör. otomatik_siparis">
+      </div>
+      <div class="field">
+        <label>Mesaj Şablonu</label>
+        <input type="text" id="auto-msg" placeholder="ör. Stok kritik: {Ürün Adı} = {Stok Miktarı}">
+      </div>
+      <div class="field">
+        <label>Gönderilecek Sütunlar (virgülle ayır)</label>
+        <input type="text" id="auto-cols" placeholder="ör. Ürün Adı, Stok Miktarı, Tedarikçi">
+      </div>
+
+      <div id="auto-modal-alert" class="alert" style="margin-top:10px"></div>
+
+      <div class="modal-actions">
+        <button class="btn btn-outline" onclick="closeAutoModal()">İptal</button>
+        <button class="btn" style="background:var(--accent);color:#fff" onclick="saveAutoRule()">Kaydet</button>
+      </div>
+      <input type="hidden" id="auto-edit-id">
+    </div>
+  </div>
+
 </main>
 
 <script>
@@ -1430,6 +1631,7 @@ function saveNotion() {
   setStatus('notion', true);
   document.getElementById('btn-notion-disc').style.display = '';
   showAlert('alert-notion', '✓ Notion bağlantısı kaydedildi', 'ok');
+  triggerAutoSuggest('notion');
 }
 
 function disconnectNotion() {
@@ -1527,6 +1729,7 @@ function saveWebhook() {
   setStatus('webhook', true, '✓ Aktif');
   document.getElementById('btn-wh-disc').style.display = '';
   showAlert('alert-webhook', '✓ Webhook etkinleştirildi', 'ok');
+  triggerAutoSuggest('webhook');
 }
 
 function disconnectWebhook() {
@@ -1567,6 +1770,7 @@ function saveSlack() {
   setStatus('slack', true);
   document.getElementById('btn-slack-disc').style.display = '';
   showAlert('alert-slack', '✓ Slack entegrasyonu etkinleştirildi', 'ok');
+  triggerAutoSuggest('slack');
 }
 
 function disconnectSlack() {
@@ -1691,6 +1895,7 @@ function saveAirtable() {
   setStatus('airtable', true);
   document.getElementById('btn-airtable-disc').style.display = '';
   showAlert('alert-airtable', '✓ Airtable bağlantısı kaydedildi', 'ok');
+  triggerAutoSuggest('airtable');
 }
 
 function disconnectAirtable() {
@@ -1770,6 +1975,7 @@ function saveMake() {
   setStatus('make', true, '✓ Aktif');
   document.getElementById('btn-make-disc').style.display = '';
   showAlert('alert-make', '✓ Make webhook etkinleştirildi', 'ok');
+  triggerAutoSuggest('make');
 }
 
 function disconnectMake() {
@@ -1875,6 +2081,7 @@ function saveTeams() {
   setStatus('teams', true);
   document.getElementById('btn-teams-disc').style.display = '';
   showAlert('alert-teams', '✓ Teams entegrasyonu etkinleştirildi', 'ok');
+  triggerAutoSuggest('teams');
 }
 
 function disconnectTeams() {
@@ -2085,8 +2292,8 @@ document.addEventListener('DOMContentLoaded', () => {
   updateHeroStats();
   loadLogs();
   applyPaywalls();
-
   updateGSAuthUI();
+  renderAutomationRules();
 
   window.addEventListener('message', (e) => {
     if (e.data?.type === 'drive_auth') {
@@ -2114,6 +2321,283 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 });
+</script>
+
+<script>
+// ── Otomasyon Kuralları UI ───────────────────────────────────────────────────
+let _cachedRules = [];
+let _pendingSuggestions = [];
+
+const OPERATORS = {
+  less_than: 'küçüktür (<)',
+  greater_than: 'büyüktür (>)',
+  equals: 'eşittir',
+  not_equals: 'eşit değil',
+  contains: 'içerir',
+  is_empty: 'boş',
+  date_is_today: 'tarihi bugün',
+  date_passed: 'tarihi geçmiş',
+  changed: 'değer değişti'
+};
+
+const INT_LABELS = {
+  make: 'Make', slack: 'Slack', webhook: 'Webhook', teams: 'Teams',
+  notion: 'Notion', airtable: 'Airtable'
+};
+
+function timeAgo(iso) {
+  if (!iso) return 'hiç tetiklenmedi';
+  const diff = Date.now() - new Date(iso).getTime();
+  const m = Math.floor(diff / 60000);
+  if (m < 1)  return 'az önce';
+  if (m < 60) return m + ' dakika önce';
+  const h = Math.floor(m / 60);
+  if (h < 24) return h + ' saat önce';
+  return Math.floor(h / 24) + ' gün önce';
+}
+
+async function renderAutomationRules() {
+  const token = getToken();
+  if (!token) return;
+
+  try {
+    const res = await fetch(API + '/api/automations', {
+      headers: { Authorization: 'Bearer ' + token }
+    });
+    if (!res.ok) return;
+    const { rules } = await res.json();
+    _cachedRules = rules || [];
+    renderRuleList(_cachedRules);
+  } catch {}
+}
+
+function renderRuleList(rules) {
+  const list = document.getElementById('auto-list');
+  const empty = document.getElementById('auto-empty');
+  const badge = document.getElementById('auto-active-badge');
+  const count = document.getElementById('auto-active-count');
+
+  if (!rules.length) {
+    empty.style.display = '';
+    list.innerHTML = '';
+    list.appendChild(empty);
+    badge.style.display = 'none';
+    return;
+  }
+
+  const active = rules.filter(r => r.enabled).length;
+  count.textContent = active;
+  badge.style.display = active ? '' : 'none';
+
+  list.innerHTML = rules.map(rule => {
+    const tc = rule.trigger_config || {};
+    const opLabel = OPERATORS[tc.operator] || tc.operator;
+    const intLabel = INT_LABELS[rule.integration] || rule.integration;
+    const lastFiredText = timeAgo(rule.last_fired);
+    const disabled = !rule.enabled ? ' disabled' : '';
+
+    return `<div class="auto-rule-card${rule.enabled ? '' : ' disabled'}">
+      <label class="auto-toggle">
+        <input type="checkbox" ${rule.enabled ? 'checked' : ''} onchange="toggleRule('${rule.id}', this.checked)">
+        <span class="auto-toggle-slider"></span>
+      </label>
+      <div class="auto-rule-info">
+        <div class="auto-rule-name">${escHtml(rule.name)}</div>
+        <div class="auto-rule-meta">
+          <span class="auto-rule-tag">${escHtml(intLabel)}</span>
+          <span>${escHtml(tc.column || '')} ${escHtml(opLabel)} ${tc.value !== undefined && tc.value !== '' ? escHtml(String(tc.value)) : ''}</span>
+          <span style="color:rgba(255,255,255,0.2)">·</span>
+          <span>Son: ${lastFiredText}</span>
+        </div>
+      </div>
+      <div class="auto-rule-actions">
+        <button onclick="editRule('${rule.id}')">Düzenle</button>
+        <button class="btn-danger" onclick="removeRule('${rule.id}')">Sil</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function escHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+async function toggleRule(id, enabled) {
+  const token = getToken();
+  if (!token) return;
+  try {
+    await fetch(API + '/api/automations/' + id, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+      body: JSON.stringify({ enabled })
+    });
+    const idx = _cachedRules.findIndex(r => r.id === id);
+    if (idx >= 0) { _cachedRules[idx].enabled = enabled; renderRuleList(_cachedRules); }
+  } catch {}
+}
+
+async function removeRule(id) {
+  if (!confirm('Bu kuralı silmek istediğinizden emin misiniz?')) return;
+  const token = getToken();
+  if (!token) return;
+  try {
+    await fetch(API + '/api/automations/' + id, {
+      method: 'DELETE',
+      headers: { Authorization: 'Bearer ' + token }
+    });
+    _cachedRules = _cachedRules.filter(r => r.id !== id);
+    renderRuleList(_cachedRules);
+  } catch {}
+}
+
+function openAutoModal(prefill) {
+  const overlay = document.getElementById('auto-modal-overlay');
+  overlay.classList.add('open');
+  document.getElementById('auto-modal-title').textContent = 'Yeni Otomasyon Kuralı';
+  document.getElementById('auto-edit-id').value = '';
+  document.getElementById('auto-name').value = prefill?.name || '';
+  document.getElementById('auto-integration').value = prefill?.integration || 'make';
+  document.getElementById('auto-col').value = prefill?.trigger_config?.column || '';
+  document.getElementById('auto-op').value = prefill?.trigger_config?.operator || 'less_than';
+  document.getElementById('auto-value').value = prefill?.trigger_config?.value ?? '';
+  document.getElementById('auto-event').value = prefill?.action_config?.event || '';
+  document.getElementById('auto-msg').value = prefill?.action_config?.message || '';
+  document.getElementById('auto-cols').value = (prefill?.action_config?.include_columns || []).join(', ');
+  document.getElementById('auto-throttle').value = String(prefill?.throttle_seconds ?? 3600);
+  document.getElementById('auto-modal-alert').className = 'alert';
+  document.getElementById('auto-modal-alert').textContent = '';
+}
+
+function editRule(id) {
+  const rule = _cachedRules.find(r => r.id === id);
+  if (!rule) return;
+  openAutoModal(rule);
+  document.getElementById('auto-modal-title').textContent = 'Kuralı Düzenle';
+  document.getElementById('auto-edit-id').value = id;
+}
+
+function closeAutoModal() {
+  document.getElementById('auto-modal-overlay').classList.remove('open');
+}
+
+async function saveAutoRule() {
+  const token = getToken();
+  if (!token) return;
+
+  const name = document.getElementById('auto-name').value.trim();
+  const integration = document.getElementById('auto-integration').value;
+  const col = document.getElementById('auto-col').value.trim();
+  const op = document.getElementById('auto-op').value;
+  const val = document.getElementById('auto-value').value.trim();
+  const event = document.getElementById('auto-event').value.trim() || 'auto_trigger';
+  const msg = document.getElementById('auto-msg').value.trim();
+  const colsRaw = document.getElementById('auto-cols').value.trim();
+  const throttle = parseInt(document.getElementById('auto-throttle').value);
+  const editId = document.getElementById('auto-edit-id').value;
+
+  const alertEl = document.getElementById('auto-modal-alert');
+  if (!name || !col) {
+    alertEl.className = 'alert err show';
+    alertEl.textContent = '✗ Kural adı ve sütun adı zorunludur';
+    return;
+  }
+
+  const rule = {
+    name, integration,
+    trigger_config: { type: 'cell_condition', column: col, operator: op, value: val },
+    action_config: {
+      event, message: msg,
+      include_columns: colsRaw ? colsRaw.split(',').map(s => s.trim()).filter(Boolean) : []
+    },
+    throttle_seconds: throttle
+  };
+
+  try {
+    let res, data;
+    if (editId) {
+      res = await fetch(API + '/api/automations/' + editId, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+        body: JSON.stringify(rule)
+      });
+    } else {
+      res = await fetch(API + '/api/automations', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+        body: JSON.stringify(rule)
+      });
+    }
+    data = await res.json();
+    if (!res.ok) { alertEl.className = 'alert err show'; alertEl.textContent = '✗ ' + (data.error || 'Hata'); return; }
+
+    closeAutoModal();
+    await renderAutomationRules();
+  } catch (e) {
+    alertEl.className = 'alert err show';
+    alertEl.textContent = '✗ ' + e.message;
+  }
+}
+
+// ── AI Öneri ──────────────────────────────────────────────────────────────────
+async function triggerAutoSuggest(integration) {
+  const token = getToken();
+  if (!token) return;
+
+  // Tablo başlıklarını app.html localStorage'dan al
+  const sheetRaw = localStorage.getItem('sheet_headers') || localStorage.getItem('mocksheets_headers');
+  let headers = [];
+  try { headers = JSON.parse(sheetRaw) || []; } catch {}
+  if (!headers.length) return;
+
+  try {
+    const res = await fetch(API + '/api/automations/suggest', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+      body: JSON.stringify({ headers, integration })
+    });
+    if (!res.ok) return;
+    const data = await res.json();
+    if (!data.suggestions?.length) return;
+
+    _pendingSuggestions = data.suggestions.map(s => ({ ...s, integration }));
+
+    const banner = document.getElementById('auto-suggest-banner');
+    document.getElementById('auto-suggest-title').textContent =
+      (data.business_label || 'İş türü') + ' tespit edildi — ' + data.suggestions.length + ' hazır kural önerisi var';
+    document.getElementById('auto-suggest-desc').textContent =
+      data.suggestions.map(s => s.name).join(' · ');
+    banner.classList.remove('hidden');
+  } catch {}
+}
+
+async function applySuggestions() {
+  const token = getToken();
+  if (!token || !_pendingSuggestions.length) return;
+
+  for (const s of _pendingSuggestions) {
+    try {
+      await fetch(API + '/api/automations', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+        body: JSON.stringify({
+          name: s.name,
+          integration: s.integration,
+          trigger_config: s.trigger_config,
+          action_config: s.action_config,
+          throttle_seconds: s.throttle_seconds || 3600
+        })
+      });
+    } catch {}
+  }
+
+  dismissSuggestion();
+  await renderAutomationRules();
+}
+
+function dismissSuggestion() {
+  _pendingSuggestions = [];
+  document.getElementById('auto-suggest-banner').classList.add('hidden');
+}
 </script>
 
 <!-- Beni Haberdar Et Modal -->

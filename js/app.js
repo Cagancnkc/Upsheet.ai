@@ -912,6 +912,14 @@ function handleFile(e) {
       if (typeof uploadFileToSupabase === 'function') {
         uploadFileToSupabase(file, sheets);
       }
+
+      // Tablo başlıklarını kaydet (otomasyon AI önerisi için) ve kuralları değerlendir
+      try {
+        const _headers = (sheets[activeSheet] && sheets[activeSheet][0]) || [];
+        localStorage.setItem('mocksheets_headers', JSON.stringify(_headers.filter(Boolean)));
+        if (window.Automations) window.Automations.evaluate(sheets[activeSheet]);
+      } catch {}
+
     } catch(err) {
       toast('Could not read file: ' + err.message, 'err');
     }
@@ -1463,6 +1471,7 @@ async function sendChat() {
       }
       reply = typeof aiResult === 'string' ? aiResult : (aiResult.reply || 'Done');
       applyAIChanges(aiResult);
+      if (window.Automations) window.Automations.evaluate(sheets[activeSheet]);
     } else {
       await new Promise(r => setTimeout(r, 900));
       reply = generateLocalReply(msg);
@@ -2995,6 +3004,7 @@ document.addEventListener('DOMContentLoaded', () => {
     _cellEditTimer = setTimeout(() => {
       const ref = colLetter(selCol) + (selRow + 1);
       addHistory('manual', ref + ' edited');
+      if (window.Automations) window.Automations.evaluate(sheets[activeSheet]);
     }, 2000);
   });
 
