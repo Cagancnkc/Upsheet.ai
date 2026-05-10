@@ -1,5 +1,5 @@
 // ============================================================
-// MOCKSHEETS DATASET v4.0
+// MOCKSHEETS DATASET v5.0
 // 600+ Ã¶rnek, 25 kategori, 40+ action tipi
 // TÃ¼m Excel formÃ¼lleri, muhasebe, bordro, veri analizi
 // ============================================================
@@ -707,6 +707,174 @@ const EXCEL_DATASET = [
   { user_command: "satırlardaki verileri zenginleştir", logic: "enrich row data with AI batch processing", category: "ai", output: { action: "batch_ai", instruction: "Bu veriyi ek bilgilerle zenginleştir", reply: "📊 Veri zenginleştirme tamamlandı", changes: [] } },
   { user_command: "her ürün için SEO açıklaması yaz", logic: "write SEO product description for each item batch", category: "ai", output: { action: "batch_ai", instruction: "Bu ürün için SEO uyumlu açıklama yaz", reply: "📊 SEO açıklamaları oluşturuldu", changes: [] } },
   { user_command: "müşteri notlarını analiz et ve özetle", logic: "analyze and summarize customer notes batch AI", category: "ai", output: { action: "batch_ai", instruction: "Bu müşteri notunu analiz et ve özetle", reply: "📊 Müşteri notları analiz edildi", changes: [] } },
+
+
+  // ──────────────────────────────────────────────────────────
+  // VALIDATE (+10 yeni örnek — toplam 15)
+  // ──────────────────────────────────────────────────────────
+  { user_command: "e-posta adreslerinin formatını doğrula", logic: "validate email address format in column", category: "cleaning", output: { action: "validate", type: "email", reply: "✓ E-posta formatları doğrulandı", changes: [] } },
+  { user_command: "telefon numaralarını kontrol et", logic: "validate phone number format digits", category: "cleaning", output: { action: "validate", type: "phone", reply: "✓ Telefon numaraları kontrol edildi", changes: [] } },
+  { user_command: "tarih formatı geçerli mi kontrol et", logic: "validate date format correctness", category: "cleaning", output: { action: "validate", type: "date", reply: "✓ Tarih formatları doğrulandı", changes: [] } },
+  { user_command: "TC kimlik numaralarını doğrula", logic: "validate Turkish national ID number format", category: "cleaning", output: { action: "validate", type: "tc_kimlik", reply: "✓ TC kimlik numaraları doğrulandı", changes: [] } },
+  { user_command: "IBAN numaralarının doğruluğunu kontrol et", logic: "validate IBAN bank account number format", category: "cleaning", output: { action: "validate", type: "IBAN", reply: "✓ IBAN numaraları doğrulandı", changes: [] } },
+  { user_command: "negatif değer var mı kontrol et", logic: "validate no negative values exist in column", category: "cleaning", output: { action: "validate", type: "positive_only", reply: "✓ Negatif değer kontrolü yapıldı", changes: [] } },
+  { user_command: "boş hücre var mı bak", logic: "validate check for empty blank cells", category: "cleaning", output: { action: "validate", type: "not_empty", reply: "✓ Boş hücre kontrolü yapıldı", changes: [] } },
+  { user_command: "vergi numarası formatını doğrula", logic: "validate tax number VKN format Turkey", category: "cleaning", output: { action: "validate", type: "vergi_no", reply: "✓ Vergi numaraları doğrulandı", changes: [] } },
+  { user_command: "sayısal sütunda metin var mı kontrol et", logic: "validate numeric column has no text strings", category: "cleaning", output: { action: "validate", type: "numeric", reply: "✓ Sayısal doğrulama tamamlandı", changes: [] } },
+  { user_command: "değerler belirli aralıkta mı kontrol et", logic: "validate values within acceptable range bounds", category: "cleaning", output: { action: "validate", type: "range", reply: "✓ Değer aralığı doğrulandı", changes: [] } },
+
+  // ──────────────────────────────────────────────────────────
+  // SEARCH (+10 yeni örnek — toplam 15)
+  // ──────────────────────────────────────────────────────────
+  { user_command: "ahmet'i ara", logic: "search for name Ahmet in all cells", category: "search", output: { action: "search", query: "ahmet", reply: "✓ 'Ahmet' arandı", changes: [] } },
+  { user_command: "istanbul'u bul", logic: "search find istanbul city text", category: "search", output: { action: "search", query: "istanbul", reply: "✓ 'İstanbul' arandı", changes: [] } },
+  { user_command: "fatura numarasını ara", logic: "search for invoice number text", category: "search", output: { action: "search", column: "fatura", reply: "✓ Fatura numarası arandı", changes: [] } },
+  { user_command: "iptal olan siparişleri ara", logic: "search for cancelled orders status text", category: "search", output: { action: "search", query: "iptal", reply: "✓ İptal siparişler arandı", changes: [] } },
+  { user_command: "e-postada gmail olanları bul", logic: "search gmail in email column contains", category: "search", output: { action: "search", query: "gmail", column: "email", reply: "✓ Gmail adresleri bulundu", changes: [] } },
+  { user_command: "ürün kodunda ABC içerenleri bul", logic: "search contains ABC in product code column", category: "search", output: { action: "search", query: "ABC", column: "ürün_kodu", reply: "✓ ABC içeren kayıtlar bulundu", changes: [] } },
+  { user_command: "notlarda önemli geçenleri ara", logic: "search important keyword in notes column", category: "search", output: { action: "search", query: "önemli", column: "not", reply: "✓ 'Önemli' içeren notlar arandı", changes: [] } },
+  { user_command: "müşteri adında şirketi ara", logic: "search company keyword in customer name field", category: "search", output: { action: "search", query: "şirket", column: "müşteri", reply: "✓ Şirket içeren müşteriler arandı", changes: [] } },
+  { user_command: "2024 yılına ait kayıtları bul", logic: "search find year 2024 in date column", category: "search", output: { action: "search", query: "2024", column: "tarih", reply: "✓ 2024 kayıtları bulundu", changes: [] } },
+  { user_command: "eksik veri içeren satırları bul", logic: "search find rows with missing incomplete data", category: "search", output: { action: "search", type: "empty", reply: "✓ Eksik veri satırları bulundu", changes: [] } },
+
+  // ──────────────────────────────────────────────────────────
+  // REMOVE_FILTER (+6 yeni örnek — toplam 10)
+  // ──────────────────────────────────────────────────────────
+  { user_command: "filtreyi kaldır", logic: "remove clear active filter", category: "filtering", output: { action: "remove_filter", reply: "✓ Filtre kaldırıldı", changes: [] } },
+  { user_command: "filtrelemeyi iptal et", logic: "cancel disable current filter", category: "filtering", output: { action: "remove_filter", reply: "✓ Filtreleme iptal edildi", changes: [] } },
+  { user_command: "tüm verileri göster", logic: "show all data remove filter", category: "filtering", output: { action: "remove_filter", reply: "✓ Tüm veriler gösterildi", changes: [] } },
+  { user_command: "filtreyi temizle", logic: "clear remove applied filter", category: "filtering", output: { action: "remove_filter", reply: "✓ Filtre temizlendi", changes: [] } },
+  { user_command: "hepsini göster filtreyi kaldır", logic: "show all records clear filter reset", category: "filtering", output: { action: "remove_filter", reply: "✓ Tüm kayıtlar gösterildi", changes: [] } },
+  { user_command: "normal görünüme dön", logic: "return normal view remove filter", category: "filtering", output: { action: "remove_filter", reply: "✓ Normal görünüme dönüldü", changes: [] } },
+
+  // ──────────────────────────────────────────────────────────
+  // COUNT (+6 yeni örnek — toplam 10)
+  // ──────────────────────────────────────────────────────────
+  { user_command: "kaç kayıt var", logic: "count total number of records rows", category: "calculation", output: { action: "count", reply: "✓ Toplam kayıt sayısı hesaplandı", changes: [] } },
+  { user_command: "satır sayısını say", logic: "count total rows in spreadsheet", category: "calculation", output: { action: "count", reply: "✓ Satır sayısı hesaplandı", changes: [] } },
+  { user_command: "müşteri sayısı kaç", logic: "count number of customers total", category: "calculation", output: { action: "count", column: "müşteri", reply: "✓ Müşteri sayısı hesaplandı", changes: [] } },
+  { user_command: "ürün adedi kaç", logic: "count number of products quantity", category: "calculation", output: { action: "count", column: "ürün", reply: "✓ Ürün adedi sayıldı", changes: [] } },
+  { user_command: "toplam fatura sayısı", logic: "count total number of invoices", category: "calculation", output: { action: "count", column: "fatura", reply: "✓ Fatura sayısı hesaplandı", changes: [] } },
+  { user_command: "kaç farklı şehir var", logic: "count number of entries by city", category: "calculation", output: { action: "count", column: "şehir", reply: "✓ Şehir sayısı hesaplandı", changes: [] } },
+
+  // ──────────────────────────────────────────────────────────
+  // TOP_N (+7 yeni örnek — toplam 10)
+  // ──────────────────────────────────────────────────────────
+  { user_command: "en yüksek satışlı 10 ürünü göster", logic: "show top 10 products by sales descending", category: "analysis", output: { action: "top_n", column: "satış", n: 10, direction: "desc", reply: "✓ En yüksek 10 satış gösterildi", changes: [] } },
+  { user_command: "en pahalı 5 ürünü listele", logic: "list top 5 most expensive products by price", category: "analysis", output: { action: "top_n", column: "fiyat", n: 5, direction: "desc", reply: "✓ En pahalı 5 ürün listelendi", changes: [] } },
+  { user_command: "en yüksek maaşlı 3 çalışanı göster", logic: "show top 3 employees highest salary", category: "analysis", output: { action: "top_n", column: "maaş", n: 3, direction: "desc", reply: "✓ En yüksek maaşlı 3 çalışan gösterildi", changes: [] } },
+  { user_command: "en büyük 10 siparişi göster", logic: "show top 10 largest orders by amount", category: "analysis", output: { action: "top_n", column: "tutar", n: 10, direction: "desc", reply: "✓ En büyük 10 sipariş gösterildi", changes: [] } },
+  { user_command: "en fazla alışveriş yapan 5 müşteriyi listele", logic: "list top 5 customers most purchases", category: "analysis", output: { action: "top_n", column: "alışveriş", n: 5, direction: "desc", reply: "✓ En fazla alışveriş yapan 5 müşteri listelendi", changes: [] } },
+  { user_command: "en düşük performanslı 5 ürünü göster", logic: "show bottom 5 worst performing products", category: "analysis", output: { action: "top_n", column: "satış", n: 5, direction: "asc", reply: "✓ En düşük performanslı 5 ürün gösterildi", changes: [] } },
+  { user_command: "kâr oranı en yüksek 10 kaydı getir", logic: "get top 10 records highest profit margin", category: "analysis", output: { action: "top_n", column: "kar", n: 10, direction: "desc", reply: "✓ Kâr oranı en yüksek 10 kayıt getirildi", changes: [] } },
+
+  // ──────────────────────────────────────────────────────────
+  // EXPLAIN (+7 yeni örnek — toplam 10)
+  // ──────────────────────────────────────────────────────────
+  { user_command: "bu veriyi açıkla", logic: "explain summarize the current data insight", category: "help", output: { action: "explain", reply: "📊 Veri analizi ve açıklama yapıldı", changes: [] } },
+  { user_command: "satış trendini açıkla", logic: "explain sales trend pattern insight", category: "help", output: { action: "explain", column: "satış", reply: "📊 Satış trendi açıklandı", changes: [] } },
+  { user_command: "bu tabloyu özetle", logic: "summarize explain table data overview", category: "help", output: { action: "explain", reply: "📊 Tablo özeti oluşturuldu", changes: [] } },
+  { user_command: "anomalileri açıkla", logic: "explain detected anomalies outliers meaning", category: "help", output: { action: "explain", reply: "📊 Anomaliler açıklandı", changes: [] } },
+  { user_command: "neden bu sonuç çıktı", logic: "explain why this result outcome reason", category: "help", output: { action: "explain", reply: "📊 Sonucun nedeni açıklandı", changes: [] } },
+  { user_command: "gelir düşüşünü açıkla", logic: "explain revenue decline drop reason insight", category: "help", output: { action: "explain", column: "gelir", reply: "📊 Gelir düşüşü açıklandı", changes: [] } },
+  { user_command: "bu verileri yorumla", logic: "interpret analyze and explain data meaning", category: "help", output: { action: "explain", reply: "📊 Veriler yorumlandı", changes: [] } },
+
+  // ──────────────────────────────────────────────────────────
+  // COUNT_UNIQUE (+8 yeni örnek — toplam 10)
+  // ──────────────────────────────────────────────────────────
+  { user_command: "kaç farklı müşteri var", logic: "count unique distinct customers", category: "calculation", output: { action: "count_unique", column: "müşteri", reply: "✓ Benzersiz müşteri sayısı hesaplandı", changes: [] } },
+  { user_command: "benzersiz ürün sayısı kaç", logic: "count unique distinct product names", category: "calculation", output: { action: "count_unique", column: "ürün", reply: "✓ Benzersiz ürün sayısı hesaplandı", changes: [] } },
+  { user_command: "kaç farklı kategori var", logic: "count unique distinct categories", category: "calculation", output: { action: "count_unique", column: "kategori", reply: "✓ Benzersiz kategori sayısı hesaplandı", changes: [] } },
+  { user_command: "farklı şehir sayısını göster", logic: "show count unique distinct cities", category: "calculation", output: { action: "count_unique", column: "şehir", reply: "✓ Benzersiz şehir sayısı gösterildi", changes: [] } },
+  { user_command: "kaç farklı tedarikçi var", logic: "count unique distinct suppliers vendors", category: "calculation", output: { action: "count_unique", column: "tedarikçi", reply: "✓ Benzersiz tedarikçi sayısı hesaplandı", changes: [] } },
+  { user_command: "benzersiz sipariş durumu kaç tür", logic: "count unique distinct order status types", category: "calculation", output: { action: "count_unique", column: "durum", reply: "✓ Benzersiz sipariş durumu sayıldı", changes: [] } },
+  { user_command: "kaç farklı departman var", logic: "count unique distinct departments HR", category: "calculation", output: { action: "count_unique", column: "departman", reply: "✓ Benzersiz departman sayısı hesaplandı", changes: [] } },
+  { user_command: "farklı para birimi kaç tane", logic: "count unique distinct currency types", category: "calculation", output: { action: "count_unique", column: "para_birimi", reply: "✓ Benzersiz para birimi sayıldı", changes: [] } },
+
+  // ──────────────────────────────────────────────────────────
+  // DELETE_COLUMN (+6 yeni örnek — toplam 8)
+  // ──────────────────────────────────────────────────────────
+  { user_command: "notlar sütununu sil", logic: "delete remove notes column", category: "structure", output: { action: "delete_column", column: "notlar", reply: "✓ Notlar sütunu silindi", changes: [] } },
+  { user_command: "açıklama kolonunu kaldır", logic: "remove delete description column", category: "structure", output: { action: "delete_column", column: "açıklama", reply: "✓ Açıklama kolonu kaldırıldı", changes: [] } },
+  { user_command: "bu sütunu sil", logic: "delete selected current column", category: "structure", output: { action: "delete_column", reply: "✓ Sütun silindi", changes: [] } },
+  { user_command: "gereksiz sütunları kaldır", logic: "remove delete unnecessary extra columns", category: "structure", output: { action: "delete_column", reply: "✓ Gereksiz sütunlar kaldırıldı", changes: [] } },
+  { user_command: "eski fiyat sütununu sil", logic: "delete old price column remove", category: "structure", output: { action: "delete_column", column: "eski_fiyat", reply: "✓ Eski fiyat sütunu silindi", changes: [] } },
+  { user_command: "e sütununu kaldır", logic: "delete remove column E", category: "structure", output: { action: "delete_column", column: "E", reply: "✓ E sütunu kaldırıldı", changes: [] } },
+
+  // ──────────────────────────────────────────────────────────
+  // CLEAR_COLORS (+6 yeni örnek — toplam 8)
+  // ──────────────────────────────────────────────────────────
+  { user_command: "renkleri temizle", logic: "clear remove all cell colors highlights", category: "highlighting", output: { action: "clear_colors", reply: "✓ Renkler temizlendi", changes: [] } },
+  { user_command: "tüm vurgulamaları kaldır", logic: "remove clear all highlights colors formatting", category: "highlighting", output: { action: "clear_colors", reply: "✓ Tüm vurgulamalar kaldırıldı", changes: [] } },
+  { user_command: "renklendirmeyi iptal et", logic: "cancel undo color formatting highlights", category: "highlighting", output: { action: "clear_colors", reply: "✓ Renklendirme iptal edildi", changes: [] } },
+  { user_command: "arka plan renklerini sil", logic: "delete remove background fill colors cells", category: "highlighting", output: { action: "clear_colors", reply: "✓ Arka plan renkleri silindi", changes: [] } },
+  { user_command: "boyayı kaldır", logic: "remove paint color fill all cells", category: "highlighting", output: { action: "clear_colors", reply: "✓ Boya kaldırıldı", changes: [] } },
+  { user_command: "sütun renklerini temizle", logic: "clear column colors remove highlights", category: "highlighting", output: { action: "clear_colors", reply: "✓ Sütun renkleri temizlendi", changes: [] } },
+
+  // ──────────────────────────────────────────────────────────
+  // UNDO (+4 yeni örnek — toplam 5)
+  // ──────────────────────────────────────────────────────────
+  { user_command: "geri al", logic: "undo last action revert", category: "structure", output: { action: "undo", reply: "✓ Son işlem geri alındı", changes: [] } },
+  { user_command: "bir önceki adıma dön", logic: "go back previous step undo", category: "structure", output: { action: "undo", reply: "✓ Önceki adıma dönüldü", changes: [] } },
+  { user_command: "yaptığımı geri al", logic: "undo what I just did revert", category: "structure", output: { action: "undo", reply: "✓ İşlem geri alındı", changes: [] } },
+  { user_command: "ctrl z", logic: "undo keyboard shortcut last action", category: "structure", output: { action: "undo", reply: "✓ Geri alındı", changes: [] } },
+
+  // ──────────────────────────────────────────────────────────
+  // RENAME_COLUMNS (+5 yeni örnek — toplam 6)
+  // ──────────────────────────────────────────────────────────
+  { user_command: "sütun adlarını değiştir", logic: "rename column headers names", category: "structure", output: { action: "rename_columns", mapping: {}, reply: "✓ Sütun adları değiştirildi", changes: [] } },
+  { user_command: "başlıkları yeniden adlandır", logic: "rename column headers titles", category: "structure", output: { action: "rename_columns", mapping: {}, reply: "✓ Başlıklar yeniden adlandırıldı", changes: [] } },
+  { user_command: "a sütununu isim olarak adlandır", logic: "rename column A to isim name", category: "structure", output: { action: "rename_columns", mapping: { A: "isim" }, reply: "✓ Sütun adlandırıldı", changes: [] } },
+  { user_command: "sütun başlıklarını türkçeleştir", logic: "rename column headers to Turkish names", category: "structure", output: { action: "rename_columns", mapping: {}, reply: "✓ Sütun başlıkları Türkçeleştirildi", changes: [] } },
+  { user_command: "fiyat sütununun adını tutar olarak değiştir", logic: "rename column fiyat price to tutar amount", category: "structure", output: { action: "rename_columns", mapping: { fiyat: "tutar" }, reply: "✓ Sütun adı değiştirildi", changes: [] } },
+
+  // ──────────────────────────────────────────────────────────
+  // FIND_REPLACE (+5 yeni örnek — toplam 6)
+  // ──────────────────────────────────────────────────────────
+  { user_command: "tüm evet değerlerini yes ile değiştir", logic: "find replace evet with yes all cells", category: "cleaning", output: { action: "find_replace", find: "evet", replace: "yes", reply: "✓ Evet → Yes değiştirildi", changes: [] } },
+  { user_command: "istanbul yazısını İstanbul olarak düzelt", logic: "find replace istanbul with correct Istanbul capitalization", category: "cleaning", output: { action: "find_replace", find: "istanbul", replace: "İstanbul", reply: "✓ istanbul → İstanbul düzeltildi", changes: [] } },
+  { user_command: "türk lirasını tl ile değiştir", logic: "find replace Turkish lira text with TL abbreviation", category: "cleaning", output: { action: "find_replace", find: "türk lirası", replace: "TL", reply: "✓ Türk Lirası → TL değiştirildi", changes: [] } },
+  { user_command: "null değerleri boş bırak", logic: "find replace null text with empty blank", category: "cleaning", output: { action: "find_replace", find: "null", replace: "", reply: "✓ Null değerler temizlendi", changes: [] } },
+  { user_command: "iptal olanları reddedildi olarak güncelle", logic: "find replace iptal cancelled with reddedildi rejected", category: "cleaning", output: { action: "find_replace", find: "iptal", replace: "reddedildi", reply: "✓ İptal → Reddedildi güncellendi", changes: [] } },
+
+  // ──────────────────────────────────────────────────────────
+  // DELETE_EMPTY_COLUMNS (+4 yeni örnek — toplam 5)
+  // ──────────────────────────────────────────────────────────
+  { user_command: "boş sütunları sil", logic: "delete remove empty blank columns", category: "cleaning", output: { action: "delete_empty_columns", reply: "✓ Boş sütunlar silindi", changes: [] } },
+  { user_command: "içi boş kolonları kaldır", logic: "remove empty columns no data", category: "cleaning", output: { action: "delete_empty_columns", reply: "✓ Boş kolonlar kaldırıldı", changes: [] } },
+  { user_command: "gereksiz boş sütunları temizle", logic: "clean up unnecessary empty columns", category: "cleaning", output: { action: "delete_empty_columns", reply: "✓ Gereksiz boş sütunlar temizlendi", changes: [] } },
+  { user_command: "veri olmayan sütunları kaldır", logic: "remove columns with no data empty", category: "cleaning", output: { action: "delete_empty_columns", reply: "✓ Veri olmayan sütunlar kaldırıldı", changes: [] } },
+
+  // ──────────────────────────────────────────────────────────
+  // COUNT_BLANK (+4 yeni örnek — toplam 5)
+  // ──────────────────────────────────────────────────────────
+  { user_command: "boş hücre sayısını göster", logic: "count number of blank empty cells", category: "calculation", output: { action: "count_blank", reply: "✓ Boş hücre sayısı gösterildi", changes: [] } },
+  { user_command: "kaç hücre boş", logic: "how many cells are empty blank", category: "calculation", output: { action: "count_blank", reply: "✓ Boş hücre sayısı hesaplandı", changes: [] } },
+  { user_command: "eksik veri sayısı kaç", logic: "count missing data blank cells number", category: "calculation", output: { action: "count_blank", reply: "✓ Eksik veri sayısı hesaplandı", changes: [] } },
+  { user_command: "doldurulmamış alan sayısını göster", logic: "show count unfilled empty fields", category: "calculation", output: { action: "count_blank", reply: "✓ Doldurulmamış alan sayısı gösterildi", changes: [] } },
+
+  // ──────────────────────────────────────────────────────────
+  // CLEAR_ALL (+3 yeni örnek — toplam 4)
+  // ──────────────────────────────────────────────────────────
+  { user_command: "her şeyi temizle", logic: "clear all data formatting filters reset everything", category: "cleaning", output: { action: "clear_all", reply: "✓ Her şey temizlendi", changes: [] } },
+  { user_command: "tabloyu sıfırla", logic: "reset table clear all content formatting", category: "cleaning", output: { action: "clear_all", reply: "✓ Tablo sıfırlandı", changes: [] } },
+  { user_command: "tüm içeriği sil ve baştan başla", logic: "delete all content start fresh clear everything", category: "cleaning", output: { action: "clear_all", reply: "✓ Tüm içerik silindi", changes: [] } },
+
+  // ──────────────────────────────────────────────────────────
+  // ADD_ROW (+4 yeni örnek — toplam 5)
+  // ──────────────────────────────────────────────────────────
+  { user_command: "yeni satır ekle", logic: "add new empty row to spreadsheet", category: "structure", output: { action: "add_row", reply: "✓ Yeni satır eklendi", changes: [] } },
+  { user_command: "alta yeni kayıt ekle", logic: "add new record row at bottom", category: "structure", output: { action: "add_row", position: "bottom", reply: "✓ Alta yeni kayıt eklendi", changes: [] } },
+  { user_command: "en üste boş satır ekle", logic: "add empty row at top first position", category: "structure", output: { action: "add_row", position: "top", reply: "✓ En üste boş satır eklendi", changes: [] } },
+  { user_command: "satır araya ekle", logic: "insert row between existing rows", category: "structure", output: { action: "add_row", position: "insert", reply: "✓ Satır araya eklendi", changes: [] } },
+
+  // ──────────────────────────────────────────────────────────
+  // ADD_COLUMN (+4 yeni örnek — toplam 5)
+  // ──────────────────────────────────────────────────────────
+  { user_command: "yeni sütun ekle", logic: "add new empty column to spreadsheet", category: "structure", output: { action: "add_column", reply: "✓ Yeni sütun eklendi", changes: [] } },
+  { user_command: "sağa yeni kolon ekle", logic: "add new column to the right side", category: "structure", output: { action: "add_column", position: "right", reply: "✓ Sağa yeni kolon eklendi", changes: [] } },
+  { user_command: "kâr marjı sütunu ekle", logic: "add new profit margin column to sheet", category: "structure", output: { action: "add_column", name: "kâr_marjı", reply: "✓ Kâr marjı sütunu eklendi", changes: [] } },
+  { user_command: "toplam sütunu oluştur", logic: "create new total sum column", category: "structure", output: { action: "add_column", name: "toplam", reply: "✓ Toplam sütunu oluşturuldu", changes: [] } },
 
 ];
 
