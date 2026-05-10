@@ -1,6 +1,6 @@
 // ============================================================
-// MOCKSHEETS DATASET v6.0
-// 600+ Ã¶rnek, 25 kategori, 40+ action tipi
+// MOCKSHEETS DATASET v7.0
+// 702 örnek, 25 kategori, 41+ action tipi
 // TÃ¼m Excel formÃ¼lleri, muhasebe, bordro, veri analizi
 // ============================================================
 
@@ -941,6 +941,13 @@ const EXCEL_DATASET = [
 { user_command: "id sütununu kaldır", logic: "delete the ID column", category: "structure", output: { action: "delete_column", column: "id", reply: "✓ ID sütunu kaldırıldı", changes: [] } },
 { user_command: "son sütunu sil", logic: "delete the last column", category: "structure", output: { action: "delete_column", column: "last", reply: "✓ Son sütun silindi", changes: [] } },
 { user_command: "puan kolonunu kaldır", logic: "remove the score column", category: "structure", output: { action: "delete_column", column: "puan", reply: "✓ Puan kolonu kaldırıldı", changes: [] } }
+,
+{ user_command: "toplam kaç veri var", logic: "count total number of records in dataset", category: "calculation", output: { action: "count", reply: "✓ Toplam veri sayısı hesaplandı", changes: [] } },
+  { user_command: "kaç tane müşteri kaydı var", logic: "count number of customer records", category: "calculation", output: { action: "count", reply: "✓ Müşteri kayıt sayısı hesaplandı", changes: [] } },
+  { user_command: "veri sayısını göster", logic: "show count of data entries", category: "calculation", output: { action: "count", reply: "✓ Veri sayısı gösterildi", changes: [] } },
+  { user_command: "filtreyi temizle", logic: "clear remove active filter", category: "filtering", output: { action: "remove_filter", reply: "✓ Filtre temizlendi", changes: [] } },
+  { user_command: "filtrelemeyi iptal et", logic: "cancel undo filter", category: "filtering", output: { action: "remove_filter", reply: "✓ Filtreleme iptal edildi", changes: [] } },
+  { user_command: "bütün satırları göster", logic: "show all rows remove filter", category: "filtering", output: { action: "remove_filter", reply: "✓ Tüm satırlar gösterildi", changes: [] } }
 
 ];
 
@@ -986,4 +993,4 @@ const INTENT_MAP = {
 };
 
 module.exports = { EXCEL_DATASET, COLOR_MAP, INTENT_MAP };
-// Toplam: 600+ Ã¶rnek, 25 kategori, 40+ action tipi
+// Toplam: 702 örnek, 25 kategori, 41+ action tipi
