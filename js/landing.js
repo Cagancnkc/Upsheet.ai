@@ -29,7 +29,7 @@ function animateWords(words) {
 }
 
 
-const BIZ_BASE = { monthly: 149, yearly: 6990 };
+const BIZ_BASE = { monthly: 49, yearly: 470 };
 let currentPeriod = 'monthly';
 
 function setPeriod(period) {
@@ -49,19 +49,19 @@ function setPeriod(period) {
   var freeGiftBiz = document.getElementById('yearly-gift-biz');
 
   if (proNumEl) {
-    if (period === 'yearly') proNumEl.textContent = '2.990';
-    else                     proNumEl.textContent = '69';
+    if (period === 'yearly') proNumEl.textContent = '278';
+    else                     proNumEl.textContent = '29';
   }
   if (proPeriodEl) proPeriodEl.textContent = p.pro.period;
 
   if (proNoteEl) {
-    proNoteEl.textContent = period === 'yearly' ? '≈ ₺249/ay · 2 ay ücretsiz' : 'Aylık faturalandırılır';
+    proNoteEl.textContent = period === 'yearly' ? '≈ $23/ay · %20 indirim' : 'Aylık faturalandırılır';
     proNoteEl.style.display = 'block';
   }
 
   if (proOrigEl) {
     if (period === 'yearly') {
-      proOrigEl.textContent = 'Aylık ₺69 yerine';
+      proOrigEl.textContent = 'Aylık $29 yerine';
       proOrigEl.style.display = 'block';
     } else {
       proOrigEl.style.display = 'none';
@@ -98,7 +98,7 @@ function updateBizPrice() {
 
   if (bizOrigEl) {
     if (currentPeriod === 'yearly') {
-      bizOrigEl.textContent = 'Aylık ₺149 yerine';
+      bizOrigEl.textContent = 'Aylık $49 yerine';
       bizOrigEl.style.display = 'block';
     } else {
       bizOrigEl.style.display = 'none';

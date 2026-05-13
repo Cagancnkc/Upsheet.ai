@@ -17,14 +17,14 @@ const STRIPE_LINKS = {
 // ── Plan bilgileri ───────────────────────────────
 const PLAN_INFO = {
   pro: {
-    weekly:  { price: '₺124,75', period: 'haftalık', name: 'Pro Haftalık' },
-    monthly: { price: '₺499',    period: 'aylık',    name: 'Pro Aylık' },
-    yearly:  { price: '₺2.990',  period: 'yıllık',   name: 'Pro Yıllık' }
+    weekly:  { price: '$7.25', period: 'haftalık', name: 'Pro Haftalık' },
+    monthly: { price: '$29',   period: 'aylık',    name: 'Pro Aylık' },
+    yearly:  { price: '$278',  period: 'yıllık',   name: 'Pro Yıllık' }
   },
   business: {
-    weekly:  { price: '₺274,75', period: 'haftalık', name: 'İş Haftalık' },
-    monthly: { price: '₺1.099',  period: 'aylık',    name: 'İş Aylık' },
-    yearly:  { price: '₺6.990',  period: 'yıllık',   name: 'İş Yıllık' }
+    weekly:  { price: '$12.25', period: 'haftalık', name: 'İş Haftalık' },
+    monthly: { price: '$49',    period: 'aylık',    name: 'İş Aylık' },
+    yearly:  { price: '$470',   period: 'yıllık',   name: 'İş Yıllık' }
   }
 };
 

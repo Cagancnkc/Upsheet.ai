@@ -343,8 +343,8 @@
       <div class="gift-badge" id="gift-pro">🎁 2 AY ÜCRETSİZ</div>
       <div class="plan-opt-orig" id="orig-pro"></div>
       <div class="plan-opt-price">
-        <span class="plan-opt-curr">₺</span>
-        <span class="plan-opt-num" id="pro-price">69</span>
+        <span class="plan-opt-curr">$</span>
+        <span class="plan-opt-num" id="pro-price">29</span>
         <span class="plan-opt-period" id="pro-period">/ay</span>
       </div>
       <div class="plan-opt-note" id="pro-plan-note">Aylık ödeme</div>
@@ -365,8 +365,8 @@
       <div class="gift-badge" id="gift-biz">🎁 2 AY ÜCRETSİZ</div>
       <div class="plan-opt-orig" id="orig-biz"></div>
       <div class="plan-opt-price">
-        <span class="plan-opt-curr">₺</span>
-        <span class="plan-opt-num" id="biz-price">149</span>
+        <span class="plan-opt-curr">$</span>
+        <span class="plan-opt-num" id="biz-price">49</span>
         <span class="plan-opt-period" id="biz-period">/ay</span>
       </div>
       <div class="plan-opt-note" id="biz-plan-note">Aylık ödeme</div>
@@ -413,14 +413,14 @@ const STRIPE_LINKS = {
 
 const PRICES = {
   pro: {
-    weekly:  { amount: 17,   display: '17',    period: '/hf' },
-    monthly: { amount: 69,   display: '69',    period: '/ay' },
-    yearly:  { amount: 588,  display: '588',   period: '/yıl' }
+    weekly:  { amount: 7.25, display: '7.25', period: '/hf' },
+    monthly: { amount: 29,   display: '29',   period: '/ay' },
+    yearly:  { amount: 278,  display: '278',  period: '/yıl' }
   },
   business: {
-    weekly:  { amount: 36,   display: '36',    period: '/hf' },
-    monthly: { amount: 149,  display: '149',   period: '/ay' },
-    yearly:  { amount: 1068, display: '1.068', period: '/yıl' }
+    weekly:  { amount: 12.25, display: '12.25', period: '/hf' },
+    monthly: { amount: 49,    display: '49',    period: '/ay' },
+    yearly:  { amount: 470,   display: '470',   period: '/yıl' }
   }
 };
 
@@ -467,9 +467,9 @@ function updatePrices() {
   const giftPro = document.getElementById('gift-pro');
 
   if (isYearly) {
-    proOrig.textContent = 'Aylık ₺69 yerine';
+    proOrig.textContent = 'Aylık $29 yerine';
     proOrig.style.display = 'block';
-    proNote.textContent = '≈ ₺49/ay · 2 ay ücretsiz 🎁';
+    proNote.textContent = '≈ $23/ay · %20 indirim 🎁';
     giftPro.style.display = 'flex';
   } else {
     proOrig.style.display = 'none';
@@ -486,9 +486,9 @@ function updatePrices() {
   const giftBiz = document.getElementById('gift-biz');
 
   if (isYearly) {
-    bizOrig.textContent = 'Aylık ₺149 yerine';
+    bizOrig.textContent = 'Aylık $49 yerine';
     bizOrig.style.display = 'block';
-    bizNote.textContent = '≈ ₺89/ay · 2 ay ücretsiz 🎁';
+    bizNote.textContent = '≈ $39/ay · %20 indirim 🎁';
     giftBiz.style.display = 'flex';
   } else {
     bizOrig.style.display = 'none';
@@ -503,7 +503,7 @@ function updateCheckoutBtn() {
   const price = PRICES[selectedPlan][selectedPeriod];
   const planName = selectedPlan === 'pro' ? 'Pro' : 'İş';
   const btn = document.getElementById('checkout-btn');
-  btn.textContent = `${planName} Plan — ₺${price.display}${price.period} → Ödemeye Geç`;
+  btn.textContent = `${planName} Plan — $${price.display}${price.period} → Ödemeye Geç`;
 }
 
 // Kullanıcı auth token'ını al
