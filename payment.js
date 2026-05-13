@@ -4,12 +4,12 @@
 const STRIPE_LINKS = {
   pro: {
     weekly:  'https://buy.stripe.com/test_00w8wOce7aCX5GQgOybMQ03',
-    monthly: 'https://buy.stripe.com/test_bJe14m5PJ4ez1qAaqabMQ07',
+    monthly: 'https://buy.stripe.com/test_eVq3cufqj9yT5GQ0PAbMQ08',
     yearly:  'https://buy.stripe.com/test_00w5kC5PJ3av6KU41MbMQ01'
   },
   business: {
     weekly:  'https://buy.stripe.com/test_fZu4gy0vpcL5fhq2XIbMQ02',
-    monthly: 'https://buy.stripe.com/test_9B6aEW1zt8uP3yIaqabMQ06',
+    monthly: 'https://buy.stripe.com/test_28EdR8ce7cL5d9igOybMQ09',
     yearly:  'https://buy.stripe.com/test_eVq5kC7XR8uP2uE0PAbMQ00'
   }
 };
