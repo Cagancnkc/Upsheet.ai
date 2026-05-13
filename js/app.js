@@ -4885,32 +4885,37 @@ function renderIntegrationShortcuts() {
   const el = document.getElementById('exp-integrations-section');
   if (!el) return;
   const configs = [
-    { key: 'int_gs',       name: 'Google Sheets',    fn: 'exportToGSheets',
-      icon: '<img src="https://upload.wikimedia.org/wikipedia/commons/a/ae/Google_Sheets_2020_Logo.svg" width="14" height="14" style="object-fit:contain">' },
-    { key: 'int_notion',   name: 'Notion',            fn: 'exportToNotion',
-      icon: '<img src="https://upload.wikimedia.org/wikipedia/commons/e/e9/Notion-logo.svg" width="13" height="13" style="filter:invert(.7);object-fit:contain">' },
-    { key: 'int_slack',    name: 'Slack',             fn: 'exportToSlack',
-      icon: '<img src="https://upload.wikimedia.org/wikipedia/commons/d/d5/Slack_icon_2019.svg" width="13" height="13" style="object-fit:contain">' },
-    { key: 'int_airtable', name: 'Airtable',          fn: 'exportToAirtable',
-      icon: '<img src="https://upload.wikimedia.org/wikipedia/commons/4/4b/Airtable_Logo.svg" width="13" height="13" style="object-fit:contain">' },
-    { key: 'int_teams',    name: 'Microsoft Teams',   fn: 'exportToTeams',
-      icon: '<img src="https://upload.wikimedia.org/wikipedia/commons/c/c9/Microsoft_Office_Teams_%282018%E2%80%93present%29.svg" width="13" height="13" style="object-fit:contain">' },
-    { key: 'int_trello',   name: 'Trello',            fn: 'exportToTrello',
-      icon: '<img src="https://upload.wikimedia.org/wikipedia/en/8/8c/Trello_logo.svg" width="13" height="13" style="object-fit:contain">' },
-    { key: 'int_make',     name: 'Make',              fn: 'triggerMake',
-      icon: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M8 12h8M12 8v8"/></svg>' },
-    { key: 'int_drive',    name: 'Google Drive',      fn: 'exportToDrive',
-      icon: '<img src="https://upload.wikimedia.org/wikipedia/commons/1/12/Google_Drive_icon_%282020%29.svg" width="13" height="13" style="object-fit:contain">' },
-    { key: 'int_webhook',  name: 'Webhook',           fn: 'triggerWebhook',
-      icon: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#6366F1" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>' }
+    { key:'int_gs',       name:'Google Sheets', fn:'exportToGSheets',
+      icon:'<img src="https://upload.wikimedia.org/wikipedia/commons/a/ae/Google_Sheets_2020_Logo.svg">' },
+    { key:'int_notion',   name:'Notion',         fn:'exportToNotion',
+      icon:'<img src="https://upload.wikimedia.org/wikipedia/commons/e/e9/Notion-logo.svg" style="filter:invert(.7)">' },
+    { key:'int_slack',    name:'Slack',           fn:'exportToSlack',
+      icon:'<img src="https://upload.wikimedia.org/wikipedia/commons/d/d5/Slack_icon_2019.svg">' },
+    { key:'int_airtable', name:'Airtable',        fn:'exportToAirtable',
+      icon:'<img src="https://upload.wikimedia.org/wikipedia/commons/4/4b/Airtable_Logo.svg">' },
+    { key:'int_teams',    name:'Teams',           fn:'exportToTeams',
+      icon:'<img src="https://upload.wikimedia.org/wikipedia/commons/c/c9/Microsoft_Office_Teams_%282018%E2%80%93present%29.svg">' },
+    { key:'int_trello',   name:'Trello',          fn:'exportToTrello',
+      icon:'<img src="https://upload.wikimedia.org/wikipedia/en/8/8c/Trello_logo.svg">' },
+    { key:'int_make',     name:'Make',            fn:'triggerMake',
+      icon:'<svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M8 12h8M12 8v8"/></svg>' },
+    { key:'int_drive',    name:'Drive',           fn:'exportToDrive',
+      icon:'<img src="https://upload.wikimedia.org/wikipedia/commons/1/12/Google_Drive_icon_%282020%29.svg">' },
+    { key:'int_webhook',  name:'Webhook',         fn:'triggerWebhook',
+      icon:'<svg viewBox="0 0 24 24" fill="none" stroke="#6366F1" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>' }
   ];
-  const connected = configs.filter(c => { try { return !!JSON.parse(localStorage.getItem(c.key)); } catch { return false; } });
-  if (!connected.length) { el.innerHTML = ''; el.style.display = 'none'; return; }
+
+  const cards = configs.map(c => {
+    const isConnected = (() => { try { return !!JSON.parse(localStorage.getItem(c.key)); } catch { return false; } })();
+    const onclick = isConnected ? `${c.fn}()` : `window.open('integrations.html','_blank')`;
+    const cls = isConnected ? 'exp-int-card' : 'exp-int-card disconnected';
+    const dot = isConnected ? '<span class="exp-int-dot"></span>' : '';
+    const title = isConnected ? `${c.name}'a aktar` : `${c.name} bağla`;
+    return `<button class="${cls}" onclick="${onclick}" title="${title}">${c.icon}<span class="exp-int-card-name">${c.name}</span>${dot}</button>`;
+  }).join('');
+
   el.style.display = '';
-  el.innerHTML = '<div class="exp-separator"></div><div class="exp-header">Entegrasyonlara Aktar</div>' +
-    connected.map(c =>
-      `<button class="exp-item" onclick="${c.fn}()"><span class="exp-int-icon">${c.icon}</span><span>${c.name}'a Aktar</span></button>`
-    ).join('');
+  el.innerHTML = `<div class="exp-separator"></div><div class="exp-int-header"><span>Entegrasyonlar</span><a href="integrations.html" target="_blank" onclick="closeExportMenu()">Yönet →</a></div><div class="exp-int-grid">${cards}</div>`;
 }
 
 async function exportToGSheets() {

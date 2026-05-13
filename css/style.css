@@ -129,7 +129,7 @@ body.dark .rf-item-name{color:#e2e2e2;}
 #export-dropdown{
   display:none;position:fixed;
   background:#fff;border:1.5px solid #E5E7EB;border-radius:12px;
-  box-shadow:0 8px 32px rgba(0,0,0,0.13);min-width:230px;z-index:99999;overflow:hidden;
+  box-shadow:0 8px 32px rgba(0,0,0,0.13);min-width:260px;z-index:99999;overflow:hidden;
   opacity:0;transform:translateY(-6px);
   transition:opacity .18s ease,transform .18s ease;
   pointer-events:none;
@@ -162,6 +162,29 @@ body.dark .export-arrow{border-color:rgba(52,211,153,0.25) !important;border-lef
 .exp-separator{height:1px;background:#E5E7EB;margin:4px 0;}
 body.dark .exp-separator{background:#2a2a2a;}
 .exp-int-icon{width:20px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+
+/* ── INTEGRATION SHORTCUTS GRID ─────────────── */
+.exp-int-header{display:flex;align-items:center;justify-content:space-between;padding:8px 14px 4px;}
+.exp-int-header span{font-size:10px;font-weight:600;color:#9CA3AF;letter-spacing:.05em;text-transform:uppercase;}
+.exp-int-header a{font-size:10px;color:#059669;text-decoration:none;opacity:.8;transition:opacity .12s;}
+.exp-int-header a:hover{opacity:1;text-decoration:underline;}
+.exp-int-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:0 10px 10px;}
+.exp-int-card{
+  display:flex;align-items:center;gap:7px;
+  padding:7px 9px;border-radius:8px;border:none;background:none;
+  cursor:pointer;font-size:12px;color:#374151;text-align:left;
+  transition:background .12s,opacity .12s;
+}
+.exp-int-card:hover{background:#F0FDF4;}
+.exp-int-card.disconnected{opacity:.45;}
+.exp-int-card.disconnected:hover{opacity:.75;background:#F9FAFB;}
+.exp-int-card img,.exp-int-card svg{width:15px;height:15px;object-fit:contain;flex-shrink:0;}
+.exp-int-card-name{font-size:11px;font-weight:500;line-height:1.2;flex:1;}
+.exp-int-dot{width:5px;height:5px;border-radius:50%;background:#10B981;flex-shrink:0;}
+body.dark .exp-int-card{color:#e2e8f0;}
+body.dark .exp-int-card:hover{background:rgba(5,150,105,0.12);}
+body.dark .exp-int-card.disconnected:hover{background:rgba(255,255,255,0.04);}
+body.dark .exp-int-header a{color:#34D399;}
 
 /* ── FORMULA BAR ────────────────────────────── */
 #formulaBar{
