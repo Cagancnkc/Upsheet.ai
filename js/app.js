@@ -4836,11 +4836,11 @@ function doGenerateFormula(data) {
 function toggleExportMenu(e) {
   if (e) e.stopPropagation();
   const menu = document.getElementById('export-dropdown');
-  const btn  = document.getElementById('exportArrowBtn');
   if (!menu) return;
 
   if (menu.classList.contains('open')) {
     menu.classList.remove('open');
+    const btn = document.getElementById('exportArrowBtn');
     if (btn) btn.classList.remove('open');
     setTimeout(() => { if (!menu.classList.contains('open')) menu.style.display = ''; }, 200);
     return;
@@ -4848,18 +4848,28 @@ function toggleExportMenu(e) {
 
   renderIntegrationShortcuts();
 
-  // position before showing
-  if (btn) {
-    const r = btn.getBoundingClientRect();
-    menu.style.top   = (r.bottom + 6) + 'px';
-    menu.style.right = Math.max(0, window.innerWidth - r.right) + 'px';
-    menu.style.left  = '';
+  const trigger = (e && e.currentTarget) || document.getElementById('exportArrowBtn');
+  const toolbarBtn = document.getElementById('exportArrowBtn');
+
+  if (trigger) {
+    const r = trigger.getBoundingClientRect();
+    const isSidebar = trigger.classList.contains('sb-item');
+
+    if (isSidebar) {
+      menu.style.top   = r.top + 'px';
+      menu.style.left  = (r.right + 8) + 'px';
+      menu.style.right = '';
+    } else {
+      menu.style.top   = (r.bottom + 6) + 'px';
+      menu.style.right = Math.max(0, window.innerWidth - r.right) + 'px';
+      menu.style.left  = '';
+    }
   }
 
   menu.style.display = 'block';
-  void menu.offsetHeight; // force reflow so CSS transition fires
+  void menu.offsetHeight;
   menu.classList.add('open');
-  if (btn) btn.classList.add('open');
+  if (toolbarBtn) toolbarBtn.classList.add('open');
 }
 
 document.addEventListener('click', function(e) {
