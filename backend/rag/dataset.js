@@ -1,6 +1,6 @@
 // ============================================================
-// MOCKSHEETS DATASET v8.0
-// 802 örnek, 26 kategori, 43+ action tipi
+// MOCKSHEETS DATASET v9.0
+// ~860 örnek, 26 kategori, 43+ action tipi
 // TÃ¼m Excel formÃ¼lleri, muhasebe, bordro, veri analizi
 // ============================================================
 
@@ -875,7 +875,6 @@ const EXCEL_DATASET = [
   { user_command: "sağa yeni kolon ekle", logic: "add new column to the right side", category: "structure", output: { action: "add_column", position: "right", reply: "✓ Sağa yeni kolon eklendi", changes: [] } },
   { user_command: "kâr marjı sütunu ekle", logic: "add new profit margin column to sheet", category: "structure", output: { action: "add_column", name: "kâr_marjı", reply: "✓ Kâr marjı sütunu eklendi", changes: [] } },
   { user_command: "toplam sütunu oluştur", logic: "create new total sum column", category: "structure", output: { action: "add_column", name: "toplam", reply: "✓ Toplam sütunu oluşturuldu", changes: [] } },
-,
 // clear_all (+6)
 { user_command: "tabloyu komple temizle", logic: "clear all data completely", category: "structure", output: { action: "clear_all", reply: "✓ Tablo tamamen temizlendi", changes: [] } },
 { user_command: "tüm verileri sıfırla", logic: "reset all data in table", category: "structure", output: { action: "clear_all", reply: "✓ Tüm veriler sıfırlandı", changes: [] } },
@@ -1057,7 +1056,79 @@ const EXCEL_DATASET = [
   { user_command: "EĞERHATA ile hata yakalamak istiyorum", logic: "catch errors with IFERROR EĞERHATA Turkish Excel function name", category: "formula", output: { action: "generate_formula", formula_type: "iferror", reply: "✓ EĞERHATA (IFERROR) formülü oluşturuldu", changes: [] } },
   { user_command: "İNDİS KAÇINCI kombinasyonu oluştur", logic: "create INDEX MATCH combination İNDİS KAÇINCI Turkish Excel lookup", category: "formula", output: { action: "generate_formula", formula_type: "index_match", reply: "✓ İNDİS-KAÇINCI formülü oluşturuldu", changes: [] } },
   { user_command: "tarih farkını gün olarak hesapla", logic: "calculate date difference in days DATEDIF formula Turkish", category: "formula", output: { action: "generate_formula", formula_type: "datedif", reply: "✓ Tarih farkı formülü oluşturuldu", changes: [] } },
-  { user_command: "kümülatif toplam formülü yaz", logic: "write running total cumulative sum formula kümülatif Turkish", category: "formula", output: { action: "generate_formula", formula_type: "running_total", reply: "✓ Kümülatif toplam formülü oluşturuldu", changes: [] } }
+  { user_command: "kümülatif toplam formülü yaz", logic: "write running total cumulative sum formula kümülatif Turkish", category: "formula", output: { action: "generate_formula", formula_type: "running_total", reply: "✓ Kümülatif toplam formülü oluşturuldu", changes: [] } },
+
+  // --- GRUP 6: AI Kategorileri v9.0 (+58 örnek) ---
+
+  // extract (+10)
+  { user_command: "telefon numaralarını çıkar", logic: "extract phone numbers from text column", category: "extract", output: { action: "extract", type: "phone", reply: "✓ Telefon numaraları çıkarıldı", changes: [] } },
+  { user_command: "tarih bilgilerini metinden al", logic: "extract date values from text cells", category: "extract", output: { action: "extract", type: "date", reply: "✓ Tarih bilgileri alındı", changes: [] } },
+  { user_command: "fiyatları metinden çıkar", logic: "extract price amounts from text strings", category: "extract", output: { action: "extract", type: "price", reply: "✓ Fiyatlar metinden çıkarıldı", changes: [] } },
+  { user_command: "posta kodlarını bul", logic: "extract postal zip codes from address text", category: "extract", output: { action: "extract", type: "postal_code", reply: "✓ Posta kodları bulundu", changes: [] } },
+  { user_command: "sözleşme numaralarını çıkar", logic: "extract contract reference numbers from text", category: "extract", output: { action: "extract", type: "contract_number", reply: "✓ Sözleşme numaraları çıkarıldı", changes: [] } },
+  { user_command: "banka hesap numaralarını al", logic: "extract bank account numbers from text column", category: "extract", output: { action: "extract", type: "account_number", reply: "✓ Hesap numaraları alındı", changes: [] } },
+  { user_command: "web adreslerini çıkar", logic: "extract URLs web addresses from text", category: "extract", output: { action: "extract", type: "url", reply: "✓ Web adresleri çıkarıldı", changes: [] } },
+  { user_command: "parantez içindeki bilgileri al", logic: "extract text inside parentheses brackets", category: "extract", output: { action: "extract", type: "parenthesis", reply: "✓ Parantez içi bilgiler alındı", changes: [] } },
+  { user_command: "ürün kodu ile ürün adını birbirinden ayır", logic: "split product code and product name into separate columns", category: "extract", output: { action: "extract", type: "code_name_split", reply: "✓ Ürün kodu ve adı ayrıldı", changes: [] } },
+  { user_command: "kategori kodunu metinden çıkar", logic: "extract category code prefix from text string", category: "extract", output: { action: "extract", type: "category_code", reply: "✓ Kategori kodu çıkarıldı", changes: [] } },
+
+  // anomaly_detection (+10)
+  { user_command: "olağandışı giderleri işaretle", logic: "flag unusual expense anomaly outlier detection", category: "anomaly_detection", output: { action: "anomaly_detection", column: "gider", reply: "📊 Olağandışı giderler işaretlendi", changes: [] } },
+  { user_command: "maaş aykırı değerlerini tespit et", logic: "detect salary outlier anomaly payroll unusual", category: "anomaly_detection", output: { action: "anomaly_detection", column: "maaş", reply: "📊 Maaş aykırı değerleri tespit edildi", changes: [] } },
+  { user_command: "ani artış gösteren kalemleri bul", logic: "detect sudden spike increase anomaly data", category: "anomaly_detection", output: { action: "anomaly_detection", type: "spike", reply: "📊 Ani artış gösteren kalemler bulundu", changes: [] } },
+  { user_command: "stok negatif olan ürünleri işaretle", logic: "find negative stock inventory anomaly flag", category: "anomaly_detection", output: { action: "anomaly_detection", column: "stok", reply: "📊 Negatif stok kalemleri işaretlendi", changes: [] } },
+  { user_command: "bütçe aşımlarını tespit et", logic: "detect budget overrun exceed anomaly flag", category: "anomaly_detection", output: { action: "anomaly_detection", column: "bütçe", reply: "📊 Bütçe aşımları tespit edildi", changes: [] } },
+  { user_command: "normalin üç katından fazla değerleri bul", logic: "find values exceeding 3x threshold anomaly detection", category: "anomaly_detection", output: { action: "anomaly_detection", threshold: 3, reply: "📊 Eşik aşan değerler bulundu", changes: [] } },
+  { user_command: "tekrarlayan şüpheli işlemleri tespit et", logic: "detect repeated suspicious duplicate transactions anomaly", category: "anomaly_detection", output: { action: "anomaly_detection", type: "duplicate_suspicious", reply: "📊 Şüpheli işlemler tespit edildi", changes: [] } },
+  { user_command: "geç ödemeleri işaretle", logic: "flag late overdue delayed payments anomaly", category: "anomaly_detection", output: { action: "anomaly_detection", column: "ödeme_tarihi", reply: "📊 Geç ödemeler işaretlendi", changes: [] } },
+  { user_command: "sıfırdan küçük değerleri anomali olarak göster", logic: "show negative below zero values as anomaly outlier", category: "anomaly_detection", output: { action: "anomaly_detection", condition: "below_zero", reply: "📊 Negatif değerler anomali olarak gösterildi", changes: [] } },
+  { user_command: "beklenmedik satış düşüşlerini bul", logic: "find unexpected sudden sales drop decrease anomaly", category: "anomaly_detection", output: { action: "anomaly_detection", column: "satış", type: "drop", reply: "📊 Beklenmedik satış düşüşleri bulundu", changes: [] } },
+
+  // compare (+10)
+  { user_command: "ocak şubat mart aylarını karşılaştır", logic: "compare January February March monthly data side by side", category: "compare", output: { action: "compare", periods: ["Ocak", "Şubat", "Mart"], reply: "📊 Aylık karşılaştırma yapıldı", changes: [] } },
+  { user_command: "şubelerin satışlarını karşılaştır", logic: "compare branch store sales performance", category: "compare", output: { action: "compare", column: "satış", groupBy: "şube", reply: "📊 Şube satışları karşılaştırıldı", changes: [] } },
+  { user_command: "çalışan verimlilik karşılaştırması", logic: "compare employee productivity efficiency performance", category: "compare", output: { action: "compare", column: "verimlilik", reply: "📊 Çalışan verimliliği karşılaştırıldı", changes: [] } },
+  { user_command: "birinci çeyrek ile ikinci çeyreği karşılaştır", logic: "compare Q1 first quarter vs Q2 second quarter results", category: "compare", output: { action: "compare", period1: "Q1", period2: "Q2", reply: "📊 Çeyrek karşılaştırması yapıldı", changes: [] } },
+  { user_command: "yıllık büyüme oranını hesapla", logic: "calculate year over year growth rate comparison percentage", category: "compare", output: { action: "compare", type: "yoy_growth", reply: "📊 Yıllık büyüme oranı hesaplandı", changes: [] } },
+  { user_command: "maliyetleri ve gelirleri yan yana göster", logic: "show cost and revenue side by side comparison columns", category: "compare", output: { action: "compare", col1: "maliyet", col2: "gelir", reply: "📊 Maliyet-gelir karşılaştırması yapıldı", changes: [] } },
+  { user_command: "online ve offline satışları karşılaştır", logic: "compare online offline channel sales figures", category: "compare", output: { action: "compare", col1: "online", col2: "offline", reply: "📊 Online-offline karşılaştırması yapıldı", changes: [] } },
+  { user_command: "en iyi ve en kötü performansı karşılaştır", logic: "compare best worst performing items employees products", category: "compare", output: { action: "compare", type: "best_worst", reply: "📊 En iyi ve en kötü karşılaştırması yapıldı", changes: [] } },
+  { user_command: "ürün kategorilerini gelire göre karşılaştır", logic: "compare product categories by revenue income", category: "compare", output: { action: "compare", column: "gelir", groupBy: "kategori", reply: "📊 Kategori karşılaştırması yapıldı", changes: [] } },
+  { user_command: "tatil dönemi ile normal dönemi karşılaştır", logic: "compare holiday seasonal period vs normal period sales", category: "compare", output: { action: "compare", period1: "tatil", period2: "normal", reply: "📊 Dönem karşılaştırması yapıldı", changes: [] } },
+
+  // forecast (+8)
+  { user_command: "talep tahmini yap", logic: "demand forecast prediction calculation future", category: "forecast", output: { action: "forecast", column: "talep", reply: "📊 Talep tahmini yapıldı", changes: [] } },
+  { user_command: "bütçe projeksiyonu hazırla", logic: "budget projection forecast planning future", category: "forecast", output: { action: "forecast", column: "bütçe", type: "projection", reply: "📊 Bütçe projeksiyonu hazırlandı", changes: [] } },
+  { user_command: "stok yenileme zamanını tahmin et", logic: "forecast stock replenishment timing reorder point", category: "forecast", output: { action: "forecast", column: "stok", type: "reorder", reply: "📊 Stok yenileme tahmini yapıldı", changes: [] } },
+  { user_command: "sezonsal satış tahmini yap", logic: "seasonal sales forecast prediction pattern", category: "forecast", output: { action: "forecast", method: "seasonal", column: "satış", reply: "📊 Sezonsal satış tahmini yapıldı", changes: [] } },
+  { user_command: "yıllık satış hedefine ulaşma tahmini", logic: "forecast whether annual sales target will be met projection", category: "forecast", output: { action: "forecast", target: "hedef", column: "satış", reply: "📊 Hedef ulaşım tahmini yapıldı", changes: [] } },
+  { user_command: "gelecek dönem kar tahmini", logic: "forecast next period profit earnings prediction", category: "forecast", output: { action: "forecast", column: "kar", reply: "📊 Gelecek dönem kâr tahmini yapıldı", changes: [] } },
+  { user_command: "personel ihtiyacını tahmin et", logic: "forecast headcount staffing needs future workforce", category: "forecast", output: { action: "forecast", column: "personel", reply: "📊 Personel ihtiyacı tahmini yapıldı", changes: [] } },
+  { user_command: "aylık büyüme tahmini", logic: "monthly growth rate forecast trend projection", category: "forecast", output: { action: "forecast", type: "growth", period: "monthly", reply: "📊 Aylık büyüme tahmini yapıldı", changes: [] } },
+
+  // sentiment_analysis (+10)
+  { user_command: "çalışan geri bildirimlerini analiz et", logic: "analyze employee feedback satisfaction sentiment text", category: "sentiment_analysis", output: { action: "sentiment_analysis", column: "geri_bildirim", reply: "📊 Çalışan geri bildirimleri analiz edildi", changes: [] } },
+  { user_command: "teslimat yorumlarını değerlendir", logic: "evaluate delivery reviews sentiment analysis positive negative", category: "sentiment_analysis", output: { action: "sentiment_analysis", column: "yorum", reply: "📊 Teslimat yorumları değerlendirildi", changes: [] } },
+  { user_command: "net promoter score hesapla", logic: "calculate NPS net promoter score sentiment loyalty", category: "sentiment_analysis", output: { action: "sentiment_analysis", output_type: "nps", reply: "📊 NPS skoru hesaplandı", changes: [] } },
+  { user_command: "olumlu geri bildirimleri listele", logic: "list filter positive feedback comments sentiment analysis", category: "sentiment_analysis", output: { action: "sentiment_analysis", filter: "positive", reply: "📊 Olumlu geri bildirimler listelendi", changes: [] } },
+  { user_command: "tedarikçi değerlendirmelerini analiz et", logic: "analyze supplier vendor evaluation ratings sentiment", category: "sentiment_analysis", output: { action: "sentiment_analysis", column: "değerlendirme", reply: "📊 Tedarikçi değerlendirmeleri analiz edildi", changes: [] } },
+  { user_command: "yorumları pozitif negatif nötr olarak etiketle", logic: "label tag reviews positive negative neutral sentiment classification", category: "sentiment_analysis", output: { action: "sentiment_analysis", output_type: "labels", reply: "📊 Yorumlar etiketlendi", changes: [] } },
+  { user_command: "memnuniyet trendini göster", logic: "show satisfaction trend over time sentiment trend", category: "sentiment_analysis", output: { action: "sentiment_analysis", output_type: "trend", reply: "📊 Memnuniyet trendi gösterildi", changes: [] } },
+  { user_command: "en çok şikayet edilen konuları çıkar", logic: "extract most complained topics themes from negative reviews", category: "sentiment_analysis", output: { action: "sentiment_analysis", output_type: "topics", reply: "📊 En çok şikayet edilen konular çıkarıldı", changes: [] } },
+  { user_command: "yıldız puanı düşük yorumları analiz et", logic: "analyze low star rating reviews sentiment negative", category: "sentiment_analysis", output: { action: "sentiment_analysis", filter: "low_rating", reply: "📊 Düşük puanlı yorumlar analiz edildi", changes: [] } },
+  { user_command: "hizmet kalitesi yorumlarını değerlendir", logic: "evaluate service quality feedback sentiment customer experience", category: "sentiment_analysis", output: { action: "sentiment_analysis", column: "hizmet_yorumu", reply: "📊 Hizmet kalitesi yorumları değerlendirildi", changes: [] } },
+
+  // classify (+10)
+  { user_command: "ödeme yöntemine göre kategorile", logic: "categorize classify by payment method type", category: "classify", output: { action: "classify", column: "ödeme_yöntemi", reply: "📊 Ödeme yöntemine göre kategorilendi", changes: [] } },
+  { user_command: "bölgeye göre sınıflandır", logic: "classify categorize by region geographic area", category: "classify", output: { action: "classify", column: "bölge", reply: "📊 Bölgeye göre sınıflandırıldı", changes: [] } },
+  { user_command: "fatura ödeme durumunu ödendi bekliyor gecikti olarak etiketle", logic: "label invoice payment status paid pending overdue", category: "classify", output: { action: "classify", categories: ["Ödendi", "Bekliyor", "Gecikti"], reply: "📊 Fatura durumları etiketlendi", changes: [] } },
+  { user_command: "performans puanına göre A B C D derecelendir", logic: "grade classify by performance score A B C D rating", category: "classify", output: { action: "classify", categories: ["A", "B", "C", "D"], reply: "📊 Performans derecelendirmesi yapıldı", changes: [] } },
+  { user_command: "sipariş durumuna göre grupla", logic: "group classify orders by status processing shipped delivered", category: "classify", output: { action: "classify", column: "durum", reply: "📊 Sipariş durumuna göre gruplandı", changes: [] } },
+  { user_command: "departmana göre sınıflandır", logic: "classify categorize by department team division", category: "classify", output: { action: "classify", column: "departman", reply: "📊 Departmana göre sınıflandırıldı", changes: [] } },
+  { user_command: "gelir seviyesine göre yüksek orta düşük derecelendir", logic: "classify by income revenue level high medium low tier", category: "classify", output: { action: "classify", categories: ["Yüksek", "Orta", "Düşük"], reply: "📊 Gelir seviyesine göre derecelendirildi", changes: [] } },
+  { user_command: "satışları mevsimsel kategorilere ayır", logic: "classify sales by seasonal category spring summer autumn winter", category: "classify", output: { action: "classify", categories: ["İlkbahar", "Yaz", "Sonbahar", "Kış"], reply: "📊 Satışlar mevsimsel kategorilere ayrıldı", changes: [] } },
+  { user_command: "müşterileri bronz gümüş altın platin olarak etiketle", logic: "label customers bronze silver gold platinum loyalty tier", category: "classify", output: { action: "classify", categories: ["Bronz", "Gümüş", "Altın", "Platin"], reply: "📊 Müşteri sadakat seviyeleri etiketlendi", changes: [] } },
+  { user_command: "ürün kategorisini otomatik belirle", logic: "automatically determine assign product category classification AI", category: "classify", output: { action: "classify", column: "ürün", auto: true, reply: "📊 Ürün kategorileri otomatik belirlendi", changes: [] } }
 
 ];
 
@@ -1103,4 +1174,4 @@ const INTENT_MAP = {
 };
 
 module.exports = { EXCEL_DATASET, COLOR_MAP, INTENT_MAP };
-// Toplam: 802 örnek, 26 kategori, 43+ action tipi
+// Toplam: ~860 örnek, 26 kategori, 43+ action tipi
