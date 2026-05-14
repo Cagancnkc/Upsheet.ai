@@ -4896,23 +4896,23 @@ function renderIntegrationShortcuts() {
   if (!el) return;
   const configs = [
     { key:'int_gs',       name:'Google Sheets', fn:'exportToGSheets',
-      icon:'<img src="https://upload.wikimedia.org/wikipedia/commons/a/ae/Google_Sheets_2020_Logo.svg">' },
+      icon:'<img width="22" height="22" style="width:22px;height:22px" src="https://upload.wikimedia.org/wikipedia/commons/a/ae/Google_Sheets_2020_Logo.svg">' },
     { key:'int_notion',   name:'Notion',         fn:'exportToNotion',
-      icon:'<img src="https://upload.wikimedia.org/wikipedia/commons/e/e9/Notion-logo.svg" style="filter:invert(.7)">' },
+      icon:'<img width="22" height="22" style="width:22px;height:22px;filter:invert(.7)" src="https://upload.wikimedia.org/wikipedia/commons/e/e9/Notion-logo.svg">' },
     { key:'int_slack',    name:'Slack',           fn:'exportToSlack',
-      icon:'<img src="https://upload.wikimedia.org/wikipedia/commons/d/d5/Slack_icon_2019.svg">' },
+      icon:'<img width="22" height="22" style="width:22px;height:22px" src="https://upload.wikimedia.org/wikipedia/commons/d/d5/Slack_icon_2019.svg">' },
     { key:'int_airtable', name:'Airtable',        fn:'exportToAirtable',
-      icon:'<img src="https://upload.wikimedia.org/wikipedia/commons/4/4b/Airtable_Logo.svg">' },
+      icon:'<img width="22" height="22" style="width:22px;height:22px" src="https://upload.wikimedia.org/wikipedia/commons/4/4b/Airtable_Logo.svg">' },
     { key:'int_teams',    name:'Teams',           fn:'exportToTeams',
-      icon:'<img src="https://upload.wikimedia.org/wikipedia/commons/c/c9/Microsoft_Office_Teams_%282018%E2%80%93present%29.svg">' },
+      icon:'<img width="22" height="22" style="width:22px;height:22px" src="https://upload.wikimedia.org/wikipedia/commons/c/c9/Microsoft_Office_Teams_%282018%E2%80%93present%29.svg">' },
     { key:'int_trello',   name:'Trello',          fn:'exportToTrello',
-      icon:'<img src="https://upload.wikimedia.org/wikipedia/en/8/8c/Trello_logo.svg">' },
+      icon:'<img width="22" height="22" style="width:22px;height:22px" src="https://upload.wikimedia.org/wikipedia/en/8/8c/Trello_logo.svg">' },
     { key:'int_make',     name:'Make',            fn:'triggerMake',
-      icon:'<svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M8 12h8M12 8v8"/></svg>' },
+      icon:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M8 12h8M12 8v8"/></svg>' },
     { key:'int_drive',    name:'Drive',           fn:'exportToDrive',
-      icon:'<img src="https://upload.wikimedia.org/wikipedia/commons/1/12/Google_Drive_icon_%282020%29.svg">' },
+      icon:'<img width="22" height="22" style="width:22px;height:22px" src="https://upload.wikimedia.org/wikipedia/commons/1/12/Google_Drive_icon_%282020%29.svg">' },
     { key:'int_webhook',  name:'Webhook',         fn:'triggerWebhook',
-      icon:'<svg viewBox="0 0 24 24" fill="none" stroke="#6366F1" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>' }
+      icon:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6366F1" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>' }
   ];
 
   const cards = configs.map(c => {
