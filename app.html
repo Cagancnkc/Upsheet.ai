@@ -12,13 +12,47 @@
 <link rel="apple-touch-icon" href="/icon-192.png">
 <link rel="icon" href="images/logo.png">
 <meta name="description" content="Manage your Excel spreadsheets with AI-powered commands using Mocksheets">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <link rel="stylesheet" href="css/style.css?v=3">
 <script src="api.js"></script>
 <style>
+/* ── SIDEBAR ENTEGRASYON ITEMS ── */
+.sb-int-item{
+  display:flex;align-items:center;gap:8px;
+  padding:6px 10px 6px 12px;margin:1px 6px;border-radius:7px;cursor:pointer;
+  font-size:12px;color:rgba(255,255,255,0.55);transition:background .12s,color .12s;
+  user-select:none;
+}
+.sb-int-item:hover{background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.9);}
+.sb-int-logo{width:15px;height:15px;object-fit:contain;flex-shrink:0;border-radius:3px;}
+.sb-int-letter{
+  width:15px;height:15px;border-radius:4px;display:flex;align-items:center;
+  justify-content:center;font-size:9px;font-weight:700;color:#fff;flex-shrink:0;
+}
+.sb-int-name{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sb-int-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;background:rgba(255,255,255,0.15);}
+.sb-int-dot.on{background:#22c55e;box-shadow:0 0 4px rgba(34,197,94,0.5);}
+.sb-badge-live{
+  font-size:9px;font-weight:700;padding:2px 5px;border-radius:4px;flex-shrink:0;
+  background:rgba(34,197,94,0.15);color:#6EE7B7;
+}
+.sb-badge-soon{
+  font-size:9px;font-weight:700;padding:2px 5px;border-radius:4px;flex-shrink:0;
+  background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.3);
+}
+.sb-int-item-more{
+  font-size:11px;color:rgba(255,255,255,0.3);padding-left:12px;margin-top:2px;
+}
+.sb-int-item-more:hover{color:rgba(255,255,255,0.6);}
+#appSidebar.collapsed .sb-int-item{justify-content:center;padding:9px 4px;}
+#appSidebar.collapsed .sb-int-name,
+#appSidebar.collapsed .sb-int-dot,
+#appSidebar.collapsed .sb-badge-live,
+#appSidebar.collapsed .sb-badge-soon,
+#appSidebar.collapsed .sb-int-item-more{display:none;}
+
 /* ── TOAST BİLDİRİM ── */
 .toast-container {
   position: fixed;
@@ -823,6 +857,27 @@ body.light .sb-upgrade-btn{background:linear-gradient(135deg,rgba(99,102,241,0.1
 
 
 
+<header id="appTopbar">
+  <a class="topbar-brand" href="/">
+    <img src="images/logo.png" alt="Mocksheets" style="height:24px;display:block">
+  </a>
+  <div class="topbar-crumb">
+    <span class="topbar-crumb-file" id="topbarFileName">Yeni Tablo</span>
+    <span class="topbar-crumb-sep">/</span>
+    <span class="topbar-crumb-saved" id="topbarSaved"></span>
+  </div>
+  <div class="topbar-actions">
+    <button class="topbar-btn-share">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+      Paylaş
+    </button>
+    <button class="topbar-btn-download" onclick="downloadFile()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      İndir
+    </button>
+  </div>
+</header>
+
 <div id="main">
 
 <!-- SIDEBAR -->
@@ -978,10 +1033,35 @@ body.light .sb-upgrade-btn{background:linear-gradient(135deg,rgba(99,102,241,0.1
         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
       </div>
 
-      <div class="sb-item" data-tooltip="Entegrasyonlar" onclick="window.location.href='integrations.html'">
+      <div class="sb-item sb-item-expandable open" onclick="toggleSbSection('intSection', this)" data-tooltip="Entegrasyonlar">
         <span class="sb-item-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="2" width="9" height="9" rx="2"/><rect x="13" y="2" width="9" height="9" rx="2"/><rect x="2" y="13" width="9" height="9" rx="2"/><rect x="13" y="13" width="9" height="9" rx="2"/></svg></span>
         <span class="sb-item-label">Entegrasyonlar</span>
-        <span class="sb-item-badge-green">Live</span>
+        <svg class="sb-item-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div id="intSection" class="sb-sub-section open">
+        <div class="sb-int-item">
+          <img src="https://www.gstatic.com/images/branding/product/1x/sheets_2020q4_48dp.png" class="sb-int-logo" alt="Google Sheets">
+          <span class="sb-int-name">Google Sheets</span>
+          <span class="sb-int-dot on"></span>
+        </div>
+        <div class="sb-int-item">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/3/34/Microsoft_Office_Excel_%282019%E2%80%93present%29.svg" class="sb-int-logo" alt="Excel">
+          <span class="sb-int-name">Excel Online</span>
+          <span class="sb-int-dot on"></span>
+        </div>
+        <div class="sb-int-item">
+          <span class="sb-int-letter" style="background:#FF4F00">⚡</span>
+          <span class="sb-int-name">Zapier</span>
+          <span class="sb-badge-live">canlı</span>
+        </div>
+        <div class="sb-int-item">
+          <span class="sb-int-letter" style="background:#4A154B">S</span>
+          <span class="sb-int-name">Slack</span>
+          <span class="sb-badge-soon">yakında</span>
+        </div>
+        <div class="sb-int-item sb-int-item-more" onclick="window.location.href='integrations.html'">
+          Tüm entegrasyonlar +8
+        </div>
       </div>
 
     </div><!-- /tools section -->
@@ -2088,5 +2168,30 @@ function queueOfflineMessage(payload) {
   </button>
   <div id="exp-integrations-section"></div>
 </div>
+
+<script>
+(function(){
+  function syncTopbar(){
+    var fi = document.getElementById('fileNameInput');
+    var tn = document.getElementById('topbarFileName');
+    if(fi && tn) tn.textContent = fi.value || 'Yeni Tablo';
+  }
+  var fi = document.getElementById('fileNameInput');
+  if(fi){
+    fi.addEventListener('input', syncTopbar);
+    fi.addEventListener('change', syncTopbar);
+    syncTopbar();
+  }
+  var tb = document.getElementById('tbSaved');
+  var ts = document.getElementById('topbarSaved');
+  if(tb && ts){
+    var obs = new MutationObserver(function(){
+      ts.textContent = tb.classList.contains('visible') ? '• kaydedildi' : '';
+    });
+    obs.observe(tb, {attributes:true,attributeFilter:['class']});
+  }
+  setTimeout(syncTopbar, 800);
+})();
+</script>
 </body>
 </html>
