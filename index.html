@@ -1,30 +1,20 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<!-- Primary SEO -->
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Mocksheets — AI Excel Asistanı | 12 Kat Daha Hızlı Çalış</title>
 <meta name="description" content="Excel formülü yazmadan veri yönetin. Mocksheets AI ile veri temizleme, rapor oluşturma ve vergi hesaplamalarını saniyeler içinde yapın. Erken kullanıcılar zaten kullanıyor.">
 <meta name="keywords" content="AI Excel asistanı, Excel otomasyonu, veri temizleme, AI muhasebe, KDV hesaplama, bordro Excel, formülsüz Excel, spreadsheet AI">
-
-<!-- Open Graph -->
 <meta property="og:title" content="Mocksheets — Formül Yazmadan Excel Yönetin">
 <meta property="og:description" content="Türkçe yazın, AI halleder. KDV, SGK, veri temizleme ve raporlama — hepsi tek komutla.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://mocksheets.com">
 <meta property="og:image" content="https://mocksheets.com/images/og-preview.png">
-
-<!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Mocksheets — AI Excel Asistanı">
 <meta name="twitter:description" content="Formül yazmadan Excel yönetin. 12 kat daha hızlı.">
-
-<!-- Canonical -->
 <link rel="canonical" href="https://mocksheets.com">
-
-<!-- Schema.org structured data -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -46,1107 +36,1242 @@
   }
 }
 </script>
-
-<meta name="theme-color" content="#4F46E5">
+<meta name="theme-color" content="#5B3CFF">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Mocksheets">
 <link rel="apple-touch-icon" href="/icon-192.png">
-<link rel="icon" href="images/logo.png">
+<link rel="icon" href="/images/logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/landing.css">
-<style>html{scroll-behavior:smooth}</style>
-<script src="payment.js?v=2" defer></script>
-<!-- Microsoft Clarity -->
-<script type="text/javascript">
-    (function(c,l,a,r,i,t,y){
-        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-    })(window, document, "clarity", "script", "w9w9hcd4ac");
-</script>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&family=Geist+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F6F4EE;
+    --paper-2:#EEEAE0;
+    --ink:#0E0E10;
+    --ink-2:#26252A;
+    --mute:#6B6960;
+    --line:#1f1e1c14;
+    --line-strong:#1f1e1c22;
+    --violet:#5B3CFF;
+    --violet-deep:#3A22B8;
+    --violet-soft:#E8E2FF;
+    --lime:#D9F26B;
+    --peach:#FFD0B0;
+    --sky:#BFE5FF;
+    --grid:#1f1e1c0e;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Geist', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    font-feature-settings:"ss01","ss02","cv11";
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+    overflow-x:hidden;
+  }
+  a{color:inherit;text-decoration:none}
+  button{font-family:inherit;cursor:pointer;border:0;background:none;color:inherit}
+  .mono{font-family:'Geist Mono', ui-monospace, monospace;font-feature-settings:"ss01"}
+  .serif{font-family:'Instrument Serif', serif;font-style:italic;font-weight:400}
+
+  /* layout */
+  .wrap{max-width:1320px;margin:0 auto;padding:0 28px}
+  section{position:relative}
+
+  /* nav */
+  .nav{
+    position:sticky;top:14px;z-index:50;
+    margin:14px auto 0; max-width:1320px;
+    padding:0 14px;
+  }
+  .nav-inner{
+    display:flex;align-items:center;gap:16px;
+    background:rgba(246,244,238,0.72);
+    backdrop-filter:saturate(140%) blur(14px);
+    -webkit-backdrop-filter:saturate(140%) blur(14px);
+    border:1px solid var(--line-strong);
+    border-radius:999px;
+    padding:8px 10px 8px 18px;
+  }
+  .brand{display:flex;align-items:center;gap:10px;font-weight:600;letter-spacing:-0.01em}
+  .brand-mark{
+    width:26px;height:26px;border-radius:8px;
+    background:radial-gradient(120% 120% at 0% 0%, #7a5bff 0%, #2a16a0 60%, #0E0E10 100%);
+    position:relative;overflow:hidden;
+    box-shadow:inset 0 0 0 1px #ffffff14;
+  }
+  .brand-mark::after{
+    content:"";position:absolute;inset:6px;
+    background:
+      linear-gradient(transparent 49%, #ffffffcc 49% 51%, transparent 51%) 0 0/100% 50%,
+      linear-gradient(90deg, transparent 49%, #ffffffcc 49% 51%, transparent 51%) 0 0/50% 100%;
+    background-repeat:no-repeat,no-repeat;
+    border-radius:3px;
+    opacity:.85;
+  }
+  .brand-name{font-size:17px}
+  .nav-links{display:flex;gap:4px;margin:0 auto}
+  .nav-links a{
+    padding:9px 14px;border-radius:999px;font-size:14.5px;color:var(--ink-2);
+    transition:background .2s ease, color .2s ease;
+  }
+  .nav-links a:hover{background:#1f1e1c0a;color:var(--ink)}
+  .nav-cta{display:flex;gap:8px;align-items:center}
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:11px 18px;border-radius:999px;font-size:14.5px;font-weight:500;
+    transition:transform .15s ease, background .2s ease, color .2s ease, box-shadow .2s ease;
+    white-space:nowrap;
+  }
+  .btn-ghost{color:var(--ink-2)}
+  .btn-ghost:hover{background:#1f1e1c0a}
+  .btn-dark{background:var(--ink);color:var(--paper)}
+  .btn-dark:hover{transform:translateY(-1px);box-shadow:0 8px 24px -10px #0e0e1066}
+  .btn-violet{background:var(--violet);color:#fff}
+  .btn-violet:hover{transform:translateY(-1px);box-shadow:0 10px 28px -8px #5b3cff66}
+  .btn-outline{border:1px solid var(--line-strong);background:transparent}
+  .btn-outline:hover{background:#1f1e1c08}
+
+  /* hero */
+  .hero{padding:88px 0 40px;position:relative}
+  .eyebrow{
+    display:inline-flex;gap:10px;align-items:center;
+    background:#fff;border:1px solid var(--line-strong);
+    border-radius:999px;padding:6px 6px 6px 12px;
+    font-size:13px;color:var(--ink-2)
+  }
+  .eyebrow .dot{
+    width:8px;height:8px;border-radius:999px;background:var(--violet);
+    box-shadow:0 0 0 4px #5b3cff22;
+  }
+  .eyebrow .pill{
+    background:var(--ink);color:var(--paper);font-family:'Geist Mono',monospace;
+    font-size:11px;padding:4px 8px;border-radius:999px;letter-spacing:.02em
+  }
+  .hero h1{
+    font-family:'Geist';
+    font-weight:600;
+    font-size:clamp(56px, 8.4vw, 124px);
+    line-height:.92;
+    letter-spacing:-0.045em;
+    margin:22px 0 0;
+    max-width:1180px;
+  }
+  .hero h1 .accent{
+    background:linear-gradient(180deg,#6c4dff 0%,#3a22b8 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .hero h1 em{font-family:'Instrument Serif';font-style:italic;font-weight:400;letter-spacing:-0.02em}
+  .hero-sub{
+    margin-top:28px;max-width:560px;font-size:19px;line-height:1.45;color:var(--ink-2);
+  }
+  .hero-actions{display:flex;gap:12px;margin-top:30px;flex-wrap:wrap}
+  .hero-meta{display:flex;gap:28px;margin-top:34px;color:var(--mute);font-size:13.5px;flex-wrap:wrap}
+  .hero-meta b{color:var(--ink);font-weight:600}
+
+  /* hero command demo */
+  .hero-grid{
+    display:grid;grid-template-columns:1.15fr .85fr;gap:36px;align-items:end;margin-top:48px;
+  }
+  @media (max-width:960px){.hero-grid{grid-template-columns:1fr}}
+  .terminal{
+    background:var(--ink);color:var(--paper);
+    border-radius:22px;padding:18px 18px 16px;
+    box-shadow:0 30px 80px -30px #0e0e1066, inset 0 0 0 1px #ffffff08;
+    font-family:'Geist Mono', monospace;
+    font-size:14px;line-height:1.55;
+    min-height:280px;
+    position:relative;overflow:hidden;
+  }
+  .terminal::before{
+    content:"";position:absolute;inset:0;
+    background:radial-gradient(120% 60% at 0% 0%, #5b3cff22, transparent 60%);
+    pointer-events:none;
+  }
+  .term-bar{display:flex;align-items:center;gap:6px;padding-bottom:10px;border-bottom:1px solid #ffffff14;margin-bottom:12px}
+  .term-bar .d{width:10px;height:10px;border-radius:50%}
+  .term-bar .d1{background:#FF5F57}.term-bar .d2{background:#FEBC2E}.term-bar .d3{background:#28C840}
+  .term-bar .label{margin-left:8px;color:#ffffff66;font-size:12px}
+  .term-line{display:flex;gap:10px;align-items:flex-start;margin:6px 0}
+  .term-prompt{color:#7a5bff;font-weight:600}
+  .term-comment{color:#ffffff55}
+  .term-ok{color:#9BE36B}
+  .term-cursor{display:inline-block;width:8px;height:1.05em;background:var(--paper);vertical-align:-2px;margin-left:2px;animation:blink 1.05s steps(1) infinite}
+  @keyframes blink{50%{opacity:0}}
+
+  /* mini grid card */
+  .grid-card{
+    background:#fff;border-radius:22px;padding:14px;
+    border:1px solid var(--line-strong);
+    box-shadow:0 20px 60px -30px #0e0e1033;
+  }
+  .grid-card .gc-head{display:flex;align-items:center;justify-content:space-between;padding:4px 6px 10px}
+  .gc-title{font-weight:600;font-size:14px;display:flex;gap:8px;align-items:center}
+  .gc-title .swatch{width:10px;height:10px;border-radius:3px;background:var(--violet)}
+  .gc-tag{font-family:'Geist Mono',monospace;font-size:11px;color:var(--mute);background:var(--paper-2);padding:3px 8px;border-radius:999px}
+  .sheet{
+    border:1px solid var(--line);border-radius:12px;overflow:hidden;
+    font-family:'Geist Mono', monospace;font-size:12px;
+  }
+  .sheet .row{display:grid;grid-template-columns:38px 1.4fr 1fr 1fr;border-bottom:1px solid var(--line)}
+  .sheet .row:last-child{border-bottom:0}
+  .sheet .cell{padding:8px 10px;border-right:1px solid var(--line);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .sheet .cell:last-child{border-right:0}
+  .sheet .head{background:var(--paper-2);color:var(--ink-2);font-weight:500}
+  .sheet .idx{background:var(--paper-2);color:var(--mute);text-align:center}
+  .sheet .hl{background:#fff7d6;transition:background .4s ease}
+  .sheet .hl-violet{background:#ece4ff;transition:background .4s ease}
+  .sheet .num{text-align:right;font-variant-numeric:tabular-nums}
+
+  /* sections */
+  .section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:32px;margin-bottom:36px;flex-wrap:wrap}
+  .section-eyebrow{font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--mute)}
+  .section-title{
+    font-size:clamp(40px, 5vw, 72px);font-weight:600;line-height:1;letter-spacing:-0.035em;
+    margin:14px 0 0;max-width:900px;
+  }
+  .section-title em{font-family:'Instrument Serif';font-style:italic;font-weight:400}
+  .section-title .accent{color:var(--violet)}
+  .section-sub{max-width:480px;color:var(--ink-2);font-size:17px;line-height:1.5}
+
+  /* bento */
+  .bento{
+    display:grid;
+    grid-template-columns:repeat(12,1fr);
+    grid-auto-rows:minmax(220px, auto);
+    gap:14px;
+  }
+  .tile{
+    border-radius:22px;background:#fff;border:1px solid var(--line-strong);
+    padding:22px;position:relative;overflow:hidden;
+    transition:transform .25s ease, box-shadow .25s ease;
+  }
+  .tile:hover{transform:translateY(-2px);box-shadow:0 22px 50px -28px #0e0e1033}
+  .tile h3{
+    font-weight:600;font-size:24px;letter-spacing:-0.02em;line-height:1.1;margin:14px 0 6px;
+  }
+  .tile p{color:var(--ink-2);font-size:14.5px;line-height:1.5;margin:0;max-width:42ch}
+  .tile .kicker{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--mute)}
+  .tile.dark{background:var(--ink);color:var(--paper);border-color:#ffffff14}
+  .tile.dark p{color:#ffffffb0}.tile.dark .kicker{color:#ffffff80}
+  .tile.violet{background:linear-gradient(180deg,#5B3CFF 0%, #3A22B8 100%);color:#fff;border-color:#ffffff20}
+  .tile.violet p{color:#ffffffcc}.tile.violet .kicker{color:#ffffffaa}
+  .tile.lime{background:var(--lime);border-color:#0e0e1014}
+  .tile.paper{background:var(--paper-2)}
+
+  .span-7{grid-column:span 7}
+  .span-5{grid-column:span 5}
+  .span-4{grid-column:span 4}
+  .span-6{grid-column:span 6}
+  .span-8{grid-column:span 8}
+  .span-12{grid-column:span 12}
+  .row-2{grid-row:span 2}
+  @media (max-width:960px){
+    .span-7,.span-5,.span-4,.span-6,.span-8{grid-column:span 12}
+  }
+
+  /* tile inner illustration */
+  .illus{
+    margin-top:18px;border-radius:14px;overflow:hidden;
+    border:1px solid var(--line);
+    background:var(--paper);
+    aspect-ratio:16/9;
+    position:relative;
+  }
+  .illus.tall{aspect-ratio:auto;min-height:220px}
+
+  /* demo carousel */
+  .demo-shell{
+    background:#fff;border:1px solid var(--line-strong);border-radius:28px;overflow:hidden;
+    box-shadow:0 40px 100px -50px #0e0e1066;
+  }
+  .demo-top{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--line)}
+  .demo-top .url{
+    flex:1;background:var(--paper-2);border-radius:999px;padding:8px 14px;
+    font-family:'Geist Mono',monospace;font-size:13px;color:var(--ink-2);
+    display:flex;align-items:center;gap:10px
+  }
+  .demo-top .url::before{content:"";width:10px;height:10px;border-radius:50%;background:#9BE36B;box-shadow:0 0 0 4px #9be36b22}
+  .demo-step-tabs{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+  .step-tab{
+    border:1px solid var(--line-strong);background:#fff;border-radius:999px;
+    padding:6px 12px;font-size:12.5px;color:var(--ink-2);font-family:'Geist Mono',monospace;
+    transition:all .2s ease;
+  }
+  .step-tab.active{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .step-tab:hover{transform:translateY(-1px)}
+  .demo-body{display:grid;grid-template-columns:340px 1fr;min-height:520px}
+  @media (max-width:860px){.demo-body{grid-template-columns:1fr}}
+  .demo-side{
+    border-right:1px solid var(--line);
+    padding:22px;display:flex;flex-direction:column;gap:18px;background:var(--paper);
+  }
+  .chat-msg{
+    background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 14px;font-size:14px;line-height:1.45;
+    box-shadow:0 4px 14px -8px #0e0e1022;
+  }
+  .chat-msg.you{background:var(--violet);color:#fff;border-color:transparent;align-self:flex-end;max-width:90%}
+  .chat-msg.bot{align-self:flex-start;max-width:95%}
+  .chat-msg .who{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;opacity:.6;display:block;margin-bottom:4px}
+  .chat-actions{
+    margin-top:auto;display:flex;gap:8px;background:#fff;border:1px solid var(--line-strong);
+    border-radius:14px;padding:8px;
+  }
+  .chat-input{
+    flex:1;font-family:inherit;font-size:14px;border:0;background:transparent;padding:6px 8px;outline:none;color:var(--ink)
+  }
+  .chat-send{
+    background:var(--ink);color:var(--paper);border-radius:10px;padding:8px 14px;font-size:13px
+  }
+  .demo-main{padding:22px;display:flex;flex-direction:column;gap:14px}
+  .demo-toolbar{display:flex;gap:8px;align-items:center;color:var(--mute);font-size:12.5px;font-family:'Geist Mono',monospace}
+  .demo-toolbar .pill2{background:var(--paper-2);border-radius:8px;padding:4px 8px;color:var(--ink-2)}
+  .big-sheet{
+    flex:1;border:1px solid var(--line);border-radius:14px;overflow:hidden;
+    font-family:'Geist Mono',monospace;font-size:12.5px;
+  }
+  .big-sheet .row{display:grid;grid-template-columns:42px repeat(5, 1fr);border-bottom:1px solid var(--line)}
+  .big-sheet .row:last-child{border-bottom:0}
+  .big-sheet .cell{padding:9px 10px;border-right:1px solid var(--line);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:#fff}
+  .big-sheet .cell:last-child{border-right:0}
+  .big-sheet .head{background:var(--paper-2);color:var(--ink-2);font-weight:500}
+  .big-sheet .idx{background:var(--paper-2);color:var(--mute);text-align:center}
+  .big-sheet .num{text-align:right;font-variant-numeric:tabular-nums}
+  .big-sheet .hl-y{background:#fff7d6}
+  .big-sheet .hl-v{background:#ece4ff}
+  .big-sheet .hl-l{background:#eafac9}
+  .big-sheet .hl-r{background:#ffe1d9}
+
+  /* integrations */
+  .integrations{display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
+  @media (max-width:960px){.integrations{grid-template-columns:repeat(3,1fr)}}
+  @media (max-width:560px){.integrations{grid-template-columns:repeat(2,1fr)}}
+  .int{
+    background:#fff;border:1px solid var(--line-strong);border-radius:18px;
+    padding:18px;display:flex;flex-direction:column;gap:8px;min-height:140px;
+    transition:transform .2s ease, box-shadow .2s ease;
+  }
+  .int:hover{transform:translateY(-2px);box-shadow:0 20px 40px -28px #0e0e1033}
+  .int-logo{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:14px;font-family:'Geist Mono',monospace}
+  .int-name{font-weight:600;font-size:15px;margin-top:6px}
+  .int-meta{font-size:12px;color:var(--mute);font-family:'Geist Mono',monospace;text-transform:uppercase;letter-spacing:.16em}
+  .int-badge{
+    align-self:flex-start;font-family:'Geist Mono',monospace;font-size:10.5px;
+    padding:3px 8px;border-radius:999px;background:var(--paper-2);color:var(--ink-2);
+    text-transform:uppercase;letter-spacing:.12em
+  }
+  .int-badge.live{background:#eafac9;color:#3a5a18}
+  .int-badge.soon{background:#fff;border:1px dashed var(--line-strong);color:var(--mute)}
+
+  /* pricing */
+  .pricing{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  @media (max-width:960px){.pricing{grid-template-columns:1fr}}
+  .price{
+    background:#fff;border:1px solid var(--line-strong);border-radius:22px;padding:26px;display:flex;flex-direction:column;gap:14px;
+  }
+  .price.pro{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .price.pro .price-amt{color:#fff}
+  .price.pro li{color:#ffffffcc}
+  .price-name{display:flex;justify-content:space-between;align-items:center;font-size:14px;font-family:'Geist Mono',monospace;text-transform:uppercase;letter-spacing:.14em;color:var(--mute)}
+  .price.pro .price-name{color:#ffffff80}
+  .price-amt{font-size:54px;font-weight:600;letter-spacing:-0.035em;line-height:1;display:flex;align-items:baseline;gap:6px}
+  .price-amt small{font-size:14px;font-weight:500;color:var(--mute);letter-spacing:0}
+  .price-desc{font-size:14px;color:var(--ink-2)}.price.pro .price-desc{color:#ffffffb0}
+  .price ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px;font-size:14px}
+  .price li{display:flex;gap:10px;align-items:flex-start}
+  .price li::before{content:"";display:inline-block;width:14px;height:14px;border-radius:50%;background:var(--lime);flex-shrink:0;margin-top:2px;box-shadow:inset 0 0 0 4px #fff}
+  .price.pro li::before{box-shadow:inset 0 0 0 4px var(--ink)}
+  .price-tag{align-self:flex-start;background:var(--lime);color:var(--ink);padding:4px 10px;border-radius:999px;font-family:'Geist Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.14em}
+
+  /* testimonials */
+  .testi{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  @media (max-width:960px){.testi{grid-template-columns:1fr}}
+  .quote{
+    background:#fff;border:1px solid var(--line-strong);border-radius:22px;padding:26px;
+    display:flex;flex-direction:column;gap:18px;
+  }
+  .quote.dark{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .quote.dark .who, .quote.dark .who small{color:#ffffffb0}
+  .quote .num{
+    font-family:'Geist';font-weight:600;font-size:64px;letter-spacing:-0.04em;line-height:1
+  }
+  .quote .num em{font-family:'Instrument Serif';font-style:italic;font-weight:400;color:var(--violet)}
+  .quote.dark .num em{color:#a48cff}
+  .quote .label{font-family:'Geist Mono',monospace;font-size:12px;text-transform:uppercase;letter-spacing:.14em;color:var(--mute)}
+  .quote.dark .label{color:#ffffff80}
+  .quote-text{font-size:16px;line-height:1.5}
+  .quote-who{display:flex;align-items:center;gap:12px;margin-top:auto}
+  .avatar{width:38px;height:38px;border-radius:50%;background:var(--violet);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px;font-family:'Geist Mono',monospace}
+  .who{font-size:14px;font-weight:500;color:var(--ink)}
+  .who small{display:block;color:var(--mute);font-weight:400;font-size:12.5px;margin-top:2px}
+
+  /* CTA */
+  .cta{
+    background:var(--ink);color:var(--paper);border-radius:28px;padding:64px 48px;
+    position:relative;overflow:hidden;
+  }
+  .cta::before{
+    content:"";position:absolute;inset:0;
+    background:
+      radial-gradient(60% 80% at 100% 0%, #5b3cff44, transparent 60%),
+      radial-gradient(40% 60% at 0% 100%, #d9f26b22, transparent 60%);
+    pointer-events:none;
+  }
+  .cta h2{
+    position:relative;font-weight:600;font-size:clamp(40px, 6vw, 92px);
+    letter-spacing:-0.04em;line-height:.95;margin:0;max-width:14ch;
+  }
+  .cta h2 em{font-family:'Instrument Serif';font-style:italic;font-weight:400}
+  .cta .cta-actions{display:flex;gap:12px;margin-top:32px;flex-wrap:wrap;position:relative}
+  .cta .btn-dark{background:#fff;color:var(--ink)}
+  .cta .btn-outline{border-color:#ffffff30;color:var(--paper)}
+  .cta .btn-outline:hover{background:#ffffff10}
+  .cta-foot{
+    position:relative;margin-top:46px;display:flex;gap:32px;flex-wrap:wrap;color:#ffffffaa;font-size:13.5px
+  }
+  .cta-foot b{color:#fff;font-weight:600}
+
+  /* footer */
+  footer{padding:60px 0 80px;color:var(--ink-2)}
+  .foot{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:32px}
+  @media (max-width:760px){.foot{grid-template-columns:1fr 1fr}}
+  .foot h5{font-family:'Geist Mono',monospace;font-size:12px;text-transform:uppercase;letter-spacing:.18em;color:var(--mute);margin:0 0 14px;font-weight:500}
+  .foot ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px;font-size:14px}
+  .foot a:hover{color:var(--violet)}
+  .foot-bottom{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-top:48px;padding-top:24px;border-top:1px solid var(--line-strong);font-size:13px;color:var(--mute);flex-wrap:wrap}
+
+  /* trust strip */
+  .trust{
+    margin-top:80px;padding:24px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+    display:flex;align-items:center;gap:40px;flex-wrap:wrap;
+    font-family:'Geist Mono',monospace;font-size:12.5px;letter-spacing:.06em;color:var(--mute);
+  }
+  .trust .label{text-transform:uppercase;letter-spacing:.18em}
+  .trust .logos{display:flex;gap:40px;align-items:center;flex-wrap:wrap;flex:1}
+  .trust .logo{font-family:'Geist';font-weight:600;letter-spacing:-0.01em;font-size:17px;color:var(--ink-2);opacity:.8;display:flex;align-items:center;gap:6px}
+  .trust .logo .dot{width:8px;height:8px;border-radius:50%;background:currentColor;opacity:.6}
+
+  /* feature illustration helpers */
+  .ill-grid{
+    width:100%;height:100%;
+    background:
+      linear-gradient(var(--grid) 1px, transparent 1px) 0 0/100% 25%,
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/16.66% 100%;
+  }
+
+  /* command list (feature 1) */
+  .cmd-list{display:flex;flex-direction:column;gap:8px;font-family:'Geist Mono',monospace;font-size:13px}
+  .cmd-row{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:#fff;border:1px solid var(--line)}
+  .cmd-row .ar{color:var(--violet)}
+  .cmd-row .out{color:var(--mute)}
+
+  /* PDF illustration */
+  .pdf-illus{
+    display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:14px;height:100%;padding:14px;
+  }
+  .pdf-doc{background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:6px}
+  .pdf-doc .ln{height:6px;background:var(--paper-2);border-radius:3px}
+  .pdf-doc .ln.w70{width:70%}.pdf-doc .ln.w90{width:90%}.pdf-doc .ln.w50{width:50%}
+  .pdf-tag{font-family:'Geist Mono',monospace;font-size:10px;color:var(--mute);text-transform:uppercase;letter-spacing:.14em;margin-bottom:6px}
+  .arrow{font-family:'Geist Mono',monospace;font-size:22px;color:var(--violet)}
+  .pdf-out{background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden;font-family:'Geist Mono',monospace;font-size:11px}
+  .pdf-out .r{display:grid;grid-template-columns:1fr 1fr 1fr;border-bottom:1px solid var(--line)}
+  .pdf-out .r:last-child{border-bottom:0}
+  .pdf-out .c{padding:6px 8px;border-right:1px solid var(--line)}
+  .pdf-out .c:last-child{border-right:0}
+  .pdf-out .h{background:var(--paper-2);color:var(--ink-2)}
+
+  /* type pair */
+  h1,h2,h3,h4,h5{margin:0}
+  .micro{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--mute)}
+
+  /* tax illustration */
+  .tax-card{display:flex;flex-direction:column;gap:8px}
+  .tax-row{display:flex;justify-content:space-between;font-family:'Geist Mono',monospace;font-size:13px;padding:8px 0;border-bottom:1px dashed var(--line-strong)}
+  .tax-row:last-child{border-bottom:0;font-weight:600}
+  .tax-row .amt{color:var(--ink)}
+
+  /* logo strip animation */
+  .scrolling-row{
+    overflow:hidden;mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);
+  }
+  .scrolling-row .track{display:flex;gap:48px;animation:scroll 30s linear infinite;width:max-content}
+  @keyframes scroll{to{transform:translateX(-50%)}}
+
+  /* responsive nav */
+  @media (max-width:780px){
+    .nav-links{display:none}
+  }
+
+</style>
 </head>
 <body>
 
-<!-- KAMPANYA BANNER START -->
-<div id="campaign-banner" style="width:100%;background:linear-gradient(90deg,#1a0533 0%,#3b0764 25%,#4F46E5 65%,#7C3AED 100%);position:relative;overflow:hidden;z-index:9999;color:white;">
-  <!-- Animasyonlu arka plan daireleri -->
-  <div style="position:absolute;inset:0;pointer-events:none;overflow:hidden">
-    <div style="position:absolute;width:300px;height:300px;border-radius:50%;background:rgba(124,58,237,0.25);top:-150px;left:10%;animation:banner-pulse 4s ease-in-out infinite"></div>
-    <div style="position:absolute;width:200px;height:200px;border-radius:50%;background:rgba(79,70,229,0.2);top:-100px;right:15%;animation:banner-pulse 4s ease-in-out infinite .8s"></div>
-    <div style="position:absolute;top:6px;left:20%;font-size:10px;opacity:.6;animation:twinkle 2s infinite">✦</div>
-    <div style="position:absolute;top:4px;left:45%;font-size:8px;opacity:.5;animation:twinkle 2s infinite .4s">✦</div>
-    <div style="position:absolute;top:8px;right:25%;font-size:10px;opacity:.6;animation:twinkle 2s infinite .8s">✦</div>
-  </div>
-  <!-- İçerik -->
-  <div style="max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:center;gap:12px;padding:9px 52px 9px 16px;position:relative;flex-wrap:wrap;">
-    <!-- Rozet -->
-    <div style="display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);border-radius:100px;padding:3px 12px 3px 7px;flex-shrink:0;">
-      <span style="font-size:15px;animation:gift-bounce 2s ease-in-out infinite">🎁</span>
-      <span style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.9)">Kuruluş Dönemi Fırsatı</span>
-    </div>
-    <!-- Ana metin -->
-    <span style="font-size:13px;font-weight:500;color:rgba(255,255,255,.95);letter-spacing:-.01em">Kayıt ol, <span style="color:#FFD700;font-weight:800;text-shadow:0 0 20px rgba(255,215,0,0.4)">1 ay Claude Pro ücretsiz</span> kazan</span>
-    <!-- Tıklanabilir MOCK100 chip -->
-    <div style="display:flex;align-items:center;gap:7px;background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.35);border-radius:8px;padding:4px 12px;cursor:pointer;transition:all .2s;"
-         onclick="copyPromoCode()"
-         onmouseover="this.style.background='rgba(255,215,0,0.2)'"
-         onmouseout="this.style.background='rgba(255,215,0,0.1)'"
-         title="Kopyalamak için tıkla">
-      <span style="font-size:11px;font-weight:700;letter-spacing:.05em;color:#FFD700">MOCK100</span>
-      <span id="copy-icon" style="font-size:11px;color:rgba(255,215,0,.7)">📋</span>
-    </div>
-    <!-- CTA -->
-    <a href="auth.html?promo=MOCK100" style="display:inline-flex;align-items:center;gap:5px;background:white;color:#4F46E5;padding:5px 14px;border-radius:100px;font-size:12px;font-weight:800;text-decoration:none;flex-shrink:0;box-shadow:0 2px 12px rgba(0,0,0,0.15);transition:all .2s;"
-       onmouseover="this.style.transform='scale(1.05)';this.style.boxShadow='0 4px 20px rgba(0,0,0,0.25)'"
-       onmouseout="this.style.transform='scale(1)';this.style.boxShadow='0 2px 12px rgba(0,0,0,0.15)'">
-      Hemen Başla <span style="font-size:10px">→</span>
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="/">
+      <img src="/images/logo-wordmark.png" alt="Mocksheets" style="height:28px;display:block">
     </a>
-    <!-- Kapat -->
-    <button onclick="closeBanner()"
-            style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.7);width:22px;height:22px;border-radius:50%;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;line-height:1;font-family:inherit;"
-            onmouseover="this.style.background='rgba(255,255,255,0.2)'"
-            onmouseout="this.style.background='rgba(255,255,255,0.1)'">✕</button>
+    <div class="nav-links">
+      <a href="#features">Özellikler</a>
+      <a href="#demo">Demo</a>
+      <a href="#integrations">Entegrasyonlar</a>
+      <a href="#pricing">Fiyatlar</a>
+      <a href="#stories">Hikayeler</a>
+    </div>
+    <div class="nav-cta">
+      <a href="/auth" class="btn btn-ghost">Giriş Yap</a>
+      <a href="/app" class="btn btn-dark">Ücretsiz Başla →</a>
+    </div>
   </div>
-</div>
-<style>
-@keyframes banner-pulse{0%,100%{transform:scale(1);opacity:.5}50%{transform:scale(1.15);opacity:.8}}
-@keyframes gift-bounce{0%,100%{transform:translateY(0) rotate(-5deg)}50%{transform:translateY(-4px) rotate(5deg)}}
-@keyframes twinkle{0%,100%{opacity:.2;transform:scale(.8)}50%{opacity:.8;transform:scale(1.2)}}
-
-/* ── ENTEGRASYON 3D CAROUSEL ── */
-.int-carousel-section{position:relative;padding:40px 0 60px;overflow:hidden}
-.int-carousel-track{display:flex;align-items:center;justify-content:center;gap:20px;perspective:1200px;min-height:360px;padding:20px 0}
-.int-card{flex-shrink:0;width:240px;cursor:pointer;transition:all .4s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d}
-.int-card:not(.active){transform:scale(.82) rotateY(12deg);opacity:.55;filter:blur(.5px)}
-.int-card.active~.int-card:not(.active){transform:scale(.82) rotateY(-12deg)}
-.int-card.active{transform:scale(1.05) rotateY(0deg);opacity:1;filter:none;z-index:10}
-.int-card-inner{background:white;border:1.5px solid #E5E7EB;border-radius:20px;padding:28px 24px;text-align:center;box-shadow:0 4px 6px rgba(0,0,0,.04),0 20px 40px rgba(0,0,0,.08);position:relative;overflow:hidden;transition:box-shadow .3s ease}
-.int-card.active .int-card-inner{box-shadow:0 0 0 2px rgba(99,102,241,.2),0 20px 60px rgba(99,102,241,.15)}
-.int-card-glow{position:absolute;top:-30px;right:-30px;width:100px;height:100px;background:var(--glow);border-radius:50%;opacity:.06;filter:blur(20px);transition:opacity .3s}
-.int-card.active .int-card-glow{opacity:.14}
-.int-card-logo{width:48px;height:48px;object-fit:contain;margin:0 auto 14px;display:block;filter:drop-shadow(0 2px 6px rgba(0,0,0,.12))}
-.int-card-title{font-size:16px;font-weight:700;color:#111827;margin:0 0 6px}
-.int-card-desc{font-size:12px;color:#6B7280;line-height:1.5;margin:0 0 14px}
-.int-card-badge{display:inline-block;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;margin-bottom:12px}
-.int-card-badge.connected{background:#D1FAE5;color:#065F46}
-.int-card-badge.available{background:#EEF2FF;color:#4338CA}
-.int-card-badge.soon{background:#F3F4F6;color:#6B7280}
-.int-card-features{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin-bottom:16px}
-.int-card-features span{font-size:10px;background:#F9FAFB;border:1px solid #E5E7EB;border-radius:8px;padding:3px 8px;color:#374151}
-.int-card-btn{display:inline-block;padding:8px 20px;background:linear-gradient(135deg,#6366F1,#8B5CF6);color:white;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;transition:all .2s;font-family:inherit}
-.int-card-btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(99,102,241,.35)}
-.soon-btn{background:#F3F4F6;color:#6B7280}
-.soon-btn:hover{background:#E5E7EB;box-shadow:none;transform:none}
-.int-arrow{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;background:white;border:1.5px solid #E5E7EB;border-radius:50%;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,.08);transition:all .2s;z-index:20}
-.int-arrow:hover{background:#6366F1;color:white;border-color:#6366F1;transform:translateY(-50%) scale(1.05)}
-.int-arrow-left{left:16px}
-.int-arrow-right{right:16px}
-.int-dots{display:flex;justify-content:center;gap:8px;margin-top:24px}
-.int-dot{width:8px;height:8px;border-radius:50%;background:#D1D5DB;cursor:pointer;transition:all .2s}
-.int-dot.active{width:24px;border-radius:4px;background:#6366F1}
-@media(max-width:768px){.int-arrow{display:none}.int-card:not(.active){display:none}.int-carousel-track{gap:0}}
-
-/* ── FİYATLANDIRMA ── */
-.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;max-width:960px;margin:0 auto;padding:0 20px;align-items:start}
-.plan-card{background:white;border:1.5px solid #E5E7EB;border-radius:20px;padding:32px 28px;position:relative;transition:transform .2s ease,box-shadow .2s ease}
-.plan-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,.08)}
-.plan-card.popular{border:2px solid transparent;background:linear-gradient(white,white) padding-box,linear-gradient(135deg,#6366F1,#8B5CF6,#EC4899) border-box;transform:scale(1.04);box-shadow:0 20px 60px rgba(99,102,241,.18)}
-.plan-card.popular:hover{transform:scale(1.04) translateY(-4px)}
-.popular-badge{position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#6366F1,#8B5CF6);color:white;font-size:11px;font-weight:700;padding:4px 16px;border-radius:20px;white-space:nowrap;box-shadow:0 4px 12px rgba(99,102,241,.35);letter-spacing:.03em}
-.plan-name{font-size:14px;font-weight:600;color:#6B7280;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
-.plan-price{font-size:42px;font-weight:800;color:#111827;line-height:1;margin-bottom:4px}
-.plan-price sup{font-size:18px;font-weight:600;vertical-align:super}
-.plan-price-sub{font-size:13px;color:#9CA3AF;margin-bottom:20px}
-.plan-divider{height:1px;background:#F3F4F6;margin:20px 0}
-.plan-feature{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:#374151;margin-bottom:10px;line-height:1.4}
-.plan-feature .check{color:#10B981;font-size:14px;flex-shrink:0;margin-top:1px}
-.plan-feature .cross{color:#D1D5DB;font-size:14px;flex-shrink:0;margin-top:1px}
-.plan-cta{display:block;width:100%;padding:13px;border-radius:12px;font-size:14px;font-weight:700;text-align:center;cursor:pointer;text-decoration:none;margin-top:24px;transition:all .2s;font-family:inherit;border:none;box-sizing:border-box}
-.plan-cta.outline{background:transparent;border:1.5px solid #E5E7EB;color:#374151}
-.plan-cta.outline:hover{border-color:#6366F1;color:#6366F1}
-.plan-cta.gradient{background:linear-gradient(135deg,#6366F1,#8B5CF6);color:white;box-shadow:0 4px 14px rgba(99,102,241,.35)}
-.plan-cta.gradient:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(99,102,241,.4)}
-.pricing-toggle{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:40px}
-.toggle-track{width:52px;height:28px;background:#E5E7EB;border-radius:14px;position:relative;cursor:pointer;transition:background .2s}
-.toggle-track.active{background:#6366F1}
-.toggle-thumb{position:absolute;top:3px;left:3px;width:22px;height:22px;background:white;border-radius:50%;transition:transform .2s;box-shadow:0 2px 4px rgba(0,0,0,.15)}
-.toggle-track.active .toggle-thumb{transform:translateX(24px)}
-.toggle-label{font-size:14px;font-weight:500;color:#374151;cursor:pointer}
-.toggle-label.active{color:#6366F1;font-weight:700}
-.save-badge{background:#D1FAE5;color:#065F46;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px}
-@media(max-width:768px){.pricing-grid{grid-template-columns:1fr;max-width:380px}.plan-card.popular{transform:scale(1)}.plan-card.popular:hover{transform:translateY(-4px)}}
-
-/* ── CANLI DEMO ── */
-@keyframes cursorBlink{0%,100%{opacity:1}50%{opacity:0}}
-@keyframes cellFadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
-.demo-step-dot{width:8px;height:8px;border-radius:50%;background:#D1D5DB;cursor:pointer;transition:all .3s}
-.demo-step-dot.active{width:24px;border-radius:4px;background:#6366F1}
-.demo-table{width:100%;border-collapse:collapse;font-size:12px;font-family:inherit}
-.demo-table th{background:#F9FAFB;border:1px solid #E5E7EB;padding:8px 12px;text-align:left;font-weight:600;color:#6B7280;font-size:11px}
-.demo-table td{border:1px solid #F3F4F6;padding:7px 12px;color:#374151;transition:background .4s ease;animation:cellFadeIn .3s ease}
-.demo-table tr:hover td{background:#F9FAFB}
-.cell-red{background:#FEE2E2 !important;color:#991B1B}
-.cell-green{background:#D1FAE5 !important;color:#065F46}
-.cell-yellow{background:#FEF9C3 !important}
-.cell-empty{color:#D1D5DB;font-style:italic}
-@keyframes pricePulse {
-  0%,100% { transform:scale(1); box-shadow:0 0 0 0 rgba(220,38,38,0.3); }
-  50% { transform:scale(1.05); box-shadow:0 0 0 4px rgba(220,38,38,0); }
-}
-</style>
-<script>
-(function(){
-  if(localStorage.getItem('banner_closed_v2')==='1'){var el=document.getElementById('campaign-banner');if(el)el.style.display='none';}
-  var _bp=new URLSearchParams(window.location.search);
-  if(_bp.get('promo')){localStorage.setItem('promo_code',_bp.get('promo').toUpperCase());}
-})();
-function closeBanner(){
-  var el=document.getElementById('campaign-banner');
-  if(el){
-    el.style.transition='max-height .3s,opacity .3s,padding .3s';
-    el.style.maxHeight=el.offsetHeight+'px';
-    el.style.overflow='hidden';
-    setTimeout(function(){el.style.maxHeight='0';el.style.opacity='0';el.style.padding='0';},10);
-    setTimeout(function(){el.style.display='none';},320);
-  }
-  localStorage.setItem('banner_closed_v2','1');
-}
-function copyPromoCode(){
-  navigator.clipboard.writeText('MOCK100').then(function(){
-    var ic=document.getElementById('copy-icon');if(ic){ic.textContent='✅';setTimeout(function(){ic.textContent='📋';},2000);}
-  }).catch(function(){
-    var ta=document.createElement('textarea');ta.value='MOCK100';document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
-    var ic=document.getElementById('copy-icon');if(ic){ic.textContent='✅';setTimeout(function(){ic.textContent='📋';},2000);}
-  });
-}
-</script>
-<!-- KAMPANYA BANNER END -->
-
-<!-- NAVBAR -->
-<nav class="lp-nav">
-  <a href="index.html" class="lp-nav-logo">
-    <img src="images/logo-wordmark.png" alt="Mocksheets" style="height:96px;width:auto;object-fit:contain">
-  </a>
-  <div class="lp-nav-links">
-    <a href="#features" data-i18n="nav_features">Özellikler</a>
-    <a href="#pricing" data-i18n="nav_pricing">Fiyatlar</a>
-    <a href="#integrations">Entegrasyonlar</a>
-    <a href="#testimonials">Kullanıcılar</a>
-    <a href="auth.html" data-i18n="nav_login">Giriş Yap</a>
-  </div>
-  <a href="auth.html" class="lp-nav-cta" data-i18n="nav_start">Ücretsiz Başla</a>
 </nav>
 
 <!-- HERO -->
-<section class="lp-hero">
-  <div class="lp-hero-badge">
-    <span>🤖 AI Excel Asistanı</span>
-  </div>
-
-  <h1 class="lp-hero-h1">
-    Formül yazmayı bırakın.<br>
-    <span class="lp-gradient-text">
-      Verilerinizle konuşun.
+<section class="hero">
+  <div class="wrap">
+    <span class="eyebrow">
+      <span class="dot"></span>
+      Türkçe AI Excel Asistanı
+      <span class="pill">v2.0 — yeni</span>
     </span>
-  </h1>
 
-  <p class="lp-hero-sub">
-    Veri düzenleme 12x daha hızlı.
-  </p>
+    <h1>
+      Formülü unutun.<br>
+      <span class="accent">Tablonuzla</span> <em>konuşun.</em>
+    </h1>
 
-  <div class="lp-hero-ctas">
-    <a href="auth.html" class="lp-btn-primary hero-cta-btn">
-      ⚡ Ücretsiz Başla — Şimdi Zaman Kazanın
-    </a>
-    <a href="#features" class="lp-btn-ghost" data-i18n="hero_cta_ghost">
-      Nasıl çalışır? →
-    </a>
-  </div>
-
-  <div class="lp-hero-proof">
-    <div class="lp-proof-item">
-      <strong>⭐ 4.9/5</strong>
-      <span>Erken Kullanıcı</span>
-    </div>
-    <div class="lp-proof-divider"></div>
-    <div class="lp-proof-item">
-      <strong>🌍 Türkçe</strong>
-      <span>Tam destek</span>
-    </div>
-    <div class="lp-proof-divider"></div>
-    <div class="lp-proof-item">
-      <strong>⚡ 12x</strong>
-      <span>Daha hızlı</span>
-    </div>
-  </div>
-
-  <div class="lp-hero-mockup">
-    <div class="lp-mockup-bar">
-      <span class="lp-mockup-dot r"></span>
-      <span class="lp-mockup-dot y"></span>
-      <span class="lp-mockup-dot g"></span>
-      <span class="lp-mockup-title">Mocksheets — AI Excel</span>
-    </div>
-    <div class="lp-mockup-body">
-      <div class="lp-mockup-chat">
-        <div class="lp-chat-msg user">B sütununu topla ve C1'e yaz</div>
-        <div class="lp-chat-msg ai">✓ B sütunu toplamı hesaplandı → C1: ₺48.750</div>
-        <div class="lp-chat-msg user">Negatif değerleri kırmızıya boya</div>
-        <div class="lp-chat-msg ai">✓ 3 hücre kırmızı ile işaretlendi</div>
-        <div class="lp-chat-msg user">Fiyatlara KDV ekle</div>
-        <div class="lp-chat-msg ai">✓ %20 KDV eklendi, 127 satır güncellendi</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- FLOWING TEXT -->
-<section class="lp-flowing-text" id="features">
-  <div class="lp-container">
-    <div class="lp-flow-line">
-      <span class="flow-word active">Mocksheets'te</span>
-      <span class="flow-word dim">Excel</span>
-      <span class="flow-word dim">ile</span>
-      <span class="flow-word dim">çalışma</span>
-      <span class="flow-word dim">biçimini</span>
-    </div>
-    <div class="lp-flow-line">
-      <span class="flow-word dim">tamamen</span>
-      <span class="flow-word dim">yeniden</span>
-      <span class="flow-word dim">tasarlıyoruz.</span>
-    </div>
-    <div class="lp-flow-spacer"></div>
-    <div class="lp-flow-line">
-      <span class="flow-word dim">En</span>
-      <span class="flow-word dim">güncel</span>
-      <span class="flow-word dim">AI</span>
-      <span class="flow-word dim">modelleriyle</span>
-    </div>
-    <div class="lp-flow-line">
-      <span class="flow-word dim">verilerinizi</span>
-      <span class="flow-word dim">analiz</span>
-      <span class="flow-word dim">ediyoruz,</span>
-    </div>
-    <div class="lp-flow-line">
-      <span class="flow-word dim">raporlar</span>
-      <span class="flow-word dim">üretiyoruz</span>
-      <span class="flow-word dim">ve</span>
-      <span class="flow-word dim">düzenliyoruz.</span>
-    </div>
-    <div class="lp-flow-spacer"></div>
-    <div class="lp-flow-line">
-      <span class="flow-word dim">Böylece</span>
-      <span class="flow-word dim">siz</span>
-      <span class="flow-word dim">gerçekten</span>
-    </div>
-    <div class="lp-flow-line">
-      <span class="flow-word dim">önemli</span>
-      <span class="flow-word dim">olana</span>
-      <span class="flow-word dim">odaklanırsınız.</span>
-    </div>
-  </div>
-</section>
-
-<!-- DEMO -->
-<section id="demo" style="padding:80px 20px;background:#F9FAFB;">
-  <div style="max-width:900px;margin:0 auto;text-align:center;">
-    <div style="display:inline-flex;align-items:center;gap:8px;background:#EEF2FF;color:#6366F1;padding:6px 16px;border-radius:20px;font-size:12px;font-weight:700;margin-bottom:16px;letter-spacing:.04em">
-      ▶ CANLI DEMO
-    </div>
-    <h2 style="font-size:clamp(28px,5vw,42px);font-weight:800;color:#111827;margin:0 0 12px">
-      Görmek inanmaktır.
-    </h2>
-    <p style="font-size:16px;color:#6B7280;margin:0 0 48px">
-      Gerçek bir Mocksheets oturumu — sıfırdan mükemmele 8 saniyede.
+    <p class="hero-sub">
+      KDV raporları, SGK hesapları, pivot tablolar — Türkçe yazın, Mocksheets çözsün.
+      Yarım gününüzü alan iş artık <b style="color:var(--ink)">4 dakika.</b>
     </p>
 
-    <div id="demoContainer" style="background:white;border:1.5px solid #E5E7EB;border-radius:20px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.10);max-width:860px;margin:0 auto;">
-      <!-- Toolbar -->
-      <div style="background:#F9FAFB;border-bottom:1px solid #E5E7EB;padding:12px 20px;display:flex;align-items:center;gap:12px;">
-        <div style="display:flex;gap:6px">
-          <div style="width:12px;height:12px;border-radius:50%;background:#FF5F57"></div>
-          <div style="width:12px;height:12px;border-radius:50%;background:#FEBC2E"></div>
-          <div style="width:12px;height:12px;border-radius:50%;background:#28C840"></div>
+    <div class="hero-actions">
+      <a href="/app" class="btn btn-violet">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        Ücretsiz başla — kart gerekmez
+      </a>
+      <a href="#demo" class="btn btn-outline">Demoyu izleyin →</a>
+    </div>
+
+    <div class="hero-meta">
+      <span><b>4.9/5</b> · 2.300+ erken kullanıcı</span>
+      <span><b>%100</b> · Türkçe muhasebe terimleri</span>
+      <span><b>12×</b> · Geleneksel Excel'e göre hızlı</span>
+    </div>
+
+    <!-- Live mini demo -->
+    <div class="hero-grid">
+      <div class="terminal" aria-hidden="true">
+        <div class="term-bar">
+          <div class="d d1"></div><div class="d d2"></div><div class="d d3"></div>
+          <span class="label">mocksheets · komut satırı</span>
         </div>
-        <div style="flex:1;background:white;border:1px solid #E5E7EB;border-radius:8px;padding:5px 12px;font-size:12px;color:#9CA3AF;text-align:left;">mocksheets.com/app</div>
-        <div id="demoStepBadge" style="font-size:11px;font-weight:700;background:#EEF2FF;color:#6366F1;padding:3px 10px;border-radius:20px;">1 / 5</div>
+        <div class="term-line"><span class="term-prompt">›</span><span id="typed-line">Mart KDV'sini hesapla, %18 olanları sarıya boya<span class="term-cursor"></span></span></div>
+        <div class="term-line"><span class="term-comment">// 247 satır tarandı · 4 sütun · 0.8 sn</span></div>
+        <div class="term-line"><span class="term-ok">✓</span><span>F sütununa KDV formülü uygulandı (=E2*0.18)</span></div>
+        <div class="term-line"><span class="term-ok">✓</span><span>%18 KDV içeren 89 satır <span style="background:#fff7d6;color:var(--ink);padding:1px 6px;border-radius:4px">sarı</span> boyandı</span></div>
+        <div class="term-line"><span class="term-ok">✓</span><span>Toplam: <b style="color:#fff">₺ 184.620,00</b></span></div>
       </div>
 
-      <!-- Spreadsheet Grid -->
-      <div style="padding:0;overflow:hidden">
-        <div id="demoGrid" style="overflow-x:auto;min-height:280px"></div>
-      </div>
-
-      <!-- Chat Bar -->
-      <div style="border-top:1px solid #E5E7EB;padding:14px 20px;background:white;display:flex;align-items:center;gap:12px;">
-        <span style="font-size:16px">✨</span>
-        <div id="demoChatInput" style="flex:1;height:38px;background:#F9FAFB;border:1.5px solid #E5E7EB;border-radius:10px;padding:0 14px;font-size:13px;color:#374151;display:flex;align-items:center;font-family:inherit;transition:border-color .2s;">
-          <span id="demoTypedText" style="color:#9CA3AF">Ne yapmak istersiniz?</span>
-          <span id="demoCursor" style="display:inline-block;width:2px;height:16px;background:#6366F1;margin-left:2px;animation:cursorBlink 1s infinite;"></span>
+      <div class="grid-card">
+        <div class="gc-head">
+          <div class="gc-title"><span class="swatch"></span> mart-faturalari.xlsx</div>
+          <span class="gc-tag">canlı</span>
         </div>
-        <button style="width:38px;height:38px;background:linear-gradient(135deg,#6366F1,#8B5CF6);border:none;border-radius:10px;color:white;font-size:16px;cursor:pointer;flex-shrink:0;">↑</button>
-      </div>
-
-      <!-- Progress Bar -->
-      <div style="height:3px;background:#F3F4F6">
-        <div id="demoProgress" style="height:100%;width:0%;background:linear-gradient(90deg,#6366F1,#8B5CF6);transition:width .5s ease;"></div>
+        <div class="sheet">
+          <div class="row">
+            <div class="cell head idx"></div>
+            <div class="cell head">Firma</div>
+            <div class="cell head num">Tutar</div>
+            <div class="cell head num">KDV</div>
+          </div>
+          <div class="row">
+            <div class="cell idx">1</div>
+            <div class="cell">Demir A.Ş.</div>
+            <div class="cell num">12.400</div>
+            <div class="cell num hl">2.232</div>
+          </div>
+          <div class="row">
+            <div class="cell idx">2</div>
+            <div class="cell">Lale Ltd.</div>
+            <div class="cell num">8.750</div>
+            <div class="cell num hl">1.575</div>
+          </div>
+          <div class="row">
+            <div class="cell idx">3</div>
+            <div class="cell">Mavi Holding</div>
+            <div class="cell num">45.200</div>
+            <div class="cell num hl-violet">3.616</div>
+          </div>
+          <div class="row">
+            <div class="cell idx">4</div>
+            <div class="cell">Çelik Tic.</div>
+            <div class="cell num">6.300</div>
+            <div class="cell num hl">1.134</div>
+          </div>
+          <div class="row">
+            <div class="cell idx">5</div>
+            <div class="cell">Ankara İnş.</div>
+            <div class="cell num">22.100</div>
+            <div class="cell num hl">3.978</div>
+          </div>
+          <div class="row">
+            <div class="cell idx">…</div>
+            <div class="cell" style="color:var(--mute)">242 satır daha</div>
+            <div class="cell num" style="color:var(--mute)">—</div>
+            <div class="cell num" style="color:var(--mute)">—</div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- Step İndikatörleri -->
-    <div style="display:flex;justify-content:center;gap:8px;margin-top:24px">
-      <div class="demo-step-dot active" data-step="0"></div>
-      <div class="demo-step-dot" data-step="1"></div>
-      <div class="demo-step-dot" data-step="2"></div>
-      <div class="demo-step-dot" data-step="3"></div>
-      <div class="demo-step-dot" data-step="4"></div>
-    </div>
-
-    <div id="demoStepDesc" style="margin-top:16px;font-size:14px;color:#6B7280;min-height:24px;">
-      📂 Boş spreadsheet açılıyor...
+    <!-- trust -->
+    <div class="trust">
+      <span class="label">Güvenenler</span>
+      <div class="logos">
+        <span class="logo"><span class="dot"></span>YALIN Mali</span>
+        <span class="logo"><span class="dot"></span>Kervan Co.</span>
+        <span class="logo"><span class="dot"></span>OrbitWorks</span>
+        <span class="logo"><span class="dot"></span>Anadolu Yazılım</span>
+        <span class="logo"><span class="dot"></span>BizimBüro</span>
+        <span class="logo"><span class="dot"></span>Doğa Lojistik</span>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- MARQUEE -->
-<section class="lp-marquee-section">
-  <p class="lp-marquee-label">Kullanıcılarımızın en çok kullandığı komutlar</p>
-  <div class="lp-marquee-wrapper">
-    <div class="lp-marquee-track">
-      <div class="lp-marquee-chip">📊 B sütununu topla</div>
-      <div class="lp-marquee-chip">🧹 Boş satırları sil</div>
-      <div class="lp-marquee-chip">💰 KDV hesapla</div>
-      <div class="lp-marquee-chip">🔴 Negatifleri kırmızıya boya</div>
-      <div class="lp-marquee-chip">📈 A'dan Z'ye sırala</div>
-      <div class="lp-marquee-chip">📋 Aylık rapor oluştur</div>
-      <div class="lp-marquee-chip">🔍 En yüksek 5 değeri bul</div>
-      <div class="lp-marquee-chip">💼 Net maaş hesapla</div>
-      <div class="lp-marquee-chip">📊 B sütununu topla</div>
-      <div class="lp-marquee-chip">🧹 Boş satırları sil</div>
-      <div class="lp-marquee-chip">💰 KDV hesapla</div>
-      <div class="lp-marquee-chip">🔴 Negatifleri kırmızıya boya</div>
-      <div class="lp-marquee-chip">📈 A'dan Z'ye sırala</div>
-      <div class="lp-marquee-chip">📋 Aylık rapor oluştur</div>
-      <div class="lp-marquee-chip">🔍 En yüksek 5 değeri bul</div>
-      <div class="lp-marquee-chip">💼 Net maaş hesapla</div>
+<!-- LIVE DEMO -->
+<section id="demo" style="padding:80px 0 30px">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="section-eyebrow">— canlı demo</div>
+        <h2 class="section-title">Görmek <em class="accent">inanmaktır.</em></h2>
+      </div>
+      <p class="section-sub">
+        Bir Mocksheets oturumu — sıfırdan rapora 8 saniyede. Adımları aşağıdan inceleyin,
+        kendiniz de tetikleyin.
+      </p>
     </div>
-  </div>
-  <div class="lp-marquee-wrapper lp-marquee-reverse">
-    <div class="lp-marquee-track">
-      <div class="lp-marquee-chip dark">⚡ Tekrarları kaldır</div>
-      <div class="lp-marquee-chip dark">📉 Trend analizi yap</div>
-      <div class="lp-marquee-chip dark">🎯 Pivot tablo oluştur</div>
-      <div class="lp-marquee-chip dark">💡 Anomalileri tespit et</div>
-      <div class="lp-marquee-chip dark">📅 Tarihleri formatla</div>
-      <div class="lp-marquee-chip dark">✏️ Büyük harfe çevir</div>
-      <div class="lp-marquee-chip dark">🔗 Sütunları birleştir</div>
-      <div class="lp-marquee-chip dark">📊 Bordro hesapla</div>
-      <div class="lp-marquee-chip dark">⚡ Tekrarları kaldır</div>
-      <div class="lp-marquee-chip dark">📉 Trend analizi yap</div>
-      <div class="lp-marquee-chip dark">🎯 Pivot tablo oluştur</div>
-      <div class="lp-marquee-chip dark">💡 Anomalileri tespit et</div>
-      <div class="lp-marquee-chip dark">📅 Tarihleri formatla</div>
-      <div class="lp-marquee-chip dark">✏️ Büyük harfe çevir</div>
-      <div class="lp-marquee-chip dark">🔗 Sütunları birleştir</div>
-      <div class="lp-marquee-chip dark">📊 Bordro hesapla</div>
-    </div>
-  </div>
-</section>
 
-<!-- BENTO FEATURES -->
-<section class="lp-features">
-  <div class="lp-container">
-    <span class="lp-marquee-label">Özellikler</span>
-    <h2 class="lp-section-title">
-      Sadece bir araç değil.<br>
-      <span class="lp-gradient-text">Tam bir Excel asistanı.</span>
-    </h2>
-
-    <div class="lp-bento">
-
-      <div class="lp-bento-card lp-bento-large">
-        <div class="lp-bento-tag">🤖 AI Engine</div>
-        <h3>Sadece yazın,<br>AI anlasın</h3>
-        <p>Formül bilmeden Excel yönetin.
-        "KDV ekle", "sırala", "temizle" — hepsi çalışır.</p>
-        <div class="lp-bento-demo">
-          <div class="lp-demo-row">
-            <span class="lp-demo-cmd">→ "Aylık satış ortalamasını hesapla"</span>
+    <div class="demo-shell">
+      <div class="demo-top">
+        <div class="d d1" style="width:10px;height:10px;border-radius:50%;background:#FF5F57"></div>
+        <div class="d d2" style="width:10px;height:10px;border-radius:50%;background:#FEBC2E"></div>
+        <div class="d d3" style="width:10px;height:10px;border-radius:50%;background:#28C840"></div>
+        <div class="url">mocksheets.com/app · faturalar-2026-q1</div>
+        <div class="demo-step-tabs" id="step-tabs">
+          <button class="step-tab active" data-step="1">01 · yükle</button>
+          <button class="step-tab" data-step="2">02 · sırala</button>
+          <button class="step-tab" data-step="3">03 · KDV hesapla</button>
+          <button class="step-tab" data-step="4">04 · vurgula</button>
+          <button class="step-tab" data-step="5">05 · rapor</button>
+        </div>
+      </div>
+      <div class="demo-body">
+        <aside class="demo-side">
+          <div class="chat-msg bot">
+            <span class="who">Mocksheets</span>
+            Merhaba 👋 Excel veya PDF dosyanızı sürükleyin, ya da bir komut yazın.
           </div>
-          <div class="lp-demo-row success">
-            <span>✓ Ortalama: ₺24.840 (127 satır analiz edildi)</span>
+          <div class="chat-msg you" id="step-prompt">
+            <span class="who" style="color:#ffffffcc">Sen</span>
+            Tutara göre büyükten küçüğe sırala
           </div>
-          <div class="lp-demo-row">
-            <span class="lp-demo-cmd">→ "En düşük 3 değeri kırmızıya boya"</span>
+          <div class="chat-msg bot" id="step-response">
+            <span class="who">Mocksheets</span>
+            Tamam. <b>C sütunu</b> azalan sırada düzenlendi. 247 satır 0.6 sn'de işlendi.
           </div>
-          <div class="lp-demo-row success">
-            <span>✓ 3 hücre kırmızı ile işaretlendi</span>
+          <div class="chat-actions">
+            <input class="chat-input" placeholder="Bir şey yazın — örn. 'KDV ekle, sarıya boya'…" />
+            <button class="chat-send">Gönder ⏎</button>
+          </div>
+        </aside>
+        <div class="demo-main">
+          <div class="demo-toolbar">
+            <span class="pill2">📄 faturalar-q1.xlsx</span>
+            <span class="pill2">247 satır</span>
+            <span class="pill2">son: 0.6 sn</span>
+            <span style="margin-left:auto;color:var(--mute)">A1:F247</span>
+          </div>
+          <div class="big-sheet" id="big-sheet">
+            <!-- rendered by JS -->
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;color:var(--mute);font-size:13px">
+            <span class="micro">İpucu:</span>
+            Her komut geri alınabilir. Versiyon geçmişi otomatik kaydedilir.
           </div>
         </div>
       </div>
-
-      <div class="lp-bento-card">
-        <div class="lp-bento-tag">💰 Accounting</div>
-        <h3>AI Destekli Muhasebe</h3>
-        <p>KDV, SGK, bordro ve vergi hesaplamalarını saniyeler içinde yapın. Türk vergi sistemi dahil.</p>
-        <div class="lp-bento-pills">
-          <span>KDV %20</span>
-          <span>Vergi %14</span>
-          <span>Net Maaş</span>
-          <span>Kıdem</span>
-        </div>
-      </div>
-
-      <div class="lp-bento-card">
-        <div class="lp-bento-tag">📊 Reports</div>
-        <h3>Otomatik Rapor Oluşturma</h3>
-        <p>Aylık, haftalık veya günlük raporlar tek komutla. Excel'e veya Notion'a aktarın.</p>
-        <div class="lp-bento-stat">
-          <span class="lp-stat-num">3 min</span>
-          <span class="lp-stat-label">Eskiden 3 saatti</span>
-        </div>
-      </div>
-
-      <div class="lp-bento-card">
-        <div class="lp-bento-tag">🧹 Cleanup</div>
-        <h3>Akıllı Veri Temizleme</h3>
-        <p>Boş satırlar, tekrarlar, format hataları — "Temizle" yazın, AI halletsin.</p>
-      </div>
-
-      <div class="lp-bento-card">
-        <div class="lp-bento-tag">🔒 Security</div>
-        <h3>KVKK uyumlu,<br>verileriniz güvende</h3>
-        <p>Dosyalarınız sunucularımızda saklanmaz. Tamamen güvenli.</p>
-        <div class="lp-bento-badges">
-          <span>🔒 SSL</span>
-          <span>🔐 KVKK</span>
-          <span>✅ Güvenli</span>
-        </div>
-      </div>
-
     </div>
   </div>
 </section>
 
-<!-- STATS -->
-<section class="lp-stats">
-  <div class="lp-container">
-    <div class="lp-stats-grid">
-      <div class="lp-stat-item">
-        <div class="lp-stat-big">12x</div>
-        <div class="lp-stat-desc">Daha hızlı veri düzenleme</div>
+<!-- FEATURES BENTO -->
+<section id="features" style="padding:80px 0 30px">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="section-eyebrow">— neler yapar</div>
+        <h2 class="section-title">Excel'in <em>düşünmeyen</em> kuzeni değil.<br><span class="accent">Birlikte düşündüğünüz</span> kuzen.</h2>
       </div>
-      <div class="lp-stat-item">
-        <div class="lp-stat-big">18 sa</div>
-        <div class="lp-stat-desc">Haftada ortalama kazanılan süre</div>
-      </div>
-      <div class="lp-stat-item">
-        <div class="lp-stat-big">%87</div>
-        <div class="lp-stat-desc">Daha az formül hatası</div>
-      </div>
-      <div class="lp-stat-item">
-        <div class="lp-stat-big">100+</div>
-        <div class="lp-stat-desc">Hedef kullanıcı</div>
-      </div>
+      <p class="section-sub">
+        Yedi yıldır muhasebeci, sekiz yıldır pivot tablo. Mocksheets, Türkçe muhasebe diline
+        özel olarak eğitildi. KDV, SGK, gelir vergisi — fonksiyon adı ezberlemenize gerek yok.
+      </p>
     </div>
-    <p class="lp-stats-source">* Mocksheets beta user survey 2025</p>
+
+    <div class="bento">
+      <!-- Feature 1: Turkish natural commands -->
+      <div class="tile span-7">
+        <div class="kicker">01 · DOĞAL DİL</div>
+        <h3>Türkçe yazın, Mocksheets anlasın.</h3>
+        <p>"Mart KDV'sini hesapla", "Çiftleri sil", "Kırmızı satırları sona at" — 600+ örnek ile beslenmiş RAG katmanı, niyetinizi ilk seferde yakalar.</p>
+        <div class="illus" style="padding:14px;background:var(--paper-2)">
+          <div class="cmd-list">
+            <div class="cmd-row"><span class="ar">›</span><span>KDV'si %18 olanları sarıya boya</span><span class="out" style="margin-left:auto">+89 hücre</span></div>
+            <div class="cmd-row"><span class="ar">›</span><span>Tekrarlayan firmaları birleştir</span><span class="out" style="margin-left:auto">12 grup</span></div>
+            <div class="cmd-row"><span class="ar">›</span><span>SGK matrahını brüt maaşa göre yaz</span><span class="out" style="margin-left:auto">+34 hücre</span></div>
+            <div class="cmd-row"><span class="ar">›</span><span>Şubat'tan önceki satırları gizle</span><span class="out" style="margin-left:auto">-118 satır</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature 2: Turkish tax engine -->
+      <div class="tile span-5 dark">
+        <div class="kicker" style="color:#a48cff">02 · TÜRK MUHASEBE MOTORU</div>
+        <h3>KDV, SGK, gelir vergisi — yerel<br><span style="color:#a48cff">dil ile yerel kural.</span></h3>
+        <p>2026 vergi dilimleri, asgari ücret, SGK tavanı, stopaj oranları sürekli güncel. Mali müşavirinizin onaylayacağı sonuçlar.</p>
+        <div class="illus" style="background:#ffffff08;border-color:#ffffff14;padding:18px">
+          <div class="tax-card" style="color:#fff">
+            <div class="tax-row" style="border-color:#ffffff18"><span>Brüt Maaş</span><span class="amt" style="color:#fff">₺ 45.000,00</span></div>
+            <div class="tax-row" style="border-color:#ffffff18"><span>SGK İşçi Payı (%14)</span><span class="amt" style="color:#fff">₺ 6.300,00</span></div>
+            <div class="tax-row" style="border-color:#ffffff18"><span>İşsizlik Sigortası (%1)</span><span class="amt" style="color:#fff">₺ 450,00</span></div>
+            <div class="tax-row" style="border-color:#ffffff18"><span>Gelir Vergisi (%20)</span><span class="amt" style="color:#fff">₺ 7.650,00</span></div>
+            <div class="tax-row" style="color:#D9F26B"><span>Net</span><span class="amt" style="color:#D9F26B">₺ 30.600,00</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature 3: PDF -->
+      <div class="tile span-5">
+        <div class="kicker">03 · PDF → TABLO</div>
+        <h3>Fatura, ekstre, çıktı —<br>tek tıkla tabloya.</h3>
+        <p>OCR + yapısal çıkarım. Bankacılık ekstrelerinden gelir tablolarına, PDF'ler artık veriniz.</p>
+        <div class="illus" style="background:var(--paper-2)">
+          <div class="pdf-illus">
+            <div class="pdf-doc">
+              <div class="pdf-tag">FATURA.PDF</div>
+              <div class="ln w90"></div>
+              <div class="ln w70"></div>
+              <div class="ln w90"></div>
+              <div class="ln w50"></div>
+              <div class="ln w70"></div>
+              <div class="ln w90"></div>
+            </div>
+            <div class="arrow">→</div>
+            <div class="pdf-out">
+              <div class="r"><div class="c h">Tarih</div><div class="c h">Ürün</div><div class="c h">Tutar</div></div>
+              <div class="r"><div class="c">14.03.26</div><div class="c">Kâğıt A4</div><div class="c">₺240</div></div>
+              <div class="r"><div class="c">14.03.26</div><div class="c">Kalem</div><div class="c">₺85</div></div>
+              <div class="r"><div class="c">15.03.26</div><div class="c">Toner</div><div class="c">₺1.420</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature 4: speed -->
+      <div class="tile span-4 lime">
+        <div class="kicker">04 · HIZ</div>
+        <h3>0.6 sn / komut.<br>Ortalama.</h3>
+        <p>RAG önbelleği + Claude prompt caching. İlk komuttan sonra hız <b>4×</b> artar.</p>
+        <div class="illus" style="background:#0e0e1010;border:0;display:flex;align-items:center;justify-content:center;font-family:'Geist Mono',monospace">
+          <div style="text-align:center;color:var(--ink)">
+            <div style="font-size:64px;font-weight:600;letter-spacing:-0.04em;line-height:1">0.6<small style="font-size:18px;color:var(--ink-2)"> sn</small></div>
+            <div class="micro" style="color:var(--ink-2);margin-top:6px">ortalama yanıt süresi</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature 5: undo / history -->
+      <div class="tile span-4">
+        <div class="kicker">05 · GERİ AL</div>
+        <h3>Her hareket geri alınabilir.</h3>
+        <p>Versiyon geçmişi her komutta otomatik kaydedilir. ⌘Z basın, başlangıca dönün.</p>
+        <div class="illus" style="background:var(--paper-2);display:flex;flex-direction:column;justify-content:center;padding:14px;gap:6px">
+          <div class="cmd-row" style="background:#fff"><span class="ar">●</span><span style="font-size:12.5px">14:23 · KDV sütunu eklendi</span></div>
+          <div class="cmd-row" style="background:#fff"><span class="ar">●</span><span style="font-size:12.5px">14:23 · Sarı vurgu uygulandı</span></div>
+          <div class="cmd-row" style="background:var(--violet);color:#fff;border-color:transparent"><span style="color:#fff">●</span><span style="font-size:12.5px">14:24 · Pivot oluşturuldu ← şu an</span></div>
+          <div class="cmd-row" style="background:#fff;opacity:.5"><span class="ar">○</span><span style="font-size:12.5px">14:25 · Rapor dışa aktarıldı</span></div>
+        </div>
+      </div>
+
+      <!-- Feature 6: live cursor / collab -->
+      <div class="tile span-4 violet">
+        <div class="kicker" style="color:#ffffffcc">06 · İŞBİRLİĞİ</div>
+        <h3>Ekibinizle aynı<br>tabloda, aynı anda.</h3>
+        <p>Canlı imleçler, yorum dizileri, paylaşılan komut geçmişi. Excel'in unuttuğu şey.</p>
+        <div class="illus" style="background:#ffffff14;border-color:#ffffff20;display:flex;align-items:center;justify-content:center;gap:-8px;padding:0">
+          <div style="display:flex;gap:-12px">
+            <div class="avatar" style="background:#FFD0B0;color:#0e0e10;border:3px solid #5B3CFF;margin-right:-12px">AK</div>
+            <div class="avatar" style="background:#BFE5FF;color:#0e0e10;border:3px solid #5B3CFF;margin-right:-12px">MT</div>
+            <div class="avatar" style="background:#D9F26B;color:#0e0e10;border:3px solid #5B3CFF;margin-right:-12px">ZA</div>
+            <div class="avatar" style="background:#fff;color:#5B3CFF;border:3px solid #5B3CFF">+4</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
   </div>
 </section>
 
 <!-- INTEGRATIONS -->
-<section class="lp-integrations" id="integrations">
-  <div class="lp-container">
-
-    <div style="text-align:center;margin-bottom:56px">
-      <span class="lp-marquee-label">Integrations</span>
-      <h2 class="lp-section-title" style="margin-bottom:16px">
-        Mocksheets'i bağlayın<br>
-        <span class="lp-gradient-text">mevcut araçlarınıza.</span>
-      </h2>
-      <p style="font-size:16px;color:#6B7280;max-width:480px;margin:0 auto;line-height:1.6">
-        Veri aktarın, otomasyon tetikleyin ve tablolarınızı
-        kullandığınız uygulamalarla senkronize edin.
+<section id="integrations" style="padding:80px 0 30px">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="section-eyebrow">— entegrasyonlar</div>
+        <h2 class="section-title">Çalıştığınız <em class="accent">her yerde.</em></h2>
+      </div>
+      <p class="section-sub">
+        Mocksheets, ekibinizin halihazırda kullandığı araçlarla konuşur. Veri aktarın,
+        otomasyon tetikleyin, tablolarınızı senkronize edin.
       </p>
     </div>
 
-    <!-- ENTEGRASYON CAROUSEL -->
-    <div class="int-carousel-section">
-      <div class="int-carousel-track" id="intTrack">
-
-        <div class="int-card" data-index="0" onclick="selectIntCard(0)">
-          <div class="int-card-inner">
-            <div class="int-card-glow" style="--glow:#0F9D58"></div>
-            <img src="https://www.gstatic.com/images/branding/product/1x/sheets_2020q4_48dp.png" class="int-card-logo" alt="Google Sheets">
-            <h3 class="int-card-title">Google Sheets</h3>
-            <p class="int-card-desc">Tek tıkla dışa aktar.<br>Veriler anında senkronize.</p>
-            <div class="int-card-badge connected">✓ Bağlı</div>
-            <div class="int-card-features"><span>↑ Dışa Aktar</span><span>⟳ Senkronize</span><span>📋 Tablo</span></div>
-            <a href="integrations.html" class="int-card-btn">Bağla →</a>
-          </div>
-        </div>
-
-        <div class="int-card" data-index="1" onclick="selectIntCard(1)">
-          <div class="int-card-inner">
-            <div class="int-card-glow" style="--glow:#000000"></div>
-            <img src="https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.png" class="int-card-logo" alt="Notion">
-            <h3 class="int-card-title">Notion</h3>
-            <p class="int-card-desc">Satırları sayfalara dönüştür.<br>Otomatik veritabanı.</p>
-            <div class="int-card-badge connected">✓ Bağlı</div>
-            <div class="int-card-features"><span>📄 Sayfalar</span><span>🗄️ Veritabanı</span><span>⟳ Senkron</span></div>
-            <a href="integrations.html" class="int-card-btn">Bağla →</a>
-          </div>
-        </div>
-
-        <div class="int-card" data-index="2" onclick="selectIntCard(2)">
-          <div class="int-card-inner">
-            <div class="int-card-glow" style="--glow:#FF4A00"></div>
-            <img src="https://upload.wikimedia.org/wikipedia/commons/f/fd/Zapier_logo.svg" class="int-card-logo" alt="Zapier">
-            <h3 class="int-card-title">Zapier</h3>
-            <p class="int-card-desc">5000+ uygulamaya bağlan.<br>Otomasyon tek tıkla.</p>
-            <div class="int-card-badge available">Kullanılabilir</div>
-            <div class="int-card-features"><span>⚡ Webhook</span><span>🔄 Otomasyon</span><span>🔗 5000+ App</span></div>
-            <a href="integrations.html" class="int-card-btn">Bağla →</a>
-          </div>
-        </div>
-
-        <div class="int-card" data-index="3" onclick="selectIntCard(3)">
-          <div class="int-card-inner">
-            <div class="int-card-glow" style="--glow:#4A154B"></div>
-            <img src="https://upload.wikimedia.org/wikipedia/commons/d/d5/Slack_icon_2019.svg" class="int-card-logo" alt="Slack">
-            <h3 class="int-card-title">Slack</h3>
-            <p class="int-card-desc">AI aksiyonlarında bildirim al.<br>Ekibinizi haberdar edin.</p>
-            <div class="int-card-badge soon">Yakında</div>
-            <div class="int-card-features"><span>🔔 Bildirim</span><span>💬 Mesaj</span><span>👥 Ekip</span></div>
-            <button class="int-card-btn soon-btn" onclick="notifyMe('slack')">Haber Ver →</button>
-          </div>
-        </div>
-
-        <div class="int-card" data-index="4" onclick="selectIntCard(4)">
-          <div class="int-card-inner">
-            <div class="int-card-glow" style="--glow:#FCB400"></div>
-            <img src="https://upload.wikimedia.org/wikipedia/commons/4/4b/Airtable_Logo.svg" class="int-card-logo" alt="Airtable">
-            <h3 class="int-card-title">Airtable</h3>
-            <p class="int-card-desc">Veritabanına aktar.<br>Grid view'a dönüştür.</p>
-            <div class="int-card-badge soon">Yakında</div>
-            <div class="int-card-features"><span>🗃️ Veritabanı</span><span>📊 Grid</span><span>🔗 API</span></div>
-            <button class="int-card-btn soon-btn" onclick="notifyMe('airtable')">Haber Ver →</button>
-          </div>
-        </div>
-
-        <div class="int-card" data-index="5" onclick="selectIntCard(5)">
-          <div class="int-card-inner">
-            <div class="int-card-glow" style="--glow:#6D00CC"></div>
-            <img src="https://upload.wikimedia.org/wikipedia/commons/7/7e/Make_%28software%29_Logo.svg" class="int-card-logo" alt="Make">
-            <h3 class="int-card-title">Make</h3>
-            <p class="int-card-desc">Görsel otomasyon kur.<br>Sürükle bırak akışlar.</p>
-            <div class="int-card-badge soon">Yakında</div>
-            <div class="int-card-features"><span>🎨 Görsel</span><span>⚙️ Otomasyon</span><span>🔄 Akış</span></div>
-            <button class="int-card-btn soon-btn" onclick="notifyMe('make')">Haber Ver →</button>
-          </div>
-        </div>
-
+    <div class="integrations">
+      <div class="int">
+        <div class="int-logo" style="background:#fff;border:1px solid var(--line-strong);display:flex;align-items:center;justify-content:center"><img src="/images/integrations/googlesheets.svg" alt="Google Sheets" style="width:22px;height:22px"></div>
+        <div class="int-name">Google Sheets</div>
+        <div class="int-meta">2 yönlü senk</div>
+        <span class="int-badge live">● bağlı</span>
       </div>
-
-      <button class="int-arrow int-arrow-left" onclick="moveCarousel(-1)">‹</button>
-      <button class="int-arrow int-arrow-right" onclick="moveCarousel(1)">›</button>
-
-      <div class="int-dots">
-        <span class="int-dot active" onclick="selectIntCard(0)"></span>
-        <span class="int-dot" onclick="selectIntCard(1)"></span>
-        <span class="int-dot" onclick="selectIntCard(2)"></span>
-        <span class="int-dot" onclick="selectIntCard(3)"></span>
-        <span class="int-dot" onclick="selectIntCard(4)"></span>
-        <span class="int-dot" onclick="selectIntCard(5)"></span>
+      <div class="int">
+        <div class="int-logo" style="background:#fff;border:1px solid var(--line-strong);display:flex;align-items:center;justify-content:center"><img src="/images/integrations/microsoftexcel.svg" alt="Excel Online" style="width:22px;height:22px"></div>
+        <div class="int-name">Excel Online</div>
+        <div class="int-meta">Microsoft 365</div>
+        <span class="int-badge live">● bağlı</span>
+      </div>
+      <div class="int">
+        <div class="int-logo" style="background:#fff;border:1px solid var(--line-strong);display:flex;align-items:center;justify-content:center"><img src="/images/integrations/notion.svg" alt="Notion" style="width:22px;height:22px"></div>
+        <div class="int-name">Notion</div>
+        <div class="int-meta">Veritabanı</div>
+        <span class="int-badge live">● bağlı</span>
+      </div>
+      <div class="int">
+        <div class="int-logo" style="background:#fff;border:1px solid var(--line-strong);display:flex;align-items:center;justify-content:center"><img src="/images/integrations/zapier.svg" alt="Zapier" style="width:22px;height:22px"></div>
+        <div class="int-name">Zapier</div>
+        <div class="int-meta">5000+ uygulama</div>
+        <span class="int-badge live">● bağlı</span>
+      </div>
+      <div class="int">
+        <div class="int-logo" style="background:#fff;border:1px solid var(--line-strong);display:flex;align-items:center;justify-content:center"><img src="/images/integrations/airtable.svg" alt="Airtable" style="width:22px;height:22px"></div>
+        <div class="int-name">Airtable</div>
+        <div class="int-meta">Grid view</div>
+        <span class="int-badge live">● bağlı</span>
+      </div>
+      <div class="int">
+        <div class="int-logo" style="background:#fff;border:1px solid var(--line-strong);display:flex;align-items:center;justify-content:center"><img src="/images/integrations/slack.svg" alt="Slack" style="width:22px;height:22px"></div>
+        <div class="int-name">Slack</div>
+        <div class="int-meta">Bildirim</div>
+        <span class="int-badge soon">yakında</span>
+      </div>
+      <div class="int">
+        <div class="int-logo" style="background:#003366">L</div>
+        <div class="int-name">Logo Tiger</div>
+        <div class="int-meta">Türk ERP</div>
+        <span class="int-badge live">● bağlı</span>
+      </div>
+      <div class="int">
+        <div class="int-logo" style="background:#E60000">M</div>
+        <div class="int-name">Mikro ERP</div>
+        <div class="int-meta">Türk ERP</div>
+        <span class="int-badge live">● bağlı</span>
+      </div>
+      <div class="int">
+        <div class="int-logo" style="background:#5B3CFF">D</div>
+        <div class="int-name">Dropbox</div>
+        <div class="int-meta">Dosya senk</div>
+        <span class="int-badge soon">yakında</span>
+      </div>
+      <div class="int">
+        <div class="int-logo" style="background:#fff;border:1px solid var(--line-strong);display:flex;align-items:center;justify-content:center"><img src="/images/integrations/googledrive.svg" alt="Google Drive" style="width:22px;height:22px"></div>
+        <div class="int-name">Google Drive</div>
+        <div class="int-meta">Dosya senk</div>
+        <span class="int-badge live">● bağlı</span>
+      </div>
+      <div class="int">
+        <div class="int-logo" style="background:#0e0e10">Q</div>
+        <div class="int-name">QuickBooks</div>
+        <div class="int-meta">Muhasebe</div>
+        <span class="int-badge soon">yakında</span>
+      </div>
+      <div class="int">
+        <div class="int-logo" style="background:#FFD43B;color:#0e0e10">+</div>
+        <div class="int-name">Webhook / API</div>
+        <div class="int-meta">Özel akış</div>
+        <span class="int-badge live">● bağlı</span>
       </div>
     </div>
+  </div>
+</section>
 
+<!-- PRICING -->
+<section id="pricing" style="padding:80px 0 30px">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="section-eyebrow">— fiyatlandırma</div>
+        <h2 class="section-title">Bir kahve fiyatına<br><em class="accent">bir asistan.</em></h2>
+      </div>
+      <p class="section-sub">
+        Ücretsiz katmanla başlayın, ihtiyaç duydukça yükseltin. Sözleşme yok, gizli ücret yok.
+        İstediğiniz zaman iptal edin.
+      </p>
+    </div>
+
+    <div class="pricing">
+      <div class="price">
+        <div class="price-name"><span>Ücretsiz</span><span>BAŞLA</span></div>
+        <div class="price-amt">₺0<small> / ay</small></div>
+        <div class="price-desc">Mocksheets'i tanımak için ideal. Kart gerekmez.</div>
+        <ul>
+          <li>Günde 5 AI komutu</li>
+          <li>Ayda 20 komut</li>
+          <li>Google Sheets bağlantısı</li>
+          <li>Türkçe + İngilizce arayüz</li>
+        </ul>
+        <a href="/app" class="btn btn-outline" style="margin-top:auto">Ücretsiz başla</a>
+      </div>
+
+      <div class="price pro">
+        <div class="price-name"><span>Pro</span><span class="price-tag">en popüler</span></div>
+        <div class="price-amt">₺249<small> / ay</small></div>
+        <div class="price-desc">Mali müşavirler ve yoğun çalışanlar için. İlk 14 gün ücretsiz.</div>
+        <ul>
+          <li>Günde 30 AI komutu, ayda 200</li>
+          <li>PDF → tablo çıkarımı</li>
+          <li>Tüm entegrasyonlar</li>
+          <li>Versiyon geçmişi (90 gün)</li>
+          <li>Öncelikli destek</li>
+        </ul>
+        <a href="/billing?plan=pro" class="btn btn-dark" style="background:var(--lime);color:var(--ink);margin-top:auto">Pro'ya başla →</a>
+      </div>
+
+      <div class="price">
+        <div class="price-name"><span>İşletme</span><span>EKİP</span></div>
+        <div class="price-amt">₺899<small> / ay</small></div>
+        <div class="price-desc">5 koltuk dahil. Ekibinizi tek hesapta toplayın.</div>
+        <ul>
+          <li>Sınırsız AI komutu</li>
+          <li>Canlı işbirliği + yorumlar</li>
+          <li>SSO + audit log</li>
+          <li>Özel ERP entegrasyonları</li>
+          <li>Atanmış müşteri temsilcisi</li>
+        </ul>
+        <a href="/contact" class="btn btn-outline" style="margin-top:auto">Satış ile konuşun</a>
+      </div>
+    </div>
   </div>
 </section>
 
 <!-- TESTIMONIALS -->
-<section class="lp-testimonials" id="testimonials">
-  <div class="lp-container">
-    <p class="lp-marquee-label">Kullanıcılarımız ne diyor</p>
-    <h2 class="lp-section-title">
-      Gerçek insanlar,<br>gerçek sonuçlar.
-    </h2>
+<section id="stories" style="padding:80px 0 30px">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="section-eyebrow">— hikayeler</div>
+        <h2 class="section-title">Gerçek insanlar,<br><em class="accent">gerçek sonuçlar.</em></h2>
+      </div>
+      <p class="section-sub">
+        Mocksheets'in günlük iş akışını nasıl değiştirdiğini kullanıcılarımızdan dinleyin.
+      </p>
+    </div>
 
-    <div class="lp-testi-grid">
-      <div class="lp-testi-card lp-testi-featured">
-        <div class="lp-testi-metric">23 saat</div>
-        <div class="lp-testi-metric-label">haftada kazandı</div>
-        <p>"KDV raporunu artık 4 dakikada hazırlıyorum. Eskiden yarım günümü alıyordu."</p>
-        <div class="lp-testi-author">
-          <div class="lp-testi-avatar">AK</div>
-          <div>
-            <div class="lp-testi-name">Ayşe K.</div>
-            <div class="lp-testi-role">Mali Müşavir · İstanbul</div>
-          </div>
+    <div class="testi">
+      <div class="quote dark">
+        <div class="label">Haftada kazandı</div>
+        <div class="num">23 <em>saat</em></div>
+        <div class="quote-text">"KDV raporunu artık 4 dakikada hazırlıyorum. Eskiden yarım günümü alıyordu. Şubat kapanışını çocuğumla geçirdim — bu kadar."</div>
+        <div class="quote-who">
+          <div class="avatar">AK</div>
+          <div class="who">Ayşe K.<small>Mali Müşavir · İstanbul</small></div>
         </div>
       </div>
 
-      <div class="lp-testi-card">
-        <div class="lp-testi-metric">10x</div>
-        <div class="lp-testi-metric-label">daha hızlı rapor</div>
-        <p>"Çalışanım Excel bilmiyordu. Mocksheets verdim — artık bağımsız çalışıyor."</p>
-        <div class="lp-testi-author">
-          <div class="lp-testi-avatar">MT</div>
-          <div>
-            <div class="lp-testi-name">Mehmet T.</div>
-            <div class="lp-testi-role">KOBİ Sahibi · Ankara</div>
-          </div>
+      <div class="quote">
+        <div class="label">Daha hızlı rapor</div>
+        <div class="num">10<em>×</em></div>
+        <div class="quote-text">"Çalışanım Excel'i hiç bilmiyordu. Mocksheets verdim — artık benden bağımsız çalışıyor. KDV beyanından bordro hesabına her şeyi yapıyor."</div>
+        <div class="quote-who">
+          <div class="avatar" style="background:#FFD0B0;color:#0e0e10">MT</div>
+          <div class="who">Mehmet T.<small>KOBİ Sahibi · Ankara</small></div>
         </div>
       </div>
 
-      <div class="lp-testi-card">
-        <div class="lp-testi-metric">%87</div>
-        <div class="lp-testi-metric-label">daha az hata</div>
-        <p>"30 dakikalık pivot işini 3 dakikada yapıyorum. Hayat kurtarıcı."</p>
-        <div class="lp-testi-author">
-          <div class="lp-testi-avatar">ZA</div>
-          <div>
-            <div class="lp-testi-name">Zeynep A.</div>
-            <div class="lp-testi-role">Finans Analisti · İzmir</div>
-          </div>
+      <div class="quote">
+        <div class="label">Daha az hata</div>
+        <div class="num">%87 <em>↓</em></div>
+        <div class="quote-text">"30 dakikalık pivot işini 3 dakikada yapıyorum. Üstelik tek bir formül hatası bile yok. Mocksheets benim için hayat kurtarıcı."</div>
+        <div class="quote-who">
+          <div class="avatar" style="background:#BFE5FF;color:#0e0e10">ZA</div>
+          <div class="who">Zeynep A.<small>Finans Analisti · İzmir</small></div>
         </div>
       </div>
-    </div>
-
-    <div class="lp-trust-bar">
-      <div class="lp-trust-item">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-        </svg>
-        <span>256-bit SSL Şifreleme</span>
-      </div>
-      <div class="lp-trust-item">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-        </svg>
-        <span>KVKK Uyumlu</span>
-      </div>
-      <div class="lp-trust-item">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <rect x="2" y="5" width="20" height="14" rx="2"/>
-          <path d="M2 10h20"/>
-        </svg>
-        <span>Güvenli Ödeme</span>
-      </div>
-      <div class="lp-trust-item">
-        <span>⭐⭐⭐⭐⭐</span>
-        <span>4.9/5 — Erken Kullanıcı</span>
-      </div>
-      <div class="lp-trust-item">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="12" cy="12" r="10"/>
-          <polyline points="12 6 12 12 16 14"/>
-        </svg>
-        <span>14 Gün Para İade Garantisi</span>
-      </div>
-    </div>
-
-  </div>
-</section>
-
-<!-- FİYATLANDIRMA -->
-<section class="lp-pricing" id="pricing">
-  <div class="lp-container">
-
-    <h2 class="lp-section-title">
-      Sade fiyatlandırma,<br>
-      <span class="lp-gradient-text">sürpriz yok.</span>
-    </h2>
-
-    <!-- Fiyatlandırma Toggle -->
-    <div class="pricing-toggle">
-      <span class="toggle-label" id="label-monthly">Aylık</span>
-      <div class="toggle-track" id="pricingToggle" onclick="togglePricing()">
-        <div class="toggle-thumb"></div>
-      </div>
-      <span class="toggle-label" id="label-yearly">Yıllık <span class="save-badge">-20%</span></span>
-    </div>
-
-    <!-- Plan Kartları -->
-    <div class="pricing-grid">
-
-      <!-- BAŞLANGIÇ -->
-      <div class="plan-card">
-        <div class="plan-name">Başlangıç</div>
-        <div class="plan-price">Ücretsiz</div>
-        <div class="plan-price-sub">Sonsuza kadar ücretsiz</div>
-        <div class="plan-divider"></div>
-        <div class="plan-feature"><span class="check">✓</span><span>Ayda <b>20 AI komutu</b></span></div>
-        <div class="plan-feature"><span class="check">✓</span><span>Temel veri temizleme</span></div>
-        <div class="plan-feature"><span class="check">✓</span><span>CSV ve Excel desteği</span></div>
-        <div class="plan-feature"><span class="check">✓</span><span>Sırala ve filtrele</span></div>
-        <div class="plan-feature"><span class="cross">✗</span><span>KDV ve bordro hesaplama</span></div>
-        <div class="plan-feature"><span class="cross">✗</span><span>Google Sheets entegrasyonu</span></div>
-        <div class="plan-feature"><span class="cross">✗</span><span>Otomatik rapor oluşturma</span></div>
-        <a href="auth.html" class="plan-cta outline">Ücretsiz Başla →</a>
-      </div>
-
-      <!-- PRO -->
-      <div class="plan-card popular">
-        <div class="popular-badge">⭐ En Popüler</div>
-        <div class="plan-name">Pro</div>
-        <div class="plan-price"><sup>$</sup><span id="pro-price">29</span></div>
-        <div class="plan-price-sub" id="pro-sub">/ ay — aylık faturalandırılır</div>
-        <div class="plan-divider"></div>
-        <div class="plan-feature"><span class="check">✓</span><span><b>500 AI komutu</b> / ay</span></div>
-        <div class="plan-feature"><span class="check">✓</span><span>KDV, SGK, bordro hesaplama</span></div>
-        <div class="plan-feature"><span class="check">✓</span><span>Google Sheets entegrasyonu</span></div>
-        <div class="plan-feature"><span class="check">✓</span><span>Notion entegrasyonu</span></div>
-        <div class="plan-feature"><span class="check">✓</span><span>Otomatik rapor oluşturma</span></div>
-        <div class="plan-feature"><span class="check">✓</span><span>Öncelikli destek (48 saat)</span></div>
-        <div class="plan-feature"><span class="check">✓</span><span>Gelişmiş veri analizi</span></div>
-        <a href="auth.html?plan=pro" class="plan-cta gradient">Pro'ya Geç →</a>
-      </div>
-
-      <!-- BUSINESS -->
-      <div class="plan-card">
-        <div class="plan-name">Business</div>
-        <div class="plan-price"><sup>$</sup><span id="is-price">49</span></div>
-        <div class="plan-price-sub" id="is-sub">/ ay — aylık faturalandırılır</div>
-        <div class="plan-divider"></div>
-        <div class="plan-feature"><span class="check">✓</span><span><b>Sınırsız</b> AI komutu</span></div>
-        <div class="plan-feature"><span class="check">✓</span><span>Pro'daki her şey dahil</span></div>
-        <div class="plan-feature"><span class="check">✓</span><span>Zapier &amp; Webhook entegrasyonu</span></div>
-        <div class="plan-feature"><span class="check">✓</span><span>Ekip üyeleri — <b>+₺80/kullanıcı</b></span></div>
-        <div class="plan-feature"><span class="check">✓</span><span>Özel AI model eğitimi</span></div>
-        <div class="plan-feature"><span class="check">✓</span><span>SLA garantisi &amp; 4 saat destek</span></div>
-        <div class="plan-feature"><span class="check">✓</span><span>Muhasebe entegrasyonları</span></div>
-        <a href="auth.html?plan=business" class="plan-cta outline">İş Planı Başla →</a>
-      </div>
-
-    </div>
-
-    <p class="lp-pricing-note" style="text-align:center;margin-top:32px;font-size:13px;color:#9CA3AF">
-      ✓ Kredi kartı gerekmez &nbsp;·&nbsp;
-      ✓ 14 gün para iade garantisi &nbsp;·&nbsp;
-      ✓ İstediğin zaman iptal
-    </p>
-
-  </div>
-</section>
-
-<!-- BLOG -->
-<section class="lp-blog-section">
-  <div class="lp-container">
-    <div style="text-align:center;margin-bottom:48px">
-      <span class="lp-marquee-label">Blog & Rehberler</span>
-      <h2 class="lp-section-title" style="margin-bottom:12px">
-        Excel'i daha iyi kullanmak için
-      </h2>
-      <p style="font-size:16px;color:#6B7280">Ücretsiz rehberler ve ipuçları</p>
-    </div>
-
-    <div class="lp-blog-grid">
-      <a href="blog.html" class="lp-blog-card">
-        <div class="lp-blog-tag">Muhasebe</div>
-        <h3>Excel'de KDV Hesaplama: Formülsüz Yöntem</h3>
-        <p>AI ile KDV dahil ve hariç hesaplamaları nasıl yapılır? Adım adım kılavuz.</p>
-        <span class="lp-blog-read">Yakında →</span>
-      </a>
-
-      <a href="blog.html" class="lp-blog-card">
-        <div class="lp-blog-tag">Veri Yönetimi</div>
-        <h3>Dağınık Excel Verilerini 10 Saniyede Temizle</h3>
-        <p>Boş satırlar, tekrarlar ve format hataları için en hızlı AI komutları.</p>
-        <span class="lp-blog-read">Yakında →</span>
-      </a>
-
-      <a href="blog.html" class="lp-blog-card">
-        <div class="lp-blog-tag">Raporlama</div>
-        <h3>Aylık Satış Raporunu AI ile 3 Dakikada Hazırla</h3>
-        <p>Manuel raporlama sürecinizi nasıl otomatize edersiniz? Gerçek kullanım senaryosu.</p>
-        <span class="lp-blog-read">Yakında →</span>
-      </a>
     </div>
   </div>
 </section>
 
-<!-- FINAL CTA -->
-<section class="lp-final-cta">
-  <div class="lp-container">
-    <div class="lp-final-inner">
-      <h2>
-        <span>Bu hafta Excel'de</span><br>
-        <span class="lp-gradient-text">kaç saat harcayacaksınız?</span>
-      </h2>
-      <p>Ortalama kullanıcımız haftada 18 saat harcıyordu. Şimdi 1,5.</p>
-      <a href="auth.html" class="lp-btn-primary lp-btn-large">
-        Ücretsiz Başla — Kredi Kartı Gerekmez
-      </a>
-      <div class="lp-final-proof">
-        <span>⭐⭐⭐⭐⭐</span>
-        <span>Erken Kullanıcı · 4.9/5 puan</span>
+<!-- FAQ-ish promise / FINAL CTA -->
+<section style="padding:80px 0 30px">
+  <div class="wrap">
+    <div class="cta">
+      <div class="micro" style="color:#ffffff80;margin-bottom:20px">— başlayalım</div>
+      <h2>Excel'i öğrenmeyi <em>bırakın.</em><br>Excel'i konuşmaya <em>başlayın.</em></h2>
+      <div class="cta-actions">
+        <a href="/app" class="btn btn-dark">Ücretsiz hesap aç — 2 dakika</a>
+        <a href="/contact" class="btn btn-outline">Satış ekibiyle konuşun</a>
+      </div>
+      <div class="cta-foot">
+        <span><b>Kart gerekmez</b> · 14 gün Pro denemesi</span>
+        <span><b>KVKK uyumlu</b> · veriler Türkiye'de</span>
+        <span><b>İptal kolay</b> · tek tıkla</span>
       </div>
     </div>
   </div>
 </section>
 
 <!-- FOOTER -->
-<footer class="lp-footer">
-  <div class="lp-container">
-    <div class="lp-footer-grid">
-      <div class="lp-footer-brand">
-        <a href="index.html" class="lp-nav-logo lp-footer-logo">
-          <img src="images/logo.png" height="32" width="32" alt="Mocksheets" style="border-radius:7px;object-fit:contain">
-          <span>Mocksheets</span>
-        </a>
-        <p>Veri yönetimini 12 kat hızlandırıyoruz.</p>
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div>
+        <a class="brand" href="/" style="font-size:18px"><img src="/images/logo-wordmark.png" alt="Mocksheets" style="height:28px;display:block"></a>
+        <p style="margin:14px 0 0;max-width:36ch;color:var(--mute);font-size:14px;line-height:1.55">
+          Türkçe konuşan tarayıcı tabanlı AI Excel asistanı. İstanbul'da yapıldı, dünyaya kullanılıyor.
+        </p>
       </div>
-      <div class="lp-footer-col">
-        <h4>Ürün</h4>
-        <a href="#features">Özellikler</a>
-        <a href="#pricing">Fiyatlar</a>
-        <a href="auth.html">Başla</a>
-        <a href="similarweb-analytics.html">Rakip Analizi</a>
+      <div>
+        <h5>Ürün</h5>
+        <ul>
+          <li><a href="#features">Özellikler</a></li>
+          <li><a href="#pricing">Fiyatlar</a></li>
+          <li><a href="#integrations">Entegrasyonlar</a></li>
+          <li><a href="#">Değişiklik günlüğü</a></li>
+          <li><a href="#">Yol haritası</a></li>
+        </ul>
       </div>
-      <div class="lp-footer-col">
-        <h4>Şirket</h4>
-        <a href="about.html">Hakkımızda</a>
-        <a href="blog.html">Blog</a>
-        <a href="contact.html">İletişim</a>
+      <div>
+        <h5>Kaynaklar</h5>
+        <ul>
+          <li><a href="#">Türkçe Excel rehberi</a></li>
+          <li><a href="#">KDV / SGK örnekleri</a></li>
+          <li><a href="#">API dökümanı</a></li>
+          <li><a href="/blog">Blog</a></li>
+        </ul>
       </div>
-      <div class="lp-footer-col">
-        <h4>Destek</h4>
-        <a href="kvkk.html">KVKK</a>
-        <a href="privacy.html">Gizlilik</a>
-        <a href="terms.html">Kullanım Koşulları</a>
+      <div>
+        <h5>Şirket</h5>
+        <ul>
+          <li><a href="/about">Hakkımızda</a></li>
+          <li><a href="/contact">İletişim</a></li>
+          <li><a href="/kvkk">KVKK</a></li>
+          <li><a href="/terms">Sözleşme</a></li>
+        </ul>
       </div>
     </div>
-    <div class="lp-footer-bottom">
-      <span>© 2026 Mocksheets. Tüm hakları saklıdır. · <a href="https://www.linkedin.com/in/cagancnkc" target="_blank" rel="noopener" style="color:inherit;opacity:.7;text-decoration:none">LinkedIn</a></span>
-      <div class="lp-footer-trust">
-        <span>🔒 SSL</span>
-        <span>🔐 KVKK</span>
-        <span>💳 Güvenli Ödeme</span>
-      </div>
+    <div class="foot-bottom">
+      <span>© 2026 Mocksheets · Made with ☕ in İstanbul</span>
+      <span>v2.0.4 · son güncelleme: 14 Mayıs</span>
     </div>
   </div>
 </footer>
 
-<script src="i18n.js"></script>
-<script defer src="js/landing.js"></script>
 <script>
-(function() {
-  function updatePricingBadges() {
-    var activeBtn = document.querySelector('.lp-period-btn.active, [data-period].active');
-    var isYearly = activeBtn && activeBtn.dataset.period === 'yearly';
-    ['yearly-gift-pro', 'yearly-gift-biz'].forEach(function(id) {
-      var el = document.getElementById(id);
-      if (el) el.style.display = isYearly ? 'flex' : 'none';
-    });
-  }
-  document.addEventListener('DOMContentLoaded', function() {
-    updatePricingBadges();
-    document.querySelectorAll('.lp-period-btn, [data-period]').forEach(function(btn) {
-      btn.addEventListener('click', function() { setTimeout(updatePricingBadges, 50); });
-    });
-  });
-})();
-</script>
-<script>
-/* ── CANLI DEMO ── */
-var DEMO_DATA = {
-  messy: [
-    ['ürün','Adet','FİYAT','toplam','not'],
-    ['  Laptop  ','3','12500','','iyi'],
-    ['','','','',''],
-    ['mouse','15','450 TL','6750','eksik stok'],
-    ['KLAVYE','8','₺780','6240',''],
-    ['Monitör','','3200','','bekliyor'],
-    ['','','','',''],
-    ['usb hub','25','120','-3000','iade'],
-    ['kulaklık','6','890 lira','5340','']
-  ],
-  clean: [
-    ['Ürün','Adet','Fiyat (₺)','Toplam (₺)','Durum'],
-    ['Laptop','3','12.500','37.500','Stokta'],
-    ['Monitör','5','3.200','16.000','Bekliyor'],
-    ['Klavye','8','780','6.240','Stokta'],
-    ['Kulaklık','6','890','5.340','Stokta'],
-    ['Mouse','15','450','6.750','Düşük Stok'],
-    ['USB Hub','25','120','3.000','Stokta']
-  ]
-};
-var demoStep = 0, demoTimer = null, demoTypeTimer = null;
-var DEMO_STEPS = [
-  { desc: '📂 Boş spreadsheet açılıyor...', progress: 0 },
-  { desc: '📥 Karışık Excel dosyası yüklendi — tutarsız format, boş satırlar, hatalı değerler', progress: 20 },
-  { desc: '💬 Komut giriliyor: "Veriyi temizle, sırala ve negatif değerleri kırmızıya boya"', progress: 40 },
-  { desc: '🤖 AI işliyor — boş satırlar siliniyor, formatlar düzeltiliyor, sıralanıyor...', progress: 70 },
-  { desc: '✅ Tamamlandı! 3 boş satır silindi, 7 format hatası düzeltildi, 1 negatif değer işaretlendi', progress: 100 }
-];
-var DEMO_PROMPT = 'Veriyi temizle, sırala ve negatif değerleri kırmızıya boya';
-function buildDemoGrid(data, highlights) {
-  var grid = document.getElementById('demoGrid');
-  if (!grid) return;
-  var html = '<table class="demo-table"><thead><tr>';
-  data[0].forEach(function(h) { html += '<th>' + (h || '') + '</th>'; });
-  html += '</tr></thead><tbody>';
-  data.slice(1).forEach(function(row, ri) {
-    var isEmpty = row.every(function(c) { return !c || !String(c).trim(); });
-    html += '<tr' + (isEmpty ? ' style="opacity:.3"' : '') + '>';
-    row.forEach(function(cell, ci) {
-      var cls = '';
-      if (!cell || !String(cell).trim()) cls = 'cell-empty';
-      if (highlights) {
-        if (highlights.red && highlights.red.indexOf(ri + ',' + ci) > -1) cls = 'cell-red';
-        if (highlights.green && highlights.green.indexOf(ri + ',' + ci) > -1) cls = 'cell-green';
+  /* ---- Hero typing ---- */
+  (function(){
+    const lines = [
+      "Mart KDV'sini hesapla, %18 olanları sarıya boya",
+      "Tekrarlayan firmaları birleştir",
+      "Bordro hesapla — brüt 45.000, net göster",
+      "Şubat'tan önceki satırları gizle",
+      "Sütun B'yi pivotla, satışı topla"
+    ];
+    const el = document.getElementById('typed-line');
+    if(!el) return;
+    let li = 0, ci = 0, deleting = false;
+    const cursor = '<span class="term-cursor"></span>';
+    function tick(){
+      const w = lines[li];
+      if(!deleting){
+        ci++;
+        if(ci > w.length){ deleting = true; setTimeout(tick, 1800); return; }
+      } else {
+        ci--;
+        if(ci < 0){ deleting = false; li = (li+1)%lines.length; ci = 0; }
       }
-      html += '<td class="' + cls + '">' + (cell || '—') + '</td>';
-    });
-    html += '</tr>';
-  });
-  html += '</tbody></table>';
-  grid.innerHTML = html;
-}
-function updateDemoStep(step) {
-  demoStep = step;
-  var badge = document.getElementById('demoStepBadge');
-  var desc = document.getElementById('demoStepDesc');
-  var progress = document.getElementById('demoProgress');
-  var input = document.getElementById('demoChatInput');
-  var typedText = document.getElementById('demoTypedText');
-  var dots = document.querySelectorAll('.demo-step-dot');
-  if (badge) badge.textContent = (step + 1) + ' / 5';
-  if (desc) desc.textContent = DEMO_STEPS[step].desc;
-  if (progress) progress.style.width = DEMO_STEPS[step].progress + '%';
-  dots.forEach(function(d, i) { d.classList.toggle('active', i === step); });
-  if (step === 0) {
-    buildDemoGrid([['','','','',''],['','','','',''],['','','','',''],['','','','','']], null);
-  } else if (step === 1) {
-    buildDemoGrid(DEMO_DATA.messy, null);
-  } else if (step === 2) {
-    buildDemoGrid(DEMO_DATA.messy, null);
-    if (typedText) {
-      typedText.style.color = '#374151';
-      var i = 0;
-      typedText.textContent = '';
-      clearInterval(demoTypeTimer);
-      demoTypeTimer = setInterval(function() {
-        if (i < DEMO_PROMPT.length) { typedText.textContent += DEMO_PROMPT[i++]; }
-        else { clearInterval(demoTypeTimer); }
-      }, 35);
+      el.innerHTML = w.slice(0,ci) + cursor;
+      setTimeout(tick, deleting ? 22 : 42);
     }
-    if (input) { input.style.borderColor = '#6366F1'; input.style.boxShadow = '0 0 0 3px rgba(99,102,241,.1)'; }
-  } else if (step === 3) {
-    if (typedText) { typedText.textContent = '⏳ AI işliyor'; typedText.style.color = '#9CA3AF'; }
-    if (input) { input.style.borderColor = '#E5E7EB'; input.style.boxShadow = 'none'; }
-    buildDemoGrid(DEMO_DATA.messy, null);
-  } else if (step === 4) {
-    buildDemoGrid(DEMO_DATA.clean, { red: ['4,2','4,3','4,4'], green: ['0,2','0,3','0,4'] });
-    if (typedText) { typedText.textContent = '✓ Tamamlandı'; typedText.style.color = '#10B981'; }
-    if (input) { input.style.borderColor = '#10B981'; input.style.boxShadow = '0 0 0 3px rgba(16,185,129,.1)'; }
-  }
-}
-function startDemoLoop() {
-  updateDemoStep(0);
-  demoTimer = setInterval(function() {
-    var next = (demoStep + 1) % 5;
-    if (next === 0) {
-      var t = document.getElementById('demoTypedText');
-      var inp = document.getElementById('demoChatInput');
-      if (t) { t.textContent = 'Ne yapmak istersiniz?'; t.style.color = '#9CA3AF'; }
-      if (inp) { inp.style.borderColor = '#E5E7EB'; inp.style.boxShadow = 'none'; }
+    tick();
+  })();
+
+  /* ---- Demo carousel ---- */
+  (function(){
+    const sheet = document.getElementById('big-sheet');
+    const tabs = document.querySelectorAll('.step-tab');
+    const prompt = document.getElementById('step-prompt');
+    const response = document.getElementById('step-response');
+
+    const dataBase = [
+      ['1','14.03.26','Demir A.Ş.','12.400','%18'],
+      ['2','14.03.26','Lale Ltd.','8.750','%18'],
+      ['3','15.03.26','Mavi Holding','45.200','%8'],
+      ['4','15.03.26','Çelik Tic.','6.300','%18'],
+      ['5','16.03.26','Ankara İnş.','22.100','%18'],
+      ['6','16.03.26','Doğa Lojistik','3.420','%1'],
+      ['7','17.03.26','Yıldız Gıda','15.600','%8'],
+    ];
+
+    function header(cols){
+      return `<div class="row">
+        <div class="cell head idx"></div>
+        ${cols.map(c=>`<div class="cell head${c.num?' num':''}">${c.label}</div>`).join('')}
+      </div>`;
     }
-    updateDemoStep(next);
-  }, 2200);
-}
-document.addEventListener('DOMContentLoaded', function() {
-  startDemoLoop();
-  document.querySelectorAll('.demo-step-dot').forEach(function(dot) {
-    dot.addEventListener('click', function() {
-      clearInterval(demoTimer);
-      updateDemoStep(parseInt(dot.dataset.step));
-      startDemoLoop();
-    });
-  });
-});
+    function rows(rs, hl){
+      return rs.map((r,i)=>`<div class="row">
+        <div class="cell idx">${r[0]}</div>
+        ${r.slice(1).map((c,j)=>`<div class="cell${typeof hl==='function'?' '+(hl(i,j)||''):''}${j>=2?' num':''}">${c}</div>`).join('')}
+      </div>`).join('');
+    }
 
-/* ── FİYATLANDIRMA TOGGLE ── */
-var pricingIsYearly = false;
-var PRICES = {
-  monthly: {
-    pro:     { amount: 29,    label: '$29',    period: '/ay' },
-    biz:     { amount: 49,    label: '$49',    period: '/ay' },
-    bizBase: 49
-  },
-  yearly: {
-    pro:     { amount: 278,   label: '$278',   period: '/yıl' },
-    biz:     { amount: 470,   label: '$470',   period: '/yıl' },
-    bizBase: 470,
-    proMonthly:  23,
-    bizMonthly:  39
-  }
-};
+    const steps = {
+      1: {
+        prompt: "Dosyamı yükledim. Verileri göster.",
+        response: "Dosya yüklendi. <b>247 satır</b>, 5 sütun algılandı. Başlık satırı otomatik tanındı.",
+        render(){
+          const cols = [{label:'Tarih'},{label:'Firma'},{label:'Tutar',num:1},{label:'KDV Oranı'}];
+          return header(cols) + rows(dataBase);
+        }
+      },
+      2: {
+        prompt: "Tutara göre büyükten küçüğe sırala",
+        response: "Tamam. <b>C sütunu</b> azalan sırada düzenlendi. 247 satır 0.6 sn'de işlendi.",
+        render(){
+          const cols = [{label:'Tarih'},{label:'Firma'},{label:'Tutar ↓',num:1},{label:'KDV Oranı'}];
+          const sorted = [...dataBase].sort((a,b)=>parseInt(b[3].replace('.',''))-parseInt(a[3].replace('.',''))).map((r,i)=>[String(i+1),...r.slice(1)]);
+          return header(cols) + rows(sorted, (i,j)=> j===2 ? 'hl-v':'');
+        }
+      },
+      3: {
+        prompt: "KDV tutarını yeni bir sütuna hesapla",
+        response: "<b>E sütunu</b> eklendi. Formül: <span class='mono' style='background:#ffffff14;padding:2px 6px;border-radius:4px'>=C2 * KDV_oranı(D2)</span>. Toplam: ₺ 184.620,00",
+        render(){
+          const cols = [{label:'Tarih'},{label:'Firma'},{label:'Tutar',num:1},{label:'Oran'},{label:'KDV',num:1}];
+          const sorted = [...dataBase].sort((a,b)=>parseInt(b[3].replace('.',''))-parseInt(a[3].replace('.','')));
+          const withKDV = sorted.map((r,i)=>{
+            const tutar = parseInt(r[3].replace('.',''));
+            const oran = r[4]==='%18'?0.18:r[4]==='%8'?0.08:0.01;
+            const kdv = Math.round(tutar*oran);
+            return [String(i+1), r[1], r[2], r[3], r[4], kdv.toLocaleString('tr-TR')];
+          });
+          return header(cols) + withKDV.map((r,i)=>`<div class="row" style="grid-template-columns:42px repeat(5,1fr)">
+            <div class="cell idx">${r[0]}</div>
+            <div class="cell">${r[1]}</div>
+            <div class="cell">${r[2]}</div>
+            <div class="cell num">${r[3]}</div>
+            <div class="cell">${r[4]}</div>
+            <div class="cell num hl-l">${r[5]}</div>
+          </div>`).join('');
+        }
+      },
+      4: {
+        prompt: "%18 KDV'li satırları sarıya boya",
+        response: "<b>89 satır</b> sarıya boyandı. (Tüm dosyada — burada ilk 7 satır gösteriliyor.)",
+        render(){
+          const cols = [{label:'Tarih'},{label:'Firma'},{label:'Tutar',num:1},{label:'Oran'},{label:'KDV',num:1}];
+          const sorted = [...dataBase].sort((a,b)=>parseInt(b[3].replace('.',''))-parseInt(a[3].replace('.','')));
+          const withKDV = sorted.map((r,i)=>{
+            const tutar = parseInt(r[3].replace('.',''));
+            const oran = r[4]==='%18'?0.18:r[4]==='%8'?0.08:0.01;
+            const kdv = Math.round(tutar*oran);
+            return [String(i+1), r[1], r[2], r[3], r[4], kdv.toLocaleString('tr-TR'), r[4]==='%18'];
+          });
+          return header(cols) + withKDV.map((r,i)=>{
+            const hl = r[6] ? 'hl-y' : '';
+            return `<div class="row" style="grid-template-columns:42px repeat(5,1fr)">
+              <div class="cell idx ${hl}">${r[0]}</div>
+              <div class="cell ${hl}">${r[1]}</div>
+              <div class="cell ${hl}">${r[2]}</div>
+              <div class="cell num ${hl}">${r[3]}</div>
+              <div class="cell ${hl}">${r[4]}</div>
+              <div class="cell num ${hl}">${r[5]}</div>
+            </div>`;
+          }).join('');
+        }
+      },
+      5: {
+        prompt: "Aylık rapor oluştur — KDV oranına göre toplam",
+        response: "Pivot tablo oluşturuldu. PDF olarak da dışa aktarabilirim — söyle yeter.",
+        render(){
+          return `
+          <div class="row" style="grid-template-columns:42px 1.4fr 1fr 1fr 1fr 1fr">
+            <div class="cell head idx"></div>
+            <div class="cell head">KDV Oranı</div>
+            <div class="cell head num">Satır</div>
+            <div class="cell head num">Tutar Top.</div>
+            <div class="cell head num">KDV Top.</div>
+            <div class="cell head">Pay</div>
+          </div>
+          <div class="row" style="grid-template-columns:42px 1.4fr 1fr 1fr 1fr 1fr">
+            <div class="cell idx">1</div><div class="cell hl-y">%18</div><div class="cell num hl-y">89</div><div class="cell num hl-y">₺ 1.025.667</div><div class="cell num hl-y">₺ 184.620</div><div class="cell hl-y">66%</div>
+          </div>
+          <div class="row" style="grid-template-columns:42px 1.4fr 1fr 1fr 1fr 1fr">
+            <div class="cell idx">2</div><div class="cell hl-v">%8</div><div class="cell num hl-v">112</div><div class="cell num hl-v">₺ 412.300</div><div class="cell num hl-v">₺ 32.984</div><div class="cell hl-v">26%</div>
+          </div>
+          <div class="row" style="grid-template-columns:42px 1.4fr 1fr 1fr 1fr 1fr">
+            <div class="cell idx">3</div><div class="cell hl-r">%1</div><div class="cell num hl-r">46</div><div class="cell num hl-r">₺ 124.080</div><div class="cell num hl-r">₺ 1.240</div><div class="cell hl-r">8%</div>
+          </div>
+          <div class="row" style="grid-template-columns:42px 1.4fr 1fr 1fr 1fr 1fr;background:var(--ink);color:#fff">
+            <div class="cell idx" style="background:#0e0e10;color:#fff">Σ</div>
+            <div class="cell" style="background:#0e0e10;color:#fff"><b>Toplam</b></div>
+            <div class="cell num" style="background:#0e0e10;color:#fff"><b>247</b></div>
+            <div class="cell num" style="background:#0e0e10;color:#fff"><b>₺ 1.562.047</b></div>
+            <div class="cell num" style="background:#0e0e10;color:#D9F26B"><b>₺ 218.844</b></div>
+            <div class="cell" style="background:#0e0e10;color:#fff">100%</div>
+          </div>
+          `;
+        }
+      }
+    };
 
-function togglePricing() {
-  pricingIsYearly = !pricingIsYearly;
-  var toggle = document.getElementById('pricingToggle');
-  var labelM = document.getElementById('label-monthly');
-  var labelY = document.getElementById('label-yearly');
-  if (toggle) toggle.classList.toggle('active', pricingIsYearly);
-  if (labelM) labelM.classList.toggle('active', !pricingIsYearly);
-  if (labelY) labelY.classList.toggle('active', pricingIsYearly);
-  var proPrice = document.getElementById('pro-price');
-  var proSub   = document.getElementById('pro-sub');
-  var isPrice  = document.getElementById('is-price');
-  var isSub    = document.getElementById('is-sub');
-  if (pricingIsYearly) {
-    var py = PRICES.yearly;
-    if (proPrice) proPrice.textContent = py.proMonthly;
-    if (proSub)   proSub.textContent   = '/ ay \u2014 y\u0131ll\u0131k faturaland\u0131r\u0131l\u0131r (' + py.pro.label + '/y\u0131l)';
-    if (isPrice)  isPrice.textContent  = py.bizMonthly;
-    if (isSub)    isSub.textContent    = '/ ay \u2014 y\u0131ll\u0131k faturaland\u0131r\u0131l\u0131r (' + py.biz.label + '/y\u0131l)';
-  } else {
-    var pm = PRICES.monthly;
-    if (proPrice) proPrice.textContent = pm.pro.amount;
-    if (proSub)   proSub.textContent   = '/ ay \u2014 ayl\u0131k faturaland\u0131r\u0131l\u0131r';
-    if (isPrice)  isPrice.textContent  = pm.biz.amount;
-    if (isSub)    isSub.textContent    = '/ ay \u2014 ayl\u0131k faturaland\u0131r\u0131l\u0131r';
-  }
-}
+    function setStep(n){
+      tabs.forEach(t=>t.classList.toggle('active', t.dataset.step===String(n)));
+      sheet.innerHTML = steps[n].render();
+      prompt.innerHTML = '<span class="who" style="color:#ffffffcc">Sen</span>' + steps[n].prompt;
+      response.innerHTML = '<span class="who">Mocksheets</span>' + steps[n].response;
+    }
 
-/* ── ENTEGRASYON CAROUSEL ── */
-let intActiveIndex = 0;
-function selectIntCard(index) {
-  document.querySelectorAll('.int-card').forEach(function(card, i) {
-    card.classList.toggle('active', i === index);
-  });
-  document.querySelectorAll('.int-dot').forEach(function(dot, i) {
-    dot.classList.toggle('active', i === index);
-  });
-  intActiveIndex = index;
-}
-function moveCarousel(dir) {
-  var cards = document.querySelectorAll('.int-card');
-  var next = intActiveIndex + dir;
-  if (next < 0) next = cards.length - 1;
-  if (next >= cards.length) next = 0;
-  selectIntCard(next);
-}
-function notifyMe(app) {
-  var names = { slack: 'Slack', airtable: 'Airtable', make: 'Make' };
-  var email = prompt((names[app] || app) + ' hazır olduğunda haber verelim. E-posta adresiniz:');
-  if (email && email.indexOf('@') > -1) {
-    alert('✓ Teşekkürler! ' + (names[app] || app) + ' hazır olduğunda ' + email + ' adresine haber vereceğiz.');
-  }
-}
-document.addEventListener('DOMContentLoaded', function() {
-  selectIntCard(0);
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'ArrowLeft') moveCarousel(-1);
-    if (e.key === 'ArrowRight') moveCarousel(1);
-  });
-});
+    tabs.forEach(t=>t.addEventListener('click', ()=>setStep(parseInt(t.dataset.step))));
+    setStep(1);
+
+    /* auto-cycle */
+    let auto = 1, paused = false;
+    document.getElementById('demo').addEventListener('mouseenter', ()=>paused=true);
+    document.getElementById('demo').addEventListener('mouseleave', ()=>paused=false);
+    setInterval(()=>{
+      if(paused) return;
+      auto = auto >= 5 ? 1 : auto + 1;
+      setStep(auto);
+    }, 4200);
+  })();
 </script>
+
 </body>
 </html>
-
