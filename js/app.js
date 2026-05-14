@@ -2993,7 +2993,7 @@ function closeOnboardBanner() {
 // Cell edit debounce for manual history
 let _cellEditTimer = null;
 document.addEventListener('DOMContentLoaded', () => {
-  const savedTheme = localStorage.getItem('theme') || 'dark';
+  const savedTheme = localStorage.getItem('theme') || 'light';
   document.body.classList.add(savedTheme);
   updateThemeIcon();
   setTimeout(loadUserUsage, 500);
