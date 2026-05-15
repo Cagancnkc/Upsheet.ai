@@ -348,6 +348,119 @@ body.dark .chat-enter-kbd { background: rgba(255,255,255,0.04); border-color: rg
 /* Grid area — bottom padding so content isn't hidden behind fixed bar */
 #gridWrap { padding-bottom: 88px; }
 
+/* ── Share Modal ─────────────────────────────────────────────── */
+#shareModal {
+  position: fixed; inset: 0;
+  background: rgba(15,12,30,0.55);
+  backdrop-filter: blur(10px) saturate(1.3);
+  z-index: 1200;
+  display: none; align-items: center; justify-content: center;
+}
+#shareModal.open { display: flex; animation: fo .18s; }
+#shareModalPanel {
+  background: var(--panel, #fff);
+  border: 1px solid var(--line-2, rgba(0,0,0,.1));
+  border-radius: 18px;
+  box-shadow: 0 32px 80px rgba(91,60,255,0.13), 0 2px 12px rgba(0,0,0,.12);
+  width: 480px; max-width: 94vw;
+  padding: 24px 24px 20px;
+  animation: ms .22s cubic-bezier(.16,1,.3,1);
+}
+body.dark #shareModalPanel { background:#1a1825; border-color:rgba(255,255,255,.08); }
+.sm-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; }
+.sm-header-left { display:flex; align-items:center; gap:12px; }
+.sm-icon {
+  width:40px; height:40px; border-radius:11px;
+  background:linear-gradient(135deg,#7c5fff,#3a22b8);
+  display:flex; align-items:center; justify-content:center; flex-shrink:0; color:#fff;
+}
+.sm-title { font-size:15px; font-weight:700; color:var(--ink); }
+.sm-sub { font-size:12px; color:var(--ink-2); margin-top:1px; }
+.sm-close {
+  width:30px; height:30px; border-radius:8px; border:none;
+  background:transparent; color:var(--ink-2); font-size:18px; cursor:pointer;
+  display:flex; align-items:center; justify-content:center; transition:background .15s,color .15s;
+}
+.sm-close:hover { background:var(--line, rgba(0,0,0,.06)); color:var(--ink); }
+.sm-section { margin-bottom:16px; }
+.sm-label {
+  font-size:11.5px; font-weight:600; color:var(--ink-2); text-transform:uppercase;
+  letter-spacing:.04em; margin-bottom:8px; display:flex; align-items:center; gap:6px;
+}
+.sm-badge {
+  background:var(--violet-soft, #ede9ff); color:var(--violet, #5B3CFF);
+  border-radius:10px; font-size:10px; padding:1px 7px; font-weight:700;
+}
+.sm-invite-row { display:flex; gap:6px; align-items:center; }
+.sm-email-input {
+  flex:1; height:36px; border:1px solid var(--line-2, rgba(0,0,0,.1));
+  border-radius:9px; padding:0 12px; font-size:13px; outline:none;
+  background:var(--bg, #fafaf7); color:var(--ink); transition:border-color .15s;
+}
+.sm-email-input:focus { border-color:var(--violet, #5B3CFF); }
+body.dark .sm-email-input { background:rgba(255,255,255,.05); border-color:rgba(255,255,255,.1); }
+.sm-role-select {
+  height:36px; border:1px solid var(--line-2, rgba(0,0,0,.1));
+  border-radius:9px; padding:0 8px; font-size:12px; outline:none;
+  background:var(--bg, #fafaf7); color:var(--ink); cursor:pointer;
+}
+body.dark .sm-role-select { background:rgba(255,255,255,.05); border-color:rgba(255,255,255,.1); color:#e2e0f0; }
+.sm-invite-btn {
+  height:36px; padding:0 14px; border-radius:9px; border:none;
+  background:var(--violet, #5B3CFF); color:#fff; font-size:13px; font-weight:600; cursor:pointer;
+  transition:opacity .15s; white-space:nowrap;
+}
+.sm-invite-btn:hover { opacity:.88; }
+.sm-collab-list { display:flex; flex-direction:column; gap:2px; }
+.sm-collab-row {
+  display:flex; align-items:center; gap:10px; padding:7px 10px;
+  border-radius:10px; transition:background .12s;
+}
+.sm-collab-row:hover { background:var(--line, rgba(0,0,0,.04)); }
+.sm-av {
+  width:32px; height:32px; border-radius:50%; font-size:11px; font-weight:700;
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  border:2px solid var(--panel, #fff);
+}
+.sm-collab-info { flex:1; min-width:0; }
+.sm-collab-name { font-size:13px; font-weight:600; color:var(--ink); }
+.sm-collab-email { font-size:11px; color:var(--ink-2); }
+.sm-role-mini {
+  font-size:11.5px; border:1px solid var(--line-2); border-radius:7px;
+  padding:3px 8px; background:var(--panel); color:var(--ink); outline:none; cursor:pointer;
+}
+body.dark .sm-role-mini { background:rgba(255,255,255,.06); border-color:rgba(255,255,255,.1); color:#e2e0f0; }
+.sm-link-section {
+  background:var(--bg, #fafaf7); border-radius:12px; padding:12px 14px 14px;
+}
+body.dark .sm-link-section { background:rgba(255,255,255,.04); }
+.sm-link-row { display:flex; align-items:center; gap:8px; }
+.sm-link-icon { color:var(--ink-2); flex-shrink:0; }
+.sm-link-input {
+  flex:1; border:none; outline:none; font-size:12px; background:transparent;
+  color:var(--ink-2); font-family:'Geist Mono',monospace; min-width:0;
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.sm-copy-btn {
+  display:flex; align-items:center; gap:5px; height:32px; padding:0 12px;
+  border-radius:8px; border:none;
+  background:linear-gradient(180deg,#6c4dff,#3a22b8); color:#fff;
+  font-size:12px; font-weight:600; cursor:pointer; flex-shrink:0; transition:opacity .15s;
+}
+.sm-copy-btn:hover { opacity:.88; }
+.sm-footer { display:flex; align-items:center; justify-content:space-between; margin-top:18px; }
+.sm-stop-btn {
+  font-size:12.5px; color:#ef4444; background:none; border:none; cursor:pointer;
+  padding:6px 10px; border-radius:7px; font-weight:500; transition:background .12s;
+}
+.sm-stop-btn:hover { background:rgba(239,68,68,.08); }
+.sm-close-btn {
+  font-size:12.5px; font-weight:600; color:var(--ink-2);
+  background:var(--line, rgba(0,0,0,.06)); border:none; cursor:pointer;
+  padding:7px 16px; border-radius:8px; transition:background .12s;
+}
+.sm-close-btn:hover { background:var(--line-2); color:var(--ink); }
+
 /* Mobile */
 @media (max-width: 768px) {
   #chat-bar {
@@ -901,7 +1014,7 @@ body.light .sb-upgrade-btn{background:linear-gradient(135deg,rgba(99,102,241,0.1
     <span class="collab-av" style="background:var(--violet);color:#fff">SY</span>
   </div>
   <div class="topbar-actions">
-    <button class="topbar-btn-share">
+    <button class="topbar-btn-share" onclick="shareFile()">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M16 6l-4-4-4 4"/><path d="M12 2v13"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>
       Paylaş
     </button>
@@ -2224,6 +2337,87 @@ function queueOfflineMessage(payload) {
   </div>
 </div>
 
+<!-- ── Share Modal ─────────────────────────────────────────── -->
+<div id="shareModal" onclick="shareModalClickOutside(event)">
+  <div id="shareModalPanel">
+
+    <div class="sm-header">
+      <div class="sm-header-left">
+        <div class="sm-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        </div>
+        <div>
+          <div class="sm-title">Paylaşım &amp; İşbirliği</div>
+          <div class="sm-sub">Arkadaşlarınla birlikte çalış</div>
+        </div>
+      </div>
+      <button class="sm-close" onclick="closeShareModal()" title="Kapat">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+    <div class="sm-section">
+      <div class="sm-label">Davet Et</div>
+      <div class="sm-invite-row">
+        <input class="sm-email-input" type="email" placeholder="E-posta adresi girin…" autocomplete="off"/>
+        <select class="sm-role-select">
+          <option>Düzenleyebilir</option>
+          <option>Görüntüleyebilir</option>
+        </select>
+        <button class="sm-invite-btn" onclick="this.textContent='Gönderildi ✓';setTimeout(()=>this.textContent='Davet Et',2000)">Davet Et</button>
+      </div>
+    </div>
+
+    <div class="sm-section">
+      <div class="sm-label">Mevcut erişim <span class="sm-badge">3</span></div>
+      <div class="sm-collab-list">
+        <div class="sm-collab-row">
+          <span class="sm-av" style="background:#FFD0B0;color:#7a4a1e">AK</span>
+          <div class="sm-collab-info">
+            <div class="sm-collab-name">Ahmet Kaya</div>
+            <div class="sm-collab-email">ahmet@sirket.com</div>
+          </div>
+          <select class="sm-role-mini"><option>Düzenleyebilir</option><option>Görüntüleyebilir</option></select>
+        </div>
+        <div class="sm-collab-row">
+          <span class="sm-av" style="background:#BFE5FF;color:#1a4a7a">MT</span>
+          <div class="sm-collab-info">
+            <div class="sm-collab-name">Mehmet Tunç</div>
+            <div class="sm-collab-email">mehmet@sirket.com</div>
+          </div>
+          <select class="sm-role-mini"><option>Düzenleyebilir</option><option>Görüntüleyebilir</option></select>
+        </div>
+        <div class="sm-collab-row">
+          <span class="sm-av" style="background:#5B3CFF;color:#fff">SY</span>
+          <div class="sm-collab-info">
+            <div class="sm-collab-name">Selin Yıldız</div>
+            <div class="sm-collab-email">selin@sirket.com</div>
+          </div>
+          <select class="sm-role-mini"><option>Düzenleyebilir</option><option selected>Görüntüleyebilir</option></select>
+        </div>
+      </div>
+    </div>
+
+    <div class="sm-section sm-link-section">
+      <div class="sm-label">Paylaşım bağlantısı</div>
+      <div class="sm-link-row">
+        <svg class="sm-link-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        <input id="shareUrlInput" class="sm-link-input" readonly placeholder="Bağlantı oluşturuluyor…"/>
+        <button class="sm-copy-btn" onclick="copyShareUrl()">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          Kopyala
+        </button>
+      </div>
+    </div>
+
+    <div class="sm-footer">
+      <button class="sm-stop-btn" onclick="stopSharing&&stopSharing();closeShareModal()">Paylaşımı Kaldır</button>
+      <button class="sm-close-btn" onclick="closeShareModal()">Kapat</button>
+    </div>
+
+  </div>
+</div>
+
 <script>
 (function() {
   var logos = document.querySelectorAll('.tb-int-logo');
@@ -2276,6 +2470,45 @@ function queueOfflineMessage(payload) {
   }
   setTimeout(syncTopbar, 800);
 })();
+</script>
+
+<script>
+// ── Share Modal helpers ──────────────────────────────────────
+window.showShareModal = function(shareUrl) {
+  var inp = document.getElementById('shareUrlInput');
+  if (inp) inp.value = shareUrl;
+  var m = document.getElementById('shareModal');
+  if (m) m.classList.add('open');
+};
+function closeShareModal() {
+  var m = document.getElementById('shareModal');
+  if (m) m.classList.remove('open');
+}
+function shareModalClickOutside(e) {
+  if (e.target.id === 'shareModal') closeShareModal();
+}
+function copyShareUrl() {
+  var inp = document.getElementById('shareUrlInput');
+  if (!inp || !inp.value) return;
+  var btn = document.querySelector('.sm-copy-btn');
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(inp.value)
+      .then(function() {
+        if (typeof toast === 'function') toast('Bağlantı kopyalandı ✓', 'ok');
+        if (btn) { btn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Kopyalandı'; setTimeout(function(){ btn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Kopyala'; }, 2000); }
+      })
+      .catch(function() { inp.select(); document.execCommand('copy'); if (typeof toast === 'function') toast('Kopyalandı ✓', 'ok'); });
+  } else {
+    inp.select(); document.execCommand('copy');
+    if (typeof toast === 'function') toast('Kopyalandı ✓', 'ok');
+  }
+}
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    var m = document.getElementById('shareModal');
+    if (m && m.classList.contains('open')) closeShareModal();
+  }
+});
 </script>
 </body>
 </html>
