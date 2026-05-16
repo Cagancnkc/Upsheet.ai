@@ -32,29 +32,32 @@ async function generateExamples(existingCommands) {
 Aşağıdaki mevcut komutları TEKRAR ETME:
 ${sample}
 
-Tam olarak 100 adet YENİ Türkçe Excel komutu örneği üret. Her satır bu formatta olmalı (virgülle bitmeli):
-  { user_command: "...", logic: "...", category: "...", output: { action: "...", reply: "...", changes: [] } },
+Tam olarak 100 adet YENİ Türkçe Excel komutu örneği üret. SADECE geçerli bir JSON array döndür:
 
-Action tipleri ve formatları:
-- sort: { action: "sort", direction: "asc"/"desc", column: "...", reply: "✅ ..." }
-- sum/average/max/min/count: { action: "sum", column: "...", reply: "✅ ..." }
-- filter: { action: "filter", condition: "...", column: "...", value: "...", reply: "✅ ..." }
-- remove_filter: { action: "remove_filter", reply: "✅ ..." }
-- highlight: { action: "highlight", condition: "...", color: "#hex", reply: "✅ ..." }
-- update_cells: { action: "update_cells", formula: "...", reply: "✅ ..." }
-- delete_rows: { action: "delete_rows", condition: "...", reply: "🗑️ ..." }
-- remove_duplicates: { action: "remove_duplicates", reply: "✅ ..." }
-- transform: { action: "transform", transform: "uppercase"/"lowercase"/"trim", reply: "✅ ..." }
-- add_row: { action: "add_row", reply: "➕ ..." }
-- message: { action: "message", reply: "ℹ️ ..." }
+[
+  {"user_command":"...","logic":"...","category":"...","output":{"action":"...","reply":"...","changes":[]}},
+  ...
+]
+
+Action tipleri ve output formatları:
+- sort: {"action":"sort","direction":"asc","column":"...","reply":"✅ ...","changes":[]}
+- sum/average/max/min/count: {"action":"sum","column":"...","reply":"✅ ...","changes":[]}
+- filter: {"action":"filter","condition":"...","column":"...","value":"...","reply":"✅ ...","changes":[]}
+- remove_filter: {"action":"remove_filter","reply":"✅ ...","changes":[]}
+- highlight: {"action":"highlight","condition":"...","color":"#hex","reply":"✅ ...","changes":[]}
+- update_cells: {"action":"update_cells","formula":"...","reply":"✅ ...","changes":[]}
+- delete_rows: {"action":"delete_rows","condition":"...","reply":"🗑️ ...","changes":[]}
+- remove_duplicates: {"action":"remove_duplicates","reply":"✅ ...","changes":[]}
+- transform: {"action":"transform","transform":"uppercase","reply":"✅ ...","changes":[]}
+- add_row: {"action":"add_row","reply":"➕ ...","changes":[]}
+- message: {"action":"message","reply":"ℹ️ ...","changes":[]}
 
 Kurallar:
 1. user_command: Türkçe, doğal konuşma dili, kısa
 2. logic: İngilizce (embedding için)
 3. reply: Türkçe, emoji ile başlasın
 4. Çeşitlilik: muhasebe, bordro, stok, satış, KDV (%18/%20), SGK, e-fatura, depo, tedarik konuları
-5. SADECE satırları yaz, başka hiçbir şey yazma (açıklama, başlık, kod bloğu yok)
-6. Her satır iki boşlukla girintili ve virgülle bitsin`
+5. SADECE JSON array yaz, başka hiçbir şey yazma (açıklama, başlık, kod bloğu yok)`
     }]
   });
 
@@ -62,26 +65,29 @@ Kurallar:
 }
 
 function parseGeneratedLines(text) {
+  const start = text.indexOf('[');
+  const end = text.lastIndexOf(']');
+  if (start === -1 || end === -1) {
+    console.error('JSON array bulunamadı');
+    return [];
+  }
+
+  let parsed;
+  try {
+    parsed = JSON.parse(text.slice(start, end + 1));
+  } catch (e) {
+    console.error('JSON parse hatası:', e.message);
+    return [];
+  }
+
+  if (!Array.isArray(parsed)) return [];
+
   const lines = [];
-  let current = '';
-  let depth = 0;
-
-  for (const rawLine of text.split('\n')) {
-    const line = rawLine.trim();
-    if (!line) continue;
-    if (depth === 0 && !line.startsWith('{')) continue;
-
-    current += (current ? ' ' : '') + line;
-    for (const ch of line) {
-      if (ch === '{') depth++;
-      else if (ch === '}') depth--;
-    }
-
-    if (depth === 0 && current.includes('user_command')) {
-      if (!current.endsWith(',')) current += ',';
-      lines.push(current);
-      current = '';
-    }
+  for (const obj of parsed) {
+    if (!obj.user_command || !obj.logic || !obj.category || !obj.output) continue;
+    // Build JS object literal from parsed data — always syntactically valid
+    const line = `{ user_command: ${JSON.stringify(obj.user_command)}, logic: ${JSON.stringify(obj.logic)}, category: ${JSON.stringify(obj.category)}, output: ${JSON.stringify(obj.output)} },`;
+    lines.push(line);
   }
 
   return lines;
@@ -102,14 +108,13 @@ async function appendToDataset(lines) {
     execSync(`node --check "${tmpPath}"`, { stdio: 'pipe' });
   } catch (e) {
     fs.unlinkSync(tmpPath);
-    throw new Error(`Üretilen satırlar dataset.js'i bozuyor: ${e.stderr?.toString() || e.message}`);
+    throw new Error(`Syntax hatası: ${e.stderr?.toString() || e.message}`);
   }
   fs.unlinkSync(tmpPath);
   fs.writeFileSync(DATASET_PATH, newContent, 'utf8');
 }
 
 async function ingestNewExamples(startIndex) {
-  // Clear require cache so we get the updated dataset
   delete require.cache[require.resolve(DATASET_PATH)];
   const { EXCEL_DATASET } = require(DATASET_PATH);
   const newExamples = EXCEL_DATASET.slice(startIndex);
@@ -136,7 +141,6 @@ async function main() {
   const beforeCount = await getSupabaseCount();
   console.log(`Mevcut Supabase kayıt sayısı: ${beforeCount}`);
 
-  // Read existing commands for dedup
   const rawContent = fs.readFileSync(DATASET_PATH, 'utf8');
   const existingCommands = [...rawContent.matchAll(/user_command:\s*"([^"]+)"/g)].map(m => m[1]);
   console.log(`Mevcut dataset örnek sayısı: ${existingCommands.length}`);
@@ -163,7 +167,6 @@ async function main() {
   console.log(`Supabase'e yüklenen: ${ingested}`);
   console.log(`Toplam dataset: ${total}`);
 
-  // Write summary to file for workflow email step
   const summary = `Eklenen: ${lines.length} örnek\nSupabase'e yüklenen: ${ingested}\nToplam dataset: ${total} örnek\nTarih: ${new Date().toISOString().split('T')[0]}`;
   fs.writeFileSync(path.join(__dirname, '../.generation-summary'), summary);
 }
