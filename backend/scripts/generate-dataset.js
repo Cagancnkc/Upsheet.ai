@@ -102,7 +102,7 @@ async function appendToDataset(lines) {
 
   const newContent = content.slice(0, insertPoint) + block + content.slice(insertPoint);
 
-  const tmpPath = DATASET_PATH + '.tmp';
+  const tmpPath = DATASET_PATH.replace(/\.js$/, '.tmp.js');
   fs.writeFileSync(tmpPath, newContent, 'utf8');
   try {
     execSync(`node --check "${tmpPath}"`, { stdio: 'pipe' });
