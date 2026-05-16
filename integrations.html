@@ -432,6 +432,8 @@ body {
 @keyframes dotPulse { 0%,100% { box-shadow:0 0 0 0 rgba(16,185,129,0.4); } 50% { box-shadow:0 0 0 4px rgba(16,185,129,0); } }
 @keyframes slideInRight { from { opacity:0; transform:translateX(24px); } to { opacity:1; transform:translateX(0); } }
 @keyframes spin { from { transform:rotate(0deg); } to { transform:rotate(360deg); } }
+@keyframes slideIn { from { opacity:0; transform:translateX(20px); } to { opacity:1; transform:translateX(0); } }
+@keyframes shake { 0%,100% { transform:translateX(0); } 20%,60% { transform:translateX(-6px); } 40%,80% { transform:translateX(6px); } }
 .pro-paywall-overlay {
   position:absolute;inset:0;
   background:rgba(10,10,15,0.88);
@@ -576,16 +578,16 @@ body {
     <div class="int-quick" id="quickExportRow">
       <span class="int-quick-label">Hızlı Aktar:</span>
       <button class="btn btn-green btn-sm" onclick="quickExport('gs')">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/a/ae/Google_Sheets_2020_Logo.svg" width="13" height="13" alt="" onerror="this.style.display='none'">
+        <img src="images/integrations/googlesheets.svg" width="13" height="13" alt="" onerror="this.style.display='none'">
         Sheets
       </button>
       <button class="btn btn-notion btn-sm" onclick="quickExport('notion')">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/e/e9/Notion-logo.svg" width="12" height="12" alt="" style="filter:invert(1)" onerror="this.style.display='none'">
+        <img src="images/integrations/notion.svg" width="12" height="12" alt="" style="filter:invert(1)" onerror="this.style.display='none'">
         Notion
       </button>
       <button class="btn btn-outline btn-sm" onclick="quickExport('webhook')">⚡ Webhook</button>
       <button class="btn btn-slack btn-sm" onclick="quickExport('slack')">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/d/d5/Slack_icon_2019.svg" width="12" height="12" alt="" style="filter:invert(1)" onerror="this.style.display='none'">
+        <img src="images/integrations/slack.svg" width="12" height="12" alt="" style="filter:invert(1)" onerror="this.style.display='none'">
         Slack
       </button>
       <button class="btn btn-outline btn-sm" onclick="quickExport('excel')">📗 Excel İndir</button>
@@ -604,7 +606,7 @@ body {
       <div class="int-card-top" onclick="toggleCard('gs')">
         <div class="int-card-header">
           <div class="int-logo" style="background:rgba(15,157,88,0.15)">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/a/ae/Google_Sheets_2020_Logo.svg" alt="GS"
+            <img src="images/integrations/googlesheets.svg" alt="GS"
                  onerror="this.parentElement.innerHTML='<span class=em>📊</span>'">
           </div>
           <div class="int-card-meta">
@@ -686,7 +688,7 @@ body {
       <div class="int-card-top" onclick="toggleCard('notion')">
         <div class="int-card-header">
           <div class="int-logo" style="background:rgba(255,255,255,0.06)">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/e/e9/Notion-logo.svg" alt="Notion"
+            <img src="images/integrations/notion.svg" alt="Notion"
                  style="filter:invert(1)" onerror="this.parentElement.innerHTML='<span class=em>◻️</span>'">
           </div>
           <div class="int-card-meta">
@@ -751,7 +753,7 @@ body {
       <div class="int-card-top" onclick="toggleCard('webhook')">
         <div class="int-card-header">
           <div class="int-logo" style="background:rgba(255,74,0,0.12)">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/f/fd/Zapier_logo.svg" alt="Zapier"
+            <img src="images/integrations/zapier.svg" alt="Zapier"
                  onerror="this.parentElement.innerHTML='<span class=em>⚡</span>'">
           </div>
           <div class="int-card-meta">
@@ -825,7 +827,7 @@ body {
       <div class="int-card-top" onclick="toggleCard('slack')">
         <div class="int-card-header">
           <div class="int-logo" style="background:rgba(74,21,75,0.3)">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/d/d5/Slack_icon_2019.svg" alt="Slack"
+            <img src="images/integrations/slack.svg" alt="Slack"
                  onerror="this.parentElement.innerHTML='<span class=em>💬</span>'">
           </div>
           <div class="int-card-meta">
@@ -1217,6 +1219,86 @@ body {
             </div>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- Dropbox -->
+    <div class="int-card int-card-soon">
+      <div class="int-card-top" onclick="openNotifyModal('Dropbox')">
+        <div class="int-card-header">
+          <div class="int-logo" style="background:rgba(0,97,255,0.12)">
+            <img src="images/integrations/dropbox.svg" alt="Dropbox" onerror="this.parentElement.innerHTML='<span class=em>📦</span>'">
+          </div>
+          <div class="int-card-meta">
+            <div class="int-card-name">Dropbox</div>
+            <div class="int-card-desc">Dosyaları Dropbox'a kaydet</div>
+          </div>
+          <span class="int-badge badge-soon">Yakında</span>
+        </div>
+      </div>
+      <div class="int-pills">
+        <span class="int-pill">Cloud Storage</span>
+        <span class="int-pill">Otomatik Yedek</span>
+      </div>
+    </div>
+
+    <!-- QuickBooks -->
+    <div class="int-card int-card-soon">
+      <div class="int-card-top" onclick="openNotifyModal('QuickBooks')">
+        <div class="int-card-header">
+          <div class="int-logo" style="background:rgba(44,160,28,0.12)">
+            <img src="images/integrations/quickbooks.svg" alt="QuickBooks" onerror="this.parentElement.innerHTML='<span class=em>📒</span>'">
+          </div>
+          <div class="int-card-meta">
+            <div class="int-card-name">QuickBooks</div>
+            <div class="int-card-desc">Muhasebe yazılımına aktar</div>
+          </div>
+          <span class="int-badge badge-soon">Yakında</span>
+        </div>
+      </div>
+      <div class="int-pills">
+        <span class="int-pill">Muhasebe</span>
+        <span class="int-pill">REST API</span>
+      </div>
+    </div>
+
+    <!-- Mikro ERP -->
+    <div class="int-card int-card-soon">
+      <div class="int-card-top" onclick="openNotifyModal('Mikro ERP')">
+        <div class="int-card-header">
+          <div class="int-logo" style="background:rgba(227,30,36,0.12)">
+            <img src="images/integrations/mikroerp.svg" alt="Mikro ERP" onerror="this.parentElement.innerHTML='<span class=em>🏢</span>'">
+          </div>
+          <div class="int-card-meta">
+            <div class="int-card-name">Mikro ERP</div>
+            <div class="int-card-desc">Mikro ERP'ye veri aktar</div>
+          </div>
+          <span class="int-badge badge-soon">Yakında</span>
+        </div>
+      </div>
+      <div class="int-pills">
+        <span class="int-pill">ERP</span>
+        <span class="int-pill">Türk Yazılımı</span>
+      </div>
+    </div>
+
+    <!-- Logo Tiger -->
+    <div class="int-card int-card-soon">
+      <div class="int-card-top" onclick="openNotifyModal('Logo Tiger')">
+        <div class="int-card-header">
+          <div class="int-logo" style="background:rgba(255,255,255,0.06)">
+            <img src="images/integrations/logotiger.svg" alt="Logo Tiger" onerror="this.parentElement.innerHTML='<span class=em>🐯</span>'">
+          </div>
+          <div class="int-card-meta">
+            <div class="int-card-name">Logo Tiger</div>
+            <div class="int-card-desc">Logo Tiger ERP entegrasyonu</div>
+          </div>
+          <span class="int-badge badge-soon">Yakında</span>
+        </div>
+      </div>
+      <div class="int-pills">
+        <span class="int-pill">ERP</span>
+        <span class="int-pill">Türk Yazılımı</span>
       </div>
     </div>
 
