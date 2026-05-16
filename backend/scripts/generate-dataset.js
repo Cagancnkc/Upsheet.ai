@@ -6,6 +6,7 @@ const { createEmbedding } = require('../rag/embeddings');
 const { insertCommand } = require('../rag/vectorStore');
 const fs = require('fs');
 const path = require('path');
+const { execSync } = require('child_process');
 
 const DATASET_PATH = path.join(__dirname, '../rag/dataset.js');
 
@@ -61,10 +62,29 @@ Kurallar:
 }
 
 function parseGeneratedLines(text) {
-  return text
-    .split('\n')
-    .map(l => l.trim())
-    .filter(l => l.startsWith('{') && l.includes('user_command'));
+  const lines = [];
+  let current = '';
+  let depth = 0;
+
+  for (const rawLine of text.split('\n')) {
+    const line = rawLine.trim();
+    if (!line) continue;
+    if (depth === 0 && !line.startsWith('{')) continue;
+
+    current += (current ? ' ' : '') + line;
+    for (const ch of line) {
+      if (ch === '{') depth++;
+      else if (ch === '}') depth--;
+    }
+
+    if (depth === 0 && current.includes('user_command')) {
+      if (!current.endsWith(',')) current += ',';
+      lines.push(current);
+      current = '';
+    }
+  }
+
+  return lines;
 }
 
 async function appendToDataset(lines) {
@@ -75,6 +95,16 @@ async function appendToDataset(lines) {
   const block = `\n  // ──────────────────────────────────────────────────────────\n  // AUTO-GENERATED ${today}\n  // ──────────────────────────────────────────────────────────\n  ${lines.join('\n  ')}\n`;
 
   const newContent = content.slice(0, insertPoint) + block + content.slice(insertPoint);
+
+  const tmpPath = DATASET_PATH + '.tmp';
+  fs.writeFileSync(tmpPath, newContent, 'utf8');
+  try {
+    execSync(`node --check "${tmpPath}"`, { stdio: 'pipe' });
+  } catch (e) {
+    fs.unlinkSync(tmpPath);
+    throw new Error(`Üretilen satırlar dataset.js'i bozuyor: ${e.stderr?.toString() || e.message}`);
+  }
+  fs.unlinkSync(tmpPath);
   fs.writeFileSync(DATASET_PATH, newContent, 'utf8');
 }
 
