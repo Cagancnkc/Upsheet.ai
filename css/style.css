@@ -95,8 +95,17 @@ body.dark .topbar-btn-share:hover{background:rgba(255,255,255,0.06);color:rgba(2
 .tb-metric-badge.pulse{animation:pulse-badge .6s ease;}
 
 /* ── BRAND MARK ──────────────────────────────── */
-.brand-mark-img{
-  width:24px;height:24px;border-radius:7px;flex-shrink:0;display:block;
+.brand-mark{
+  width:24px;height:24px;border-radius:7px;flex-shrink:0;
+  background:radial-gradient(120% 120% at 0% 0%, #7a5bff 0%, #2a16a0 60%, #0E0E10 100%);
+  position:relative;overflow:hidden;box-shadow:inset 0 0 0 1px #ffffff20;
+}
+.brand-mark::after{
+  content:"";position:absolute;inset:5px;border-radius:2px;
+  background:
+    linear-gradient(transparent 49%, #ffffffcc 49% 51%, transparent 51%) 0 0/100% 50%,
+    linear-gradient(90deg, transparent 49%, #ffffffcc 49% 51%, transparent 51%) 0 0/50% 100%;
+  background-repeat:no-repeat,no-repeat;opacity:.9;
 }
 .brand-name{font-weight:600;letter-spacing:-0.01em;font-size:14px;color:var(--ink);}
 body.dark .brand-name{color:rgba(255,255,255,0.9);}
