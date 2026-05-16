@@ -5,12 +5,12 @@ const STRIPE_LINKS = {
   pro: {
     weekly:  'https://buy.stripe.com/test_00w8wOce7aCX5GQgOybMQ03',
     monthly: 'https://buy.stripe.com/test_eVq3cufqj9yT5GQ0PAbMQ08',
-    yearly:  'https://buy.stripe.com/test_00w5kC5PJ3av6KU41MbMQ01'
+    yearly:  'https://buy.stripe.com/test_28EeVcgun7qL9X6buebMQ0a'
   },
   business: {
     weekly:  'https://buy.stripe.com/test_fZu4gy0vpcL5fhq2XIbMQ02',
     monthly: 'https://buy.stripe.com/test_28EdR8ce7cL5d9igOybMQ09',
-    yearly:  'https://buy.stripe.com/test_eVq5kC7XR8uP2uE0PAbMQ00'
+    yearly:  'https://buy.stripe.com/test_8x2aEWemf8uPd9i0PAbMQ0b'
   }
 };
 
