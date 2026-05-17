@@ -64,6 +64,35 @@ Kurallar:
   return message.content[0].text.trim();
 }
 
+function extractObjectsFromText(arrayText) {
+  const inner = arrayText.slice(1, -1);
+  const objects = [];
+  let depth = 0;
+  let start = -1;
+  let inString = false;
+
+  for (let i = 0; i < inner.length; i++) {
+    const ch = inner[i];
+    if (inString) {
+      if (ch === '\\') { i++; continue; }
+      if (ch === '"') inString = false;
+      continue;
+    }
+    if (ch === '"') { inString = true; continue; }
+    if (ch === '{') {
+      if (depth === 0) start = i;
+      depth++;
+    } else if (ch === '}') {
+      depth--;
+      if (depth === 0 && start !== -1) {
+        try { objects.push(JSON.parse(inner.slice(start, i + 1))); } catch (_) {}
+        start = -1;
+      }
+    }
+  }
+  return objects;
+}
+
 function parseGeneratedLines(text) {
   const start = text.indexOf('[');
   const end = text.lastIndexOf(']');
@@ -72,12 +101,14 @@ function parseGeneratedLines(text) {
     return [];
   }
 
+  const arrayText = text.slice(start, end + 1);
   let parsed;
   try {
-    parsed = JSON.parse(text.slice(start, end + 1));
+    parsed = JSON.parse(arrayText);
   } catch (e) {
-    console.error('JSON parse hatası:', e.message);
-    return [];
+    console.error(`Full parse hatası, obje obje deneniyor: ${e.message}`);
+    parsed = extractObjectsFromText(arrayText);
+    console.log(`Kurtarılan obje sayısı: ${parsed.length}`);
   }
 
   if (!Array.isArray(parsed)) return [];
@@ -85,7 +116,6 @@ function parseGeneratedLines(text) {
   const lines = [];
   for (const obj of parsed) {
     if (!obj.user_command || !obj.logic || !obj.category || !obj.output) continue;
-    // Build JS object literal from parsed data — always syntactically valid
     const line = `{ user_command: ${JSON.stringify(obj.user_command)}, logic: ${JSON.stringify(obj.logic)}, category: ${JSON.stringify(obj.category)}, output: ${JSON.stringify(obj.output)} },`;
     lines.push(line);
   }
@@ -98,7 +128,9 @@ async function appendToDataset(lines) {
   const today = new Date().toISOString().split('T')[0];
   const insertPoint = content.lastIndexOf('\n];');
 
-  const block = `\n  // ──────────────────────────────────────────────────────────\n  // AUTO-GENERATED ${today}\n  // ──────────────────────────────────────────────────────────\n  ${lines.join('\n  ')}\n`;
+  const needsComma = content.slice(0, insertPoint).trimEnd().endsWith('}');
+  const prefix = needsComma ? ',\n' : '\n';
+  const block = `${prefix}  // ──────────────────────────────────────────────────────────\n  // AUTO-GENERATED ${today}\n  // ──────────────────────────────────────────────────────────\n  ${lines.join('\n  ')}\n`;
 
   const newContent = content.slice(0, insertPoint) + block + content.slice(insertPoint);
 
