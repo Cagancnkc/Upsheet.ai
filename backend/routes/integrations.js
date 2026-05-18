@@ -197,7 +197,7 @@ router.post('/notion/export', async (req, res) => {
 
   let count = 0;
   const errors = [];
-  const toExport = rows.slice(0, 100);
+  const toExport = rows.slice(0, 500);
 
   for (const row of toExport) {
     try {
@@ -373,7 +373,7 @@ router.post('/airtable/export', async (req, res) => {
 
   const tbl = encodeURIComponent((tableName || 'Table 1').trim());
   const url = `https://api.airtable.com/v0/${baseId.trim()}/${tbl}`;
-  const toExport = rows.slice(0, 50);
+  const toExport = rows.slice(0, 300);
   let count = 0;
   const errors = [];
 
@@ -565,7 +565,7 @@ router.post('/trello/export', async (req, res) => {
       : lists[0];
     if (!targetList) return res.status(400).json({ error: 'Uygun liste bulunamadı' });
 
-    const toExport = rows.slice(0, 30);
+    const toExport = rows.slice(0, 100);
     let count = 0;
     const errors = [];
 
@@ -707,6 +707,240 @@ router.post('/sheets/write', async (req, res) => {
     if (status === 403) return res.status(403).json({ error: "Yetersiz izin. Spreadsheet'e yazma erişiminiz yok.", code: 'PERMISSION_DENIED' });
     if (status === 404) return res.status(404).json({ error: "Spreadsheet bulunamadı. URL veya ID'yi kontrol edin." });
     res.status(500).json({ error: 'Google Sheets yazma hatası: ' + err.message });
+  }
+});
+
+// ── Excel Online: Microsoft Graph API + Azure AD OAuth2 ──────────────────────
+
+const MSFT_TENANT = 'common';
+const MSFT_SCOPES = 'Files.ReadWrite User.Read offline_access';
+
+function getMsftRedirectUri() {
+  return (process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 3001}`)
+    + '/api/integrations/excel/callback';
+}
+
+// OAuth2 URL üret
+router.get('/excel/auth', (req, res) => {
+  const clientId = process.env.MSFT_CLIENT_ID;
+  if (!clientId) return res.status(500).json({ error: 'MSFT_CLIENT_ID eksik. Azure Portal\'da uygulama kaydı yapın.' });
+
+  const redirectUri = getMsftRedirectUri();
+  const url = `https://login.microsoftonline.com/${MSFT_TENANT}/oauth2/v2.0/authorize`
+    + `?client_id=${clientId}`
+    + `&response_type=code`
+    + `&redirect_uri=${encodeURIComponent(redirectUri)}`
+    + `&response_mode=query`
+    + `&scope=${encodeURIComponent(MSFT_SCOPES)}`;
+
+  res.json({ url });
+});
+
+// OAuth2 callback — token alır, popup'a postMessage ile iletir
+router.get('/excel/callback', async (req, res) => {
+  const { code, error } = req.query;
+  if (error || !code) {
+    return res.send(
+      `<script>window.opener?.postMessage({type:'excel_auth',error:'${error || 'cancelled'}'},'*');window.close();</script>`
+    );
+  }
+
+  const clientId = process.env.MSFT_CLIENT_ID;
+  const clientSecret = process.env.MSFT_CLIENT_SECRET;
+  const redirectUri = getMsftRedirectUri();
+
+  try {
+    const r = await fetch(`https://login.microsoftonline.com/${MSFT_TENANT}/oauth2/v2.0/token`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        client_id: clientId,
+        client_secret: clientSecret,
+        code,
+        redirect_uri: redirectUri,
+        grant_type: 'authorization_code',
+        scope: MSFT_SCOPES
+      })
+    });
+    const tokens = await r.json();
+
+    if (tokens.access_token) {
+      const expiry = Date.now() + (tokens.expires_in || 3600) * 1000;
+      res.send(
+        `<script>window.opener?.postMessage({type:'excel_auth',tokens:${JSON.stringify({ access_token: tokens.access_token, refresh_token: tokens.refresh_token, expiry })}}, '*');window.close();</script>`
+      );
+    } else {
+      const msg = tokens.error_description || tokens.error || 'Token alınamadı';
+      res.send(
+        `<script>window.opener?.postMessage({type:'excel_auth',error:${JSON.stringify(msg)}},'*');window.close();</script>`
+      );
+    }
+  } catch (err) {
+    res.send(
+      `<script>window.opener?.postMessage({type:'excel_auth',error:${JSON.stringify(err.message)}},'*');window.close();</script>`
+    );
+  }
+});
+
+// Token yenile (access token süresi ~1 saat)
+router.post('/excel/refresh', async (req, res) => {
+  const { refreshToken } = req.body;
+  if (!refreshToken) return res.status(400).json({ error: 'refreshToken gerekli' });
+
+  try {
+    const r = await fetch(`https://login.microsoftonline.com/${MSFT_TENANT}/oauth2/v2.0/token`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        client_id: process.env.MSFT_CLIENT_ID,
+        client_secret: process.env.MSFT_CLIENT_SECRET,
+        refresh_token: refreshToken,
+        grant_type: 'refresh_token',
+        scope: MSFT_SCOPES
+      })
+    });
+    const tokens = await r.json();
+    if (!tokens.access_token) return res.status(401).json({ error: 'Token yenilenemedi. Lütfen tekrar bağlanın.', code: 'TOKEN_EXPIRED' });
+
+    res.json({
+      access_token: tokens.access_token,
+      refresh_token: tokens.refresh_token || refreshToken,
+      expiry: Date.now() + (tokens.expires_in || 3600) * 1000
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Kullanıcı profili al (bağlantı testi)
+router.post('/excel/me', async (req, res) => {
+  const { accessToken } = req.body;
+  if (!accessToken) return res.status(400).json({ error: 'accessToken gerekli' });
+
+  try {
+    const r = await fetch('https://graph.microsoft.com/v1.0/me', {
+      headers: { Authorization: `Bearer ${accessToken}` }
+    });
+    if (r.status === 401) return res.status(401).json({ error: 'Token geçersiz veya süresi dolmuş', code: 'TOKEN_EXPIRED' });
+    const profile = await r.json();
+    res.json({ success: true, name: profile.displayName, email: profile.mail || profile.userPrincipalName });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// OneDrive'a Excel/CSV dosyası yükle (veya mevcut dosyanın üzerine yaz)
+router.post('/excel/upload', async (req, res) => {
+  const { accessToken, fileName, data } = req.body;
+  if (!accessToken) return res.status(400).json({ error: 'accessToken gerekli. Önce Microsoft ile bağlanın.' });
+  if (!data?.length) return res.status(400).json({ error: 'Dışa aktarılacak veri yok' });
+
+  const name = (fileName || 'mocksheets-export').replace(/\.xlsx?$/i, '') + '.xlsx';
+
+  // SheetJS'siz basit CSV olarak kaydet (OneDrive destekler)
+  const csv = '\uFEFF' + data.map(row =>
+    (row || []).map(cell => {
+      const str = String(cell ?? '');
+      return str.includes(',') || str.includes('"') || str.includes('\n')
+        ? `"${str.replace(/"/g, '""')}"` : str;
+    }).join(',')
+  ).join('\r\n');
+
+  const csvName = name.replace(/\.xlsx?$/i, '.csv');
+
+  try {
+    // OneDrive basit yükleme (< 4MB için uygundur)
+    const uploadUrl = `https://graph.microsoft.com/v1.0/me/drive/root:/${encodeURIComponent(csvName)}:/content`;
+    const r = await fetch(uploadUrl, {
+      method: 'PUT',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'text/csv; charset=utf-8'
+      },
+      body: csv
+    });
+
+    if (r.status === 401) return res.status(401).json({ error: 'Microsoft token süresi dolmuş. Lütfen tekrar bağlanın.', code: 'TOKEN_EXPIRED' });
+    if (!r.ok) {
+      const err = await r.json().catch(() => ({}));
+      return res.status(r.status).json({ error: 'OneDrive yükleme hatası: ' + (err.error?.message || r.statusText) });
+    }
+
+    const file = await r.json();
+    res.json({
+      success: true,
+      rows: data.length,
+      fileName: csvName,
+      fileId: file.id,
+      webUrl: file.webUrl,
+      message: `✅ ${data.length} satır OneDrive'a yüklendi: ${csvName}`
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// OneDrive'daki CSV/Excel dosyasını oku
+router.post('/excel/read', async (req, res) => {
+  const { accessToken, fileId, fileName } = req.body;
+  if (!accessToken) return res.status(400).json({ error: 'accessToken gerekli' });
+  if (!fileId && !fileName) return res.status(400).json({ error: 'fileId veya fileName gerekli' });
+
+  try {
+    let downloadUrl;
+    if (fileId) {
+      downloadUrl = `https://graph.microsoft.com/v1.0/me/drive/items/${fileId}/content`;
+    } else {
+      downloadUrl = `https://graph.microsoft.com/v1.0/me/drive/root:/${encodeURIComponent(fileName)}:/content`;
+    }
+
+    const r = await fetch(downloadUrl, {
+      headers: { Authorization: `Bearer ${accessToken}` }
+    });
+
+    if (r.status === 401) return res.status(401).json({ error: 'Token süresi dolmuş', code: 'TOKEN_EXPIRED' });
+    if (r.status === 404) return res.status(404).json({ error: 'Dosya bulunamadı' });
+    if (!r.ok) return res.status(r.status).json({ error: 'Dosya okunamadı: ' + r.statusText });
+
+    const text = await r.text();
+    // CSV parse (basit)
+    const rows = text.split(/\r?\n/).filter(l => l.trim()).map(line => {
+      const cells = [];
+      let cur = '', inQ = false;
+      for (let i = 0; i < line.length; i++) {
+        const ch = line[i];
+        if (ch === '"') { inQ = !inQ; continue; }
+        if (ch === ',' && !inQ) { cells.push(cur); cur = ''; continue; }
+        cur += ch;
+      }
+      cells.push(cur);
+      return cells;
+    });
+
+    res.json({ success: true, data: rows, rowCount: rows.length, colCount: rows[0]?.length || 0 });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// OneDrive dosya listesi (son değiştirilen CSV/XLSX dosyaları)
+router.post('/excel/files', async (req, res) => {
+  const { accessToken } = req.body;
+  if (!accessToken) return res.status(400).json({ error: 'accessToken gerekli' });
+
+  try {
+    const r = await fetch(
+      `https://graph.microsoft.com/v1.0/me/drive/root/children?$filter=file ne null&$select=id,name,webUrl,lastModifiedDateTime,size&$orderby=lastModifiedDateTime desc&$top=20`,
+      { headers: { Authorization: `Bearer ${accessToken}` } }
+    );
+    if (r.status === 401) return res.status(401).json({ error: 'Token süresi dolmuş', code: 'TOKEN_EXPIRED' });
+    const result = await r.json();
+    const files = (result.value || [])
+      .filter(f => /\.(csv|xlsx?|ods)$/i.test(f.name))
+      .map(f => ({ id: f.id, name: f.name, url: f.webUrl, modified: f.lastModifiedDateTime, size: f.size }));
+    res.json({ success: true, files });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 

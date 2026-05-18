@@ -4897,6 +4897,8 @@ function renderIntegrationShortcuts() {
   const configs = [
     { key:'int_gs',       name:'Google Sheets', fn:'exportToGSheets',
       icon:'<img width="22" height="22" style="width:22px;height:22px" src="https://upload.wikimedia.org/wikipedia/commons/a/ae/Google_Sheets_2020_Logo.svg">' },
+    { key:'int_excel',    name:'Excel Online',   fn:'exportToExcelOnline',
+      icon:'<img width="22" height="22" style="width:22px;height:22px" src="https://upload.wikimedia.org/wikipedia/commons/3/34/Microsoft_Office_Excel_%282019%E2%80%93present%29.svg">' },
     { key:'int_notion',   name:'Notion',         fn:'exportToNotion',
       icon:'<img width="22" height="22" style="width:22px;height:22px;filter:invert(.7)" src="https://upload.wikimedia.org/wikipedia/commons/e/e9/Notion-logo.svg">' },
     { key:'int_slack',    name:'Slack',           fn:'exportToSlack',
@@ -5001,6 +5003,63 @@ async function exportToGSheets() {
     toast(`CSV indirildi (${result.rows} satır). Doğrudan yazmak için Entegrasyonlar'dan Google ile bağlanın.`, 'ok');
   } catch (err) {
     toast('Google Sheets aktarımı başarısız: ' + err.message, 'err');
+  }
+}
+
+async function exportToExcelOnline() {
+  document.getElementById('export-dropdown').style.display = 'none';
+  const cfg = JSON.parse(localStorage.getItem('int_excel') || '{}');
+  if (!cfg.access_token) {
+    if (confirm('Excel Online bağlantısı kurulmamış. Entegrasyonlar sayfasına git?'))
+      window.open('integrations.html', '_blank');
+    return;
+  }
+
+  // Token yenile gerekiyorsa
+  let accessToken = cfg.access_token;
+  if (cfg.expiry && Date.now() >= cfg.expiry - 60000 && cfg.refresh_token) {
+    try {
+      const authToken = getAuthToken();
+      const resp = await fetch(API_URL + '/api/integrations/excel/refresh', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
+        body: JSON.stringify({ refreshToken: cfg.refresh_token })
+      });
+      const data = await resp.json();
+      if (data.access_token) {
+        accessToken = data.access_token;
+        localStorage.setItem('int_excel', JSON.stringify({ ...cfg, ...data }));
+      }
+    } catch {}
+  }
+
+  const data = sheets[activeSheet];
+  let lastRow = 0;
+  for (let r = 0; r < ROWS; r++) { if (data[r].some(c => c !== '')) lastRow = r + 1; }
+  const exportData = data.slice(0, Math.max(lastRow, 1));
+
+  toast('OneDrive\'a yükleniyor...', 'info');
+  try {
+    const authToken = getAuthToken();
+    const resp = await fetch(API_URL + '/api/integrations/excel/upload', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
+      body: JSON.stringify({ accessToken, fileName: 'mocksheets-export.csv', data: exportData })
+    });
+    const result = await resp.json();
+    if (result.success) {
+      toast(`${result.rows} satır OneDrive'a yüklendi: ${result.fileName}`, 'ok');
+      if (result.webUrl && confirm('Dosyayı OneDrive\'da aç?')) window.open(result.webUrl, '_blank');
+    } else if (result.code === 'TOKEN_EXPIRED') {
+      const updated = JSON.parse(localStorage.getItem('int_excel') || '{}');
+      delete updated.access_token;
+      localStorage.setItem('int_excel', JSON.stringify(updated));
+      toast('Microsoft token süresi doldu. Entegrasyonlar sayfasından tekrar bağlanın.', 'err');
+    } else {
+      toast('OneDrive yükleme hatası: ' + (result.error || ''), 'err');
+    }
+  } catch (err) {
+    toast('Excel Online aktarımı başarısız: ' + err.message, 'err');
   }
 }
 
