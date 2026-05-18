@@ -1,0 +1,1391 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Otomasyonlar — Mocksheet</title>
+<link rel="icon" href="images/logo.png">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:         #0a0a0f;
+  --bg-node:    #12121a;
+  --bg-panel:   #0d0d16;
+  --bg-palette: #0d0d16;
+  --border:     rgba(255,255,255,0.07);
+  --border-hover: rgba(255,255,255,0.14);
+  --border-sel: rgba(139,92,246,0.55);
+  --text:       rgba(255,255,255,0.88);
+  --muted:      rgba(255,255,255,0.38);
+  --accent-p:   #8b5cf6;
+  --accent-c:   #06b6d4;
+  --accent-o:   #f97316;
+  --accent-g:   #10b981;
+  --nav-h:      54px;
+  --palette-w:  244px;
+  --config-w:   296px;
+  --radius:     13px;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  height: 100vh;
+  overflow: hidden;
+  user-select: none;
+}
+
+/* ── NAV ─────────────────────────────────────────── */
+#aut-nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  height: var(--nav-h);
+  display: flex; align-items: center; gap: 12px;
+  padding: 0 16px;
+  background: rgba(10,10,15,0.92);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-logo {
+  display: flex; align-items: center; gap: 7px;
+  text-decoration: none; color: var(--text);
+  font-size: 14px; font-weight: 700;
+  flex-shrink: 0;
+}
+.nav-logo img { height: 24px; }
+.nav-divider { width: 1px; height: 20px; background: var(--border); flex-shrink: 0; }
+#aut-title {
+  flex: 1;
+  background: transparent; border: none; outline: none;
+  font-size: 14px; font-weight: 600; color: var(--text);
+  padding: 5px 10px;
+  border-radius: 7px;
+  transition: background .15s;
+  min-width: 0;
+}
+#aut-title:hover, #aut-title:focus { background: rgba(255,255,255,0.05); }
+.nav-spacer { flex: 1; }
+.nav-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 13px; font-weight: 500; padding: 7px 14px;
+  border-radius: 9px; border: 1px solid var(--border);
+  background: rgba(255,255,255,0.04); color: var(--text);
+  cursor: pointer; transition: all .15s; white-space: nowrap;
+  text-decoration: none;
+}
+.nav-btn:hover { background: rgba(255,255,255,0.08); border-color: var(--border-hover); }
+.nav-btn.primary {
+  background: var(--accent-p); border-color: var(--accent-p); color: #fff;
+}
+.nav-btn.primary:hover { background: #7c3aed; border-color: #7c3aed; }
+.nav-btn.run-btn {
+  background: rgba(16,185,129,0.12); border-color: rgba(16,185,129,0.3); color: var(--accent-g);
+}
+.nav-btn.run-btn:hover { background: rgba(16,185,129,0.2); }
+#btn-save.saving { opacity: 0.6; pointer-events: none; }
+
+/* ── LAYOUT ───────────────────────────────────────── */
+#aut-layout {
+  position: fixed;
+  top: var(--nav-h); left: 0; right: 0; bottom: 0;
+  display: flex; overflow: hidden;
+}
+
+/* ── PALETTE ──────────────────────────────────────── */
+#aut-palette {
+  width: var(--palette-w);
+  flex-shrink: 0;
+  background: var(--bg-palette);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  display: flex; flex-direction: column;
+  padding: 12px 10px;
+  gap: 0;
+}
+#aut-palette::-webkit-scrollbar { width: 4px; }
+#aut-palette::-webkit-scrollbar-track { background: transparent; }
+#aut-palette::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+
+.pal-search {
+  position: relative; margin-bottom: 10px;
+}
+.pal-search input {
+  width: 100%;
+  background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+  border-radius: 8px; padding: 7px 10px 7px 30px;
+  font-size: 12px; color: var(--text); outline: none;
+  transition: border-color .15s;
+}
+.pal-search input:focus { border-color: rgba(139,92,246,0.4); }
+.pal-search input::placeholder { color: var(--muted); }
+.pal-search-icon {
+  position: absolute; left: 9px; top: 50%; transform: translateY(-50%);
+  color: var(--muted); pointer-events: none;
+}
+
+.pal-section { margin-bottom: 8px; }
+.pal-label {
+  font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--muted); padding: 6px 6px 4px;
+}
+
+.pal-node {
+  display: flex; align-items: center; gap: 9px;
+  padding: 8px 9px; border-radius: 9px;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.025);
+  cursor: grab; transition: all .15s;
+  margin-bottom: 3px;
+}
+.pal-node:hover {
+  background: rgba(255,255,255,0.06);
+  border-color: var(--border-hover);
+  transform: translateX(1px);
+}
+.pal-node:active { cursor: grabbing; }
+.pal-node-icon {
+  width: 28px; height: 28px; border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; font-size: 14px;
+}
+.pal-node-icon.trigger { background: rgba(249,115,22,0.15); }
+.pal-node-icon.action  { background: rgba(6,182,212,0.12); }
+.pal-node-info { min-width: 0; }
+.pal-node-name { font-size: 12px; font-weight: 600; color: var(--text); }
+.pal-node-desc { font-size: 10px; color: var(--muted); margin-top: 1px; }
+
+.pal-divider { height: 1px; background: var(--border); margin: 10px 0; }
+
+.pal-saved-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 4px 6px 6px;
+}
+.pal-saved-label { font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+#pal-saved-count { font-size: 10px; color: var(--accent-p); font-weight: 700; }
+
+.saved-rule-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 9px; border-radius: 8px; border: 1px solid var(--border);
+  background: rgba(255,255,255,0.02); margin-bottom: 3px; cursor: pointer;
+  transition: all .15s;
+}
+.saved-rule-item:hover { background: rgba(255,255,255,0.05); border-color: var(--border-hover); }
+.saved-rule-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.saved-rule-dot.enabled  { background: var(--accent-g); box-shadow: 0 0 6px rgba(16,185,129,0.5); }
+.saved-rule-dot.disabled { background: var(--muted); }
+.saved-rule-name { font-size: 11px; color: var(--text); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.saved-rule-int  { font-size: 10px; color: var(--muted); }
+
+/* ── CANVAS WRAP ──────────────────────────────────── */
+#aut-canvas-wrap {
+  flex: 1; position: relative; overflow: hidden;
+  background: var(--bg);
+  background-image:
+    radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+#aut-canvas-wrap.panning { cursor: grabbing !important; }
+
+#aut-world {
+  position: absolute; top: 0; left: 0;
+  transform-origin: 0 0;
+  width: 4000px; height: 4000px;
+}
+
+#aut-svg {
+  position: absolute; top: 0; left: 0;
+  width: 4000px; height: 4000px;
+  pointer-events: none; overflow: visible;
+}
+
+#aut-canvas {
+  position: absolute; top: 0; left: 0;
+  width: 4000px; height: 4000px;
+}
+
+/* ── EMPTY STATE ──────────────────────────────────── */
+#aut-empty {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center; pointer-events: none;
+}
+#aut-empty.hidden { display: none; }
+.empty-icon { font-size: 48px; margin-bottom: 12px; opacity: 0.3; }
+.empty-title { font-size: 15px; font-weight: 600; color: var(--muted); margin-bottom: 6px; }
+.empty-sub { font-size: 12px; color: rgba(255,255,255,0.22); }
+
+/* ── NODES ────────────────────────────────────────── */
+.aut-node {
+  position: absolute;
+  width: 210px;
+  border-radius: var(--radius);
+  background: var(--bg-node);
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+  cursor: default;
+  transition: box-shadow .15s, border-color .15s;
+  animation: nodeIn .18s ease-out;
+}
+@keyframes nodeIn {
+  from { opacity: 0; transform: scale(0.88); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.aut-node:hover {
+  border-color: var(--border-hover);
+  box-shadow: 0 6px 32px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.04);
+}
+.aut-node.selected {
+  border-color: var(--border-sel);
+  box-shadow: 0 6px 32px rgba(139,92,246,0.2), 0 0 0 1px rgba(139,92,246,0.1);
+}
+.aut-node.dragging { opacity: 0.75; box-shadow: 0 16px 48px rgba(0,0,0,0.6); z-index: 100; }
+
+.aut-node-stripe {
+  height: 3px; border-radius: var(--radius) var(--radius) 0 0;
+}
+.aut-node.trigger .aut-node-stripe { background: linear-gradient(90deg, var(--accent-o), #fb923c); }
+.aut-node.action  .aut-node-stripe { background: linear-gradient(90deg, var(--accent-c), #38bdf8); }
+
+.aut-node-header {
+  display: flex; align-items: center; gap: 9px;
+  padding: 10px 12px 8px;
+  cursor: grab;
+}
+.aut-node-header:active { cursor: grabbing; }
+.aut-node-icon-wrap {
+  width: 30px; height: 30px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  font-size: 16px;
+}
+.aut-node.trigger .aut-node-icon-wrap { background: rgba(249,115,22,0.15); }
+.aut-node.action  .aut-node-icon-wrap { background: rgba(6,182,212,0.12); }
+.aut-node-title { font-size: 12px; font-weight: 700; color: var(--text); }
+.aut-node-cat {
+  font-size: 9px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+  margin-top: 1px;
+}
+.aut-node.trigger .aut-node-cat { color: var(--accent-o); }
+.aut-node.action  .aut-node-cat { color: var(--accent-c); }
+
+.aut-node-body {
+  padding: 0 12px 10px;
+  font-size: 11px; color: var(--muted); line-height: 1.5;
+  min-height: 30px;
+}
+.aut-node-body-line {
+  display: flex; align-items: center; gap: 4px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.aut-node-config-hint {
+  font-style: italic; color: rgba(255,255,255,0.2); font-size: 10px;
+}
+
+.aut-node-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 12px 10px;
+  position: relative;
+}
+
+/* Ports */
+.aut-port {
+  width: 12px; height: 12px; border-radius: 50%;
+  border: 2px solid var(--bg-node);
+  cursor: crosshair;
+  position: absolute; top: 50%; transform: translateY(-50%);
+  pointer-events: all;
+  transition: transform .12s, box-shadow .12s;
+  z-index: 10;
+}
+.aut-port:hover {
+  transform: translateY(-50%) scale(1.4);
+  box-shadow: 0 0 8px currentColor;
+}
+.aut-port.in  { left: -7px; background: var(--accent-c); color: var(--accent-c); }
+.aut-port.out { right: -7px; background: var(--accent-p); color: var(--accent-p); }
+.aut-node.trigger .aut-port.out { background: var(--accent-o); color: var(--accent-o); }
+
+/* Connection delete btn */
+.conn-del-btn {
+  display: none;
+  position: absolute;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: #ef4444; border: none; color: #fff;
+  font-size: 10px; cursor: pointer; align-items: center; justify-content: center;
+  pointer-events: all; z-index: 50;
+  transform: translate(-50%, -50%);
+}
+.conn-del-btn:hover { background: #dc2626; }
+
+/* ── RIGHT CONFIG PANEL ───────────────────────────── */
+#aut-config {
+  width: var(--config-w);
+  flex-shrink: 0;
+  background: var(--bg-panel);
+  border-left: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  transition: width .2s ease, opacity .2s ease;
+  overflow: hidden;
+}
+#aut-config.hidden { width: 0; opacity: 0; pointer-events: none; }
+
+#aut-config-nav {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px 12px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+#aut-config-title { font-size: 13px; font-weight: 700; }
+#aut-config-close {
+  width: 24px; height: 24px; border-radius: 6px;
+  background: rgba(255,255,255,0.06); border: none; color: var(--muted);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  font-size: 12px; transition: all .15s;
+}
+#aut-config-close:hover { background: rgba(255,255,255,0.12); color: var(--text); }
+
+#aut-config-body {
+  flex: 1; overflow-y: auto; padding: 16px;
+  display: flex; flex-direction: column; gap: 12px;
+}
+#aut-config-body::-webkit-scrollbar { width: 4px; }
+#aut-config-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 4px; }
+
+.cfg-field { display: flex; flex-direction: column; gap: 5px; }
+.cfg-label { font-size: 11px; font-weight: 600; color: var(--muted); }
+.cfg-input, .cfg-select, .cfg-textarea {
+  background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+  border-radius: 8px; padding: 8px 10px;
+  font-size: 12px; color: var(--text); outline: none;
+  transition: border-color .15s;
+  font-family: inherit;
+}
+.cfg-input:focus, .cfg-select:focus, .cfg-textarea:focus { border-color: rgba(139,92,246,0.5); }
+.cfg-input::placeholder, .cfg-textarea::placeholder { color: var(--muted); }
+.cfg-select { appearance: none; cursor: pointer; }
+.cfg-textarea { resize: vertical; min-height: 68px; }
+
+.cfg-name-field input {
+  font-size: 13px; font-weight: 600;
+  background: rgba(255,255,255,0.04);
+}
+
+#aut-config-footer {
+  padding: 12px 16px;
+  border-top: 1px solid var(--border);
+  display: flex; gap: 8px; flex-shrink: 0;
+}
+.btn-cfg-del {
+  flex: 1; padding: 8px; border-radius: 8px;
+  background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.25);
+  color: #f87171; font-size: 12px; font-weight: 600;
+  cursor: pointer; transition: all .15s;
+}
+.btn-cfg-del:hover { background: rgba(239,68,68,0.2); }
+.btn-cfg-apply {
+  flex: 2; padding: 8px; border-radius: 8px;
+  background: var(--accent-p); border: none;
+  color: #fff; font-size: 12px; font-weight: 700;
+  cursor: pointer; transition: all .15s;
+}
+.btn-cfg-apply:hover { background: #7c3aed; }
+
+/* ── CONTEXT MENU ─────────────────────────────────── */
+#aut-ctx-menu {
+  position: fixed; z-index: 500;
+  background: #1a1a28; border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px; padding: 4px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  min-width: 148px;
+}
+#aut-ctx-menu.hidden { display: none; }
+.ctx-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 10px; border-radius: 7px;
+  font-size: 12px; font-weight: 500; cursor: pointer;
+  transition: background .1s;
+}
+.ctx-item:hover { background: rgba(255,255,255,0.07); }
+.ctx-item.danger { color: #f87171; }
+.ctx-item.danger:hover { background: rgba(239,68,68,0.1); }
+
+/* ── ZOOM CONTROLS ────────────────────────────────── */
+#aut-zoom-ctrl {
+  position: absolute; bottom: 16px; right: 16px;
+  display: flex; align-items: center; gap: 4px;
+  background: rgba(13,13,22,0.9); border: 1px solid var(--border);
+  border-radius: 10px; padding: 5px 8px;
+  backdrop-filter: blur(12px);
+}
+.zoom-btn {
+  width: 26px; height: 26px; border-radius: 6px;
+  background: rgba(255,255,255,0.05); border: none; color: var(--text);
+  cursor: pointer; font-size: 16px; font-weight: 300;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .15s;
+}
+.zoom-btn:hover { background: rgba(255,255,255,0.1); }
+#zoom-label { font-size: 11px; color: var(--muted); width: 36px; text-align: center; }
+
+/* ── TOASTS ───────────────────────────────────────── */
+#aut-toasts {
+  position: fixed; bottom: 20px; left: 50%;
+  transform: translateX(-50%);
+  display: flex; flex-direction: column; gap: 8px; align-items: center;
+  z-index: 999; pointer-events: none;
+}
+.aut-toast {
+  padding: 9px 18px; border-radius: 10px;
+  font-size: 13px; font-weight: 600;
+  animation: toastIn .2s ease-out;
+  pointer-events: none;
+}
+@keyframes toastIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.aut-toast.success { background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); color: #6ee7b7; }
+.aut-toast.error   { background: rgba(239,68,68,0.15);  border: 1px solid rgba(239,68,68,0.3);  color: #fca5a5; }
+.aut-toast.info    { background: rgba(139,92,246,0.15); border: 1px solid rgba(139,92,246,0.3); color: #c4b5fd; }
+
+/* ── MINI PANEL: node count badge ─────────────────── */
+#aut-status {
+  position: absolute; top: 12px; right: 12px;
+  font-size: 11px; color: var(--muted);
+  background: rgba(13,13,22,0.8); border: 1px solid var(--border);
+  border-radius: 7px; padding: 4px 10px;
+  backdrop-filter: blur(8px);
+}
+
+/* ── Scrollbar global ─────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="aut-nav">
+  <a href="app.html" class="nav-logo">
+    <img src="images/logo.png" alt="Mocksheet">
+    Mocksheet
+  </a>
+  <div class="nav-divider"></div>
+  <input id="aut-title" type="text" placeholder="Otomasyon Adı…" maxlength="80" spellcheck="false">
+  <div class="nav-spacer"></div>
+  <button class="nav-btn run-btn" id="btn-run" onclick="runWorkflow()">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+    Çalıştır
+  </button>
+  <button class="nav-btn primary" id="btn-save" onclick="saveWorkflow()">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+    Kaydet
+  </button>
+  <a href="app.html" class="nav-btn">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+    Uygulamaya Dön
+  </a>
+</nav>
+
+<!-- LAYOUT -->
+<div id="aut-layout">
+
+  <!-- PALETTE -->
+  <aside id="aut-palette">
+    <div class="pal-search">
+      <svg class="pal-search-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="pal-search" placeholder="Node ara…" oninput="filterPalette(this.value)">
+    </div>
+
+    <div class="pal-section" id="pal-triggers">
+      <div class="pal-label">Tetikleyiciler</div>
+    </div>
+
+    <div class="pal-section" id="pal-actions">
+      <div class="pal-label">Aksiyonlar</div>
+    </div>
+
+    <div class="pal-divider"></div>
+
+    <div class="pal-saved-header">
+      <span class="pal-saved-label">Kayıtlı Otomasyonlar</span>
+      <span id="pal-saved-count">0</span>
+    </div>
+    <div id="pal-saved-list"></div>
+  </aside>
+
+  <!-- CANVAS -->
+  <div id="aut-canvas-wrap"
+    ondragover="event.preventDefault()"
+    ondrop="handleCanvasDrop(event)">
+
+    <div id="aut-world">
+      <svg id="aut-svg">
+        <defs>
+          <linearGradient id="conn-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#f97316"/>
+            <stop offset="100%" stop-color="#8b5cf6"/>
+          </linearGradient>
+          <linearGradient id="conn-grad-temp" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#8b5cf6" stop-opacity="0.6"/>
+            <stop offset="100%" stop-color="#06b6d4" stop-opacity="0.6"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <div id="aut-canvas"></div>
+    </div>
+
+    <div id="aut-empty">
+      <div class="empty-icon">⚡</div>
+      <div class="empty-title">İş Akışı Oluşturun</div>
+      <div class="empty-sub">Soldan bir tetikleyici sürükleyin</div>
+    </div>
+
+    <div id="aut-status">0 node</div>
+    <div id="aut-zoom-ctrl">
+      <button class="zoom-btn" onclick="setZoom(STATE.zoom - 0.15)">−</button>
+      <span id="zoom-label">100%</span>
+      <button class="zoom-btn" onclick="setZoom(STATE.zoom + 0.15)">+</button>
+      <button class="zoom-btn" style="font-size:11px" onclick="resetView()" title="Sıfırla">⌂</button>
+    </div>
+  </div>
+
+  <!-- CONFIG PANEL -->
+  <aside id="aut-config" class="hidden">
+    <div id="aut-config-nav">
+      <span id="aut-config-title">Node Ayarları</span>
+      <button id="aut-config-close" onclick="closeConfig()">✕</button>
+    </div>
+    <div id="aut-config-body"></div>
+    <div id="aut-config-footer">
+      <button class="btn-cfg-del" onclick="deleteSelectedNode()">Sil</button>
+      <button class="btn-cfg-apply" onclick="applyConfig()">Uygula</button>
+    </div>
+  </aside>
+</div>
+
+<!-- CONTEXT MENU -->
+<div id="aut-ctx-menu" class="hidden">
+  <div class="ctx-item" onclick="ctxConfigure()">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+    Ayarla
+  </div>
+  <div class="ctx-item" onclick="ctxDuplicate()">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+    Kopyala
+  </div>
+  <div class="ctx-item danger" onclick="deleteSelectedNode()">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+    Sil
+  </div>
+</div>
+
+<!-- TOASTS -->
+<div id="aut-toasts"></div>
+
+<script src="js/automations.js"></script>
+<script>
+'use strict';
+
+// ── Node Definitions ──────────────────────────────────────────────────────────
+const NODE_DEFS = {
+  sheet_change: {
+    category: 'trigger', label: 'Sheet Değişikliği', icon: '⚡', desc: 'Hücre düzenlenince',
+    configFields: [
+      { key: 'column', label: 'Sütun Adı', type: 'text', placeholder: 'örn: Tutar' }
+    ],
+    toRuleConfig(cfg) {
+      return { trigger_config: { type: 'changed', column: cfg.column || '', operator: 'changed', value: '' } };
+    },
+    bodyText(cfg) { return cfg.column ? `Sütun: ${cfg.column}` : null; }
+  },
+  cell_condition: {
+    category: 'trigger', label: 'Hücre Koşulu', icon: '◈', desc: 'Koşul sağlanınca',
+    configFields: [
+      { key: 'column',   label: 'Sütun',    type: 'text',   placeholder: 'örn: Tutar' },
+      { key: 'operator', label: 'Operatör', type: 'select',
+        options: [
+          { v: 'greater_than', l: 'Büyüktür (>)' },
+          { v: 'less_than',    l: 'Küçüktür (<)' },
+          { v: 'equals',       l: 'Eşittir (=)' },
+          { v: 'not_equals',   l: 'Eşit Değil (≠)' },
+          { v: 'contains',     l: 'İçeriyor' },
+          { v: 'is_empty',     l: 'Boş' },
+          { v: 'date_is_today',l: 'Bugün (tarih)' },
+          { v: 'date_passed',  l: 'Geçmiş (tarih)' }
+        ]
+      },
+      { key: 'value', label: 'Değer', type: 'text', placeholder: 'örn: 5000' }
+    ],
+    toRuleConfig(cfg) {
+      return { trigger_config: { type: 'cell_condition', column: cfg.column || '', operator: cfg.operator || 'greater_than', value: cfg.value || '' } };
+    },
+    bodyText(cfg) {
+      const opLabels = { greater_than:'>',less_than:'<',equals:'=',not_equals:'≠',contains:'içeriyor',is_empty:'boş',date_is_today:'bugün',date_passed:'geçmiş' };
+      if (!cfg.column) return null;
+      return `${cfg.column} ${opLabels[cfg.operator]||''} ${cfg.value||''}`.trim();
+    }
+  },
+  schedule: {
+    category: 'trigger', label: 'Zamanlama', icon: '🕐', desc: 'Belirli aralıkta',
+    configFields: [
+      { key: 'interval', label: 'Aralık', type: 'select',
+        options: [
+          { v: '3600',   l: 'Her saat' },
+          { v: '86400',  l: 'Her gün' },
+          { v: '604800', l: 'Her hafta' }
+        ]
+      }
+    ],
+    toRuleConfig(cfg) {
+      return { trigger_config: { type: 'schedule', column: '', operator: 'changed', value: cfg.interval || '86400' } };
+    },
+    bodyText(cfg) {
+      const map = { '3600':'Her saat','86400':'Her gün','604800':'Her hafta' };
+      return cfg.interval ? map[cfg.interval] || cfg.interval : null;
+    }
+  },
+  form_submit: {
+    category: 'trigger', label: 'Form Gönder', icon: '📋', desc: 'Form doldurulunca',
+    configFields: [
+      { key: 'column', label: 'Kaynak Sütun', type: 'text', placeholder: 'örn: Form Yanıtı' }
+    ],
+    toRuleConfig(cfg) {
+      return { trigger_config: { type: 'cell_condition', column: cfg.column || '', operator: 'not_equals', value: '' } };
+    },
+    bodyText(cfg) { return cfg.column ? `Sütun: ${cfg.column}` : null; }
+  },
+
+  // ACTIONS
+  slack: {
+    category: 'action', label: 'Slack', icon: '💬', desc: 'Slack mesajı gönder',
+    configFields: [
+      { key: 'message', label: 'Mesaj', type: 'textarea', placeholder: 'Dikkat: {Tutar} limiti aşıldı!' },
+      { key: 'include_columns', label: 'Dahil Et (virgülle)', type: 'text', placeholder: 'Müşteri, Tutar' },
+      { key: 'throttle', label: 'Gecikme', type: 'select', options: [{ v:'300',l:'5 dakika' },{ v:'3600',l:'1 saat' },{ v:'86400',l:'1 gün' }] }
+    ],
+    integration: 'slack',
+    toRuleConfig(cfg) {
+      return { integration: 'slack', action_config: { event:'auto_trigger', message: cfg.message||'', include_columns: cfg.include_columns ? cfg.include_columns.split(',').map(s=>s.trim()).filter(Boolean) : [] }, throttle_seconds: parseInt(cfg.throttle||'3600') };
+    },
+    bodyText(cfg) { return cfg.message ? cfg.message.slice(0,40) + (cfg.message.length>40?'…':'') : null; }
+  },
+  notion: {
+    category: 'action', label: 'Notion', icon: '📝', desc: 'Notion\'a kaydet',
+    configFields: [
+      { key: 'message', label: 'Not', type: 'textarea', placeholder: '{Müşteri} eklendi' },
+      { key: 'include_columns', label: 'Dahil Et (virgülle)', type: 'text', placeholder: 'Müşteri, Tutar' },
+      { key: 'throttle', label: 'Gecikme', type: 'select', options: [{ v:'300',l:'5 dakika' },{ v:'3600',l:'1 saat' },{ v:'86400',l:'1 gün' }] }
+    ],
+    integration: 'notion',
+    toRuleConfig(cfg) {
+      return { integration: 'notion', action_config: { event:'auto_trigger', message: cfg.message||'', include_columns: cfg.include_columns ? cfg.include_columns.split(',').map(s=>s.trim()).filter(Boolean) : [] }, throttle_seconds: parseInt(cfg.throttle||'3600') };
+    },
+    bodyText(cfg) { return cfg.message ? cfg.message.slice(0,40)+(cfg.message.length>40?'…':'') : null; }
+  },
+  google_sheets: {
+    category: 'action', label: 'Google Sheets', icon: '📊', desc: 'Sheets\'e aktar',
+    configFields: [
+      { key: 'include_columns', label: 'Aktarılacak Sütunlar', type: 'text', placeholder: 'Hepsi için boş bırak' },
+      { key: 'message', label: 'Not / Başlık', type: 'text', placeholder: 'Otomasyon aktarımı' },
+      { key: 'throttle', label: 'Gecikme', type: 'select', options: [{ v:'300',l:'5 dakika' },{ v:'3600',l:'1 saat' },{ v:'86400',l:'1 gün' }] }
+    ],
+    integration: 'google_sheets',
+    toRuleConfig(cfg) {
+      return { integration: 'google_sheets', action_config: { event:'auto_trigger', message: cfg.message||'', include_columns: cfg.include_columns ? cfg.include_columns.split(',').map(s=>s.trim()).filter(Boolean) : [] }, throttle_seconds: parseInt(cfg.throttle||'3600') };
+    },
+    bodyText(cfg) { return cfg.include_columns || 'Tüm sütunlar'; }
+  },
+  airtable: {
+    category: 'action', label: 'Airtable', icon: '🗃️', desc: 'Airtable\'a ekle',
+    configFields: [
+      { key: 'message', label: 'Kayıt Başlığı', type: 'text', placeholder: '{Müşteri} kaydı' },
+      { key: 'include_columns', label: 'Dahil Et (virgülle)', type: 'text', placeholder: 'Müşteri, Tutar' },
+      { key: 'throttle', label: 'Gecikme', type: 'select', options: [{ v:'300',l:'5 dakika' },{ v:'3600',l:'1 saat' },{ v:'86400',l:'1 gün' }] }
+    ],
+    integration: 'airtable',
+    toRuleConfig(cfg) {
+      return { integration: 'airtable', action_config: { event:'auto_trigger', message: cfg.message||'', include_columns: cfg.include_columns ? cfg.include_columns.split(',').map(s=>s.trim()).filter(Boolean) : [] }, throttle_seconds: parseInt(cfg.throttle||'3600') };
+    },
+    bodyText(cfg) { return cfg.message || null; }
+  },
+  teams: {
+    category: 'action', label: 'Microsoft Teams', icon: '👥', desc: 'Teams bildirimi',
+    configFields: [
+      { key: 'message', label: 'Mesaj', type: 'textarea', placeholder: 'Yeni kayıt: {Müşteri}' },
+      { key: 'include_columns', label: 'Dahil Et (virgülle)', type: 'text', placeholder: 'Müşteri, Tutar' },
+      { key: 'throttle', label: 'Gecikme', type: 'select', options: [{ v:'300',l:'5 dakika' },{ v:'3600',l:'1 saat' },{ v:'86400',l:'1 gün' }] }
+    ],
+    integration: 'teams',
+    toRuleConfig(cfg) {
+      return { integration: 'teams', action_config: { event:'auto_trigger', message: cfg.message||'', include_columns: cfg.include_columns ? cfg.include_columns.split(',').map(s=>s.trim()).filter(Boolean) : [] }, throttle_seconds: parseInt(cfg.throttle||'3600') };
+    },
+    bodyText(cfg) { return cfg.message ? cfg.message.slice(0,40)+(cfg.message.length>40?'…':'') : null; }
+  },
+  make: {
+    category: 'action', label: 'Make (Zapier)', icon: '⚙️', desc: 'Webhook tetikle',
+    configFields: [
+      { key: 'event', label: 'Event Adı', type: 'text', placeholder: 'auto_trigger' },
+      { key: 'include_columns', label: 'Dahil Et (virgülle)', type: 'text', placeholder: 'Tümü için boş' },
+      { key: 'throttle', label: 'Gecikme', type: 'select', options: [{ v:'300',l:'5 dakika' },{ v:'3600',l:'1 saat' },{ v:'86400',l:'1 gün' }] }
+    ],
+    integration: 'make',
+    toRuleConfig(cfg) {
+      return { integration: 'make', action_config: { event: cfg.event||'auto_trigger', message:'', include_columns: cfg.include_columns ? cfg.include_columns.split(',').map(s=>s.trim()).filter(Boolean) : [] }, throttle_seconds: parseInt(cfg.throttle||'3600') };
+    },
+    bodyText(cfg) { return cfg.event || 'auto_trigger'; }
+  },
+  webhook: {
+    category: 'action', label: 'Webhook', icon: '🔗', desc: 'HTTP isteği gönder',
+    configFields: [
+      { key: 'event', label: 'Event', type: 'text', placeholder: 'auto_trigger' },
+      { key: 'include_columns', label: 'Dahil Et (virgülle)', type: 'text', placeholder: 'Tümü için boş' },
+      { key: 'throttle', label: 'Gecikme', type: 'select', options: [{ v:'300',l:'5 dakika' },{ v:'3600',l:'1 saat' },{ v:'86400',l:'1 gün' }] }
+    ],
+    integration: 'webhook',
+    toRuleConfig(cfg) {
+      return { integration: 'webhook', action_config: { event: cfg.event||'auto_trigger', message:'', include_columns: cfg.include_columns ? cfg.include_columns.split(',').map(s=>s.trim()).filter(Boolean) : [] }, throttle_seconds: parseInt(cfg.throttle||'3600') };
+    },
+    bodyText(cfg) { return cfg.event || null; }
+  },
+  email: {
+    category: 'action', label: 'E-posta', icon: '✉️', desc: 'E-posta bildirimi',
+    configFields: [
+      { key: 'message', label: 'Konu / Mesaj', type: 'textarea', placeholder: 'Yeni kayıt eklendi: {Müşteri}' },
+      { key: 'include_columns', label: 'Dahil Et (virgülle)', type: 'text', placeholder: 'Müşteri, Tutar' },
+      { key: 'throttle', label: 'Gecikme', type: 'select', options: [{ v:'300',l:'5 dakika' },{ v:'3600',l:'1 saat' },{ v:'86400',l:'1 gün' }] }
+    ],
+    integration: 'webhook',
+    toRuleConfig(cfg) {
+      return { integration: 'webhook', action_config: { event:'email', message: cfg.message||'', include_columns: cfg.include_columns ? cfg.include_columns.split(',').map(s=>s.trim()).filter(Boolean) : [] }, throttle_seconds: parseInt(cfg.throttle||'3600') };
+    },
+    bodyText(cfg) { return cfg.message ? cfg.message.slice(0,40)+(cfg.message.length>40?'…':'') : null; }
+  }
+};
+
+// ── State ─────────────────────────────────────────────────────────────────────
+const STATE = {
+  nodes: {},
+  connections: [],
+  selectedNodeId: null,
+  ctxNodeId: null,
+  pan: { x: 200, y: 100 },
+  zoom: 1.0,
+  dragging: null,      // { nodeId, startMX, startMY, origX, origY }
+  panning: null,       // { startMX, startMY, origPanX, origPanY }
+  connecting: null,    // { fromNode, tempPath }
+  dirty: false,
+  rules: [],
+  nextId: 1
+};
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function uid() { return 'n' + (STATE.nextId++); }
+function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+
+function showToast(msg, type = 'info') {
+  const t = document.createElement('div');
+  t.className = `aut-toast ${type}`;
+  t.textContent = msg;
+  document.getElementById('aut-toasts').appendChild(t);
+  setTimeout(() => t.remove(), 3000);
+}
+
+function applyWorldTransform() {
+  const world = document.getElementById('aut-world');
+  world.style.transform = `translate(${STATE.pan.x}px, ${STATE.pan.y}px) scale(${STATE.zoom})`;
+}
+
+function setZoom(z) {
+  STATE.zoom = clamp(z, 0.25, 2.5);
+  applyWorldTransform();
+  document.getElementById('zoom-label').textContent = Math.round(STATE.zoom * 100) + '%';
+}
+
+function resetView() {
+  STATE.pan = { x: 200, y: 100 };
+  setZoom(1.0);
+  applyWorldTransform();
+}
+
+function updateStatus() {
+  const count = Object.keys(STATE.nodes).length;
+  document.getElementById('aut-status').textContent = count + ' node';
+  document.getElementById('aut-empty').classList.toggle('hidden', count > 0);
+}
+
+// ── Palette Rendering ─────────────────────────────────────────────────────────
+function renderPalette(filter = '') {
+  const fl = filter.toLowerCase();
+  const trigSec  = document.getElementById('pal-triggers');
+  const actSec   = document.getElementById('pal-actions');
+  // Remove old nodes but keep the label
+  trigSec.querySelectorAll('.pal-node').forEach(n => n.remove());
+  actSec.querySelectorAll('.pal-node').forEach(n => n.remove());
+
+  Object.entries(NODE_DEFS).forEach(([subtype, def]) => {
+    if (fl && !def.label.toLowerCase().includes(fl) && !def.desc.toLowerCase().includes(fl)) return;
+    const el = document.createElement('div');
+    el.className = 'pal-node';
+    el.draggable = true;
+    el.dataset.subtype = subtype;
+    el.innerHTML = `
+      <div class="pal-node-icon ${def.category}">${def.icon}</div>
+      <div class="pal-node-info">
+        <div class="pal-node-name">${def.label}</div>
+        <div class="pal-node-desc">${def.desc}</div>
+      </div>`;
+    el.addEventListener('dragstart', e => {
+      e.dataTransfer.setData('subtype', subtype);
+      e.dataTransfer.effectAllowed = 'copy';
+    });
+    (def.category === 'trigger' ? trigSec : actSec).appendChild(el);
+  });
+}
+
+function filterPalette(v) { renderPalette(v); }
+
+// ── Canvas Drop ───────────────────────────────────────────────────────────────
+function handleCanvasDrop(e) {
+  e.preventDefault();
+  const subtype = e.dataTransfer.getData('subtype');
+  if (!subtype || !NODE_DEFS[subtype]) return;
+
+  const wrap = document.getElementById('aut-canvas-wrap');
+  const rect = wrap.getBoundingClientRect();
+  const x = (e.clientX - rect.left - STATE.pan.x) / STATE.zoom - 105;
+  const y = (e.clientY - rect.top  - STATE.pan.y) / STATE.zoom - 60;
+
+  createNode(subtype, Math.max(0, x), Math.max(0, y));
+}
+
+// ── Node Creation ─────────────────────────────────────────────────────────────
+function createNode(subtype, x, y, config = {}, id = null) {
+  const def = NODE_DEFS[subtype];
+  if (!def) return null;
+  const nodeId = id || uid();
+  STATE.nodes[nodeId] = { id: nodeId, subtype, x, y, config: { ...config } };
+  renderNode(nodeId);
+  updateStatus();
+  STATE.dirty = true;
+  return nodeId;
+}
+
+function renderNode(nodeId) {
+  const node = STATE.nodes[nodeId];
+  const def  = NODE_DEFS[node.subtype];
+  const canvas = document.getElementById('aut-canvas');
+
+  let el = document.getElementById('node-' + nodeId);
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'node-' + nodeId;
+    el.className = `aut-node ${def.category}`;
+    canvas.appendChild(el);
+  }
+
+  el.style.left = node.x + 'px';
+  el.style.top  = node.y + 'px';
+  el.classList.toggle('selected', STATE.selectedNodeId === nodeId);
+
+  const bodyText = def.bodyText(node.config);
+
+  el.innerHTML = `
+    <div class="aut-node-stripe"></div>
+    <div class="aut-node-header">
+      <div class="aut-node-icon-wrap">${def.icon}</div>
+      <div>
+        <div class="aut-node-title">${def.label}</div>
+        <div class="aut-node-cat">${def.category === 'trigger' ? 'Tetikleyici' : 'Aksiyon'}</div>
+      </div>
+    </div>
+    <div class="aut-node-body">
+      ${bodyText
+        ? `<div class="aut-node-body-line">${bodyText}</div>`
+        : `<div class="aut-node-config-hint">Yapılandırmak için tıklayın…</div>`}
+    </div>
+    <div class="aut-node-footer" style="position:relative;height:16px;">
+      ${def.category === 'action' ? `<div class="aut-port in"  data-node="${nodeId}" data-port="in"></div>` : ''}
+      ${def.category === 'trigger' ? `<div class="aut-port out" data-node="${nodeId}" data-port="out"></div>` : ''}
+    </div>`;
+
+  // Header drag
+  el.querySelector('.aut-node-header').addEventListener('mousedown', e => {
+    if (e.button !== 0) return;
+    e.stopPropagation();
+    selectNode(nodeId);
+    STATE.dragging = { nodeId, startMX: e.clientX, startMY: e.clientY, origX: node.x, origY: node.y };
+  });
+
+  // Click to select / open config
+  el.addEventListener('click', e => {
+    e.stopPropagation();
+    selectNode(nodeId);
+    openConfig(nodeId);
+  });
+
+  // Context menu
+  el.addEventListener('contextmenu', e => {
+    e.preventDefault();
+    e.stopPropagation();
+    selectNode(nodeId);
+    STATE.ctxNodeId = nodeId;
+    showCtxMenu(e.clientX, e.clientY);
+  });
+
+  // Port mousedown for connecting
+  const port = el.querySelector('.aut-port.out');
+  if (port) {
+    port.addEventListener('mousedown', e => {
+      e.stopPropagation();
+      e.preventDefault();
+      startConnecting(nodeId, e);
+    });
+  }
+  const inPort = el.querySelector('.aut-port.in');
+  if (inPort) {
+    inPort.addEventListener('mouseup', e => {
+      e.stopPropagation();
+      finishConnecting(nodeId);
+    });
+  }
+}
+
+function selectNode(nodeId) {
+  STATE.selectedNodeId = nodeId;
+  document.querySelectorAll('.aut-node').forEach(el => el.classList.remove('selected'));
+  const el = document.getElementById('node-' + nodeId);
+  if (el) el.classList.add('selected');
+}
+
+function deleteSelectedNode() {
+  const id = STATE.ctxNodeId || STATE.selectedNodeId;
+  if (!id) return;
+  // Remove connections
+  STATE.connections = STATE.connections.filter(c => c.from !== id && c.to !== id);
+  // Remove element
+  const el = document.getElementById('node-' + id);
+  if (el) el.remove();
+  delete STATE.nodes[id];
+  if (STATE.selectedNodeId === id) STATE.selectedNodeId = null;
+  STATE.ctxNodeId = null;
+  closeConfig();
+  hideCtxMenu();
+  redrawConnections();
+  updateStatus();
+  STATE.dirty = true;
+}
+
+// ── Connections ───────────────────────────────────────────────────────────────
+function getPortCenter(nodeId, portType) {
+  const el = document.getElementById('node-' + nodeId);
+  if (!el) return null;
+  const port = el.querySelector(`.aut-port.${portType}`);
+  if (!port) return null;
+  const pr = port.getBoundingClientRect();
+  const wr = document.getElementById('aut-canvas-wrap').getBoundingClientRect();
+  return {
+    x: (pr.left + pr.width / 2 - wr.left - STATE.pan.x) / STATE.zoom,
+    y: (pr.top  + pr.height/ 2 - wr.top  - STATE.pan.y) / STATE.zoom
+  };
+}
+
+function bezierPath(x1, y1, x2, y2) {
+  const dx = Math.abs(x2 - x1) * 0.55 + 40;
+  return `M ${x1} ${y1} C ${x1+dx} ${y1}, ${x2-dx} ${y2}, ${x2} ${y2}`;
+}
+
+function redrawConnections() {
+  const svg = document.getElementById('aut-svg');
+  // Remove old rendered connections (keep defs and temp)
+  svg.querySelectorAll('.conn-path, .conn-del-wrap').forEach(e => e.remove());
+
+  STATE.connections.forEach(conn => {
+    const from = getPortCenter(conn.from, 'out');
+    const to   = getPortCenter(conn.to,   'in');
+    if (!from || !to) return;
+
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('class', 'conn-path');
+    path.setAttribute('d', bezierPath(from.x, from.y, to.x, to.y));
+    path.setAttribute('fill', 'none');
+    path.setAttribute('stroke', 'url(#conn-grad)');
+    path.setAttribute('stroke-width', '2.5');
+    path.setAttribute('stroke-linecap', 'round');
+    path.style.pointerEvents = 'stroke';
+    path.style.cursor = 'pointer';
+    path.addEventListener('contextmenu', e => {
+      e.preventDefault();
+      if (confirm('Bu bağlantıyı silmek istediğinizden emin misiniz?')) {
+        STATE.connections = STATE.connections.filter(c => c.id !== conn.id);
+        redrawConnections();
+        STATE.dirty = true;
+      }
+    });
+    svg.appendChild(path);
+  });
+}
+
+function startConnecting(fromNodeId, e) {
+  const tempPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  tempPath.setAttribute('fill', 'none');
+  tempPath.setAttribute('stroke', 'url(#conn-grad-temp)');
+  tempPath.setAttribute('stroke-width', '2');
+  tempPath.setAttribute('stroke-dasharray', '6 4');
+  tempPath.setAttribute('stroke-linecap', 'round');
+  document.getElementById('aut-svg').appendChild(tempPath);
+  STATE.connecting = { fromNode: fromNodeId, tempPath };
+}
+
+function updateTempConnection(e) {
+  if (!STATE.connecting) return;
+  const from = getPortCenter(STATE.connecting.fromNode, 'out');
+  if (!from) return;
+  const wr = document.getElementById('aut-canvas-wrap').getBoundingClientRect();
+  const mx = (e.clientX - wr.left - STATE.pan.x) / STATE.zoom;
+  const my = (e.clientY - wr.top  - STATE.pan.y) / STATE.zoom;
+  STATE.connecting.tempPath.setAttribute('d', bezierPath(from.x, from.y, mx, my));
+}
+
+function finishConnecting(toNodeId) {
+  if (!STATE.connecting) return;
+  const { fromNode, tempPath } = STATE.connecting;
+  tempPath.remove();
+  STATE.connecting = null;
+
+  if (fromNode === toNodeId) return;
+  const fromDef = NODE_DEFS[STATE.nodes[fromNode]?.subtype];
+  const toDef   = NODE_DEFS[STATE.nodes[toNodeId]?.subtype];
+  if (!fromDef || !toDef) return;
+  if (fromDef.category !== 'trigger' || toDef.category !== 'action') {
+    showToast('Tetikleyiciden aksiyona bağlayın', 'error');
+    return;
+  }
+  // Check duplicate
+  if (STATE.connections.find(c => c.from === fromNode && c.to === toNodeId)) {
+    showToast('Bu bağlantı zaten mevcut', 'info');
+    return;
+  }
+  STATE.connections.push({ id: 'c' + Date.now(), from: fromNode, to: toNodeId });
+  redrawConnections();
+  STATE.dirty = true;
+  showToast('Bağlantı oluşturuldu', 'success');
+}
+
+function cancelConnecting() {
+  if (!STATE.connecting) return;
+  STATE.connecting.tempPath.remove();
+  STATE.connecting = null;
+}
+
+// ── Config Panel ──────────────────────────────────────────────────────────────
+function openConfig(nodeId) {
+  const node = STATE.nodes[nodeId];
+  if (!node) return;
+  const def  = NODE_DEFS[node.subtype];
+
+  document.getElementById('aut-config-title').textContent = def.label + ' Ayarları';
+  document.getElementById('aut-config').classList.remove('hidden');
+
+  const body = document.getElementById('aut-config-body');
+  body.innerHTML = '';
+
+  // Name field
+  const nameField = document.createElement('div');
+  nameField.className = 'cfg-field cfg-name-field';
+  nameField.innerHTML = `<label class="cfg-label">Node Adı</label><input class="cfg-input" data-cfgkey="__name__" value="${node.config.__name__ || def.label}" placeholder="${def.label}">`;
+  body.appendChild(nameField);
+
+  def.configFields.forEach(field => {
+    const wrap = document.createElement('div');
+    wrap.className = 'cfg-field';
+    const val = node.config[field.key] ?? '';
+
+    if (field.type === 'select') {
+      const opts = field.options.map(o => `<option value="${o.v}" ${val === o.v ? 'selected' : ''}>${o.l}</option>`).join('');
+      wrap.innerHTML = `<label class="cfg-label">${field.label}</label><select class="cfg-select" data-cfgkey="${field.key}">${opts}</select>`;
+    } else if (field.type === 'textarea') {
+      wrap.innerHTML = `<label class="cfg-label">${field.label}</label><textarea class="cfg-textarea" data-cfgkey="${field.key}" placeholder="${field.placeholder||''}">${val}</textarea>`;
+    } else {
+      wrap.innerHTML = `<label class="cfg-label">${field.label}</label><input class="cfg-input" data-cfgkey="${field.key}" value="${val}" placeholder="${field.placeholder||''}">`;
+    }
+    body.appendChild(wrap);
+  });
+}
+
+function applyConfig() {
+  const nodeId = STATE.selectedNodeId;
+  if (!nodeId) return;
+  const node = STATE.nodes[nodeId];
+  document.querySelectorAll('#aut-config-body [data-cfgkey]').forEach(el => {
+    node.config[el.dataset.cfgkey] = el.value;
+  });
+  renderNode(nodeId);
+  redrawConnections();
+  STATE.dirty = true;
+  showToast('Ayarlar uygulandı', 'success');
+}
+
+function closeConfig() {
+  document.getElementById('aut-config').classList.add('hidden');
+}
+
+// ── Context Menu ──────────────────────────────────────────────────────────────
+function showCtxMenu(x, y) {
+  const m = document.getElementById('aut-ctx-menu');
+  m.classList.remove('hidden');
+  m.style.left = x + 'px';
+  m.style.top  = y + 'px';
+}
+function hideCtxMenu() { document.getElementById('aut-ctx-menu').classList.add('hidden'); }
+
+function ctxConfigure() { hideCtxMenu(); if (STATE.ctxNodeId) openConfig(STATE.ctxNodeId); }
+
+function ctxDuplicate() {
+  hideCtxMenu();
+  const id = STATE.ctxNodeId;
+  if (!id || !STATE.nodes[id]) return;
+  const orig = STATE.nodes[id];
+  createNode(orig.subtype, orig.x + 30, orig.y + 30, { ...orig.config });
+  showToast('Node kopyalandı', 'info');
+}
+
+// ── Save ──────────────────────────────────────────────────────────────────────
+async function saveWorkflow() {
+  const btn = document.getElementById('btn-save');
+  btn.classList.add('saving');
+
+  const workflowName = document.getElementById('aut-title').value.trim() || 'Yeni Otomasyon';
+  const pairs = STATE.connections
+    .map(c => ({ trigger: STATE.nodes[c.from], action: STATE.nodes[c.to] }))
+    .filter(p => p.trigger && p.action);
+
+  if (!pairs.length) {
+    showToast('Bir tetikleyici ile aksiyon bağlayın', 'error');
+    btn.classList.remove('saving');
+    return;
+  }
+
+  try {
+    let saved = 0;
+    for (let i = 0; i < pairs.length; i++) {
+      const { trigger, action } = pairs[i];
+      const tDef = NODE_DEFS[trigger.subtype];
+      const aDef = NODE_DEFS[action.subtype];
+      const tCfg = tDef.toRuleConfig(trigger.config);
+      const aCfg = aDef.toRuleConfig(action.config);
+      const ruleName = pairs.length > 1 ? `${workflowName} #${i+1}` : workflowName;
+      const rule = {
+        name: ruleName,
+        integration: aCfg.integration,
+        trigger_config: tCfg.trigger_config,
+        action_config: aCfg.action_config,
+        throttle_seconds: aCfg.throttle_seconds || 3600,
+        enabled: true
+      };
+      const existing = STATE.rules.find(r => r.name === ruleName);
+      if (existing) {
+        await window.Automations.update(existing.id, rule);
+      } else {
+        await window.Automations.save(rule);
+      }
+      saved++;
+    }
+    STATE.rules = await window.Automations.load();
+    STATE.dirty = false;
+    saveCanvasState();
+    renderSavedRules();
+    showToast(`${saved} otomasyon kaydedildi`, 'success');
+  } catch (err) {
+    showToast('Kaydetme hatası: ' + err.message, 'error');
+  }
+  btn.classList.remove('saving');
+}
+
+// ── Run (manual test) ─────────────────────────────────────────────────────────
+async function runWorkflow() {
+  const pairs = STATE.connections
+    .map(c => ({ trigger: STATE.nodes[c.from], action: STATE.nodes[c.to] }))
+    .filter(p => p.trigger && p.action);
+  if (!pairs.length) { showToast('Bağlı node yok', 'error'); return; }
+  showToast('Otomasyon test tetiklendi', 'info');
+}
+
+// ── Persistence ───────────────────────────────────────────────────────────────
+function saveCanvasState() {
+  try {
+    localStorage.setItem('aut_canvas', JSON.stringify({
+      nodes: STATE.nodes, connections: STATE.connections,
+      pan: STATE.pan, zoom: STATE.zoom,
+      title: document.getElementById('aut-title').value,
+      nextId: STATE.nextId
+    }));
+  } catch {}
+}
+
+function loadCanvasState() {
+  try {
+    const raw = localStorage.getItem('aut_canvas');
+    if (!raw) return;
+    const s = JSON.parse(raw);
+    STATE.pan   = s.pan   || { x: 200, y: 100 };
+    STATE.zoom  = s.zoom  || 1.0;
+    STATE.nextId = s.nextId || 1;
+    if (s.title) document.getElementById('aut-title').value = s.title;
+    Object.values(s.nodes || {}).forEach(n => {
+      STATE.nodes[n.id] = n;
+      renderNode(n.id);
+    });
+    STATE.connections = s.connections || [];
+    applyWorldTransform();
+    setZoom(STATE.zoom);
+    setTimeout(redrawConnections, 50);
+    updateStatus();
+  } catch {}
+}
+
+function renderSavedRules() {
+  const list  = document.getElementById('pal-saved-list');
+  const count = document.getElementById('pal-saved-count');
+  list.innerHTML = '';
+  count.textContent = STATE.rules.length;
+  STATE.rules.forEach(r => {
+    const el = document.createElement('div');
+    el.className = 'saved-rule-item';
+    el.innerHTML = `
+      <div class="saved-rule-dot ${r.enabled ? 'enabled' : 'disabled'}"></div>
+      <div class="saved-rule-name" title="${r.name}">${r.name}</div>
+      <div class="saved-rule-int">${r.integration || ''}</div>`;
+    list.appendChild(el);
+  });
+}
+
+// ── Mouse / Keyboard Events ───────────────────────────────────────────────────
+let spaceDown = false;
+
+document.addEventListener('keydown', e => {
+  if (e.code === 'Space' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+    spaceDown = true;
+    document.getElementById('aut-canvas-wrap').style.cursor = 'grab';
+    e.preventDefault();
+  }
+  if (e.code === 'Escape') {
+    cancelConnecting();
+    closeConfig();
+    hideCtxMenu();
+    STATE.selectedNodeId = null;
+    document.querySelectorAll('.aut-node').forEach(n => n.classList.remove('selected'));
+  }
+  if ((e.code === 'Delete' || e.code === 'Backspace') && STATE.selectedNodeId &&
+      e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+    STATE.ctxNodeId = STATE.selectedNodeId;
+    deleteSelectedNode();
+  }
+});
+
+document.addEventListener('keyup', e => {
+  if (e.code === 'Space') {
+    spaceDown = false;
+    document.getElementById('aut-canvas-wrap').style.cursor = '';
+  }
+});
+
+document.addEventListener('mousedown', e => {
+  if (e.button === 1 || (e.button === 0 && spaceDown)) {
+    e.preventDefault();
+    STATE.panning = { startMX: e.clientX, startMY: e.clientY, origPanX: STATE.pan.x, origPanY: STATE.pan.y };
+    document.getElementById('aut-canvas-wrap').classList.add('panning');
+  }
+});
+
+document.addEventListener('mousemove', e => {
+  if (STATE.dragging) {
+    const { nodeId, startMX, startMY, origX, origY } = STATE.dragging;
+    const dx = (e.clientX - startMX) / STATE.zoom;
+    const dy = (e.clientY - startMY) / STATE.zoom;
+    const node = STATE.nodes[nodeId];
+    node.x = Math.max(0, origX + dx);
+    node.y = Math.max(0, origY + dy);
+    const el = document.getElementById('node-' + nodeId);
+    if (el) { el.style.left = node.x + 'px'; el.style.top = node.y + 'px'; }
+    redrawConnections();
+  }
+  if (STATE.panning) {
+    STATE.pan.x = STATE.panning.origPanX + (e.clientX - STATE.panning.startMX);
+    STATE.pan.y = STATE.panning.origPanY + (e.clientY - STATE.panning.startMY);
+    applyWorldTransform();
+  }
+  if (STATE.connecting) {
+    updateTempConnection(e);
+  }
+});
+
+document.addEventListener('mouseup', e => {
+  STATE.dragging = null;
+  STATE.panning  = null;
+  document.getElementById('aut-canvas-wrap').classList.remove('panning');
+  if (STATE.connecting && e.button === 0) {
+    const underEl = document.elementFromPoint(e.clientX, e.clientY);
+    const port = underEl?.closest?.('.aut-port.in');
+    if (!port) cancelConnecting();
+  }
+});
+
+document.getElementById('aut-canvas-wrap').addEventListener('wheel', e => {
+  e.preventDefault();
+  const delta = e.deltaY < 0 ? 0.1 : -0.1;
+  const wrap = document.getElementById('aut-canvas-wrap');
+  const rect  = wrap.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+  const newZoom = clamp(STATE.zoom + delta, 0.25, 2.5);
+  const zr = newZoom / STATE.zoom;
+  STATE.pan.x = mx - zr * (mx - STATE.pan.x);
+  STATE.pan.y = my - zr * (my - STATE.pan.y);
+  STATE.zoom = newZoom;
+  applyWorldTransform();
+  document.getElementById('zoom-label').textContent = Math.round(STATE.zoom * 100) + '%';
+}, { passive: false });
+
+// Click on canvas background → deselect
+document.getElementById('aut-canvas').addEventListener('click', e => {
+  if (e.target === document.getElementById('aut-canvas')) {
+    STATE.selectedNodeId = null;
+    document.querySelectorAll('.aut-node').forEach(n => n.classList.remove('selected'));
+    closeConfig();
+  }
+});
+
+document.addEventListener('click', e => {
+  if (!document.getElementById('aut-ctx-menu').classList.contains('hidden') &&
+      !document.getElementById('aut-ctx-menu').contains(e.target)) {
+    hideCtxMenu();
+  }
+});
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+async function init() {
+  renderPalette();
+  loadCanvasState();
+
+  try {
+    STATE.rules = await window.Automations.load();
+    renderSavedRules();
+  } catch {}
+
+  applyWorldTransform();
+  setZoom(STATE.zoom);
+}
+
+init();
+
+window.addEventListener('beforeunload', e => {
+  if (STATE.dirty) {
+    saveCanvasState();
+  }
+});
+</script>
+</body>
+</html>
