@@ -5006,61 +5006,19 @@ async function exportToGSheets() {
   }
 }
 
-async function exportToExcelOnline() {
+function exportToExcelOnline() {
   document.getElementById('export-dropdown').style.display = 'none';
-  const cfg = JSON.parse(localStorage.getItem('int_excel') || '{}');
-  if (!cfg.access_token) {
-    if (confirm('Excel Online bağlantısı kurulmamış. Entegrasyonlar sayfasına git?'))
-      window.open('integrations.html', '_blank');
-    return;
-  }
-
-  // Token yenile gerekiyorsa
-  let accessToken = cfg.access_token;
-  if (cfg.expiry && Date.now() >= cfg.expiry - 60000 && cfg.refresh_token) {
-    try {
-      const authToken = getAuthToken();
-      const resp = await fetch(API_URL + '/api/integrations/excel/refresh', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
-        body: JSON.stringify({ refreshToken: cfg.refresh_token })
-      });
-      const data = await resp.json();
-      if (data.access_token) {
-        accessToken = data.access_token;
-        localStorage.setItem('int_excel', JSON.stringify({ ...cfg, ...data }));
-      }
-    } catch {}
-  }
-
+  if (typeof XLSX === 'undefined') { toast('SheetJS kütüphanesi yüklenemedi', 'err'); return; }
   const data = sheets[activeSheet];
   let lastRow = 0;
   for (let r = 0; r < ROWS; r++) { if (data[r].some(c => c !== '')) lastRow = r + 1; }
   const exportData = data.slice(0, Math.max(lastRow, 1));
-
-  toast('OneDrive\'a yükleniyor...', 'info');
-  try {
-    const authToken = getAuthToken();
-    const resp = await fetch(API_URL + '/api/integrations/excel/upload', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
-      body: JSON.stringify({ accessToken, fileName: 'mocksheets-export.csv', data: exportData })
-    });
-    const result = await resp.json();
-    if (result.success) {
-      toast(`${result.rows} satır OneDrive'a yüklendi: ${result.fileName}`, 'ok');
-      if (result.webUrl && confirm('Dosyayı OneDrive\'da aç?')) window.open(result.webUrl, '_blank');
-    } else if (result.code === 'TOKEN_EXPIRED') {
-      const updated = JSON.parse(localStorage.getItem('int_excel') || '{}');
-      delete updated.access_token;
-      localStorage.setItem('int_excel', JSON.stringify(updated));
-      toast('Microsoft token süresi doldu. Entegrasyonlar sayfasından tekrar bağlanın.', 'err');
-    } else {
-      toast('OneDrive yükleme hatası: ' + (result.error || ''), 'err');
-    }
-  } catch (err) {
-    toast('Excel Online aktarımı başarısız: ' + err.message, 'err');
-  }
+  const ws = XLSX.utils.aoa_to_sheet(exportData);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, sheetNames[activeSheet] || 'Sheet1');
+  const fileName = (sheetNames[activeSheet] || 'Mocksheets') + '.xlsx';
+  XLSX.writeFile(wb, fileName);
+  toast(`"${fileName}" indirildi (${exportData.length} satır)`, 'ok');
 }
 
 async function exportToNotion() {

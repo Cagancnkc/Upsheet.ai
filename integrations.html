@@ -598,7 +598,7 @@ body {
   </section>
 
   <!-- ── Available Integrations ── -->
-  <div class="int-section-label">Kullanılabilir (11)</div>
+  <div class="int-section-label">Kullanılabilir (10)</div>
   <div class="int-grid" id="intGrid">
 
     <!-- Google Sheets -->
@@ -683,69 +683,6 @@ body {
       </div>
     </div>
 
-    <!-- Excel Online (Microsoft 365 / OneDrive) -->
-    <div class="int-card" data-name="Excel Online" data-key="excel">
-      <div class="int-card-top" onclick="toggleCard('excel')">
-        <div class="int-card-header">
-          <div class="int-logo" style="background:rgba(33,115,70,0.15)">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/3/34/Microsoft_Office_Excel_%282019%E2%80%93present%29.svg" alt="Excel"
-                 onerror="this.parentElement.innerHTML='<span class=em>📗</span>'">
-          </div>
-          <div class="int-card-meta">
-            <div class="int-card-name">Excel Online</div>
-            <div class="int-card-desc">OneDrive'a yükle / dosyadan oku</div>
-          </div>
-          <span class="int-badge badge-connect" id="badge-excel">Bağla →</span>
-          <span class="int-chevron">▼</span>
-        </div>
-      </div>
-      <div class="int-pills">
-        <span class="int-pill">OneDrive</span>
-        <span class="int-pill">Microsoft 365</span>
-        <span class="int-pill">CSV / Excel</span>
-      </div>
-      <div class="int-form-wrap" id="form-excel">
-        <div class="int-form-inner">
-          <div class="form">
-            <div class="info-box">
-              <strong>📌 Kurulum:</strong><br>
-              1. <strong>Microsoft ile Bağlan</strong>'a tıklayın (Microsoft hesabınızla giriş yapın)<br>
-              2. İzinleri onaylayın (OneDrive dosya okuma/yazma)<br>
-              3. Verilerinizi OneDrive'a aktarın veya mevcut CSV/Excel dosyasından içeri alın
-            </div>
-            <div class="field">
-              <label>Dosya Adı</label>
-              <input id="excel-filename" type="text" placeholder="mocksheets-export.csv">
-              <span class="hint">Boş bırakırsanız otomatik isim verilir</span>
-            </div>
-            <div class="alert" id="alert-excel"></div>
-            <div class="alert" id="alert-excel-oauth" style="margin:0 0 10px"></div>
-            <div class="btns">
-              <button class="btn btn-dark" id="btn-excel-auth" onclick="authExcel()">🔗 Microsoft ile Bağlan</button>
-              <div id="excel-connected-row" style="display:none;align-items:center;gap:10px">
-                <span style="font-size:13px;color:#22C55E;font-weight:600" id="excel-user-label">✓ Bağlandı</span>
-                <button class="btn btn-red" onclick="disconnectExcel()">Bağlantıyı Kes</button>
-              </div>
-            </div>
-            <div style="border-top:1px solid var(--border);padding-top:16px;margin-top:12px">
-              <div id="excel-progress" style="display:none;margin-bottom:12px">
-                <div style="font-size:12px;color:#475569;margin-bottom:6px" id="excel-progress-label">Hazırlanıyor...</div>
-                <div class="progress-wrap"><div class="progress-bar" id="excel-pbar" style="width:0%"></div></div>
-              </div>
-              <div class="alert" id="alert-excel-exp"></div>
-              <div class="btns" style="margin-top:10px">
-                <button class="btn btn-green" id="btn-excel-exp" onclick="exportExcel()">📤 OneDrive'a Yükle</button>
-                <button class="btn btn-outline" id="btn-excel-read" onclick="readExcel()">📥 Dosyadan Oku</button>
-              </div>
-              <div id="excel-files-list" style="display:none;margin-top:12px">
-                <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:8px">OneDrive'daki dosyalar:</div>
-                <div id="excel-files-items"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
 
     <!-- Notion -->
     <div class="int-card" data-name="Notion" data-key="notion">
@@ -1163,6 +1100,7 @@ body {
             <div class="alert" id="alert-excel"></div>
             <div class="btns">
               <button class="btn btn-green" onclick="exportExcel()">📥 Excel İndir (.xlsx)</button>
+              <button class="btn btn-outline" onclick="importExcel()">📂 Excel Yükle (.xlsx/.csv)</button>
             </div>
           </div>
         </div>
@@ -1550,7 +1488,7 @@ function setStatus(provider, connected, label) {
 }
 
 function updateHeroStats() {
-  const n = ['int_gs','int_excel','int_notion','int_webhook','int_slack','int_airtable','int_make','int_drive','int_teams','int_trello'].filter(k => lsLoad(k)).length;
+  const n = ['int_gs','int_notion','int_webhook','int_slack','int_airtable','int_make','int_drive','int_teams','int_trello'].filter(k => lsLoad(k)).length;
   const el = document.getElementById('stat-connected');
   if (el) el.textContent = n;
 }
@@ -1581,188 +1519,33 @@ function getSheetData() {
 }
 
 // ════════════════════════════════════════════════
-// EXCEL ONLINE (Microsoft 365 / OneDrive)
+// MICROSOFT EXCEL — SheetJS (tarayıcı tabanlı, kurulum gerekmez)
 // ════════════════════════════════════════════════
-function updateExcelAuthUI() {
-  const cfg = lsLoad('int_excel');
-  const hasToken = !!cfg?.access_token;
-  const authBtn = document.getElementById('btn-excel-auth');
-  const connRow = document.getElementById('excel-connected-row');
-  const userLabel = document.getElementById('excel-user-label');
-  if (authBtn) authBtn.style.display = hasToken ? 'none' : '';
-  if (connRow) connRow.style.display = hasToken ? 'flex' : 'none';
-  if (userLabel && cfg?.name) userLabel.textContent = '✓ ' + cfg.name;
-}
-
-function disconnectExcel() {
-  lsRemove('int_excel');
-  setStatus('excel', false);
-  updateExcelAuthUI();
-  document.getElementById('excel-files-list').style.display = 'none';
-  showAlert('alert-excel-oauth', 'Microsoft bağlantısı kesildi.', 'ok');
-}
-
-async function authExcel() {
-  showAlert('alert-excel-oauth', 'Microsoft OAuth sayfası açılıyor...', 'info');
-  try {
-    const resp = await fetch(API + '/api/integrations/excel/auth', { headers: buildHeaders() });
-    const data = await resp.json();
-    if (!data.url) return showAlert('alert-excel-oauth', '✗ ' + (data.error || 'OAuth yapılandırılmamış. MSFT_CLIENT_ID eksik.'), 'err');
-    window.open(data.url, 'excelAuth', 'width=520,height=640,scrollbars=yes,resizable=yes');
-  } catch {
-    showAlert('alert-excel-oauth', '✗ Sunucuya ulaşılamıyor', 'err');
-  }
-}
-
-async function getExcelToken() {
-  const cfg = lsLoad('int_excel');
-  if (!cfg?.access_token) return null;
-  if (cfg.expiry && Date.now() < cfg.expiry - 60000) return cfg.access_token;
-  if (!cfg.refresh_token) return null;
-  try {
-    const resp = await fetch(API + '/api/integrations/excel/refresh', {
-      method: 'POST', headers: buildHeaders(),
-      body: JSON.stringify({ refreshToken: cfg.refresh_token })
-    });
-    const data = await resp.json();
-    if (data.access_token) {
-      lsSave('int_excel', { ...cfg, ...data });
-      return data.access_token;
-    }
-  } catch {}
-  return null;
-}
-
-async function exportExcel() {
-  const sheet = getSheetData();
-  if (!sheet?.data?.length) return showAlert('alert-excel-exp', '✗ Veri yok. Uygulamayı açın ve dosya yükleyin.', 'err');
-
-  const accessToken = await getExcelToken();
-  if (!accessToken) return showAlert('alert-excel-exp', '✗ Önce Microsoft hesabınızla bağlanın.', 'err');
-
-  const btn = document.getElementById('btn-excel-exp');
-  const prog = document.getElementById('excel-progress');
-  const pbar = document.getElementById('excel-pbar');
-  const label = document.getElementById('excel-progress-label');
-  btn.disabled = true; btn.textContent = 'Yükleniyor...';
-  prog.style.display = '';
-  if (label) label.textContent = 'OneDrive\'a yükleniyor...';
-  pbar.style.width = '40%';
-
-  try {
-    const fileName = document.getElementById('excel-filename').value.trim() || 'mocksheets-export.csv';
-    const resp = await fetch(API + '/api/integrations/excel/upload', {
-      method: 'POST', headers: buildHeaders(),
-      body: JSON.stringify({ accessToken, fileName, data: sheet.data })
-    });
-    pbar.style.width = '90%';
-    const result = await resp.json();
-    pbar.style.width = '100%';
-    if (result.success) {
-      showAlert('alert-excel-exp', `✓ ${result.rows} satır OneDrive'a yüklendi: ${result.fileName}`, 'ok');
-      if (result.webUrl && confirm('Dosyayı OneDrive\'da aç?')) window.open(result.webUrl, '_blank');
-    } else if (result.code === 'TOKEN_EXPIRED') {
-      const cfg = lsLoad('int_excel') || {};
-      delete cfg.access_token;
-      lsSave('int_excel', cfg);
-      updateExcelAuthUI();
-      showAlert('alert-excel-exp', '✗ Microsoft token süresi doldu. Lütfen tekrar bağlanın.', 'err');
-    } else {
-      showAlert('alert-excel-exp', '✗ ' + (result.error || 'Yükleme başarısız'), 'err');
-    }
-  } catch (err) {
-    showAlert('alert-excel-exp', '✗ Sunucuya ulaşılamıyor: ' + err.message, 'err');
-  } finally {
-    btn.disabled = false; btn.textContent = '📤 OneDrive\'a Yükle';
-    setTimeout(() => { prog.style.display = 'none'; pbar.style.width = '0%'; }, 1000);
-  }
-}
-
-async function readExcel() {
-  const accessToken = await getExcelToken();
-  if (!accessToken) return showAlert('alert-excel-exp', '✗ Önce Microsoft hesabınızla bağlanın.', 'err');
-
-  const btn = document.getElementById('btn-excel-read');
-  btn.disabled = true; btn.textContent = 'Yükleniyor...';
-
-  try {
-    const resp = await fetch(API + '/api/integrations/excel/files', {
-      method: 'POST', headers: buildHeaders(),
-      body: JSON.stringify({ accessToken })
-    });
-    const result = await resp.json();
-    if (result.code === 'TOKEN_EXPIRED') {
-      const cfg = lsLoad('int_excel') || {};
-      delete cfg.access_token;
-      lsSave('int_excel', cfg);
-      updateExcelAuthUI();
-      showAlert('alert-excel-exp', '✗ Microsoft token süresi doldu. Lütfen tekrar bağlanın.', 'err');
-      return;
-    }
-    if (!result.success || !result.files?.length) {
-      showAlert('alert-excel-exp', 'ℹ OneDrive\'da CSV/Excel dosyası bulunamadı.', 'info');
-      return;
-    }
-    const list = document.getElementById('excel-files-list');
-    const items = document.getElementById('excel-files-items');
-    items.innerHTML = result.files.map(f =>
-      `<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)">
-        <span style="font-size:13px;color:var(--text)">${f.name}</span>
-        <button class="btn btn-outline" style="font-size:11px;padding:3px 8px" onclick="importExcelFile('${f.id}','${f.name.replace(/'/g,"\\'")}')">İçeri Al</button>
-      </div>`
-    ).join('');
-    list.style.display = '';
-  } catch (err) {
-    showAlert('alert-excel-exp', '✗ Sunucuya ulaşılamıyor: ' + err.message, 'err');
-  } finally {
-    btn.disabled = false; btn.textContent = '📥 Dosyadan Oku';
-  }
-}
-
-async function importExcelFile(fileId, fileName) {
-  const accessToken = await getExcelToken();
-  if (!accessToken) return showAlert('alert-excel-exp', '✗ Önce Microsoft hesabınızla bağlanın.', 'err');
-
-  showAlert('alert-excel-exp', `📥 "${fileName}" içeri alınıyor...`, 'info');
-  try {
-    const resp = await fetch(API + '/api/integrations/excel/read', {
-      method: 'POST', headers: buildHeaders(),
-      body: JSON.stringify({ accessToken, fileId })
-    });
-    const result = await resp.json();
-    if (!result.success) return showAlert('alert-excel-exp', '✗ ' + (result.error || 'Okuma başarısız'), 'err');
-    sessionStorage.setItem('mocksheet_import', JSON.stringify({ data: result.data, source: fileName }));
-    showAlert('alert-excel-exp', `✓ ${result.rowCount} satır alındı. Uygulamayı açın veya sayfayı yenileyin.`, 'ok');
-  } catch (err) {
-    showAlert('alert-excel-exp', '✗ Sunucuya ulaşılamıyor: ' + err.message, 'err');
-  }
-}
-
-// OAuth postMessage dinleyici (sheets/drive ile paylaşılmış pattern)
-window.addEventListener('message', e => {
-  if (e.data?.type === 'excel_auth') {
-    if (e.data.error) {
-      showAlert('alert-excel-oauth', '✗ ' + e.data.error, 'err');
-      return;
-    }
-    const tokens = e.data.tokens;
-    lsSave('int_excel', tokens);
-    setStatus('excel', true);
-    updateExcelAuthUI();
-    // Profil bilgisini al
-    fetch(API + '/api/integrations/excel/me', {
-      method: 'POST', headers: buildHeaders(),
-      body: JSON.stringify({ accessToken: tokens.access_token })
-    }).then(r => r.json()).then(d => {
-      if (d.name) {
-        const cfg = lsLoad('int_excel') || {};
-        lsSave('int_excel', { ...cfg, name: d.name, email: d.email });
-        updateExcelAuthUI();
+function importExcel() {
+  if (typeof XLSX === 'undefined') return showAlert('alert-excel', '✗ SheetJS kütüphanesi yüklenemedi', 'err');
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.xlsx,.xls,.csv';
+  input.onchange = e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      try {
+        const wb = XLSX.read(ev.target.result, { type: 'binary' });
+        const ws = wb.Sheets[wb.SheetNames[0]];
+        const data = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+        sessionStorage.setItem('mocksheet_import', JSON.stringify({ data, source: file.name }));
+        showAlert('alert-excel', `✓ "${file.name}" okundu (${data.length} satır). Uygulamada açılacak.`, 'ok');
+        setTimeout(() => window.open('app.html', '_blank'), 1500);
+      } catch (err) {
+        showAlert('alert-excel', '✗ Dosya okunamadı: ' + err.message, 'err');
       }
-    }).catch(() => {});
-    showAlert('alert-excel-oauth', '✓ Microsoft hesabı bağlandı!', 'ok');
-  }
-});
+    };
+    reader.readAsBinaryString(file);
+  };
+  input.click();
+}
 
 // ════════════════════════════════════════════════
 // GOOGLE SHEETS
@@ -2552,12 +2335,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   updateGSAuthUI();
-
-  const excel = lsLoad('int_excel');
-  if (excel?.access_token) {
-    setStatus('excel', true);
-  }
-  updateExcelAuthUI();
 
   const notion = lsLoad('int_notion');
   if (notion) {
