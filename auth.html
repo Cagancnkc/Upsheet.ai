@@ -1,502 +1,700 @@
 <!DOCTYPE html>
-<html lang="tr" class="dark">
+<html lang="tr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mocksheets — Giriş Yap / Kayıt Ol</title>
-  <meta name="theme-color" content="#f97316">
+  <title>Mocksheets — Giriş Yap / Kaydol</title>
+  <meta name="theme-color" content="#3D1F7A">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Mocksheets">
   <link rel="apple-touch-icon" href="/icon-192.png">
   <link rel="icon" href="images/logo.png">
-  <meta name="description" content="Manage your Excel spreadsheets with AI-powered commands using Mocksheets">
+  <meta name="description" content="Türkçe komutlarla Excel'i yönetin — Mocksheets AI asistanı">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
 
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          fontFamily: {
-            sans:    ['DM Sans', 'ui-sans-serif', 'system-ui'],
-            heading: ['Sora', 'ui-sans-serif', 'system-ui'],
-          },
-          colors: {
-            background:  '#09090b',
-            foreground:  '#fafafa',
-            primary:     { DEFAULT: '#f97316', foreground: '#ffffff' },
-            border:      '#2a2a2a',
-            input:       '#2a2a2a',
-            card:        '#111111',
-          }
-        }
-      }
-    }
-  </script>
-
-  <!-- Supabase CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; }
-    body {
-      background: #09090b;
-      font-family: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
-    }
-    input[type=password]::-ms-reveal,
-    input[type=password]::-ms-clear { display: none; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    @keyframes slideUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes msgFade {
-      from { opacity: 0; transform: translateY(6px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to   { opacity: 1; }
-    }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0; }
-    }
-    @keyframes slideDown {
-      from { opacity: 0; transform: translateY(-8px); }
-      to   { opacity: 1; transform: translateY(0); }
+    :root {
+      --bg:      #F6F4EE;
+      --paper:   #FFFFFF;
+      --ink:     #15140F;
+      --ink-2:   #5C5A53;
+      --accent:  #3D1F7A;
+      --accent-light: #EDE8F8;
+      --line:    #E8E5DC;
+      --muted:   #F0EDE4;
+      --excel:   #1F7A4B;
+      --excel-light: #DCFCE7;
+      --warn:    #FEF9C3;
+      --radius:  12px;
     }
 
-    .form-card { animation: slideUp 0.5s cubic-bezier(.16,1,.3,1) both; }
-    .auth-left-content { animation: fadeIn 0.4s ease both; }
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'Geist', ui-sans-serif, system-ui, sans-serif;
+      font-size: 15px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
 
-    .msg { opacity: 0; animation: msgFade 0.4s ease forwards; }
-    .msg:nth-child(1) { animation-delay: 0.4s; }
-    .msg:nth-child(2) { animation-delay: 1.4s; }
-    .msg:nth-child(3) { animation-delay: 2.4s; }
-    .msg:nth-child(4) { animation-delay: 3.4s; }
-    .msg:nth-child(5) { animation-delay: 4.4s; }
+    /* ── Layout ── */
+    .auth-layout {
+      display: grid;
+      grid-template-columns: 1.05fr 1fr;
+      min-height: 100vh;
+    }
+    @media (max-width: 980px) {
+      .auth-layout { grid-template-columns: 1fr; }
+      .auth-right  { display: none !important; }
+    }
 
-    .auth-input {
+    /* ── Left Panel ── */
+    .auth-left {
       display: flex;
-      height: 44px;
-      width: 100%;
-      border-radius: 12px;
-      border: 1px solid #2a2a2a;
-      background: #0a0a0a;
-      padding: 8px 16px;
-      font-size: 14px;
-      color: white;
-      font-family: 'DM Sans', sans-serif;
-      transition: border-color 0.15s, box-shadow 0.15s;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 40px;
+      background: var(--bg);
+      position: relative;
     }
-    .auth-input::placeholder { color: #4a4a5a; }
-    .auth-input:focus {
-      border-color: #f97316;
-      box-shadow: 0 0 0 3px rgba(249,115,22,0.12);
-      outline: none;
+    @media (max-width: 600px) {
+      .auth-left { padding: 32px 20px; }
     }
-    .auth-input:disabled { cursor: not-allowed; opacity: 0.5; }
 
-    .pw-wrap { position: relative; width: 100%; }
-    .pw-wrap .auth-input { padding-right: 40px; }
-    .pw-toggle {
-      position: absolute;
-      right: 0;
-      top: 0;
-      bottom: 0;
-      width: 40px;
+    .auth-left-inner {
+      width: 100%;
+      max-width: 400px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* Wordmark */
+    .wordmark {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--ink);
+    }
+    .wordmark img { height: 32px; width: auto; object-fit: contain; }
+    .wordmark-text {
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+    }
+
+    /* Eyebrow badge */
+    .eyebrow-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: 999px;
+      background: var(--accent-light);
+      color: var(--accent);
+      font-size: 13px;
+      font-weight: 500;
+      width: fit-content;
+    }
+
+    /* Heading */
+    .auth-heading {
+      font-size: 36px;
+      font-weight: 500;
+      line-height: 1.1;
+      letter-spacing: -0.025em;
+      color: var(--ink);
+    }
+    .auth-heading em {
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-style: italic;
+      font-weight: 400;
+    }
+    @media (max-width: 600px) {
+      .auth-heading { font-size: 28px; }
+    }
+
+    /* Form card */
+    .form-card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .form-card-heading {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    /* Google button */
+    .btn-google {
       display: flex;
       align-items: center;
       justify-content: center;
-      background: transparent;
-      border: none;
-      cursor: pointer;
-      color: #4a4a5a;
-      transition: color 0.15s;
-    }
-    .pw-toggle:hover { color: #9ca3af; }
-    .pw-toggle:focus { outline: none; }
-
-    .btn-primary-auth {
-      margin-top: 4px;
+      gap: 10px;
       height: 44px;
       width: 100%;
-      border-radius: 12px;
-      background: #f97316;
-      color: white;
+      border-radius: var(--radius);
+      border: 1.5px solid var(--line);
+      background: var(--paper);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--ink);
+      font-family: 'Geist', sans-serif;
+      cursor: pointer;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .btn-google:hover {
+      border-color: #C5BFB3;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .btn-google:active { transform: scale(0.99); }
+
+    /* OR divider */
+    .or-divider {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--ink-2);
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+    }
+    .or-divider::before,
+    .or-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--line);
+    }
+
+    /* Input */
+    .auth-input-wrap { display: flex; flex-direction: column; gap: 6px; }
+    .auth-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ink-2);
+    }
+    .auth-input {
+      height: 44px;
+      width: 100%;
+      border-radius: var(--radius);
+      border: 1.5px solid var(--line);
+      background: var(--bg);
+      padding: 0 14px;
+      font-size: 14px;
+      color: var(--ink);
+      font-family: 'Geist', sans-serif;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      outline: none;
+    }
+    .auth-input::placeholder { color: #A8A49C; }
+    .auth-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(61,31,122,0.1);
+      background: var(--paper);
+    }
+    .auth-input.valid {
+      border-color: var(--excel);
+    }
+
+    /* Submit button */
+    .btn-submit {
+      height: 46px;
+      width: 100%;
+      border-radius: var(--radius);
+      border: none;
+      background: var(--accent);
+      color: #fff;
       font-size: 14px;
       font-weight: 600;
-      font-family: 'DM Sans', sans-serif;
-      border: none;
+      font-family: 'Geist', sans-serif;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
-      transition: all 0.15s;
+      transition: opacity 0.15s, box-shadow 0.15s, background 0.2s;
+      opacity: 0.5;
     }
-    .btn-primary-auth:hover { box-shadow: 0 0 24px rgba(249,115,22,0.4); opacity: 0.95; }
-    .btn-primary-auth:disabled { opacity: 0.7; cursor: not-allowed; }
+    .btn-submit.active { opacity: 1; }
+    .btn-submit.active:hover { box-shadow: 0 4px 16px rgba(61,31,122,0.3); }
+    .btn-submit:disabled { cursor: not-allowed; }
+    .btn-submit.success-state {
+      background: var(--excel);
+      opacity: 1;
+    }
 
-    .btn-google {
-      display: flex;
-      height: 48px;
-      width: 100%;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      border-radius: 12px;
-      border: 1.5px solid #e2e8f0;
-      background: white;
-      font-size: 15px;
-      font-weight: 600;
-      color: #111111;
-      font-family: 'DM Sans', sans-serif;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .btn-google:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.15); transform: translateY(-1px); }
-
-    .auth-label {
-      font-size: 12px;
-      font-weight: 500;
-      color: #9ca3af;
-      margin-bottom: 4px;
-      display: block;
-    }
+    /* Error */
     .auth-error {
-      font-size: 12px;
-      color: #ef4444;
-      text-align: center;
-      padding: 4px 12px;
-      border-radius: 8px;
-      background: rgba(239,68,68,0.08);
-      border: 1px solid rgba(239,68,68,0.2);
-      display: none;
-    }
-    .auth-success {
-      font-size: 12px;
-      color: #22c55e;
-      text-align: center;
+      font-size: 13px;
+      color: #C0392B;
       padding: 8px 12px;
       border-radius: 8px;
-      background: rgba(34,197,94,0.08);
-      border: 1px solid rgba(34,197,94,0.2);
+      background: #FDEAEA;
+      border: 1px solid #F5C6C6;
       display: none;
     }
 
-    .toggle-link {
-      background: transparent;
-      border: none;
-      color: #f97316;
-      font-weight: 600;
-      font-size: 14px;
-      font-family: 'DM Sans', sans-serif;
-      cursor: pointer;
-      text-decoration: none;
+    /* Toggle row */
+    .toggle-row {
+      text-align: center;
+      font-size: 13px;
+      color: var(--ink-2);
     }
-    .toggle-link:hover { text-decoration: underline; text-underline-offset: 4px; }
+    .toggle-btn {
+      background: none;
+      border: none;
+      color: var(--accent);
+      font-weight: 600;
+      font-size: 13px;
+      font-family: 'Geist', sans-serif;
+      cursor: pointer;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .toggle-btn:hover { opacity: 0.8; }
 
-    .cursor-blink { animation: pulse 1s step-end infinite; }
+    /* Footer */
+    .auth-footer {
+      text-align: center;
+      font-size: 12px;
+      color: #A8A49C;
+    }
+    .auth-footer a {
+      color: inherit;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    .auth-footer a:hover { color: var(--ink-2); }
 
+    /* Spinner */
     .spinner {
       width: 16px; height: 16px;
-      border: 2px solid rgba(255,255,255,0.3);
-      border-top-color: white;
+      border: 2px solid rgba(255,255,255,0.35);
+      border-top-color: #fff;
       border-radius: 50%;
-      animation: spin 0.7s linear infinite;
+      animation: spin 0.6s linear infinite;
       flex-shrink: 0;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    ::-webkit-scrollbar { width: 0; }
-
-    /* ── DİL SEÇİCİ (koyu tema) ── */
-    .lang-switcher {
-      display: flex; align-items: center;
-      background: rgba(255,255,255,0.06);
-      border-radius: 100px; padding: 3px; gap: 2px;
+    /* ── Right Panel ── */
+    .auth-right {
+      display: flex;
+      flex-direction: column;
+      background: var(--paper);
+      border-left: 1px solid var(--line);
+      position: relative;
+      overflow: hidden;
     }
-    .lang-btn {
-      padding: 4px 10px; border: none;
-      background: transparent; border-radius: 100px;
-      font-size: 12px; font-weight: 600; color: #9ca3af;
-      cursor: pointer; transition: all 0.15s; letter-spacing: 0.02em;
-      font-family: 'DM Sans', sans-serif;
-    }
-    .lang-btn.active { background: rgba(255,255,255,0.12); color: #fff; box-shadow: 0 1px 4px rgba(0,0,0,0.4); }
-    .lang-btn:hover:not(.active) { color: white; }
 
-    /* Layout */
-    .auth-layout {
+    /* Grid background */
+    .auth-right-bg {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--line) 1px, transparent 1px);
+      background-size: 32px 32px;
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    /* Corner crosshairs */
+    .crosshair {
+      position: absolute;
+      width: 16px; height: 16px;
+      pointer-events: none;
+      z-index: 2;
+    }
+    .crosshair::before,
+    .crosshair::after {
+      content: '';
+      position: absolute;
+      background: #C5BFB3;
+    }
+    .crosshair::before { width: 1px; height: 100%; left: 50%; }
+    .crosshair::after  { height: 1px; width: 100%; top: 50%; }
+    .crosshair-tl { top: 24px; left: 24px; }
+    .crosshair-tr { top: 24px; right: 24px; }
+    .crosshair-bl { bottom: 24px; left: 24px; }
+    .crosshair-br { bottom: 24px; right: 24px; }
+
+    /* Right panel content */
+    .auth-right-content {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      height: 100%;
+      padding: 56px 48px;
+      gap: 32px;
+    }
+
+    /* Sheet preview */
+    .sheet-preview {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+    }
+
+    .sheet-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--line);
+      background: var(--muted);
+    }
+    .sheet-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+    }
+    .sheet-dot-r { background: #FF5F57; }
+    .sheet-dot-y { background: #FFBD2E; }
+    .sheet-dot-g { background: #28CA41; }
+    .sheet-filename {
+      font-size: 12px;
+      color: var(--ink-2);
+      font-family: 'Geist Mono', monospace;
+      margin-left: 6px;
+    }
+
+    .sheet-grid {
       width: 100%;
-      min-height: 100vh;
-      background: #09090b;
-      color: white;
-      display: grid;
-      grid-template-columns: 1fr;
+      border-collapse: collapse;
+      font-size: 12px;
+      font-family: 'Geist Mono', monospace;
     }
-    @media (min-width: 768px) {
-      .auth-layout { grid-template-columns: 1fr 1fr; }
+    .sheet-grid th {
+      background: var(--muted);
+      color: var(--ink-2);
+      font-weight: 500;
+      padding: 6px 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--line);
+      white-space: nowrap;
     }
-    .auth-right { display: none; }
-    @media (min-width: 768px) { .auth-right { display: flex; } }
+    .sheet-grid td {
+      padding: 6px 12px;
+      border-bottom: 1px solid var(--line);
+      color: var(--ink);
+      transition: background 0.3s;
+      white-space: nowrap;
+    }
+    .sheet-grid tr:last-child td { border-bottom: none; }
+    .sheet-grid td.cell-highlight { background: var(--warn); }
+    .sheet-grid td.cell-done { background: var(--excel-light); color: var(--excel); font-weight: 500; }
 
-    /* Success state */
-    .signup-success-panel { display: none; flex-direction: column; align-items: center; gap: 20px; text-align: center; padding: 16px 0; }
+    /* AI prompt bar */
+    .ai-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      border-top: 1px solid var(--line);
+      background: var(--muted);
+    }
+    .ai-icon {
+      width: 22px; height: 22px;
+      border-radius: 6px;
+      background: var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .ai-icon svg { width: 12px; height: 12px; fill: #fff; }
+    .ai-prompt {
+      font-size: 12px;
+      color: var(--ink);
+      font-family: 'Geist', sans-serif;
+      flex: 1;
+      min-height: 16px;
+    }
+    .ai-prompt-cursor {
+      display: inline-block;
+      width: 2px; height: 13px;
+      background: var(--accent);
+      vertical-align: middle;
+      margin-left: 1px;
+      animation: blink 1s step-end infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+    /* Summary chip */
+    .summary-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--excel-light);
+      color: var(--excel);
+      font-size: 11px;
+      font-weight: 500;
+      font-family: 'Geist', sans-serif;
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+    .summary-chip.visible { opacity: 1; }
+
+    /* Testimonial */
+    .testimonial {
+      border-left: 3px solid var(--accent-light);
+      padding-left: 16px;
+    }
+    .testimonial-text {
+      font-size: 15px;
+      color: var(--ink);
+      line-height: 1.6;
+      font-style: italic;
+      font-family: 'Instrument Serif', Georgia, serif;
+    }
+    .testimonial-cite {
+      font-size: 12px;
+      color: var(--ink-2);
+      margin-top: 6px;
+    }
+
+    /* Social proof logos */
+    .social-proof {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .social-proof-label {
+      font-size: 11px;
+      color: var(--ink-2);
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .social-proof-logos {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .logo-chip {
+      font-size: 11px;
+      font-weight: 600;
+      color: #A8A49C;
+      letter-spacing: 0.04em;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .animate-in { animation: fadeIn 0.5s ease both; }
   </style>
-<!-- Microsoft Clarity -->
-<script type="text/javascript">
+
+  <!-- Microsoft Clarity -->
+  <script type="text/javascript">
     (function(c,l,a,r,i,t,y){
-        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+      c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+      t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+      y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
     })(window, document, "clarity", "script", "w9w9hcd4ac");
-</script>
+  </script>
 </head>
-<body class="dark">
+<body>
 
 <div class="auth-layout">
 
-  <!-- ── LEFT PANEL: Form ── -->
-  <div style="display:flex; min-height:100vh; align-items:center; justify-content:center; padding:24px; position:relative; overflow:hidden; background-image:radial-gradient(circle,#2a2a2a 1px,transparent 1px); background-size:28px 28px;">
-    <!-- Orange glow -->
-    <div style="position:absolute; inset:0; pointer-events:none; background:radial-gradient(ellipse at 20% 50%, rgba(249,115,22,0.07) 0%, transparent 60%);"></div>
+  <!-- ── LEFT PANEL ── -->
+  <div class="auth-left">
+    <div class="auth-left-inner animate-in">
 
-    <div class="auth-left-content" style="position:relative; z-index:10; width:100%; max-width:400px; display:flex; flex-direction:column; align-items:center; gap:24px;">
-
-      <!-- Logo -->
-      <a href="index.html" style="display:flex; flex-direction:column; align-items:center; gap:6px; text-decoration:none; color:white;">
-        <div style="margin-bottom:4px;">
-          <img src="images/logo-wordmark.png" style="height:104px;width:auto;object-fit:contain;" alt="Mocksheets">
-        </div>
-        <span style="font-size:13px; color:#94a3b8;">AI ile Excel Yönetimi</span>
+      <!-- Wordmark -->
+      <a href="index.html" class="wordmark">
+        <img src="images/logo-wordmark.png" alt="Mocksheets" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+        <span class="wordmark-text" style="display:none">mocksheets</span>
       </a>
 
-      <!-- Badge -->
-      <div style="display:flex; align-items:center; gap:6px; padding:6px 12px; border-radius:999px; border:1px solid rgba(249,115,22,0.3); background:rgba(249,115,22,0.08); font-size:12px; font-weight:500; color:#f97316;">
-        847 kişi bize katıldı 🔥
+      <!-- Eyebrow -->
+      <div class="eyebrow-badge">
+        🔥 847 takım kullanıyor
       </div>
 
+      <!-- Heading -->
+      <h1 class="auth-heading" id="authHeading">
+        Excel'i <em>yaz,</em><br>AI halleder.
+      </h1>
+
       <!-- Form Card -->
-      <div class="form-card" style="width:100%; border-radius:20px; border:1px solid #1f1f1f; background:#111111; padding:40px;">
+      <div class="form-card">
+        <div class="form-card-heading" id="formCardHeading">Tekrar hoş geldiniz</div>
 
-        <!-- Heading -->
-        <div style="display:flex; flex-direction:column; align-items:center; gap:6px; text-align:center; margin-bottom:24px;">
-          <h1 id="formHeading" style="font-size:24px; font-weight:700; color:white; font-family:'Sora',sans-serif;">Tekrar hoş geldiniz</h1>
-          <p id="formSubheading" style="font-size:14px; color:#6b7280;">E-posta ile giriş yapın</p>
+        <!-- Google -->
+        <button class="btn-google" onclick="handleGoogleLogin()">
+          <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" width="18" height="18">
+          Google ile Devam Et
+        </button>
+
+        <!-- OR -->
+        <div class="or-divider">VEYA</div>
+
+        <!-- Email -->
+        <div class="auth-input-wrap">
+          <label class="auth-label" for="emailInput">E-posta adresi</label>
+          <input
+            class="auth-input"
+            id="emailInput"
+            type="email"
+            placeholder="isim@sirket.com"
+            autocomplete="email"
+            oninput="onEmailInput(this.value)"
+          >
         </div>
 
-        <!-- Google Button -->
-        <div style="display:flex; flex-direction:column; gap:6px; margin-bottom:20px;">
-          <button class="btn-google" onclick="handleGoogleLogin()">
-            <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" width="18" height="18">
-            <span data-i18n="auth_google">Google ile Devam Et</span>
-          </button>
-          <p id="googleMsg" style="text-align:center; font-size:11px; color:#4a4a5a;">🔒 Google şifrenizi asla görmeyiz</p>
+        <div id="authError" class="auth-error"></div>
+
+        <!-- Submit -->
+        <button class="btn-submit" id="submitBtn" onclick="handleSubmit()" disabled>
+          <span id="submitText">Giriş Yap →</span>
+        </button>
+
+        <!-- Toggle -->
+        <div class="toggle-row" id="toggleRow">
+          Hesabın yok mu?
+          <button class="toggle-btn" onclick="switchMode('signup')">Kaydol</button>
         </div>
-
-        <!-- Divider -->
-        <div style="display:flex; align-items:center; gap:12px; margin-bottom:20px;">
-          <div style="flex:1; height:1px; background:#1f1f1f;"></div>
-          <span style="font-size:12px; color:#4a4a5a; font-weight:500; letter-spacing:.05em;">VEYA</span>
-          <div style="flex:1; height:1px; background:#1f1f1f;"></div>
-        </div>
-
-        <!-- ── SIGNIN FORM ── -->
-        <form id="signinForm" onsubmit="handleSignIn(event)" autocomplete="on" style="display:flex; flex-direction:column; gap:16px;">
-          <div style="display:grid; gap:6px;">
-            <label class="auth-label" for="si-email" data-i18n="auth_email">E-posta</label>
-            <input class="auth-input" id="si-email" name="email" type="email" placeholder="siz@ornek.com" required autocomplete="email">
-          </div>
-
-          <div style="display:grid; gap:6px;">
-            <label class="auth-label" for="si-password" data-i18n="auth_password">Şifre</label>
-            <div class="pw-wrap">
-              <input class="auth-input" id="si-password" name="password" type="password" placeholder="Şifreniz" required autocomplete="current-password">
-              <button type="button" class="pw-toggle" onclick="togglePw('si-password', this)" aria-label="Show password">
-                <svg id="si-eye" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-              </button>
-            </div>
-          </div>
-
-          <div id="siError" class="auth-error"></div>
-
-          <button type="submit" class="btn-primary-auth" id="siBtn">Giriş Yap →</button>
-        </form>
-
-        <!-- ── SIGNUP FORM ── -->
-        <form id="signupForm" onsubmit="handleSignUp(event)" autocomplete="on" style="display:none; flex-direction:column; gap:16px;">
-          <div style="display:grid; gap:6px;">
-            <label class="auth-label" for="su-name">Ad Soyad</label>
-            <input class="auth-input" id="su-name" name="name" type="text" placeholder="Adınız Soyadınız" autocomplete="name">
-          </div>
-
-          <div style="display:grid; gap:6px;">
-            <label class="auth-label" for="su-email">E-posta</label>
-            <input class="auth-input" id="su-email" name="email" type="email" placeholder="siz@ornek.com" required autocomplete="email">
-          </div>
-
-          <div style="display:grid; gap:6px;">
-            <label class="auth-label" for="su-password">Şifre</label>
-            <div class="pw-wrap">
-              <input class="auth-input" id="su-password" name="password" type="password" placeholder="En az 6 karakter" required autocomplete="new-password">
-              <button type="button" class="pw-toggle" onclick="togglePw('su-password', this)" aria-label="Show password">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-              </button>
-            </div>
-          </div>
-
-          <div style="display:grid; gap:6px;">
-            <label class="auth-label" for="su-confirm">Şifre Tekrar</label>
-            <div class="pw-wrap">
-              <input class="auth-input" id="su-confirm" name="confirmPassword" type="password" placeholder="Şifrenizi tekrar girin" required autocomplete="new-password">
-              <button type="button" class="pw-toggle" onclick="togglePw('su-confirm', this)" aria-label="Show password">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-              </button>
-            </div>
-          </div>
-
-          <!-- Promosyon Kodu (opsiyonel) -->
-          <div id="promo-section" style="margin-top:8px">
-            <button type="button" id="promo-toggle-btn"
-                    onclick="togglePromo()"
-                    style="background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:5px;font-size:12px;color:#6B7280;padding:0;font-family:inherit;transition:color .15s;"
-                    onmouseover="this.style.color='#4F46E5'"
-                    onmouseout="this.style.color='#6B7280'">
-              <span id="promo-toggle-icon" style="font-size:13px;font-weight:700;transition:transform .2s">＋</span>
-              <span>Promosyon kodun var mı?</span>
-              <span style="font-size:10px;background:#EDE9FE;color:#5B21B6;padding:1px 7px;border-radius:100px;font-weight:600">MOCK100</span>
-            </button>
-            <div id="promo-input-wrap" style="display:none;margin-top:8px;animation:slideDown .2s ease-out">
-              <div style="position:relative">
-                <input type="text" id="promo-code-input"
-                       placeholder="Promosyon kodunu gir (örn: MOCK100)"
-                       maxlength="20" autocomplete="off"
-                       style="width:100%;padding:10px 44px 10px 14px;border:1.5px solid #E5E7EB;border-radius:10px;font-size:13px;font-family:inherit;outline:none;transition:border .2s;letter-spacing:.03em;text-transform:uppercase;box-sizing:border-box;"
-                       oninput="this.value=this.value.toUpperCase();onPromoInput(this.value)"
-                       onfocus="this.style.borderColor='#4F46E5'"
-                       onblur="this.style.borderColor=(this.value&&validPromos[this.value]?'#059669':'#E5E7EB')">
-                <div id="promo-status-icon" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:16px;pointer-events:none"></div>
-              </div>
-              <div id="promo-msg" style="font-size:12px;margin-top:5px;display:none;border-radius:6px;padding:6px 10px"></div>
-            </div>
-          </div>
-
-          <div id="suError" class="auth-error"></div>
-          <div id="suSuccess" class="auth-success"></div>
-
-          <button type="submit" class="btn-primary-auth" id="suBtn">Hesap Oluştur →</button>
-        </form>
-
-        <!-- ── SIGNUP SUCCESS PANEL ── -->
-        <div class="signup-success-panel" id="signupSuccess">
-          <div style="width:64px; height:64px; border-radius:50%; background:#f0fdf4; border:2px solid #22c55e; display:flex; align-items:center; justify-content:center; font-size:28px;">📧</div>
-          <div>
-            <h2 style="font-size:20px; font-weight:700; color:white; margin-bottom:8px; font-family:'Sora',sans-serif;">Doğrulama e-postası gönderildi!</h2>
-            <p style="font-size:14px; color:#6b7280; line-height:1.6;" id="successEmailMsg">Gelen kutunuzu kontrol edin.</p>
-          </div>
-          <button type="button" onclick="switchForm('signin')" class="toggle-link">← Girişe geri dön</button>
-        </div>
-
-        <!-- Toggle link -->
-        <p style="text-align:center; font-size:14px; color:#6b7280; margin-top:20px;" id="toggleRow">
-          Hesabın yok mu? <button type="button" class="toggle-link" onclick="switchForm('signup')">Kayıt ol</button>
-        </p>
       </div>
 
       <!-- Footer -->
-      <p style="text-align:center; font-size:11px; color:#4a4a5a; padding:0 16px;">
-        Kayıt olarak <a href="privacy.html" style="text-decoration:underline; text-underline-offset:2px; color:inherit;">Gizlilik Politikası</a>'nı ve <a href="terms.html" style="text-decoration:underline; text-underline-offset:2px; color:inherit;">Kullanım Koşulları</a>'nı kabul etmiş olursunuz.
+      <p class="auth-footer">
+        © 2026 mocksheets, inc. ·
+        <a href="privacy.html">Gizlilik</a> ·
+        <a href="terms.html">Koşullar</a>
       </p>
+
     </div>
   </div>
 
-  <!-- ── RIGHT PANEL: Visual (desktop only) ── -->
-  <div class="auth-right" style="flex-direction:column; background:#0a0a0a; border-left:1px solid #1f1f1f; position:relative; overflow:hidden;">
-    <!-- Dot pattern -->
-    <div style="position:absolute; inset:0; pointer-events:none; opacity:0.4; background-image:radial-gradient(circle,#1f1f1f 1px,transparent 1px); background-size:32px 32px;"></div>
-    <!-- Glow -->
-    <div style="position:absolute; top:0; right:0; width:384px; height:384px; pointer-events:none; background:radial-gradient(ellipse at 80% 10%, rgba(249,115,22,0.06) 0%, transparent 60%);"></div>
+  <!-- ── RIGHT PANEL ── -->
+  <div class="auth-right">
+    <div class="auth-right-bg"></div>
+    <div class="crosshair crosshair-tl"></div>
+    <div class="crosshair crosshair-tr"></div>
+    <div class="crosshair crosshair-bl"></div>
+    <div class="crosshair crosshair-br"></div>
 
-    <div style="position:relative; z-index:10; display:flex; flex-direction:column; justify-content:center; height:100%; padding:64px 48px; gap:40px;">
+    <div class="auth-right-content">
 
-      <!-- Quote -->
-      <blockquote id="rightQuote">
-        <p style="font-size:20px; font-weight:600; color:white; font-style:italic; line-height:1.6; font-family:'Sora',sans-serif;">
-          "Pazartesi raporları artık 8 dakika sürüyor."
-        </p>
-        <cite style="display:block; font-size:14px; color:#6b7280; margin-top:8px; font-style:normal;" id="rightCite">
-          — Mocksheets kullanıcısı, Finans Analisti
-        </cite>
+      <!-- Sheet Preview -->
+      <div class="sheet-preview">
+        <!-- Toolbar -->
+        <div class="sheet-toolbar">
+          <span class="sheet-dot sheet-dot-r"></span>
+          <span class="sheet-dot sheet-dot-y"></span>
+          <span class="sheet-dot sheet-dot-g"></span>
+          <span class="sheet-filename">Q3_satis_raporu.xlsx</span>
+        </div>
+
+        <!-- Grid -->
+        <table class="sheet-grid">
+          <thead>
+            <tr>
+              <th>Bölge</th>
+              <th>Satış</th>
+              <th>Hedef</th>
+              <th>Fark</th>
+            </tr>
+          </thead>
+          <tbody id="sheetBody">
+            <tr>
+              <td>İstanbul</td>
+              <td class="cell-val">₺248K</td>
+              <td>₺220K</td>
+              <td class="cell-diff">+12.7%</td>
+            </tr>
+            <tr>
+              <td>Ankara</td>
+              <td class="cell-val">₺186K</td>
+              <td>₺200K</td>
+              <td class="cell-diff">-7.0%</td>
+            </tr>
+            <tr>
+              <td>İzmir</td>
+              <td class="cell-val">₺156K</td>
+              <td>₺150K</td>
+              <td class="cell-diff">+4.0%</td>
+            </tr>
+            <tr>
+              <td>Diğer</td>
+              <td class="cell-val">₺257K</td>
+              <td>₺240K</td>
+              <td class="cell-diff">+7.1%</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- AI Bar -->
+        <div class="ai-bar">
+          <div class="ai-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          </div>
+          <div class="ai-prompt" id="aiPrompt">
+            <span id="aiPromptText"></span><span class="ai-prompt-cursor" id="aiCursor"></span>
+          </div>
+          <div class="summary-chip" id="summaryChip">
+            ✓ 312 satır · ₺847K · 4 anomali
+          </div>
+        </div>
+      </div>
+
+      <!-- Testimonial -->
+      <blockquote class="testimonial">
+        <p class="testimonial-text">"Pazartesi raporları artık 8 dakika sürüyor."</p>
+        <p class="testimonial-cite">— Mocksheets kullanıcısı, Finans Analisti</p>
       </blockquote>
 
-      <!-- Mock Chat -->
-      <div style="border-radius:16px; border:1px solid #1f1f1f; background:#0d0d0d; padding:16px; width:100%; max-width:320px;">
-        <div style="display:flex; align-items:center; gap:8px; margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid #1a1a1a;">
-          <div style="width:24px; height:24px; border-radius:8px; background:#f97316; display:flex; align-items:center; justify-content:center; color:white; font-size:11px; font-weight:700; flex-shrink:0;">AI</div>
-          <span style="font-size:11px; font-weight:500; color:#6b7280; text-transform:uppercase; letter-spacing:.05em;">AI Assistant</span>
-          <div style="margin-left:auto; width:8px; height:8px; border-radius:50%; background:#22c55e;"></div>
+      <!-- Social proof -->
+      <div class="social-proof">
+        <div class="social-proof-label">Güvenen ekipler</div>
+        <div class="social-proof-logos">
+          <span class="logo-chip">IŞIK MAĞARALAR</span>
+          <span class="logo-chip">KOÇTAŞ</span>
+          <span class="logo-chip">GETİR</span>
+          <span class="logo-chip">ARZUM</span>
         </div>
-        <div style="display:flex; flex-direction:column; gap:8px;">
-          <div class="msg" style="display:flex; justify-content:flex-end;">
-            <div style="font-size:12px; padding:8px 12px; border-radius:16px; border-top-right-radius:4px; background:#f97316; color:white; max-width:85%; line-height:1.5;">Aylık satış raporunu hazırla</div>
-          </div>
-          <div class="msg" style="display:flex; justify-content:flex-start;">
-            <div style="font-size:12px; padding:8px 12px; border-radius:16px; border-top-left-radius:4px; background:#1a1a1a; color:#d1d5db; max-width:85%; line-height:1.5;">Analiz ediliyor... ✓</div>
-          </div>
-          <div class="msg" style="display:flex; justify-content:flex-start;">
-            <div style="font-size:12px; padding:8px 12px; border-radius:16px; border-top-left-radius:4px; background:#1a1a1a; color:#d1d5db; max-width:85%; line-height:1.5;">312 satır işlendi, 4 anomali bulundu 📊</div>
-          </div>
-          <div class="msg" style="display:flex; justify-content:flex-end;">
-            <div style="font-size:12px; padding:8px 12px; border-radius:16px; border-top-right-radius:4px; background:#f97316; color:white; max-width:85%; line-height:1.5;">Anomalileri kırmızıya boya</div>
-          </div>
-          <div class="msg" style="display:flex; justify-content:flex-start;">
-            <div style="font-size:12px; padding:8px 12px; border-radius:16px; border-top-left-radius:4px; background:#1a1a1a; color:#d1d5db; max-width:85%; line-height:1.5;">Tamamlandı ✓</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Metrics -->
-      <div style="display:flex; align-items:center; gap:24px;">
-        <div style="display:flex; flex-direction:column; gap:2px;">
-          <span style="font-size:18px; font-weight:700; color:white; font-family:'Sora',sans-serif;">847+</span>
-          <span style="font-size:12px; color:#4a4a5a;">Kayıtlı Kullanıcı</span>
-        </div>
-        <div style="display:flex; flex-direction:column; gap:2px;">
-          <span style="font-size:18px; font-weight:700; color:white; font-family:'Sora',sans-serif;">4.9/5</span>
-          <span style="font-size:12px; color:#4a4a5a;">Kullanıcı Puanı</span>
-        </div>
-        <div style="display:flex; flex-direction:column; gap:2px;">
-          <span style="font-size:18px; font-weight:700; color:white; font-family:'Sora',sans-serif;">87%</span>
-          <span style="font-size:12px; color:#4a4a5a;">Zaman Tasarrufu</span>
-        </div>
-      </div>
-
-      <!-- Typewriter -->
-      <div style="font-size:14px; font-weight:500; color:#f97316; font-family:'Sora',sans-serif;">
-        <span id="typewriter"></span><span class="cursor-blink" style="color:#f97316;">|</span>
       </div>
 
     </div>
   </div>
+
 </div>
 
 <script>
-// ── Supabase init ──────────────────────────────────────────────
+// ── Supabase ───────────────────────────────────────────────────
 const sb = supabase.createClient(
   'https://ogizbfzoywylljvnidak.supabase.co',
   'sb_publishable_WauaqVsDx_vgHsilyJl0gg_1DvfSIzC'
 );
 
-// Redirect if already signed in (plan parametresi varsa pending_checkout kaydet)
+// Redirect if already signed in
 sb.auth.getSession().then(function({ data }) {
   if (data && data.session) {
     var params = new URLSearchParams(window.location.search);
@@ -511,309 +709,215 @@ sb.auth.getSession().then(function({ data }) {
   }
 });
 
-// ── Error translation ──────────────────────────────────────────
-function translateError(msg) {
-  if (!msg) return 'Bir hata oluştu, lütfen tekrar deneyin';
-  if (msg.includes('Invalid login credentials'))    return 'Hatalı e-posta veya şifre';
-  if (msg.includes('Email not confirmed'))          return 'Lütfen e-postanızı doğrulayın. Gelen kutunuzu kontrol edin.';
-  if (msg.includes('User already registered'))      return 'Bu e-posta zaten kayıtlı. Giriş yapmayı deneyin.';
-  if (msg.includes('Password should be at least'))  return 'Şifre en az 6 karakter olmalıdır';
-  if (msg.includes('Unable to validate email'))     return 'Geçersiz e-posta adresi';
-  if (msg.includes('invalid'))                      return 'Geçersiz e-posta adresi';
-  if (msg.includes('Too many requests') || msg.includes('rate limit')) return 'Çok fazla deneme. Lütfen bir süre bekleyin.';
-  return 'İşlem başarısız: ' + msg;
+// ── Mode: 'signin' | 'signup' ──────────────────────────────────
+var currentMode = 'signin';
+
+function switchMode(mode) {
+  currentMode = mode;
+  var heading    = document.getElementById('formCardHeading');
+  var toggleRow  = document.getElementById('toggleRow');
+  var submitText = document.getElementById('submitText');
+
+  document.getElementById('authError').style.display = 'none';
+
+  if (mode === 'signup') {
+    heading.textContent   = 'Hesabınızı oluşturun';
+    submitText.textContent = 'Kaydol →';
+    toggleRow.innerHTML   = 'Zaten hesabın var mı? <button class="toggle-btn" onclick="switchMode(\'signin\')">Giriş yap</button>';
+  } else {
+    heading.textContent   = 'Tekrar hoş geldiniz';
+    submitText.textContent = 'Giriş Yap →';
+    toggleRow.innerHTML   = 'Hesabın yok mu? <button class="toggle-btn" onclick="switchMode(\'signup\')">Kaydol</button>';
+  }
+
+  // Re-validate current email
+  onEmailInput(document.getElementById('emailInput').value);
 }
 
-// ── Password toggle ────────────────────────────────────────────
-function togglePw(inputId, btn) {
-  var inp = document.getElementById(inputId);
-  var show = inp.type === 'password';
-  inp.type = show ? 'text' : 'password';
-  btn.innerHTML = show
-    ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>'
-    : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+// ── Email validation ───────────────────────────────────────────
+var emailValid = false;
+
+function onEmailInput(val) {
+  var input = document.getElementById('emailInput');
+  var btn   = document.getElementById('submitBtn');
+  emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val.trim());
+  if (emailValid) {
+    input.classList.add('valid');
+    btn.classList.add('active');
+    btn.disabled = false;
+  } else {
+    input.classList.remove('valid');
+    btn.classList.remove('active');
+    btn.disabled = true;
+  }
 }
 
-// ── Google login ───────────────────────────────────────────────
-async function handleGoogleLogin() {
-  var msgEl = document.getElementById('googleMsg');
+// ── Submit ─────────────────────────────────────────────────────
+async function handleSubmit() {
+  if (!emailValid) return;
+
+  var email   = document.getElementById('emailInput').value.trim();
+  var btn     = document.getElementById('submitBtn');
+  var errEl   = document.getElementById('authError');
+  var txtEl   = document.getElementById('submitText');
+
+  errEl.style.display = 'none';
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner"></div><span>Bağlanıyor...</span>';
+
+  var redirectTo = (window.location.hostname === 'localhost')
+    ? 'http://localhost:3000/app.html'
+    : 'https://mocksheets.com/app.html';
+
   try {
-    var { error } = await sb.auth.signInWithOAuth({
+    var result;
+    if (currentMode === 'signup') {
+      result = await sb.auth.signUp({
+        email: email,
+        options: {
+          emailRedirectTo: redirectTo,
+          data: { full_name: email.split('@')[0] }
+        }
+      });
+    } else {
+      result = await sb.auth.signInWithOtp({
+        email: email,
+        options: { emailRedirectTo: redirectTo }
+      });
+    }
+
+    if (result.error) {
+      errEl.textContent   = translateError(result.error.message);
+      errEl.style.display = 'block';
+      btn.disabled = false;
+      btn.innerHTML = '<span id="submitText">' + (currentMode === 'signup' ? 'Kaydol →' : 'Giriş Yap →') + '</span>';
+      return;
+    }
+
+    // Success
+    btn.classList.add('success-state');
+    btn.innerHTML = '<span>✓ Bağlantı gönderildi</span>';
+    document.getElementById('formCardHeading').textContent = '📬 E-postanızı kontrol edin';
+
+  } catch(e) {
+    errEl.textContent   = 'Beklenmeyen bir hata oluştu. Lütfen tekrar deneyin.';
+    errEl.style.display = 'block';
+    btn.disabled = false;
+    btn.innerHTML = '<span id="submitText">' + (currentMode === 'signup' ? 'Kaydol →' : 'Giriş Yap →') + '</span>';
+  }
+}
+
+// ── Google OAuth ───────────────────────────────────────────────
+async function handleGoogleLogin() {
+  try {
+    await sb.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: window.location.hostname === 'localhost'
+        redirectTo: (window.location.hostname === 'localhost')
           ? 'http://localhost:3000/app.html'
           : 'https://mocksheets.com/app.html',
         queryParams: { access_type: 'offline', prompt: 'consent' }
       }
     });
-    if (error) {
-      msgEl.textContent = '⚠ Google ile giriş şu an kullanılamıyor. Lütfen e-posta kullanın.';
-      msgEl.style.color = '#f97316';
-    }
   } catch(e) {
-    msgEl.textContent = '⚠ Google ile giriş şu an kullanılamıyor. E-posta ile devam edin.';
-    msgEl.style.color = '#f97316';
+    var errEl = document.getElementById('authError');
+    errEl.textContent   = '⚠ Google ile giriş şu an kullanılamıyor. E-posta kullanın.';
+    errEl.style.display = 'block';
   }
 }
 
-// ── Sign In ────────────────────────────────────────────────────
-async function handleSignIn(e) {
-  e.preventDefault();
-  var email    = document.getElementById('si-email').value.trim();
-  var password = document.getElementById('si-password').value;
-  var errorEl  = document.getElementById('siError');
-  var btn      = document.getElementById('siBtn');
-
-  errorEl.style.display = 'none';
-  btn.disabled = true;
-  btn.innerHTML = '<div class="spinner"></div> Giriş yapılıyor...';
-
-  try {
-    var { data, error } = await sb.auth.signInWithPassword({ email: email, password: password });
-    if (error) {
-      errorEl.textContent = translateError(error.message);
-      errorEl.style.display = 'block';
-      btn.disabled = false;
-      btn.textContent = 'Giriş Yap →';
-      return;
-    }
-    if (data && data.session) {
-      setTimeout(function() {
-        if (typeof checkPendingCheckout === 'function') checkPendingCheckout();
-      }, 800);
-      window.location.href = 'app.html';
-    }
-  } catch(err) {
-    errorEl.textContent = 'Beklenmeyen bir hata oluştu. Lütfen tekrar deneyin.';
-    errorEl.style.display = 'block';
-    btn.disabled = false;
-    btn.textContent = 'Giriş Yap →';
-  }
+// ── Error translation ──────────────────────────────────────────
+function translateError(msg) {
+  if (!msg) return 'Bir hata oluştu, lütfen tekrar deneyin';
+  if (msg.includes('Invalid login credentials'))     return 'Hatalı e-posta veya şifre';
+  if (msg.includes('Email not confirmed'))           return 'E-postanızı doğrulayın. Gelen kutunuzu kontrol edin.';
+  if (msg.includes('User already registered'))       return 'Bu e-posta zaten kayıtlı. Giriş yapmayı deneyin.';
+  if (msg.includes('Unable to validate email'))      return 'Geçersiz e-posta adresi';
+  if (msg.includes('Too many requests') || msg.includes('rate limit')) return 'Çok fazla deneme. Lütfen bekleyin.';
+  return 'İşlem başarısız: ' + msg;
 }
 
-// ── Sign Up ────────────────────────────────────────────────────
-async function handleSignUp(e) {
-  e.preventDefault();
-  var name     = document.getElementById('su-name').value.trim();
-  var email    = document.getElementById('su-email').value.trim();
-  var password = document.getElementById('su-password').value;
-  var confirm  = document.getElementById('su-confirm').value;
-  var errorEl  = document.getElementById('suError');
-  var btn      = document.getElementById('suBtn');
-
-  errorEl.style.display = 'none';
-
-  if (!email.includes('@')) {
-    errorEl.textContent = 'Lütfen geçerli bir e-posta adresi girin';
-    errorEl.style.display = 'block';
-    return;
-  }
-  if (password.length < 6) {
-    errorEl.textContent = 'Şifre en az 6 karakter olmalıdır';
-    errorEl.style.display = 'block';
-    return;
-  }
-  if (password !== confirm) {
-    errorEl.textContent = 'Şifreler eşleşmiyor';
-    errorEl.style.display = 'block';
-    return;
-  }
-
-  btn.disabled = true;
-  btn.innerHTML = '<div class="spinner"></div> Hesap oluşturuluyor...';
-
-  try {
-    var { data, error } = await sb.auth.signUp({
-      email: email,
-      password: password,
-      options: { data: { full_name: name || email.split('@')[0] } }
-    });
-
-    if (error) {
-      errorEl.textContent = translateError(error.message);
-      errorEl.style.display = 'block';
-      btn.disabled = false;
-      btn.textContent = 'Hesap Oluştur →';
-      return;
-    }
-
-    if (data.user && !data.session) {
-      // Email confirmation required
-      document.getElementById('signupForm').style.display = 'none';
-      var panel = document.getElementById('signupSuccess');
-      panel.style.display = 'flex';
-      document.getElementById('successEmailMsg').innerHTML =
-        '<strong style="color:#9ca3af">' + email + '</strong> adresine doğrulama bağlantısı gönderdik.<br>Gelen kutunuzu (ve spam klasörünü) kontrol edin.';
-      document.getElementById('toggleRow').style.display = 'none';
-      return;
-    }
-
-    if (data.session) {
-      setTimeout(function() {
-        if (typeof checkPendingCheckout === 'function') checkPendingCheckout();
-      }, 800);
-      window.location.href = 'app.html';
-    }
-  } catch(err) {
-    errorEl.textContent = 'Beklenmeyen bir hata oluştu. Lütfen tekrar deneyin.';
-    errorEl.style.display = 'block';
-    btn.disabled = false;
-    btn.textContent = 'Hesap Oluştur →';
-  }
-}
-
-// ── Form toggle ────────────────────────────────────────────────
-var currentForm = 'signin';
-
-function switchForm(target) {
-  var signinForm   = document.getElementById('signinForm');
-  var signupForm   = document.getElementById('signupForm');
-  var successPanel = document.getElementById('signupSuccess');
-  var heading      = document.getElementById('formHeading');
-  var subheading   = document.getElementById('formSubheading');
-  var toggleRow    = document.getElementById('toggleRow');
-  var quote        = document.getElementById('rightQuote').querySelector('p');
-  var cite         = document.getElementById('rightCite');
-
-  // Clear errors
-  document.getElementById('siError').style.display = 'none';
-  document.getElementById('suError').style.display = 'none';
-  successPanel.style.display = 'none';
-  toggleRow.style.display = 'block';
-
-  if (target === 'signup') {
-    currentForm = 'signup';
-    signinForm.style.display = 'none';
-    signupForm.style.display = 'flex';
-    heading.textContent    = 'Hesabınızı oluşturun';
-    subheading.textContent = 'Bilgilerinizi girerek başlayın';
-    toggleRow.innerHTML = 'Zaten hesabın var mı? <button type="button" class="toggle-link" onclick="switchForm(\'signin\')">Giriş yap</button>';
-    quote.textContent = '"847 kişi bekleme listesindeydi. Şimdi siz içerisindesiniz."';
-    cite.textContent  = '— Mocksheets Ekibi';
-  } else {
-    currentForm = 'signin';
-    signupForm.style.display = 'none';
-    signinForm.style.display = 'flex';
-    heading.textContent    = 'Tekrar hoş geldiniz';
-    subheading.textContent = 'E-posta ile giriş yapın';
-    toggleRow.innerHTML = 'Hesabın yok mu? <button type="button" class="toggle-link" onclick="switchForm(\'signup\')">Kayıt ol</button>';
-    quote.textContent = '"Pazartesi raporları artık 8 dakika sürüyor."';
-    cite.textContent  = '— Mocksheets kullanıcısı, Finans Analisti';
-  }
-}
-
-// ── Typewriter ─────────────────────────────────────────────────
+// ── SheetPreview animation ─────────────────────────────────────
 (function() {
-  var texts    = ['Formül hatası kalmadı.', 'Raporlar 8 dakikada hazır.', 'Yaz, AI halleder.'];
-  var el       = document.getElementById('typewriter');
-  var arrIdx   = 0;
-  var charIdx  = 0;
-  var deleting = false;
+  var promptText  = 'Q3 satışlarını sırala, toplamı göster';
+  var replyText   = '✓ Sıralandı · Toplam: ₺847.290';
+  var promptEl    = document.getElementById('aiPromptText');
+  var cursorEl    = document.getElementById('aiCursor');
+  var chipEl      = document.getElementById('summaryChip');
+  var cells       = document.querySelectorAll('#sheetBody td.cell-val, #sheetBody td.cell-diff');
 
-  function tick() {
-    var current = texts[arrIdx];
-    if (!deleting) {
-      el.textContent = current.slice(0, charIdx + 1);
-      charIdx++;
-      if (charIdx >= current.length) {
-        deleting = true;
-        setTimeout(tick, 2000);
-        return;
-      }
-      setTimeout(tick, 70);
-    } else {
-      el.textContent = current.slice(0, charIdx - 1);
-      charIdx--;
-      if (charIdx <= 0) {
-        deleting = false;
-        arrIdx = (arrIdx + 1) % texts.length;
-        setTimeout(tick, 400);
-        return;
-      }
-      setTimeout(tick, 35);
-    }
+  function typewrite(el, text, speed, cb) {
+    var i = 0;
+    el.textContent = '';
+    var t = setInterval(function() {
+      el.textContent = text.slice(0, ++i);
+      if (i >= text.length) { clearInterval(t); if (cb) setTimeout(cb, 300); }
+    }, speed);
   }
 
-  setTimeout(tick, 800);
+  function highlightCells(cb) {
+    var i = 0;
+    var interval = setInterval(function() {
+      if (i < cells.length) {
+        cells[i].classList.add('cell-highlight');
+        i++;
+      } else {
+        clearInterval(interval);
+        setTimeout(function() {
+          cells.forEach(function(c) {
+            c.classList.remove('cell-highlight');
+            c.classList.add('cell-done');
+          });
+          if (cb) setTimeout(cb, 600);
+        }, 200);
+      }
+    }, 150);
+  }
+
+  function resetCells() {
+    cells.forEach(function(c) {
+      c.classList.remove('cell-highlight', 'cell-done');
+    });
+  }
+
+  function runLoop() {
+    // Stage 1: type prompt
+    promptEl.textContent = '';
+    chipEl.classList.remove('visible');
+    cursorEl.style.display = 'inline-block';
+    typewrite(promptEl, promptText, 45, function() {
+      // Stage 2: reply
+      setTimeout(function() {
+        typewrite(promptEl, replyText, 35, function() {
+          cursorEl.style.display = 'none';
+          // Stage 3: highlight cells
+          highlightCells(function() {
+            // Stage 4: summary chip
+            chipEl.classList.add('visible');
+            // Stage 5: reset
+            setTimeout(function() {
+              chipEl.classList.remove('visible');
+              promptEl.textContent = '';
+              cursorEl.style.display = 'inline-block';
+              resetCells();
+              setTimeout(runLoop, 600);
+            }, 2200);
+          });
+        });
+      }, 400);
+    });
+  }
+
+  setTimeout(runLoop, 1200);
 })();
+
+// Handle Enter key
+document.getElementById('emailInput').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && emailValid) handleSubmit();
+});
 </script>
 
 <script src="i18n.js"></script>
 <script src="payment.js?v=2"></script>
-<script>
-// ── Promosyon kodu ─────────────────────────────
-var validPromos = {
-  'MOCK100': { label: '1 ay Claude Pro ücretsiz', icon: '🎁', color: '#059669', bg: '#D1FAE5' }
-};
-var _promoTimer = null;
-
-function togglePromo() {
-  var wrap = document.getElementById('promo-input-wrap');
-  var icon = document.getElementById('promo-toggle-icon');
-  var open = wrap.style.display !== 'none';
-  wrap.style.display = open ? 'none' : 'block';
-  icon.textContent = open ? '＋' : '－';
-  icon.style.transform = open ? 'rotate(0deg)' : 'rotate(45deg)';
-  if (!open) {
-    var params = new URLSearchParams(window.location.search);
-    var saved = params.get('promo') || localStorage.getItem('promo_code');
-    if (saved) {
-      var input = document.getElementById('promo-code-input');
-      if (input) { input.value = saved.toUpperCase(); validatePromoCode(saved.toUpperCase()); }
-    }
-    setTimeout(function(){ var inp = document.getElementById('promo-code-input'); if(inp) inp.focus(); }, 120);
-  }
-}
-
-function onPromoInput(val) {
-  clearTimeout(_promoTimer);
-  if (!val) { setPromoStatus('', '', '', ''); return; }
-  _promoTimer = setTimeout(function(){ validatePromoCode(val); }, 400);
-}
-
-function validatePromoCode(code) {
-  var statusEl = document.getElementById('promo-status-icon');
-  var msgEl    = document.getElementById('promo-msg');
-  var inputEl  = document.getElementById('promo-code-input');
-  if (!code) { setPromoStatus('', '', '', ''); return; }
-  var promo = validPromos[code.toUpperCase()];
-  if (promo) {
-    if (statusEl) statusEl.textContent = '✅';
-    if (msgEl) { msgEl.style.display='block'; msgEl.style.background=promo.bg; msgEl.style.color=promo.color; msgEl.innerHTML=promo.icon+' <strong>Uygulandı!</strong> '+promo.label; }
-    if (inputEl) inputEl.style.borderColor = promo.color;
-    localStorage.setItem('promo_code', code.toUpperCase());
-  } else {
-    if (statusEl) statusEl.textContent = '❌';
-    if (msgEl) { msgEl.style.display='block'; msgEl.style.background='#FEE2E2'; msgEl.style.color='#DC2626'; msgEl.innerHTML='✗ Geçersiz kod.'; }
-    if (inputEl) inputEl.style.borderColor = '#EF4444';
-    localStorage.removeItem('promo_code');
-  }
-}
-
-function setPromoStatus(icon, bg, color, msg) {
-  var s=document.getElementById('promo-status-icon');
-  var m=document.getElementById('promo-msg');
-  var i=document.getElementById('promo-code-input');
-  if(s) s.textContent=icon;
-  if(m){ m.style.display=msg?'block':'none'; m.textContent=msg; m.style.background=bg; m.style.color=color; }
-  if(i) i.style.borderColor='#E5E7EB';
-}
-
-function getActivePromoCode() {
-  var input = document.getElementById('promo-code-input');
-  if (input && input.value && validPromos[input.value.toUpperCase()]) return input.value.toUpperCase();
-  return localStorage.getItem('promo_code') || null;
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-  // URL'de promo kodu varsa otomatik aç
-  var params = new URLSearchParams(window.location.search);
-  var urlPromo = params.get('promo') || localStorage.getItem('promo_code');
-  if (urlPromo && validPromos[urlPromo.toUpperCase()]) {
-    setTimeout(togglePromo, 600);
-  }
-});
-</script>
 </body>
 </html>
