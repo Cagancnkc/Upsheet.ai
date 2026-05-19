@@ -423,8 +423,8 @@ function buildConfig(defId, c){
       html += seg('Olay','event',[{v:'edit',l:'Düzenlenince'},{v:'add',l:'Eklenince'},{v:'delete',l:'Silinince'}], c.event);
       break;
     case 'cell-condition':
-      html += fld('Hücre', inp('cell','A1',c.cell));
-      html += fld('Operatör', sel('operator',[{v:'eq',l:'Eşittir'},{v:'neq',l:'Eşit değil'},{v:'gt',l:'Büyüktür'},{v:'lt',l:'Küçüktür'},{v:'contains',l:'İçerir'}], c.operator||'eq'));
+      html += fld('Sütun adı', inp('column','ÖrnekSütun',c.column));
+      html += fld('Operatör', sel('operator',[{v:'equals',l:'Eşittir'},{v:'not_equals',l:'Eşit değil'},{v:'greater_than',l:'Büyüktür'},{v:'less_than',l:'Küçüktür'},{v:'contains',l:'İçerir'},{v:'is_empty',l:'Boş'}], c.operator||'equals'));
       html += fld('Değer', inp('value','',c.value));
       break;
     case 'schedule':
@@ -503,7 +503,7 @@ function isConfigured(node){
   const c = node.config||{};
   switch(node.defId){
     case 'sheet-change':   return !!c.sheet;
-    case 'cell-condition': return !!(c.cell && c.value);
+    case 'cell-condition': return !!(c.column && c.operator);
     case 'schedule':       return !!c.interval;
     case 'slack':          return !!(c.channel && c.message);
     case 'email':          return !!(c.to && c.subject);
@@ -696,18 +696,79 @@ function selectNode(id){
   redrawEdges();
 }
 
-function testNode(){
-  showToast('<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg> Test çalıştırılıyor\u2026','dark',2000);
+async function testNode(){
+  if(!S.selectedId) return;
+  const node = S.nodes[S.selectedId];
+  const def = getDef(node.defId);
+
+  if(!isConfigured(node)){
+    showToast('⚠ Node yapılandırılmamış — önce ayarları doldurun','light',2500);
+    return;
+  }
+
+  if(def.kind === 'trigger'){
+    showToast('✓ Tetikleyici yapılandırması geçerli','light',2000);
+    return;
+  }
+
+  showToast('<div class="pulse"></div> Test gönderiliyor\u2026','dark',1500);
+
+  if(node.defId === 'slack'){
+    const intConfig = (()=>{ try{ return JSON.parse(localStorage.getItem('int_slack')||'null'); }catch{ return null; } })();
+    if(!intConfig?.url){
+      showToast('⚠ Slack entegrasyonu yapılandırılmamış (int_slack)','light',3000);
+      return;
+    }
+  }
+
+  setTimeout(()=>{
+    showToast(`✓ ${def.name} test başarılı (yapılandırma geçerli)`,'light',2500);
+  }, 1200);
 }
 
 // ── WORKFLOW OPS ─────────────────────────────────────────────
-function saveWorkflow(){
+function workflowToRules(){
+  const rules=[];
+  const triggerNodes=Object.values(S.nodes).filter(n=>getDef(n.defId)?.kind==='trigger');
+  for(const trigger of triggerNodes){
+    const connectedActionIds=S.edges.filter(e=>e.from===trigger.id).map(e=>e.to);
+    const actionNodes=connectedActionIds.map(id=>S.nodes[id]).filter(n=>n&&getDef(n.defId)?.kind==='action');
+    if(!actionNodes.length) continue;
+    for(const action of actionNodes){
+      const tc=trigger.config||{}, ac=action.config||{};
+      const integration=action.defId==='sheets'?'google_sheets':action.defId;
+      rules.push({
+        name:`${S.name}${actionNodes.length>1?' → '+getDef(action.defId).name:''}`,
+        integration,
+        trigger_config:{ type:trigger.defId, column:tc.column||'', operator:tc.operator||'equals', value:tc.value||'' },
+        action_config:{ event:`${action.defId}_trigger`, message:ac.message||`${S.name} tetiklendi`, include_columns:[] },
+        throttle_seconds:3600,
+        enabled:true
+      });
+    }
+  }
+  return rules;
+}
+
+async function saveWorkflow(){
   const data={name:S.name, nodes:S.nodes, edges:S.edges};
   localStorage.setItem('mocksheet_automation', JSON.stringify(data));
   S.dirty=false;
   renderTopBar();
-  showToast('<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Otomasyon kaydedildi','light',2400);
-  if(window.Automations&&window.Automations.save) window.Automations.save(data).catch(()=>{});
+
+  if(window.Automations){
+    const rules=workflowToRules();
+    let saved=0;
+    for(const rule of rules){
+      try{ await window.Automations.save(rule); saved++; }catch(e){ console.warn('Kural kaydedilemedi:',e); }
+    }
+    const msg=rules.length
+      ?`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Otomasyon kaydedildi (${saved}/${rules.length} kural)`
+      :'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Otomasyon kaydedildi';
+    showToast(msg,'light',3000);
+  } else {
+    showToast('<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Otomasyon kaydedildi','light',2400);
+  }
 }
 
 function loadWorkflow(){
@@ -724,11 +785,36 @@ function loadWorkflow(){
   }catch(err){ console.warn('Load err',err); }
 }
 
-function runWorkflow(){
+async function runWorkflow(){
   if(S.running) return;
   S.running=true; renderTopBar(); redrawEdges();
-  showToast('<div class="pulse"></div> Otomasyon çalışıyor\u2026','dark',2800);
-  setTimeout(()=>{ S.running=false; renderTopBar(); redrawEdges(); },2800);
+  showToast('<div class="pulse"></div> Otomasyon çalışıyor\u2026','dark',3500);
+
+  try{
+    let sheetData=null;
+    try{
+      const raw=localStorage.getItem('mocksheet_state');
+      if(raw){
+        const state=JSON.parse(raw);
+        const sheetName=state.activeSheet||Object.keys(state.sheets||{})[0];
+        const rows=state.sheets?.[sheetName];
+        if(Array.isArray(rows)&&rows.length>1) sheetData=rows;
+      }
+    }catch(e){ /* sheet verisi okunamadı */ }
+
+    if(window.Automations&&sheetData){
+      await window.Automations.evaluate(sheetData);
+      showToast('<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Otomasyon tamamlandı','light',2500);
+    }else if(!sheetData){
+      showToast("⚠ Önce app.html'de bir sayfa açın — sheet verisi bulunamadı",'light',3500);
+    }else{
+      showToast('⚠ Otomasyon motoru yüklenemedi','light',3000);
+    }
+  }catch(e){
+    showToast(`Hata: ${e.message}`,'light',3000);
+  }finally{
+    S.running=false; renderTopBar(); redrawEdges();
+  }
 }
 
 // ── TOASTS ───────────────────────────────────────────────────

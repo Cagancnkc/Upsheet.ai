@@ -205,7 +205,9 @@ async function fireRuleIntegration(rule, matchingRows, headers) {
   // Her entegrasyon için payload oluştur
   const payload = buildPayload(rule, matchingRows, headers, filledMessage);
 
-  const BACKEND = window.BACKEND_URL || 'http://localhost:3001';
+  const BACKEND = (typeof API_URL !== 'undefined' && API_URL)
+    || window.BACKEND_URL
+    || (window.location.hostname === 'localhost' ? 'http://localhost:3001' : 'https://upsheet-ai.onrender.com');
   const token = getAuthToken();
 
   try {
