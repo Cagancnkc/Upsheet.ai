@@ -48,6 +48,7 @@ let recentFiles = [];
 let colWidths = {};
 let rowHeights = {};
 let versionHistory = []; // [{type, desc, time, snapshot, metaSnap}]
+let redoStack = [];
 let historyRestoreIdx = -1;
 let apiKey = localStorage.getItem('openai_key') || '';
 let chatHistory = [];
@@ -133,6 +134,7 @@ function buildGrid(data) {
       if (m.bold) td.classList.add('bold');
       if (m.italic) td.classList.add('italic');
       if (m.underline) td.classList.add('underline');
+      if (m.strikethrough) td.classList.add('strikethrough');
       if (m.bg) td.style.background = m.bg;
       if (m.color) td.style.color = m.color;
       if (m.align) td.style.textAlign = m.align;
@@ -230,6 +232,7 @@ function applyMetaToCell(r, c) {
   cell.classList.toggle('bold', !!meta.bold);
   cell.classList.toggle('italic', !!meta.italic);
   cell.classList.toggle('underline', !!meta.underline);
+  cell.classList.toggle('strikethrough', !!meta.strikethrough);
   cell.style.color = meta.color || '';
   cell.style.background = meta.bg || '';
 }
@@ -454,6 +457,7 @@ function toggleFormat(type) {
     if (type === 'bold') meta.bold = !meta.bold;
     if (type === 'italic') meta.italic = !meta.italic;
     if (type === 'underline') meta.underline = !meta.underline;
+    if (type === 'strikethrough') meta.strikethrough = !meta.strikethrough;
     setCellMeta(r, c, meta);
     applyMetaToCell(r, c);
   });
@@ -533,6 +537,11 @@ function updateToolbarState() {
   document.getElementById('tbBold')?.classList.toggle('on', !!m.bold);
   document.getElementById('tbItalic')?.classList.toggle('on', !!m.italic);
   document.getElementById('tbUnderline')?.classList.toggle('on', !!m.underline);
+  document.getElementById('tbStrikethrough')?.classList.toggle('on', !!m.strikethrough);
+  const fontSel = document.getElementById('tbFontSelect');
+  if (fontSel) fontSel.value = m.fontFamily || 'Geist';
+  const sizeSel = document.getElementById('tbSizeSelect');
+  if (sizeSel) sizeSel.value = m.fontSize || 12;
 }
 
 function mergeCells() {
@@ -1248,8 +1257,9 @@ function showToast(msg, type, undoable) { toast(msg, type, undoable); }
 
 function undo() {
   if (!versionHistory || versionHistory.length < 2) { toast(t('toast_nothing_undo'), 'info'); return; }
-  versionHistory.shift();
+  redoStack.push(versionHistory.shift());
   const prev = versionHistory[0];
+  if (!prev?.snap) { toast(t('toast_nothing_undo'), 'info'); return; }
   sheets = JSON.parse(JSON.stringify(prev.snap.sheets));
   cellMeta = JSON.parse(JSON.stringify(prev.snap.cellMeta));
   activeSheet = prev.snap.activeSheet;
@@ -1257,6 +1267,19 @@ function undo() {
   if (typeof renderSheetTabs === 'function') renderSheetTabs();
   updateStatus();
   toast(t('toast_undone'), 'info');
+}
+
+function redo() {
+  if (!redoStack || redoStack.length === 0) { toast(t('toast_nothing_redo'), 'info'); return; }
+  const next = redoStack.pop();
+  versionHistory.unshift(next);
+  sheets = JSON.parse(JSON.stringify(next.snap.sheets));
+  cellMeta = JSON.parse(JSON.stringify(next.snap.cellMeta));
+  activeSheet = next.snap.activeSheet;
+  buildGrid();
+  if (typeof renderSheetTabs === 'function') renderSheetTabs();
+  updateStatus();
+  toast(t('toast_redone'), 'info');
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -2813,7 +2836,9 @@ function takeSnapshot() {
 }
 
 async function addHistory(type, text) {
-  versionHistory.unshift({ type, desc: text, text, time: Date.now() });
+  const snap = takeSnapshot();
+  versionHistory.unshift({ type, desc: text, text, time: Date.now(), snap });
+  redoStack = [];
   if (versionHistory.length > 50) versionHistory.pop();
   renderVersionHistory();
 

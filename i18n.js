@@ -183,6 +183,7 @@
     toast_api_cleared: 'API anahtarı silindi',
     toast_nothing_undo: 'Geri alınacak bir şey yok',
     toast_undone: 'Geri alındı',
+    toast_redone: 'Yinelendi',
     toast_no_empty_rows: 'Boş satır bulunamadı',
     toast_no_dup: 'Tekrarlayan satır bulunamadı',
     toast_no_last_sheet: 'Son sheet silinemez',

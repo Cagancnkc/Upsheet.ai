@@ -1061,12 +1061,21 @@ body.light .sb-upgrade-btn{background:linear-gradient(135deg,rgba(99,102,241,0.1
 
   <!-- FONT + SIZE pickers (static visual) -->
   <div class="tb-group">
-    <button class="tb-btn" style="gap:3px;font-size:12px" title="Yazı tipi">
-      Geist <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
-    </button>
-    <button class="tb-btn" style="gap:3px;font-size:12px;min-width:36px" title="Boyut">
-      12 <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
-    </button>
+    <select id="tbFontSelect" class="tb-select" title="Yazı tipi" onchange="applyFont(this.value)">
+      <option value="Geist">Geist</option>
+      <option value="Arial">Arial</option>
+      <option value="Helvetica">Helvetica</option>
+      <option value="Georgia">Georgia</option>
+      <option value="Times New Roman">Times New Roman</option>
+      <option value="Courier New">Courier New</option>
+      <option value="Verdana">Verdana</option>
+    </select>
+    <select id="tbSizeSelect" class="tb-select" title="Boyut" onchange="applyFontSize(this.value)" style="width:52px">
+      <option>8</option><option>9</option><option>10</option><option>11</option>
+      <option selected>12</option><option>14</option><option>16</option><option>18</option>
+      <option>20</option><option>24</option><option>28</option><option>32</option>
+      <option>36</option><option>48</option><option>72</option>
+    </select>
   </div>
 
   <div class="tb-sep"></div>
@@ -1076,21 +1085,23 @@ body.light .sb-upgrade-btn{background:linear-gradient(135deg,rgba(99,102,241,0.1
     <button id="tbBold" class="tb-btn tb-icon-only tb-format" onclick="toggleFormat('bold')" title="Kalın (Ctrl+B)"><strong>B</strong></button>
     <button id="tbItalic" class="tb-btn tb-icon-only tb-format" onclick="toggleFormat('italic')" title="İtalik (Ctrl+I)"><em>I</em></button>
     <button id="tbUnderline" class="tb-btn tb-icon-only tb-format" onclick="toggleFormat('underline')" title="Altı çizili (Ctrl+U)"><u>U</u></button>
-    <button class="tb-btn tb-icon-only tb-format" onclick="toggleFormat('strikethrough')" title="Üstü çizili"><s>S</s></button>
+    <button id="tbStrikethrough" class="tb-btn tb-icon-only tb-format" onclick="toggleFormat('strikethrough')" title="Üstü çizili"><s>S</s></button>
   </div>
 
   <div class="tb-sep"></div>
 
   <!-- COLORS -->
   <div class="tb-group">
-    <button class="tb-btn tb-icon-only" title="Yazı rengi" style="flex-direction:column;gap:1px;height:30px;padding:3px 8px">
+    <button class="tb-btn tb-icon-only" title="Yazı rengi" onclick="document.getElementById('tbTextColorInput').click()" style="flex-direction:column;gap:1px;height:30px;padding:3px 8px">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
-      <span style="width:14px;height:3px;background:var(--ink);border-radius:1px;display:block"></span>
+      <span id="tbTextColorSwatch" style="width:14px;height:3px;background:#0f172a;border-radius:1px;display:block"></span>
     </button>
-    <button class="tb-btn tb-icon-only" title="Dolgu rengi" style="flex-direction:column;gap:1px;height:30px;padding:3px 8px">
+    <input type="color" id="tbTextColorInput" value="#0f172a" style="display:none" onchange="setTextColor(this.value);document.getElementById('tbTextColorSwatch').style.background=this.value">
+    <button class="tb-btn tb-icon-only" title="Dolgu rengi" onclick="document.getElementById('tbFillColorInput').click()" style="flex-direction:column;gap:1px;height:30px;padding:3px 8px">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 11h2v3M21 14a2 2 0 1 1-2-2"/><path d="M3 5a2 2 0 0 1 2-2h7l4 4v5"/><path d="M14 17v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8"/></svg>
-      <span style="width:14px;height:3px;background:var(--hl-y);border-radius:1px;display:block"></span>
+      <span id="tbFillColorSwatch" style="width:14px;height:3px;background:#fef08a;border-radius:1px;display:block"></span>
     </button>
+    <input type="color" id="tbFillColorInput" value="#fef08a" style="display:none" onchange="setCellBgColor(this.value);document.getElementById('tbFillColorSwatch').style.background=this.value">
   </div>
 
   <div class="tb-sep"></div>
