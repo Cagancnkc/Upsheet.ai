@@ -1,2758 +1,722 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="tr" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Entegrasyonlar — Mocksheet</title>
 <link rel="icon" href="images/logo.png">
+<title>Entegrasyonlar — Mocksheets</title>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 
-:root {
-  --bg:       #0a0a0f;
-  --bg-card:  #111827;
-  --bg-form:  #0d1424;
-  --border:   rgba(255,255,255,0.08);
-  --accent:   #6366F1;
-  --success:  #10B981;
-  --text:     rgba(255,255,255,0.85);
-  --muted:    rgba(255,255,255,0.4);
-  --radius:   16px;
+:root{
+  --bg:#f8f7ff;
+  --surface:#ffffff;
+  --surface2:#f3f4f6;
+  --brand:#7c5cff;
+  --brand-soft:rgba(124,92,255,0.1);
+  --text:#111827;
+  --text-muted:#6b7280;
+  --border:#e5e7eb;
+  --shadow:0 1px 3px rgba(0,0,0,.08),0 4px 12px rgba(0,0,0,.04);
+  --shadow-hover:0 4px 16px rgba(0,0,0,.1),0 12px 32px rgba(0,0,0,.06);
+  --radius:14px;
+  --radius-sm:8px;
 }
-
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  -webkit-font-smoothing: antialiased;
-  min-height: 100vh;
-}
-
-/* ── Navbar ── */
-.int-nav {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-  height: 58px;
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 0 28px;
-  background: rgba(10,10,15,0.88);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--border);
-}
-.nav-logo {
-  display: flex; align-items: center; gap: 8px;
-  font-size: 15px; font-weight: 700;
-  text-decoration: none; color: var(--text);
-}
-.nav-logo img { height: 28px; width: auto; }
-.nav-back {
-  display: inline-flex; align-items: center; gap: 6px;
-  font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.5);
-  text-decoration: none; padding: 7px 14px;
-  border: 1px solid var(--border); border-radius: 9px;
-  background: rgba(255,255,255,0.04);
-  transition: all .15s;
-}
-.nav-back:hover { border-color: rgba(255,255,255,0.18); color: var(--text); background: rgba(255,255,255,0.07); }
-
-/* ── Main ── */
-.int-main {
-  padding-top: 58px;
-  max-width: 1100px;
-  margin: 0 auto;
-  padding-left: 32px;
-  padding-right: 32px;
-  padding-bottom: 80px;
+[data-theme="dark"]{
+  --bg:#0c0c18;
+  --surface:#16162a;
+  --surface2:#1e1e35;
+  --brand-soft:rgba(124,92,255,0.15);
+  --text:#e2e8f0;
+  --text-muted:#94a3b8;
+  --border:#2a2a45;
+  --shadow:0 1px 3px rgba(0,0,0,.3),0 4px 12px rgba(0,0,0,.2);
+  --shadow-hover:0 4px 16px rgba(0,0,0,.3),0 12px 32px rgba(0,0,0,.2);
 }
 
-/* ── Hero ── */
-.int-hero {
-  text-align: center;
-  padding: 72px 20px 52px;
-  position: relative;
-  overflow: hidden;
-}
-.int-hero::before {
-  content: '';
-  position: absolute; top: 0; left: 50%; transform: translateX(-50%);
-  width: 700px; height: 380px;
-  background: radial-gradient(ellipse at 50% 0%, rgba(99,102,241,0.18) 0%, transparent 65%);
-  pointer-events: none;
-}
-.int-hero-eyebrow {
-  display: inline-flex; align-items: center; gap: 7px;
-  font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
-  color: #818CF8;
-  background: rgba(99,102,241,0.12); border: 1px solid rgba(99,102,241,0.25);
-  padding: 5px 14px; border-radius: 100px;
-  margin-bottom: 20px;
-}
-.int-hero-title {
-  font-size: clamp(36px, 5vw, 62px);
-  font-weight: 900; letter-spacing: -.03em; line-height: 1.08;
-  background: linear-gradient(135deg, #fff 25%, #a5b4fc 60%, #8B5CF6 100%);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  background-clip: text;
-  margin-bottom: 16px;
-}
-.int-hero-sub {
-  font-size: 16px; color: var(--muted); line-height: 1.6;
-  max-width: 480px; margin: 0 auto 36px;
-}
-.int-stats {
-  display: inline-flex; gap: 0; align-items: center;
-  background: rgba(255,255,255,0.04); border: 1px solid var(--border);
-  border-radius: 14px; overflow: hidden; margin-bottom: 28px;
-}
-.int-stat {
-  padding: 14px 28px; text-align: center;
-  border-right: 1px solid var(--border);
-}
-.int-stat:last-child { border-right: none; }
-.int-stat-num {
-  font-size: 26px; font-weight: 800; line-height: 1;
-  color: var(--text); display: block; margin-bottom: 4px;
-}
-.int-stat-num.green { color: #34D399; }
-.int-stat-label { font-size: 11px; color: var(--muted); font-weight: 500; text-transform: uppercase; letter-spacing: .06em; }
-.int-search-wrap { position: relative; max-width: 380px; margin: 0 auto; }
-.int-search {
-  width: 100%;
-  background: rgba(255,255,255,0.05); border: 1px solid var(--border);
-  border-radius: 12px; padding: 12px 16px 12px 42px;
-  font-size: 14px; color: var(--text); font-family: inherit;
-  outline: none; transition: border-color .2s, box-shadow .2s;
-}
-.int-search::placeholder { color: var(--muted); }
-.int-search:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(99,102,241,0.15); }
-.int-search-icon {
-  position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
-  color: var(--muted); font-size: 15px; pointer-events: none;
+body{
+  background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  min-height:100vh;
+  transition:background .2s,color .2s;
 }
 
-/* ── Quick export row ── */
-.int-quick {
-  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
-  justify-content: center; margin-top: 20px;
+/* NAV */
+.int-nav{
+  display:flex;align-items:center;gap:12px;
+  padding:0 24px;height:64px;
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  position:sticky;top:0;z-index:100;
 }
-.int-quick-label { font-size: 12px; color: var(--muted); font-weight: 500; }
-.alert-quick-wrap { margin-top: 10px; text-align: center; }
+.nav-logo img{height:72px;width:auto;object-fit:contain;}
 
-/* ── Section label ── */
-.int-section-label {
-  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em;
-  color: var(--muted); margin-bottom: 16px; margin-top: 48px;
-  display: flex; align-items: center; gap: 10px;
+.back-btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:7px 14px;border-radius:var(--radius-sm);
+  font-size:13px;font-weight:500;
+  color:var(--text-muted);text-decoration:none;
+  border:1px solid var(--border);background:transparent;
+  transition:all .15s;white-space:nowrap;
 }
-.int-section-label::after {
-  content: ''; flex: 1; height: 1px; background: var(--border);
-}
+.back-btn:hover{color:var(--brand);border-color:var(--brand);background:var(--brand-soft);}
 
-/* ── Card Grid ── */
-.int-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-}
-
-/* ── Integration Card ── */
-.int-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-left: 3px solid transparent;
-  border-radius: var(--radius);
-  overflow: hidden;
-  transition: transform .28s cubic-bezier(.22,.68,0,1.2),
-              box-shadow .28s ease, border-color .2s;
-  opacity: 0;
-  animation: fadeInUp .5s ease forwards;
-}
-.int-card:nth-child(1) { animation-delay:   0ms; }
-.int-card:nth-child(2) { animation-delay:  60ms; }
-.int-card:nth-child(3) { animation-delay: 120ms; }
-.int-card:nth-child(4) { animation-delay: 180ms; }
-.int-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 20px 48px rgba(99,102,241,0.16);
-  border-left-color: var(--accent);
-}
-.int-card.connected {
-  border-left-color: var(--success);
-  box-shadow: 0 0 0 1px rgba(16,185,129,0.1), 0 8px 32px rgba(16,185,129,0.08);
-}
-.int-card.connected:hover {
-  box-shadow: 0 20px 48px rgba(16,185,129,0.18);
-}
-.int-card.open { transform: translateY(-3px); }
-
-/* Card top (clickable to toggle accordion) */
-.int-card-top {
-  padding: 22px 22px 0;
-  cursor: pointer;
-  user-select: none;
-}
-
-/* Card header row */
-.int-card-header {
-  display: flex; align-items: flex-start; gap: 14px;
-  margin-bottom: 14px;
-}
-
-/* Logo box */
-.int-logo {
-  width: 52px; height: 52px; border-radius: 12px; flex-shrink: 0;
-  display: flex; align-items: center; justify-content: center;
-  overflow: hidden; background: rgba(255,255,255,0.07);
-}
-.int-logo img { width: 30px; height: 30px; object-fit: contain; }
-.int-logo .em { font-size: 24px; }
-
-.int-card-meta { flex: 1; min-width: 0; }
-.int-card-name {
-  font-size: 15px; font-weight: 700; color: var(--text);
-  margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.int-card-desc { font-size: 12px; color: var(--muted); line-height: 1.4; }
-
-/* Badge */
-.int-badge {
-  flex-shrink: 0; font-size: 11px; font-weight: 700;
-  padding: 4px 11px; border-radius: 100px;
-  display: inline-flex; align-items: center; gap: 5px;
-  white-space: nowrap; margin-top: 2px;
-}
-.badge-connected {
-  background: rgba(16,185,129,0.15); color: #34D399;
-}
-.badge-connected::before {
-  content: ''; width: 6px; height: 6px; border-radius: 50%;
-  background: #10B981;
-  box-shadow: 0 0 0 0 rgba(16,185,129,0.5);
-  animation: dotPulse 2s ease-in-out infinite;
-  flex-shrink: 0;
-}
-.badge-connect {
-  background: rgba(99,102,241,0.2); color: #818CF8;
-  cursor: pointer;
-}
-.badge-soon {
-  background: rgba(255,255,255,0.06); color: var(--muted);
-}
-
-/* Pills */
-.int-pills {
-  display: flex; gap: 6px; flex-wrap: wrap;
-  padding: 0 22px 16px;
-}
-.int-pill {
-  font-size: 10px; font-weight: 600;
-  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);
-  color: var(--muted); padding: 3px 9px; border-radius: 100px;
-}
-
-/* Chevron */
-.int-chevron {
-  font-size: 11px; color: var(--muted); margin-left: auto; margin-top: 3px;
-  transition: transform .3s ease;
-}
-.int-card.open .int-chevron { transform: rotate(180deg); }
-
-/* Accordion form */
-.int-form-wrap {
-  max-height: 0; overflow: hidden;
-  transition: max-height .42s cubic-bezier(.4,0,.2,1);
-  background: var(--bg-form);
-  border-top: 0px solid transparent;
-}
-.int-card.open .int-form-wrap {
-  max-height: 900px;
-  border-top: 1px solid var(--border);
-}
-.int-form-inner { padding: 22px; }
-
-/* ── Form elements ── */
-.form { display: flex; flex-direction: column; gap: 14px; }
-.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.field { display: flex; flex-direction: column; gap: 5px; }
-.field label { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.5); }
-.field input, .field select, .field textarea {
-  border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px;
-  font-size: 13px; font-family: inherit; color: var(--text);
-  background: rgba(255,255,255,0.04); outline: none;
-  transition: border-color .15s, box-shadow .15s;
-}
-.field input::placeholder, .field textarea::placeholder { color: rgba(255,255,255,0.2); }
-.field input:focus, .field select:focus, .field textarea:focus {
-  border-color: var(--accent); box-shadow: 0 0 0 3px rgba(99,102,241,0.14);
-}
-.field select {
-  cursor: pointer; appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748B' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat; background-position: right 10px center; padding-right: 28px;
-}
-.field select option { background: #1a1a2a; color: var(--text); }
-.field textarea { resize: vertical; min-height: 70px; }
-.hint { font-size: 11px; color: #475569; line-height: 1.5; }
-.hint a { color: var(--accent); text-decoration: none; }
-.hint a:hover { color: #818CF8; text-decoration: underline; }
-.hint code { color: #94A3B8; font-family: 'Menlo','Monaco',monospace; font-size: 10px; }
-
-/* ── Alert ── */
-.alert {
-  padding: 10px 14px; border-radius: 10px;
-  font-size: 13px; font-weight: 500;
-  display: none; align-items: flex-start; gap: 8px;
-  line-height: 1.5; border: 1px solid transparent;
-}
-.alert.show { display: flex; }
-.alert.ok   { background: rgba(16,185,129,0.1);  color: #34D399; border-color: rgba(16,185,129,0.2); }
-.alert.err  { background: rgba(239,68,68,0.1);   color: #F87171; border-color: rgba(239,68,68,0.2); }
-.alert.info { background: rgba(99,102,241,0.1);  color: #A5B4FC; border-color: rgba(99,102,241,0.2); }
-
-/* ── Info box ── */
-.info-box {
-  background: rgba(99,102,241,0.08); border: 1px solid rgba(99,102,241,0.2);
-  border-radius: 10px; padding: 13px 15px;
-  font-size: 12px; color: #A5B4FC; line-height: 1.7;
-}
-.info-box strong { color: #C7D2FE; }
-.info-box a { color: #818CF8; text-decoration: none; }
-.info-box a:hover { color: #A5B4FC; text-decoration: underline; }
-.info-box code { font-family: 'Menlo','Monaco',monospace; font-size: 10px; color: #94A3B8; }
-
-/* ── Buttons ── */
-.btns { display: flex; gap: 8px; flex-wrap: wrap; }
-.btn {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 9px 16px; border-radius: 9px;
-  font-size: 13px; font-weight: 600; font-family: inherit;
-  cursor: pointer; border: none; transition: all .15s;
-}
-.btn:disabled { opacity: .35; cursor: not-allowed; }
-.btn-dark {
-  background: linear-gradient(135deg, #6366F1, #8B5CF6); color: white;
-  box-shadow: 0 2px 8px rgba(99,102,241,0.25);
-}
-.btn-dark:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(99,102,241,0.4); }
-.btn-outline {
-  background: rgba(255,255,255,0.05); color: #CBD5E1;
-  border: 1px solid rgba(255,255,255,0.12);
-}
-.btn-outline:hover:not(:disabled) { background: rgba(255,255,255,0.09); border-color: rgba(255,255,255,0.2); color: var(--text); }
-.btn-green { background: #059669; color: white; }
-.btn-green:hover:not(:disabled) { background: #10B981; box-shadow: 0 4px 12px rgba(16,185,129,0.3); transform: translateY(-1px); }
-.btn-notion { background: rgba(255,255,255,0.08); color: var(--text); border: 1px solid rgba(255,255,255,0.12); }
-.btn-notion:hover:not(:disabled) { background: rgba(255,255,255,0.14); }
-.btn-slack { background: #4A154B; color: white; }
-.btn-slack:hover:not(:disabled) { background: #611564; box-shadow: 0 4px 12px rgba(74,21,75,0.5); transform: translateY(-1px); }
-.btn-red { background: rgba(239,68,68,0.1); color: #F87171; border: 1px solid rgba(239,68,68,0.2); }
-.btn-red:hover:not(:disabled) { background: rgba(239,68,68,0.18); border-color: rgba(239,68,68,0.35); }
-.btn-sm { padding: 7px 13px; font-size: 12px; }
-
-/* ── Progress ── */
-.progress-wrap { background: rgba(255,255,255,0.06); border-radius: 100px; height: 5px; overflow: hidden; }
-.progress-bar {
-  height: 100%; background: linear-gradient(90deg, #6366F1, #8B5CF6);
-  border-radius: 100px; transition: width .3s;
-  box-shadow: 0 0 8px rgba(99,102,241,0.5);
-}
-
-/* ── Steps ── */
-.steps { display: flex; flex-direction: column; gap: 8px; }
-.step { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; background: rgba(255,255,255,0.03); border-radius: 9px; border: 1px solid var(--border); }
-.step-num {
-  width: 22px; height: 22px; border-radius: 50%;
-  background: linear-gradient(135deg, #6366F1, #8B5CF6); color: white;
-  font-size: 11px; font-weight: 700;
-  display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px;
-}
-.step-text { font-size: 12px; color: #64748B; line-height: 1.5; }
-.step-text strong { color: #94A3B8; }
-.step-text a { color: var(--accent); text-decoration: none; }
-
-/* ── Code block ── */
-.code-block {
-  background: #0D1117; color: #C9D1D9;
-  border: 1px solid var(--border); border-radius: 10px; padding: 16px;
-  font-size: 11px; font-family: 'Menlo','Monaco','Consolas',monospace;
-  line-height: 1.8; overflow-x: auto;
-}
-.code-block .key { color: #79C0FF; }
-.code-block .str { color: #A5D6FF; }
-.code-block .num { color: #F2CC60; }
-
-/* ── "Coming soon" card variant ── */
-.int-card-soon .int-card-top { cursor: default; }
-.int-card-soon:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(99,102,241,0.08); }
-.coming-inner { padding: 20px 22px; text-align: center; }
-.coming-icon { font-size: 36px; margin-bottom: 10px; opacity: .6; }
-.coming-title { font-size: 14px; font-weight: 700; color: rgba(255,255,255,0.5); margin-bottom: 6px; }
-.coming-text { font-size: 12px; color: rgba(255,255,255,0.25); line-height: 1.5; max-width: 240px; margin: 0 auto 14px; }
-.chips { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; margin-bottom: 14px; }
-.chip { background: rgba(255,255,255,0.04); border: 1px solid var(--border); padding: 4px 10px; border-radius: 100px; font-size: 11px; color: rgba(255,255,255,0.3); }
-
-/* ── Logs section ── */
-.int-logs {
-  margin-top: 56px;
-  background: var(--bg-card); border: 1px solid var(--border);
-  border-radius: var(--radius); overflow: hidden;
-}
-.int-logs-head {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 18px 22px; border-bottom: 1px solid var(--border);
-}
-.int-logs-title { font-size: 14px; font-weight: 700; color: var(--text); }
-.logs-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-.logs-table th {
-  text-align: left; padding: 10px 22px;
-  font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em;
-  color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.02);
-  border-bottom: 1px solid var(--border);
-}
-.logs-table td { padding: 11px 22px; border-bottom: 1px solid rgba(255,255,255,0.04); color: rgba(255,255,255,0.5); vertical-align: middle; }
-.logs-table tr:last-child td { border-bottom: none; }
-.logs-table tr:hover td { background: rgba(255,255,255,0.02); }
-.log-ok  { background: rgba(16,185,129,0.12); color: #34D399; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 100px; }
-.log-err { background: rgba(239,68,68,0.12);  color: #F87171; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 100px; }
-.empty   { text-align: center; padding: 36px; color: rgba(255,255,255,0.2); font-size: 14px; }
-
-/* ── Responsive ── */
-@media (max-width: 900px) { .int-grid { grid-template-columns: repeat(2,1fr); } }
-@media (max-width: 600px) {
-  .int-grid { grid-template-columns: 1fr; }
-  .int-main { padding-left: 16px; padding-right: 16px; }
-  .int-stats { flex-direction: column; border-radius: 14px; }
-  .int-stat { border-right: none; border-bottom: 1px solid var(--border); }
-  .int-stat:last-child { border-bottom: none; }
-  .form-row { grid-template-columns: 1fr; }
-}
-
-/* ── Animations ── */
-@keyframes fadeInUp { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
-@keyframes dotPulse { 0%,100% { box-shadow:0 0 0 0 rgba(16,185,129,0.4); } 50% { box-shadow:0 0 0 4px rgba(16,185,129,0); } }
-@keyframes slideInRight { from { opacity:0; transform:translateX(24px); } to { opacity:1; transform:translateX(0); } }
-@keyframes spin { from { transform:rotate(0deg); } to { transform:rotate(360deg); } }
-@keyframes slideIn { from { opacity:0; transform:translateX(20px); } to { opacity:1; transform:translateX(0); } }
-@keyframes shake { 0%,100% { transform:translateX(0); } 20%,60% { transform:translateX(-6px); } 40%,80% { transform:translateX(6px); } }
-.pro-paywall-overlay {
-  position:absolute;inset:0;
-  background:rgba(10,10,15,0.88);
-  backdrop-filter:blur(4px);
-  -webkit-backdrop-filter:blur(4px);
-  border-radius:inherit;
+.theme-btn{
+  width:36px;height:36px;border-radius:var(--radius-sm);
+  border:1px solid var(--border);background:transparent;
+  cursor:pointer;font-size:16px;color:var(--text-muted);
   display:flex;align-items:center;justify-content:center;
-  z-index:10;animation:paywallFadeIn .2s ease;
+  transition:all .15s;
 }
-@keyframes paywallFadeIn { from{opacity:0} to{opacity:1} }
+.theme-btn:hover{background:var(--surface2);color:var(--text);}
 
-/* ── Otomasyon Kuralları ── */
-.auto-section { margin-top: 56px; }
-.auto-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
-.auto-header-left { display:flex; align-items:center; gap:12px; }
-.auto-badge {
-  display:inline-flex; align-items:center; gap:5px;
-  background:rgba(99,102,241,0.12); border:1px solid rgba(99,102,241,0.25);
-  color:#818CF8; font-size:11px; font-weight:700; padding:3px 10px; border-radius:100px;
+.search-wrap{position:relative;width:240px;}
+.search-input{
+  width:100%;padding:8px 40px 8px 34px;
+  border:1px solid var(--border);border-radius:var(--radius-sm);
+  background:var(--surface2);color:var(--text);font-size:13px;
+  font-family:inherit;outline:none;transition:all .15s;
 }
-.auto-list { display:flex; flex-direction:column; gap:10px; margin-bottom:16px; }
-.auto-rule-card {
-  background:var(--bg-card); border:1px solid var(--border);
-  border-radius:12px; padding:14px 18px;
-  display:flex; align-items:center; gap:14px;
+.search-input:focus{border-color:var(--brand);background:var(--surface);}
+.search-input::placeholder{color:var(--text-muted);}
+.search-icon{
+  position:absolute;left:10px;top:50%;transform:translateY(-50%);
+  color:var(--text-muted);font-size:13px;pointer-events:none;
 }
-.auto-rule-card.disabled { opacity:.5; }
-.auto-toggle { position:relative; width:38px; height:22px; flex-shrink:0; }
-.auto-toggle input { opacity:0; width:0; height:0; position:absolute; }
-.auto-toggle-slider {
-  position:absolute; inset:0; cursor:pointer;
-  background:rgba(255,255,255,0.1); border-radius:100px; transition:.2s;
+.search-kbd{
+  position:absolute;right:8px;top:50%;transform:translateY(-50%);
+  font-size:10px;color:var(--text-muted);background:var(--surface);
+  border:1px solid var(--border);border-radius:4px;padding:1px 5px;
+  pointer-events:none;
 }
-.auto-toggle-slider::after {
-  content:''; position:absolute; width:16px; height:16px;
-  left:3px; top:3px; background:#fff; border-radius:50%; transition:.2s;
-}
-.auto-toggle input:checked + .auto-toggle-slider { background:var(--accent); }
-.auto-toggle input:checked + .auto-toggle-slider::after { transform:translateX(16px); }
-.auto-rule-info { flex:1; min-width:0; }
-.auto-rule-name { font-size:13px; font-weight:600; color:var(--text); margin-bottom:3px; }
-.auto-rule-meta { font-size:11px; color:var(--muted); display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
-.auto-rule-tag {
-  background:rgba(255,255,255,0.06); border:1px solid var(--border);
-  padding:2px 7px; border-radius:6px; font-size:10px; font-weight:600;
-  color:rgba(255,255,255,0.4);
-}
-.auto-rule-actions { display:flex; gap:6px; flex-shrink:0; }
-.auto-rule-actions button {
-  background:rgba(255,255,255,0.05); border:1px solid var(--border);
-  border-radius:8px; padding:5px 10px; font-size:11px; color:var(--muted);
-  cursor:pointer; transition:.15s;
-}
-.auto-rule-actions button:hover { background:rgba(255,255,255,0.1); color:var(--text); }
-.auto-rule-actions .btn-danger:hover { background:rgba(239,68,68,0.12); color:#F87171; border-color:rgba(239,68,68,0.3); }
-.auto-empty {
-  text-align:center; padding:36px; color:var(--muted); font-size:14px;
-  background:var(--bg-card); border:1px dashed var(--border); border-radius:12px;
-}
-.auto-suggest-banner {
-  background:linear-gradient(135deg,rgba(99,102,241,0.12),rgba(139,92,246,0.08));
-  border:1px solid rgba(99,102,241,0.2); border-radius:12px;
-  padding:14px 18px; display:flex; align-items:center; gap:14px; margin-bottom:16px;
-}
-.auto-suggest-banner.hidden { display:none; }
-.auto-suggest-icon { font-size:22px; flex-shrink:0; }
-.auto-suggest-text { flex:1; }
-.auto-suggest-title { font-size:13px; font-weight:700; color:#A5B4FC; margin-bottom:2px; }
-.auto-suggest-desc  { font-size:12px; color:var(--muted); }
-.auto-suggest-actions { display:flex; gap:8px; flex-shrink:0; }
 
-/* ── Modal ── */
-.auto-modal-overlay {
-  display:none; position:fixed; inset:0; z-index:9998;
-  background:rgba(0,0,0,0.75); backdrop-filter:blur(8px);
-  align-items:center; justify-content:center;
+/* MAIN */
+.int-main{max-width:1100px;margin:0 auto;padding:32px 24px 80px;}
+
+.int-header{margin-bottom:24px;}
+.int-header h1{font-size:26px;font-weight:800;margin-bottom:6px;letter-spacing:-.02em;}
+.int-header p{font-size:14px;color:var(--text-muted);}
+
+.stats-bar{
+  display:flex;gap:24px;padding:12px 0;
+  margin-bottom:20px;border-bottom:1px solid var(--border);
 }
-.auto-modal-overlay.open { display:flex; }
-.auto-modal {
-  background:#111827; border:1px solid rgba(255,255,255,0.1);
-  border-radius:20px; padding:32px; max-width:500px; width:94%;
-  position:relative; max-height:90vh; overflow-y:auto;
+.stat{font-size:13px;color:var(--text-muted);}
+.stat strong{color:var(--text);font-weight:700;}
+
+/* TOOLBAR */
+.int-toolbar{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;margin-bottom:20px;flex-wrap:wrap;
 }
-.auto-modal h3 { font-size:17px; font-weight:700; margin-bottom:20px; }
-.auto-modal .field { margin-bottom:14px; }
-.auto-modal label { display:block; font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; margin-bottom:6px; }
-.auto-modal input, .auto-modal select, .auto-modal textarea {
-  width:100%; padding:9px 12px; background:rgba(255,255,255,0.05);
-  border:1px solid rgba(255,255,255,0.1); border-radius:9px;
-  font-size:13px; color:var(--text); font-family:inherit; outline:none;
+.cat-pills{display:flex;gap:6px;flex-wrap:wrap;}
+.cat-pill{
+  padding:5px 14px;border-radius:100px;font-size:12px;font-weight:500;
+  border:1px solid var(--border);background:var(--surface);
+  color:var(--text-muted);cursor:pointer;transition:all .15s;
 }
-.auto-modal input:focus, .auto-modal select, .auto-modal select:focus { border-color:var(--accent); }
-.auto-modal select option { background:#111827; }
-.auto-modal .row2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-.auto-modal .modal-actions { display:flex; gap:10px; margin-top:20px; }
-.auto-modal .modal-actions button { flex:1; }
+.cat-pill:hover{border-color:var(--brand);color:var(--brand);}
+.cat-pill.active{background:var(--brand);border-color:var(--brand);color:#fff;}
+
+.view-toggle{display:flex;gap:4px;}
+.view-btn{
+  width:32px;height:32px;border-radius:var(--radius-sm);
+  border:1px solid var(--border);background:transparent;
+  cursor:pointer;color:var(--text-muted);font-size:15px;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .15s;
+}
+.view-btn.active{background:var(--brand-soft);border-color:var(--brand);color:var(--brand);}
+.view-btn:hover:not(.active){background:var(--surface2);}
+
+/* CARDS */
+.cards-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:16px;
+}
+@media(max-width:900px){.cards-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:560px){.cards-grid{grid-template-columns:1fr;}}
+
+.cards-list{display:flex;flex-direction:column;gap:8px;}
+
+.int-card{
+  background:var(--surface);
+  border:1.5px solid var(--border);
+  border-radius:var(--radius);
+  padding:22px;
+  cursor:pointer;
+  transition:all .2s;
+  position:relative;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+}
+.int-card::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(124,92,255,0.07) 0%,transparent 60%);
+  opacity:0;transition:opacity .3s;pointer-events:none;
+}
+.int-card:hover{border-color:#c4b5fd;box-shadow:var(--shadow-hover);transform:translateY(-2px);}
+.int-card:hover::before{opacity:1;}
+.int-card.connected{border-color:#86efac;}
+.int-card.coming-soon{opacity:.6;cursor:default;}
+.int-card.coming-soon:hover{transform:none;box-shadow:none;border-color:var(--border);}
+.int-card.coming-soon::before{display:none;}
+
+.card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;}
+.card-icon{
+  width:48px;height:48px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.card-badges{display:flex;flex-direction:column;gap:4px;align-items:flex-end;}
+.badge{
+  font-size:10px;font-weight:600;text-transform:uppercase;
+  letter-spacing:.05em;padding:2px 8px;border-radius:100px;
+  white-space:nowrap;
+}
+.badge-pro{background:rgba(124,92,255,0.12);color:var(--brand);}
+.badge-free{background:rgba(34,197,94,0.12);color:#16a34a;}
+.badge-soon{background:var(--surface2);color:var(--text-muted);}
+.badge-connected{background:rgba(34,197,94,0.12);color:#16a34a;}
+.badge-popular{background:rgba(251,191,36,0.15);color:#d97706;}
+
+.card-body{flex:1;}
+.card-name{font-size:15px;font-weight:700;margin-bottom:6px;}
+.card-desc{font-size:12px;color:var(--text-muted);line-height:1.55;}
+
+.card-footer{display:flex;align-items:center;justify-content:space-between;margin-top:16px;}
+.card-cat{font-size:11px;color:var(--text-muted);}
+
+.connect-btn{
+  padding:6px 14px;border-radius:var(--radius-sm);
+  font-size:12px;font-weight:600;cursor:pointer;border:none;
+  font-family:inherit;transition:all .15s;
+}
+.connect-btn.btn-connect{background:var(--brand);color:#fff;}
+.connect-btn.btn-connect:hover{opacity:.88;}
+.connect-btn.btn-disconnect{background:transparent;color:#ef4444;border:1px solid #fca5a5;}
+.connect-btn.btn-disconnect:hover{background:#fef2f2;}
+.connect-btn.btn-soon{background:var(--surface2);color:var(--text-muted);cursor:default;}
+
+.empty-state{text-align:center;padding:60px 24px;color:var(--text-muted);}
+.empty-state p{font-size:14px;}
+
+/* MODAL */
+.modal-overlay{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,.5);backdrop-filter:blur(4px);
+  display:flex;align-items:center;justify-content:center;
+  z-index:200;padding:24px;
+  animation:fadeIn .15s ease;
+}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+
+.modal-box{
+  background:var(--surface);
+  border:1.5px solid var(--border);
+  border-radius:var(--radius);
+  padding:32px;
+  max-width:440px;width:100%;
+  box-shadow:0 24px 64px rgba(0,0,0,.2);
+  animation:slideUp .2s ease;
+}
+@keyframes slideUp{from{transform:translateY(16px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+
+.modal-header{display:flex;align-items:center;gap:14px;margin-bottom:16px;}
+.modal-title{font-size:18px;font-weight:700;}
+.modal-close{
+  margin-left:auto;width:28px;height:28px;
+  border:none;background:none;cursor:pointer;color:var(--text-muted);
+  font-size:20px;border-radius:6px;
+  display:flex;align-items:center;justify-content:center;line-height:1;
+}
+.modal-close:hover{background:var(--surface2);}
+.modal-desc{font-size:13px;color:var(--text-muted);line-height:1.6;margin-bottom:20px;}
+.modal-actions{display:flex;gap:10px;}
+.modal-btn{
+  flex:1;padding:11px;border-radius:var(--radius-sm);
+  font-size:14px;font-weight:600;cursor:pointer;border:none;
+  font-family:inherit;transition:all .15s;
+}
+.modal-btn-primary{background:var(--brand);color:#fff;}
+.modal-btn-primary:hover{opacity:.88;}
+.modal-btn-secondary{background:var(--surface2);color:var(--text);border:1px solid var(--border);}
+.modal-btn-secondary:hover{border-color:var(--brand);color:var(--brand);}
 </style>
-<!-- Microsoft Clarity -->
-<script type="text/javascript">
-    (function(c,l,a,r,i,t,y){
-        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-    })(window, document, "clarity", "script", "w9w9hcd4ac");
-</script>
-<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 </head>
 <body>
-
-<nav class="int-nav">
-  <a href="index.html" class="nav-logo">
-    <img src="images/logo-wordmark.png" alt="Mocksheets" style="height:96px;width:auto;object-fit:contain;">
-  </a>
-  <a href="app.html" class="nav-back">← Uygulamaya Dön</a>
-</nav>
-
-<main class="int-main">
-
-  <!-- ── Hero ── -->
-  <section class="int-hero">
-    <div class="int-hero-eyebrow">🔗 Entegrasyonlar</div>
-    <h1 class="int-hero-title">Her şeyi bağlayın</h1>
-    <p class="int-hero-sub">Mocksheet verilerinizi favori uygulamalarınızla senkronize edin, otomasyonlar kurun.</p>
-
-    <div class="int-stats">
-      <div class="int-stat">
-        <span class="int-stat-num green" id="stat-connected">0</span>
-        <span class="int-stat-label">Bağlı</span>
-      </div>
-      <div class="int-stat">
-        <span class="int-stat-num">10</span>
-        <span class="int-stat-label">Kullanılabilir</span>
-      </div>
-    </div>
-
-    <div class="int-search-wrap">
-      <span class="int-search-icon">🔍</span>
-      <input class="int-search" id="searchInput" type="text" placeholder="Entegrasyon ara..." oninput="filterCards(this.value)">
-    </div>
-
-    <!-- Quick export -->
-    <div class="int-quick" id="quickExportRow">
-      <span class="int-quick-label">Hızlı Aktar:</span>
-      <button class="btn btn-green btn-sm" onclick="quickExport('gs')">
-        <img src="images/integrations/googlesheets.svg" width="13" height="13" alt="" onerror="this.style.display='none'">
-        Sheets
-      </button>
-      <button class="btn btn-notion btn-sm" onclick="quickExport('notion')">
-        <img src="images/integrations/notion.svg" width="12" height="12" alt="" style="filter:invert(1)" onerror="this.style.display='none'">
-        Notion
-      </button>
-      <button class="btn btn-outline btn-sm" onclick="quickExport('webhook')">⚡ Webhook</button>
-      <button class="btn btn-slack btn-sm" onclick="quickExport('slack')">
-        <img src="images/integrations/slack.svg" width="12" height="12" alt="" style="filter:invert(1)" onerror="this.style.display='none'">
-        Slack
-      </button>
-      <button class="btn btn-outline btn-sm" onclick="quickExport('excel')">📗 Excel İndir</button>
-    </div>
-    <div class="alert-quick-wrap">
-      <div class="alert" id="alert-quick" style="display:inline-flex;margin-top:8px"></div>
-    </div>
-  </section>
-
-  <!-- ── Available Integrations ── -->
-  <div class="int-section-label">Kullanılabilir (10)</div>
-  <div class="int-grid" id="intGrid">
-
-    <!-- Google Sheets -->
-    <div class="int-card" data-name="Google Sheets" data-key="gs">
-      <div class="int-card-top" onclick="toggleCard('gs')">
-        <div class="int-card-header">
-          <div class="int-logo" style="background:rgba(15,157,88,0.15)">
-            <img src="images/integrations/googlesheets.svg" alt="GS"
-                 onerror="this.parentElement.innerHTML='<span class=em>📊</span>'">
-          </div>
-          <div class="int-card-meta">
-            <div class="int-card-name">Google Sheets</div>
-            <div class="int-card-desc">Tablo verilerini senkronize et</div>
-          </div>
-          <span class="int-badge badge-connect" id="badge-gs">Bağla →</span>
-          <span class="int-chevron">▼</span>
-        </div>
-      </div>
-      <div class="int-pills">
-        <span class="int-pill">CSV Aktar</span>
-        <span class="int-pill">Dışa Aktar</span>
-        <span class="int-pill">Sync</span>
-      </div>
-      <div class="int-form-wrap" id="form-gs">
-        <div class="int-form-inner">
-          <div class="form">
-            <div class="info-box">
-              <strong>📌 Nasıl bulunur?</strong> Google Sheets'i açın → URL'den kopyalayın:<br>
-              <code>https://docs.google.com/spreadsheets/d/<strong>1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgVE2upms</strong>/edit</code>
-            </div>
-            <div class="field">
-              <label>Google Sheet URL veya ID *</label>
-              <input id="gs-url" type="text" placeholder="https://docs.google.com/spreadsheets/d/...">
-              <span class="hint">Tam URL veya sadece spreadsheet ID'sini yapıştırın</span>
-            </div>
-            <div class="form-row">
-              <div class="field">
-                <label>Sayfa / Sekme Adı</label>
-                <input id="gs-tab" type="text" placeholder="Sheet1">
-                <span class="hint">Boş bırakırsanız ilk sayfa kullanılır</span>
-              </div>
-              <div class="field">
-                <label>Başlangıç Hücresi</label>
-                <input id="gs-cell" type="text" placeholder="A1" value="A1">
-              </div>
-            </div>
-            <div class="alert" id="alert-gs"></div>
-            <div class="btns">
-              <button class="btn btn-outline" onclick="validateGS()">🔍 URL Doğrula</button>
-              <button class="btn btn-dark" onclick="saveGS()">💾 Kaydet</button>
-              <button class="btn btn-red" id="btn-gs-disc" style="display:none" onclick="disconnectGS()">🗑️ Kaldır</button>
-            </div>
-
-            <div style="border-top:1px solid var(--border);padding-top:16px;margin-top:4px">
-              <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:10px">Google Hesabıyla Doğrudan Yaz</div>
-              <div id="gs-oauth-section">
-                <div class="steps" id="gs-steps-noauth">
-                  <div class="step"><div class="step-num">1</div><div class="step-text">URL'nizi girin ve <strong>Kaydet</strong>'e tıklayın</div></div>
-                  <div class="step"><div class="step-num">2</div><div class="step-text"><strong>Google ile Bağlan</strong>'a tıklayın — veriler doğrudan Sheet'e yazılır</div></div>
-                </div>
-                <div class="alert" id="alert-gs-oauth" style="margin:10px 0 0"></div>
-                <div class="btns" style="margin-top:10px">
-                  <button class="btn btn-dark" id="btn-gs-auth" onclick="authGSheets()">🔗 Google ile Bağlan</button>
-                  <div id="gs-connected-row" style="display:none;align-items:center;gap:10px">
-                    <span style="font-size:13px;color:#22C55E;font-weight:600">✓ Google bağlı</span>
-                    <button class="btn btn-red" onclick="disconnectGSAuth()">Bağlantıyı Kes</button>
-                  </div>
-                </div>
-              </div>
-              <div class="alert" id="alert-gs-exp" style="margin:12px 0"></div>
-              <div id="gs-progress" style="display:none;margin-bottom:12px">
-                <div style="font-size:12px;color:#475569;margin-bottom:6px" id="gs-progress-label">Hazırlanıyor...</div>
-                <div class="progress-wrap"><div class="progress-bar" id="gs-pbar" style="width:0%"></div></div>
-              </div>
-              <div class="btns">
-                <button class="btn btn-green" id="btn-gs-exp" onclick="exportGS()">📤 Google Sheets'e Yaz</button>
-                <button class="btn btn-outline" id="btn-gs-csv" onclick="exportGScsv()" style="font-size:12px">⬇ CSV İndir</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-
-    <!-- Notion -->
-    <div class="int-card" data-name="Notion" data-key="notion">
-      <div class="int-card-top" onclick="toggleCard('notion')">
-        <div class="int-card-header">
-          <div class="int-logo" style="background:rgba(255,255,255,0.06)">
-            <img src="images/integrations/notion.svg" alt="Notion"
-                 style="filter:invert(1)" onerror="this.parentElement.innerHTML='<span class=em>◻️</span>'">
-          </div>
-          <div class="int-card-meta">
-            <div class="int-card-name">Notion</div>
-            <div class="int-card-desc">Veri tabanına satır aktar</div>
-          </div>
-          <span class="int-badge badge-connect" id="badge-notion">Bağla →</span>
-          <span class="int-chevron">▼</span>
-        </div>
-      </div>
-      <div class="int-pills">
-        <span class="int-pill">Veri Tabanı Sync</span>
-        <span class="int-pill">API</span>
-        <span class="int-pill">Max 500 satır</span>
-      </div>
-      <div class="int-form-wrap" id="form-notion">
-        <div class="int-form-inner">
-          <div class="form">
-            <div class="info-box">
-              <strong>📌 Kurulum:</strong><br>
-              1. <a href="https://www.notion.so/my-integrations" target="_blank">notion.so/my-integrations</a> → Yeni entegrasyon<br>
-              2. <strong>Internal Integration Secret</strong>'ı kopyalayın<br>
-              3. Hedef veritabanı → <strong>... → Bağlantılar → Entegrasyonunuzu ekleyin</strong>
-            </div>
-            <div class="field">
-              <label>Entegrasyon Token'ı *</label>
-              <input id="notion-token" type="password" placeholder="ntn_xxxxxxxxxxxxxxxxxxxxxxxxxxxx">
-              <span class="hint"><a href="https://www.notion.so/my-integrations" target="_blank">notion.so/my-integrations</a> → Internal Integration Secret</span>
-            </div>
-            <div class="field">
-              <label>Database ID *</label>
-              <input id="notion-db" type="text" placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx">
-              <span class="hint">notion.so/workspace/<strong>a8aec43384f447ed84390e8e42c2e089</strong>?v=... — kalın kısım ID'dir</span>
-            </div>
-            <div class="alert" id="alert-notion"></div>
-            <div class="btns">
-              <button class="btn btn-outline" onclick="testNotion()">🔍 Bağlantıyı Test Et</button>
-              <button class="btn btn-dark" onclick="saveNotion()">💾 Kaydet</button>
-              <button class="btn btn-red" id="btn-notion-disc" style="display:none" onclick="disconnectNotion()">🗑️ Kaldır</button>
-            </div>
-
-            <div style="border-top:1px solid var(--border);padding-top:16px;margin-top:4px">
-              <div class="info-box" style="margin-bottom:12px">
-                <strong>📌 Nasıl çalışır?</strong> Sütun başlıkları → Notion özellikleri | Sayılar otomatik algılanır | Tarihler (GG.AA.YYYY) dönüştürülür
-              </div>
-              <div class="alert" id="alert-notion-exp" style="margin-bottom:12px"></div>
-              <div id="notion-progress" style="display:none;margin-bottom:12px">
-                <div style="font-size:12px;color:#475569;margin-bottom:6px" id="notion-progress-text">Aktarılıyor...</div>
-                <div class="progress-wrap"><div class="progress-bar" id="notion-pbar" style="width:0%"></div></div>
-              </div>
-              <div class="btns">
-                <button class="btn btn-notion" id="btn-notion-exp" onclick="exportNotion()">📤 Notion'a Aktar</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Webhook / Zapier -->
-    <div class="int-card" data-name="Zapier Webhook" data-key="webhook">
-      <div class="int-card-top" onclick="toggleCard('webhook')">
-        <div class="int-card-header">
-          <div class="int-logo" style="background:rgba(255,74,0,0.12)">
-            <img src="images/integrations/zapier.svg" alt="Zapier"
-                 onerror="this.parentElement.innerHTML='<span class=em>⚡</span>'">
-          </div>
-          <div class="int-card-meta">
-            <div class="int-card-name">Zapier / Webhook</div>
-            <div class="int-card-desc">HTTP endpoint'e veri gönder</div>
-          </div>
-          <span class="int-badge badge-connect" id="badge-webhook">Bağla →</span>
-          <span class="int-chevron">▼</span>
-        </div>
-      </div>
-      <div class="int-pills">
-        <span class="int-pill">HTTP Payload</span>
-        <span class="int-pill">Otomasyon</span>
-        <span class="int-pill">n8n / Make</span>
-      </div>
-      <div class="int-form-wrap" id="form-webhook">
-        <div class="int-form-inner">
-          <div class="form">
-            <div class="info-box">
-              <strong>📌 Zapier kurulumu:</strong> Yeni Zap → Trigger: <strong>Webhooks by Zapier → Catch Hook</strong> → URL'yi kopyalayın
-            </div>
-            <div class="field">
-              <label>Webhook URL *</label>
-              <input id="wh-url" type="text" placeholder="https://hooks.zapier.com/hooks/catch/...">
-              <span class="hint">Zapier, Make, n8n, Pipedream veya herhangi bir HTTP endpoint</span>
-            </div>
-            <div class="form-row">
-              <div class="field">
-                <label>Tetikleyici Olay</label>
-                <select id="wh-trigger">
-                  <option value="manual">Yalnızca manuel</option>
-                  <option value="ai_action">Her AI aksiyonundan sonra</option>
-                  <option value="export">Dosya aktarımında</option>
-                  <option value="all">Tüm olaylar</option>
-                </select>
-              </div>
-              <div class="field">
-                <label>Gizli Anahtar (opsiyonel)</label>
-                <input id="wh-secret" type="text" placeholder="my-secret-key">
-                <span class="hint">X-Webhook-Secret header olarak gönderilir</span>
-              </div>
-            </div>
-            <div class="alert" id="alert-webhook"></div>
-            <div class="btns">
-              <button class="btn btn-outline" onclick="testWebhook()">📨 Test Yükü Gönder</button>
-              <button class="btn btn-dark" onclick="saveWebhook()">💾 Kaydet</button>
-              <button class="btn btn-red" id="btn-wh-disc" style="display:none" onclick="disconnectWebhook()">🗑️ Devre Dışı</button>
-            </div>
-
-            <div style="border-top:1px solid var(--border);padding-top:14px;margin-top:4px">
-              <div style="font-size:12px;font-weight:600;color:var(--muted);margin-bottom:10px">JSON Payload Yapısı</div>
-              <div class="code-block">
-<span class="key">"source"</span>: <span class="str">"Mocksheet"</span>,
-<span class="key">"event"</span>: <span class="str">"ai_action"</span>,
-<span class="key">"timestamp"</span>: <span class="str">"2026-04-03T12:00:00Z"</span>,
-<span class="key">"data"</span>: {
-  <span class="key">"action"</span>: <span class="str">"delete_rows"</span>,
-  <span class="key">"reply"</span>: <span class="str">"✓ 12 boş satır silindi"</span>,
-  <span class="key">"changes_count"</span>: <span class="num">12</span>,
-  <span class="key">"sheet"</span>: <span class="str">"Satışlar Q1"</span>,
-  <span class="key">"rows"</span>: <span class="num">247</span>
-}</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Slack -->
-    <div class="int-card" data-name="Slack" data-key="slack">
-      <div class="int-card-top" onclick="toggleCard('slack')">
-        <div class="int-card-header">
-          <div class="int-logo" style="background:rgba(74,21,75,0.3)">
-            <img src="images/integrations/slack.svg" alt="Slack"
-                 onerror="this.parentElement.innerHTML='<span class=em>💬</span>'">
-          </div>
-          <div class="int-card-meta">
-            <div class="int-card-name">Slack</div>
-            <div class="int-card-desc">Kanala otomatik bildirim gönder</div>
-          </div>
-          <span class="int-badge badge-connect" id="badge-slack">Bağla →</span>
-          <span class="int-chevron">▼</span>
-        </div>
-      </div>
-      <div class="int-pills">
-        <span class="int-pill">Bildirimler</span>
-        <span class="int-pill">Raporlar</span>
-        <span class="int-pill">Incoming Webhook</span>
-      </div>
-      <div class="int-form-wrap" id="form-slack">
-        <div class="int-form-inner">
-          <div class="form">
-            <div class="info-box">
-              <strong>📌 Kurulum:</strong><br>
-              1. <a href="https://api.slack.com/apps" target="_blank">api.slack.com/apps</a> → <strong>Create New App → From scratch</strong><br>
-              2. <strong>Incoming Webhooks</strong> → Açın → <strong>Add New Webhook to Workspace</strong><br>
-              3. Kanal seçin → URL'yi kopyalayın
-            </div>
-            <div class="field">
-              <label>Slack Webhook URL *</label>
-              <input id="slack-url" type="text" placeholder="https://hooks.slack.com/services/T.../B.../...">
-              <span class="hint">Şu formatta: <code>https://hooks.slack.com/services/...</code></span>
-            </div>
-            <div class="form-row">
-              <div class="field">
-                <label>Bildirim Tetikleyici</label>
-                <select id="slack-trigger">
-                  <option value="manual">Yalnızca manuel</option>
-                  <option value="ai_action">Her AI aksiyonundan sonra</option>
-                  <option value="export">Dosya aktarımında</option>
-                  <option value="all">Tüm olaylar</option>
-                </select>
-              </div>
-              <div class="field">
-                <label>Test Mesajı</label>
-                <input id="slack-test-msg" type="text" placeholder="Mocksheet bağlantı testi başarılı!">
-              </div>
-            </div>
-            <div class="alert" id="alert-slack"></div>
-            <div class="btns">
-              <button class="btn btn-outline" onclick="testSlack()">📨 Test Mesajı Gönder</button>
-              <button class="btn btn-slack" onclick="saveSlack()">💾 Kaydet</button>
-              <button class="btn btn-red" id="btn-slack-disc" style="display:none" onclick="disconnectSlack()">🗑️ Kaldır</button>
-            </div>
-
-            <div style="border-top:1px solid var(--border);padding-top:14px;margin-top:4px">
-              <div style="background:#1a1a2e;border-radius:10px;padding:14px;font-family:monospace;border:1px solid var(--border)">
-                <div style="color:#E8912D;font-size:12px;font-weight:700;margin-bottom:6px">🤖 Mocksheet Bildirimi</div>
-                <div style="color:#D4D4D4;font-size:11px;line-height:1.6">
-                  <div>✅ <strong style="color:#9CDCFE">AI Aksiyonu Tamamlandı</strong></div>
-                  <div style="margin-top:6px;padding:7px;background:rgba(255,255,255,.05);border-radius:5px;border-left:3px solid #6366F1">
-                    <div>📋 <strong>Sayfa:</strong> Satışlar Q1</div>
-                    <div>⚡ <strong>İşlem:</strong> Boş satırlar silindi</div>
-                    <div>📊 <strong>Etkilenen satır:</strong> 12</div>
-                  </div>
-                  <div style="margin-top:5px;color:#475569;font-size:10px">📅 03 Nis 2026 12:00 • Mocksheet</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-
-    <!-- Airtable -->
-    <div class="int-card" data-name="Airtable" data-key="airtable">
-      <div class="int-card-top" onclick="toggleCard('airtable')">
-        <div class="int-card-header">
-          <div class="int-logo" style="background:rgba(24,191,255,0.12)">
-            <img src="images/integrations/airtable.svg" alt="Airtable" width="28" height="28"
-                 onerror="this.parentElement.innerHTML='<span class=em>📋</span>'">
-          </div>
-          <div class="int-card-meta">
-            <div class="int-card-name">Airtable</div>
-            <div class="int-card-desc">Tabloyu Airtable'a aktar</div>
-          </div>
-          <span class="int-badge badge-connect" id="badge-airtable">Bağla →</span>
-          <span class="int-chevron">▼</span>
-        </div>
-      </div>
-      <div class="int-pills">
-        <span class="int-pill">REST API</span>
-        <span class="int-pill">Max 50 satır</span>
-        <span class="int-pill">PAT</span>
-      </div>
-      <div class="int-form-wrap" id="form-airtable">
-        <div class="int-form-inner">
-          <div class="form">
-            <div class="info-box">
-              <strong>📌 Kurulum:</strong><br>
-              1. <a href="https://airtable.com/create/tokens" target="_blank">airtable.com/create/tokens</a> → Personal Access Token oluşturun<br>
-              2. Base URL'nden Base ID'yi kopyalayın: <code>airtable.com/<strong>appXXXXXXXXXXXXXX</strong>/...</code>
-            </div>
-            <div class="field">
-              <label>Personal Access Token *</label>
-              <input id="airtable-token" type="password" placeholder="patXXXXXXXXXXXXXXXX...">
-              <span class="hint">airtable.com/create/tokens adresinden oluşturun</span>
-            </div>
-            <div class="form-row">
-              <div class="field">
-                <label>Base ID *</label>
-                <input id="airtable-base" type="text" placeholder="appXXXXXXXXXXXXXX">
-              </div>
-              <div class="field">
-                <label>Tablo Adı</label>
-                <input id="airtable-table" type="text" placeholder="Table 1">
-              </div>
-            </div>
-            <div class="alert" id="alert-airtable"></div>
-            <div class="btns">
-              <button class="btn btn-outline" onclick="testAirtable()">🔍 Bağlantıyı Test Et</button>
-              <button class="btn btn-dark" onclick="saveAirtable()">💾 Kaydet</button>
-              <button class="btn btn-red" id="btn-airtable-disc" style="display:none" onclick="disconnectAirtable()">🗑️ Kaldır</button>
-            </div>
-            <div style="border-top:1px solid var(--border);padding-top:16px;margin-top:4px">
-              <div class="alert" id="alert-airtable-exp" style="margin-bottom:12px"></div>
-              <div id="airtable-progress" style="display:none;margin-bottom:12px">
-                <div style="font-size:12px;color:#475569;margin-bottom:6px" id="airtable-progress-text">Aktarılıyor...</div>
-                <div class="progress-wrap"><div class="progress-bar" id="airtable-pbar" style="width:0%"></div></div>
-              </div>
-              <div class="btns">
-                <button class="btn btn-green" id="btn-airtable-exp" onclick="exportAirtable()">📤 Airtable'a Aktar</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Make -->
-    <div class="int-card" data-name="Make" data-key="make">
-      <div class="int-card-top" onclick="toggleCard('make')">
-        <div class="int-card-header">
-          <div class="int-logo" style="background:rgba(109,0,204,0.15)">
-            <img src="images/integrations/make.svg" alt="Make" width="28" height="28"
-                 onerror="this.parentElement.innerHTML='<span class=em>⚙️</span>'">
-          </div>
-          <div class="int-card-meta">
-            <div class="int-card-name">Make</div>
-            <div class="int-card-desc">Görsel otomasyon senaryoları</div>
-          </div>
-          <span class="int-badge badge-connect" id="badge-make">Bağla →</span>
-          <span class="int-chevron">▼</span>
-        </div>
-      </div>
-      <div class="int-pills">
-        <span class="int-pill">Webhook</span>
-        <span class="int-pill">Senaryo Tetikle</span>
-        <span class="int-pill">Otomasyon</span>
-      </div>
-      <div class="int-form-wrap" id="form-make">
-        <div class="int-form-inner">
-          <div class="form">
-            <div class="info-box">
-              <strong>📌 Kurulum:</strong> Make → Senaryo oluştur → Webhooks modülü ekle → <strong>Custom webhook</strong> → URL'yi kopyalayın
-            </div>
-            <div class="field">
-              <label>Make Webhook URL *</label>
-              <input id="make-url" type="text" placeholder="https://hook.eu2.make.com/...">
-              <span class="hint">Make senaryonuzdaki Webhook modülünden alın</span>
-            </div>
-            <div class="field">
-              <label>Tetikleyici Olay</label>
-              <select id="make-trigger">
-                <option value="manual">Yalnızca manuel</option>
-                <option value="ai_action">Her AI aksiyonundan sonra</option>
-                <option value="export">Dosya aktarımında</option>
-                <option value="all">Tüm olaylar</option>
-              </select>
-            </div>
-            <div class="alert" id="alert-make"></div>
-            <div class="btns">
-              <button class="btn btn-outline" onclick="testMake()">📨 Test Yükü Gönder</button>
-              <button class="btn btn-dark" onclick="saveMake()">💾 Kaydet</button>
-              <button class="btn btn-red" id="btn-make-disc" style="display:none" onclick="disconnectMake()">🗑️ Kaldır</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Google Drive -->
-    <div class="int-card" data-name="Google Drive" data-key="drive">
-      <div class="int-card-top" onclick="toggleCard('drive')">
-        <div class="int-card-header">
-          <div class="int-logo" style="background:rgba(66,133,244,0.12)">
-            <img src="images/integrations/googledrive.svg" alt="Drive" width="28" height="28"
-                 onerror="this.parentElement.innerHTML='<span class=em>📁</span>'">
-          </div>
-          <div class="int-card-meta">
-            <div class="int-card-name">Google Drive</div>
-            <div class="int-card-desc">Dosyaları Drive'a kaydet</div>
-          </div>
-          <span class="int-badge badge-connect" id="badge-drive">Bağla →</span>
-          <span class="int-chevron">▼</span>
-        </div>
-      </div>
-      <div class="int-pills">
-        <span class="int-pill">OAuth2</span>
-        <span class="int-pill">CSV Yükle</span>
-        <span class="int-pill">Otomatik Yedek</span>
-      </div>
-      <div class="int-form-wrap" id="form-drive">
-        <div class="int-form-inner">
-          <div class="form">
-            <div class="info-box">
-              <strong>📌 Kurulum:</strong> Google hesabınızla giriş yapın. Dosyalarınız Drive'a CSV olarak yüklenir. Backend'de <code>GOOGLE_CLIENT_ID</code> ve <code>GOOGLE_CLIENT_SECRET</code> env değişkenleri gereklidir.
-            </div>
-            <div class="field">
-              <label>Dosya Adı</label>
-              <input id="drive-filename" type="text" placeholder="Mocksheets_Export">
-              <span class="hint">Drive'a kaydedilecek dosya adı (.csv uzantısı otomatik eklenir)</span>
-            </div>
-            <div class="alert" id="alert-drive"></div>
-            <div class="btns">
-              <button class="btn btn-outline" id="btn-drive-auth" onclick="authDrive()">🔐 Google ile Bağlan</button>
-              <button class="btn btn-red" id="btn-drive-disc" style="display:none" onclick="disconnectDrive()">🗑️ Bağlantıyı Kes</button>
-            </div>
-            <div style="border-top:1px solid var(--border);padding-top:16px;margin-top:4px">
-              <div class="alert" id="alert-drive-exp" style="margin-bottom:12px"></div>
-              <div class="btns">
-                <button class="btn btn-green" id="btn-drive-exp" onclick="exportDrive()">📤 Drive'a Yükle</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Microsoft Excel -->
-    <div class="int-card" data-name="Microsoft Excel" data-key="excel">
-      <div class="int-card-top" onclick="toggleCard('excel')">
-        <div class="int-card-header">
-          <div class="int-logo" style="background:rgba(33,115,70,0.15)">
-            <img src="images/integrations/microsoftexcel.svg" alt="Excel" width="28" height="28"
-                 onerror="this.parentElement.innerHTML='<span class=em>📗</span>'">
-          </div>
-          <div class="int-card-meta">
-            <div class="int-card-name">Microsoft Excel</div>
-            <div class="int-card-desc">Excel dosyası indir (.xlsx)</div>
-          </div>
-          <span class="int-badge badge-connected" id="badge-excel">✓ Hazır</span>
-          <span class="int-chevron">▼</span>
-        </div>
-      </div>
-      <div class="int-pills">
-        <span class="int-pill">.xlsx İndir</span>
-        <span class="int-pill">Offline</span>
-        <span class="int-pill">Kurulum Gerekmez</span>
-      </div>
-      <div class="int-form-wrap" id="form-excel">
-        <div class="int-form-inner">
-          <div class="form">
-            <div class="info-box">
-              <strong>📌 Nasıl çalışır?</strong> Mevcut tablo verileriniz direkt olarak .xlsx dosyası olarak indirilir. Kurulum veya hesap bağlantısı gerekmez.
-            </div>
-            <div class="field">
-              <label>Dosya Adı</label>
-              <input id="excel-filename" type="text" placeholder="Mocksheets_Export">
-              <span class="hint">İndirilen dosyanın adı (.xlsx otomatik eklenir)</span>
-            </div>
-            <div class="alert" id="alert-excel"></div>
-            <div class="btns">
-              <button class="btn btn-green" onclick="exportExcel()">📥 Excel İndir (.xlsx)</button>
-              <button class="btn btn-outline" onclick="importExcel()">📂 Excel Yükle (.xlsx/.csv)</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Microsoft Teams -->
-    <div class="int-card" data-name="Microsoft Teams" data-key="teams">
-      <div class="int-card-top" onclick="toggleCard('teams')">
-        <div class="int-card-header">
-          <div class="int-logo" style="background:rgba(98,100,167,0.2)">
-            <img src="images/integrations/microsoftteams.svg" alt="Teams" width="28" height="28"
-                 onerror="this.parentElement.innerHTML='<span class=em>💼</span>'">
-          </div>
-          <div class="int-card-meta">
-            <div class="int-card-name">Microsoft Teams</div>
-            <div class="int-card-desc">Kanala bildirim gönder</div>
-          </div>
-          <span class="int-badge badge-connect" id="badge-teams">Bağla →</span>
-          <span class="int-chevron">▼</span>
-        </div>
-      </div>
-      <div class="int-pills">
-        <span class="int-pill">Bildirimler</span>
-        <span class="int-pill">Incoming Webhook</span>
-        <span class="int-pill">MessageCard</span>
-      </div>
-      <div class="int-form-wrap" id="form-teams">
-        <div class="int-form-inner">
-          <div class="form">
-            <div class="info-box">
-              <strong>📌 Kurulum:</strong><br>
-              1. Teams kanalına sağ tıklayın → <strong>Connectors</strong><br>
-              2. <strong>Incoming Webhook</strong> → Yapılandır → URL'yi kopyalayın
-            </div>
-            <div class="field">
-              <label>Teams Webhook URL *</label>
-              <input id="teams-url" type="text" placeholder="https://your-org.webhook.office.com/webhookb2/...">
-              <span class="hint">Teams kanalı → Connectors → Incoming Webhook URL'si</span>
-            </div>
-            <div class="alert" id="alert-teams"></div>
-            <div class="btns">
-              <button class="btn btn-outline" onclick="testTeams()">📨 Test Mesajı Gönder</button>
-              <button class="btn btn-dark" onclick="saveTeams()">💾 Kaydet</button>
-              <button class="btn btn-red" id="btn-teams-disc" style="display:none" onclick="disconnectTeams()">🗑️ Kaldır</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Trello -->
-    <div class="int-card" data-name="Trello" data-key="trello">
-      <div class="int-card-top" onclick="toggleCard('trello')">
-        <div class="int-card-header">
-          <div class="int-logo" style="background:rgba(0,82,204,0.15)">
-            <img src="images/integrations/trello.svg" alt="Trello" width="28" height="28"
-                 onerror="this.parentElement.innerHTML='<span class=em>📌</span>'">
-          </div>
-          <div class="int-card-meta">
-            <div class="int-card-name">Trello</div>
-            <div class="int-card-desc">Satırları Trello kartına aktar</div>
-          </div>
-          <span class="int-badge badge-connect" id="badge-trello">Bağla →</span>
-          <span class="int-chevron">▼</span>
-        </div>
-      </div>
-      <div class="int-pills">
-        <span class="int-pill">Kart Oluştur</span>
-        <span class="int-pill">Max 30 satır</span>
-        <span class="int-pill">REST API</span>
-      </div>
-      <div class="int-form-wrap" id="form-trello">
-        <div class="int-form-inner">
-          <div class="form">
-            <div class="info-box">
-              <strong>📌 Kurulum:</strong><br>
-              1. <a href="https://trello.com/power-ups/admin" target="_blank">trello.com/power-ups/admin</a> → API Key alın<br>
-              2. API Key sayfasında → <strong>Token oluştur</strong> → İzin verin
-            </div>
-            <div class="form-row">
-              <div class="field">
-                <label>API Key *</label>
-                <input id="trello-key" type="text" placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx">
-              </div>
-              <div class="field">
-                <label>Token *</label>
-                <input id="trello-token" type="password" placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx...">
-              </div>
-            </div>
-            <div class="form-row">
-              <div class="field">
-                <label>Board ID *</label>
-                <input id="trello-board" type="text" placeholder="Pano URL'sindeki ID">
-                <span class="hint">trello.com/b/<strong>abcd1234</strong>/pano-adi</span>
-              </div>
-              <div class="field">
-                <label>Liste Adı</label>
-                <input id="trello-list" type="text" placeholder="To Do">
-                <span class="hint">Boş bırakırsanız ilk liste kullanılır</span>
-              </div>
-            </div>
-            <div class="alert" id="alert-trello"></div>
-            <div class="btns">
-              <button class="btn btn-outline" onclick="testTrello()">🔍 Board'u Doğrula</button>
-              <button class="btn btn-dark" onclick="saveTrello()">💾 Kaydet</button>
-              <button class="btn btn-red" id="btn-trello-disc" style="display:none" onclick="disconnectTrello()">🗑️ Kaldır</button>
-            </div>
-            <div style="border-top:1px solid var(--border);padding-top:16px;margin-top:4px">
-              <div class="alert" id="alert-trello-exp" style="margin-bottom:12px"></div>
-              <div id="trello-progress" style="display:none;margin-bottom:12px">
-                <div style="font-size:12px;color:#475569;margin-bottom:6px" id="trello-progress-text">Aktarılıyor...</div>
-                <div class="progress-wrap"><div class="progress-bar" id="trello-pbar" style="width:0%"></div></div>
-              </div>
-              <div class="btns">
-                <button class="btn btn-green" id="btn-trello-exp" onclick="exportTrello()">📤 Trello'ya Aktar</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Dropbox -->
-    <div class="int-card int-card-soon">
-      <div class="int-card-top" onclick="openNotifyModal('Dropbox')">
-        <div class="int-card-header">
-          <div class="int-logo" style="background:rgba(0,97,255,0.12)">
-            <img src="images/integrations/dropbox.svg" alt="Dropbox" onerror="this.parentElement.innerHTML='<span class=em>📦</span>'">
-          </div>
-          <div class="int-card-meta">
-            <div class="int-card-name">Dropbox</div>
-            <div class="int-card-desc">Dosyaları Dropbox'a kaydet</div>
-          </div>
-          <span class="int-badge badge-soon">Yakında</span>
-        </div>
-      </div>
-      <div class="int-pills">
-        <span class="int-pill">Cloud Storage</span>
-        <span class="int-pill">Otomatik Yedek</span>
-      </div>
-    </div>
-
-    <!-- QuickBooks -->
-    <div class="int-card int-card-soon">
-      <div class="int-card-top" onclick="openNotifyModal('QuickBooks')">
-        <div class="int-card-header">
-          <div class="int-logo" style="background:rgba(44,160,28,0.12)">
-            <img src="images/integrations/quickbooks.svg" alt="QuickBooks" onerror="this.parentElement.innerHTML='<span class=em>📒</span>'">
-          </div>
-          <div class="int-card-meta">
-            <div class="int-card-name">QuickBooks</div>
-            <div class="int-card-desc">Muhasebe yazılımına aktar</div>
-          </div>
-          <span class="int-badge badge-soon">Yakında</span>
-        </div>
-      </div>
-      <div class="int-pills">
-        <span class="int-pill">Muhasebe</span>
-        <span class="int-pill">REST API</span>
-      </div>
-    </div>
-
-    <!-- Mikro ERP -->
-    <div class="int-card int-card-soon">
-      <div class="int-card-top" onclick="openNotifyModal('Mikro ERP')">
-        <div class="int-card-header">
-          <div class="int-logo" style="background:rgba(227,30,36,0.12)">
-            <img src="images/integrations/mikroerp.svg" alt="Mikro ERP" onerror="this.parentElement.innerHTML='<span class=em>🏢</span>'">
-          </div>
-          <div class="int-card-meta">
-            <div class="int-card-name">Mikro ERP</div>
-            <div class="int-card-desc">Mikro ERP'ye veri aktar</div>
-          </div>
-          <span class="int-badge badge-soon">Yakında</span>
-        </div>
-      </div>
-      <div class="int-pills">
-        <span class="int-pill">ERP</span>
-        <span class="int-pill">Türk Yazılımı</span>
-      </div>
-    </div>
-
-    <!-- Logo Tiger -->
-    <div class="int-card int-card-soon">
-      <div class="int-card-top" onclick="openNotifyModal('Logo Tiger')">
-        <div class="int-card-header">
-          <div class="int-logo" style="background:rgba(255,255,255,0.06)">
-            <img src="images/integrations/logotiger.svg" alt="Logo Tiger" onerror="this.parentElement.innerHTML='<span class=em>🐯</span>'">
-          </div>
-          <div class="int-card-meta">
-            <div class="int-card-name">Logo Tiger</div>
-            <div class="int-card-desc">Logo Tiger ERP entegrasyonu</div>
-          </div>
-          <span class="int-badge badge-soon">Yakında</span>
-        </div>
-      </div>
-      <div class="int-pills">
-        <span class="int-pill">ERP</span>
-        <span class="int-pill">Türk Yazılımı</span>
-      </div>
-    </div>
-
-  </div><!-- /int-grid -->
-
-  <!-- ── Activity Logs ── -->
-  <div class="int-logs">
-    <div class="int-logs-head">
-      <div class="int-logs-title">Aktivite Kayıtları</div>
-      <button class="btn btn-outline btn-sm" onclick="loadLogs()">🔄 Yenile</button>
-    </div>
-    <table class="logs-table">
-      <thead>
-        <tr>
-          <th>Sağlayıcı</th><th>Olay</th><th>Durum</th><th>Satırlar</th><th>Zaman</th>
-        </tr>
-      </thead>
-      <tbody id="logs-body">
-        <tr><td colspan="5" class="empty">Yükleniyor...</td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- ── Otomasyon Kuralları ── -->
-  <div class="auto-section">
-    <div class="int-section-label">Otomasyon Kuralları</div>
-
-    <!-- AI öneri banner (gizli, JS tarafından gösterilir) -->
-    <div class="auto-suggest-banner hidden" id="auto-suggest-banner">
-      <div class="auto-suggest-icon">✨</div>
-      <div class="auto-suggest-text">
-        <div class="auto-suggest-title" id="auto-suggest-title">Akıllı kural önerileri hazır</div>
-        <div class="auto-suggest-desc" id="auto-suggest-desc">Tablonuza uygun otomasyon şablonları tespit edildi.</div>
-      </div>
-      <div class="auto-suggest-actions">
-        <button class="btn btn-outline btn-sm" onclick="dismissSuggestion()">Hayır</button>
-        <button class="btn btn-sm" style="background:var(--accent);color:#fff" onclick="applySuggestions()">Yükle</button>
-      </div>
-    </div>
-
-    <!-- Kural listesi -->
-    <div class="auto-list" id="auto-list">
-      <div class="auto-empty" id="auto-empty">Henüz otomasyon kuralı yok. İlk kuralı eklemek için aşağıdaki butonu kullanın.</div>
-    </div>
-
-    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-      <button class="btn btn-sm" style="background:var(--accent);color:#fff" onclick="openAutoModal()">+ Yeni Kural</button>
-      <div class="auto-badge" id="auto-active-badge" style="display:none">
-        <span style="width:6px;height:6px;background:#818CF8;border-radius:50%;display:inline-block"></span>
-        <span id="auto-active-count">0</span> aktif kural
-      </div>
-    </div>
-  </div>
-
-  <!-- ── Otomasyon Kural Modal ── -->
-  <div class="auto-modal-overlay" id="auto-modal-overlay" onclick="if(event.target===this)closeAutoModal()">
-    <div class="auto-modal">
-      <button onclick="closeAutoModal()" style="position:absolute;top:14px;right:16px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:6px;width:28px;height:28px;font-size:14px;cursor:pointer;color:#64748B">✕</button>
-      <h3 id="auto-modal-title">Yeni Otomasyon Kuralı</h3>
-
-      <div class="field">
-        <label>Kural Adı</label>
-        <input type="text" id="auto-name" placeholder="ör. Stok Düşük → Sipariş Ver">
-      </div>
-      <div class="row2">
-        <div class="field">
-          <label>Entegrasyon</label>
-          <select id="auto-integration">
-            <option value="make">Make</option>
-            <option value="slack">Slack</option>
-            <option value="webhook">Webhook / Zapier</option>
-            <option value="teams">Microsoft Teams</option>
-            <option value="notion">Notion</option>
-            <option value="airtable">Airtable</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>Bekleme Süresi</label>
-          <select id="auto-throttle">
-            <option value="900">15 dakika</option>
-            <option value="3600" selected>1 saat</option>
-            <option value="21600">6 saat</option>
-            <option value="86400">1 gün</option>
-            <option value="0">Süre sınırı yok</option>
-          </select>
-        </div>
-      </div>
-
-      <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">Koşul</div>
-      <div class="row2">
-        <div class="field">
-          <label>Sütun</label>
-          <input type="text" id="auto-col" placeholder="ör. Stok Miktarı">
-        </div>
-        <div class="field">
-          <label>Operatör</label>
-          <select id="auto-op">
-            <option value="less_than">Küçüktür (&lt;)</option>
-            <option value="greater_than">Büyüktür (&gt;)</option>
-            <option value="equals">Eşittir</option>
-            <option value="not_equals">Eşit değil</option>
-            <option value="contains">İçerir</option>
-            <option value="is_empty">Boş</option>
-            <option value="date_is_today">Tarihi bugün</option>
-            <option value="date_passed">Tarihi geçmiş</option>
-            <option value="changed">Değer değişti</option>
-          </select>
-        </div>
-      </div>
-      <div class="field" id="auto-value-wrap">
-        <label>Eşik Değer</label>
-        <input type="text" id="auto-value" placeholder="ör. 5">
-      </div>
-
-      <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:14px 0 10px">Aksiyon</div>
-      <div class="field">
-        <label>Olay Adı (event)</label>
-        <input type="text" id="auto-event" placeholder="ör. otomatik_siparis">
-      </div>
-      <div class="field">
-        <label>Mesaj Şablonu</label>
-        <input type="text" id="auto-msg" placeholder="ör. Stok kritik: {Ürün Adı} = {Stok Miktarı}">
-      </div>
-      <div class="field">
-        <label>Gönderilecek Sütunlar (virgülle ayır)</label>
-        <input type="text" id="auto-cols" placeholder="ör. Ürün Adı, Stok Miktarı, Tedarikçi">
-      </div>
-
-      <div id="auto-modal-alert" class="alert" style="margin-top:10px"></div>
-
-      <div class="modal-actions">
-        <button class="btn btn-outline" onclick="closeAutoModal()">İptal</button>
-        <button class="btn" style="background:var(--accent);color:#fff" onclick="saveAutoRule()">Kaydet</button>
-      </div>
-      <input type="hidden" id="auto-edit-id">
-    </div>
-  </div>
-
-</main>
-
-<script>
-const API = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-  ? 'http://localhost:3001'
-  : 'https://upsheet-ai.onrender.com';
-
-// ── Helpers ──────────────────────────────────────
-function getToken() {
-  try {
-    const raw = localStorage.getItem('sb-access-token') ||
-                localStorage.getItem('supabase.auth.token');
-    if (!raw) return null;
-    const p = JSON.parse(raw);
-    return p?.access_token || p?.currentSession?.access_token || null;
-  } catch { return null; }
-}
-
-function buildHeaders() {
-  const h = { 'Content-Type': 'application/json' };
-  const tok = getToken();
-  if (tok) h['Authorization'] = 'Bearer ' + tok;
-  return h;
-}
-
-function showAlert(id, msg, type) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  el.className = 'alert ' + type + ' show';
-  el.textContent = msg;
-}
-
-function hideAlert(id) {
-  const el = document.getElementById(id);
-  if (el) { el.className = 'alert'; el.textContent = ''; }
-}
-
-function setStatus(provider, connected, label) {
-  const badge = document.getElementById('badge-' + provider);
-  const card  = document.querySelector('[data-key="' + provider + '"]');
-  if (badge) {
-    badge.className = 'int-badge ' + (connected ? 'badge-connected' : 'badge-connect');
-    badge.textContent = label || (connected ? '✓ Bağlandı' : 'Bağla →');
-  }
-  if (card) card.classList.toggle('connected', !!connected);
-  updateHeroStats();
-}
-
-function updateHeroStats() {
-  const n = ['int_gs','int_notion','int_webhook','int_slack','int_airtable','int_make','int_drive','int_teams','int_trello'].filter(k => lsLoad(k)).length;
-  const el = document.getElementById('stat-connected');
-  if (el) el.textContent = n;
-}
-
-function toggleCard(key) {
-  const card = document.querySelector('[data-key="' + key + '"]');
-  if (!card) return;
-  const wasOpen = card.classList.contains('open');
-  document.querySelectorAll('.int-card.open').forEach(c => c.classList.remove('open'));
-  if (!wasOpen) card.classList.add('open');
-}
-
-function filterCards(q) {
-  q = q.toLowerCase();
-  document.querySelectorAll('.int-card[data-name]').forEach(card => {
-    const name = card.getAttribute('data-name').toLowerCase();
-    card.style.display = (!q || name.includes(q)) ? '' : 'none';
-  });
-}
-
-function lsSave(key, val)  { localStorage.setItem(key, JSON.stringify(val)); }
-function lsLoad(key)       { try { return JSON.parse(localStorage.getItem(key)); } catch { return null; } }
-function lsRemove(key)     { localStorage.removeItem(key); }
-
-function getSheetData() {
-  try { return JSON.parse(sessionStorage.getItem('mocksheet_current')); }
-  catch { return null; }
-}
-
-// ════════════════════════════════════════════════
-// MICROSOFT EXCEL — SheetJS (tarayıcı tabanlı, kurulum gerekmez)
-// ════════════════════════════════════════════════
-function importExcel() {
-  if (typeof XLSX === 'undefined') return showAlert('alert-excel', '✗ SheetJS kütüphanesi yüklenemedi', 'err');
-  const input = document.createElement('input');
-  input.type = 'file';
-  input.accept = '.xlsx,.xls,.csv';
-  input.onchange = e => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = ev => {
-      try {
-        const wb = XLSX.read(ev.target.result, { type: 'binary' });
-        const ws = wb.Sheets[wb.SheetNames[0]];
-        const data = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
-        sessionStorage.setItem('mocksheet_import', JSON.stringify({ data, source: file.name }));
-        showAlert('alert-excel', `✓ "${file.name}" okundu (${data.length} satır). Uygulamada açılacak.`, 'ok');
-        setTimeout(() => window.open('app.html', '_blank'), 1500);
-      } catch (err) {
-        showAlert('alert-excel', '✗ Dosya okunamadı: ' + err.message, 'err');
-      }
-    };
-    reader.readAsBinaryString(file);
-  };
-  input.click();
-}
-
-// ════════════════════════════════════════════════
-// GOOGLE SHEETS
-// ════════════════════════════════════════════════
-function validateGS() {
-  const url = document.getElementById('gs-url').value.trim();
-  if (!url) return showAlert('alert-gs', '✗ Lütfen URL veya ID girin', 'err');
-  const ok = url.match(/\/d\/([a-zA-Z0-9-_]+)/) || (url.length > 20 && !url.includes('/'));
-  showAlert('alert-gs', ok ? '✓ Geçerli Google Sheets URL tespit edildi' : '✗ URL formatı hatalı görünüyor. Tam URL yapıştırın.', ok ? 'ok' : 'err');
-}
-
-function saveGS() {
-  const url = document.getElementById('gs-url').value.trim();
-  if (!url) return showAlert('alert-gs', '✗ Lütfen URL veya ID girin', 'err');
-  const tab  = document.getElementById('gs-tab').value.trim();
-  const cell = document.getElementById('gs-cell').value.trim() || 'A1';
-  const existing = lsLoad('int_gs') || {};
-  lsSave('int_gs', { ...existing, url, tab, cell }); // OAuth token korunur
-  setStatus('gs', true);
-  document.getElementById('btn-gs-disc').style.display = '';
-  showAlert('alert-gs', '✓ Google Sheets bağlantısı kaydedildi', 'ok');
-}
-
-function disconnectGS() {
-  lsRemove('int_gs');
-  document.getElementById('gs-url').value = '';
-  document.getElementById('gs-tab').value = '';
-  document.getElementById('gs-cell').value = 'A1';
-  document.getElementById('btn-gs-disc').style.display = 'none';
-  setStatus('gs', false);
-  hideAlert('alert-gs');
-  updateGSAuthUI();
-}
-
-function disconnectGSAuth() {
-  const existing = lsLoad('int_gs') || {};
-  delete existing.tokens;
-  if (Object.keys(existing).length) lsSave('int_gs', existing);
-  updateGSAuthUI();
-  showAlert('alert-gs-oauth', 'Google bağlantısı kesildi. URL bilgileri korundu.', 'ok');
-}
-
-function updateGSAuthUI() {
-  const cfg = lsLoad('int_gs');
-  const hasTokens = !!cfg?.tokens?.access_token;
-  const authBtn = document.getElementById('btn-gs-auth');
-  const connRow = document.getElementById('gs-connected-row');
-  const expBtn = document.getElementById('btn-gs-exp');
-  if (authBtn) authBtn.style.display = hasTokens ? 'none' : '';
-  if (connRow) connRow.style.display = hasTokens ? 'flex' : 'none';
-  if (expBtn) expBtn.textContent = hasTokens ? '📤 Google Sheets\'e Yaz' : '📤 Doğrudan Yaz (Bağlantı Yok)';
-}
-
-async function authGSheets() {
-  showAlert('alert-gs-oauth', 'Google OAuth sayfası açılıyor...', 'info');
-  try {
-    const resp = await fetch(API + '/api/integrations/sheets/auth', { headers: buildHeaders() });
-    const data = await resp.json();
-    if (!data.url) return showAlert('alert-gs-oauth', '✗ ' + (data.error || 'OAuth yapılandırılmamış'), 'err');
-    window.open(data.url, 'sheetsAuth', 'width=520,height=640,scrollbars=yes,resizable=yes');
-  } catch {
-    showAlert('alert-gs-oauth', '✗ Sunucuya ulaşılamıyor', 'err');
-  }
-}
-
-async function exportGS() {
-  const cfg = lsLoad('int_gs');
-  if (!cfg) return showAlert('alert-gs-exp', '✗ Önce URL girin ve Kaydet\'e tıklayın', 'err');
-  const sheet = getSheetData();
-  if (!sheet?.data?.length) return showAlert('alert-gs-exp', '✗ Veri yok. Uygulamayı açın ve dosya yükleyin.', 'err');
-
-  const btn = document.getElementById('btn-gs-exp');
-  const prog = document.getElementById('gs-progress');
-  const pbar = document.getElementById('gs-pbar');
-  const label = document.getElementById('gs-progress-label');
-  btn.disabled = true; btn.textContent = 'Yazılıyor...';
-  prog.style.display = '';
-
-  if (cfg.tokens?.access_token) {
-    // Gerçek Google Sheets API yazma
-    try {
-      if (label) label.textContent = 'Google Sheets\'e yazılıyor...';
-      pbar.style.width = '40%';
-      const resp = await fetch(API + '/api/integrations/sheets/write', {
-        method: 'POST', headers: buildHeaders(),
-        body: JSON.stringify({
-          accessToken: cfg.tokens.access_token,
-          refreshToken: cfg.tokens.refresh_token,
-          tokenExpiry: cfg.tokens.expiry_date,
-          sheetId: cfg.url,
-          sheetName: cfg.tab || 'Sheet1',
-          startCell: cfg.cell || 'A1',
-          data: sheet.data
-        })
-      });
-      pbar.style.width = '90%';
-      const result = await resp.json();
-      if (result.newAccessToken) {
-        const updated = lsLoad('int_gs') || {};
-        updated.tokens = { ...updated.tokens, access_token: result.newAccessToken };
-        lsSave('int_gs', updated);
-      }
-      pbar.style.width = '100%';
-      if (result.success) {
-        showAlert('alert-gs-exp', `✓ ${result.rows} satır Google Sheets'e yazıldı`, 'ok');
-        if (confirm('Google Sheets\'i aç?')) window.open(result.sheetUrl, '_blank');
-      } else if (result.code === 'TOKEN_EXPIRED') {
-        const updated = lsLoad('int_gs') || {};
-        delete updated.tokens;
-        lsSave('int_gs', updated);
-        updateGSAuthUI();
-        showAlert('alert-gs-exp', '✗ Google token süresi doldu. Lütfen tekrar bağlanın.', 'err');
-      } else {
-        showAlert('alert-gs-exp', '✗ ' + (result.error || 'Yazma başarısız'), 'err');
-      }
-    } catch (err) {
-      showAlert('alert-gs-exp', '✗ Sunucuya ulaşılamıyor: ' + err.message, 'err');
-    } finally {
-      btn.disabled = false; btn.textContent = '📤 Google Sheets\'e Yaz';
-      setTimeout(() => { prog.style.display = 'none'; pbar.style.width = '0%'; }, 1000);
-    }
-    return;
-  }
-
-  // Token yoksa CSV fallback
-  showAlert('alert-gs-exp', 'ℹ Google hesabı bağlı değil. Önce Google ile bağlanın veya CSV indirin.', 'info');
-  btn.disabled = false; btn.textContent = '📤 Doğrudan Yaz (Bağlantı Yok)';
-  prog.style.display = 'none';
-}
-
-async function exportGScsv() {
-  const cfg = lsLoad('int_gs');
-  const sheet = getSheetData();
-  if (!sheet?.data?.length) return showAlert('alert-gs-exp', '✗ Veri yok', 'err');
-
-  const btn = document.getElementById('btn-gs-csv');
-  btn.disabled = true; btn.textContent = 'İndiriliyor...';
-  try {
-    const resp = await fetch(API + '/api/integrations/sheets/export', {
-      method: 'POST', headers: buildHeaders(),
-      body: JSON.stringify({ sheetId: cfg?.url, data: sheet.data, sheetName: cfg?.tab || 'Sheet1' })
-    });
-    if (!resp.ok) throw new Error('Sunucu hatası: ' + resp.status);
-    const result = await resp.json();
-    const blob = new Blob([result.csv], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = (cfg?.tab || 'mocksheet') + '.csv';
-    link.click();
-    URL.revokeObjectURL(link.href);
-    showAlert('alert-gs-exp', `✓ CSV indirildi (${result.rows} satır). Google Sheets'te: Dosya → İçe Aktar → Yükle`, 'ok');
-  } catch (err) {
-    showAlert('alert-gs-exp', '✗ ' + err.message, 'err');
-  } finally {
-    btn.disabled = false; btn.textContent = '⬇ CSV İndir';
-  }
-}
-
-function getIntegrationError(status, fallback) {
-  if (status === 401) return 'Token geçersiz. Lütfen token\'ı kontrol edin.';
-  if (status === 403) return 'Yetersiz izin. Token\'ın gerekli erişime sahip olduğundan emin olun.';
-  if (status === 404) return 'URL bulunamadı. Adresi kontrol edin.';
-  if (status === 400) return 'Hatalı istek. Girilen bilgileri kontrol edin.';
-  if (status === 429) return 'Çok fazla istek. Lütfen bekleyin.';
-  if (status >= 500)  return 'Sunucu hatası. Entegrasyon servisinde sorun var.';
-  return fallback || 'Bağlantı hatası';
-}
-
-// ════════════════════════════════════════════════
-// NOTION
-// ════════════════════════════════════════════════
-async function testNotion() {
-  const token = document.getElementById('notion-token').value.trim();
-  const dbId  = document.getElementById('notion-db').value.trim();
-  if (!token) return showAlert('alert-notion', '✗ Entegrasyon token\'ınızı girin', 'err');
-  showAlert('alert-notion', 'Bağlantı test ediliyor...', 'info');
-  try {
-    const resp = await fetch(API + '/api/integrations/notion/test', {
-      method: 'POST', headers: buildHeaders(),
-      body: JSON.stringify({ token, dbId })
-    });
-    const data = await resp.json();
-    if (data.success) showAlert('alert-notion', '✓ Bağlandı' + (data.dbName ? ': ' + data.dbName : ' — Token geçerli'), 'ok');
-    else showAlert('alert-notion', '✗ ' + getIntegrationError(resp.status, data.error || 'Geçersiz kimlik bilgileri'), 'err');
-  } catch {
-    showAlert('alert-notion', '✗ Sunucuya ulaşılamıyor. Bağlantınızı kontrol edin.', 'err');
-  }
-}
-
-function saveNotion() {
-  const token = document.getElementById('notion-token').value.trim();
-  const dbId  = document.getElementById('notion-db').value.trim();
-  if (!token) return showAlert('alert-notion', '✗ Token\'ınızı girin', 'err');
-  if (!dbId)  return showAlert('alert-notion', '✗ Veritabanı ID\'nizi girin', 'err');
-  lsSave('int_notion', { token, dbId });
-  setStatus('notion', true);
-  document.getElementById('btn-notion-disc').style.display = '';
-  showAlert('alert-notion', '✓ Notion bağlantısı kaydedildi', 'ok');
-  triggerAutoSuggest('notion');
-}
-
-function disconnectNotion() {
-  lsRemove('int_notion');
-  document.getElementById('notion-token').value = '';
-  document.getElementById('notion-db').value = '';
-  document.getElementById('btn-notion-disc').style.display = 'none';
-  setStatus('notion', false);
-  hideAlert('alert-notion');
-}
-
-async function exportNotion() {
-  const cfg = lsLoad('int_notion');
-  if (!cfg) return showAlert('alert-notion-exp', '✗ Önce Notion kimlik bilgilerinizi kaydedin', 'err');
-  const sheet = getSheetData();
-  if (!sheet?.data?.length) return showAlert('alert-notion-exp', '✗ Veri yok. Uygulamayı açın ve dosya yükleyin.', 'err');
-
-  const headers = sheet.data[0];
-  const rows    = sheet.data.slice(1);
-  if (!rows.length) return showAlert('alert-notion-exp', '✗ Aktarılacak satır yok', 'err');
-
-  const btn  = document.getElementById('btn-notion-exp');
-  const prog = document.getElementById('notion-progress');
-  const pbar = document.getElementById('notion-pbar');
-  const ptxt = document.getElementById('notion-progress-text');
-  btn.disabled = true;
-  prog.style.display = '';
-  ptxt.textContent = rows.length + ' satır aktarılıyor...';
-  showAlert('alert-notion-exp', rows.length + ' satır aktarılıyor...', 'info');
-
-  try {
-    const resp = await fetch(API + '/api/integrations/notion/export', {
-      method: 'POST', headers: buildHeaders(),
-      body: JSON.stringify({ token: cfg.token, databaseId: cfg.dbId, headers, rows })
-    });
-
-    let pct = 10;
-    const tick = setInterval(() => { pct = Math.min(pct + 5, 90); pbar.style.width = pct + '%'; }, 500);
-    const data = await resp.json();
-    clearInterval(tick);
-    pbar.style.width = '100%';
-
-    if (data.success || data.count > 0) {
-      showAlert('alert-notion-exp',
-        `✓ ${data.count}/${data.total} satır Notion'a aktarıldı` +
-        (data.errors?.length ? ` (${data.errors.length} hata)` : ''), 'ok');
-      if (confirm('Notion veritabanını aç?'))
-        window.open('https://www.notion.so/' + cfg.dbId.replace(/-/g, ''), '_blank');
-    } else {
-      showAlert('alert-notion-exp', '✗ ' + (data.error || data.errors?.[0] || 'Aktarım başarısız'), 'err');
-    }
-  } catch (err) {
-    showAlert('alert-notion-exp', '✗ Sunucuya ulaşılamıyor: ' + err.message, 'err');
-  } finally {
-    btn.disabled = false; btn.textContent = '📤 Notion\'a Aktar';
-    setTimeout(() => { prog.style.display = 'none'; pbar.style.width = '0%'; }, 1500);
-  }
-}
-
-// ════════════════════════════════════════════════
-// WEBHOOK
-// ════════════════════════════════════════════════
-async function testWebhook() {
-  const url    = document.getElementById('wh-url').value.trim();
-  const secret = document.getElementById('wh-secret').value.trim();
-  if (!url) return showAlert('alert-webhook', '✗ Webhook URL girin', 'err');
-  showAlert('alert-webhook', 'Test yükü gönderiliyor...', 'info');
-  try {
-    const resp = await fetch(API + '/api/integrations/webhook/send', {
-      method: 'POST', headers: buildHeaders(),
-      body: JSON.stringify({ url, event: 'test', secret,
-        data: { message: 'Mocksheet test payload', timestamp: new Date().toISOString() } })
-    });
-    const data = await resp.json();
-    if (data.success) showAlert('alert-webhook', '✓ Test yükü gönderildi — uç noktanızı kontrol edin', 'ok');
-    else showAlert('alert-webhook', '✗ ' + getIntegrationError(resp.status, data.error || 'Gönderilemedi'), 'err');
-  } catch {
-    try {
-      await fetch(url, { method: 'POST', mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ source: 'Mocksheet', event: 'test' }) });
-      showAlert('alert-webhook', '✓ Test gönderildi (Zapier/Make panonuzu kontrol edin)', 'ok');
-    } catch {
-      showAlert('alert-webhook', '✗ Sunucuya ulaşılamıyor. Bağlantınızı kontrol edin.', 'err');
-    }
-  }
-}
-
-function saveWebhook() {
-  const url     = document.getElementById('wh-url').value.trim();
-  const trigger = document.getElementById('wh-trigger').value;
-  const secret  = document.getElementById('wh-secret').value.trim();
-  if (!url) return showAlert('alert-webhook', '✗ Webhook URL girin', 'err');
-  lsSave('int_webhook', { url, trigger, secret });
-  setStatus('webhook', true, '✓ Aktif');
-  document.getElementById('btn-wh-disc').style.display = '';
-  showAlert('alert-webhook', '✓ Webhook etkinleştirildi', 'ok');
-  triggerAutoSuggest('webhook');
-}
-
-function disconnectWebhook() {
-  lsRemove('int_webhook');
-  document.getElementById('wh-url').value = '';
-  document.getElementById('wh-secret').value = '';
-  document.getElementById('btn-wh-disc').style.display = 'none';
-  setStatus('webhook', false, 'Bağla →');
-  hideAlert('alert-webhook');
-}
-
-// ════════════════════════════════════════════════
-// SLACK
-// ════════════════════════════════════════════════
-async function testSlack() {
-  const url = document.getElementById('slack-url').value.trim();
-  const msg = document.getElementById('slack-test-msg').value.trim();
-  if (!url) return showAlert('alert-slack', '✗ Slack webhook URL girin', 'err');
-  showAlert('alert-slack', 'Test mesajı gönderiliyor...', 'info');
-  try {
-    const resp = await fetch(API + '/api/integrations/slack/test', {
-      method: 'POST', headers: buildHeaders(),
-      body: JSON.stringify({ webhookUrl: url, message: msg || undefined })
-    });
-    const data = await resp.json();
-    if (data.success) showAlert('alert-slack', '✓ Test mesajı gönderildi — Slack kanalınızı kontrol edin', 'ok');
-    else showAlert('alert-slack', '✗ ' + getIntegrationError(resp.status, data.error || 'Gönderilemedi'), 'err');
-  } catch {
-    showAlert('alert-slack', '✗ Sunucuya ulaşılamıyor. Bağlantınızı kontrol edin.', 'err');
-  }
-}
-
-function saveSlack() {
-  const url     = document.getElementById('slack-url').value.trim();
-  const trigger = document.getElementById('slack-trigger').value;
-  if (!url) return showAlert('alert-slack', '✗ Slack webhook URL girin', 'err');
-  lsSave('int_slack', { url, trigger });
-  setStatus('slack', true);
-  document.getElementById('btn-slack-disc').style.display = '';
-  showAlert('alert-slack', '✓ Slack entegrasyonu etkinleştirildi', 'ok');
-  triggerAutoSuggest('slack');
-}
-
-function disconnectSlack() {
-  lsRemove('int_slack');
-  document.getElementById('slack-url').value = '';
-  document.getElementById('btn-slack-disc').style.display = 'none';
-  setStatus('slack', false);
-  hideAlert('alert-slack');
-}
-
-// ════════════════════════════════════════════════
-// QUICK EXPORT
-// ════════════════════════════════════════════════
-async function quickExport(provider) {
-  const alertId = 'alert-quick';
-
-  if (provider === 'gs') {
-    if (!lsLoad('int_gs')) return showAlert(alertId, '✗ Google Sheets bağlı değil. Önce bağlantıyı kurun.', 'err');
-    return exportGS();
-  }
-  if (provider === 'notion') {
-    if (!lsLoad('int_notion')) return showAlert(alertId, '✗ Notion bağlı değil. Önce bağlantıyı kurun.', 'err');
-    return exportNotion();
-  }
-  if (provider === 'webhook') {
-    const cfg = lsLoad('int_webhook');
-    if (!cfg) return showAlert(alertId, '✗ Webhook yapılandırılmamış. Önce ayarları yapın.', 'err');
-    const sheet = getSheetData();
-    try {
-      const resp = await fetch(API + '/api/integrations/webhook/send', {
-        method: 'POST', headers: buildHeaders(),
-        body: JSON.stringify({ url: cfg.url, event: 'manual_export', secret: cfg.secret,
-          data: sheet ? { rows: sheet.data?.length, sheet: sheet.name } : {} })
-      });
-      const data = await resp.json();
-      if (data.success) showAlert(alertId, '✓ Webhook başarıyla tetiklendi', 'ok');
-      else showAlert(alertId, '✗ Webhook gönderilemedi: ' + (data.error || ''), 'err');
-    } catch { showAlert(alertId, '✗ Sunucuya ulaşılamıyor', 'err'); }
-    return;
-  }
-  if (provider === 'slack') {
-    const cfg = lsLoad('int_slack');
-    if (!cfg) return showAlert(alertId, '✗ Slack bağlı değil. Önce bağlantıyı kurun.', 'err');
-    const sheet = getSheetData();
-    try {
-      const resp = await fetch(API + '/api/integrations/slack/notify', {
-        method: 'POST', headers: buildHeaders(),
-        body: JSON.stringify({
-          webhookUrl: cfg.url,
-          title: '📊 Mocksheet Dışa Aktarım',
-          message: 'Veriler Mocksheet\'ten gönderildi.',
-          fields: sheet ? [
-            { label: 'Sayfa', value: sheet.name || 'Bilinmiyor' },
-            { label: 'Satır sayısı', value: String((sheet.data?.length || 1) - 1) }
-          ] : []
-        })
-      });
-      const data = await resp.json();
-      if (data.success) showAlert(alertId, '✓ Slack bildirimi gönderildi', 'ok');
-      else showAlert(alertId, '✗ Slack gönderilemedi: ' + (data.error || ''), 'err');
-    } catch { showAlert(alertId, '✗ Sunucuya ulaşılamıyor', 'err'); }
-  }
-  if (provider === 'excel') {
-    return exportExcel();
-  }
-}
-
-// ════════════════════════════════════════════════
-// LOGS
-// ════════════════════════════════════════════════
-function loadLogs() {
-  const tbody = document.getElementById('logs-body');
-  const providers = [
-    { key: 'int_gs',       name: 'Google Sheets' },
-    { key: 'int_notion',   name: 'Notion' },
-    { key: 'int_webhook',  name: 'Webhook' },
-    { key: 'int_slack',    name: 'Slack' },
-    { key: 'int_airtable', name: 'Airtable' },
-    { key: 'int_make',     name: 'Make' },
-    { key: 'int_drive',    name: 'Google Drive' },
-    { key: 'int_teams',    name: 'Microsoft Teams' },
-    { key: 'int_trello',   name: 'Trello' }
-  ];
-  const rows = providers.filter(p => lsLoad(p.key)).map(p => `
-    <tr>
-      <td><strong style="color:rgba(255,255,255,0.8)">${p.name}</strong></td>
-      <td>Bağlı</td>
-      <td><span class="log-ok">✓ Aktif</span></td>
-      <td>—</td>
-      <td>Aktif</td>
-    </tr>`).join('');
-  tbody.innerHTML = rows || '<tr><td colspan="5" class="empty">Henüz aktivite yok</td></tr>';
-}
-
-// ════════════════════════════════════════════════
-// AIRTABLE
-// ════════════════════════════════════════════════
-async function testAirtable() {
-  const token     = document.getElementById('airtable-token').value.trim();
-  const baseId    = document.getElementById('airtable-base').value.trim();
-  const tableName = document.getElementById('airtable-table').value.trim();
-  if (!token || !baseId) return showAlert('alert-airtable', '✗ Token ve Base ID gerekli', 'err');
-  showAlert('alert-airtable', 'Bağlantı test ediliyor...', 'info');
-  try {
-    const resp = await fetch(API + '/api/integrations/airtable/test', {
-      method: 'POST', headers: buildHeaders(),
-      body: JSON.stringify({ token, baseId, tableName: tableName || 'Table 1' })
-    });
-    const data = await resp.json();
-    if (data.success) showAlert('alert-airtable', '✓ ' + (data.message || 'Bağlantı başarılı'), 'ok');
-    else showAlert('alert-airtable', '✗ ' + getIntegrationError(resp.status, data.error), 'err');
-  } catch { showAlert('alert-airtable', '✗ Sunucuya ulaşılamıyor', 'err'); }
-}
-
-function saveAirtable() {
-  const token     = document.getElementById('airtable-token').value.trim();
-  const baseId    = document.getElementById('airtable-base').value.trim();
-  const tableName = document.getElementById('airtable-table').value.trim() || 'Table 1';
-  if (!token) return showAlert('alert-airtable', '✗ Token gerekli', 'err');
-  if (!baseId) return showAlert('alert-airtable', '✗ Base ID gerekli', 'err');
-  lsSave('int_airtable', { token, baseId, tableName });
-  setStatus('airtable', true);
-  document.getElementById('btn-airtable-disc').style.display = '';
-  showAlert('alert-airtable', '✓ Airtable bağlantısı kaydedildi', 'ok');
-  triggerAutoSuggest('airtable');
-}
-
-function disconnectAirtable() {
-  lsRemove('int_airtable');
-  document.getElementById('airtable-token').value = '';
-  document.getElementById('airtable-base').value  = '';
-  document.getElementById('airtable-table').value = '';
-  document.getElementById('btn-airtable-disc').style.display = 'none';
-  setStatus('airtable', false);
-  hideAlert('alert-airtable');
-}
-
-async function exportAirtable() {
-  const cfg = lsLoad('int_airtable');
-  if (!cfg) return showAlert('alert-airtable-exp', '✗ Önce bağlantıyı kaydedin', 'err');
-  const sheet = getSheetData();
-  if (!sheet?.data?.length) return showAlert('alert-airtable-exp', '✗ Veri yok. Uygulamayı açın ve dosya yükleyin.', 'err');
-
-  const headers = sheet.data[0];
-  const rows    = sheet.data.slice(1);
-  if (!rows.length) return showAlert('alert-airtable-exp', '✗ Aktarılacak satır yok', 'err');
-
-  const btn  = document.getElementById('btn-airtable-exp');
-  const prog = document.getElementById('airtable-progress');
-  const pbar = document.getElementById('airtable-pbar');
-  const ptxt = document.getElementById('airtable-progress-text');
-  btn.disabled = true;
-  prog.style.display = '';
-  ptxt.textContent = rows.length + ' satır aktarılıyor...';
-
-  try {
-    let pct = 10;
-    const tick = setInterval(() => { pct = Math.min(pct + 4, 85); pbar.style.width = pct + '%'; }, 400);
-    const resp = await fetch(API + '/api/integrations/airtable/export', {
-      method: 'POST', headers: buildHeaders(),
-      body: JSON.stringify({ token: cfg.token, baseId: cfg.baseId, tableName: cfg.tableName, headers, rows })
-    });
-    clearInterval(tick);
-    pbar.style.width = '100%';
-    const data = await resp.json();
-    if (data.success || data.count > 0) {
-      showAlert('alert-airtable-exp', `✓ ${data.count}/${data.total} satır Airtable'a aktarıldı` + (data.errors?.length ? ` (${data.errors.length} hata)` : ''), 'ok');
-    } else {
-      showAlert('alert-airtable-exp', '✗ ' + (data.error || data.errors?.[0] || 'Aktarım başarısız'), 'err');
-    }
-  } catch (err) {
-    showAlert('alert-airtable-exp', '✗ Sunucuya ulaşılamıyor: ' + err.message, 'err');
-  } finally {
-    btn.disabled = false; btn.textContent = '📤 Airtable\'a Aktar';
-    setTimeout(() => { prog.style.display = 'none'; pbar.style.width = '0%'; }, 1500);
-  }
-}
-
-// ════════════════════════════════════════════════
-// MAKE
-// ════════════════════════════════════════════════
-async function testMake() {
-  const url = document.getElementById('make-url').value.trim();
-  if (!url) return showAlert('alert-make', '✗ Webhook URL girin', 'err');
-  showAlert('alert-make', 'Test yükü gönderiliyor...', 'info');
-  try {
-    const resp = await fetch(API + '/api/integrations/make/trigger', {
-      method: 'POST', headers: buildHeaders(),
-      body: JSON.stringify({ url, event: 'test', data: { message: 'Mocksheet test payload', timestamp: new Date().toISOString() } })
-    });
-    const data = await resp.json();
-    if (data.success) showAlert('alert-make', '✓ ' + (data.message || 'Test yükü gönderildi'), 'ok');
-    else showAlert('alert-make', '✗ ' + getIntegrationError(resp.status, data.error || 'Gönderilemedi'), 'err');
-  } catch { showAlert('alert-make', '✗ Sunucuya ulaşılamıyor', 'err'); }
-}
-
-function saveMake() {
-  const url     = document.getElementById('make-url').value.trim();
-  const trigger = document.getElementById('make-trigger').value;
-  if (!url) return showAlert('alert-make', '✗ Webhook URL girin', 'err');
-  lsSave('int_make', { url, trigger });
-  setStatus('make', true, '✓ Aktif');
-  document.getElementById('btn-make-disc').style.display = '';
-  showAlert('alert-make', '✓ Make webhook etkinleştirildi', 'ok');
-  triggerAutoSuggest('make');
-}
-
-function disconnectMake() {
-  lsRemove('int_make');
-  document.getElementById('make-url').value = '';
-  document.getElementById('btn-make-disc').style.display = 'none';
-  setStatus('make', false, 'Bağla →');
-  hideAlert('alert-make');
-}
-
-// ════════════════════════════════════════════════
-// GOOGLE DRIVE
-// ════════════════════════════════════════════════
-async function authDrive() {
-  showAlert('alert-drive', 'OAuth2 sayfası açılıyor...', 'info');
-  try {
-    const resp = await fetch(API + '/api/integrations/drive/auth', { headers: buildHeaders() });
-    const data = await resp.json();
-    if (!data.url) return showAlert('alert-drive', '✗ ' + (data.error || 'OAuth yapılandırılmamış'), 'err');
-    window.open(data.url, 'driveAuth', 'width=500,height=620,scrollbars=yes');
-  } catch { showAlert('alert-drive', '✗ Sunucuya ulaşılamıyor', 'err'); }
-}
-
-function disconnectDrive() {
-  lsRemove('int_drive');
-  document.getElementById('btn-drive-auth').style.display = '';
-  document.getElementById('btn-drive-disc').style.display = 'none';
-  setStatus('drive', false);
-  hideAlert('alert-drive');
-}
-
-async function exportDrive() {
-  const cfg = lsLoad('int_drive');
-  if (!cfg?.token) return showAlert('alert-drive-exp', '✗ Önce Google hesabınızla bağlanın', 'err');
-  const sheet = getSheetData();
-  if (!sheet?.data?.length) return showAlert('alert-drive-exp', '✗ Veri yok. Uygulamayı açın ve dosya yükleyin.', 'err');
-
-  const btn = document.getElementById('btn-drive-exp');
-  btn.disabled = true; btn.textContent = 'Yükleniyor...';
-
-  const csv = '\uFEFF' + sheet.data.map(row =>
-    (row || []).map(cell => {
-      const s = String(cell ?? '');
-      return s.includes(',') || s.includes('"') ? `"${s.replace(/"/g,'""')}"` : s;
-    }).join(',')
-  ).join('\r\n');
-
-  const fileName = document.getElementById('drive-filename').value.trim() || cfg.fileName || 'Mocksheets_Export';
-
-  try {
-    const resp = await fetch(API + '/api/integrations/drive/upload', {
-      method: 'POST', headers: buildHeaders(),
-      body: JSON.stringify({ token: cfg.token, fileName, csv })
-    });
-    const data = await resp.json();
-    if (data.success) showAlert('alert-drive-exp', '✓ ' + (data.message || 'Drive\'a yüklendi'), 'ok');
-    else showAlert('alert-drive-exp', '✗ ' + (data.error || 'Yükleme başarısız'), 'err');
-  } catch (err) {
-    showAlert('alert-drive-exp', '✗ ' + err.message, 'err');
-  } finally {
-    btn.disabled = false; btn.textContent = '📤 Drive\'a Yükle';
-  }
-}
-
-// ════════════════════════════════════════════════
-// MICROSOFT EXCEL
-// ════════════════════════════════════════════════
-function exportExcel() {
-  const sheet = getSheetData();
-  if (!sheet?.data?.length) return showAlert('alert-excel', '✗ Veri yok. Uygulamayı açın ve dosya yükleyin.', 'err');
-  if (typeof XLSX === 'undefined') return showAlert('alert-excel', '✗ SheetJS kütüphanesi yüklenemedi', 'err');
-
-  const ws = XLSX.utils.aoa_to_sheet(sheet.data);
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, sheet.name || 'Sheet1');
-  const fileName = (document.getElementById('excel-filename').value.trim() || 'Mocksheets_Export') + '.xlsx';
-  XLSX.writeFile(wb, fileName);
-  showAlert('alert-excel', `✓ "${fileName}" indirildi (${sheet.data.length} satır)`, 'ok');
-}
-
-// ════════════════════════════════════════════════
-// MICROSOFT TEAMS
-// ════════════════════════════════════════════════
-async function testTeams() {
-  const url = document.getElementById('teams-url').value.trim();
-  if (!url) return showAlert('alert-teams', '✗ Teams webhook URL girin', 'err');
-  showAlert('alert-teams', 'Test mesajı gönderiliyor...', 'info');
-  try {
-    const resp = await fetch(API + '/api/integrations/teams/test', {
-      method: 'POST', headers: buildHeaders(),
-      body: JSON.stringify({ webhookUrl: url })
-    });
-    const data = await resp.json();
-    if (data.success) showAlert('alert-teams', '✓ Test mesajı gönderildi — Teams kanalınızı kontrol edin', 'ok');
-    else showAlert('alert-teams', '✗ ' + getIntegrationError(resp.status, data.error || 'Gönderilemedi'), 'err');
-  } catch { showAlert('alert-teams', '✗ Sunucuya ulaşılamıyor', 'err'); }
-}
-
-function saveTeams() {
-  const url = document.getElementById('teams-url').value.trim();
-  if (!url) return showAlert('alert-teams', '✗ Webhook URL girin', 'err');
-  lsSave('int_teams', { url });
-  setStatus('teams', true);
-  document.getElementById('btn-teams-disc').style.display = '';
-  showAlert('alert-teams', '✓ Teams entegrasyonu etkinleştirildi', 'ok');
-  triggerAutoSuggest('teams');
-}
-
-function disconnectTeams() {
-  lsRemove('int_teams');
-  document.getElementById('teams-url').value = '';
-  document.getElementById('btn-teams-disc').style.display = 'none';
-  setStatus('teams', false);
-  hideAlert('alert-teams');
-}
-
-// ════════════════════════════════════════════════
-// TRELLO
-// ════════════════════════════════════════════════
-async function testTrello() {
-  const apiKey  = document.getElementById('trello-key').value.trim();
-  const token   = document.getElementById('trello-token').value.trim();
-  const boardId = document.getElementById('trello-board').value.trim();
-  if (!apiKey || !token || !boardId) return showAlert('alert-trello', '✗ API Key, Token ve Board ID gerekli', 'err');
-  showAlert('alert-trello', 'Board doğrulanıyor...', 'info');
-  try {
-    const resp = await fetch(API + '/api/integrations/trello/test', {
-      method: 'POST', headers: buildHeaders(),
-      body: JSON.stringify({ apiKey, token, boardId })
-    });
-    const data = await resp.json();
-    if (data.success) showAlert('alert-trello', '✓ ' + (data.message || 'Board bulundu'), 'ok');
-    else showAlert('alert-trello', '✗ ' + getIntegrationError(resp.status, data.error), 'err');
-  } catch { showAlert('alert-trello', '✗ Sunucuya ulaşılamıyor', 'err'); }
-}
-
-function saveTrello() {
-  const apiKey   = document.getElementById('trello-key').value.trim();
-  const token    = document.getElementById('trello-token').value.trim();
-  const boardId  = document.getElementById('trello-board').value.trim();
-  const listName = document.getElementById('trello-list').value.trim();
-  if (!apiKey || !token) return showAlert('alert-trello', '✗ API Key ve Token gerekli', 'err');
-  if (!boardId)          return showAlert('alert-trello', '✗ Board ID gerekli', 'err');
-  lsSave('int_trello', { apiKey, token, boardId, listName });
-  setStatus('trello', true);
-  document.getElementById('btn-trello-disc').style.display = '';
-  showAlert('alert-trello', '✓ Trello bağlantısı kaydedildi', 'ok');
-}
-
-function disconnectTrello() {
-  lsRemove('int_trello');
-  ['trello-key','trello-token','trello-board','trello-list'].forEach(id => { document.getElementById(id).value = ''; });
-  document.getElementById('btn-trello-disc').style.display = 'none';
-  setStatus('trello', false);
-  hideAlert('alert-trello');
-}
-
-async function exportTrello() {
-  const cfg = lsLoad('int_trello');
-  if (!cfg) return showAlert('alert-trello-exp', '✗ Önce bağlantıyı kaydedin', 'err');
-  const sheet = getSheetData();
-  if (!sheet?.data?.length) return showAlert('alert-trello-exp', '✗ Veri yok. Uygulamayı açın ve dosya yükleyin.', 'err');
-
-  const headers = sheet.data[0];
-  const rows    = sheet.data.slice(1);
-  if (!rows.length) return showAlert('alert-trello-exp', '✗ Aktarılacak satır yok', 'err');
-
-  const btn  = document.getElementById('btn-trello-exp');
-  const prog = document.getElementById('trello-progress');
-  const pbar = document.getElementById('trello-pbar');
-  const ptxt = document.getElementById('trello-progress-text');
-  btn.disabled = true;
-  prog.style.display = '';
-  ptxt.textContent = Math.min(rows.length, 30) + ' satır aktarılıyor...';
-
-  try {
-    let pct = 10;
-    const tick = setInterval(() => { pct = Math.min(pct + 5, 85); pbar.style.width = pct + '%'; }, 400);
-    const resp = await fetch(API + '/api/integrations/trello/export', {
-      method: 'POST', headers: buildHeaders(),
-      body: JSON.stringify({ apiKey: cfg.apiKey, token: cfg.token, boardId: cfg.boardId, listName: cfg.listName, headers, rows })
-    });
-    clearInterval(tick);
-    pbar.style.width = '100%';
-    const data = await resp.json();
-    if (data.success || data.count > 0) {
-      showAlert('alert-trello-exp', `✓ ${data.count}/${data.total} kart "${data.listName || 'liste'}"ye eklendi` + (data.errors?.length ? ` (${data.errors.length} hata)` : ''), 'ok');
-    } else {
-      showAlert('alert-trello-exp', '✗ ' + (data.error || data.errors?.[0] || 'Aktarım başarısız'), 'err');
-    }
-  } catch (err) {
-    showAlert('alert-trello-exp', '✗ Sunucuya ulaşılamıyor: ' + err.message, 'err');
-  } finally {
-    btn.disabled = false; btn.textContent = '📤 Trello\'ya Aktar';
-    setTimeout(() => { prog.style.display = 'none'; pbar.style.width = '0%'; }, 1500);
-  }
-}
-
-// ════════════════════════════════════════════════
-// PRO PAYWALL
-// ════════════════════════════════════════════════
-function checkProAccess() {
-  try {
-    var plan = JSON.parse(localStorage.getItem('mocksheets_plan'))?.plan || 'free';
-    return plan === 'pro' || plan === 'business';
-  } catch { return false; }
-}
-
-function applyPaywalls() {
-  if (checkProAccess()) return;
-  document.querySelectorAll('.int-card:not(.int-card-soon)').forEach(function(card) {
-    var name = card.querySelector('.int-card-name')?.textContent || 'Bu entegrasyon';
-    var overlay = document.createElement('div');
-    overlay.className = 'pro-paywall-overlay';
-    overlay.innerHTML =
-      '<div style="text-align:center;padding:28px 24px">' +
-        '<span style="display:inline-block;background:#D9F26B;color:#0a0a0f;font-size:10px;font-weight:700;letter-spacing:.12em;font-family:monospace;text-transform:uppercase;padding:4px 12px;border-radius:999px;margin-bottom:14px">PRO</span>' +
-        '<div style="font-size:17px;font-weight:700;color:#F9FAFB;margin-bottom:6px;letter-spacing:-0.01em">Pro abonelik gerekli</div>' +
-        '<div style="font-size:12px;color:rgba(255,255,255,0.45);margin-bottom:20px;line-height:1.6;max-width:200px;margin-left:auto;margin-right:auto">' +
-          name + ' entegrasyonu Pro planda kullanılabilir' +
-        '</div>' +
-        '<a href="index.html#pricing" style="' +
-          'display:inline-block;padding:11px 24px;' +
-          'background:#D9F26B;color:#0a0a0f;border-radius:999px;' +
-          'font-size:13px;font-weight:700;text-decoration:none;letter-spacing:-.01em;' +
-        '">Pro aboneliğe geç →</a>' +
-      '</div>';
-    card.style.position = 'relative';
-    card.appendChild(overlay);
-  });
-}
-
-// ════════════════════════════════════════════════
-// INIT
-// ════════════════════════════════════════════════
-document.addEventListener('DOMContentLoaded', () => {
-  const gs = lsLoad('int_gs');
-  if (gs) {
-    document.getElementById('gs-url').value  = gs.url || '';
-    document.getElementById('gs-tab').value  = gs.tab || '';
-    document.getElementById('gs-cell').value = gs.cell || 'A1';
-    document.getElementById('btn-gs-disc').style.display = '';
-    setStatus('gs', true);
-  }
-
-  updateGSAuthUI();
-
-  const notion = lsLoad('int_notion');
-  if (notion) {
-    document.getElementById('notion-token').value = notion.token || '';
-    document.getElementById('notion-db').value    = notion.dbId || '';
-    document.getElementById('btn-notion-disc').style.display = '';
-    setStatus('notion', true);
-  }
-
-  const wh = lsLoad('int_webhook');
-  if (wh) {
-    document.getElementById('wh-url').value     = wh.url || '';
-    document.getElementById('wh-trigger').value = wh.trigger || 'manual';
-    document.getElementById('wh-secret').value  = wh.secret || '';
-    document.getElementById('btn-wh-disc').style.display = '';
-    setStatus('webhook', true, '✓ Aktif');
-  }
-
-  const slack = lsLoad('int_slack');
-  if (slack) {
-    document.getElementById('slack-url').value     = slack.url || '';
-    document.getElementById('slack-trigger').value = slack.trigger || 'manual';
-    document.getElementById('btn-slack-disc').style.display = '';
-    setStatus('slack', true);
-  }
-
-  const airtable = lsLoad('int_airtable');
-  if (airtable) {
-    document.getElementById('airtable-token').value = airtable.token || '';
-    document.getElementById('airtable-base').value  = airtable.baseId || '';
-    document.getElementById('airtable-table').value = airtable.tableName || '';
-    document.getElementById('btn-airtable-disc').style.display = '';
-    setStatus('airtable', true);
-  }
-
-  const make = lsLoad('int_make');
-  if (make) {
-    document.getElementById('make-url').value     = make.url || '';
-    document.getElementById('make-trigger').value = make.trigger || 'manual';
-    document.getElementById('btn-make-disc').style.display = '';
-    setStatus('make', true, '✓ Aktif');
-  }
-
-  const drive = lsLoad('int_drive');
-  if (drive) {
-    document.getElementById('btn-drive-auth').style.display = 'none';
-    document.getElementById('btn-drive-disc').style.display = '';
-    document.getElementById('drive-filename').value = drive.fileName || '';
-    setStatus('drive', true);
-  }
-
-  const teams = lsLoad('int_teams');
-  if (teams) {
-    document.getElementById('teams-url').value = teams.url || '';
-    document.getElementById('btn-teams-disc').style.display = '';
-    setStatus('teams', true);
-  }
-
-  const trello = lsLoad('int_trello');
-  if (trello) {
-    document.getElementById('trello-key').value   = trello.apiKey || '';
-    document.getElementById('trello-token').value = trello.token || '';
-    document.getElementById('trello-board').value = trello.boardId || '';
-    document.getElementById('trello-list').value  = trello.listName || '';
-    document.getElementById('btn-trello-disc').style.display = '';
-    setStatus('trello', true);
-  }
-
-  updateHeroStats();
-  loadLogs();
-  applyPaywalls();
-  updateGSAuthUI();
-  renderAutomationRules();
-
-  window.addEventListener('message', (e) => {
-    if (e.data?.type === 'drive_auth') {
-      if (e.data.token) {
-        lsSave('int_drive', { token: e.data.token, fileName: document.getElementById('drive-filename').value.trim() || 'Mocksheets_Export' });
-        document.getElementById('btn-drive-auth').style.display = 'none';
-        document.getElementById('btn-drive-disc').style.display = '';
-        setStatus('drive', true);
-        showAlert('alert-drive', '✓ Google Drive bağlandı', 'ok');
-      } else {
-        showAlert('alert-drive', '✗ Bağlantı başarısız: ' + (e.data.error || 'İptal edildi'), 'err');
-      }
-    }
-    if (e.data?.type === 'sheets_auth') {
-      if (e.data.tokens?.access_token) {
-        const existing = lsLoad('int_gs') || {};
-        lsSave('int_gs', { ...existing, tokens: e.data.tokens });
-        setStatus('gs', true);
-        updateGSAuthUI();
-        hideAlert('alert-gs-oauth');
-        showAlert('alert-gs-exp', '✓ Google hesabıyla bağlandı! Artık doğrudan yazabilirsiniz.', 'ok');
-      } else {
-        showAlert('alert-gs-oauth', '✗ Bağlantı başarısız: ' + (e.data.error || 'İptal edildi'), 'err');
-      }
-    }
-  });
-});
-</script>
-
-<script>
-// ── Otomasyon Kuralları UI ───────────────────────────────────────────────────
-let _cachedRules = [];
-let _pendingSuggestions = [];
-
-const OPERATORS = {
-  less_than: 'küçüktür (<)',
-  greater_than: 'büyüktür (>)',
-  equals: 'eşittir',
-  not_equals: 'eşit değil',
-  contains: 'içerir',
-  is_empty: 'boş',
-  date_is_today: 'tarihi bugün',
-  date_passed: 'tarihi geçmiş',
-  changed: 'değer değişti'
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect, useRef } = React;
+
+const CATEGORIES = ['Tümü', 'Üretkenlik', 'Otomasyon', 'İletişim', 'Depolama', 'CRM'];
+
+const Icon = {
+  GoogleSheets: () => (
+    <svg viewBox="0 0 24 24" width="26" height="26" fill="none">
+      <rect width="24" height="24" rx="5" fill="#0F9D58"/>
+      <rect x="6" y="6" width="12" height="12" rx="1" fill="none" stroke="#fff" strokeWidth="1.2"/>
+      <line x1="6" y1="10" x2="18" y2="10" stroke="#fff" strokeWidth="1.2"/>
+      <line x1="6" y1="14" x2="18" y2="14" stroke="#fff" strokeWidth="1.2"/>
+      <line x1="11" y1="6" x2="11" y2="18" stroke="#fff" strokeWidth="1.2"/>
+    </svg>
+  ),
+  Notion: () => (
+    <svg viewBox="0 0 24 24" width="26" height="26">
+      <rect width="24" height="24" rx="5" fill="#fff"/>
+      <text x="4.5" y="18" fontSize="17" fontWeight="900" fill="#000" fontFamily="Georgia,serif">N</text>
+    </svg>
+  ),
+  Zapier: () => (
+    <svg viewBox="0 0 24 24" width="26" height="26">
+      <rect width="24" height="24" rx="5" fill="#FF4A00"/>
+      <text x="5" y="18" fontSize="16" fontWeight="900" fill="#fff" fontFamily="Arial,sans-serif">Z</text>
+    </svg>
+  ),
+  Slack: () => (
+    <svg viewBox="0 0 24 24" width="26" height="26" fill="none">
+      <rect width="24" height="24" rx="5" fill="#4A154B"/>
+      <circle cx="8.5" cy="9" r="1.8" fill="#E01E5A"/>
+      <rect x="7" y="11" width="3" height="4" rx="1.5" fill="#E01E5A"/>
+      <circle cx="15.5" cy="15" r="1.8" fill="#2EB67D"/>
+      <rect x="14" y="9" width="3" height="4" rx="1.5" fill="#2EB67D"/>
+      <circle cx="9" cy="15.5" r="1.8" fill="#ECB22E"/>
+      <rect x="11" y="14" width="4" height="3" rx="1.5" fill="#ECB22E"/>
+      <circle cx="15" cy="8.5" r="1.8" fill="#36C5F0"/>
+      <rect x="9" y="7" width="4" height="3" rx="1.5" fill="#36C5F0"/>
+    </svg>
+  ),
+  Airtable: () => (
+    <svg viewBox="0 0 24 24" width="26" height="26">
+      <rect width="24" height="24" rx="5" fill="#FFBF00"/>
+      <text x="5" y="18" fontSize="15" fontWeight="900" fill="#fff" fontFamily="Arial,sans-serif">A</text>
+    </svg>
+  ),
+  Make: () => (
+    <svg viewBox="0 0 24 24" width="26" height="26" fill="none">
+      <rect width="24" height="24" rx="5" fill="#6D00CC"/>
+      <circle cx="7" cy="12" r="2.2" fill="#fff"/>
+      <circle cx="17" cy="12" r="2.2" fill="#fff"/>
+      <line x1="9.2" y1="12" x2="14.8" y2="12" stroke="#fff" strokeWidth="1.5"/>
+    </svg>
+  ),
+  GoogleDrive: () => (
+    <svg viewBox="0 0 24 24" width="26" height="26" fill="none">
+      <rect width="24" height="24" rx="5" fill="#F8F9FA"/>
+      <path d="M12 5 L5.5 17 H10.5 L17 5 Z" fill="#4285F4"/>
+      <path d="M5.5 17 L3 20 H10 L12 16 Z" fill="#EA4335"/>
+      <path d="M17 5 L21 12 L18.5 17 H14 Z" fill="#FBBC05"/>
+    </svg>
+  ),
+  MicrosoftExcel: () => (
+    <svg viewBox="0 0 24 24" width="26" height="26">
+      <rect width="24" height="24" rx="5" fill="#217346"/>
+      <text x="4.5" y="18" fontSize="16" fontWeight="900" fill="#fff" fontFamily="Arial,sans-serif">X</text>
+    </svg>
+  ),
+  MicrosoftTeams: () => (
+    <svg viewBox="0 0 24 24" width="26" height="26" fill="none">
+      <rect width="24" height="24" rx="5" fill="#6264A7"/>
+      <rect x="7" y="9" width="10" height="8" rx="2" fill="rgba(255,255,255,0.9)"/>
+      <text x="10" y="16" fontSize="7" fontWeight="700" fill="#6264A7" fontFamily="Arial,sans-serif">T</text>
+    </svg>
+  ),
+  Webhook: () => (
+    <svg viewBox="0 0 24 24" width="26" height="26" fill="none">
+      <rect width="24" height="24" rx="5" fill="#FF4A00"/>
+      <path d="M8 11 C8 9 9.8 7.5 12 7.5 S16 9 16 11" stroke="#fff" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
+      <path d="M5.5 15.5 C5.5 12 8.4 9.5 12 9.5 S18.5 12 18.5 15.5" stroke="#fff" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
+      <circle cx="12" cy="17" r="1.8" fill="#fff"/>
+    </svg>
+  ),
+  Linear: () => (
+    <svg viewBox="0 0 24 24" width="26" height="26" fill="none">
+      <rect width="24" height="24" rx="5" fill="#5E6AD2"/>
+      <path d="M5 19 L19 5M5 12 L12 5M12 19 L19 12" stroke="#fff" strokeWidth="1.8" strokeLinecap="round"/>
+    </svg>
+  ),
+  HubSpot: () => (
+    <svg viewBox="0 0 24 24" width="26" height="26" fill="none">
+      <rect width="24" height="24" rx="5" fill="#FF7A59"/>
+      <circle cx="12" cy="12" r="3" fill="#fff"/>
+      <line x1="12" y1="4" x2="12" y2="8.5" stroke="#fff" strokeWidth="1.5" strokeLinecap="round"/>
+      <line x1="12" y1="15.5" x2="12" y2="20" stroke="#fff" strokeWidth="1.5" strokeLinecap="round"/>
+      <line x1="4" y1="12" x2="8.5" y2="12" stroke="#fff" strokeWidth="1.5" strokeLinecap="round"/>
+      <line x1="15.5" y1="12" x2="20" y2="12" stroke="#fff" strokeWidth="1.5" strokeLinecap="round"/>
+    </svg>
+  ),
+  Discord: () => (
+    <svg viewBox="0 0 24 24" width="26" height="26" fill="none">
+      <rect width="24" height="24" rx="5" fill="#5865F2"/>
+      <path d="M16 7.5C15.1 7.1 14.1 6.8 13 6.6L12.8 7C13.8 7.3 14.7 7.7 15.5 8.2C14.2 7.5 13 7.1 12 7.1C11 7.1 9.8 7.5 8.5 8.2C9.3 7.7 10.2 7.3 11.2 7L11 6.6C9.9 6.8 8.9 7.1 8 7.5C6.8 9.5 6.2 11.8 6.4 14.1C7.4 15 8.4 15.5 9.4 15.9L10 15.1C9.3 14.8 8.6 14.5 8 14.1C8.6 14.5 9.5 14.9 12 14.9C14.5 14.9 15.4 14.5 16 14.1C15.4 14.5 14.7 14.8 14 15.1L14.6 15.9C15.6 15.5 16.6 15 17.6 14.1C17.8 11.8 17.2 9.5 16 7.5Z" fill="#fff"/>
+      <ellipse cx="10" cy="12" rx="1.4" ry="1.5" fill="#5865F2"/>
+      <ellipse cx="14" cy="12" rx="1.4" ry="1.5" fill="#5865F2"/>
+    </svg>
+  ),
 };
 
-const INT_LABELS = {
-  make: 'Make', slack: 'Slack', webhook: 'Webhook', teams: 'Teams',
-  notion: 'Notion', airtable: 'Airtable'
-};
+const INTEGRATIONS = [
+  {
+    id: 'google-sheets',
+    name: 'Google Sheets',
+    desc: "Google Sheets dosyalarını içe aktarın veya Mocksheets verilerinizi Google Sheets'e aktarın.",
+    category: 'Üretkenlik', tier: 'free', popular: true, icon: 'GoogleSheets', iconBg: '#e8f5e9',
+  },
+  {
+    id: 'notion',
+    name: 'Notion',
+    desc: 'Notion veritabanlarını Excel formatına dönüştürün ve AI ile analiz edin.',
+    category: 'Üretkenlik', tier: 'pro', popular: true, icon: 'Notion', iconBg: '#f5f5f5',
+  },
+  {
+    id: 'zapier',
+    name: 'Zapier',
+    desc: "Zapier üzerinden 5000+ uygulamaya bağlanın ve iş akışlarını otomatize edin.",
+    category: 'Otomasyon', tier: 'pro', popular: true, icon: 'Zapier', iconBg: '#fff3ef',
+  },
+  {
+    id: 'slack',
+    name: 'Slack',
+    desc: 'Raporları ve analizleri Slack kanallarına otomatik olarak gönderin.',
+    category: 'İletişim', tier: 'pro', popular: true, icon: 'Slack', iconBg: '#f8f0f8',
+  },
+  {
+    id: 'airtable',
+    name: 'Airtable',
+    desc: 'Airtable tabloları ile Mocksheets arasında veri senkronizasyonu sağlayın.',
+    category: 'Üretkenlik', tier: 'pro', icon: 'Airtable', iconBg: '#fffbeb',
+  },
+  {
+    id: 'make',
+    name: 'Make',
+    desc: 'Make senaryolarıyla karmaşık otomasyon iş akışları ve veri pipeline\'ları oluşturun.',
+    category: 'Otomasyon', tier: 'pro', icon: 'Make', iconBg: '#f3e8ff',
+  },
+  {
+    id: 'google-drive',
+    name: 'Google Drive',
+    desc: "Google Drive'daki Excel ve CSV dosyalarına doğrudan erişin ve içe aktarın.",
+    category: 'Depolama', tier: 'free', icon: 'GoogleDrive', iconBg: '#f0f4ff',
+  },
+  {
+    id: 'ms-excel',
+    name: 'Microsoft Excel',
+    desc: "OneDrive ve SharePoint'teki Excel dosyalarını içe aktarın.",
+    category: 'Üretkenlik', tier: 'pro', popular: true, icon: 'MicrosoftExcel', iconBg: '#e8f5e9',
+  },
+  {
+    id: 'ms-teams',
+    name: 'Microsoft Teams',
+    desc: 'Raporları ve analizleri Teams kanallarına otomatik olarak gönderin.',
+    category: 'İletişim', tier: 'pro', icon: 'MicrosoftTeams', iconBg: '#eeeffb',
+  },
+  {
+    id: 'webhook',
+    name: 'Webhook',
+    desc: "Herhangi bir uygulamaya özel webhook'lar ile veri gönderin veya alın.",
+    category: 'Otomasyon', tier: 'pro', icon: 'Webhook', iconBg: '#fff3ef',
+  },
+  {
+    id: 'linear',
+    name: 'Linear',
+    desc: 'Linear projelerinizdeki görev verilerini analiz edin ve raporlayın.',
+    category: 'Üretkenlik', tier: 'pro', comingSoon: true, icon: 'Linear', iconBg: '#eeeeff',
+  },
+  {
+    id: 'hubspot',
+    name: 'HubSpot',
+    desc: 'CRM verilerinizi analiz edin ve müşteri raporları oluşturun.',
+    category: 'CRM', tier: 'pro', comingSoon: true, icon: 'HubSpot', iconBg: '#fff3f0',
+  },
+  {
+    id: 'discord',
+    name: 'Discord',
+    desc: 'Analiz sonuçlarını Discord sunucularınıza ve kanallarınıza gönderin.',
+    category: 'İletişim', tier: 'pro', comingSoon: true, icon: 'Discord', iconBg: '#eef0ff',
+  },
+];
 
-function timeAgo(iso) {
-  if (!iso) return 'hiç tetiklenmedi';
-  const diff = Date.now() - new Date(iso).getTime();
-  const m = Math.floor(diff / 60000);
-  if (m < 1)  return 'az önce';
-  if (m < 60) return m + ' dakika önce';
-  const h = Math.floor(m / 60);
-  if (h < 24) return h + ' saat önce';
-  return Math.floor(h / 24) + ' gün önce';
-}
+const TWEAK_DEFAULTS = { theme: 'light', accentColor: '#7c5cff', viewMode: 'grid', showPopular: true, density: 'comfortable' };
 
-async function renderAutomationRules() {
-  const token = getToken();
-  if (!token) return;
-
-  try {
-    const res = await fetch(API + '/api/automations', {
-      headers: { Authorization: 'Bearer ' + token }
-    });
-    if (!res.ok) return;
-    const { rules } = await res.json();
-    _cachedRules = rules || [];
-    renderRuleList(_cachedRules);
-  } catch {}
-}
-
-function renderRuleList(rules) {
-  const list = document.getElementById('auto-list');
-  const empty = document.getElementById('auto-empty');
-  const badge = document.getElementById('auto-active-badge');
-  const count = document.getElementById('auto-active-count');
-
-  if (!rules.length) {
-    empty.style.display = '';
-    list.innerHTML = '';
-    list.appendChild(empty);
-    badge.style.display = 'none';
-    return;
-  }
-
-  const active = rules.filter(r => r.enabled).length;
-  count.textContent = active;
-  badge.style.display = active ? '' : 'none';
-
-  list.innerHTML = rules.map(rule => {
-    const tc = rule.trigger_config || {};
-    const opLabel = OPERATORS[tc.operator] || tc.operator;
-    const intLabel = INT_LABELS[rule.integration] || rule.integration;
-    const lastFiredText = timeAgo(rule.last_fired);
-    const disabled = !rule.enabled ? ' disabled' : '';
-
-    return `<div class="auto-rule-card${rule.enabled ? '' : ' disabled'}">
-      <label class="auto-toggle">
-        <input type="checkbox" ${rule.enabled ? 'checked' : ''} onchange="toggleRule('${rule.id}', this.checked)">
-        <span class="auto-toggle-slider"></span>
-      </label>
-      <div class="auto-rule-info">
-        <div class="auto-rule-name">${escHtml(rule.name)}</div>
-        <div class="auto-rule-meta">
-          <span class="auto-rule-tag">${escHtml(intLabel)}</span>
-          <span>${escHtml(tc.column || '')} ${escHtml(opLabel)} ${tc.value !== undefined && tc.value !== '' ? escHtml(String(tc.value)) : ''}</span>
-          <span style="color:rgba(255,255,255,0.2)">·</span>
-          <span>Son: ${lastFiredText}</span>
+function ConnectModal({ integration, onClose, onConfirm }) {
+  const IconComp = Icon[integration.icon];
+  return (
+    <div className="modal-overlay" onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
+      <div className="modal-box">
+        <div className="modal-header">
+          <div className="card-icon" style={{ background: integration.iconBg, width: 44, height: 44, borderRadius: 10 }}>
+            {IconComp ? <IconComp /> : '🔗'}
+          </div>
+          <span className="modal-title">{integration.name} Bağla</span>
+          <button className="modal-close" onClick={onClose}>×</button>
+        </div>
+        <p className="modal-desc">
+          {integration.name} hesabınızı Mocksheets ile bağlamak için yetkilendirme gerekiyor.
+          Bağlandıktan sonra verilerinizi içe aktarabilir, dışa aktarabilir ve otomatize edebilirsiniz.
+        </p>
+        <div className="modal-actions">
+          <button className="modal-btn modal-btn-secondary" onClick={onClose}>Vazgeç</button>
+          <button className="modal-btn modal-btn-primary" onClick={onConfirm}>Bağlan →</button>
         </div>
       </div>
-      <div class="auto-rule-actions">
-        <button onclick="editRule('${rule.id}')">Düzenle</button>
-        <button class="btn-danger" onclick="removeRule('${rule.id}')">Sil</button>
-      </div>
-    </div>`;
-  }).join('');
+    </div>
+  );
 }
 
-function escHtml(str) {
-  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
+function IntegrationCard({ integration, connected, onConnect, onDisconnect, listView }) {
+  const isConnected = connected.has(integration.id);
+  const ref = useRef(null);
+  const IconComp = Icon[integration.icon];
 
-async function toggleRule(id, enabled) {
-  const token = getToken();
-  if (!token) return;
-  try {
-    await fetch(API + '/api/automations/' + id, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
-      body: JSON.stringify({ enabled })
-    });
-    const idx = _cachedRules.findIndex(r => r.id === id);
-    if (idx >= 0) { _cachedRules[idx].enabled = enabled; renderRuleList(_cachedRules); }
-  } catch {}
-}
-
-async function removeRule(id) {
-  if (!confirm('Bu kuralı silmek istediğinizden emin misiniz?')) return;
-  const token = getToken();
-  if (!token) return;
-  try {
-    await fetch(API + '/api/automations/' + id, {
-      method: 'DELETE',
-      headers: { Authorization: 'Bearer ' + token }
-    });
-    _cachedRules = _cachedRules.filter(r => r.id !== id);
-    renderRuleList(_cachedRules);
-  } catch {}
-}
-
-function openAutoModal(prefill) {
-  const overlay = document.getElementById('auto-modal-overlay');
-  overlay.classList.add('open');
-  document.getElementById('auto-modal-title').textContent = 'Yeni Otomasyon Kuralı';
-  document.getElementById('auto-edit-id').value = '';
-  document.getElementById('auto-name').value = prefill?.name || '';
-  document.getElementById('auto-integration').value = prefill?.integration || 'make';
-  document.getElementById('auto-col').value = prefill?.trigger_config?.column || '';
-  document.getElementById('auto-op').value = prefill?.trigger_config?.operator || 'less_than';
-  document.getElementById('auto-value').value = prefill?.trigger_config?.value ?? '';
-  document.getElementById('auto-event').value = prefill?.action_config?.event || '';
-  document.getElementById('auto-msg').value = prefill?.action_config?.message || '';
-  document.getElementById('auto-cols').value = (prefill?.action_config?.include_columns || []).join(', ');
-  document.getElementById('auto-throttle').value = String(prefill?.throttle_seconds ?? 3600);
-  document.getElementById('auto-modal-alert').className = 'alert';
-  document.getElementById('auto-modal-alert').textContent = '';
-}
-
-function editRule(id) {
-  const rule = _cachedRules.find(r => r.id === id);
-  if (!rule) return;
-  openAutoModal(rule);
-  document.getElementById('auto-modal-title').textContent = 'Kuralı Düzenle';
-  document.getElementById('auto-edit-id').value = id;
-}
-
-function closeAutoModal() {
-  document.getElementById('auto-modal-overlay').classList.remove('open');
-}
-
-async function saveAutoRule() {
-  const token = getToken();
-  if (!token) return;
-
-  const name = document.getElementById('auto-name').value.trim();
-  const integration = document.getElementById('auto-integration').value;
-  const col = document.getElementById('auto-col').value.trim();
-  const op = document.getElementById('auto-op').value;
-  const val = document.getElementById('auto-value').value.trim();
-  const event = document.getElementById('auto-event').value.trim() || 'auto_trigger';
-  const msg = document.getElementById('auto-msg').value.trim();
-  const colsRaw = document.getElementById('auto-cols').value.trim();
-  const throttle = parseInt(document.getElementById('auto-throttle').value);
-  const editId = document.getElementById('auto-edit-id').value;
-
-  const alertEl = document.getElementById('auto-modal-alert');
-  if (!name || !col) {
-    alertEl.className = 'alert err show';
-    alertEl.textContent = '✗ Kural adı ve sütun adı zorunludur';
-    return;
+  function handleMouseMove(e) {
+    if (!ref.current) return;
+    const rect = ref.current.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width * 100).toFixed(1) + '%';
+    const y = ((e.clientY - rect.top) / rect.height * 100).toFixed(1) + '%';
+    ref.current.style.setProperty('--mx', x);
+    ref.current.style.setProperty('--my', y);
   }
 
-  const rule = {
-    name, integration,
-    trigger_config: { type: 'cell_condition', column: col, operator: op, value: val },
-    action_config: {
-      event, message: msg,
-      include_columns: colsRaw ? colsRaw.split(',').map(s => s.trim()).filter(Boolean) : []
-    },
-    throttle_seconds: throttle
-  };
+  const iconEl = (
+    <div
+      className="card-icon"
+      style={{ background: integration.iconBg, width: listView ? 40 : 48, height: listView ? 40 : 48, borderRadius: listView ? 10 : 12, flexShrink: 0 }}
+    >
+      {IconComp ? <IconComp /> : '🔗'}
+    </div>
+  );
 
-  try {
-    let res, data;
-    if (editId) {
-      res = await fetch(API + '/api/automations/' + editId, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
-        body: JSON.stringify(rule)
-      });
-    } else {
-      res = await fetch(API + '/api/automations', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
-        body: JSON.stringify(rule)
-      });
-    }
-    data = await res.json();
-    if (!res.ok) { alertEl.className = 'alert err show'; alertEl.textContent = '✗ ' + (data.error || 'Hata'); return; }
-
-    closeAutoModal();
-    await renderAutomationRules();
-  } catch (e) {
-    alertEl.className = 'alert err show';
-    alertEl.textContent = '✗ ' + e.message;
-  }
-}
-
-// ── AI Öneri ──────────────────────────────────────────────────────────────────
-async function triggerAutoSuggest(integration) {
-  const token = getToken();
-  if (!token) return;
-
-  // Tablo başlıklarını app.html localStorage'dan al
-  const sheetRaw = localStorage.getItem('sheet_headers') || localStorage.getItem('mocksheets_headers');
-  let headers = [];
-  try { headers = JSON.parse(sheetRaw) || []; } catch {}
-  if (!headers.length) return;
-
-  try {
-    const res = await fetch(API + '/api/automations/suggest', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
-      body: JSON.stringify({ headers, integration })
-    });
-    if (!res.ok) return;
-    const data = await res.json();
-    if (!data.suggestions?.length) return;
-
-    _pendingSuggestions = data.suggestions.map(s => ({ ...s, integration }));
-
-    const banner = document.getElementById('auto-suggest-banner');
-    document.getElementById('auto-suggest-title').textContent =
-      (data.business_label || 'İş türü') + ' tespit edildi — ' + data.suggestions.length + ' hazır kural önerisi var';
-    document.getElementById('auto-suggest-desc').textContent =
-      data.suggestions.map(s => s.name).join(' · ');
-    banner.classList.remove('hidden');
-  } catch {}
-}
-
-async function applySuggestions() {
-  const token = getToken();
-  if (!token || !_pendingSuggestions.length) return;
-
-  for (const s of _pendingSuggestions) {
-    try {
-      await fetch(API + '/api/automations', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
-        body: JSON.stringify({
-          name: s.name,
-          integration: s.integration,
-          trigger_config: s.trigger_config,
-          action_config: s.action_config,
-          throttle_seconds: s.throttle_seconds || 3600
-        })
-      });
-    } catch {}
-  }
-
-  dismissSuggestion();
-  await renderAutomationRules();
-}
-
-function dismissSuggestion() {
-  _pendingSuggestions = [];
-  document.getElementById('auto-suggest-banner').classList.add('hidden');
-}
-</script>
-
-<!-- Beni Haberdar Et Modal -->
-<div id="notifyModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);align-items:center;justify-content:center;">
-  <div style="background:#111118;border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:36px;max-width:420px;width:90%;text-align:center;box-shadow:0 32px 80px rgba(0,0,0,0.6);position:relative;">
-    <button onclick="document.getElementById('notifyModal').style.display='none'" style="position:absolute;top:14px;right:16px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:6px;width:28px;height:28px;font-size:14px;cursor:pointer;color:#64748B;display:flex;align-items:center;justify-content:center;">✕</button>
-    <div style="font-size:48px;margin-bottom:14px">🔔</div>
-    <div style="font-size:20px;font-weight:800;margin-bottom:8px;color:#F1F5F9" id="notify-title">Yakında Geliyor!</div>
-    <div style="font-size:14px;color:#475569;margin-bottom:20px">Bu entegrasyon hazır olduğunda sizi haberdar edelim.</div>
-    <input type="email" id="notify-email" placeholder="E-posta adresiniz"
-           style="width:100%;padding:11px 14px;border:1px solid rgba(255,255,255,0.1);border-radius:10px;font-size:14px;margin-bottom:12px;font-family:inherit;outline:none;box-sizing:border-box;background:rgba(255,255,255,0.05);color:#F1F5F9;">
-    <button onclick="submitNotify()" style="width:100%;padding:12px;background:linear-gradient(135deg,#6366F1,#8B5CF6);color:white;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;box-shadow:0 4px 16px rgba(99,102,241,0.3);">
-      🔔 Beni Haberdar Et
+  const connectBtn = integration.comingSoon ? (
+    <button className="connect-btn btn-soon" disabled>Yakında</button>
+  ) : isConnected ? (
+    <button className="connect-btn btn-disconnect" onClick={e => { e.stopPropagation(); onDisconnect(integration.id); }}>
+      Bağlantıyı Kes
     </button>
-    <div id="notify-success" style="display:none;margin-top:12px;color:#34D399;font-size:13px;font-weight:500;">
-      ✓ Kaydedildi! Hazır olduğunda e-posta göndereceğiz.
-    </div>
-  </div>
-</div>
-<script>
-function openNotifyModal(name) {
-  document.getElementById('notify-title').textContent = name + ' — Yakında Geliyor!';
-  document.getElementById('notify-email').value = '';
-  document.getElementById('notify-success').style.display = 'none';
-  var modal = document.getElementById('notifyModal');
-  modal.style.display = 'flex';
-  modal.onclick = function(e) { if (e.target === modal) modal.style.display = 'none'; };
-}
-function submitNotify() {
-  var email = document.getElementById('notify-email').value;
-  var re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!re.test(email)) {
-    document.getElementById('notify-email').style.borderColor = '#EF4444';
-    return;
+  ) : (
+    <button className="connect-btn btn-connect" onClick={e => { e.stopPropagation(); onConnect(integration.id); }}>
+      Bağlan
+    </button>
+  );
+
+  const cardClass = `int-card${isConnected ? ' connected' : ''}${integration.comingSoon ? ' coming-soon' : ''}`;
+
+  if (listView) {
+    return (
+      <div
+        ref={ref}
+        className={cardClass}
+        onMouseMove={handleMouseMove}
+        style={{ flexDirection: 'row', alignItems: 'center', gap: 16, padding: '14px 20px' }}
+      >
+        {iconEl}
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div className="card-name" style={{ marginBottom: 3 }}>{integration.name}</div>
+          <div className="card-desc">{integration.desc}</div>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+          <span className="card-cat" style={{ marginRight: 4 }}>{integration.category}</span>
+          {isConnected && <span className="badge badge-connected">✓ Bağlı</span>}
+          {!isConnected && integration.popular && <span className="badge badge-popular">⭐</span>}
+          {integration.comingSoon
+            ? <span className="badge badge-soon">Yakında</span>
+            : <span className={`badge badge-${integration.tier}`}>{integration.tier === 'free' ? 'Ücretsiz' : 'Pro'}</span>
+          }
+          {connectBtn}
+        </div>
+      </div>
+    );
   }
-  var list = JSON.parse(localStorage.getItem('notify_list') || '[]');
-  list.push({ email: email, date: new Date().toISOString() });
-  localStorage.setItem('notify_list', JSON.stringify(list));
-  document.getElementById('notify-success').style.display = 'block';
-  setTimeout(function() { document.getElementById('notifyModal').style.display = 'none'; }, 2000);
+
+  return (
+    <div ref={ref} className={cardClass} onMouseMove={handleMouseMove}>
+      <div className="card-top">
+        {iconEl}
+        <div className="card-badges">
+          {isConnected && <span className="badge badge-connected">✓ Bağlı</span>}
+          {!isConnected && integration.popular && <span className="badge badge-popular">⭐ Popüler</span>}
+          {integration.comingSoon
+            ? <span className="badge badge-soon">Yakında</span>
+            : <span className={`badge badge-${integration.tier}`}>{integration.tier === 'free' ? 'Ücretsiz' : 'Pro'}</span>
+          }
+        </div>
+      </div>
+      <div className="card-body">
+        <div className="card-name">{integration.name}</div>
+        <div className="card-desc">{integration.desc}</div>
+      </div>
+      <div className="card-footer">
+        <span className="card-cat">{integration.category}</span>
+        {connectBtn}
+      </div>
+    </div>
+  );
 }
+
+function App() {
+  const [tweaks, setTweaksState] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ms-int-theme');
+      return { ...TWEAK_DEFAULTS, theme: saved || 'light' };
+    } catch { return { ...TWEAK_DEFAULTS }; }
+  });
+  const setTweaks = (key, val) => setTweaksState(prev => ({ ...prev, [key]: val }));
+
+  const [query, setQuery] = useState('');
+  const [activeCat, setActiveCat] = useState('Tümü');
+  const [view, setView] = useState('grid');
+  const [connected, setConnected] = useState(new Set());
+  const [modal, setModal] = useState(null);
+  const searchRef = useRef(null);
+
+  useEffect(() => {
+    try { localStorage.setItem('ms-int-theme', tweaks.theme); } catch {}
+    document.documentElement.setAttribute('data-theme', tweaks.theme);
+  }, [tweaks.theme]);
+
+  useEffect(() => {
+    function onKey(e) {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        if (searchRef.current) searchRef.current.focus();
+      }
+      if (e.key === 'Escape') setModal(null);
+    }
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
+  const filtered = INTEGRATIONS.filter(it => {
+    const matchCat = activeCat === 'Tümü' || it.category === activeCat;
+    const q = query.toLowerCase();
+    const matchQ = !q || it.name.toLowerCase().includes(q) || it.desc.toLowerCase().includes(q) || it.category.toLowerCase().includes(q);
+    return matchCat && matchQ;
+  });
+
+  function handleConnect(id) {
+    // TODO: POST /api/integrations/connect ile OAuth akışı başlat
+    setModal(INTEGRATIONS.find(i => i.id === id) || null);
+  }
+
+  function handleDisconnect(id) {
+    // TODO: DELETE /api/integrations/:id
+    setConnected(prev => { const s = new Set(prev); s.delete(id); return s; });
+  }
+
+  function confirmConnect() {
+    if (!modal) return;
+    // TODO: POST /api/integrations/connect ile OAuth akışı başlat
+    setConnected(prev => new Set([...prev, modal.id]));
+    setModal(null);
+  }
+
+  const availableCount = INTEGRATIONS.filter(i => !i.comingSoon).length;
+  const soonCount = INTEGRATIONS.filter(i => i.comingSoon).length;
+
+  return (
+    <>
+      <nav className="int-nav">
+        <a className="nav-logo" href="index.html">
+          <img src="images/logo-wordmark.png" alt="Mocksheets" />
+        </a>
+        <div style={{ flex: 1 }} />
+        <div className="search-wrap">
+          <span className="search-icon">🔍</span>
+          <input
+            ref={searchRef}
+            className="search-input"
+            type="text"
+            placeholder="Entegrasyon ara..."
+            value={query}
+            onChange={e => setQuery(e.target.value)}
+          />
+          {!query && <span className="search-kbd">⌘K</span>}
+        </div>
+        <button
+          className="theme-btn"
+          onClick={() => setTweaks('theme', tweaks.theme === 'light' ? 'dark' : 'light')}
+          title="Tema değiştir"
+        >
+          {tweaks.theme === 'light' ? '🌙' : '☀️'}
+        </button>
+        <a className="back-btn" href="app.html">← Uygulamaya Dön</a>
+      </nav>
+
+      <div className="int-main">
+        <div className="int-header">
+          <h1>Entegrasyonlar</h1>
+          <p>Mocksheets'i favori araçlarınızla bağlayın ve iş akışlarınızı otomatize edin</p>
+        </div>
+
+        <div className="stats-bar">
+          <span className="stat"><strong>{availableCount}</strong> entegrasyon mevcut</span>
+          <span className="stat"><strong>{connected.size}</strong> bağlı</span>
+          <span className="stat"><strong>{soonCount}</strong> yakında</span>
+        </div>
+
+        <div className="int-toolbar">
+          <div className="cat-pills">
+            {CATEGORIES.map(cat => (
+              <button
+                key={cat}
+                className={'cat-pill' + (activeCat === cat ? ' active' : '')}
+                onClick={() => setActiveCat(cat)}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+          <div className="view-toggle">
+            <button
+              className={'view-btn' + (view === 'grid' ? ' active' : '')}
+              onClick={() => setView('grid')}
+              title="Izgara görünüm"
+            >⊞</button>
+            <button
+              className={'view-btn' + (view === 'list' ? ' active' : '')}
+              onClick={() => setView('list')}
+              title="Liste görünüm"
+            >☰</button>
+          </div>
+        </div>
+
+        {filtered.length === 0 ? (
+          <div className="empty-state">
+            <p>"{query}" için entegrasyon bulunamadı.</p>
+          </div>
+        ) : (
+          <div className={view === 'grid' ? 'cards-grid' : 'cards-list'}>
+            {filtered.map(it => (
+              <IntegrationCard
+                key={it.id}
+                integration={it}
+                connected={connected}
+                onConnect={handleConnect}
+                onDisconnect={handleDisconnect}
+                listView={view === 'list'}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+
+      {modal && (
+        <ConnectModal
+          integration={modal}
+          onClose={() => setModal(null)}
+          onConfirm={confirmConnect}
+        />
+      )}
+    </>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />);
 </script>
 </body>
 </html>
