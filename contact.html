@@ -134,7 +134,7 @@ body{background:#F7F7F5}
       </button>
 
       <div class="success-msg" id="contact-success">
-        ✓ Mesajınız alındı! En kısa sürede yanıt vereceğiz.
+        📧 Mail istemciniz açılıyor. Açılmazsa doğrudan <a href="mailto:helpmocksheets@gmail.com" style="color:#065F46;font-weight:700;">helpmocksheets@gmail.com</a> adresine yazabilirsiniz.
       </div>
     </div>
   </div>
@@ -163,13 +163,9 @@ function submitContactForm() {
   var mailBody = encodeURIComponent(
     message + '\n\n---\nGönderen: ' + name + '\nE-posta: ' + email
   );
-  window.location.href = 'mailto:info@mocksheets.com?subject=' + mailSubject + '&body=' + mailBody;
+  window.open('mailto:info@mocksheets.com?subject=' + mailSubject + '&body=' + mailBody);
 
   document.getElementById('contact-success').style.display = 'block';
-  document.getElementById('contact-name').value = '';
-  document.getElementById('contact-email').value = '';
-  document.getElementById('contact-message').value = '';
-  document.getElementById('contact-subject').value = '';
 }
 </script>
 </body>
