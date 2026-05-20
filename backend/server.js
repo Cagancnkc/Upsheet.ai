@@ -89,6 +89,7 @@ const UPSHEET_KNOWLEDGE_BASE = {
   }
 };
 
+const helmet = require('helmet');
 const app    = express();
 const PORT = process.env.PORT || 3001;
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
@@ -103,6 +104,7 @@ const allowedOrigins = [
   process.env.CLIENT_URL
 ].filter(Boolean);
 
+app.use(helmet({ crossOriginResourcePolicy: false }));
 app.use(cors({
   origin: (origin, callback) => {
     if (!origin || allowedOrigins.includes(origin)) {
@@ -133,7 +135,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/health', (req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString(), anthropic: !!process.env.ANTHROPIC_API_KEY });
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
 app.post('/api/chat', checkLimit, async (req, res) => {
@@ -217,20 +219,6 @@ app.get('/api/usage', async (req, res) => {
   });
 });
 
-// ── Test endpoint (auth'suz, geliştirme/debug) ───────────────────────────────
-app.post('/api/test-chat', async (req, res) => {
-  try {
-    const { message, sheetContext } = req.body;
-    if (!message) return res.status(400).json({ error: 'message gerekli' });
-    const result = await processExcelCommand(
-      message,
-      sheetContext || [['Ad', 'Fiyat'], ['Masa', '100'], ['Sandalye', '50']]
-    );
-    res.json(result);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
 
 // ── Sentiment Analysis Endpoint ──────────────────────────────────────────────
 app.post('/api/sentiment', checkLimit, async (req, res) => {

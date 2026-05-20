@@ -102,12 +102,22 @@ body{background:#09090b;color:#e2e8f0;font-family:'Inter',sans-serif;min-height:
 
   function showError(msg) {
     var ls = document.getElementById('loadState');
-    ls.innerHTML =
-      '<div id="errCard">' +
-        '<h2>⚠️ Dosya Açılamadı</h2>' +
-        '<p>' + msg + '</p>' +
-        '<a href="index.html" class="btn btn-ghost" style="margin-top:20px;display:inline-flex;">Ana Sayfa</a>' +
-      '</div>';
+    var div = document.createElement('div');
+    div.id = 'errCard';
+    var h2 = document.createElement('h2');
+    h2.textContent = '⚠️ Dosya Açılamadı';
+    var p = document.createElement('p');
+    p.textContent = msg;
+    var a = document.createElement('a');
+    a.href = 'index.html';
+    a.className = 'btn btn-ghost';
+    a.style.cssText = 'margin-top:20px;display:inline-flex;';
+    a.textContent = 'Ana Sayfa';
+    div.appendChild(h2);
+    div.appendChild(p);
+    div.appendChild(a);
+    ls.innerHTML = '';
+    ls.appendChild(div);
   }
 
   function renderGrid(data) {

@@ -246,6 +246,10 @@ router.post('/notion/export', async (req, res) => {
   res.json({ success: count > 0, count, total: toExport.length, errors: errors.slice(0, 5) });
 });
 
+function isPrivateHost(hostname) {
+  return /^(localhost|127\.|10\.|172\.(1[6-9]|2\d|3[01])\.|192\.168\.|169\.254\.|0\.|::1$|fc00:|fe80:)/i.test(hostname);
+}
+
 // ── Webhook: Send ────────────────────────────────
 router.post('/webhook/send', async (req, res) => {
   const { url, event, data, secret } = req.body;
@@ -255,6 +259,9 @@ router.post('/webhook/send', async (req, res) => {
     const parsed = new URL(url);
     if (!['http:', 'https:'].includes(parsed.protocol)) {
       return res.status(400).json({ error: 'Geçersiz URL protokolü' });
+    }
+    if (isPrivateHost(parsed.hostname)) {
+      return res.status(400).json({ error: 'İç ağ adreslerine istek yapılamaz' });
     }
   } catch {
     return res.status(400).json({ error: 'Geçersiz URL formatı' });
@@ -432,9 +439,10 @@ router.get('/drive/auth', (req, res) => {
 
 // ── Google Drive: OAuth2 callback ───────────────
 router.get('/drive/callback', async (req, res) => {
+  const allowedOrigin = process.env.FRONTEND_URL || 'https://mocksheets.com';
   const { code, error } = req.query;
   if (error || !code) {
-    return res.send(`<script>window.opener.postMessage({type:'drive_auth',error:'${error || 'cancelled'}'},'*');window.close();</script>`);
+    return res.send(`<script>window.opener.postMessage({type:'drive_auth',error:${JSON.stringify(error || 'cancelled')}},${JSON.stringify(allowedOrigin)});window.close();</script>`);
   }
 
   const clientId = process.env.GOOGLE_CLIENT_ID;
@@ -449,12 +457,12 @@ router.get('/drive/callback', async (req, res) => {
     });
     const token = await r.json();
     if (token.access_token) {
-      res.send(`<script>window.opener.postMessage({type:'drive_auth',token:${JSON.stringify(token.access_token)}},'*');window.close();</script>`);
+      res.send(`<script>window.opener.postMessage({type:'drive_auth',token:${JSON.stringify(token.access_token)}},${JSON.stringify(allowedOrigin)});window.close();</script>`);
     } else {
-      res.send(`<script>window.opener.postMessage({type:'drive_auth',error:'Token alınamadı'},'*');window.close();</script>`);
+      res.send(`<script>window.opener.postMessage({type:'drive_auth',error:'Token alınamadı'},${JSON.stringify(allowedOrigin)});window.close();</script>`);
     }
   } catch (err) {
-    res.send(`<script>window.opener.postMessage({type:'drive_auth',error:'${err.message}'},'*');window.close();</script>`);
+    res.send(`<script>window.opener.postMessage({type:'drive_auth',error:${JSON.stringify(err.message)}},${JSON.stringify(allowedOrigin)});window.close();</script>`);
   }
 });
 
@@ -617,10 +625,11 @@ router.get('/sheets/auth', (req, res) => {
 
 // ── Google Sheets: OAuth2 callback ──────────────
 router.get('/sheets/callback', async (req, res) => {
+  const allowedOrigin = process.env.FRONTEND_URL || 'https://mocksheets.com';
   const { code, error } = req.query;
   if (error || !code) {
     return res.send(
-      `<script>window.opener?.postMessage({type:'sheets_auth',error:'${error || 'cancelled'}'},'*');window.close();</script>`
+      `<script>window.opener?.postMessage({type:'sheets_auth',error:${JSON.stringify(error || 'cancelled')}},${JSON.stringify(allowedOrigin)});window.close();</script>`
     );
   }
 
@@ -638,16 +647,17 @@ router.get('/sheets/callback', async (req, res) => {
     const tokens = await r.json();
     if (tokens.access_token) {
       res.send(
-        `<script>window.opener?.postMessage({type:'sheets_auth',tokens:${JSON.stringify(tokens)}},'*');window.close();</script>`
+        `<script>window.opener?.postMessage({type:'sheets_auth',tokens:${JSON.stringify(tokens)}},${JSON.stringify(allowedOrigin)});window.close();</script>`
       );
     } else {
+      const errMsg = tokens.error_description || tokens.error || 'Token alınamadı';
       res.send(
-        `<script>window.opener?.postMessage({type:'sheets_auth',error:'Token alınamadı: ${tokens.error_description || tokens.error || ''}'},'*');window.close();</script>`
+        `<script>window.opener?.postMessage({type:'sheets_auth',error:${JSON.stringify(errMsg)}},${JSON.stringify(allowedOrigin)});window.close();</script>`
       );
     }
   } catch (err) {
     res.send(
-      `<script>window.opener?.postMessage({type:'sheets_auth',error:'${err.message}'},'*');window.close();</script>`
+      `<script>window.opener?.postMessage({type:'sheets_auth',error:${JSON.stringify(err.message)}},${JSON.stringify(allowedOrigin)});window.close();</script>`
     );
   }
 });
@@ -738,10 +748,11 @@ router.get('/excel/auth', (req, res) => {
 
 // OAuth2 callback — token alır, popup'a postMessage ile iletir
 router.get('/excel/callback', async (req, res) => {
+  const allowedOrigin = process.env.FRONTEND_URL || 'https://mocksheets.com';
   const { code, error } = req.query;
   if (error || !code) {
     return res.send(
-      `<script>window.opener?.postMessage({type:'excel_auth',error:'${error || 'cancelled'}'},'*');window.close();</script>`
+      `<script>window.opener?.postMessage({type:'excel_auth',error:${JSON.stringify(error || 'cancelled')}},${JSON.stringify(allowedOrigin)});window.close();</script>`
     );
   }
 
@@ -767,17 +778,17 @@ router.get('/excel/callback', async (req, res) => {
     if (tokens.access_token) {
       const expiry = Date.now() + (tokens.expires_in || 3600) * 1000;
       res.send(
-        `<script>window.opener?.postMessage({type:'excel_auth',tokens:${JSON.stringify({ access_token: tokens.access_token, refresh_token: tokens.refresh_token, expiry })}}, '*');window.close();</script>`
+        `<script>window.opener?.postMessage({type:'excel_auth',tokens:${JSON.stringify({ access_token: tokens.access_token, refresh_token: tokens.refresh_token, expiry })}},${JSON.stringify(allowedOrigin)});window.close();</script>`
       );
     } else {
       const msg = tokens.error_description || tokens.error || 'Token alınamadı';
       res.send(
-        `<script>window.opener?.postMessage({type:'excel_auth',error:${JSON.stringify(msg)}},'*');window.close();</script>`
+        `<script>window.opener?.postMessage({type:'excel_auth',error:${JSON.stringify(msg)}},${JSON.stringify(allowedOrigin)});window.close();</script>`
       );
     }
   } catch (err) {
     res.send(
-      `<script>window.opener?.postMessage({type:'excel_auth',error:${JSON.stringify(err.message)}},'*');window.close();</script>`
+      `<script>window.opener?.postMessage({type:'excel_auth',error:${JSON.stringify(err.message)}},${JSON.stringify(allowedOrigin)});window.close();</script>`
     );
   }
 });
