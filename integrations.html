@@ -247,12 +247,197 @@ body{
 .modal-btn-primary:hover{opacity:.88;}
 .modal-btn-secondary{background:var(--surface2);color:var(--text);border:1px solid var(--border);}
 .modal-btn-secondary:hover{border-color:var(--brand);color:var(--brand);}
+
+.modal-form-group{margin-bottom:14px;}
+.modal-label{display:block;font-size:12px;font-weight:600;color:var(--text-muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em;}
+.modal-input{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--surface2);color:var(--text);font-size:13px;font-family:inherit;outline:none;transition:border-color .15s;}
+.modal-input:focus{border-color:var(--brand);background:var(--surface);}
+.modal-input::placeholder{color:var(--text-muted);}
+.modal-hint{font-size:11px;color:var(--text-muted);margin-top:4px;}
+.test-result{padding:8px 12px;border-radius:var(--radius-sm);font-size:12px;margin-bottom:12px;line-height:1.5;}
+.test-result.success{background:rgba(34,197,94,0.1);color:#15803d;border:1px solid #86efac;}
+.test-result.error{background:rgba(239,68,68,0.1);color:#b91c1c;border:1px solid #fca5a5;}
+.oauth-info{background:var(--brand-soft);border:1px solid rgba(124,92,255,0.2);border-radius:var(--radius-sm);padding:12px;font-size:13px;line-height:1.6;margin-bottom:16px;}
+.modal-actions{display:flex;gap:8px;}
+.btn-test{flex:none !important;background:var(--surface2) !important;color:var(--text) !important;border:1px solid var(--border) !important;padding:11px 14px !important;}
+.btn-test:hover:not(:disabled){border-color:var(--brand) !important;color:var(--brand) !important;}
+.btn-test:disabled,.modal-btn-primary:disabled{opacity:.5;cursor:default;}
 </style>
 </head>
 <body>
 <div id="root"></div>
 <script type="text/babel">
 const { useState, useEffect, useRef } = React;
+
+// ── Yardımcı fonksiyonlar ─────────────────────────────────────────────────────
+const BACKEND_URL = window.location.hostname === 'localhost'
+  ? 'http://localhost:3001'
+  : 'https://upsheet-ai.onrender.com';
+
+function getAuthToken() {
+  try {
+    const sbKey = Object.keys(localStorage).find(k => k.startsWith('sb-') && k.endsWith('-auth-token'));
+    if (sbKey) { const p = JSON.parse(localStorage.getItem(sbKey)); if (p?.access_token) return p.access_token; }
+    const raw = localStorage.getItem('sb-access-token') || localStorage.getItem('supabase.auth.token');
+    if (raw) { const p = JSON.parse(raw); return p?.access_token || p?.currentSession?.access_token || null; }
+    return null;
+  } catch { return null; }
+}
+
+// LocalStorage anahtar haritası (automations.js ile uyumlu)
+const STORAGE_KEY = {
+  'slack': 'int_slack', 'ms-teams': 'int_teams', 'make': 'int_make',
+  'zapier': 'int_zapier', 'webhook': 'int_webhook', 'notion': 'int_notion',
+  'airtable': 'int_airtable', 'google-sheets': 'int_sheets',
+  'google-drive': 'int_drive', 'ms-excel': 'int_excel',
+};
+
+// Her entegrasyon için form tanımı
+const INT_CONFIG = {
+  'slack':    { type:'webhook', fields:[{key:'url',label:'Webhook URL',placeholder:'https://hooks.slack.com/services/...'}] },
+  'ms-teams': { type:'webhook', fields:[{key:'url',label:'Webhook URL',placeholder:'https://outlook.office.com/webhook/...'}] },
+  'make':     { type:'webhook', fields:[{key:'url',label:'Make Webhook URL',placeholder:'https://hook.eu1.make.com/...'}] },
+  'zapier':   { type:'webhook', fields:[{key:'url',label:'Zap Webhook URL',placeholder:'https://hooks.zapier.com/hooks/catch/...'}] },
+  'webhook':  { type:'webhook', fields:[{key:'url',label:'Hedef URL',placeholder:'https://...'},{key:'secret',label:'İmza Sırrı (opsiyonel)',placeholder:'HMAC secret — boş bırakılabilir'}] },
+  'notion':   { type:'token',   fields:[{key:'token',label:'Notion Integration Token',placeholder:'secret_...',hint:'notion.so/my-integrations adresinden alın'},{key:'dbId',label:'Veritabanı ID',placeholder:'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',hint:'Notion veritabanı URL\'inden kopyalayın'}] },
+  'airtable': { type:'token',   fields:[{key:'token',label:'Personal Access Token',placeholder:'pat...',hint:'airtable.com/create/tokens adresinden oluşturun'},{key:'baseId',label:'Base ID',placeholder:'appXXXXXXXX'},{key:'tableName',label:'Tablo Adı',placeholder:'Table 1'}] },
+  'google-sheets': { type:'oauth', authPath:'/api/integrations/sheets/auth', label:'Google' },
+  'google-drive':  { type:'oauth', authPath:'/api/integrations/drive/auth',  label:'Google' },
+  'ms-excel':      { type:'oauth', authPath:'/api/integrations/excel/auth',   label:'Microsoft' },
+};
+
+async function testIntegration(id, form, token) {
+  const h = { 'Content-Type':'application/json', Authorization:`Bearer ${token}` };
+  const base = BACKEND_URL;
+  switch (id) {
+    case 'slack':
+      return fetch(`${base}/api/integrations/slack/test`,   { method:'POST', headers:h, body:JSON.stringify({ webhookUrl: form.url }) });
+    case 'ms-teams':
+      return fetch(`${base}/api/integrations/teams/test`,   { method:'POST', headers:h, body:JSON.stringify({ webhookUrl: form.url }) });
+    case 'make':
+      return fetch(`${base}/api/integrations/make/trigger`, { method:'POST', headers:h, body:JSON.stringify({ webhookUrl: form.url, event:'test', data:{test:true} }) });
+    case 'zapier':
+    case 'webhook':
+      return fetch(`${base}/api/integrations/webhook/send`, { method:'POST', headers:h, body:JSON.stringify({ url: form.url, secret: form.secret||'', event:'test', data:{test:true} }) });
+    case 'notion':
+      return fetch(`${base}/api/integrations/notion/test`,   { method:'POST', headers:h, body:JSON.stringify({ token: form.token, databaseId: form.dbId }) });
+    case 'airtable':
+      return fetch(`${base}/api/integrations/airtable/test`, { method:'POST', headers:h, body:JSON.stringify({ token: form.token, baseId: form.baseId, tableName: form.tableName||'Table 1' }) });
+    default: return null;
+  }
+}
+
+// ── Modal bileşeni ────────────────────────────────────────────────────────────
+function ConnectModal({ integration, onClose, onSave }) {
+  const cfg = INT_CONFIG[integration.id];
+  const storageKey = STORAGE_KEY[integration.id];
+  const [form, setForm] = useState(() => {
+    try { const s = storageKey && localStorage.getItem(storageKey); return s ? JSON.parse(s) : {}; }
+    catch { return {}; }
+  });
+  const [testing, setTesting] = useState(false);
+  const [testResult, setTestResult] = useState(null);
+  const [oauthWaiting, setOauthWaiting] = useState(false);
+  const IconComp = Icon[integration.icon];
+
+  const updateField = (key, val) => { setForm(prev => ({...prev,[key]:val})); setTestResult(null); };
+
+  async function handleTest() {
+    setTesting(true); setTestResult(null);
+    try {
+      const res = await testIntegration(integration.id, form, getAuthToken());
+      if (!res) { setTestResult({ok:false,msg:'Bu entegrasyon için test desteklenmiyor.'}); return; }
+      const data = await res.json().catch(() => ({}));
+      setTestResult(res.ok ? {ok:true,msg:data.message||'Bağlantı başarılı!'} : {ok:false,msg:data.error||'Bağlantı başarısız.'});
+    } catch(e) { setTestResult({ok:false,msg:e.message}); }
+    finally { setTesting(false); }
+  }
+
+  function handleOAuth() {
+    const popup = window.open(`${BACKEND_URL}${cfg.authPath}`, 'oauth', 'width=520,height=640');
+    setOauthWaiting(true);
+    function onMsg(e) {
+      if (!e.data || typeof e.data !== 'object') return;
+      const { access_token, refresh_token, expiry, token } = e.data;
+      const at = access_token || token;
+      if (!at) return;
+      const saved = { access_token:at, refresh_token:refresh_token||null, expiry:expiry||null };
+      if (storageKey) localStorage.setItem(storageKey, JSON.stringify(saved));
+      window.removeEventListener('message', onMsg);
+      setOauthWaiting(false);
+      onSave(integration.id, saved);
+    }
+    window.addEventListener('message', onMsg);
+    const poll = setInterval(() => { try { if (popup.closed) { clearInterval(poll); window.removeEventListener('message', onMsg); setOauthWaiting(false); } } catch {} }, 500);
+  }
+
+  function handleSave() {
+    if (storageKey) localStorage.setItem(storageKey, JSON.stringify(form));
+    onSave(integration.id, form);
+  }
+
+  const isOauth = cfg?.type === 'oauth';
+  const hasRequiredFields = !cfg?.fields || cfg.fields.filter(f=>f.key!=='secret'&&f.key!=='tableName').every(f=>form[f.key]);
+
+  return (
+    <div className="modal-overlay" onClick={e=>{if(e.target===e.currentTarget)onClose();}}>
+      <div className="modal-box">
+        <div className="modal-header">
+          <div className="card-icon" style={{background:integration.iconBg,width:44,height:44,borderRadius:10}}>
+            {IconComp ? <IconComp/> : '🔗'}
+          </div>
+          <span className="modal-title">{integration.name} Bağla</span>
+          <button className="modal-close" onClick={onClose}>×</button>
+        </div>
+
+        {isOauth ? (
+          <>
+            <div className="oauth-info">
+              {integration.name} hesabınızı güvenli OAuth 2.0 ile bağlayın. Aşağıdaki butona tıkladığınızda açılan pencerede <strong>{cfg.label}</strong> hesabınızla giriş yapın ve gerekli izinleri verin.
+            </div>
+            <div className="modal-actions">
+              <button className="modal-btn modal-btn-secondary" onClick={onClose}>Vazgeç</button>
+              <button className="modal-btn modal-btn-primary" onClick={handleOAuth} disabled={oauthWaiting}>
+                {oauthWaiting ? 'Bekleniyor...' : `${cfg.label} ile Bağlan →`}
+              </button>
+            </div>
+          </>
+        ) : (
+          <>
+            {cfg?.fields?.map(field => (
+              <div key={field.key} className="modal-form-group">
+                <label className="modal-label">{field.label}</label>
+                <input
+                  className="modal-input"
+                  type={['token','apiKey','secret'].includes(field.key) ? 'password' : 'text'}
+                  placeholder={field.placeholder||''}
+                  value={form[field.key]||''}
+                  onChange={e=>updateField(field.key,e.target.value)}
+                  autoComplete="off"
+                />
+                {field.hint && <div className="modal-hint">{field.hint}</div>}
+              </div>
+            ))}
+            {testResult && (
+              <div className={`test-result ${testResult.ok?'success':'error'}`}>
+                {testResult.ok?'✓ ':'✗ '}{testResult.msg}
+              </div>
+            )}
+            <div className="modal-actions">
+              <button className="modal-btn modal-btn-secondary" onClick={onClose}>Vazgeç</button>
+              <button className="modal-btn btn-test" onClick={handleTest} disabled={testing||!hasRequiredFields}>
+                {testing ? '...' : 'Test Et'}
+              </button>
+              <button className="modal-btn modal-btn-primary" onClick={handleSave} disabled={!hasRequiredFields}>
+                Kaydet
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
 
 const CATEGORIES = ['Tümü', 'Üretkenlik', 'Otomasyon', 'İletişim', 'Depolama', 'CRM'];
 
@@ -443,30 +628,6 @@ const INTEGRATIONS = [
 
 const TWEAK_DEFAULTS = { theme: 'light', accentColor: '#7c5cff', viewMode: 'grid', showPopular: true, density: 'comfortable' };
 
-function ConnectModal({ integration, onClose, onConfirm }) {
-  const IconComp = Icon[integration.icon];
-  return (
-    <div className="modal-overlay" onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
-      <div className="modal-box">
-        <div className="modal-header">
-          <div className="card-icon" style={{ background: integration.iconBg, width: 44, height: 44, borderRadius: 10 }}>
-            {IconComp ? <IconComp /> : '🔗'}
-          </div>
-          <span className="modal-title">{integration.name} Bağla</span>
-          <button className="modal-close" onClick={onClose}>×</button>
-        </div>
-        <p className="modal-desc">
-          {integration.name} hesabınızı Mocksheets ile bağlamak için yetkilendirme gerekiyor.
-          Bağlandıktan sonra verilerinizi içe aktarabilir, dışa aktarabilir ve otomatize edebilirsiniz.
-        </p>
-        <div className="modal-actions">
-          <button className="modal-btn modal-btn-secondary" onClick={onClose}>Vazgeç</button>
-          <button className="modal-btn modal-btn-primary" onClick={onConfirm}>Bağlan →</button>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 function IntegrationCard({ integration, connected, onConnect, onDisconnect, listView }) {
   const isConnected = connected.has(integration.id);
@@ -569,7 +730,13 @@ function App() {
   const [query, setQuery] = useState('');
   const [activeCat, setActiveCat] = useState('Tümü');
   const [view, setView] = useState('grid');
-  const [connected, setConnected] = useState(new Set());
+  const [connected, setConnected] = useState(() => {
+    const s = new Set();
+    try {
+      INTEGRATIONS.forEach(i => { if (STORAGE_KEY[i.id] && localStorage.getItem(STORAGE_KEY[i.id])) s.add(i.id); });
+    } catch {}
+    return s;
+  });
   const [modal, setModal] = useState(null);
   const searchRef = useRef(null);
 
@@ -598,19 +765,16 @@ function App() {
   });
 
   function handleConnect(id) {
-    // TODO: POST /api/integrations/connect ile OAuth akışı başlat
     setModal(INTEGRATIONS.find(i => i.id === id) || null);
   }
 
   function handleDisconnect(id) {
-    // TODO: DELETE /api/integrations/:id
+    try { const k = STORAGE_KEY[id]; if (k) localStorage.removeItem(k); } catch {}
     setConnected(prev => { const s = new Set(prev); s.delete(id); return s; });
   }
 
-  function confirmConnect() {
-    if (!modal) return;
-    // TODO: POST /api/integrations/connect ile OAuth akışı başlat
-    setConnected(prev => new Set([...prev, modal.id]));
+  function handleSave(id) {
+    setConnected(prev => new Set([...prev, id]));
     setModal(null);
   }
 
@@ -708,7 +872,7 @@ function App() {
         <ConnectModal
           integration={modal}
           onClose={() => setModal(null)}
-          onConfirm={confirmConnect}
+          onSave={handleSave}
         />
       )}
     </>
