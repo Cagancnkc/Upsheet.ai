@@ -513,21 +513,25 @@ function setCellBgColor(color) {
 }
 
 function applyFont(family) {
-  const meta = getCellMeta();
-  const key = selRow + '_' + selCol;
-  if (!meta[key]) meta[key] = {};
-  meta[key].fontFamily = family;
-  const inp = getInput(selRow, selCol);
-  if (inp) inp.style.fontFamily = family;
+  const cells = getSelectedCells();
+  if (!cells || cells.length === 0) { toast(t('toast_select_cell'), 'warn'); return; }
+  cells.forEach(({r, c}) => {
+    const meta = getCellMeta(r, c);
+    meta.fontFamily = family;
+    setCellMeta(r, c, meta);
+    applyMetaToCell(r, c);
+  });
 }
 
 function applyFontSize(size) {
-  const meta = getCellMeta();
-  const key = selRow + '_' + selCol;
-  if (!meta[key]) meta[key] = {};
-  meta[key].fontSize = parseInt(size);
-  const inp = getInput(selRow, selCol);
-  if (inp) inp.style.fontSize = size + 'px';
+  const cells = getSelectedCells();
+  if (!cells || cells.length === 0) { toast(t('toast_select_cell'), 'warn'); return; }
+  cells.forEach(({r, c}) => {
+    const meta = getCellMeta(r, c);
+    meta.fontSize = parseInt(size);
+    setCellMeta(r, c, meta);
+    applyMetaToCell(r, c);
+  });
 }
 
 function updateToolbarState() {
@@ -2426,6 +2430,7 @@ document.addEventListener('keydown', e => {
   if (e.key === 'n') { e.preventDefault(); newFile(); }
   if (e.key === 'd') { e.preventDefault(); if (typeof toggleFloatingChat === 'function') toggleFloatingChat(); }
   if (e.key === 'z') { e.preventDefault(); undo(); }
+  if (e.key === 'y') { e.preventDefault(); redo(); }
 });
 
 // ═══════════════════════════════════════════════════════════════
