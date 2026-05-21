@@ -23,7 +23,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 
 /* TOP BAR */
 #top-bar{height:60px;background:var(--surface);border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 16px;gap:8px;flex-shrink:0;z-index:100}
-.tb-logo{width:32px;height:32px;background:var(--ink);color:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;flex-shrink:0}
+.tb-logo{width:32px;height:32px;border-radius:8px;object-fit:contain;flex-shrink:0}
 .tb-brand{font-weight:700;font-size:15px;color:var(--ink);flex-shrink:0}
 .tb-sep{color:var(--muted-2);font-size:14px;flex-shrink:0}
 .tb-breadcrumb{color:var(--muted);font-size:13px;font-weight:500;flex-shrink:0}
@@ -126,6 +126,19 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .ins-shortcut-desc{font-size:12px;color:var(--muted)}
 .ins-shortcut-key{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-2);background:var(--surface-2);border:1px solid var(--line);border-radius:4px;padding:2px 6px}
 
+/* SIDEBAR SUGGEST */
+.sb-suggest-btn{width:100%;height:34px;margin-top:8px;border-radius:10px;border:1px dashed var(--accent);background:var(--accent-soft);color:var(--accent);font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;transition:all .15s}
+.sb-suggest-btn:hover{background:var(--accent);color:#fff}
+.sb-suggest-btn:disabled{opacity:.5;cursor:default}
+
+/* SAVED RULES */
+.saved-rule-row{display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:10px;border:1px solid var(--line-2);margin-bottom:6px;background:var(--surface)}
+.saved-rule-info{flex:1;min-width:0}
+.saved-rule-name{font-size:12px;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.saved-rule-badge{font-size:10px;font-weight:600;padding:2px 6px;border-radius:4px;background:var(--accent-soft);color:var(--accent);margin-top:2px;display:inline-block}
+.saved-rule-del{width:28px;height:28px;border:none;background:none;color:var(--muted-2);cursor:pointer;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .12s}
+.saved-rule-del:hover{background:var(--rose-soft);color:var(--rose)}
+
 /* HUD */
 #hud-count{position:absolute;top:16px;right:16px;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:5px 12px;font-size:12px;font-weight:500;color:var(--ink-2);box-shadow:0 1px 4px rgba(0,0,0,.07);pointer-events:none}
 #hud-legend{position:absolute;bottom:20px;left:20px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px 14px;display:flex;flex-direction:column;gap:5px;box-shadow:0 1px 4px rgba(0,0,0,.07);pointer-events:none}
@@ -160,6 +173,10 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--muted-2);flex-shrink:0"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
         <input id="sb-search-input" placeholder="Ara…" type="text" autocomplete="off">
       </div>
+      <button class="sb-suggest-btn" id="sb-suggest-btn" onclick="suggestRules()">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2l1.9 5.8L20 10l-6.1 2.2L12 18l-1.9-5.8L4 10l6.1-2.2z"/></svg>
+        AI Öner
+      </button>
     </div>
     <div class="sb-filters">
       <button class="sb-chip active" data-filter="Tümü">Tümü</button>
@@ -259,7 +276,7 @@ const S = {
   pan:{x:140, y:80}, zoom:1,
   drawingEdge:null,
   dirty:false, name:'Yeni Otomasyon', running:false,
-  query:'', filter:'Tümü', nextId:1,
+  query:'', filter:'Tümü', nextId:1, savedRules:[],
 };
 
 // ── UTIL ─────────────────────────────────────────────────────
@@ -269,7 +286,7 @@ function $id(id){ return document.getElementById(id); }
 // ── TOP BAR ──────────────────────────────────────────────────
 function renderTopBar(){
   $id('top-bar').innerHTML = `
-    <div class="tb-logo">m</div>
+    <img src="images/logo.png" class="tb-logo" alt="Mocksheet">
     <span class="tb-brand">Mocksheet</span>
     <span class="tb-sep">/</span>
     <span class="tb-breadcrumb">Otomasyonlar</span>
@@ -356,7 +373,21 @@ function renderInspector(){
           <div class="ins-stat"><div class="ins-stat-val">${cfgd}</div><div class="ins-stat-lbl">Yapılandırıldı</div></div>
           <div class="ins-stat"><div class="ins-stat-val">${nc-cfgd}</div><div class="ins-stat-lbl">Bekliyor</div></div>
         </div>
-        <div class="ins-section-label" style="margin-top:4px">Kısayollar</div>
+        <div class="ins-section-label" style="margin-top:4px">Kaydedilmiş Kurallar</div>
+        ${S.savedRules.length === 0
+          ? '<div style="font-size:12px;color:var(--muted);padding:8px 0 12px">Henüz kural yok. Canvas\'tan bir iş akışı kaydedin.</div>'
+          : S.savedRules.map(r => `
+          <div class="saved-rule-row">
+            <div class="saved-rule-info">
+              <div class="saved-rule-name">${esc(r.name)}</div>
+              <div class="saved-rule-badge">${esc(r.integration||'—')}</div>
+            </div>
+            <button class="ins-toggle ${r.enabled?'on':''}" onclick="toggleSavedRule('${r.id}',${r.enabled})" title="${r.enabled?'Devre dışı bırak':'Etkinleştir'}"></button>
+            <button class="saved-rule-del" onclick="deleteSavedRule('${r.id}')" title="Sil">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+            </button>
+          </div>`).join('')}
+        <div class="ins-section-label" style="margin-top:12px">Kısayollar</div>
         <div class="ins-shortcut-row"><span class="ins-shortcut-desc">Node sil</span><span class="ins-shortcut-key">Del</span></div>
         <div class="ins-shortcut-row"><span class="ins-shortcut-desc">Kopyala</span><span class="ins-shortcut-key">Ctrl+D</span></div>
         <div class="ins-shortcut-row"><span class="ins-shortcut-desc">Kaydet</span><span class="ins-shortcut-key">Ctrl+S</span></div>
@@ -727,8 +758,8 @@ async function testNode(){
 }
 
 // ── WORKFLOW OPS ─────────────────────────────────────────────
-function workflowToRules(){
-  const rules=[];
+function workflowToRulePairs(){
+  const pairs=[];
   const triggerNodes=Object.values(S.nodes).filter(n=>getDef(n.defId)?.kind==='trigger');
   for(const trigger of triggerNodes){
     const connectedActionIds=S.edges.filter(e=>e.from===trigger.id).map(e=>e.to);
@@ -737,17 +768,21 @@ function workflowToRules(){
     for(const action of actionNodes){
       const tc=trigger.config||{}, ac=action.config||{};
       const integration=action.defId==='sheets'?'google_sheets':action.defId;
-      rules.push({
-        name:`${S.name}${actionNodes.length>1?' → '+getDef(action.defId).name:''}`,
-        integration,
-        trigger_config:{ type:trigger.defId, column:tc.column||'', operator:tc.operator||'equals', value:tc.value||'' },
-        action_config:{ event:`${action.defId}_trigger`, message:ac.message||`${S.name} tetiklendi`, include_columns:[] },
-        throttle_seconds:3600,
-        enabled:true
+      pairs.push({
+        nodeId:trigger.id,
+        actionId:action.id,
+        rule:{
+          name:`${S.name}${actionNodes.length>1?' → '+getDef(action.defId).name:''}`,
+          integration,
+          trigger_config:{ type:trigger.defId, column:tc.column||'', operator:tc.operator||'equals', value:tc.value||'' },
+          action_config:{ event:`${action.defId}_trigger`, message:ac.message||`${S.name} tetiklendi`, include_columns:[] },
+          throttle_seconds:3600,
+          enabled:true
+        }
       });
     }
   }
-  return rules;
+  return pairs;
 }
 
 async function saveWorkflow(){
@@ -757,13 +792,25 @@ async function saveWorkflow(){
   renderTopBar();
 
   if(window.Automations){
-    const rules=workflowToRules();
+    const pairs=workflowToRulePairs();
     let saved=0;
-    for(const rule of rules){
-      try{ await window.Automations.save(rule); saved++; }catch(e){ console.warn('Kural kaydedilemedi:',e); }
+    for(const {nodeId, actionId, rule} of pairs){
+      try{
+        const actionNode=S.nodes[actionId];
+        if(actionNode?.ruleId){
+          await window.Automations.update(actionNode.ruleId, rule);
+        } else {
+          const created=await window.Automations.save(rule);
+          if(actionNode && created?.id) actionNode.ruleId=created.id;
+        }
+        saved++;
+      }catch(e){ console.warn('Kural kaydedilemedi:',e); }
     }
-    const msg=rules.length
-      ?`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Otomasyon kaydedildi (${saved}/${rules.length} kural)`
+    // persist ruleIds
+    localStorage.setItem('mocksheet_automation', JSON.stringify({name:S.name, nodes:S.nodes, edges:S.edges}));
+    await loadSavedRules();
+    const msg=pairs.length
+      ?`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Otomasyon kaydedildi (${saved}/${pairs.length} kural)`
       :'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Otomasyon kaydedildi';
     showToast(msg,'light',3000);
   } else {
@@ -783,6 +830,89 @@ function loadWorkflow(){
     }
     if(data.edges) S.edges=data.edges;
   }catch(err){ console.warn('Load err',err); }
+}
+
+async function loadSavedRules(){
+  if(!window.Automations) return;
+  try{
+    S.savedRules = await window.Automations.load();
+    renderInspector();
+  }catch(e){ console.warn('Kurallar yüklenemedi:',e); }
+}
+
+async function toggleSavedRule(id, currentEnabled){
+  if(!window.Automations) return;
+  try{
+    await window.Automations.update(id, { enabled:!currentEnabled });
+    const rule=S.savedRules.find(r=>r.id===id);
+    if(rule) rule.enabled=!currentEnabled;
+    renderInspector();
+    showToast(currentEnabled?'Kural devre dışı bırakıldı':'Kural etkinleştirildi','light',2000);
+  }catch(e){ showToast('Kural güncellenemedi','light',2000); }
+}
+
+async function deleteSavedRule(id){
+  if(!window.Automations) return;
+  try{
+    await window.Automations.remove(id);
+    S.savedRules=S.savedRules.filter(r=>r.id!==id);
+    // clear ruleId from any nodes
+    Object.values(S.nodes).forEach(n=>{ if(n.ruleId===id) delete n.ruleId; });
+    renderInspector();
+    showToast('Kural silindi','light',2000);
+  }catch(e){ showToast('Kural silinemedi','light',2000); }
+}
+
+async function suggestRules(){
+  const btn=$id('sb-suggest-btn');
+  if(!window.Automations){ showToast('⚠ Otomasyon motoru yüklenemedi','light',2500); return; }
+  let headers=[];
+  try{
+    const raw=localStorage.getItem('mocksheet_state');
+    if(raw){
+      const state=JSON.parse(raw);
+      const sheetName=state.activeSheet||Object.keys(state.sheets||{})[0];
+      const rows=state.sheets?.[sheetName];
+      if(Array.isArray(rows)&&rows.length) headers=rows[0].filter(Boolean);
+    }
+  }catch(e){}
+  if(!headers.length){
+    showToast("⚠ Önce app.html'de bir tablo açın — sütun başlığı bulunamadı",'light',3500);
+    return;
+  }
+  btn.disabled=true;
+  btn.textContent='Yükleniyor…';
+  showToast('<div class="pulse"></div> AI öneri hazırlanıyor…','dark',4000);
+  try{
+    const result=await window.Automations.suggest(headers,'make');
+    const suggestions=result.suggestions||[];
+    if(!suggestions.length){ showToast('Öneri bulunamadı','light',2000); return; }
+    const wrap=$id('canvas-wrap');
+    const cx=(wrap.offsetWidth/2-S.pan.x)/S.zoom;
+    const cy=(wrap.offsetHeight/2-S.pan.y)/S.zoom;
+    let added=0;
+    suggestions.forEach((sug,i)=>{
+      const triggerType=sug.trigger_config?.type||'cell-condition';
+      const trigDef=getDef(triggerType)||getDef('cell-condition');
+      const actionMap={make:'filter',slack:'slack',webhook:'filter',notion:'notion',airtable:'airtable',email:'email'};
+      const actionDefId=actionMap[sug.integration]||'filter';
+      const ox=cx-110+(i-1)*280, oy=cy-100+i*60;
+      const tid=`n${S.nextId++}`;
+      S.nodes[tid]={id:tid,defId:trigDef.defId,kind:'trigger',x:ox,y:oy,configured:true,config:{column:sug.trigger_config?.column||'',operator:sug.trigger_config?.operator||'equals',value:sug.trigger_config?.value||''}};
+      const aid=`n${S.nextId++}`;
+      S.nodes[aid]={id:aid,defId:actionDefId,kind:'action',x:ox+280,y:oy,configured:false,config:{message:sug.action_config?.message||sug.name}};
+      S.edges.push({id:`e${Date.now()+i}`,from:tid,to:aid});
+      added++;
+    });
+    S.dirty=true;
+    renderNodes(); redrawEdges(); renderHUD(); renderInspector(); renderTopBar();
+    showToast(`✓ ${added} kural önerildi ve canvas'a eklendi`,'light',3000);
+  }catch(e){
+    showToast(`Hata: ${e.message}`,'light',3000);
+  }finally{
+    btn.disabled=false;
+    btn.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2l1.9 5.8L20 10l-6.1 2.2L12 18l-1.9-5.8L4 10l6.1-2.2z"/></svg> AI Öner';
+  }
 }
 
 async function runWorkflow(){
@@ -912,6 +1042,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
   applyTransform();
   initCanvas();
   initKeyboard();
+  loadSavedRules();
 });
 </script>
 </body>
