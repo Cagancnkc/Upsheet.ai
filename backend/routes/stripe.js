@@ -81,7 +81,7 @@ router.post('/create-checkout-session', async (req, res) => {
 
   } catch (err) {
     console.error('Stripe checkout error:', err);
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: 'Bir hata oluştu. Lütfen tekrar deneyin.' });
   }
 });
 
@@ -111,7 +111,7 @@ router.get('/subscription/:sessionId', async (req, res) => {
     });
 
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: 'Bir hata oluştu. Lütfen tekrar deneyin.' });
   }
 });
 
@@ -129,7 +129,7 @@ router.post('/customer-portal', async (req, res) => {
     });
     res.json({ url: session.url });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: 'Bir hata oluştu. Lütfen tekrar deneyin.' });
   }
 });
 

@@ -32,6 +32,9 @@ function throttle(fn, limit) {
   var _last = 0;
   return function() { var now = Date.now(); if (now - _last >= limit) { _last = now; fn.apply(this, arguments); } };
 }
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
 
 // ═══════════════════════════════════════════════════════════════
 //  STATE
@@ -1406,7 +1409,8 @@ function renderChatAttachment(att) {
   else if (att.name.match(/\.(png|jpg|jpeg)$/i)) icon = '🖼️';
   else if (att.name.match(/\.pdf$/i)) icon = '📄';
   item.dataset.attName = att.name;
-  item.innerHTML = `<span>${icon}</span><span style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${att.name}</span><button onclick="removeChatAttachment('${att.name}')" style="background:none;border:none;cursor:pointer;color:#f97316;font-size:14px;padding:0;line-height:1;">×</button>`;
+  item.innerHTML = `<span>${icon}</span><span style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escHtml(att.name)}</span><button data-name="${escHtml(att.name)}" style="background:none;border:none;cursor:pointer;color:#f97316;font-size:14px;padding:0;line-height:1;">×</button>`;
+  item.querySelector('button').addEventListener('click', function() { removeChatAttachment(this.dataset.name); });
   preview.appendChild(item);
 }
 
@@ -2275,7 +2279,7 @@ function cmdRender(items, query, aiMode) {
         </div>
         <div>
           <div style="font-size:13px;color:#f97316;font-weight:500;">Ask AI</div>
-          <div style="font-size:12px;color:#6b6b6b;margin-top:3px;">"${document.getElementById('cmdInput').value}"</div>
+          <div style="font-size:12px;color:#6b6b6b;margin-top:3px;">"${escHtml(document.getElementById('cmdInput').value)}"</div>
         </div>
       </div>`;
     cmdFocusIdx = 0;

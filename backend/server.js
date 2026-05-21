@@ -117,6 +117,23 @@ app.use(cors({
 }));
 app.use(express.json({ limit: '2mb' }));
 
+const rateLimit = require('express-rate-limit');
+const generalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 200,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Çok fazla istek. Lütfen 15 dakika sonra tekrar deneyin.' }
+});
+const aiLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 15,
+  message: { error: 'AI istek limiti aşıldı. 1 dakika sonra tekrar deneyin.' }
+});
+app.use('/api/', generalLimiter);
+app.use('/api/ai', aiLimiter);
+app.use('/api/batch-ai', aiLimiter);
+
 const integrationsRouter = require('./routes/integrations');
 const stripeRouter = require('./routes/stripe');
 const promosRouter = require('./routes/promos');
@@ -275,13 +292,13 @@ app.post('/api/batch-ai', checkLimit, async (req, res) => {
     res.json({ result: response.content[0].text.trim() });
   } catch (e) {
     console.error('/api/batch-ai hatası:', e.message);
-    res.status(500).json({ error: e.message });
+    res.status(500).json({ error: 'Sunucu hatası. Lütfen tekrar deneyin.' });
   }
 });
 
 app.use((err, _req, res, _next) => {
   console.error(err);
-  res.status(500).json({ error: err.message });
+  res.status(500).json({ error: 'Sunucu hatası. Lütfen tekrar deneyin.' });
 });
 
 app.listen(PORT, '0.0.0.0', () => {
