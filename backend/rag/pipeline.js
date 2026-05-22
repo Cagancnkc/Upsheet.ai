@@ -243,7 +243,7 @@ function parseAIResponse(rawText) {
   }
 }
 
-async function processExcelCommand(userCommand, sheetContext) {
+async function processExcelCommand(userCommand, sheetContext, history = []) {
   console.log('[Pipeline] Komut:', userCommand?.slice(0, 80));
   let lastError = null;
 
@@ -272,6 +272,8 @@ async function processExcelCommand(userCommand, sheetContext) {
         ],
 
         messages: [
+          // Konuşma geçmişi — son 8 mesaj (4 tur)
+          ...history.slice(-8).map(h => ({ role: h.role, content: String(h.content).slice(0, 500) })),
           {
             role: 'user',
             content: [

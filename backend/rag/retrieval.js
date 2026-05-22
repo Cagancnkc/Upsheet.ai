@@ -122,8 +122,10 @@ async function retrieveRelevantExamples(userCommand) {
       }
     }
 
-    // Rerank + slice top 5
-    const reranked = rerankResults(fused, userCommand).slice(0, 5);
+    // Rerank + düşük kaliteliyi filtrele + top 5
+    const reranked = rerankResults(fused, userCommand)
+      .filter(r => (r.finalScore ?? r.hybridScore ?? 0) >= 0.35)
+      .slice(0, 5);
 
     return reranked.map(r => ({
       command: r.user_command,

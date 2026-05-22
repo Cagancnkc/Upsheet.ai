@@ -4102,6 +4102,7 @@ async function sendChatMessage() {
   sendBtn.textContent = '…';
 
   addMessage(message, 'user');
+  chatHistory.push({ role: 'user', content: message });
   showTyping();
   showProgress();
 
@@ -4123,7 +4124,7 @@ async function sendChatMessage() {
         'Content-Type': 'application/json',
         ...(token ? { 'Authorization': 'Bearer ' + token } : {})
       },
-      body: JSON.stringify({ message, sheetContext })
+      body: JSON.stringify({ message, sheetContext, history: chatHistory.slice(-8) })
     });
     clearTimeout(_tid);
 
@@ -4157,6 +4158,8 @@ async function sendChatMessage() {
 
     if (data.reply) {
       addMessage(data.reply, 'ai');
+      chatHistory.push({ role: 'assistant', content: data.reply });
+      saveChatHistory();
     }
 
     if (data.action && data.action !== 'message') {
