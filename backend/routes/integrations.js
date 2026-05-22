@@ -426,46 +426,6 @@ router.post('/make/trigger', async (req, res) => {
   }
 });
 
-// ── Google Drive: OAuth2 URL üret ───────────────
-router.get('/drive/auth', (req, res) => {
-  const clientId = process.env.GOOGLE_CLIENT_ID;
-  if (!clientId) return res.status(500).json({ error: 'Google OAuth yapılandırılmamış' });
-
-  const redirectUri = (process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 3001}`) + '/api/integrations/drive/callback';
-  const scope = 'https://www.googleapis.com/auth/drive.file';
-  const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${encodeURIComponent(scope)}&access_type=offline&prompt=consent`;
-  res.json({ url });
-});
-
-// ── Google Drive: OAuth2 callback ───────────────
-router.get('/drive/callback', async (req, res) => {
-  const allowedOrigin = process.env.FRONTEND_URL || 'https://mocksheets.com';
-  const { code, error } = req.query;
-  if (error || !code) {
-    return res.send(`<script>window.opener.postMessage({type:'drive_auth',error:${JSON.stringify(error || 'cancelled')}},${JSON.stringify(allowedOrigin)});window.close();</script>`);
-  }
-
-  const clientId = process.env.GOOGLE_CLIENT_ID;
-  const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
-  const redirectUri = (process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 3001}`) + '/api/integrations/drive/callback';
-
-  try {
-    const r = await fetch('https://oauth2.googleapis.com/token', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams({ code, client_id: clientId, client_secret: clientSecret, redirect_uri: redirectUri, grant_type: 'authorization_code' })
-    });
-    const token = await r.json();
-    if (token.access_token) {
-      res.send(`<script>window.opener.postMessage({type:'drive_auth',token:${JSON.stringify(token.access_token)}},${JSON.stringify(allowedOrigin)});window.close();</script>`);
-    } else {
-      res.send(`<script>window.opener.postMessage({type:'drive_auth',error:'Token alınamadı'},${JSON.stringify(allowedOrigin)});window.close();</script>`);
-    }
-  } catch (err) {
-    res.send(`<script>window.opener.postMessage({type:'drive_auth',error:${JSON.stringify(err.message)}},${JSON.stringify(allowedOrigin)});window.close();</script>`);
-  }
-});
-
 // ── Google Drive: CSV yükle ──────────────────────
 router.post('/drive/upload', async (req, res) => {
   const { token, fileName, csv } = req.body;
@@ -597,68 +557,6 @@ router.post('/trello/export', async (req, res) => {
     res.json({ success: count > 0, count, total: toExport.length, listName: targetList.name, errors: errors.slice(0, 5) });
   } catch (err) {
     res.status(500).json({ error: err.message });
-  }
-});
-
-// ── Google Sheets: OAuth2 URL üret ──────────────
-router.get('/sheets/auth', (req, res) => {
-  const clientId = process.env.GOOGLE_CLIENT_ID;
-  if (!clientId) return res.status(500).json({ error: 'Google OAuth yapılandırılmamış. GOOGLE_CLIENT_ID eksik.' });
-
-  const redirectUri = (process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 3001}`)
-    + '/api/integrations/sheets/callback';
-  const scopes = [
-    'https://www.googleapis.com/auth/spreadsheets',
-    'https://www.googleapis.com/auth/drive.file'
-  ].join(' ');
-
-  const url = 'https://accounts.google.com/o/oauth2/v2/auth'
-    + `?client_id=${clientId}`
-    + `&redirect_uri=${encodeURIComponent(redirectUri)}`
-    + `&response_type=code`
-    + `&scope=${encodeURIComponent(scopes)}`
-    + `&access_type=offline`
-    + `&prompt=consent`;
-
-  res.json({ url });
-});
-
-// ── Google Sheets: OAuth2 callback ──────────────
-router.get('/sheets/callback', async (req, res) => {
-  const allowedOrigin = process.env.FRONTEND_URL || 'https://mocksheets.com';
-  const { code, error } = req.query;
-  if (error || !code) {
-    return res.send(
-      `<script>window.opener?.postMessage({type:'sheets_auth',error:${JSON.stringify(error || 'cancelled')}},${JSON.stringify(allowedOrigin)});window.close();</script>`
-    );
-  }
-
-  const clientId = process.env.GOOGLE_CLIENT_ID;
-  const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
-  const redirectUri = (process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 3001}`)
-    + '/api/integrations/sheets/callback';
-
-  try {
-    const r = await fetch('https://oauth2.googleapis.com/token', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams({ code, client_id: clientId, client_secret: clientSecret, redirect_uri: redirectUri, grant_type: 'authorization_code' })
-    });
-    const tokens = await r.json();
-    if (tokens.access_token) {
-      res.send(
-        `<script>window.opener?.postMessage({type:'sheets_auth',tokens:${JSON.stringify(tokens)}},${JSON.stringify(allowedOrigin)});window.close();</script>`
-      );
-    } else {
-      const errMsg = tokens.error_description || tokens.error || 'Token alınamadı';
-      res.send(
-        `<script>window.opener?.postMessage({type:'sheets_auth',error:${JSON.stringify(errMsg)}},${JSON.stringify(allowedOrigin)});window.close();</script>`
-      );
-    }
-  } catch (err) {
-    res.send(
-      `<script>window.opener?.postMessage({type:'sheets_auth',error:${JSON.stringify(err.message)}},${JSON.stringify(allowedOrigin)});window.close();</script>`
-    );
   }
 });
 

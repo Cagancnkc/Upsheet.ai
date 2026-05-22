@@ -2,6 +2,7 @@ const Anthropic = require('@anthropic-ai/sdk');
 require('dotenv').config();
 const express = require('express');
 const cors    = require('cors');
+const fetch   = require('node-fetch');
 const { processExcelCommand } = require('./rag/pipeline');
 
 const UPSHEET_KNOWLEDGE_BASE = {
@@ -140,6 +141,51 @@ const promosRouter = require('./routes/promos');
 const automationsRouter = require('./routes/automations');
 const { checkLimit, incrementUsage, requireFeature, getOrCreateUsage } = require('./middleware/limits');
 const PLANS = require('./config/plans');
+// OAuth endpoints — auth middleware'den önce kayıtlı (browser popup header gönderemez)
+app.get('/api/integrations/drive/auth', (_req, res) => {
+  const clientId = process.env.GOOGLE_CLIENT_ID;
+  if (!clientId) return res.status(500).send('<p>Google OAuth yapılandırılmamış</p>');
+  const base = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 3001}`;
+  const redirectUri = base + '/api/integrations/drive/callback';
+  const scope = 'https://www.googleapis.com/auth/drive.file';
+  res.redirect(`https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${encodeURIComponent(scope)}&access_type=offline&prompt=consent`);
+});
+
+app.get('/api/integrations/drive/callback', async (req, res) => {
+  const origin = process.env.FRONTEND_URL || 'https://mocksheets.com';
+  const { code, error } = req.query;
+  if (error || !code) return res.send(`<script>window.opener?.postMessage({type:'drive_auth',error:${JSON.stringify(error || 'cancelled')}},${JSON.stringify(origin)});window.close();</script>`);
+  const base = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 3001}`;
+  try {
+    const r = await fetch('https://oauth2.googleapis.com/token', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams({ code, client_id: process.env.GOOGLE_CLIENT_ID, client_secret: process.env.GOOGLE_CLIENT_SECRET, redirect_uri: base + '/api/integrations/drive/callback', grant_type: 'authorization_code' }) });
+    const token = await r.json();
+    if (token.access_token) res.send(`<script>window.opener?.postMessage({type:'drive_auth',token:${JSON.stringify(token.access_token)}},${JSON.stringify(origin)});window.close();</script>`);
+    else res.send(`<script>window.opener?.postMessage({type:'drive_auth',error:'Token alınamadı'},${JSON.stringify(origin)});window.close();</script>`);
+  } catch (err) { res.send(`<script>window.opener?.postMessage({type:'drive_auth',error:${JSON.stringify(err.message)}},${JSON.stringify(origin)});window.close();</script>`); }
+});
+
+app.get('/api/integrations/sheets/auth', (_req, res) => {
+  const clientId = process.env.GOOGLE_CLIENT_ID;
+  if (!clientId) return res.status(500).send('<p>Google OAuth yapılandırılmamış</p>');
+  const base = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 3001}`;
+  const redirectUri = base + '/api/integrations/sheets/callback';
+  const scopes = 'https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/drive.file';
+  res.redirect(`https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${encodeURIComponent(scopes)}&access_type=offline&prompt=consent`);
+});
+
+app.get('/api/integrations/sheets/callback', async (req, res) => {
+  const origin = process.env.FRONTEND_URL || 'https://mocksheets.com';
+  const { code, error } = req.query;
+  if (error || !code) return res.send(`<script>window.opener?.postMessage({type:'sheets_auth',error:${JSON.stringify(error || 'cancelled')}},${JSON.stringify(origin)});window.close();</script>`);
+  const base = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 3001}`;
+  try {
+    const r = await fetch('https://oauth2.googleapis.com/token', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams({ code, client_id: process.env.GOOGLE_CLIENT_ID, client_secret: process.env.GOOGLE_CLIENT_SECRET, redirect_uri: base + '/api/integrations/sheets/callback', grant_type: 'authorization_code' }) });
+    const tokens = await r.json();
+    if (tokens.access_token) res.send(`<script>window.opener?.postMessage({type:'sheets_auth',tokens:${JSON.stringify(tokens)}},${JSON.stringify(origin)});window.close();</script>`);
+    else res.send(`<script>window.opener?.postMessage({type:'sheets_auth',error:${JSON.stringify(tokens.error_description || 'Token alınamadı')}},${JSON.stringify(origin)});window.close();</script>`);
+  } catch (err) { res.send(`<script>window.opener?.postMessage({type:'sheets_auth',error:${JSON.stringify(err.message)}},${JSON.stringify(origin)});window.close();</script>`); }
+});
+
 app.use('/api/integrations', checkLimit, requireFeature('integrations'), integrationsRouter);
 app.use('/api/automations', automationsRouter);
 app.use('/api/stripe', stripeRouter);
