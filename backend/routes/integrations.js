@@ -619,77 +619,7 @@ router.post('/sheets/write', async (req, res) => {
 });
 
 // ── Excel Online: Microsoft Graph API + Azure AD OAuth2 ──────────────────────
-
-const MSFT_TENANT = 'common';
-const MSFT_SCOPES = 'Files.ReadWrite User.Read offline_access';
-
-function getMsftRedirectUri() {
-  return (process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 3001}`)
-    + '/api/integrations/excel/callback';
-}
-
-// OAuth2 URL üret
-router.get('/excel/auth', (req, res) => {
-  const clientId = process.env.MSFT_CLIENT_ID;
-  if (!clientId) return res.status(500).json({ error: 'MSFT_CLIENT_ID eksik. Azure Portal\'da uygulama kaydı yapın.' });
-
-  const redirectUri = getMsftRedirectUri();
-  const url = `https://login.microsoftonline.com/${MSFT_TENANT}/oauth2/v2.0/authorize`
-    + `?client_id=${clientId}`
-    + `&response_type=code`
-    + `&redirect_uri=${encodeURIComponent(redirectUri)}`
-    + `&response_mode=query`
-    + `&scope=${encodeURIComponent(MSFT_SCOPES)}`;
-
-  res.json({ url });
-});
-
-// OAuth2 callback — token alır, popup'a postMessage ile iletir
-router.get('/excel/callback', async (req, res) => {
-  const allowedOrigin = process.env.FRONTEND_URL || 'https://mocksheets.com';
-  const { code, error } = req.query;
-  if (error || !code) {
-    return res.send(
-      `<script>window.opener?.postMessage({type:'excel_auth',error:${JSON.stringify(error || 'cancelled')}},${JSON.stringify(allowedOrigin)});window.close();</script>`
-    );
-  }
-
-  const clientId = process.env.MSFT_CLIENT_ID;
-  const clientSecret = process.env.MSFT_CLIENT_SECRET;
-  const redirectUri = getMsftRedirectUri();
-
-  try {
-    const r = await fetch(`https://login.microsoftonline.com/${MSFT_TENANT}/oauth2/v2.0/token`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams({
-        client_id: clientId,
-        client_secret: clientSecret,
-        code,
-        redirect_uri: redirectUri,
-        grant_type: 'authorization_code',
-        scope: MSFT_SCOPES
-      })
-    });
-    const tokens = await r.json();
-
-    if (tokens.access_token) {
-      const expiry = Date.now() + (tokens.expires_in || 3600) * 1000;
-      res.send(
-        `<script>window.opener?.postMessage({type:'excel_auth',tokens:${JSON.stringify({ access_token: tokens.access_token, refresh_token: tokens.refresh_token, expiry })}},${JSON.stringify(allowedOrigin)});window.close();</script>`
-      );
-    } else {
-      const msg = tokens.error_description || tokens.error || 'Token alınamadı';
-      res.send(
-        `<script>window.opener?.postMessage({type:'excel_auth',error:${JSON.stringify(msg)}},${JSON.stringify(allowedOrigin)});window.close();</script>`
-      );
-    }
-  } catch (err) {
-    res.send(
-      `<script>window.opener?.postMessage({type:'excel_auth',error:${JSON.stringify(err.message)}},${JSON.stringify(allowedOrigin)});window.close();</script>`
-    );
-  }
-});
+// /excel/auth ve /excel/callback route'ları server.js'de kayıtlı (auth middleware'den önce)
 
 // Token yenile (access token süresi ~1 saat)
 router.post('/excel/refresh', async (req, res) => {

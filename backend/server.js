@@ -186,6 +186,35 @@ app.get('/api/integrations/sheets/callback', async (req, res) => {
   } catch (err) { res.send(`<script>window.opener?.postMessage({type:'sheets_auth',error:${JSON.stringify(err.message)}},${JSON.stringify(origin)});window.close();</script>`); }
 });
 
+app.get('/api/integrations/excel/auth', (_req, res) => {
+  const clientId = process.env.MSFT_CLIENT_ID;
+  if (!clientId) return res.status(500).send('<p>MSFT_CLIENT_ID eksik</p>');
+  const base = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 3001}`;
+  const redirectUri = base + '/api/integrations/excel/callback';
+  res.redirect(`https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=${clientId}&response_type=code&redirect_uri=${encodeURIComponent(redirectUri)}&response_mode=query&scope=${encodeURIComponent('Files.ReadWrite User.Read offline_access')}`);
+});
+
+app.get('/api/integrations/excel/callback', async (req, res) => {
+  const origin = process.env.FRONTEND_URL || 'https://mocksheets.com';
+  const { code, error } = req.query;
+  if (error || !code) return res.send(`<script>window.opener?.postMessage({type:'excel_auth',error:${JSON.stringify(error||'cancelled')}},${JSON.stringify(origin)});window.close();</script>`);
+  const base = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 3001}`;
+  try {
+    const r = await fetch('https://login.microsoftonline.com/common/oauth2/v2.0/token', {
+      method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ client_id: process.env.MSFT_CLIENT_ID, client_secret: process.env.MSFT_CLIENT_SECRET, code, redirect_uri: base + '/api/integrations/excel/callback', grant_type: 'authorization_code', scope: 'Files.ReadWrite User.Read offline_access' })
+    });
+    const tokens = await r.json();
+    if (tokens.access_token) {
+      const expiry = Date.now() + (tokens.expires_in || 3600) * 1000;
+      res.send(`<script>window.opener?.postMessage({type:'excel_auth',tokens:${JSON.stringify({ access_token: tokens.access_token, refresh_token: tokens.refresh_token, expiry })}},${JSON.stringify(origin)});window.close();</script>`);
+    } else {
+      const msg = tokens.error_description || tokens.error || 'Token alınamadı';
+      res.send(`<script>window.opener?.postMessage({type:'excel_auth',error:${JSON.stringify(msg)}},${JSON.stringify(origin)});window.close();</script>`);
+    }
+  } catch (err) { res.send(`<script>window.opener?.postMessage({type:'excel_auth',error:${JSON.stringify(err.message)}},${JSON.stringify(origin)});window.close();</script>`); }
+});
+
 app.use('/api/integrations', checkLimit, requireFeature('integrations'), integrationsRouter);
 app.use('/api/automations', automationsRouter);
 app.use('/api/stripe', stripeRouter);
