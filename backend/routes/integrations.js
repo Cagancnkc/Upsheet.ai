@@ -1,4 +1,6 @@
 'use strict';
+const MSFT_TENANT = 'common';
+const MSFT_SCOPES = 'Files.ReadWrite User.Read offline_access';
 const express = require('express');
 const router = express.Router();
 const fetch = require('node-fetch');
