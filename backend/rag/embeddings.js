@@ -4,13 +4,23 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 });
 
+// In-memory LRU embedding cache — aynı query için OpenAI'a tekrar gitmez
+const _embCache = new Map();
+const _EMB_CACHE_MAX = 500;
+
 async function createEmbedding(text) {
+  if (_embCache.has(text)) return _embCache.get(text);
   const response = await openai.embeddings.create({
     model: 'text-embedding-3-small',
     input: text,
     encoding_format: 'float'
   });
-  return response.data[0].embedding;
+  const emb = response.data[0].embedding;
+  if (_embCache.size >= _EMB_CACHE_MAX) {
+    _embCache.delete(_embCache.keys().next().value);
+  }
+  _embCache.set(text, emb);
+  return emb;
 }
 
 async function createBatchEmbeddings(texts) {

@@ -4106,7 +4106,11 @@ async function sendChatMessage() {
   showProgress();
 
   try {
-    const sheetContext = sheets[activeSheet] || [];
+    // Sunucu zaten sadece 5 satır preview alıyor — tüm sheet'i göndermek gereksiz bant genişliği
+    const _rawSheet = sheets[activeSheet] || [];
+    const sheetContext = _rawSheet.length > 7
+      ? [_rawSheet[0], ..._rawSheet.slice(1, 6)]
+      : _rawSheet;
 
     const token = getAuthToken();
     console.warn('[CALL #' + (++CALL_COUNTER) + '] sendChatMessage → fetch /api/chat', new Error().stack.split('\n')[2]?.trim());

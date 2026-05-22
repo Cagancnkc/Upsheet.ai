@@ -144,7 +144,7 @@ function getRagContext(ragContext) {
     return 'Benzer örnek bulunamadı.';
   }
 
-  const lines = ragContext.slice(0, 5).map((ex, i) => {
+  const lines = ragContext.slice(0, 3).map((ex, i) => {
     const sim = ex.similarity ? ` (benzerlik: ${(ex.similarity * 100).toFixed(0)}%)` : '';
     const output = typeof ex.output === 'string'
       ? ex.output
@@ -259,7 +259,7 @@ async function processExcelCommand(userCommand, sheetContext) {
 
       const response = await anthropic.messages.create({
         model: 'claude-haiku-4-5-20251001',
-        max_tokens: 2000,
+        max_tokens: 500,
         temperature: 0.1,
 
         // System prompt — cache'lenir (her çağrıda aynı)

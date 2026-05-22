@@ -161,7 +161,12 @@ app.post('/api/chat', checkLimit, async (req, res) => {
     if (!message || !message.trim())
       return res.status(400).json({ error: 'Mesaj boş olamaz' });
 
-    const sheetArr = sheetContext || sheetData || [];
+    if (message.length > 2000)
+      return res.status(400).json({ error: 'Komut çok uzun (max 2000 karakter)' });
+
+    let sheetArr = sheetContext || sheetData || [];
+    if (sheetArr.length > 200) sheetArr = sheetArr.slice(0, 200);
+
     const result = await processExcelCommand(message.trim(), sheetArr);
 
     await incrementUsage(req.user.id);

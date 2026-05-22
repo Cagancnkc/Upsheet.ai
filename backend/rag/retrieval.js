@@ -24,14 +24,14 @@ const TURKISH_SYNONYMS = {
 
 // Kategori boost — nadir/kritik kategorilere öncelik
 const CATEGORY_BOOST = {
-  finance: 1.05,
-  hr: 1.05,
-  formula: 1.03,
-  heatmap: 1.02,
-  forecast: 1.02,
-  anomaly_detection: 1.02,
-  compare: 1.02,
-  sentiment_analysis: 1.02,
+  finance: 1.08,
+  hr: 1.08,
+  formula: 1.05,
+  forecast: 1.25,
+  anomaly_detection: 1.25,
+  sentiment_analysis: 1.20,
+  heatmap: 1.20,
+  compare: 1.10,
 };
 
 function expandQuery(userCommand) {
