@@ -741,7 +741,7 @@ function App() {
   });
 
   function handleConnect(id) {
-    if (userPlan === 'free') { setShowUpgrade(true); return; }
+    if (userPlan !== 'pro' && userPlan !== 'business') { setShowUpgrade(true); return; }
     setModal(INTEGRATIONS.find(i => i.id === id) || null);
   }
 

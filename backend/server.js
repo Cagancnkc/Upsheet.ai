@@ -223,7 +223,7 @@ const pdfRouter = require('./routes/pdf');
 app.use('/api/pdf', pdfRouter);
 
 app.get('/', (req, res) => {
-  res.json({ status: 'ok', service: 'Mocksheets API', version: '1.0.0' });
+  res.json({ status: 'ok', service: 'Mocksheets API', version: '1.2.0' });
 });
 
 app.get('/health', (req, res) => {
