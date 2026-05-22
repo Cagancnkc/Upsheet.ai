@@ -4110,14 +4110,18 @@ async function sendChatMessage() {
 
     const token = getAuthToken();
     console.warn('[CALL #' + (++CALL_COUNTER) + '] sendChatMessage → fetch /api/chat', new Error().stack.split('\n')[2]?.trim());
+    const _ctrl = new AbortController();
+    const _tid = setTimeout(() => _ctrl.abort(), 45000);
     const response = await fetch(API_URL + '/api/chat', {
       method: 'POST',
+      signal: _ctrl.signal,
       headers: {
         'Content-Type': 'application/json',
         ...(token ? { 'Authorization': 'Bearer ' + token } : {})
       },
       body: JSON.stringify({ message, sheetContext })
     });
+    clearTimeout(_tid);
 
     if (response.status === 429) {
       const errorData = await response.json();
@@ -4168,8 +4172,13 @@ async function sendChatMessage() {
     console.error('Chat error:', error);
     hideTyping();
     hideProgress();
-    showToast('Connection error. Please try again.', 'error');
-    addMessage('❌ An error occurred. Please try again.', 'ai');
+    if (error.name === 'AbortError') {
+      showToast('İstek zaman aşımına uğradı. Tekrar deneyin.', 'error');
+      addMessage('⏱ Backend yanıt vermedi (45s). Sunucu uyandırılıyor olabilir — biraz bekleyip tekrar deneyin.', 'ai');
+    } else {
+      showToast('Bağlantı hatası. Lütfen tekrar deneyin.', 'error');
+      addMessage('❌ Bir hata oluştu. Lütfen tekrar deneyin.', 'ai');
+    }
   } finally {
     isProcessing = false;
     sendBtn.disabled = false;
