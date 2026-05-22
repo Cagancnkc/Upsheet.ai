@@ -356,7 +356,7 @@ const INT_CONFIG = {
   },
   'trello': {
     type: 'token',
-    docsUrl: 'https://trello.com/power-ups/admin',
+    docsUrl: 'https://trello.com/app-key',
     fields: [
       { key: 'apiKey', label: 'API Key', placeholder: '...', hint: 'trello.com/power-ups/admin adresinden alın' },
       { key: 'token', label: 'Token', placeholder: '...' },
@@ -427,7 +427,9 @@ function ConnectModal({ integration, onClose, onSave }) {
       const data = await res.json().catch(() => ({}));
       if (res.ok) {
         if (storageKey) localStorage.setItem(storageKey, JSON.stringify(form));
-        onSave(integration.id, form);
+        setResult({ ok: true, msg: 'Bağlantı başarılı! Kaydedildi.' });
+        setTimeout(() => { onSave(integration.id, form); }, 800);
+        return;
       } else {
         setResult({ ok: false, msg: data.error || 'Bağlantı başarısız. Bilgileri kontrol edin.' });
       }
@@ -442,6 +444,7 @@ function ConnectModal({ integration, onClose, onSave }) {
     const popup = window.open(`${BACKEND_URL}${cfg.authPath}`, 'oauth', 'width=520,height=640');
     setOauthWaiting(true);
     function onMsg(e) {
+      if (e.origin !== new URL(BACKEND_URL).origin) return;
       if (!e.data || typeof e.data !== 'object') return;
       const { access_token, refresh_token, expiry, token } = e.data;
       const at = access_token || token;
@@ -729,6 +732,8 @@ function App() {
   function handleConnect(id) { setModal(INTEGRATIONS.find(i => i.id === id) || null); }
 
   function handleDisconnect(id) {
+    const name = INTEGRATIONS.find(i => i.id === id)?.name || 'Bu entegrasyon';
+    if (!window.confirm(`${name} bağlantısını kesmek istediğinizden emin misiniz?`)) return;
     try { const k = STORAGE_KEY[id]; if (k) localStorage.removeItem(k); } catch {}
     setConnected(prev => { const s = new Set(prev); s.delete(id); return s; });
   }
@@ -770,7 +775,7 @@ function App() {
         </div>
 
         <div className="stats-bar">
-          <span className="stat"><strong>{INTEGRATIONS.length}</strong> entegrasyon</span>
+          <span className="stat"><strong>{filtered.length}</strong>{filtered.length < INTEGRATIONS.length ? ` / ${INTEGRATIONS.length}` : ''} entegrasyon</span>
           <span className="stat"><strong>{connected.size}</strong> bağlı</span>
         </div>
 
