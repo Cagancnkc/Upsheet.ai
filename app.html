@@ -20,46 +20,75 @@
 <style>
 /* ── SIDEBAR ENTEGRASYON ITEMS ── */
 .sb-int-item{
-  display:flex;align-items:center;gap:8px;
-  padding:6px 10px 6px 12px;margin:1px 6px;border-radius:7px;cursor:pointer;
-  font-size:12px;color:rgba(255,255,255,0.55);transition:background .12s,color .12s;
+  display:flex;align-items:center;gap:9px;
+  padding:8px 10px 8px 12px;margin:1px 6px;border-radius:8px;cursor:pointer;
+  font-size:12px;color:rgba(255,255,255,0.62);
+  border-left:2px solid transparent;
+  transition:background .15s,color .15s,border-color .15s;
   user-select:none;
 }
-.sb-int-item:hover{background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.9);}
-.sb-int-logo{width:15px;height:15px;object-fit:contain;flex-shrink:0;border-radius:3px;}
-.sb-int-letter{
-  width:15px;height:15px;border-radius:4px;display:flex;align-items:center;
-  justify-content:center;font-size:9px;font-weight:700;color:#fff;flex-shrink:0;
+.sb-int-item:hover{
+  background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.92);
+  border-left-color:rgba(99,102,241,0.5);
 }
-.sb-int-name{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sb-int-logo{width:18px;height:18px;object-fit:contain;flex-shrink:0;border-radius:4px;}
+.sb-int-letter{
+  width:18px;height:18px;border-radius:5px;display:flex;align-items:center;
+  justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0;
+}
+.sb-int-name{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500;}
 .sb-int-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;background:rgba(255,255,255,0.15);}
-.sb-int-dot.on{background:#22c55e;box-shadow:0 0 4px rgba(34,197,94,0.5);}
+.sb-int-dot.on{background:#22c55e;box-shadow:0 0 5px rgba(34,197,94,0.6);}
 .sb-badge-live{
-  font-size:9px;font-weight:700;padding:2px 5px;border-radius:4px;flex-shrink:0;
-  background:rgba(34,197,94,0.15);color:#6EE7B7;
+  font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px;flex-shrink:0;
+  background:rgba(34,197,94,0.14);color:#6EE7B7;
+  border:1px solid rgba(34,197,94,0.25);letter-spacing:0.02em;
 }
 .sb-badge-soon{
-  font-size:9px;font-weight:700;padding:2px 5px;border-radius:4px;flex-shrink:0;
-  background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.3);
+  font-size:9px;font-weight:600;padding:2px 7px;border-radius:20px;flex-shrink:0;
+  background:transparent;color:rgba(255,255,255,0.3);
+  border:1px dashed rgba(255,255,255,0.16);letter-spacing:0.02em;
 }
 .sb-int-item-more{
-  font-size:11px;color:rgba(255,255,255,0.3);padding-left:12px;margin-top:2px;
+  display:flex;align-items:center;gap:5px;
+  font-size:11px;font-weight:500;color:rgba(99,102,241,0.65);
+  padding:6px 12px;margin:3px 6px;border-radius:7px;cursor:pointer;
+  transition:color .12s,background .12s;border-left:2px solid transparent;
 }
-.sb-int-item-more:hover{color:rgba(255,255,255,0.6);}
+.sb-int-item-more:hover{color:#a5b4fc;background:rgba(99,102,241,0.09);border-left-color:rgba(99,102,241,0.4);}
 /* light mode overrides for integration items */
-body.light .sb-int-item{color:rgba(14,14,16,0.5);}
-body.light .sb-int-item:hover{background:rgba(14,14,16,0.06);color:rgba(14,14,16,0.9);}
+body.light .sb-int-item{color:rgba(14,14,16,0.55);}
+body.light .sb-int-item:hover{background:rgba(14,14,16,0.05);color:rgba(14,14,16,0.9);border-left-color:rgba(99,102,241,0.4);}
 body.light .sb-int-dot{background:rgba(14,14,16,0.12);}
-body.light .sb-badge-live{background:#E7F5C2;color:#3a5a18;}
-body.light .sb-badge-soon{background:transparent;color:#9A9890;border:1px dashed rgba(14,14,16,0.18);}
-body.light .sb-int-item-more{color:rgba(14,14,16,0.3);}
-body.light .sb-int-item-more:hover{color:rgba(14,14,16,0.6);}
-#appSidebar.collapsed .sb-int-item{justify-content:center;padding:9px 4px;}
+body.light .sb-badge-live{background:rgba(34,197,94,0.1);color:#166534;border-color:rgba(34,197,94,0.2);}
+body.light .sb-badge-soon{color:rgba(14,14,16,0.35);border-color:rgba(14,14,16,0.2);}
+body.light .sb-int-item-more{color:rgba(79,70,229,0.7);}
+body.light .sb-int-item-more:hover{color:#4F46E5;background:rgba(99,102,241,0.07);border-left-color:rgba(99,102,241,0.3);}
+#appSidebar.collapsed .sb-int-item{justify-content:center;padding:9px 4px;border-left-color:transparent!important;}
 #appSidebar.collapsed .sb-int-name,
 #appSidebar.collapsed .sb-int-dot,
 #appSidebar.collapsed .sb-badge-live,
 #appSidebar.collapsed .sb-badge-soon,
 #appSidebar.collapsed .sb-int-item-more{display:none;}
+
+/* ── PREFERENCES GROUP ── */
+.sb-pref-group{
+  margin:3px 6px;border-radius:9px;overflow:hidden;
+  background:rgba(255,255,255,0.025);
+  border:1px solid rgba(255,255,255,0.055);
+}
+.sb-pref-group .sb-item{margin:0;border-radius:0;}
+.sb-pref-group .sb-item:hover{background:rgba(255,255,255,0.06);}
+.sb-pref-divider{height:1px;background:rgba(255,255,255,0.05);margin:0 10px;}
+.sb-hint-kbd{
+  font-size:10px!important;padding:2px 6px!important;border-radius:5px!important;
+  color:rgba(99,102,241,0.75)!important;background:rgba(99,102,241,0.1)!important;
+  border:1px solid rgba(99,102,241,0.22)!important;font-weight:600!important;
+}
+body.light .sb-pref-group{background:rgba(0,0,0,0.02);border-color:rgba(0,0,0,0.07);}
+body.light .sb-pref-group .sb-item:hover{background:rgba(0,0,0,0.04);}
+body.light .sb-pref-divider{background:rgba(0,0,0,0.06);}
+body.light .sb-hint-kbd{color:#4F46E5!important;background:rgba(99,102,241,0.08)!important;border-color:rgba(99,102,241,0.2)!important;}
 
 /* ── TOAST BİLDİRİM ── */
 .toast-container {
@@ -649,13 +678,13 @@ body.dark {
   padding:1px 4px; border-radius:3px; font-weight:700; letter-spacing:0.04em;
   flex-shrink:0; margin-left:auto; }
 
-.sb-toggle { width:30px; height:17px; background:rgba(255,255,255,0.1);
-  border-radius:9px; position:relative; cursor:pointer; transition:background .2s; flex-shrink:0; }
-.sb-toggle.on { background:rgba(99,102,241,0.55); }
-.sb-toggle-thumb { position:absolute; top:2px; left:2px; width:13px; height:13px;
-  background:white; border-radius:50%; transition:transform .2s;
-  box-shadow:0 1px 3px rgba(0,0,0,0.35); }
-.sb-toggle.on .sb-toggle-thumb { transform:translateX(13px); }
+.sb-toggle { width:36px; height:20px; background:rgba(255,255,255,0.12);
+  border-radius:10px; position:relative; cursor:pointer; transition:background .22s; flex-shrink:0; }
+.sb-toggle.on { background:rgba(99,102,241,0.7); }
+.sb-toggle-thumb { position:absolute; top:2px; left:2px; width:16px; height:16px;
+  background:white; border-radius:50%; transition:transform .22s;
+  box-shadow:0 1px 4px rgba(0,0,0,0.4); }
+.sb-toggle.on .sb-toggle-thumb { transform:translateX(16px); }
 
 .sb-user { display:flex; align-items:center; gap:9px; padding:11px 12px;
   border-top:1px solid rgba(255,255,255,0.06); cursor:pointer;
@@ -1364,12 +1393,12 @@ body.light .sb-upgrade-btn{background:linear-gradient(135deg,rgba(99,102,241,0.1
         <div class="sb-int-item">
           <img src="https://www.gstatic.com/images/branding/product/1x/sheets_2020q4_48dp.png" class="sb-int-logo" alt="Google Sheets">
           <span class="sb-int-name">Google Sheets</span>
-          <span class="sb-int-dot on"></span>
+          <span class="sb-badge-live">bağlı</span>
         </div>
         <div class="sb-int-item">
           <img src="https://upload.wikimedia.org/wikipedia/commons/3/34/Microsoft_Office_Excel_%282019%E2%80%93present%29.svg" class="sb-int-logo" alt="Excel">
           <span class="sb-int-name">Excel Online</span>
-          <span class="sb-int-dot off"></span>
+          <span class="sb-badge-soon">bağlan</span>
         </div>
         <div class="sb-int-item">
           <span class="sb-int-letter" style="background:#003366">LT</span>
@@ -1377,12 +1406,12 @@ body.light .sb-upgrade-btn{background:linear-gradient(135deg,rgba(99,102,241,0.1
           <span class="sb-badge-soon">yakında</span>
         </div>
         <div class="sb-int-item">
-          <span class="sb-int-letter" style="background:#E60000">M</span>
+          <span class="sb-int-letter" style="background:#C8102E">M</span>
           <span class="sb-int-name">Mikro ERP</span>
           <span class="sb-badge-soon">yakında</span>
         </div>
         <div class="sb-int-item">
-          <span class="sb-int-letter" style="background:#FF4F00">⚡</span>
+          <span class="sb-int-letter" style="background:#FF4A00;font-size:12px;">⚡</span>
           <span class="sb-int-name">Zapier</span>
           <span class="sb-badge-live">canlı</span>
         </div>
@@ -1392,7 +1421,9 @@ body.light .sb-upgrade-btn{background:linear-gradient(135deg,rgba(99,102,241,0.1
           <span class="sb-badge-soon">yakında</span>
         </div>
         <div class="sb-int-item sb-int-item-more" onclick="window.location.href='integrations.html'">
-          Tüm entegrasyonlar +8
+          <span style="flex:1">Tüm entegrasyonlar</span>
+          <span style="font-size:10px;opacity:0.7">+8</span>
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
         </div>
       </div>
 
@@ -1404,16 +1435,20 @@ body.light .sb-upgrade-btn{background:linear-gradient(135deg,rgba(99,102,241,0.1
     <div class="sb-section">
       <div class="sb-section-label">Tercihler</div>
 
-      <div class="sb-item" data-tooltip="Karanlık Mod" onclick="toggleDarkMode()">
-        <span class="sb-item-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg></span>
-        <span class="sb-item-label">Karanlık Mod</span>
-        <div class="sb-toggle" id="darkToggle"><div class="sb-toggle-thumb"></div></div>
-      </div>
+      <div class="sb-pref-group">
+        <div class="sb-item" data-tooltip="Karanlık Mod" onclick="toggleDarkMode()">
+          <span class="sb-item-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg></span>
+          <span class="sb-item-label">Karanlık Mod</span>
+          <div class="sb-toggle" id="darkToggle"><div class="sb-toggle-thumb"></div></div>
+        </div>
 
-      <div class="sb-item" data-tooltip="Kısayollar" onclick="showKeyboardShortcuts()">
-        <span class="sb-item-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M8 12h.01M12 12h.01M16 12h.01M7 16h10"/></svg></span>
-        <span class="sb-item-label">Kısayollar</span>
-        <span class="sb-item-hint">⌘K</span>
+        <div class="sb-pref-divider"></div>
+
+        <div class="sb-item" data-tooltip="Kısayollar" onclick="showKeyboardShortcuts()">
+          <span class="sb-item-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M8 12h.01M12 12h.01M16 12h.01M7 16h10"/></svg></span>
+          <span class="sb-item-label">Kısayollar</span>
+          <span class="sb-item-hint sb-hint-kbd">⌘K</span>
+        </div>
       </div>
 
     </div>
@@ -1424,14 +1459,19 @@ body.light .sb-upgrade-btn{background:linear-gradient(135deg,rgba(99,102,241,0.1
   <div class="sb-user-wrap">
     <div class="sb-upgrade-wrap" id="sbUpgradeWrap">
       <div class="pro-card">
+        <div class="pc-top-glow"></div>
         <div class="pc-title">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="#D9F26B"><path d="M12 1l2.5 6.5L21 10l-6.5 2.5L12 19l-2.5-6.5L3 10l6.5-2.5L12 1z"/></svg>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="#D9F26B"><path d="M12 1l2.5 6.5L21 10l-6.5 2.5L12 19l-2.5-6.5L3 10l6.5-2.5L12 1z"/></svg>
           <span id="sbPlanLabel">Free Plan</span>
+          <span class="pc-plan-badge" id="sbPlanBadge">ÜCRETSİZ</span>
         </div>
         <div class="pc-sub" id="sbUsageText">Bu ay 0 / 20 AI komutu kullanıldı.</div>
         <div class="pc-bar"><i id="sbUsageBar" style="width:0%"></i></div>
         <div class="pc-meta"><span id="sbUsageLeft">—</span><span id="sbUsageReset">—</span></div>
-        <button class="pc-btn" onclick="window.location.href='index.html#pricing'">Pro'ya yükselt — $29/ay →</button>
+        <button class="pc-btn" onclick="window.location.href='index.html#pricing'">
+          Pro'ya yükselt — $29/ay
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
       </div>
     </div>
     <div class="user-pill" onclick="toggleUserMenu()">
