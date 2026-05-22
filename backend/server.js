@@ -303,4 +303,16 @@ app.use((err, _req, res, _next) => {
 
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server ${PORT} portunda çalışıyor`);
+
+  // Render free tier'ı uyanık tut: her 14 dakikada self-ping
+  const SELF_URL = process.env.RENDER_EXTERNAL_URL || `http://localhost:${PORT}`;
+  const _pingMod = SELF_URL.startsWith('https') ? require('https') : require('http');
+  setInterval(() => {
+    _pingMod.get(`${SELF_URL}/health`, (r) => {
+      console.log(`[keep-alive] ping → ${r.statusCode}`);
+      r.resume();
+    }).on('error', (e) => {
+      console.warn('[keep-alive] ping başarısız:', e.message);
+    });
+  }, 14 * 60 * 1000);
 });
