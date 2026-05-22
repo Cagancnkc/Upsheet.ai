@@ -135,10 +135,9 @@ body{
 /* CARDS */
 .cards-grid{
   display:grid;
-  grid-template-columns:repeat(3,1fr);
+  grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
   gap:16px;
 }
-@media(max-width:900px){.cards-grid{grid-template-columns:repeat(2,1fr);}}
 @media(max-width:560px){.cards-grid{grid-template-columns:1fr;}}
 
 .cards-list{display:flex;flex-direction:column;gap:8px;}
@@ -160,19 +159,28 @@ body{
   background:radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(124,92,255,0.07) 0%,transparent 60%);
   opacity:0;transition:opacity .3s;pointer-events:none;
 }
-.int-card:hover{border-color:#c4b5fd;box-shadow:var(--shadow-hover);transform:translateY(-2px);}
+.int-card:hover{border-color:#c4b5fd;box-shadow:var(--shadow-hover);transform:translateY(-3px);}
 .int-card:hover::before{opacity:1;}
-.int-card.connected{border-color:#86efac;}
-.int-card.coming-soon{opacity:.6;cursor:default;}
-.int-card.coming-soon:hover{transform:none;box-shadow:none;border-color:var(--border);}
-.int-card.coming-soon::before{display:none;}
+.int-card.connected{border-color:#22c55e;box-shadow:0 0 0 3px rgba(34,197,94,0.08);}
 
-.card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;}
-.card-icon{
-  width:48px;height:48px;border-radius:12px;
+/* LOGO */
+.card-logo{
+  width:52px;height:52px;border-radius:12px;
+  background:#fff;padding:10px;
+  box-shadow:0 1px 4px rgba(0,0,0,.1);
   display:flex;align-items:center;justify-content:center;
   flex-shrink:0;
 }
+.card-logo img{width:32px;height:32px;object-fit:contain;}
+[data-theme="dark"] .card-logo{background:#fff;box-shadow:0 1px 6px rgba(0,0,0,.3);}
+
+/* PULSE DOT */
+.pulse-dot{
+  width:8px;height:8px;background:#22c55e;border-radius:50%;
+  animation:pulse 2s ease-in-out infinite;flex-shrink:0;
+}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(.8)}}
+
 .card-badges{display:flex;flex-direction:column;gap:4px;align-items:flex-end;}
 .badge{
   font-size:10px;font-weight:600;text-transform:uppercase;
@@ -181,19 +189,19 @@ body{
 }
 .badge-pro{background:rgba(124,92,255,0.12);color:var(--brand);}
 .badge-free{background:rgba(34,197,94,0.12);color:#16a34a;}
-.badge-soon{background:var(--surface2);color:var(--text-muted);}
-.badge-connected{background:rgba(34,197,94,0.12);color:#16a34a;}
+.badge-connected{background:rgba(34,197,94,0.12);color:#16a34a;display:flex;align-items:center;gap:5px;}
 .badge-popular{background:rgba(251,191,36,0.15);color:#d97706;}
 
+.card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;}
 .card-body{flex:1;}
-.card-name{font-size:15px;font-weight:700;margin-bottom:6px;}
+.card-name{font-size:15px;font-weight:700;margin-bottom:4px;}
+.card-cat{font-size:11px;color:var(--text-muted);margin-bottom:6px;}
 .card-desc{font-size:12px;color:var(--text-muted);line-height:1.55;}
 
-.card-footer{display:flex;align-items:center;justify-content:space-between;margin-top:16px;}
-.card-cat{font-size:11px;color:var(--text-muted);}
+.card-footer{display:flex;align-items:center;justify-content:flex-end;margin-top:16px;}
 
 .connect-btn{
-  padding:6px 14px;border-radius:var(--radius-sm);
+  padding:7px 16px;border-radius:var(--radius-sm);
   font-size:12px;font-weight:600;cursor:pointer;border:none;
   font-family:inherit;transition:all .15s;
 }
@@ -201,7 +209,6 @@ body{
 .connect-btn.btn-connect:hover{opacity:.88;}
 .connect-btn.btn-disconnect{background:transparent;color:#ef4444;border:1px solid #fca5a5;}
 .connect-btn.btn-disconnect:hover{background:#fef2f2;}
-.connect-btn.btn-soon{background:var(--surface2);color:var(--text-muted);cursor:default;}
 
 .empty-state{text-align:center;padding:60px 24px;color:var(--text-muted);}
 .empty-state p{font-size:14px;}
@@ -220,14 +227,14 @@ body{
   background:var(--surface);
   border:1.5px solid var(--border);
   border-radius:var(--radius);
-  padding:32px;
-  max-width:440px;width:100%;
+  padding:28px;
+  max-width:480px;width:100%;
   box-shadow:0 24px 64px rgba(0,0,0,.2);
   animation:slideUp .2s ease;
 }
 @keyframes slideUp{from{transform:translateY(16px);opacity:0;}to{transform:translateY(0);opacity:1;}}
 
-.modal-header{display:flex;align-items:center;gap:14px;margin-bottom:16px;}
+.modal-header{display:flex;align-items:center;gap:14px;margin-bottom:8px;}
 .modal-title{font-size:18px;font-weight:700;}
 .modal-close{
   margin-left:auto;width:28px;height:28px;
@@ -236,32 +243,38 @@ body{
   display:flex;align-items:center;justify-content:center;line-height:1;
 }
 .modal-close:hover{background:var(--surface2);}
-.modal-desc{font-size:13px;color:var(--text-muted);line-height:1.6;margin-bottom:20px;}
-.modal-actions{display:flex;gap:10px;}
+.modal-divider{border:none;border-top:1px solid var(--border);margin:14px 0 18px;}
+.modal-desc{font-size:13px;color:var(--text-muted);line-height:1.6;margin-bottom:18px;}
+
+.modal-form-group{margin-bottom:14px;}
+.modal-label-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;}
+.modal-label{font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em;}
+.modal-label-link{font-size:11px;color:var(--brand);text-decoration:none;}
+.modal-label-link:hover{text-decoration:underline;}
+.modal-input{
+  width:100%;padding:9px 12px;
+  border:1.5px solid var(--border);border-radius:var(--radius-sm);
+  background:var(--surface2);color:var(--text);font-size:13px;
+  font-family:inherit;outline:none;transition:border-color .15s;
+}
+.modal-input:focus{border-color:var(--brand);background:var(--surface);}
+.modal-input::placeholder{color:var(--text-muted);}
+.modal-hint{font-size:11px;color:var(--text-muted);margin-top:4px;}
+.connect-result{padding:10px 12px;border-radius:var(--radius-sm);font-size:12px;margin-bottom:14px;line-height:1.5;}
+.connect-result.success{background:rgba(34,197,94,0.1);color:#15803d;border:1px solid #86efac;}
+.connect-result.error{background:rgba(239,68,68,0.1);color:#b91c1c;border:1px solid #fca5a5;}
+.oauth-info{background:var(--brand-soft);border:1px solid rgba(124,92,255,0.2);border-radius:var(--radius-sm);padding:12px;font-size:13px;line-height:1.6;margin-bottom:16px;}
+.modal-actions{display:flex;gap:8px;}
 .modal-btn{
   flex:1;padding:11px;border-radius:var(--radius-sm);
   font-size:14px;font-weight:600;cursor:pointer;border:none;
   font-family:inherit;transition:all .15s;
 }
 .modal-btn-primary{background:var(--brand);color:#fff;}
-.modal-btn-primary:hover{opacity:.88;}
+.modal-btn-primary:hover:not(:disabled){opacity:.88;}
+.modal-btn-primary:disabled{opacity:.5;cursor:default;}
 .modal-btn-secondary{background:var(--surface2);color:var(--text);border:1px solid var(--border);}
 .modal-btn-secondary:hover{border-color:var(--brand);color:var(--brand);}
-
-.modal-form-group{margin-bottom:14px;}
-.modal-label{display:block;font-size:12px;font-weight:600;color:var(--text-muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em;}
-.modal-input{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--surface2);color:var(--text);font-size:13px;font-family:inherit;outline:none;transition:border-color .15s;}
-.modal-input:focus{border-color:var(--brand);background:var(--surface);}
-.modal-input::placeholder{color:var(--text-muted);}
-.modal-hint{font-size:11px;color:var(--text-muted);margin-top:4px;}
-.test-result{padding:8px 12px;border-radius:var(--radius-sm);font-size:12px;margin-bottom:12px;line-height:1.5;}
-.test-result.success{background:rgba(34,197,94,0.1);color:#15803d;border:1px solid #86efac;}
-.test-result.error{background:rgba(239,68,68,0.1);color:#b91c1c;border:1px solid #fca5a5;}
-.oauth-info{background:var(--brand-soft);border:1px solid rgba(124,92,255,0.2);border-radius:var(--radius-sm);padding:12px;font-size:13px;line-height:1.6;margin-bottom:16px;}
-.modal-actions{display:flex;gap:8px;}
-.btn-test{flex:none !important;background:var(--surface2) !important;color:var(--text) !important;border:1px solid var(--border) !important;padding:11px 14px !important;}
-.btn-test:hover:not(:disabled){border-color:var(--brand) !important;color:var(--brand) !important;}
-.btn-test:disabled,.modal-btn-primary:disabled{opacity:.5;cursor:default;}
 </style>
 </head>
 <body>
@@ -269,7 +282,6 @@ body{
 <script type="text/babel">
 const { useState, useEffect, useRef } = React;
 
-// ── Yardımcı fonksiyonlar ─────────────────────────────────────────────────────
 const BACKEND_URL = window.location.hostname === 'localhost'
   ? 'http://localhost:3001'
   : 'https://upsheet-ai.onrender.com';
@@ -284,50 +296,112 @@ function getAuthToken() {
   } catch { return null; }
 }
 
-// LocalStorage anahtar haritası (automations.js ile uyumlu)
 const STORAGE_KEY = {
-  'slack': 'int_slack', 'ms-teams': 'int_teams', 'make': 'int_make',
-  'zapier': 'int_zapier', 'webhook': 'int_webhook', 'notion': 'int_notion',
-  'airtable': 'int_airtable', 'google-sheets': 'int_sheets',
-  'google-drive': 'int_drive', 'ms-excel': 'int_excel',
+  'slack':         'int_slack',
+  'ms-teams':      'int_teams',
+  'make':          'int_make',
+  'zapier':        'int_zapier',
+  'webhook':       'int_webhook',
+  'notion':        'int_notion',
+  'airtable':      'int_airtable',
+  'trello':        'int_trello',
+  'google-sheets': 'int_sheets',
+  'google-drive':  'int_drive',
 };
 
-// Her entegrasyon için form tanımı
 const INT_CONFIG = {
-  'slack':    { type:'webhook', fields:[{key:'url',label:'Webhook URL',placeholder:'https://hooks.slack.com/services/...'}] },
-  'ms-teams': { type:'webhook', fields:[{key:'url',label:'Webhook URL',placeholder:'https://outlook.office.com/webhook/...'}] },
-  'make':     { type:'webhook', fields:[{key:'url',label:'Make Webhook URL',placeholder:'https://hook.eu1.make.com/...'}] },
-  'zapier':   { type:'webhook', fields:[{key:'url',label:'Zap Webhook URL',placeholder:'https://hooks.zapier.com/hooks/catch/...'}] },
-  'webhook':  { type:'webhook', fields:[{key:'url',label:'Hedef URL',placeholder:'https://...'},{key:'secret',label:'İmza Sırrı (opsiyonel)',placeholder:'HMAC secret — boş bırakılabilir'}] },
-  'notion':   { type:'token',   fields:[{key:'token',label:'Notion Integration Token',placeholder:'secret_...',hint:'notion.so/my-integrations adresinden alın'},{key:'dbId',label:'Veritabanı ID',placeholder:'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',hint:'Notion veritabanı URL\'inden kopyalayın'}] },
-  'airtable': { type:'token',   fields:[{key:'token',label:'Personal Access Token',placeholder:'pat...',hint:'airtable.com/create/tokens adresinden oluşturun'},{key:'baseId',label:'Base ID',placeholder:'appXXXXXXXX'},{key:'tableName',label:'Tablo Adı',placeholder:'Table 1'}] },
-  'google-sheets': { type:'oauth', authPath:'/api/integrations/sheets/auth', label:'Google' },
-  'google-drive':  { type:'oauth', authPath:'/api/integrations/drive/auth',  label:'Google' },
-  'ms-excel':      { type:'oauth', authPath:'/api/integrations/excel/auth',   label:'Microsoft' },
+  'slack': {
+    type: 'webhook',
+    docsUrl: 'https://api.slack.com/messaging/webhooks',
+    fields: [{ key: 'url', label: 'Webhook URL', placeholder: 'https://hooks.slack.com/services/...' }],
+  },
+  'ms-teams': {
+    type: 'webhook',
+    docsUrl: 'https://learn.microsoft.com/en-us/microsoftteams/platform/webhooks-and-connectors/how-to/add-incoming-webhook',
+    fields: [{ key: 'url', label: 'Webhook URL', placeholder: 'https://outlook.office.com/webhook/...' }],
+  },
+  'make': {
+    type: 'webhook',
+    docsUrl: 'https://www.make.com/en/help/tools/webhooks',
+    fields: [{ key: 'url', label: 'Make Webhook URL', placeholder: 'https://hook.eu1.make.com/...' }],
+  },
+  'zapier': {
+    type: 'webhook',
+    docsUrl: 'https://zapier.com/help/create/code-webhooks/trigger-zaps-from-webhooks',
+    fields: [{ key: 'url', label: 'Zap Webhook URL', placeholder: 'https://hooks.zapier.com/hooks/catch/...' }],
+  },
+  'webhook': {
+    type: 'webhook',
+    fields: [
+      { key: 'url', label: 'Hedef URL', placeholder: 'https://...' },
+      { key: 'secret', label: 'İmza Sırrı (opsiyonel)', placeholder: 'HMAC secret — boş bırakılabilir' },
+    ],
+  },
+  'notion': {
+    type: 'token',
+    docsUrl: 'https://www.notion.so/my-integrations',
+    fields: [
+      { key: 'token', label: 'Integration Token', placeholder: 'secret_...', hint: 'notion.so/my-integrations adresinden alın' },
+      { key: 'dbId', label: 'Veritabanı ID', placeholder: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx', hint: 'Notion veritabanı URL\'inden kopyalayın' },
+    ],
+  },
+  'airtable': {
+    type: 'token',
+    docsUrl: 'https://airtable.com/create/tokens',
+    fields: [
+      { key: 'token', label: 'Personal Access Token', placeholder: 'pat...', hint: 'airtable.com/create/tokens adresinden oluşturun' },
+      { key: 'baseId', label: 'Base ID', placeholder: 'appXXXXXXXX' },
+      { key: 'tableName', label: 'Tablo Adı', placeholder: 'Table 1' },
+    ],
+  },
+  'trello': {
+    type: 'token',
+    docsUrl: 'https://trello.com/power-ups/admin',
+    fields: [
+      { key: 'apiKey', label: 'API Key', placeholder: '...', hint: 'trello.com/power-ups/admin adresinden alın' },
+      { key: 'token', label: 'Token', placeholder: '...' },
+      { key: 'boardId', label: 'Board ID', placeholder: '...', hint: 'Board URL\'indeki son kısım' },
+    ],
+  },
+  'google-sheets': { type: 'oauth', authPath: '/api/integrations/sheets/auth', label: 'Google' },
+  'google-drive':  { type: 'oauth', authPath: '/api/integrations/drive/auth',  label: 'Google' },
 };
 
 async function testIntegration(id, form, token) {
-  const h = { 'Content-Type':'application/json', Authorization:`Bearer ${token}` };
+  const h = { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` };
   const base = BACKEND_URL;
   switch (id) {
     case 'slack':
-      return fetch(`${base}/api/integrations/slack/test`,   { method:'POST', headers:h, body:JSON.stringify({ webhookUrl: form.url }) });
+      return fetch(`${base}/api/integrations/slack/test`, { method: 'POST', headers: h, body: JSON.stringify({ webhookUrl: form.url }) });
     case 'ms-teams':
-      return fetch(`${base}/api/integrations/teams/test`,   { method:'POST', headers:h, body:JSON.stringify({ webhookUrl: form.url }) });
+      return fetch(`${base}/api/integrations/teams/test`, { method: 'POST', headers: h, body: JSON.stringify({ webhookUrl: form.url }) });
     case 'make':
-      return fetch(`${base}/api/integrations/make/trigger`, { method:'POST', headers:h, body:JSON.stringify({ webhookUrl: form.url, event:'test', data:{test:true} }) });
+      return fetch(`${base}/api/integrations/make/trigger`, { method: 'POST', headers: h, body: JSON.stringify({ webhookUrl: form.url, event: 'test', data: { test: true } }) });
     case 'zapier':
     case 'webhook':
-      return fetch(`${base}/api/integrations/webhook/send`, { method:'POST', headers:h, body:JSON.stringify({ url: form.url, secret: form.secret||'', event:'test', data:{test:true} }) });
+      return fetch(`${base}/api/integrations/webhook/send`, { method: 'POST', headers: h, body: JSON.stringify({ url: form.url, secret: form.secret || '', event: 'test', data: { test: true } }) });
     case 'notion':
-      return fetch(`${base}/api/integrations/notion/test`,   { method:'POST', headers:h, body:JSON.stringify({ token: form.token, databaseId: form.dbId }) });
+      return fetch(`${base}/api/integrations/notion/test`, { method: 'POST', headers: h, body: JSON.stringify({ token: form.token, databaseId: form.dbId }) });
     case 'airtable':
-      return fetch(`${base}/api/integrations/airtable/test`, { method:'POST', headers:h, body:JSON.stringify({ token: form.token, baseId: form.baseId, tableName: form.tableName||'Table 1' }) });
+      return fetch(`${base}/api/integrations/airtable/test`, { method: 'POST', headers: h, body: JSON.stringify({ token: form.token, baseId: form.baseId, tableName: form.tableName || 'Table 1' }) });
+    case 'trello':
+      return fetch(`${base}/api/integrations/trello/test`, { method: 'POST', headers: h, body: JSON.stringify({ apiKey: form.apiKey, token: form.token, boardId: form.boardId }) });
     default: return null;
   }
 }
 
-// ── Modal bileşeni ────────────────────────────────────────────────────────────
+// Webhook için generic SVG ikonu
+function WebhookIcon() {
+  return (
+    <svg viewBox="0 0 32 32" width="32" height="32" fill="none">
+      <circle cx="16" cy="16" r="16" fill="#FF4A00"/>
+      <path d="M10 14.5 C10 11.5 12.7 9 16 9 S22 11.5 22 14.5" stroke="#fff" strokeWidth="2" fill="none" strokeLinecap="round"/>
+      <path d="M7 20.5 C7 15.5 11 12 16 12 S25 15.5 25 20.5" stroke="#fff" strokeWidth="2" fill="none" strokeLinecap="round"/>
+      <circle cx="16" cy="23" r="2.5" fill="#fff"/>
+    </svg>
+  );
+}
+
 function ConnectModal({ integration, onClose, onSave }) {
   const cfg = INT_CONFIG[integration.id];
   const storageKey = STORAGE_KEY[integration.id];
@@ -335,22 +409,33 @@ function ConnectModal({ integration, onClose, onSave }) {
     try { const s = storageKey && localStorage.getItem(storageKey); return s ? JSON.parse(s) : {}; }
     catch { return {}; }
   });
-  const [testing, setTesting] = useState(false);
-  const [testResult, setTestResult] = useState(null);
+  const [connecting, setConnecting] = useState(false);
+  const [result, setResult] = useState(null);
   const [oauthWaiting, setOauthWaiting] = useState(false);
-  const IconComp = Icon[integration.icon];
 
-  const updateField = (key, val) => { setForm(prev => ({...prev,[key]:val})); setTestResult(null); };
+  const updateField = (key, val) => { setForm(prev => ({ ...prev, [key]: val })); setResult(null); };
 
-  async function handleTest() {
-    setTesting(true); setTestResult(null);
+  const sensitiveKeys = ['token', 'apiKey', 'secret'];
+  const requiredKeys = cfg?.fields?.filter(f => f.key !== 'secret' && f.key !== 'tableName').map(f => f.key) || [];
+  const hasRequired = requiredKeys.every(k => form[k]?.trim());
+
+  async function handleConnect() {
+    setConnecting(true); setResult(null);
     try {
       const res = await testIntegration(integration.id, form, getAuthToken());
-      if (!res) { setTestResult({ok:false,msg:'Bu entegrasyon için test desteklenmiyor.'}); return; }
+      if (!res) { setResult({ ok: false, msg: 'Test desteklenmiyor.' }); return; }
       const data = await res.json().catch(() => ({}));
-      setTestResult(res.ok ? {ok:true,msg:data.message||'Bağlantı başarılı!'} : {ok:false,msg:data.error||'Bağlantı başarısız.'});
-    } catch(e) { setTestResult({ok:false,msg:e.message}); }
-    finally { setTesting(false); }
+      if (res.ok) {
+        if (storageKey) localStorage.setItem(storageKey, JSON.stringify(form));
+        onSave(integration.id, form);
+      } else {
+        setResult({ ok: false, msg: data.error || 'Bağlantı başarısız. Bilgileri kontrol edin.' });
+      }
+    } catch (e) {
+      setResult({ ok: false, msg: e.message || 'Bağlantı kurulamadı.' });
+    } finally {
+      setConnecting(false);
+    }
   }
 
   function handleOAuth() {
@@ -361,34 +446,40 @@ function ConnectModal({ integration, onClose, onSave }) {
       const { access_token, refresh_token, expiry, token } = e.data;
       const at = access_token || token;
       if (!at) return;
-      const saved = { access_token:at, refresh_token:refresh_token||null, expiry:expiry||null };
+      const saved = { access_token: at, refresh_token: refresh_token || null, expiry: expiry || null };
       if (storageKey) localStorage.setItem(storageKey, JSON.stringify(saved));
       window.removeEventListener('message', onMsg);
       setOauthWaiting(false);
       onSave(integration.id, saved);
     }
     window.addEventListener('message', onMsg);
-    const poll = setInterval(() => { try { if (popup.closed) { clearInterval(poll); window.removeEventListener('message', onMsg); setOauthWaiting(false); } } catch {} }, 500);
-  }
-
-  function handleSave() {
-    if (storageKey) localStorage.setItem(storageKey, JSON.stringify(form));
-    onSave(integration.id, form);
+    const poll = setInterval(() => {
+      try { if (popup.closed) { clearInterval(poll); window.removeEventListener('message', onMsg); setOauthWaiting(false); } }
+      catch {}
+    }, 500);
   }
 
   const isOauth = cfg?.type === 'oauth';
-  const hasRequiredFields = !cfg?.fields || cfg.fields.filter(f=>f.key!=='secret'&&f.key!=='tableName').every(f=>form[f.key]);
+  const logoEl = integration.id === 'webhook'
+    ? <WebhookIcon />
+    : <img src={integration.logo} width="32" height="32" style={{ objectFit: 'contain' }} alt={integration.name} />;
 
   return (
-    <div className="modal-overlay" onClick={e=>{if(e.target===e.currentTarget)onClose();}}>
+    <div className="modal-overlay" onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
       <div className="modal-box">
         <div className="modal-header">
-          <div className="card-icon" style={{background:integration.iconBg,width:44,height:44,borderRadius:10}}>
-            {IconComp ? <IconComp/> : '🔗'}
+          <div className="card-logo" style={{ width: 44, height: 44, borderRadius: 10, padding: 8 }}>
+            {logoEl}
           </div>
-          <span className="modal-title">{integration.name} Bağla</span>
+          <div>
+            <div className="modal-title">{integration.name}</div>
+            <span className={`badge badge-${integration.tier}`} style={{ fontSize: 10 }}>
+              {integration.tier === 'free' ? 'Ücretsiz' : 'Pro'}
+            </span>
+          </div>
           <button className="modal-close" onClick={onClose}>×</button>
         </div>
+        <hr className="modal-divider" />
 
         {isOauth ? (
           <>
@@ -406,30 +497,34 @@ function ConnectModal({ integration, onClose, onSave }) {
           <>
             {cfg?.fields?.map(field => (
               <div key={field.key} className="modal-form-group">
-                <label className="modal-label">{field.label}</label>
+                <div className="modal-label-row">
+                  <label className="modal-label">{field.label}</label>
+                  {cfg.docsUrl && field === cfg.fields[0] && (
+                    <a className="modal-label-link" href={cfg.docsUrl} target="_blank" rel="noopener noreferrer">
+                      Nasıl alınır? →
+                    </a>
+                  )}
+                </div>
                 <input
                   className="modal-input"
-                  type={['token','apiKey','secret'].includes(field.key) ? 'password' : 'text'}
-                  placeholder={field.placeholder||''}
-                  value={form[field.key]||''}
-                  onChange={e=>updateField(field.key,e.target.value)}
+                  type={sensitiveKeys.includes(field.key) ? 'password' : 'text'}
+                  placeholder={field.placeholder || ''}
+                  value={form[field.key] || ''}
+                  onChange={e => updateField(field.key, e.target.value)}
                   autoComplete="off"
                 />
                 {field.hint && <div className="modal-hint">{field.hint}</div>}
               </div>
             ))}
-            {testResult && (
-              <div className={`test-result ${testResult.ok?'success':'error'}`}>
-                {testResult.ok?'✓ ':'✗ '}{testResult.msg}
+            {result && (
+              <div className={`connect-result ${result.ok ? 'success' : 'error'}`}>
+                {result.ok ? '✓ ' : '✗ '}{result.msg}
               </div>
             )}
             <div className="modal-actions">
               <button className="modal-btn modal-btn-secondary" onClick={onClose}>Vazgeç</button>
-              <button className="modal-btn btn-test" onClick={handleTest} disabled={testing||!hasRequiredFields}>
-                {testing ? '...' : 'Test Et'}
-              </button>
-              <button className="modal-btn modal-btn-primary" onClick={handleSave} disabled={!hasRequiredFields}>
-                Kaydet
+              <button className="modal-btn modal-btn-primary" onClick={handleConnect} disabled={connecting || !hasRequired}>
+                {connecting ? 'Bağlanıyor...' : 'Bağlan →'}
               </button>
             </div>
           </>
@@ -439,200 +534,84 @@ function ConnectModal({ integration, onClose, onSave }) {
   );
 }
 
-const CATEGORIES = ['Tümü', 'Üretkenlik', 'Otomasyon', 'İletişim', 'Depolama', 'CRM'];
-
-const Icon = {
-  GoogleSheets: () => (
-    <svg viewBox="0 0 24 24" width="26" height="26" fill="none">
-      <rect width="24" height="24" rx="5" fill="#0F9D58"/>
-      <rect x="6" y="6" width="12" height="12" rx="1" fill="none" stroke="#fff" strokeWidth="1.2"/>
-      <line x1="6" y1="10" x2="18" y2="10" stroke="#fff" strokeWidth="1.2"/>
-      <line x1="6" y1="14" x2="18" y2="14" stroke="#fff" strokeWidth="1.2"/>
-      <line x1="11" y1="6" x2="11" y2="18" stroke="#fff" strokeWidth="1.2"/>
-    </svg>
-  ),
-  Notion: () => (
-    <svg viewBox="0 0 24 24" width="26" height="26">
-      <rect width="24" height="24" rx="5" fill="#fff"/>
-      <text x="4.5" y="18" fontSize="17" fontWeight="900" fill="#000" fontFamily="Georgia,serif">N</text>
-    </svg>
-  ),
-  Zapier: () => (
-    <svg viewBox="0 0 24 24" width="26" height="26">
-      <rect width="24" height="24" rx="5" fill="#FF4A00"/>
-      <text x="5" y="18" fontSize="16" fontWeight="900" fill="#fff" fontFamily="Arial,sans-serif">Z</text>
-    </svg>
-  ),
-  Slack: () => (
-    <svg viewBox="0 0 24 24" width="26" height="26" fill="none">
-      <rect width="24" height="24" rx="5" fill="#4A154B"/>
-      <circle cx="8.5" cy="9" r="1.8" fill="#E01E5A"/>
-      <rect x="7" y="11" width="3" height="4" rx="1.5" fill="#E01E5A"/>
-      <circle cx="15.5" cy="15" r="1.8" fill="#2EB67D"/>
-      <rect x="14" y="9" width="3" height="4" rx="1.5" fill="#2EB67D"/>
-      <circle cx="9" cy="15.5" r="1.8" fill="#ECB22E"/>
-      <rect x="11" y="14" width="4" height="3" rx="1.5" fill="#ECB22E"/>
-      <circle cx="15" cy="8.5" r="1.8" fill="#36C5F0"/>
-      <rect x="9" y="7" width="4" height="3" rx="1.5" fill="#36C5F0"/>
-    </svg>
-  ),
-  Airtable: () => (
-    <svg viewBox="0 0 24 24" width="26" height="26">
-      <rect width="24" height="24" rx="5" fill="#FFBF00"/>
-      <text x="5" y="18" fontSize="15" fontWeight="900" fill="#fff" fontFamily="Arial,sans-serif">A</text>
-    </svg>
-  ),
-  Make: () => (
-    <svg viewBox="0 0 24 24" width="26" height="26" fill="none">
-      <rect width="24" height="24" rx="5" fill="#6D00CC"/>
-      <circle cx="7" cy="12" r="2.2" fill="#fff"/>
-      <circle cx="17" cy="12" r="2.2" fill="#fff"/>
-      <line x1="9.2" y1="12" x2="14.8" y2="12" stroke="#fff" strokeWidth="1.5"/>
-    </svg>
-  ),
-  GoogleDrive: () => (
-    <svg viewBox="0 0 24 24" width="26" height="26" fill="none">
-      <rect width="24" height="24" rx="5" fill="#F8F9FA"/>
-      <path d="M12 5 L5.5 17 H10.5 L17 5 Z" fill="#4285F4"/>
-      <path d="M5.5 17 L3 20 H10 L12 16 Z" fill="#EA4335"/>
-      <path d="M17 5 L21 12 L18.5 17 H14 Z" fill="#FBBC05"/>
-    </svg>
-  ),
-  MicrosoftExcel: () => (
-    <svg viewBox="0 0 24 24" width="26" height="26">
-      <rect width="24" height="24" rx="5" fill="#217346"/>
-      <text x="4.5" y="18" fontSize="16" fontWeight="900" fill="#fff" fontFamily="Arial,sans-serif">X</text>
-    </svg>
-  ),
-  MicrosoftTeams: () => (
-    <svg viewBox="0 0 24 24" width="26" height="26" fill="none">
-      <rect width="24" height="24" rx="5" fill="#6264A7"/>
-      <rect x="7" y="9" width="10" height="8" rx="2" fill="rgba(255,255,255,0.9)"/>
-      <text x="10" y="16" fontSize="7" fontWeight="700" fill="#6264A7" fontFamily="Arial,sans-serif">T</text>
-    </svg>
-  ),
-  Webhook: () => (
-    <svg viewBox="0 0 24 24" width="26" height="26" fill="none">
-      <rect width="24" height="24" rx="5" fill="#FF4A00"/>
-      <path d="M8 11 C8 9 9.8 7.5 12 7.5 S16 9 16 11" stroke="#fff" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
-      <path d="M5.5 15.5 C5.5 12 8.4 9.5 12 9.5 S18.5 12 18.5 15.5" stroke="#fff" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
-      <circle cx="12" cy="17" r="1.8" fill="#fff"/>
-    </svg>
-  ),
-  Linear: () => (
-    <svg viewBox="0 0 24 24" width="26" height="26" fill="none">
-      <rect width="24" height="24" rx="5" fill="#5E6AD2"/>
-      <path d="M5 19 L19 5M5 12 L12 5M12 19 L19 12" stroke="#fff" strokeWidth="1.8" strokeLinecap="round"/>
-    </svg>
-  ),
-  HubSpot: () => (
-    <svg viewBox="0 0 24 24" width="26" height="26" fill="none">
-      <rect width="24" height="24" rx="5" fill="#FF7A59"/>
-      <circle cx="12" cy="12" r="3" fill="#fff"/>
-      <line x1="12" y1="4" x2="12" y2="8.5" stroke="#fff" strokeWidth="1.5" strokeLinecap="round"/>
-      <line x1="12" y1="15.5" x2="12" y2="20" stroke="#fff" strokeWidth="1.5" strokeLinecap="round"/>
-      <line x1="4" y1="12" x2="8.5" y2="12" stroke="#fff" strokeWidth="1.5" strokeLinecap="round"/>
-      <line x1="15.5" y1="12" x2="20" y2="12" stroke="#fff" strokeWidth="1.5" strokeLinecap="round"/>
-    </svg>
-  ),
-  Discord: () => (
-    <svg viewBox="0 0 24 24" width="26" height="26" fill="none">
-      <rect width="24" height="24" rx="5" fill="#5865F2"/>
-      <path d="M16 7.5C15.1 7.1 14.1 6.8 13 6.6L12.8 7C13.8 7.3 14.7 7.7 15.5 8.2C14.2 7.5 13 7.1 12 7.1C11 7.1 9.8 7.5 8.5 8.2C9.3 7.7 10.2 7.3 11.2 7L11 6.6C9.9 6.8 8.9 7.1 8 7.5C6.8 9.5 6.2 11.8 6.4 14.1C7.4 15 8.4 15.5 9.4 15.9L10 15.1C9.3 14.8 8.6 14.5 8 14.1C8.6 14.5 9.5 14.9 12 14.9C14.5 14.9 15.4 14.5 16 14.1C15.4 14.5 14.7 14.8 14 15.1L14.6 15.9C15.6 15.5 16.6 15 17.6 14.1C17.8 11.8 17.2 9.5 16 7.5Z" fill="#fff"/>
-      <ellipse cx="10" cy="12" rx="1.4" ry="1.5" fill="#5865F2"/>
-      <ellipse cx="14" cy="12" rx="1.4" ry="1.5" fill="#5865F2"/>
-    </svg>
-  ),
-};
+const CATEGORIES = ['Tümü', 'Bildirim', 'Veritabanı', 'Otomasyon', 'Bulut'];
 
 const INTEGRATIONS = [
-  {
-    id: 'google-sheets',
-    name: 'Google Sheets',
-    desc: "Google Sheets dosyalarını içe aktarın veya Mocksheets verilerinizi Google Sheets'e aktarın.",
-    category: 'Üretkenlik', tier: 'free', popular: true, icon: 'GoogleSheets', iconBg: '#e8f5e9',
-  },
-  {
-    id: 'notion',
-    name: 'Notion',
-    desc: 'Notion veritabanlarını Excel formatına dönüştürün ve AI ile analiz edin.',
-    category: 'Üretkenlik', tier: 'pro', popular: true, icon: 'Notion', iconBg: '#f5f5f5',
-  },
-  {
-    id: 'zapier',
-    name: 'Zapier',
-    desc: "Zapier üzerinden 5000+ uygulamaya bağlanın ve iş akışlarını otomatize edin.",
-    category: 'Otomasyon', tier: 'pro', popular: true, icon: 'Zapier', iconBg: '#fff3ef',
-  },
   {
     id: 'slack',
     name: 'Slack',
     desc: 'Raporları ve analizleri Slack kanallarına otomatik olarak gönderin.',
-    category: 'İletişim', tier: 'pro', popular: true, icon: 'Slack', iconBg: '#f8f0f8',
-  },
-  {
-    id: 'airtable',
-    name: 'Airtable',
-    desc: 'Airtable tabloları ile Mocksheets arasında veri senkronizasyonu sağlayın.',
-    category: 'Üretkenlik', tier: 'pro', icon: 'Airtable', iconBg: '#fffbeb',
-  },
-  {
-    id: 'make',
-    name: 'Make',
-    desc: 'Make senaryolarıyla karmaşık otomasyon iş akışları ve veri pipeline\'ları oluşturun.',
-    category: 'Otomasyon', tier: 'pro', icon: 'Make', iconBg: '#f3e8ff',
-  },
-  {
-    id: 'google-drive',
-    name: 'Google Drive',
-    desc: "Google Drive'daki Excel ve CSV dosyalarına doğrudan erişin ve içe aktarın.",
-    category: 'Depolama', tier: 'free', icon: 'GoogleDrive', iconBg: '#f0f4ff',
-  },
-  {
-    id: 'ms-excel',
-    name: 'Microsoft Excel',
-    desc: "OneDrive ve SharePoint'teki Excel dosyalarını içe aktarın.",
-    category: 'Üretkenlik', tier: 'pro', popular: true, icon: 'MicrosoftExcel', iconBg: '#e8f5e9',
+    category: 'Bildirim', tier: 'pro', popular: true,
+    logo: 'images/integrations/slack.svg',
   },
   {
     id: 'ms-teams',
     name: 'Microsoft Teams',
     desc: 'Raporları ve analizleri Teams kanallarına otomatik olarak gönderin.',
-    category: 'İletişim', tier: 'pro', icon: 'MicrosoftTeams', iconBg: '#eeeffb',
+    category: 'Bildirim', tier: 'pro',
+    logo: 'images/integrations/microsoftteams.svg',
+  },
+  {
+    id: 'notion',
+    name: 'Notion',
+    desc: 'Notion veritabanlarını Excel formatına dönüştürün ve AI ile analiz edin.',
+    category: 'Veritabanı', tier: 'pro', popular: true,
+    logo: 'images/integrations/notion.svg',
+  },
+  {
+    id: 'airtable',
+    name: 'Airtable',
+    desc: 'Airtable tabloları ile Mocksheets arasında veri senkronizasyonu sağlayın.',
+    category: 'Veritabanı', tier: 'pro',
+    logo: 'images/integrations/airtable.svg',
+  },
+  {
+    id: 'trello',
+    name: 'Trello',
+    desc: 'Trello kartlarını ve görev verilerini Excel\'e aktarın, AI ile analiz edin.',
+    category: 'Veritabanı', tier: 'pro',
+    logo: 'images/integrations/trello.svg',
+  },
+  {
+    id: 'make',
+    name: 'Make',
+    desc: 'Make senaryolarıyla karmaşık otomasyon iş akışları ve veri pipeline\'ları oluşturun.',
+    category: 'Otomasyon', tier: 'pro',
+    logo: 'images/integrations/make.svg',
+  },
+  {
+    id: 'zapier',
+    name: 'Zapier',
+    desc: '5000+ uygulamaya bağlanın ve iş akışlarınızı Zapier ile otomatize edin.',
+    category: 'Otomasyon', tier: 'pro', popular: true,
+    logo: 'images/integrations/zapier.svg',
   },
   {
     id: 'webhook',
-    name: 'Webhook',
-    desc: "Herhangi bir uygulamaya özel webhook'lar ile veri gönderin veya alın.",
-    category: 'Otomasyon', tier: 'pro', icon: 'Webhook', iconBg: '#fff3ef',
+    name: 'Özel Webhook',
+    desc: 'Herhangi bir uygulamaya özel webhook\'lar ile veri gönderin, isteğe bağlı HMAC imzası.',
+    category: 'Otomasyon', tier: 'pro',
+    logo: null,
   },
   {
-    id: 'linear',
-    name: 'Linear',
-    desc: 'Linear projelerinizdeki görev verilerini analiz edin ve raporlayın.',
-    category: 'Üretkenlik', tier: 'pro', comingSoon: true, icon: 'Linear', iconBg: '#eeeeff',
+    id: 'google-sheets',
+    name: 'Google Sheets',
+    desc: "Google Sheets dosyalarını içe aktarın veya Mocksheets verilerinizi Google Sheets'e aktarın.",
+    category: 'Bulut', tier: 'free', popular: true,
+    logo: 'images/integrations/googlesheets.svg',
   },
   {
-    id: 'hubspot',
-    name: 'HubSpot',
-    desc: 'CRM verilerinizi analiz edin ve müşteri raporları oluşturun.',
-    category: 'CRM', tier: 'pro', comingSoon: true, icon: 'HubSpot', iconBg: '#fff3f0',
-  },
-  {
-    id: 'discord',
-    name: 'Discord',
-    desc: 'Analiz sonuçlarını Discord sunucularınıza ve kanallarınıza gönderin.',
-    category: 'İletişim', tier: 'pro', comingSoon: true, icon: 'Discord', iconBg: '#eef0ff',
+    id: 'google-drive',
+    name: 'Google Drive',
+    desc: "Google Drive'daki Excel ve CSV dosyalarına doğrudan erişin ve içe aktarın.",
+    category: 'Bulut', tier: 'free',
+    logo: 'images/integrations/googledrive.svg',
   },
 ];
-
-const TWEAK_DEFAULTS = { theme: 'light', accentColor: '#7c5cff', viewMode: 'grid', showPopular: true, density: 'comfortable' };
-
 
 function IntegrationCard({ integration, connected, onConnect, onDisconnect, listView }) {
   const isConnected = connected.has(integration.id);
   const ref = useRef(null);
-  const IconComp = Icon[integration.icon];
 
   function handleMouseMove(e) {
     if (!ref.current) return;
@@ -643,50 +622,41 @@ function IntegrationCard({ integration, connected, onConnect, onDisconnect, list
     ref.current.style.setProperty('--my', y);
   }
 
-  const iconEl = (
-    <div
-      className="card-icon"
-      style={{ background: integration.iconBg, width: listView ? 40 : 48, height: listView ? 40 : 48, borderRadius: listView ? 10 : 12, flexShrink: 0 }}
-    >
-      {IconComp ? <IconComp /> : '🔗'}
+  const logoEl = integration.id === 'webhook'
+    ? <WebhookIcon />
+    : <img src={integration.logo} width="32" height="32" style={{ objectFit: 'contain' }} alt={integration.name} />;
+
+  const logoContainer = (
+    <div className="card-logo" style={listView ? { width: 44, height: 44, borderRadius: 10, padding: 8 } : {}}>
+      {logoEl}
     </div>
   );
 
-  const connectBtn = integration.comingSoon ? (
-    <button className="connect-btn btn-soon" disabled>Yakında</button>
-  ) : isConnected ? (
+  const connectBtn = isConnected ? (
     <button className="connect-btn btn-disconnect" onClick={e => { e.stopPropagation(); onDisconnect(integration.id); }}>
       Bağlantıyı Kes
     </button>
   ) : (
     <button className="connect-btn btn-connect" onClick={e => { e.stopPropagation(); onConnect(integration.id); }}>
-      Bağlan
+      Bağlan →
     </button>
   );
 
-  const cardClass = `int-card${isConnected ? ' connected' : ''}${integration.comingSoon ? ' coming-soon' : ''}`;
+  const cardClass = `int-card${isConnected ? ' connected' : ''}`;
 
   if (listView) {
     return (
-      <div
-        ref={ref}
-        className={cardClass}
-        onMouseMove={handleMouseMove}
-        style={{ flexDirection: 'row', alignItems: 'center', gap: 16, padding: '14px 20px' }}
-      >
-        {iconEl}
+      <div ref={ref} className={cardClass} onMouseMove={handleMouseMove}
+        style={{ flexDirection: 'row', alignItems: 'center', gap: 16, padding: '14px 20px' }}>
+        {logoContainer}
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div className="card-name" style={{ marginBottom: 3 }}>{integration.name}</div>
+          <div className="card-name" style={{ marginBottom: 2 }}>{integration.name}</div>
           <div className="card-desc">{integration.desc}</div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
-          <span className="card-cat" style={{ marginRight: 4 }}>{integration.category}</span>
-          {isConnected && <span className="badge badge-connected">✓ Bağlı</span>}
+          {isConnected && <div className="pulse-dot" />}
           {!isConnected && integration.popular && <span className="badge badge-popular">⭐</span>}
-          {integration.comingSoon
-            ? <span className="badge badge-soon">Yakında</span>
-            : <span className={`badge badge-${integration.tier}`}>{integration.tier === 'free' ? 'Ücretsiz' : 'Pro'}</span>
-          }
+          <span className={`badge badge-${integration.tier}`}>{integration.tier === 'free' ? 'Ücretsiz' : 'Pro'}</span>
           {connectBtn}
         </div>
       </div>
@@ -696,22 +666,23 @@ function IntegrationCard({ integration, connected, onConnect, onDisconnect, list
   return (
     <div ref={ref} className={cardClass} onMouseMove={handleMouseMove}>
       <div className="card-top">
-        {iconEl}
+        {logoContainer}
         <div className="card-badges">
-          {isConnected && <span className="badge badge-connected">✓ Bağlı</span>}
+          {isConnected && (
+            <span className="badge badge-connected">
+              <div className="pulse-dot" style={{ width: 6, height: 6 }} />Bağlı
+            </span>
+          )}
           {!isConnected && integration.popular && <span className="badge badge-popular">⭐ Popüler</span>}
-          {integration.comingSoon
-            ? <span className="badge badge-soon">Yakında</span>
-            : <span className={`badge badge-${integration.tier}`}>{integration.tier === 'free' ? 'Ücretsiz' : 'Pro'}</span>
-          }
+          <span className={`badge badge-${integration.tier}`}>{integration.tier === 'free' ? 'Ücretsiz' : 'Pro'}</span>
         </div>
       </div>
       <div className="card-body">
         <div className="card-name">{integration.name}</div>
+        <div className="card-cat">{integration.category}</div>
         <div className="card-desc">{integration.desc}</div>
       </div>
       <div className="card-footer">
-        <span className="card-cat">{integration.category}</span>
         {connectBtn}
       </div>
     </div>
@@ -719,38 +690,29 @@ function IntegrationCard({ integration, connected, onConnect, onDisconnect, list
 }
 
 function App() {
-  const [tweaks, setTweaksState] = useState(() => {
-    try {
-      const saved = localStorage.getItem('ms-int-theme');
-      return { ...TWEAK_DEFAULTS, theme: saved || 'light' };
-    } catch { return { ...TWEAK_DEFAULTS }; }
+  const [theme, setTheme] = useState(() => {
+    try { return localStorage.getItem('ms-int-theme') || 'light'; } catch { return 'light'; }
   });
-  const setTweaks = (key, val) => setTweaksState(prev => ({ ...prev, [key]: val }));
-
   const [query, setQuery] = useState('');
   const [activeCat, setActiveCat] = useState('Tümü');
   const [view, setView] = useState('grid');
   const [connected, setConnected] = useState(() => {
     const s = new Set();
-    try {
-      INTEGRATIONS.forEach(i => { if (STORAGE_KEY[i.id] && localStorage.getItem(STORAGE_KEY[i.id])) s.add(i.id); });
-    } catch {}
+    try { INTEGRATIONS.forEach(i => { if (STORAGE_KEY[i.id] && localStorage.getItem(STORAGE_KEY[i.id])) s.add(i.id); }); }
+    catch {}
     return s;
   });
   const [modal, setModal] = useState(null);
   const searchRef = useRef(null);
 
   useEffect(() => {
-    try { localStorage.setItem('ms-int-theme', tweaks.theme); } catch {}
-    document.documentElement.setAttribute('data-theme', tweaks.theme);
-  }, [tweaks.theme]);
+    try { localStorage.setItem('ms-int-theme', theme); } catch {}
+    document.documentElement.setAttribute('data-theme', theme);
+  }, [theme]);
 
   useEffect(() => {
     function onKey(e) {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-        e.preventDefault();
-        if (searchRef.current) searchRef.current.focus();
-      }
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') { e.preventDefault(); if (searchRef.current) searchRef.current.focus(); }
       if (e.key === 'Escape') setModal(null);
     }
     window.addEventListener('keydown', onKey);
@@ -764,9 +726,7 @@ function App() {
     return matchCat && matchQ;
   });
 
-  function handleConnect(id) {
-    setModal(INTEGRATIONS.find(i => i.id === id) || null);
-  }
+  function handleConnect(id) { setModal(INTEGRATIONS.find(i => i.id === id) || null); }
 
   function handleDisconnect(id) {
     try { const k = STORAGE_KEY[id]; if (k) localStorage.removeItem(k); } catch {}
@@ -777,9 +737,6 @@ function App() {
     setConnected(prev => new Set([...prev, id]));
     setModal(null);
   }
-
-  const availableCount = INTEGRATIONS.filter(i => !i.comingSoon).length;
-  const soonCount = INTEGRATIONS.filter(i => i.comingSoon).length;
 
   return (
     <>
@@ -800,12 +757,8 @@ function App() {
           />
           {!query && <span className="search-kbd">⌘K</span>}
         </div>
-        <button
-          className="theme-btn"
-          onClick={() => setTweaks('theme', tweaks.theme === 'light' ? 'dark' : 'light')}
-          title="Tema değiştir"
-        >
-          {tweaks.theme === 'light' ? '🌙' : '☀️'}
+        <button className="theme-btn" onClick={() => setTheme(t => t === 'light' ? 'dark' : 'light')} title="Tema değiştir">
+          {theme === 'light' ? '🌙' : '☀️'}
         </button>
         <a className="back-btn" href="app.html">← Uygulamaya Dön</a>
       </nav>
@@ -817,34 +770,21 @@ function App() {
         </div>
 
         <div className="stats-bar">
-          <span className="stat"><strong>{availableCount}</strong> entegrasyon mevcut</span>
+          <span className="stat"><strong>{INTEGRATIONS.length}</strong> entegrasyon</span>
           <span className="stat"><strong>{connected.size}</strong> bağlı</span>
-          <span className="stat"><strong>{soonCount}</strong> yakında</span>
         </div>
 
         <div className="int-toolbar">
           <div className="cat-pills">
             {CATEGORIES.map(cat => (
-              <button
-                key={cat}
-                className={'cat-pill' + (activeCat === cat ? ' active' : '')}
-                onClick={() => setActiveCat(cat)}
-              >
+              <button key={cat} className={'cat-pill' + (activeCat === cat ? ' active' : '')} onClick={() => setActiveCat(cat)}>
                 {cat}
               </button>
             ))}
           </div>
           <div className="view-toggle">
-            <button
-              className={'view-btn' + (view === 'grid' ? ' active' : '')}
-              onClick={() => setView('grid')}
-              title="Izgara görünüm"
-            >⊞</button>
-            <button
-              className={'view-btn' + (view === 'list' ? ' active' : '')}
-              onClick={() => setView('list')}
-              title="Liste görünüm"
-            >☰</button>
+            <button className={'view-btn' + (view === 'grid' ? ' active' : '')} onClick={() => setView('grid')} title="Izgara">⊞</button>
+            <button className={'view-btn' + (view === 'list' ? ' active' : '')} onClick={() => setView('list')} title="Liste">☰</button>
           </div>
         </div>
 
