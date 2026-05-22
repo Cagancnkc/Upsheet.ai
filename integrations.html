@@ -600,14 +600,14 @@ const INTEGRATIONS = [
     id: 'google-sheets',
     name: 'Google Sheets',
     desc: "Google Sheets dosyalarını içe aktarın veya Mocksheets verilerinizi Google Sheets'e aktarın.",
-    category: 'Bulut', tier: 'free', popular: true,
+    category: 'Bulut', tier: 'pro', popular: true,
     logo: 'images/integrations/googlesheets.svg',
   },
   {
     id: 'google-drive',
     name: 'Google Drive',
     desc: "Google Drive'daki Excel ve CSV dosyalarına doğrudan erişin ve içe aktarın.",
-    category: 'Bulut', tier: 'free',
+    category: 'Bulut', tier: 'pro',
     logo: 'images/integrations/googledrive.svg',
   },
 ];
@@ -706,6 +706,8 @@ function App() {
     return s;
   });
   const [modal, setModal] = useState(null);
+  const [userPlan, setUserPlan] = useState(null);
+  const [showUpgrade, setShowUpgrade] = useState(false);
   const searchRef = useRef(null);
 
   useEffect(() => {
@@ -716,10 +718,19 @@ function App() {
   useEffect(() => {
     function onKey(e) {
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') { e.preventDefault(); if (searchRef.current) searchRef.current.focus(); }
-      if (e.key === 'Escape') setModal(null);
+      if (e.key === 'Escape') { setModal(null); setShowUpgrade(false); }
     }
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
+  useEffect(() => {
+    const token = getAuthToken();
+    if (!token) return;
+    fetch(`${BACKEND_URL}/api/usage`, { headers: { Authorization: `Bearer ${token}` } })
+      .then(r => r.json())
+      .then(d => { if (d.plan) setUserPlan(d.plan); })
+      .catch(() => {});
   }, []);
 
   const filtered = INTEGRATIONS.filter(it => {
@@ -729,7 +740,10 @@ function App() {
     return matchCat && matchQ;
   });
 
-  function handleConnect(id) { setModal(INTEGRATIONS.find(i => i.id === id) || null); }
+  function handleConnect(id) {
+    if (userPlan === 'free') { setShowUpgrade(true); return; }
+    setModal(INTEGRATIONS.find(i => i.id === id) || null);
+  }
 
   function handleDisconnect(id) {
     const name = INTEGRATIONS.find(i => i.id === id)?.name || 'Bu entegrasyon';
@@ -812,6 +826,30 @@ function App() {
           </div>
         )}
       </div>
+
+      {showUpgrade && (
+        <div className="modal-overlay" onClick={() => setShowUpgrade(false)}>
+          <div className="modal-box" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <div style={{fontSize:32}}>⭐</div>
+              <div>
+                <div className="modal-title">Pro Plan Gerekli</div>
+                <span className="badge badge-pro" style={{fontSize:10}}>Pro</span>
+              </div>
+              <button className="modal-close" onClick={() => setShowUpgrade(false)}>×</button>
+            </div>
+            <hr className="modal-divider"/>
+            <p style={{fontSize:14,color:'var(--text-muted)',lineHeight:1.6,marginBottom:20}}>
+              Tüm entegrasyonlar <strong>Pro</strong> veya <strong>İş</strong> planı gerektirir.
+              Slack, Notion, Google Drive ve diğer entegrasyonlara erişmek için planınızı yükseltin.
+            </p>
+            <div className="modal-actions">
+              <button className="modal-btn modal-btn-secondary" onClick={() => setShowUpgrade(false)}>Vazgeç</button>
+              <a className="modal-btn modal-btn-primary" href="billing.html" style={{textDecoration:'none',textAlign:'center'}}>Planı Yükselt →</a>
+            </div>
+          </div>
+        </div>
+      )}
 
       {modal && (
         <ConnectModal
