@@ -243,10 +243,12 @@ const DEFS = [
   { defId:'schedule',      name:'Zamanlama',          kind:'trigger', tone:'teal',   desc:'Belirli aralıklarla çalıştır' },
   { defId:'form-submit',   name:'Form Gönder',        kind:'trigger', tone:'blue',   desc:'Form gönderilince tetikle' },
   { defId:'webhook',       name:'Webhook',             kind:'trigger', tone:'rose',   desc:'HTTP isteğinde tetikle' },
-  { defId:'slack',         name:'Slack',               kind:'action',  tone:'violet', desc:'Slack kanalına mesaj gönder' },
-  { defId:'notion',        name:'Notion',              kind:'action',  tone:'amber',  desc:'Notion veritabanına yaz' },
-  { defId:'sheets',        name:'Google Sheets',       kind:'action',  tone:'green',  desc:'Google Sheets güncelle' },
-  { defId:'airtable',      name:'Airtable',            kind:'action',  tone:'blue',   desc:'Airtable kaydı oluştur' },
+  { defId:'slack',         name:'Slack',               kind:'action',  tone:'violet', desc:'Slack kanalına mesaj gönder',     logo:'images/integrations/slack.svg' },
+  { defId:'make',          name:'Make',                kind:'action',  tone:'violet', desc:'Make senaryosu tetikle',          logo:'images/integrations/make.svg' },
+  { defId:'teams',         name:'Microsoft Teams',     kind:'action',  tone:'blue',   desc:'Teams kanalına mesaj gönder',     logo:'images/integrations/microsoftteams.svg' },
+  { defId:'notion',        name:'Notion',              kind:'action',  tone:'amber',  desc:'Notion veritabanına yaz',         logo:'images/integrations/notion.svg' },
+  { defId:'sheets',        name:'Google Sheets',       kind:'action',  tone:'green',  desc:'Google Sheets güncelle',          logo:'images/integrations/googlesheets.svg' },
+  { defId:'airtable',      name:'Airtable',            kind:'action',  tone:'blue',   desc:'Airtable kaydı oluştur',          logo:'images/integrations/airtable.svg' },
   { defId:'email',         name:'E-posta',             kind:'action',  tone:'rose',   desc:'E-posta gönder' },
   { defId:'filter',        name:'Filtre',              kind:'action',  tone:'teal',   desc:'Koşullu dal oluştur' },
 ];
@@ -266,6 +268,8 @@ const ICONS = {
   'airtable'      :'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>',
   'email'         :'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>',
   'filter'        :'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>',
+  'make'          :'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12h8M12 8v8"/></svg>',
+  'teams'         :'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
 };
 function icon(defId, size){ const s=size||20; return (ICONS[defId]||ICONS['filter']).replace('<svg ',`<svg width="${s}" height="${s}" `); }
 
@@ -353,8 +357,11 @@ function updateSidebarList(){
 
 function sbRow(d){
   const t = TONES[d.tone];
+  const iconHtml = d.logo
+    ? `<img src="${d.logo}" style="width:18px;height:18px;object-fit:contain">`
+    : icon(d.defId, 18);
   return `<div class="sb-item" data-def-id="${d.defId}">
-    <div class="sb-icon" style="background:${t.bg};color:${t.fg}">${icon(d.defId,18)}</div>
+    <div class="sb-icon" style="background:${t.bg};color:${t.fg}">${iconHtml}</div>
     <div class="sb-info"><div class="sb-name">${esc(d.name)}</div><div class="sb-desc">${esc(d.desc)}</div></div>
   </div>`;
 }
@@ -398,10 +405,13 @@ function renderInspector(){
   const node = S.nodes[S.selectedId];
   const def = getDef(node.defId);
   const t = TONES[def.tone];
+  const insIconHtml = def.logo
+    ? `<img src="${def.logo}" style="width:18px;height:18px;object-fit:contain">`
+    : icon(def.defId, 18);
   ins.innerHTML = `
     <div class="ins-head" style="border-bottom:2px solid ${t.fg}33">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
-        <div class="node-icon" style="width:36px;height:36px;background:${t.bg};color:${t.fg}">${icon(def.defId,18)}</div>
+        <div class="node-icon" style="width:36px;height:36px;background:${t.bg};color:${t.fg}">${insIconHtml}</div>
         <div><div class="ins-head-title">${esc(def.name)}</div><div class="ins-head-sub">${def.kind==='trigger'?'Tetikleyici':'Aksiyon'}</div></div>
       </div>
     </div>
@@ -471,10 +481,20 @@ function buildConfig(defId, c){
       html += fld('Yöntem', sel('method',[{v:'POST',l:'POST'},{v:'GET',l:'GET'},{v:'PUT',l:'PUT'}], c.method||'POST'));
       break;
     case 'slack':
+      html += fld('Webhook URL', inp('webhookUrl','https://hooks.slack.com/services/…',c.webhookUrl));
       html += fld('Kanal', inp('channel','#genel',c.channel));
-      html += fld('Mesaj', inp('message','',c.message));
+      html += fld('Mesaj', inp('message','{Ad} güncellendi',c.message));
+      break;
+    case 'make':
+      html += fld('Webhook URL', inp('webhookUrl','https://hook.make.com/…',c.webhookUrl));
+      html += fld('Olay adı', inp('event','auto_trigger',c.event));
+      break;
+    case 'teams':
+      html += fld('Webhook URL', inp('webhookUrl','https://…webhook.office.com/…',c.webhookUrl));
+      html += fld('Mesaj', inp('message','{Ad} güncellendi',c.message));
       break;
     case 'notion':
+      html += fld('API Token', inp('token','secret_…',c.token,'password'));
       html += fld('Veritabanı ID', inp('databaseId','',c.databaseId));
       html += fld('Başlık alanı', inp('titleField','Name',c.titleField));
       break;
@@ -484,7 +504,8 @@ function buildConfig(defId, c){
       html += fld('İşlem', sel('operation',[{v:'append',l:'Satır ekle'},{v:'update',l:'Güncelle'},{v:'read',l:'Oku'}], c.operation||'append'));
       break;
     case 'airtable':
-      html += fld('Base ID', inp('baseId','',c.baseId));
+      html += fld('API Key', inp('apiKey','pat…',c.apiKey,'password'));
+      html += fld('Base ID', inp('baseId','app…',c.baseId));
       html += fld('Tablo adı', inp('tableName','',c.tableName));
       html += fld('İşlem', sel('operation',[{v:'create',l:'Kayıt oluştur'},{v:'update',l:'Güncelle'},{v:'find',l:'Bul'}], c.operation||'create'));
       break;
@@ -509,6 +530,16 @@ function updateCfg(el){
   node.configured = isConfigured(node);
   S.dirty = true;
   renderNodeCard(S.selectedId);
+  syncIntConfig(node);
+}
+
+function syncIntConfig(node){
+  const c = node.config || {};
+  const def = getDef(node.defId);
+  if(!def || def.kind !== 'action') return;
+  if(c.webhookUrl) localStorage.setItem(`int_${node.defId}`, JSON.stringify({url: c.webhookUrl}));
+  if(node.defId === 'notion'   && c.token)  localStorage.setItem('int_notion',   JSON.stringify({token: c.token,  databaseId: c.databaseId}));
+  if(node.defId === 'airtable' && c.apiKey) localStorage.setItem('int_airtable', JSON.stringify({token: c.apiKey, baseId: c.baseId}));
 }
 
 function toggleCfg(btn){
@@ -536,11 +567,13 @@ function isConfigured(node){
     case 'sheet-change':   return !!c.sheet;
     case 'cell-condition': return !!(c.column && c.operator);
     case 'schedule':       return !!c.interval;
-    case 'slack':          return !!(c.channel && c.message);
+    case 'slack':          return !!(c.webhookUrl && c.channel && c.message);
+    case 'make':           return !!c.webhookUrl;
+    case 'teams':          return !!(c.webhookUrl && c.message);
     case 'email':          return !!(c.to && c.subject);
-    case 'notion':         return !!c.databaseId;
+    case 'notion':         return !!(c.token && c.databaseId);
     case 'sheets':         return !!c.spreadsheetId;
-    case 'airtable':       return !!(c.baseId && c.tableName);
+    case 'airtable':       return !!(c.apiKey && c.baseId && c.tableName);
     default:               return false;
   }
 }
@@ -579,11 +612,14 @@ function renderNodeCard(id){
   const n = S.nodes[id];
   const def = getDef(n.defId);
   const t = TONES[def.tone];
+  const nodeIconHtml = def.logo
+    ? `<img src="${def.logo}" style="width:20px;height:20px;object-fit:contain">`
+    : icon(def.defId, 20);
   el.style.left = `${n.x}px`;
   el.style.top  = `${n.y}px`;
   el.classList.toggle('selected', S.selectedId===id);
   el.innerHTML = `
-    <div class="node-icon" style="background:${t.bg};color:${t.fg}">${icon(def.defId,20)}</div>
+    <div class="node-icon" style="background:${t.bg};color:${t.fg}">${nodeIconHtml}</div>
     <div class="node-body">
       <div class="node-eyebrow">${def.kind==='trigger'?'Tetikleyici':'Aksiyon'}</div>
       <div class="node-title">${esc(def.name)}</div>
@@ -731,30 +767,39 @@ async function testNode(){
   if(!S.selectedId) return;
   const node = S.nodes[S.selectedId];
   const def = getDef(node.defId);
-
-  if(!isConfigured(node)){
-    showToast('⚠ Node yapılandırılmamış — önce ayarları doldurun','light',2500);
-    return;
-  }
-
-  if(def.kind === 'trigger'){
-    showToast('✓ Tetikleyici yapılandırması geçerli','light',2000);
-    return;
-  }
-
-  showToast('<div class="pulse"></div> Test gönderiliyor\u2026','dark',1500);
-
-  if(node.defId === 'slack'){
-    const intConfig = (()=>{ try{ return JSON.parse(localStorage.getItem('int_slack')||'null'); }catch{ return null; } })();
-    if(!intConfig?.url){
-      showToast('⚠ Slack entegrasyonu yapılandırılmamış (int_slack)','light',3000);
+  if(!isConfigured(node)){ showToast('⚠ Node yapılandırılmamış — önce ayarları doldurun','light',2500); return; }
+  if(def.kind === 'trigger'){ showToast('✓ Tetikleyici yapılandırması geçerli','light',2000); return; }
+  syncIntConfig(node);
+  const c = node.config || {};
+  const BACKEND = window.BACKEND_URL || (window.location.hostname==='localhost' ? 'http://localhost:3001' : 'https://upsheet-ai.onrender.com');
+  const token = getAuthToken();
+  let endpoint, body;
+  switch(node.defId){
+    case 'slack':
+      endpoint = `${BACKEND}/api/integrations/slack/notify`;
+      body = { webhookUrl: c.webhookUrl, title:'Test', message:'Mocksheets otomasyon testi \u2713', fields:[] };
+      break;
+    case 'make':
+      endpoint = `${BACKEND}/api/integrations/make/trigger`;
+      body = { webhookUrl: c.webhookUrl, event:'test', data:{ source:'mocksheets_test', timestamp: new Date().toISOString() } };
+      break;
+    case 'teams':
+      endpoint = `${BACKEND}/api/integrations/teams/notify`;
+      body = { webhookUrl: c.webhookUrl, title:'Test', message:'Mocksheets otomasyon testi \u2713', fields:[] };
+      break;
+    default:
+      showToast(`\u2713 ${def.name} yap\u0131land\u0131rmas\u0131 ge\u00e7erli`,'light',2000);
       return;
-    }
   }
-
-  setTimeout(()=>{
-    showToast(`✓ ${def.name} test başarılı (yapılandırma geçerli)`,'light',2500);
-  }, 1200);
+  showToast('<div class="pulse"></div> Test g\u00f6nderiliyor\u2026','dark',2500);
+  try {
+    const res = await fetch(endpoint, {
+      method:'POST', headers:{'Content-Type':'application/json', Authorization:`Bearer ${token}`},
+      body: JSON.stringify(body)
+    });
+    if(res.ok){ showToast(`\u2713 ${def.name} test ba\u015far\u0131l\u0131 \u2014 mesaj g\u00f6nderildi`,'light',3000); }
+    else { const d = await res.json().catch(()=>({})); showToast(`\u26a0 Test ba\u015far\u0131s\u0131z: ${d.error||res.status}`,'light',3000); }
+  } catch(e){ showToast(`\u26a0 Test hatas\u0131: ${e.message}`,'light',3000); }
 }
 
 // ── WORKFLOW OPS ─────────────────────────────────────────────
