@@ -4116,7 +4116,7 @@ async function sendChatMessage() {
     const token = getAuthToken();
     console.warn('[CALL #' + (++CALL_COUNTER) + '] sendChatMessage → fetch /api/chat', new Error().stack.split('\n')[2]?.trim());
     const _ctrl = new AbortController();
-    const _tid = setTimeout(() => _ctrl.abort(), 45000);
+    const _tid = setTimeout(() => _ctrl.abort(), 60000);
     const response = await fetch(API_URL + '/api/chat', {
       method: 'POST',
       signal: _ctrl.signal,
@@ -4124,9 +4124,17 @@ async function sendChatMessage() {
         'Content-Type': 'application/json',
         ...(token ? { 'Authorization': 'Bearer ' + token } : {})
       },
-      body: JSON.stringify({ message, sheetContext, history: chatHistory.slice(-8) })
+      body: JSON.stringify({ message, sheetContext, sheetName: activeSheet, history: chatHistory.slice(-8) })
     });
     clearTimeout(_tid);
+
+    if (response.status === 401) {
+      hideTyping(); hideProgress();
+      addMessage('❌ Oturum süreniz dolmuş. Giriş sayfasına yönlendiriliyorsunuz...', 'ai');
+      setTimeout(() => { window.location.href = 'auth.html'; }, 2500);
+      isProcessing = false; sendBtn.disabled = false; sendBtn.textContent = '↑';
+      return;
+    }
 
     if (response.status === 429) {
       const errorData = await response.json();
