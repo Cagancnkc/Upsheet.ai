@@ -1,0 +1,45 @@
+User-agent: *
+Allow: /
+
+# App ve auth sayfaları — SEO değeri yok, giriş gerektirir
+Disallow: /app
+Disallow: /app.html
+Disallow: /auth
+Disallow: /auth.html
+Disallow: /dashboard
+Disallow: /payment-success
+Disallow: /payment-success.html
+Disallow: /similarweb-analytics
+Disallow: /similarweb-analytics.html
+Disallow: /offline.html
+Disallow: /offline
+
+# Utility / config dosyaları
+Disallow: /sw.js
+Disallow: /*.json$
+
+# CSS/JS/images render için erişilebilir
+Allow: /css/
+Allow: /js/landing.js
+Allow: /js/plans.js
+Allow: /images/
+
+# AI crawlers
+User-agent: GPTBot
+Allow: /
+Disallow: /app
+Disallow: /auth
+Disallow: /dashboard
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+# Sitemaps
+Sitemap: https://mocksheets.com/sitemap.xml
+Sitemap: https://mocksheets.com/sitemap-en.xml
