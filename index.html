@@ -515,6 +515,59 @@
   .price-orig s { color:#bbb; }
   .price-save-note { color:#16a34a; font-weight:600; }
 
+  /* ── Pricing promo visual enhancements ─────── */
+  .pricing-promo-bar {
+    display:flex;align-items:center;justify-content:center;gap:12px;
+    background:linear-gradient(135deg,rgba(217,242,107,.14),rgba(200,241,53,.08));
+    border:1px solid rgba(200,241,53,.55);
+    border-radius:14px;padding:13px 22px;margin-bottom:28px;
+    font-size:14px;font-weight:500;color:var(--ink);
+    animation:ppbar-glow 3s ease-in-out infinite;
+  }
+  .ppbar-dot {
+    width:8px;height:8px;border-radius:50%;background:#96b800;flex-shrink:0;
+    animation:ppbar-pulse 1.5s ease-in-out infinite;
+  }
+  @keyframes ppbar-glow {
+    0%,100%{box-shadow:0 0 0 0 rgba(200,241,53,0)}
+    50%{box-shadow:0 0 22px rgba(200,241,53,.28)}
+  }
+  @keyframes ppbar-pulse {
+    0%,100%{opacity:1;transform:scale(1)}
+    50%{opacity:.35;transform:scale(.65)}
+  }
+  .price-promo-box {
+    border-radius:10px;padding:10px 13px;
+    background:rgba(200,241,53,.1);border:1px solid rgba(200,241,53,.45);
+    display:flex;flex-direction:column;gap:5px;
+  }
+  .price.pro .price-promo-box {
+    background:rgba(200,241,53,.14);border-color:rgba(200,241,53,.5);
+  }
+  .ppb-badge {
+    display:inline-flex;align-items:center;gap:5px;
+    background:rgba(200,241,53,.28);color:#3d6200;
+    border-radius:999px;padding:2px 9px;
+    font-family:'Geist Mono',monospace;font-size:11px;
+    font-weight:700;text-transform:uppercase;letter-spacing:.1em;
+    width:fit-content;
+  }
+  .price.pro .ppb-badge { background:rgba(200,241,53,.22);color:#c8f135; }
+  .ppb-detail { font-size:13px;color:var(--ink-2); }
+  .price.pro .ppb-detail { color:#ffffffaa; }
+  .ppb-detail s { color:#b0b8c4;text-decoration-color:#b0b8c4; }
+  .price.pro .ppb-detail s { color:#ffffff44;text-decoration-color:#ffffff44; }
+  .ppb-detail strong { color:var(--ink);font-weight:700; }
+  .price.pro .ppb-detail strong { color:#fff; }
+  .price-corner-badge {
+    position:absolute;top:16px;right:16px;
+    background:var(--lime);color:var(--ink);
+    border-radius:999px;padding:4px 11px;
+    font-family:'Geist Mono',monospace;font-size:10px;
+    font-weight:800;text-transform:uppercase;letter-spacing:.12em;
+    box-shadow:0 2px 10px rgba(200,241,53,.45);white-space:nowrap;
+  }
+
 </style>
 </head>
 <body>
@@ -948,6 +1001,12 @@
       <button class="pt-btn" id="ptYearly" onclick="setPricingPeriod('yearly')">Yıllık <span class="pt-save">%20 indirim</span></button>
     </div>
 
+    <div class="pricing-promo-bar">
+      <div class="ppbar-dot"></div>
+      🎉 <strong>Sınırlı süre teklifi</strong> — Yeni üyelere özel: tüm ücretli planlarda ilk 3 ay sadece <strong>$1</strong>
+      <div class="ppbar-dot"></div>
+    </div>
+
     <div class="pricing">
       <div class="price">
         <div class="price-name"><span>Ücretsiz</span><span>BAŞLA</span></div>
@@ -962,11 +1021,15 @@
         <a href="/app" class="btn btn-outline" style="margin-top:auto">Ücretsiz başla</a>
       </div>
 
-      <div class="price pro">
+      <div class="price pro" style="position:relative">
+        <div class="price-corner-badge">3 AY $1</div>
         <div class="price-name"><span>Pro</span><span class="price-tag">en popüler</span></div>
         <div class="price-amt" id="proPriceAmt">$1<small> / ay</small></div>
-        <div class="price-orig" id="proPriceOrig" style="display:block;color:#6B7280;font-size:13px;margin-bottom:4px">Yeni üyelere özel · 3 ay sonra $14/ay</div>
-        <div class="price-desc">Sık kullananlar ve profesyoneller için. İlk 3 ay yalnızca $1.</div>
+        <div class="price-promo-box" id="proPriceOrig">
+          <div><span class="ppb-badge">🎁 Yeni üyelere özel</span></div>
+          <div class="ppb-detail">İlk 3 ay · Sonra <s>$29</s> → <strong>$14/ay</strong></div>
+        </div>
+        <div class="price-desc">Sık kullananlar ve profesyoneller için.</div>
         <ul>
           <li>Günde 30 AI komutu, ayda 200</li>
           <li>PDF → tablo çıkarımı</li>
@@ -977,11 +1040,15 @@
         <a id="proCheckoutBtn" href="https://buy.stripe.com/test_eVq3cufqj9yT5GQ0PAbMQ08" target="_blank" class="btn btn-dark" style="background:var(--lime);color:var(--ink);margin-top:auto">Pro'ya başla →</a>
       </div>
 
-      <div class="price">
+      <div class="price" style="position:relative">
+        <div class="price-corner-badge">3 AY $1</div>
         <div class="price-name"><span>İşletme</span><span>EKİP</span></div>
         <div class="price-amt" id="bizPriceAmt">$1<small> / ay</small></div>
-        <div class="price-orig" id="bizPriceOrig" style="display:block;color:#6B7280;font-size:13px;margin-bottom:4px">Yeni üyelere özel · 3 ay sonra $24/ay</div>
-        <div class="price-desc">5 koltuk dahil. Ekibinizi tek hesapta toplayın. İlk 3 ay yalnızca $1.</div>
+        <div class="price-promo-box" id="bizPriceOrig">
+          <div><span class="ppb-badge">🎁 Yeni üyelere özel</span></div>
+          <div class="ppb-detail">İlk 3 ay · Sonra <strong>$24/ay</strong></div>
+        </div>
+        <div class="price-desc">5 koltuk dahil. Ekibinizi tek hesapta toplayın.</div>
         <ul>
           <li>Sınırsız AI komutu</li>
           <li>Canlı işbirliği + yorumlar</li>
