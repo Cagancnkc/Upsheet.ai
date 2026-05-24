@@ -943,7 +943,7 @@
       </p>
     </div>
 
-    <div class="pricing-toggle">
+    <div class="pricing-toggle" style="display:none">
       <button class="pt-btn active" id="ptMonthly" onclick="setPricingPeriod('monthly')">Aylık</button>
       <button class="pt-btn" id="ptYearly" onclick="setPricingPeriod('yearly')">Yıllık <span class="pt-save">%20 indirim</span></button>
     </div>
@@ -964,9 +964,9 @@
 
       <div class="price pro">
         <div class="price-name"><span>Pro</span><span class="price-tag">en popüler</span></div>
-        <div class="price-amt" id="proPriceAmt">$29<small> / ay</small></div>
-        <div class="price-orig" id="proPriceOrig" style="display:none"><s>$29/ay</s> → $23/ay <span class="price-save-note">(yıllık $276)</span></div>
-        <div class="price-desc">Sık kullananlar ve profesyoneller için. İlk 14 gün ücretsiz.</div>
+        <div class="price-amt" id="proPriceAmt">$1<small> / ay</small></div>
+        <div class="price-orig" id="proPriceOrig" style="display:block;color:#6B7280;font-size:13px;margin-bottom:4px">Yeni üyelere özel · 3 ay sonra $14/ay</div>
+        <div class="price-desc">Sık kullananlar ve profesyoneller için. İlk 3 ay yalnızca $1.</div>
         <ul>
           <li>Günde 30 AI komutu, ayda 200</li>
           <li>PDF → tablo çıkarımı</li>
@@ -979,9 +979,9 @@
 
       <div class="price">
         <div class="price-name"><span>İşletme</span><span>EKİP</span></div>
-        <div class="price-amt" id="bizPriceAmt">$49<small> / ay</small></div>
-        <div class="price-orig" id="bizPriceOrig" style="display:none"><s>$49/ay</s> → $39/ay <span class="price-save-note">(yıllık $468)</span></div>
-        <div class="price-desc">5 koltuk dahil. Ekibinizi tek hesapta toplayın.</div>
+        <div class="price-amt" id="bizPriceAmt">$1<small> / ay</small></div>
+        <div class="price-orig" id="bizPriceOrig" style="display:block;color:#6B7280;font-size:13px;margin-bottom:4px">Yeni üyelere özel · 3 ay sonra $24/ay</div>
+        <div class="price-desc">5 koltuk dahil. Ekibinizi tek hesapta toplayın. İlk 3 ay yalnızca $1.</div>
         <ul>
           <li>Sınırsız AI komutu</li>
           <li>Canlı işbirliği + yorumlar</li>
@@ -1291,10 +1291,8 @@ function setPricingPeriod(p) {
   var yearly = p === 'yearly';
   document.getElementById('ptMonthly').classList.toggle('active', !yearly);
   document.getElementById('ptYearly').classList.toggle('active', yearly);
-  document.getElementById('proPriceAmt').innerHTML = yearly ? '$23<small> / ay</small>' : '$29<small> / ay</small>';
-  document.getElementById('proPriceOrig').style.display = yearly ? '' : 'none';
-  document.getElementById('bizPriceAmt').innerHTML = yearly ? '$39<small> / ay</small>' : '$49<small> / ay</small>';
-  document.getElementById('bizPriceOrig').style.display = yearly ? '' : 'none';
+  document.getElementById('proPriceAmt').innerHTML = '$1<small> / ay</small>';
+  document.getElementById('bizPriceAmt').innerHTML = '$1<small> / ay</small>';
   document.getElementById('proCheckoutBtn').href = yearly
     ? 'https://buy.stripe.com/test_28EeVcgun7qL9X6buebMQ0a'
     : 'https://buy.stripe.com/test_eVq3cufqj9yT5GQ0PAbMQ08';

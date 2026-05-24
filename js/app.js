@@ -4368,7 +4368,7 @@ function showUpgradeModal(featureName) {
         ${featureName} özelliğini kullanmak için Pro veya İş planına geçin.
       </div>
       <div style="background:#F9FAFB;border-radius:10px;padding:16px;text-align:left;margin-bottom:24px">
-        <div style="font-size:13px;font-weight:700;margin-bottom:8px;color:#4F46E5">⭐ Pro Plan — $29/ay</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:8px;color:#4F46E5">⭐ Pro Plan — $1/ay (ilk 3 ay)</div>
         <div style="font-size:12px;color:#6B7280;line-height:1.8">✓ 200 AI komut/ay<br>✓ Tüm entegrasyonlar<br>✓ Otomatik rapor<br>✓ Rakip analizi</div>
       </div>
       <div style="display:flex;gap:10px">
