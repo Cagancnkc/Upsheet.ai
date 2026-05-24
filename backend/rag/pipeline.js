@@ -144,7 +144,7 @@ function getRagContext(ragContext) {
     return 'Benzer örnek bulunamadı.';
   }
 
-  const lines = ragContext.slice(0, 3).map((ex, i) => {
+  const lines = ragContext.slice(0, 5).map((ex, i) => {
     const sim = ex.similarity ? ` (benzerlik: ${(ex.similarity * 100).toFixed(0)}%)` : '';
     const output = typeof ex.output === 'string'
       ? ex.output

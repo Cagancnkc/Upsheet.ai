@@ -20,6 +20,33 @@ const TURKISH_SYNONYMS = {
   'çıkar': ['ayıkla', 'bul'],
   'ortalama': ['mean', 'ortalama hesapla'],
   'heatmap': ['ısıl harita', 'renk skalası'],
+  'bul': ['göster', 'getir', 'listele'],
+  'güncelle': ['değiştir', 'düzenle', 'yaz'],
+  'say': ['kaç tane', 'adet', 'sayısı'],
+  'yüzde': ['oran', 'büyüme', 'değişim'],
+  'en yüksek': ['maksimum', 'max', 'en büyük'],
+  'en düşük': ['minimum', 'min', 'en küçük'],
+  'bugün': ['güncel', 'son', 'mevcut'],
+  'bu ay': ['aylık', 'bu dönem', 'bu ayın'],
+  'renk': ['boya', 'renklendir', 'vurgula'],
+  'benzersiz': ['tekrarsız', 'unique', 'farklı'],
+  'boş': ['dolu değil', 'eksik', 'null'],
+  'büyüktür': ['aşan', 'üstünde', 'fazla'],
+  'küçüktür': ['altında', 'az', 'düşük'],
+  'içeren': ['olan', 'barındıran', 'geçen'],
+  'dönüştür': ['çevir', 'format değiştir', 'convert'],
+  'birleştir': ['merge', 'concat', 'ekle'],
+  'kdv': ['vergi', 'tax', 'kdv hesapla'],
+  'indirim': ['iskonto', 'kampanya', 'ıskonto'],
+  'kâr': ['kazanç', 'net kazanç', 'kar marjı'],
+  'stok': ['envanter', 'depo', 'miktar'],
+  'fatura': ['invoice', 'belge', 'irsaliye'],
+  'tarih': ['gün', 'zaman', 'dönem'],
+  'tekrar': ['mükerrer', 'duplicate', 'çift'],
+  'büyük harf': ['uppercase', 'kapital', 'büyüt'],
+  'küçük harf': ['lowercase', 'küçült'],
+  'format': ['biçim', 'düzen', 'stil'],
+  'koşul': ['şart', 'kriter', 'filtre'],
 };
 
 // Kategori boost — nadir/kritik kategorilere öncelik
@@ -43,13 +70,13 @@ function expandQuery(userCommand) {
       for (const syn of synonyms) {
         const expanded = lower.replace(keyword, syn);
         if (!variants.includes(expanded)) variants.push(expanded);
-        if (variants.length >= 3) break;
+        if (variants.length >= 5) break;
       }
     }
-    if (variants.length >= 3) break;
+    if (variants.length >= 5) break;
   }
 
-  return variants.slice(0, 3);
+  return variants.slice(0, 5);
 }
 
 function deduplicateResults(allResults) {
