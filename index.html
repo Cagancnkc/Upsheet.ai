@@ -554,7 +554,7 @@
     </h1>
 
     <p class="hero-sub">
-      Veri sıralama, rapor oluşturma, otomatik hesaplamalar — Türkçe yazın, Mocksheets çözsün.
+      Veri sıralama, rapor oluşturma, otomatik hesaplamalar — Mocksheets çözsün.
       Yarım gününüzü alan iş artık <b style="color:var(--ink)">4 dakika.</b>
     </p>
 
@@ -693,7 +693,7 @@
           </div>
           <div class="chat-msg bot" id="step-response">
             <span class="who">Mocksheets</span>
-            Tamam. <b>C sütunu</b> azalan sırada düzenlendi. 247 satır 0.6 sn'de işlendi.
+            Tamam. <b>C sütunu</b> azalan sırada düzenlendi. 247 satır 2,2 sn'de işlendi.
           </div>
           <div class="chat-actions">
             <input class="chat-input" placeholder="Bir şey yazın — örn. 'En yüksek 10'u yeşile boya'…" />
@@ -704,7 +704,7 @@
           <div class="demo-toolbar">
             <span class="pill2">📄 faturalar-q1.xlsx</span>
             <span class="pill2">247 satır</span>
-            <span class="pill2">son: 0.6 sn</span>
+            <span class="pill2">son: 2,2 sn</span>
             <span style="margin-left:auto;color:var(--mute)">A1:F247</span>
           </div>
           <div class="big-sheet" id="big-sheet">
@@ -738,8 +738,8 @@
       <!-- Feature 1: Turkish natural commands -->
       <div class="tile span-7">
         <div class="kicker">01 · DOĞAL DİL</div>
-        <h3>Türkçe yazın, Mocksheets anlasın.</h3>
-        <p>"En yüksek 10'u vurgula", "Çiftleri sil", "Kırmızı satırları sona at" — 600+ örnek ile beslenmiş RAG katmanı, niyetinizi ilk seferde yakalar.</p>
+        <h3>Komut verin, Mocksheets anlasın.</h3>
+        <p>"En yüksek 10'u vurgula", "Çiftleri sil", "Kırmızı satırları sona at" — niyetinizi ilk seferde yakalar.</p>
         <div class="illus" style="padding:14px;background:var(--paper-2)">
           <div class="cmd-list">
             <div class="cmd-row"><span class="ar">›</span><span>Hedefin üstündeki satırları yeşile boya</span><span class="out" style="margin-left:auto">+89 hücre</span></div>
@@ -796,12 +796,12 @@
       <!-- Feature 4: speed -->
       <div class="tile span-4 lime">
         <div class="kicker">04 · HIZ</div>
-        <h3>0.6 sn / komut.<br>Ortalama.</h3>
-        <p>RAG önbelleği + Claude prompt caching. İlk komuttan sonra hız <b>4×</b> artar.</p>
+        <h3>2,2 sn / komut.<br>Ortalama.</h3>
+        <p>Hızlı ve güvenilir. Her komut anında uygulanır.</p>
         <div class="illus" style="background:#0e0e1010;border:0;display:flex;align-items:center;justify-content:center;font-family:'Geist Mono',monospace">
           <div style="text-align:center;color:var(--ink)">
-            <div style="font-size:64px;font-weight:600;letter-spacing:-0.04em;line-height:1">0.6<small style="font-size:18px;color:var(--ink-2)"> sn</small></div>
-            <div class="micro" style="color:var(--ink-2);margin-top:6px">ortalama yanıt süresi</div>
+            <div style="font-size:64px;font-weight:600;letter-spacing:-0.04em;line-height:1">2,2<small style="font-size:18px;color:var(--ink-2)"> sn</small></div>
+            <div class="micro" style="color:var(--ink-2);margin-top:6px">yanıt alma süresi</div>
           </div>
         </div>
       </div>
@@ -1047,7 +1047,7 @@
   <div class="wrap">
     <div class="cta">
       <div class="micro" style="color:#ffffff80;margin-bottom:20px">— başlayalım</div>
-      <h2>Excel'i öğrenmeyi <em>bırakın.</em><br>Excel'i konuşmaya <em>başlayın.</em></h2>
+      <h2>Yapay zeka ile veri düzenlemek için <em>en iyisi.</em></h2>
       <div class="cta-actions">
         <a href="/app" class="btn btn-dark">Ücretsiz hesap aç — 2 dakika</a>
         <a href="/contact" class="btn btn-outline">Satış ekibiyle konuşun</a>
@@ -1177,7 +1177,7 @@
       },
       2: {
         prompt: "Tutara göre büyükten küçüğe sırala",
-        response: "Tamam. <b>C sütunu</b> azalan sırada düzenlendi. 247 satır 0.6 sn'de işlendi.",
+        response: "Tamam. <b>C sütunu</b> azalan sırada düzenlendi. 247 satır 2,2 sn'de işlendi.",
         render(){
           const cols = [{label:'Tarih'},{label:'Firma'},{label:'Tutar ↓',num:1},{label:'Kategori'}];
           const sorted = [...dataBase].sort((a,b)=>parseInt(b[3].replace('.',''))-parseInt(a[3].replace('.',''))).map((r,i)=>[String(i+1),...r.slice(1)]);
