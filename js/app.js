@@ -4312,7 +4312,7 @@ function updateUsageUI() {
   const planColors = { free: '#6B7280', pro: '#4F46E5', business: '#059669' };
   const badges = { free: '🆓 Ücretsiz', pro: '⭐ Pro', business: '🏢 İş Planı' };
 
-  const planEl = document.getElementById('plan-badge');
+  const planEl = document.getElementById('sbPlanBadge');
   if (planEl) {
     planEl.textContent = badges[userPlan] || userPlan;
     planEl.style.background = (planColors[userPlan] || '#6B7280') + '20';
@@ -4325,15 +4325,15 @@ function updateUsageUI() {
     const used = userUsage.used?.this_month || 0;
     const pct = Math.min((used / monthLimit) * 100, 100);
 
-    const usageBar = document.getElementById('usage-bar-fill');
-    const usageText = document.getElementById('usage-text');
+    const usageBar = document.getElementById('sbUsageBar');
+    const usageText = document.getElementById('sbUsageText');
 
     if (usageBar) {
       usageBar.style.width = pct + '%';
       usageBar.style.background = pct > 80 ? '#EF4444' : pct > 60 ? '#F59E0B' : '#4F46E5';
     }
     if (usageText) {
-      usageText.textContent = used + ' / ' + monthLimit + ' komut';
+      usageText.textContent = 'Bu ay ' + used + ' / ' + monthLimit + ' AI komutu kullanıldı.';
     }
   }
 }
