@@ -69,7 +69,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 #canvas-wrap{flex:1;position:relative;overflow:hidden;background:var(--bg)}
 #canvas{width:100%;height:100%;position:absolute;inset:0;cursor:default}
 #world{position:absolute;top:0;left:0;transform-origin:0 0;width:0;height:0}
-#edge-svg{position:absolute;top:0;left:0;width:0;height:0;overflow:visible;pointer-events:none;z-index:2}
+#edge-svg{position:absolute;top:0;left:0;width:100%;height:100%;overflow:visible;pointer-events:none;z-index:2;transform-origin:0 0}
 
 /* NODE CARDS */
 .node-card{position:absolute;width:220px;height:76px;background:var(--surface);border:1.5px solid var(--line);border-radius:14px;display:flex;align-items:center;gap:10px;padding:10px 12px;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.06);transition:border-color .15s,box-shadow .15s;user-select:none}
@@ -189,9 +189,8 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 
   <div id="canvas-wrap">
     <div id="canvas">
-      <div id="world">
-        <svg id="edge-svg"></svg>
-      </div>
+      <div id="world"></div>
+      <svg id="edge-svg"></svg>
     </div>
     <div id="empty-hint">
       <div class="empty-hint-icon">
@@ -578,7 +577,9 @@ function isConfigured(node){
 
 // ── CANVAS WORLD ─────────────────────────────────────────────
 function applyTransform(){
-  $id('world').style.transform = `translate(${S.pan.x}px,${S.pan.y}px) scale(${S.zoom})`;
+  const t = `translate(${S.pan.x}px,${S.pan.y}px) scale(${S.zoom})`;
+  $id('world').style.transform = t;
+  $id('edge-svg').style.transform = t;
   const sz = 24 * S.zoom;
   const c = $id('canvas');
   c.style.backgroundImage = 'radial-gradient(circle, #CBD5E1 1px, transparent 1px)';
