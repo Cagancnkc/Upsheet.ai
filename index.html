@@ -982,82 +982,279 @@
 </section>
 
 <!-- PRICING -->
-<section id="pricing" style="padding:80px 0 30px">
-  <div class="wrap">
-    <div class="section-head">
-      <div>
-        <div class="section-eyebrow">— fiyatlandırma</div>
-        <h2 class="section-title">Bir kahve fiyatına<br><em class="accent">bir asistan.</em></h2>
+<style>
+  .ms-pricing-a {
+    --ms-bg: #ffffff;
+    --ms-ink: #0a0612;
+    --ms-muted: #6b6478;
+    --ms-line: #ece9f2;
+    --ms-purple: #6d28d9;
+    --ms-purple-soft: #ede9fe;
+    background: var(--ms-bg);
+    color: var(--ms-ink);
+    font-family: 'Geist', system-ui, -apple-system, sans-serif;
+    font-feature-settings: 'ss01','cv11';
+    -webkit-font-smoothing: antialiased;
+    padding: 88px 0 72px;
+  }
+  .ms-pricing-a *, .ms-pricing-a *::before, .ms-pricing-a *::after { box-sizing: border-box; }
+  .ms-pricing-a .ms-inner { max-width: 1180px; margin: 0 auto; padding: 0 56px; }
+
+  .ms-pricing-a .ms-hero { border-bottom: 1px solid var(--ms-line); padding-bottom: 32px; }
+  .ms-pricing-a .ms-eyebrow {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 11px; letter-spacing: 0.08em;
+    color: var(--ms-muted); text-transform: uppercase;
+  }
+  .ms-pricing-a .ms-eyebrow-dot { width: 7px; height: 7px; border-radius: 99px; background: var(--ms-purple); }
+  .ms-pricing-a .ms-eyebrow-mono { color: var(--ms-purple); font-weight: 600; }
+  .ms-pricing-a .ms-title {
+    font-size: clamp(48px, 6vw, 92px); line-height: 0.96; letter-spacing: -0.045em;
+    margin: 22px 0 0; font-weight: 500; color: var(--ms-ink); text-wrap: balance;
+  }
+  .ms-pricing-a .ms-title-italic {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic; font-weight: 400; color: var(--ms-purple);
+  }
+  .ms-pricing-a .ms-hero-bottom {
+    margin-top: 32px; display: grid; grid-template-columns: 1.4fr 1fr;
+    gap: 40px; align-items: end;
+  }
+  .ms-pricing-a .ms-lede { margin: 0; font-size: 17px; line-height: 1.5; color: var(--ms-muted); max-width: 520px; }
+  .ms-pricing-a .ms-toggle-wrap { justify-self: end; text-align: right; }
+  .ms-pricing-a .ms-toggle-label {
+    font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: 0.1em;
+    color: var(--ms-muted); text-transform: uppercase; margin-bottom: 8px;
+  }
+  .ms-pricing-a .ms-toggle {
+    display: inline-flex; padding: 3px; background: #fff;
+    border-radius: 99px; border: 1px solid var(--ms-line);
+  }
+  .ms-pricing-a .ms-toggle button {
+    border: 0; background: transparent; padding: 8px 16px; border-radius: 99px;
+    font-family: inherit; font-size: 13px; color: var(--ms-muted); cursor: pointer;
+    font-weight: 500; display: inline-flex; align-items: center; gap: 6px;
+  }
+  .ms-pricing-a .ms-toggle button.ms-active { background: var(--ms-ink); color: #fff; }
+  .ms-pricing-a .ms-save-tag { color: var(--ms-purple); font-family: 'Geist Mono', monospace; font-size: 10px; }
+  .ms-pricing-a .ms-toggle button.ms-active .ms-save-tag { color: #c4b5fd; }
+
+  .ms-pricing-a .ms-plans { margin-top: 8px; }
+  .ms-pricing-a .ms-row {
+    display: grid;
+    grid-template-columns: 60px 1.4fr 220px 200px;
+    align-items: start; gap: 32px;
+    padding: 36px 0;
+    border-bottom: 1px solid var(--ms-line);
+  }
+  .ms-pricing-a .ms-row.ms-featured {
+    background: var(--ms-purple-soft);
+    margin: 0 -24px; padding: 36px 24px 36px 28px;
+    border-radius: 10px; position: relative;
+  }
+  .ms-pricing-a .ms-row-idx {
+    font-family: 'Instrument Serif', serif; font-style: italic;
+    font-size: 42px; color: var(--ms-purple); line-height: 1; margin-top: 4px;
+  }
+  .ms-pricing-a .ms-row-name {
+    font-size: 32px; font-weight: 500; letter-spacing: -0.025em;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .ms-pricing-a .ms-pop-badge {
+    font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: 0.08em;
+    background: var(--ms-ink); color: #fff; padding: 4px 10px 4px 8px; border-radius: 99px;
+    text-transform: uppercase; font-weight: 600;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .ms-pricing-a .ms-pop-badge-dot { width: 7px; height: 7px; border-radius: 2px; background: var(--ms-purple); }
+  .ms-pricing-a .ms-row-tag { margin-top: 6px; color: var(--ms-muted); font-size: 15px; }
+  .ms-pricing-a .ms-row-feats {
+    margin: 18px 0 0; padding: 0; list-style: none;
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .ms-pricing-a .ms-row-feat { font-size: 14px; color: var(--ms-ink); display: flex; gap: 8px; }
+  .ms-pricing-a .ms-feat-dash { color: var(--ms-purple); font-family: 'Geist Mono', monospace; }
+
+  .ms-pricing-a .ms-row-price { text-align: left; }
+  .ms-pricing-a .ms-price-big {
+    font-size: 86px; line-height: 0.9; font-weight: 500;
+    letter-spacing: -0.05em; color: var(--ms-ink);
+    font-feature-settings: 'tnum';
+  }
+  .ms-pricing-a .ms-price-cur { font-size: 32px; vertical-align: top; color: var(--ms-purple); font-weight: 500; }
+  .ms-pricing-a .ms-price-sub { margin-top: 10px; display: flex; flex-direction: column; gap: 2px; }
+  .ms-pricing-a .ms-price-strike {
+    font-family: 'Geist Mono', monospace; font-size: 12px;
+    color: var(--ms-muted); text-decoration: line-through;
+  }
+  .ms-pricing-a .ms-price-after { font-size: 13px; color: var(--ms-muted); }
+
+  .ms-pricing-a .ms-row-cta { display: flex; align-items: flex-start; justify-content: flex-end; }
+  .ms-pricing-a .ms-cta {
+    font-family: inherit; font-size: 14px; font-weight: 500;
+    padding: 13px 22px; border-radius: 99px; cursor: pointer;
+    border: 1px solid var(--ms-ink); background: transparent; color: var(--ms-ink);
+    display: inline-flex; align-items: center; gap: 10px;
+    transition: all .15s ease; white-space: nowrap; text-decoration: none;
+  }
+  .ms-pricing-a .ms-cta:hover { transform: translateY(-1px); }
+  .ms-pricing-a .ms-cta.ms-filled { background: var(--ms-ink); border-color: var(--ms-ink); color: #fff; }
+  .ms-pricing-a .ms-cta.ms-outline { background: transparent; border-color: var(--ms-ink); color: var(--ms-ink); }
+  .ms-pricing-a .ms-cta-arrow { font-size: 16px; margin-top: -1px; }
+  .ms-pricing-a .ms-cta-gicon { width: 16px; height: 16px; display: inline-block; }
+
+  .ms-pricing-a .ms-footnote {
+    margin-top: 36px; display: flex; align-items: center; gap: 16px;
+    color: var(--ms-muted); font-size: 13px;
+  }
+  .ms-pricing-a .ms-foot-mono {
+    font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: 0.1em;
+    background: var(--ms-purple); color: #fff; padding: 4px 8px; border-radius: 3px;
+    text-transform: uppercase; font-weight: 600;
+  }
+
+  @media (max-width: 980px) {
+    .ms-pricing-a { padding: 56px 0 48px; }
+    .ms-pricing-a .ms-inner { padding: 0 24px; }
+    .ms-pricing-a .ms-hero-bottom { grid-template-columns: 1fr; gap: 18px; }
+    .ms-pricing-a .ms-toggle-wrap { justify-self: start; text-align: left; }
+    .ms-pricing-a .ms-row {
+      grid-template-columns: 36px 1fr;
+      grid-template-areas: "idx name" ". tag" ". feats" ". price" ". cta";
+      gap: 14px; padding: 28px 0;
+    }
+    .ms-pricing-a .ms-row.ms-featured { padding: 28px 16px; }
+    .ms-pricing-a .ms-row-idx { grid-area: idx; font-size: 28px; }
+    .ms-pricing-a .ms-row-name { grid-area: name; font-size: 26px; flex-wrap: wrap; }
+    .ms-pricing-a .ms-row-tag { grid-area: tag; }
+    .ms-pricing-a .ms-row-feats { grid-area: feats; }
+    .ms-pricing-a .ms-row-price { grid-area: price; }
+    .ms-pricing-a .ms-row-cta { grid-area: cta; justify-content: flex-start; }
+    .ms-pricing-a .ms-price-big { font-size: 64px; }
+  }
+</style>
+
+<section class="ms-pricing-a" id="pricing" aria-label="Fiyatlandırma">
+  <div class="ms-inner">
+
+    <div class="ms-hero">
+      <div class="ms-eyebrow">
+        <span class="ms-eyebrow-dot"></span>
+        <span>Bültene yeni katılanlara —</span>
+        <span class="ms-eyebrow-mono">MAYIS'26 KAMPANYASI</span>
       </div>
-      <p class="section-sub">
-        Ücretsiz katmanla başlayın, ihtiyaç duydukça yükseltin. Sözleşme yok, gizli ücret yok.
-        İstediğiniz zaman iptal edin.
-      </p>
-    </div>
-
-    <div class="pricing-toggle" style="display:none">
-      <button class="pt-btn active" id="ptMonthly" onclick="setPricingPeriod('monthly')">Aylık</button>
-      <button class="pt-btn" id="ptYearly" onclick="setPricingPeriod('yearly')">Yıllık <span class="pt-save">%20 indirim</span></button>
-    </div>
-
-    <div class="pricing-promo-bar">
-      <div class="ppbar-dot"></div>
-      🎉 <strong>Sınırlı süre teklifi</strong> — Yeni üyelere özel: tüm ücretli planlarda ilk 3 ay sadece <strong>$1</strong>
-      <div class="ppbar-dot"></div>
-    </div>
-
-    <div class="pricing">
-      <div class="price">
-        <div class="price-name"><span>Ücretsiz</span><span>BAŞLA</span></div>
-        <div class="price-amt">$0<small> / ay</small></div>
-        <div class="price-desc">Mocksheets'i tanımak için ideal. Kart gerekmez.</div>
-        <ul>
-          <li>Günde 5 AI komutu</li>
-          <li>Ayda 20 komut</li>
-          <li>Google Sheets bağlantısı</li>
-          <li>Türkçe + İngilizce arayüz</li>
-        </ul>
-        <a href="/auth" class="btn btn-outline" style="margin-top:auto;display:flex;align-items:center;justify-content:center;gap:8px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="16" height="16" style="flex-shrink:0"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>Google ile kayıt ol</a>
-      </div>
-
-      <div class="price pro" style="position:relative">
-        <div class="price-corner-badge">3 AY $1</div>
-        <div class="price-name"><span>Pro</span><span class="price-tag">en popüler</span></div>
-        <div class="price-amt" id="proPriceAmt">$1<small> / ay</small></div>
-        <div class="price-promo-box" id="proPriceOrig">
-          <div><span class="ppb-badge">🎁 Yeni üyelere özel</span></div>
-          <div class="ppb-detail">İlk 3 ay · Sonra <s>$29</s> → <strong>$14/ay</strong></div>
+      <h2 class="ms-title">
+        Bir kahve fiyatına<br/>
+        <span class="ms-title-italic">bir asistan.</span>
+      </h2>
+      <div class="ms-hero-bottom">
+        <p class="ms-lede">Ücretsiz katmanla başlayın, ihtiyaç duydukça yükseltin. Sözleşme yok, gizli ücret yok. İstediğiniz zaman iptal edin.</p>
+        <div class="ms-toggle-wrap">
+          <div class="ms-toggle-label">Faturalandırma</div>
+          <div class="ms-toggle" role="tablist" aria-label="Faturalandırma sıklığı">
+            <button id="ms-btn-monthly" class="ms-active" role="tab" aria-selected="true" onclick="setPricingPeriod('monthly')">Aylık</button>
+            <button id="ms-btn-yearly" role="tab" aria-selected="false" onclick="setPricingPeriod('yearly')">Yıllık <span class="ms-save-tag">%20</span></button>
+          </div>
         </div>
-        <div class="price-desc">Sık kullananlar ve profesyoneller için.</div>
-        <ul>
-          <li>Günde 30 AI komutu, ayda 200</li>
-          <li>PDF → tablo çıkarımı</li>
-          <li>Tüm entegrasyonlar</li>
-          <li>Versiyon geçmişi (90 gün)</li>
-          <li>Öncelikli destek</li>
-        </ul>
-        <a id="proCheckoutBtn" href="https://buy.stripe.com/test_eVq3cufqj9yT5GQ0PAbMQ08" target="_blank" class="btn btn-dark" style="background:var(--lime);color:var(--ink);margin-top:auto">Pro'ya başla →</a>
-      </div>
-
-      <div class="price" style="position:relative">
-        <div class="price-corner-badge">3 AY $1</div>
-        <div class="price-name"><span>İşletme</span><span>EKİP</span></div>
-        <div class="price-amt" id="bizPriceAmt">$1<small> / ay</small></div>
-        <div class="price-promo-box" id="bizPriceOrig">
-          <div><span class="ppb-badge">🎁 Yeni üyelere özel</span></div>
-          <div class="ppb-detail">İlk 3 ay · Sonra <strong>$24/ay</strong></div>
-        </div>
-        <div class="price-desc">5 koltuk dahil. Ekibinizi tek hesapta toplayın.</div>
-        <ul>
-          <li>Sınırsız AI komutu</li>
-          <li>Canlı işbirliği + yorumlar</li>
-          <li>SSO + audit log</li>
-          <li>Özel ERP entegrasyonları</li>
-          <li>Atanmış müşteri temsilcisi</li>
-        </ul>
-        <a id="bizCheckoutBtn" href="https://buy.stripe.com/test_28EdR8ce7cL5d9igOybMQ09" target="_blank" class="btn btn-dark" style="margin-top:auto">Business'a başla →</a>
       </div>
     </div>
+
+    <div class="ms-plans">
+
+      <article class="ms-row">
+        <div class="ms-row-idx">01</div>
+        <div class="ms-row-meta">
+          <div class="ms-row-name">Başlangıç</div>
+          <div class="ms-row-tag">Tanışma için. Kartsız.</div>
+          <ul class="ms-row-feats">
+            <li class="ms-row-feat"><span class="ms-feat-dash">—</span> Günde 5 AI komutu</li>
+            <li class="ms-row-feat"><span class="ms-feat-dash">—</span> Google Sheets bağlantısı</li>
+            <li class="ms-row-feat"><span class="ms-feat-dash">—</span> TR + EN arayüz</li>
+          </ul>
+        </div>
+        <div class="ms-row-price">
+          <div class="ms-price-big"><span class="ms-price-cur">$</span>0</div>
+          <div class="ms-price-sub">
+            <span class="ms-price-after">Sonsuza dek ücretsiz</span>
+          </div>
+        </div>
+        <div class="ms-row-cta">
+          <a href="/auth" class="ms-cta">
+            <svg class="ms-cta-gicon" viewBox="0 0 48 48" aria-hidden="true">
+              <path fill="#EA4335" d="M24 9.5c3.54 0 6.7 1.22 9.2 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+              <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+              <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+              <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+            </svg>
+            Google ile kayıt ol
+          </a>
+        </div>
+      </article>
+
+      <article class="ms-row ms-featured">
+        <div class="ms-row-idx">02</div>
+        <div class="ms-row-meta">
+          <div class="ms-row-name">
+            Profesyonel
+            <span class="ms-pop-badge"><span class="ms-pop-badge-dot"></span>ÇOĞU SEÇER</span>
+          </div>
+          <div class="ms-row-tag">Tek başına çalışan profesyoneller için.</div>
+          <ul class="ms-row-feats">
+            <li class="ms-row-feat"><span class="ms-feat-dash">—</span> Sınırsıza yakın — günde 30, ayda 200</li>
+            <li class="ms-row-feat"><span class="ms-feat-dash">—</span> PDF → tablo çıkarımı</li>
+            <li class="ms-row-feat"><span class="ms-feat-dash">—</span> 90 günlük versiyon geçmişi</li>
+            <li class="ms-row-feat"><span class="ms-feat-dash">—</span> Öncelikli e-posta desteği</li>
+          </ul>
+        </div>
+        <div class="ms-row-price">
+          <div class="ms-price-big"><span class="ms-price-cur">$</span>1</div>
+          <div class="ms-price-sub">
+            <span class="ms-price-strike" id="proStrike">$29</span>
+            <span class="ms-price-after" id="proAfter">İlk 3 ay · sonra $14/ay</span>
+          </div>
+        </div>
+        <div class="ms-row-cta">
+          <a id="proCheckoutBtn" href="https://buy.stripe.com/test_eVq3cufqj9yT5GQ0PAbMQ08" target="_blank" class="ms-cta ms-filled">
+            Pro'ya geç
+            <span class="ms-cta-arrow">→</span>
+          </a>
+        </div>
+      </article>
+
+      <article class="ms-row">
+        <div class="ms-row-idx">03</div>
+        <div class="ms-row-meta">
+          <div class="ms-row-name">Ekip</div>
+          <div class="ms-row-tag">5 koltuk. Tek fatura.</div>
+          <ul class="ms-row-feats">
+            <li class="ms-row-feat"><span class="ms-feat-dash">—</span> Sınırsız AI komutu</li>
+            <li class="ms-row-feat"><span class="ms-feat-dash">—</span> Canlı işbirliği + yorumlar</li>
+            <li class="ms-row-feat"><span class="ms-feat-dash">—</span> SSO + audit log</li>
+            <li class="ms-row-feat"><span class="ms-feat-dash">—</span> Atanmış müşteri temsilcisi</li>
+          </ul>
+        </div>
+        <div class="ms-row-price">
+          <div class="ms-price-big"><span class="ms-price-cur">$</span>1</div>
+          <div class="ms-price-sub">
+            <span class="ms-price-after" id="bizAfter">İlk 3 ay · sonra $24/ay</span>
+          </div>
+        </div>
+        <div class="ms-row-cta">
+          <a id="bizCheckoutBtn" href="https://buy.stripe.com/test_28EdR8ce7cL5d9igOybMQ09" target="_blank" class="ms-cta ms-outline">
+            Ekip kur
+            <span class="ms-cta-arrow">→</span>
+          </a>
+        </div>
+      </article>
+
+    </div>
+
+    <div class="ms-footnote">
+      <span class="ms-foot-mono">KAMPANYA</span>
+      <span>Tüm planlar 14 gün koşulsuz iade • KDV dahil • KVKK uyumlu</span>
+    </div>
+
   </div>
 </section>
 
@@ -1355,16 +1552,19 @@
 <script>
 function setPricingPeriod(p) {
   var yearly = p === 'yearly';
-  document.getElementById('ptMonthly').classList.toggle('active', !yearly);
-  document.getElementById('ptYearly').classList.toggle('active', yearly);
-  document.getElementById('proPriceAmt').innerHTML = '$1<small> / ay</small>';
-  document.getElementById('bizPriceAmt').innerHTML = '$1<small> / ay</small>';
+  document.getElementById('ms-btn-monthly').classList.toggle('ms-active', !yearly);
+  document.getElementById('ms-btn-yearly').classList.toggle('ms-active', yearly);
+  document.getElementById('ms-btn-monthly').setAttribute('aria-selected', String(!yearly));
+  document.getElementById('ms-btn-yearly').setAttribute('aria-selected', String(yearly));
   document.getElementById('proCheckoutBtn').href = yearly
     ? 'https://buy.stripe.com/test_28EeVcgun7qL9X6buebMQ0a'
     : 'https://buy.stripe.com/test_eVq3cufqj9yT5GQ0PAbMQ08';
   document.getElementById('bizCheckoutBtn').href = yearly
     ? 'https://buy.stripe.com/test_8x2aEWemf8uPd9i0PAbMQ0b'
     : 'https://buy.stripe.com/test_28EdR8ce7cL5d9igOybMQ09';
+  document.getElementById('proStrike').textContent = yearly ? '$140' : '$29';
+  document.getElementById('proAfter').textContent = yearly ? 'İlk 3 ay · sonra $11/ay' : 'İlk 3 ay · sonra $14/ay';
+  document.getElementById('bizAfter').textContent = yearly ? 'İlk 3 ay · sonra $19/ay' : 'İlk 3 ay · sonra $24/ay';
 }
 </script>
 
