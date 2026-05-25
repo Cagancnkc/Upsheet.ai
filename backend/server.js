@@ -517,6 +517,12 @@ app.use((err, _req, res, _next) => {
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server ${PORT} portunda çalışıyor`);
 
+  // Initialize server-side automation scheduler
+  try {
+    const scheduler = require('./services/scheduler');
+    scheduler.loadAndScheduleAll().catch(e => console.error('[scheduler] Init error:', e.message));
+  } catch (e) { console.error('[scheduler] Load error:', e.message); }
+
   // Render free tier'ı uyanık tut: her 14 dakikada self-ping
   const SELF_URL = process.env.RENDER_EXTERNAL_URL || `http://localhost:${PORT}`;
   const _pingMod = SELF_URL.startsWith('https') ? require('https') : require('http');

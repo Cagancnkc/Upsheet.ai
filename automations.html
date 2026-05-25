@@ -1,1089 +1,1447 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="tr" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Automations – Mocksheets</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='0'><stop offset='0' stop-color='%236B35CF'/><stop offset='1' stop-color='%232B80FF'/></linearGradient></defs><rect width='32' height='32' rx='4' fill='white'/><text x='1' y='27' font-family='Arial Rounded MT Bold,Arial,sans-serif' font-weight='900' font-size='28' fill='url(%23g)'>m</text></svg>">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<title>Otomasyonlar – Mocksheets</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%2316a34a'/><text x='6' y='24' font-family='Arial' font-weight='900' font-size='22' fill='white'>m</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:#FAFAF7; --surface:#FFFFFF; --surface-2:#F5F5F1;
-  --line:#E8E7E1; --line-2:#EFEEE8;
-  --ink:#0E1116; --ink-2:#3A3F47; --muted:#7A7F87; --muted-2:#A6A9AF;
-  --accent:#16a34a; --accent-soft:#f0fdf4;
-  --green:#0F9D58; --green-soft:#E4F5EC;
-  --amber:#B45309; --amber-soft:#FDF3E1;
-  --rose:#E11D48; --rose-soft:#FCE7EE;
-  --blue:#2563EB; --blue-soft:#E6EEFE;
-  --violet:#15803d; --violet-soft:#f0fdf4;
-  --teal:#0D9488; --teal-soft:#DDF3F1;
+  --bg:#FAFAF8;--surface:#FFFFFF;--surface-2:#F5F5F0;--surface-3:#EEEEE8;
+  --line:#E8E7E0;--line-2:#DDDDD6;
+  --ink:#0E1116;--ink-2:#3A3F47;--muted:#7A7F87;--muted-2:#A6A9AF;
+  --accent:#16a34a;--accent-2:#15803d;--accent-soft:#f0fdf4;--accent-line:#bbf7d0;
+  --green:#0F9D58;--green-soft:#E4F5EC;
+  --amber:#B45309;--amber-soft:#FDF3E1;--amber-line:#fde68a;
+  --rose:#E11D48;--rose-soft:#FCE7EE;--rose-line:#fecdd3;
+  --blue:#2563EB;--blue-soft:#EFF6FF;--blue-line:#bfdbfe;
+  --radius:10px;--radius-lg:14px;--shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.06);
+  --shadow-lg:0 4px 16px rgba(0,0,0,.10),0 2px 6px rgba(0,0,0,.07);
+}
+[data-theme="dark"] {
+  --bg:#0F1117;--surface:#1A1D24;--surface-2:#22252E;--surface-3:#2A2E38;
+  --line:#2E323C;--line-2:#383D48;
+  --ink:#F0F1F3;--ink-2:#C8CDD5;--muted:#6E7480;--muted-2:#4E535E;
+  --accent-soft:#052e16;--accent-line:#166534;
+  --green-soft:#052e16;--amber-soft:#451a03;--amber-line:#78350f;
+  --rose-soft:#4c0519;--rose-line:#9f1239;
+  --blue-soft:#1e3a5f;--blue-line:#1d4ed8;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--ink);display:flex;flex-direction:column;height:100vh;overflow:hidden}
+html{scroll-behavior:smooth}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer}
+input,select,textarea{font-family:inherit}
 
-/* TOP BAR */
-#top-bar{height:60px;background:var(--surface);border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 16px;gap:8px;flex-shrink:0;z-index:100}
-.tb-logo{width:32px;height:32px;border-radius:8px;object-fit:contain;flex-shrink:0}
-.tb-brand{font-weight:700;font-size:15px;color:var(--ink);flex-shrink:0}
-.tb-sep{color:var(--muted-2);font-size:14px;flex-shrink:0}
-.tb-breadcrumb{color:var(--muted);font-size:13px;font-weight:500;flex-shrink:0}
-#tb-title{background:none;border:none;font-family:inherit;font-size:14px;font-weight:600;color:var(--ink);outline:none;min-width:120px;max-width:220px;padding:4px 6px;border-radius:6px;transition:background .15s}
-#tb-title:hover,#tb-title:focus{background:var(--surface-2)}
-.tb-dirty{width:7px;height:7px;border-radius:50%;background:var(--amber);flex-shrink:0}
-.tb-spacer{flex:1}
-.tb-btn{height:34px;padding:0 13px;border-radius:8px;border:1px solid var(--line);background:var(--surface);font-family:inherit;font-size:13px;font-weight:500;color:var(--ink-2);cursor:pointer;display:flex;align-items:center;gap:5px;transition:background .12s;white-space:nowrap}
-.tb-btn:hover{background:var(--surface-2)}
-.tb-btn-save{background:var(--ink);color:#fff;border-color:transparent}
-.tb-btn-save:hover{background:#1e2329}
-.tb-btn-run{background:var(--accent);color:#fff;border-color:transparent}
-.tb-btn-run:hover{background:#15803d}
-.tb-btn-run.running{background:var(--green)}
-.tb-avatar{width:32px;height:32px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;cursor:pointer;flex-shrink:0}
+/* ── NAV ── */
+#nav{height:56px;background:var(--surface);border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 20px;gap:0;position:sticky;top:0;z-index:200}
+.nav-back{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:13px;font-weight:500;padding:6px 10px;border-radius:7px;transition:background .12s;margin-right:4px;border:none;background:none}
+.nav-back:hover{background:var(--surface-2);color:var(--ink-2)}
+.nav-sep{width:1px;height:20px;background:var(--line);margin:0 8px}
+.nav-brand{display:flex;align-items:center;gap:8px;font-weight:700;font-size:15px}
+.nav-logo{width:28px;height:28px;border-radius:7px;background:var(--accent);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:13px}
+.nav-page{color:var(--muted);font-size:13px;font-weight:500;margin-left:4px}
+.nav-title{font-size:13px;font-weight:600;color:var(--ink)}
+.nav-spacer{flex:1}
+.nav-btn{height:34px;padding:0 14px;border-radius:8px;border:1px solid var(--line);background:var(--surface);font-size:13px;font-weight:500;color:var(--ink-2);display:flex;align-items:center;gap:6px;transition:all .12s;white-space:nowrap}
+.nav-btn:hover{background:var(--surface-2);border-color:var(--line-2)}
+.nav-btn-primary{background:var(--accent);color:#fff;border-color:transparent}
+.nav-btn-primary:hover{background:var(--accent-2);border-color:transparent}
+.nav-avatar{width:32px;height:32px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;border:2px solid var(--accent-line);flex-shrink:0;cursor:pointer}
 
-/* BODY */
-#body{display:flex;flex:1;overflow:hidden}
+/* ── MAIN ── */
+#main{max-width:1100px;margin:0 auto;padding:32px 20px 80px}
 
-/* SIDEBAR */
-#sidebar{width:308px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--line);display:flex;flex-direction:column;overflow:hidden}
-.sb-head{padding:12px 12px 0}
-.sb-search{width:100%;height:38px;background:var(--surface-2);border:1px solid var(--line-2);border-radius:10px;display:flex;align-items:center;gap:8px;padding:0 12px}
-.sb-search input{background:none;border:none;outline:none;font-family:inherit;font-size:13px;color:var(--ink);flex:1}
-.sb-search input::placeholder{color:var(--muted-2)}
-.sb-filters{display:flex;gap:6px;padding:8px 12px}
-.sb-chip{height:26px;padding:0 10px;border-radius:13px;border:1px solid var(--line);background:var(--surface);font-family:inherit;font-size:12px;font-weight:500;color:var(--muted);cursor:pointer;transition:all .12s}
-.sb-chip.active{background:var(--ink);color:#fff;border-color:transparent}
-.sb-list{flex:1;overflow-y:auto;padding:4px 8px 16px}
-.sb-list::-webkit-scrollbar{width:4px}
-.sb-list::-webkit-scrollbar-thumb{background:var(--line);border-radius:4px}
-.sb-section-label{font-size:10.5px;font-weight:700;letter-spacing:.06em;color:var(--muted-2);text-transform:uppercase;padding:12px 4px 6px}
-.sb-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;cursor:grab;transition:background .1s;user-select:none}
-.sb-item:hover{background:var(--surface-2)}
-.sb-item:active{cursor:grabbing}
-.sb-icon{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.sb-info{flex:1;min-width:0}
-.sb-name{font-size:13px;font-weight:600;color:var(--ink)}
-.sb-desc{font-size:11px;color:var(--muted);margin-top:1px}
+/* ── HERO ── */
+#hero{margin-bottom:32px}
+.hero-top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.hero-left h1{font-size:24px;font-weight:800;color:var(--ink);margin-bottom:6px}
+.hero-left p{font-size:14px;color:var(--muted);max-width:480px;line-height:1.6}
+.hero-stats{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
+.stat-chip{display:flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:5px 12px;font-size:12px;font-weight:600;color:var(--ink-2)}
+.stat-dot{width:7px;height:7px;border-radius:50%;background:var(--accent)}
+.stat-dot.amber{background:#f59e0b}
+.hero-actions{display:flex;gap:8px;flex-shrink:0;align-items:flex-start;margin-top:4px}
+.btn{height:38px;padding:0 16px;border-radius:9px;border:1px solid var(--line);background:var(--surface);font-size:13px;font-weight:600;color:var(--ink-2);display:inline-flex;align-items:center;gap:7px;transition:all .14s;white-space:nowrap;cursor:pointer}
+.btn:hover{background:var(--surface-2)}
+.btn-primary{background:var(--accent);color:#fff;border-color:transparent}
+.btn-primary:hover{background:var(--accent-2)}
+.btn-ai{background:linear-gradient(135deg,#7c3aed,#2563EB);color:#fff;border-color:transparent}
+.btn-ai:hover{opacity:.9}
+.btn-sm{height:30px;padding:0 11px;font-size:12px;border-radius:7px}
+.btn-ghost{background:none;border-color:transparent;color:var(--muted)}
+.btn-ghost:hover{background:var(--surface-2);color:var(--ink-2)}
+.btn-danger{color:var(--rose);border-color:var(--rose-line)}
+.btn-danger:hover{background:var(--rose-soft)}
 
-/* CANVAS */
-#canvas-wrap{flex:1;position:relative;overflow:hidden;background:var(--bg)}
-#canvas{width:100%;height:100%;position:absolute;inset:0;cursor:default}
-#world{position:absolute;top:0;left:0;transform-origin:0 0;width:0;height:0}
-#edge-svg{position:absolute;top:0;left:0;width:100%;height:100%;overflow:visible;pointer-events:none;z-index:2;transform-origin:0 0}
+/* ── SECTION HEADERS ── */
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.section-title{font-size:15px;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:8px}
+.section-badge{background:var(--surface-2);color:var(--muted);font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px}
 
-/* NODE CARDS */
-.node-card{position:absolute;width:220px;height:76px;background:var(--surface);border:1.5px solid var(--line);border-radius:14px;display:flex;align-items:center;gap:10px;padding:10px 12px;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.06);transition:border-color .15s,box-shadow .15s;user-select:none}
-.node-card:hover{border-color:var(--muted-2)}
-.node-card.selected{border-color:var(--accent);box-shadow:0 0 0 4px rgba(79,70,229,.12)}
-.node-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.node-body{flex:1;min-width:0}
-.node-eyebrow{font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted-2);margin-bottom:1px}
-.node-title{font-size:13.5px;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.node-sub{font-size:11px;color:var(--muted);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.node-dot{position:absolute;top:12px;right:12px;width:8px;height:8px;border-radius:50%}
-.node-dot.cfg{background:var(--green)}
-.node-dot.pend{background:var(--muted-2)}
-.node-port{position:absolute;width:14px;height:14px;border-radius:50%;top:31px;background:var(--surface);border:2px solid var(--muted-2);cursor:crosshair;z-index:10;transition:border-color .12s,transform .12s}
-.node-port:hover{border-color:var(--accent);transform:scale(1.25)}
-.node-port.port-out{right:-7px}
-.node-port.port-in{left:-7px}
-@keyframes nodeIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
-.node-new{animation:nodeIn .18s ease}
+/* ── TEMPLATE GALLERY ── */
+#templates{margin-bottom:36px}
+.template-scroll{display:flex;gap:12px;overflow-x:auto;padding-bottom:8px;scrollbar-width:thin}
+.template-scroll::-webkit-scrollbar{height:4px}
+.template-scroll::-webkit-scrollbar-track{background:transparent}
+.template-scroll::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:2px}
+.tpl-card{flex-shrink:0;width:200px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-lg);padding:14px;cursor:pointer;transition:all .14s;position:relative}
+.tpl-card:hover{border-color:var(--accent-line);box-shadow:0 0 0 3px var(--accent-soft),var(--shadow)}
+.tpl-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:10px}
+.tpl-name{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:4px;line-height:1.3}
+.tpl-desc{font-size:11px;color:var(--muted);line-height:1.5}
+.tpl-tags{display:flex;gap:4px;margin-top:10px;flex-wrap:wrap}
+.tpl-tag{font-size:10px;font-weight:600;padding:2px 7px;border-radius:5px;background:var(--surface-2);color:var(--muted)}
 
-/* INSPECTOR */
-#inspector{width:340px;flex-shrink:0;background:var(--surface);border-left:1px solid var(--line);display:flex;flex-direction:column;overflow:hidden}
-.ins-head{padding:16px 20px 14px;border-bottom:1px solid var(--line-2);flex-shrink:0}
-.ins-head-title{font-size:15px;font-weight:700;color:var(--ink)}
-.ins-head-sub{font-size:12px;color:var(--muted);margin-top:2px}
-.ins-body{flex:1;overflow-y:auto;padding:16px 20px}
-.ins-body::-webkit-scrollbar{width:4px}
-.ins-body::-webkit-scrollbar-thumb{background:var(--line);border-radius:4px}
-.ins-section{margin-bottom:20px}
-.ins-section-label{font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted-2);margin-bottom:8px}
-.ins-field{margin-bottom:12px}
-.ins-label{font-size:12px;font-weight:600;color:var(--ink-2);margin-bottom:4px;display:block}
-.ins-select,.ins-input{width:100%;height:36px;padding:0 10px;background:var(--surface-2);border:1px solid var(--line);border-radius:8px;font-family:inherit;font-size:13px;color:var(--ink);outline:none;transition:border-color .12s}
-.ins-select:focus,.ins-input:focus{border-color:var(--accent)}
-.ins-segmented{display:flex;background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:2px;gap:2px}
-.ins-seg-btn{flex:1;height:28px;border:none;background:none;border-radius:6px;font-family:inherit;font-size:12px;font-weight:500;color:var(--muted);cursor:pointer;transition:all .12s}
-.ins-seg-btn.active{background:var(--surface);color:var(--ink);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.1)}
-.ins-toggle-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line-2)}
-.ins-toggle-row:last-child{border-bottom:none}
-.ins-toggle-lbl{font-size:13px;color:var(--ink-2)}
-.ins-toggle{width:36px;height:20px;background:var(--muted-2);border-radius:10px;position:relative;cursor:pointer;transition:background .15s;border:none;flex-shrink:0}
-.ins-toggle.on{background:var(--accent)}
-.ins-toggle::after{content:'';position:absolute;width:16px;height:16px;border-radius:50%;background:#fff;top:2px;left:2px;transition:left .15s}
-.ins-toggle.on::after{left:18px}
-.ins-action-btn{width:100%;height:36px;border-radius:9px;border:1px solid var(--line);background:var(--surface);font-family:inherit;font-size:13px;font-weight:600;color:var(--ink-2);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:background .12s;margin-top:8px}
-.ins-action-btn:hover{background:var(--surface-2)}
-.ins-action-btn.danger{color:var(--rose);border-color:var(--rose-soft)}
-.ins-action-btn.danger:hover{background:var(--rose-soft)}
-.ins-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
-.ins-stat{background:var(--surface-2);border:1px solid var(--line-2);border-radius:10px;padding:12px}
-.ins-stat-val{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:500;color:var(--ink)}
-.ins-stat-lbl{font-size:11px;color:var(--muted);margin-top:2px}
-.ins-shortcut-row{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line-2)}
-.ins-shortcut-row:last-child{border-bottom:none}
-.ins-shortcut-desc{font-size:12px;color:var(--muted)}
-.ins-shortcut-key{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-2);background:var(--surface-2);border:1px solid var(--line);border-radius:4px;padding:2px 6px}
+/* ── AUTOMATIONS TABLE ── */
+#automations-section{margin-bottom:36px}
+.list-toolbar{display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
+.search-box{flex:1;min-width:180px;height:36px;background:var(--surface);border:1px solid var(--line);border-radius:9px;display:flex;align-items:center;gap:8px;padding:0 12px}
+.search-box input{flex:1;border:none;background:none;font-size:13px;color:var(--ink);outline:none}
+.search-box input::placeholder{color:var(--muted)}
+.filter-select{height:36px;padding:0 10px;border:1px solid var(--line);border-radius:9px;background:var(--surface);font-size:13px;color:var(--ink-2);outline:none;cursor:pointer}
+.rules-list{display:flex;flex-direction:column;gap:6px}
+.rule-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;display:flex;align-items:center;gap:12px;transition:box-shadow .12s}
+.rule-card:hover{box-shadow:var(--shadow)}
+.rule-toggle{position:relative;width:36px;height:20px;flex-shrink:0}
+.rule-toggle input{opacity:0;width:0;height:0;position:absolute}
+.toggle-track{display:block;width:36px;height:20px;background:var(--surface-3);border-radius:10px;cursor:pointer;transition:background .2s}
+.rule-toggle input:checked + .toggle-track{background:var(--accent)}
+.toggle-track::after{content:'';position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.rule-toggle input:checked + .toggle-track::after{transform:translateX(16px)}
+.rule-info{flex:1;min-width:0}
+.rule-name{font-size:14px;font-weight:600;color:var(--ink);margin-bottom:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rule-meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.rule-chip{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:500;padding:2px 8px;border-radius:5px}
+.chip-trigger{background:var(--blue-soft);color:var(--blue)}
+.chip-action{background:var(--green-soft);color:var(--green)}
+.chip-schedule{background:var(--amber-soft);color:var(--amber)}
+.rule-last{font-size:11px;color:var(--muted);white-space:nowrap}
+.rule-actions{display:flex;gap:4px;flex-shrink:0}
+.icon-btn{width:30px;height:30px;border-radius:7px;border:1px solid transparent;background:none;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:14px;transition:all .12s;cursor:pointer}
+.icon-btn:hover{background:var(--surface-2);border-color:var(--line);color:var(--ink-2)}
+.icon-btn.run-btn:hover{background:var(--accent-soft);border-color:var(--accent-line);color:var(--accent)}
+.icon-btn.del-btn:hover{background:var(--rose-soft);border-color:var(--rose-line);color:var(--rose)}
+.empty-state{text-align:center;padding:48px 20px;color:var(--muted)}
+.empty-state .es-icon{font-size:36px;margin-bottom:12px}
+.empty-state h3{font-size:15px;font-weight:700;color:var(--ink-2);margin-bottom:6px}
+.empty-state p{font-size:13px;line-height:1.6;max-width:320px;margin:0 auto 16px}
 
-/* SIDEBAR SUGGEST */
-.sb-suggest-btn{width:100%;height:34px;margin-top:8px;border-radius:10px;border:1px dashed var(--accent);background:var(--accent-soft);color:var(--accent);font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;transition:all .15s}
-.sb-suggest-btn:hover{background:var(--accent);color:#fff}
-.sb-suggest-btn:disabled{opacity:.5;cursor:default}
+/* ── RUN HISTORY ── */
+#run-history{margin-bottom:36px}
+.runs-list{display:flex;flex-direction:column;gap:4px}
+.run-row{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:10px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:background .12s}
+.run-row:hover{background:var(--surface-2)}
+.run-status{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0}
+.status-success{background:var(--green-soft);color:var(--green)}
+.status-error{background:var(--rose-soft);color:var(--rose)}
+.status-skipped{background:var(--amber-soft);color:var(--amber)}
+.status-pending{background:var(--blue-soft);color:var(--blue)}
+.run-time{font-size:11px;color:var(--muted);width:44px;flex-shrink:0;font-variant-numeric:tabular-nums}
+.run-name{flex:1;font-size:13px;font-weight:500;color:var(--ink-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.run-trigger{font-size:11px;color:var(--muted);flex-shrink:0;width:70px}
+.run-duration{font-size:11px;color:var(--muted);width:40px;text-align:right;flex-shrink:0;font-variant-numeric:tabular-nums}
+.run-badge{font-size:10px;font-weight:700;padding:2px 7px;border-radius:5px}
+.badge-success{background:var(--green-soft);color:var(--green)}
+.badge-error{background:var(--rose-soft);color:var(--rose)}
+.badge-skipped{background:var(--amber-soft);color:var(--amber)}
+.badge-pending{background:var(--blue-soft);color:var(--blue)}
 
-/* SAVED RULES */
-.saved-rule-row{display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:10px;border:1px solid var(--line-2);margin-bottom:6px;background:var(--surface)}
-.saved-rule-info{flex:1;min-width:0}
-.saved-rule-name{font-size:12px;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.saved-rule-badge{font-size:10px;font-weight:600;padding:2px 6px;border-radius:4px;background:var(--accent-soft);color:var(--accent);margin-top:2px;display:inline-block}
-.saved-rule-del{width:28px;height:28px;border:none;background:none;color:var(--muted-2);cursor:pointer;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .12s}
-.saved-rule-del:hover{background:var(--rose-soft);color:var(--rose)}
+/* ── MODALS ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);backdrop-filter:blur(4px);z-index:400;display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:opacity .18s}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{background:var(--surface);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);width:100%;max-width:600px;max-height:90vh;display:flex;flex-direction:column;transform:translateY(8px);transition:transform .18s}
+.modal-overlay.open .modal{transform:translateY(0)}
+.modal-lg{max-width:680px}
+.modal-head{padding:20px 24px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.modal-head h2{font-size:16px;font-weight:700}
+.modal-close{width:28px;height:28px;border-radius:7px;border:none;background:none;font-size:16px;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .12s}
+.modal-close:hover{background:var(--surface-2);color:var(--ink)}
+.modal-body{flex:1;overflow-y:auto;padding:20px 24px}
+.modal-foot{padding:14px 24px;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-shrink:0}
 
-/* HUD */
-#hud-count{position:absolute;top:16px;right:16px;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:5px 12px;font-size:12px;font-weight:500;color:var(--ink-2);box-shadow:0 1px 4px rgba(0,0,0,.07);pointer-events:none}
-#hud-legend{position:absolute;bottom:20px;left:20px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px 14px;display:flex;flex-direction:column;gap:5px;box-shadow:0 1px 4px rgba(0,0,0,.07);pointer-events:none}
-.hud-leg-row{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--ink-2)}
-.hud-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-#hud-zoom{position:absolute;bottom:20px;right:20px;background:var(--surface);border:1px solid var(--line);border-radius:10px;display:flex;align-items:center;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.07)}
-.hud-zoom-btn{width:36px;height:36px;border:none;background:none;font-size:16px;color:var(--ink-2);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .1s}
-.hud-zoom-btn:hover{background:var(--surface-2)}
-#hud-zoom-val{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ink-2);min-width:46px;text-align:center;border-left:1px solid var(--line-2);border-right:1px solid var(--line-2);height:36px;display:flex;align-items:center;justify-content:center}
-#empty-hint{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none}
-.empty-hint-icon{width:52px;height:52px;background:var(--surface-2);border:1px solid var(--line);border-radius:14px;display:flex;align-items:center;justify-content:center;margin-bottom:14px}
-.empty-hint-title{font-size:16px;font-weight:700;color:var(--ink-2);margin-bottom:6px}
-.empty-hint-sub{font-size:13px;color:var(--muted);text-align:center;max-width:230px;line-height:1.5}
+/* ── STEPS ── */
+.steps{display:flex;gap:0;margin-bottom:24px}
+.step-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;position:relative}
+.step-item:not(:last-child)::after{content:'';position:absolute;top:13px;left:calc(50% + 14px);width:calc(100% - 28px);height:1px;background:var(--line)}
+.step-item.active::after,.step-item.done::after{background:var(--accent)}
+.step-num{width:26px;height:26px;border-radius:50%;border:2px solid var(--line);background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--muted);transition:all .2s;z-index:1}
+.step-item.active .step-num{border-color:var(--accent);background:var(--accent);color:#fff}
+.step-item.done .step-num{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+.step-label{font-size:10px;font-weight:600;color:var(--muted);text-align:center}
+.step-item.active .step-label{color:var(--accent)}
 
-/* TOASTS */
-#toast-area{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none}
-.toast{padding:10px 18px;border-radius:100px;font-size:13px;font-weight:500;display:flex;align-items:center;gap:8px;box-shadow:0 4px 20px rgba(0,0,0,.15);animation:toastIn .22s ease;pointer-events:auto}
-.toast-light{background:var(--surface);color:var(--ink);border:1px solid var(--line)}
-.toast-dark{background:#0E1116;color:#fff}
-@keyframes toastIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.pulse{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulseAnim 1s ease infinite;flex-shrink:0}
-@keyframes pulseAnim{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(.8)}}
+/* ── FORM FIELDS ── */
+.field{margin-bottom:16px}
+.field-row{display:flex;gap:10px;margin-bottom:16px}
+.field-row .field{flex:1;margin-bottom:0}
+label.lbl{display:block;font-size:12px;font-weight:600;color:var(--ink-2);margin-bottom:6px}
+.inp{width:100%;height:38px;background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:0 12px;font-size:13px;color:var(--ink);outline:none;transition:border .14s}
+.inp:focus{border-color:var(--accent);background:var(--surface)}
+.inp-sm{height:34px;font-size:12px}
+select.inp{cursor:pointer}
+textarea.inp{height:auto;padding:10px 12px;resize:vertical;min-height:72px}
+.inp-hint{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.4}
+.divider{height:1px;background:var(--line);margin:18px 0}
+.section-label{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px}
+
+/* ── CONDITION ROWS ── */
+.cond-list{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.cond-row{display:flex;align-items:center;gap:6px;background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+.cond-logic{width:40px;height:28px;border:1px solid var(--line);border-radius:6px;background:var(--surface);font-size:11px;font-weight:600;color:var(--muted);text-align:center;cursor:pointer;flex-shrink:0}
+.cond-col{flex:1;height:28px;border:1px solid var(--line);border-radius:6px;background:var(--surface);padding:0 8px;font-size:12px;color:var(--ink);outline:none}
+.cond-col:focus{border-color:var(--accent)}
+.cond-op{width:120px;height:28px;border:1px solid var(--line);border-radius:6px;background:var(--surface);padding:0 6px;font-size:12px;color:var(--ink);outline:none;cursor:pointer}
+.cond-val{width:90px;height:28px;border:1px solid var(--line);border-radius:6px;background:var(--surface);padding:0 8px;font-size:12px;color:var(--ink);outline:none}
+.cond-val:focus,.cond-op:focus{border-color:var(--accent)}
+.cond-remove{width:24px;height:24px;border-radius:5px;border:none;background:none;color:var(--muted);cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.cond-remove:hover{background:var(--rose-soft);color:var(--rose)}
+
+/* ── ACTION CARDS ── */
+.action-list{display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
+.action-card{background:var(--surface-2);border:1px solid var(--line);border-radius:var(--radius);padding:12px}
+.action-card-head{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.action-num{width:20px;height:20px;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.action-type-select{flex:1;height:32px;border:1px solid var(--line);border-radius:7px;background:var(--surface);padding:0 8px;font-size:13px;color:var(--ink);outline:none;cursor:pointer}
+.action-type-select:focus{border-color:var(--accent)}
+.action-remove{width:26px;height:26px;border-radius:6px;border:none;background:none;color:var(--muted);cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.action-remove:hover{background:var(--rose-soft);color:var(--rose)}
+.action-fields{display:flex;flex-direction:column;gap:8px}
+.action-field label{display:block;font-size:11px;font-weight:600;color:var(--ink-2);margin-bottom:4px}
+.action-field input,.action-field select,.action-field textarea{width:100%;height:32px;background:var(--surface);border:1px solid var(--line);border-radius:7px;padding:0 10px;font-size:12px;color:var(--ink);outline:none;transition:border .12s}
+.action-field input:focus,.action-field select:focus,.action-field textarea:focus{border-color:var(--accent)}
+.action-field textarea{height:auto;padding:8px 10px;min-height:60px;resize:vertical}
+
+/* ── AI MODAL ── */
+.ai-input-wrap{position:relative}
+.ai-textarea{width:100%;min-height:100px;border:1.5px solid var(--accent-line);border-radius:10px;padding:14px;font-size:14px;color:var(--ink);background:var(--accent-soft);outline:none;resize:none;line-height:1.6;transition:border .14s}
+.ai-textarea:focus{border-color:var(--accent)}
+.ai-textarea::placeholder{color:var(--muted)}
+.ai-examples{display:flex;flex-direction:column;gap:6px;margin:12px 0}
+.ai-example{background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:9px 12px;font-size:12px;color:var(--muted);cursor:pointer;transition:all .12s;line-height:1.5}
+.ai-example:hover{border-color:var(--accent-line);color:var(--ink-2);background:var(--accent-soft)}
+.ai-preview{background:var(--surface-2);border:1px solid var(--line);border-radius:var(--radius);padding:14px;margin-top:16px}
+.ai-preview-title{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px}
+.preview-row{display:flex;gap:8px;margin-bottom:8px;font-size:13px}
+.preview-label{width:100px;font-weight:600;color:var(--ink-2);flex-shrink:0}
+.preview-val{color:var(--ink);flex:1}
+.loading-dots{display:inline-flex;gap:4px;align-items:center}
+.loading-dots span{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:dot-bounce .8s infinite ease-in-out}
+.loading-dots span:nth-child(2){animation-delay:.15s}
+.loading-dots span:nth-child(3){animation-delay:.3s}
+@keyframes dot-bounce{0%,80%,100%{transform:scale(.8);opacity:.5}40%{transform:scale(1);opacity:1}}
+
+/* ── RUN DETAIL MODAL ── */
+.run-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.rd-cell{background:var(--surface-2);border-radius:8px;padding:10px 12px}
+.rd-cell-label{font-size:11px;font-weight:600;color:var(--muted);margin-bottom:3px}
+.rd-cell-val{font-size:13px;font-weight:600;color:var(--ink)}
+.action-result-row{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)}
+.action-result-row:last-child{border-bottom:none}
+.ar-icon{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;margin-top:1px}
+.ar-body{flex:1;font-size:12px}
+.ar-type{font-weight:600;color:var(--ink-2);margin-bottom:2px}
+.ar-status{color:var(--muted)}
+
+/* ── TOAST ── */
+#toast{position:fixed;bottom:20px;right:20px;z-index:999;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{background:var(--ink);color:#fff;border-radius:10px;padding:12px 16px;font-size:13px;font-weight:500;box-shadow:var(--shadow-lg);max-width:320px;display:flex;align-items:center;gap:8px;pointer-events:all;animation:slideUp .2s ease}
+.toast.success{background:#166534}
+.toast.error{background:#9f1239}
+.toast.warning{background:#92400e}
+@keyframes slideUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── SPINNER ── */
+.spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spin-dark{border-color:rgba(0,0,0,.15);border-top-color:var(--accent)}
+
+/* ── THEME TOGGLE ── */
+.theme-toggle{width:30px;height:30px;border-radius:8px;border:1px solid var(--line);background:none;display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;color:var(--muted);transition:all .12s}
+.theme-toggle:hover{background:var(--surface-2);color:var(--ink)}
+
+/* ── MISC ── */
+.tag{font-size:10px;font-weight:600;padding:2px 7px;border-radius:5px;background:var(--surface-2);color:var(--muted)}
+.interpolation-hint{font-size:11px;color:var(--muted);margin-top:3px}
+.interpolation-hint code{background:var(--surface-3);border-radius:3px;padding:1px 4px;font-size:10px;font-family:monospace;color:var(--ink-2)}
+
+@media(max-width:640px){
+  #main{padding:20px 12px 60px}
+  .hero-top{flex-direction:column}
+  .hero-actions{width:100%}
+  .run-trigger,.run-duration{display:none}
+  .modal-lg{max-width:100%}
+  .run-detail-grid{grid-template-columns:1fr}
+  .field-row{flex-direction:column;gap:12px}
+}
 </style>
 </head>
 <body>
 
-<div id="top-bar"></div>
-<div id="body">
-  <div id="sidebar">
-    <div class="sb-head">
-      <div class="sb-search">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--muted-2);flex-shrink:0"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-        <input id="sb-search-input" placeholder="Ara…" type="text" autocomplete="off">
+<!-- NAV -->
+<nav id="nav">
+  <button class="nav-back" onclick="window.location.href='app.html'">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    Uygulama
+  </button>
+  <div class="nav-sep"></div>
+  <div class="nav-brand">
+    <div class="nav-logo">m</div>
+    <span>Mocksheets</span>
+  </div>
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--muted);margin:0 4px"><path d="M9 18l6-6-6-6"/></svg>
+  <span class="nav-title">Otomasyonlar</span>
+  <div class="nav-spacer"></div>
+  <button class="theme-toggle" onclick="toggleTheme()" title="Tema değiştir">🌙</button>
+  <div style="width:8px"></div>
+  <button class="nav-btn nav-btn-primary" onclick="openCreateModal()">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+    Yeni Otomasyon
+  </button>
+  <div style="width:8px"></div>
+  <div class="nav-avatar" id="nav-avatar">U</div>
+</nav>
+
+<!-- MAIN -->
+<main id="main">
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-top">
+      <div class="hero-left">
+        <h1>Otomasyon Merkezi</h1>
+        <p>Tekrar eden operasyonel görevleri otomatikleştirin. Stok uyarıları, tedarikçi bildirimleri, raporlama ve daha fazlası.</p>
+        <div class="hero-stats">
+          <span class="stat-chip"><span class="stat-dot" id="stat-dot-active"></span><span id="stat-active">0 aktif</span></span>
+          <span class="stat-chip"><span class="stat-dot" id="stat-dot-runs" style="background:#2563EB"></span><span id="stat-runs">0 çalışma</span></span>
+          <span class="stat-chip"><span class="stat-dot" id="stat-dot-success" style="background:#16a34a"></span><span id="stat-success">— başarı</span></span>
+        </div>
       </div>
-      <button class="sb-suggest-btn" id="sb-suggest-btn" onclick="suggestRules()">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2l1.9 5.8L20 10l-6.1 2.2L12 18l-1.9-5.8L4 10l6.1-2.2z"/></svg>
-        AI Öner
+      <div class="hero-actions">
+        <button class="btn btn-ai" onclick="openAIModal()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          AI ile Oluştur
+        </button>
+        <button class="btn btn-primary" onclick="openCreateModal()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+          Yeni
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- TEMPLATE GALLERY -->
+  <section id="templates">
+    <div class="section-header">
+      <div class="section-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Hazır Şablonlar
+      </div>
+      <span class="tag">9 şablon</span>
+    </div>
+    <div class="template-scroll" id="template-scroll"></div>
+  </section>
+
+  <!-- MY AUTOMATIONS -->
+  <section id="automations-section">
+    <div class="section-header">
+      <div class="section-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        Otomasyonlarım
+        <span class="section-badge" id="rule-count-badge">0</span>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <div class="list-toolbar" style="margin:0">
+          <div class="search-box">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <input type="text" placeholder="Ara..." id="search-input" oninput="filterRules()">
+          </div>
+          <select class="filter-select" id="status-filter" onchange="filterRules()">
+            <option value="all">Tümü</option>
+            <option value="active">Aktif</option>
+            <option value="inactive">Pasif</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="rules-list" id="rules-list">
+      <div class="empty-state">
+        <div class="spin spin-dark" style="margin:0 auto 12px"></div>
+        <p>Yükleniyor...</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- RUN HISTORY -->
+  <section id="run-history">
+    <div class="section-header">
+      <div class="section-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Son Çalışmalar
+        <span class="section-badge" id="run-count-badge">0</span>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="loadRuns()">Yenile</button>
+    </div>
+    <div class="runs-list" id="runs-list">
+      <div class="empty-state" style="padding:24px">
+        <p style="font-size:13px;color:var(--muted)">Henüz çalışma kaydı yok.</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ═══════════════════ CREATE/EDIT MODAL ═══════════════════ -->
+<div class="modal-overlay" id="create-overlay" onclick="overlayClose(event,'create-overlay')">
+<div class="modal modal-lg">
+  <div class="modal-head">
+    <h2 id="modal-title">Yeni Otomasyon</h2>
+    <button class="modal-close" onclick="closeCreateModal()">✕</button>
+  </div>
+  <div class="modal-body">
+    <!-- Steps -->
+    <div class="steps">
+      <div class="step-item active" id="step-1-ind">
+        <div class="step-num">1</div>
+        <div class="step-label">Tetikleyici</div>
+      </div>
+      <div class="step-item" id="step-2-ind">
+        <div class="step-num">2</div>
+        <div class="step-label">Koşullar</div>
+      </div>
+      <div class="step-item" id="step-3-ind">
+        <div class="step-num">3</div>
+        <div class="step-label">Aksiyonlar</div>
+      </div>
+    </div>
+
+    <!-- Step 1: Trigger -->
+    <div id="step-1-body">
+      <div class="field-row">
+        <div class="field">
+          <label class="lbl">Otomasyon Adı *</label>
+          <input class="inp" type="text" id="f-name" placeholder="örn. Düşük Stok Uyarısı">
+        </div>
+      </div>
+      <div class="field">
+        <label class="lbl">Açıklama (opsiyonel)</label>
+        <input class="inp" type="text" id="f-desc" placeholder="Bu otomasyon ne yapar?">
+      </div>
+      <div class="divider"></div>
+      <div class="section-label">Tetikleyici Tipi</div>
+      <div class="field">
+        <select class="inp" id="f-trigger-type" onchange="renderTriggerFields()">
+          <option value="cell_condition">Hücre Koşulu</option>
+          <option value="threshold">Eşik Değeri (sayısal)</option>
+          <option value="schedule">Zamanlama</option>
+          <option value="date_arrived">Tarih Koşulu</option>
+          <option value="row_added">Yeni Satır Eklendi</option>
+          <option value="value_changed">Değer Değişimi</option>
+          <option value="ai_anomaly">AI Anomali Tespiti</option>
+        </select>
+      </div>
+      <div id="trigger-fields"></div>
+    </div>
+
+    <!-- Step 2: Conditions -->
+    <div id="step-2-body" style="display:none">
+      <p style="font-size:13px;color:var(--muted);margin-bottom:14px">
+        Opsiyonel ek koşullar ekleyin. Tüm koşullar sağlandığında aksiyonlar tetiklenir.
+      </p>
+      <div class="cond-list" id="cond-list"></div>
+      <button class="btn btn-sm" onclick="addCondition()" style="gap:5px">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+        Koşul Ekle
       </button>
     </div>
-    <div class="sb-filters">
-      <button class="sb-chip active" data-filter="Tümü">Tümü</button>
-      <button class="sb-chip" data-filter="Tetikleyici">Tetikleyici</button>
-      <button class="sb-chip" data-filter="Aksiyon">Aksiyon</button>
-    </div>
-    <div class="sb-list" id="sb-list"></div>
-  </div>
 
-  <div id="canvas-wrap">
-    <div id="canvas">
-      <div id="world"></div>
-      <svg id="edge-svg"></svg>
-    </div>
-    <div id="empty-hint">
-      <div class="empty-hint-icon">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--muted-2)" stroke-width="1.5"><path d="M12 5v14M5 12h14"/></svg>
+    <!-- Step 3: Actions -->
+    <div id="step-3-body" style="display:none">
+      <p style="font-size:13px;color:var(--muted);margin-bottom:14px">
+        Koşullar sağlandığında gerçekleşecek aksiyonları tanımlayın. Birden fazla aksiyon ekleyebilirsiniz.
+      </p>
+      <div class="action-list" id="action-list"></div>
+      <button class="btn btn-sm" onclick="addAction()" style="gap:5px">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+        Aksiyon Ekle
+      </button>
+      <div class="interpolation-hint" style="margin-top:10px">
+        Metin alanlarında sütun değerlerini kullanabilirsiniz: <code>{Sütun Adı}</code> örn. <code>{Ürün Adı}</code>, <code>{Stok Miktarı}</code>
       </div>
-      <div class="empty-hint-title">Otomasyon oluştur</div>
-      <div class="empty-hint-sub">Soldaki panelden bir tetikleyici sürükleyerek başla</div>
-    </div>
-    <div id="hud-count"></div>
-    <div id="hud-legend">
-      <div class="hud-leg-row"><div class="hud-dot" style="background:var(--green)"></div>Yapılandırıldı</div>
-      <div class="hud-leg-row"><div class="hud-dot" style="background:var(--muted-2)"></div>Bekliyor</div>
-    </div>
-    <div id="hud-zoom">
-      <button class="hud-zoom-btn" onclick="adjustZoom(-1)">−</button>
-      <div id="hud-zoom-val">100%</div>
-      <button class="hud-zoom-btn" onclick="adjustZoom(1)">+</button>
-      <button class="hud-zoom-btn" style="font-size:12px;font-weight:600;width:42px" onclick="fitView()">Sığ</button>
+      <div class="divider"></div>
+      <div class="field-row">
+        <div class="field">
+          <label class="lbl">Tetiklenme Sıklığı (saniye)</label>
+          <input class="inp" type="number" id="f-throttle" value="3600" min="60" placeholder="3600">
+          <div class="inp-hint">Aynı kural en az bu kadar aralıkla çalışır (varsayılan: 1 saat)</div>
+        </div>
+        <div class="field">
+          <label class="lbl">Durum</label>
+          <select class="inp" id="f-enabled">
+            <option value="true">Aktif</option>
+            <option value="false">Pasif</option>
+          </select>
+        </div>
+      </div>
     </div>
   </div>
-
-  <div id="inspector"></div>
+  <div class="modal-foot">
+    <button class="btn" id="btn-prev" onclick="prevStep()" style="display:none">← Geri</button>
+    <div style="display:flex;gap:8px;margin-left:auto">
+      <button class="btn" onclick="testCurrentRule()" id="btn-test" style="display:none">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Test Et
+      </button>
+      <button class="btn btn-primary" id="btn-next" onclick="nextStep()">Devam Et →</button>
+    </div>
+  </div>
 </div>
-<div id="toast-area"></div>
+</div>
 
-<script src="api.js" onerror="console.warn('api.js yüklenemedi')"></script>
-<script src="js/automations.js" onerror="console.warn('js/automations.js yüklenemedi')"></script>
+<!-- ═══════════════════ AI MODAL ═══════════════════ -->
+<div class="modal-overlay" id="ai-overlay" onclick="overlayClose(event,'ai-overlay')">
+<div class="modal">
+  <div class="modal-head">
+    <h2>✨ AI ile Workflow Oluştur</h2>
+    <button class="modal-close" onclick="closeAIModal()">✕</button>
+  </div>
+  <div class="modal-body">
+    <p style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.6">
+      Ne yapmak istediğinizi Türkçe yazın. AI otomatik olarak uygun tetikleyici, koşul ve aksiyonları oluşturacak.
+    </p>
+    <textarea class="ai-textarea" id="ai-query" placeholder="örn. Stok 20'nin altına düşerse tedarikçiye Gmail ile bildirim gönder ve Notion'da sipariş sayfası oluştur" rows="4"></textarea>
+    <div style="font-size:11px;color:var(--muted);margin-top:6px">Örnekler:</div>
+    <div class="ai-examples">
+      <div class="ai-example" onclick="setAIExample(this)">Her gün sabah 09:00'da son ödeme tarihi geçmiş faturaları kontrol et ve ilgili kişiye Gmail gönder</div>
+      <div class="ai-example" onclick="setAIExample(this)">Stok miktarı 10'un altına düşen ürünler için Slack kanalına otomatik uyarı gönder</div>
+      <div class="ai-example" onclick="setAIExample(this)">Durum sütunu "Onaylandı" olduğunda Notion'da yeni bir sipariş sayfası oluştur</div>
+    </div>
+    <div id="ai-preview" style="display:none">
+      <div class="divider"></div>
+      <div class="ai-preview">
+        <div class="ai-preview-title">Oluşturulan Workflow</div>
+        <div id="ai-preview-content"></div>
+      </div>
+    </div>
+    <div id="ai-loading" style="display:none;text-align:center;padding:24px 0">
+      <div class="loading-dots"><span></span><span></span><span></span></div>
+      <p style="font-size:13px;color:var(--muted);margin-top:10px">AI workflow oluşturuyor...</p>
+    </div>
+  </div>
+  <div class="modal-foot">
+    <div></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn" onclick="closeAIModal()">İptal</button>
+      <button class="btn btn-primary" id="btn-ai-generate" onclick="generateWorkflow()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        Oluştur
+      </button>
+      <button class="btn btn-primary" id="btn-ai-use" style="display:none" onclick="useGeneratedWorkflow()">Kullan ve Düzenle →</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════ RUN DETAIL MODAL ═══════════════════ -->
+<div class="modal-overlay" id="run-overlay" onclick="overlayClose(event,'run-overlay')">
+<div class="modal">
+  <div class="modal-head">
+    <h2>Çalışma Detayı</h2>
+    <button class="modal-close" onclick="document.getElementById('run-overlay').classList.remove('open')">✕</button>
+  </div>
+  <div class="modal-body" id="run-detail-body"></div>
+  <div class="modal-foot">
+    <div></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn" id="btn-retry-run" onclick="retryRun()">Tekrar Çalıştır</button>
+      <button class="btn" onclick="document.getElementById('run-overlay').classList.remove('open')">Kapat</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
 <script>
-// ── AUTH GUARD ────────────────────────────────────────────────
-(function(){
-  const k = Object.keys(localStorage).find(k => k.startsWith('sb-') && k.endsWith('-auth-token'));
-  if (!k || !localStorage.getItem(k)) window.location.href = 'auth.html';
+'use strict';
+
+// ── CONFIG ─────────────────────────────────────────────────────────────────
+const API = (() => {
+  const h = window.location.hostname;
+  if (h === 'localhost' || h === '127.0.0.1') return 'http://localhost:3001';
+  return window.location.origin.replace(/:\d+$/, '') + ':3001';
 })();
 
-// ── NODE DEFINITIONS ──────────────────────────────────────────
-const NODE_W = 220, NODE_H = 76;
+// ── STATE ──────────────────────────────────────────────────────────────────
+let authToken = null;
+let allRules = [];
+let allRuns = [];
+let editId = null;
+let currentStep = 1;
+let generatedWorkflow = null;
+let currentRunId = null;
+let conditions = [];
+let actions = [];
 
-const TONES = {
-  amber:  { bg:'var(--amber-soft)',  fg:'var(--amber)'  },
-  violet: { bg:'var(--violet-soft)', fg:'var(--violet)' },
-  teal:   { bg:'var(--teal-soft)',   fg:'var(--teal)'   },
-  blue:   { bg:'var(--blue-soft)',   fg:'var(--blue)'   },
-  rose:   { bg:'var(--rose-soft)',   fg:'var(--rose)'   },
-  green:  { bg:'var(--green-soft)',  fg:'var(--green)'  },
-};
+// ── AUTH ───────────────────────────────────────────────────────────────────
+async function initAuth() {
+  try {
+    const raw = localStorage.getItem('sb-session') ||
+                localStorage.getItem('supabase.auth.token') ||
+                Object.entries(localStorage).find(([k]) => k.includes('auth-token'))?.[1];
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      authToken = parsed?.access_token || parsed?.currentSession?.access_token;
+    }
+  } catch {}
 
-const DEFS = [
-  { defId:'sheet-change',  name:'Sheet Değişikliği', kind:'trigger', tone:'amber',  desc:'Sayfa güncellenince tetikle' },
-  { defId:'cell-condition',name:'Hücre Koşulu',      kind:'trigger', tone:'violet', desc:'Koşul sağlandığında tetikle' },
-  { defId:'schedule',      name:'Zamanlama',          kind:'trigger', tone:'teal',   desc:'Belirli aralıklarla çalıştır' },
-  { defId:'form-submit',   name:'Form Gönder',        kind:'trigger', tone:'blue',   desc:'Form gönderilince tetikle' },
-  { defId:'webhook',       name:'Webhook',             kind:'trigger', tone:'rose',   desc:'HTTP isteğinde tetikle' },
-  { defId:'slack',         name:'Slack',               kind:'action',  tone:'violet', desc:'Slack kanalına mesaj gönder' },
-  { defId:'make',          name:'Make',                kind:'action',  tone:'violet', desc:'Make senaryosu tetikle' },
-  { defId:'teams',         name:'Microsoft Teams',     kind:'action',  tone:'blue',   desc:'Teams kanalına mesaj gönder' },
-  { defId:'notion',        name:'Notion',              kind:'action',  tone:'amber',  desc:'Notion veritabanına yaz' },
-  { defId:'sheets',        name:'Google Sheets',       kind:'action',  tone:'green',  desc:'Google Sheets güncelle' },
-  { defId:'airtable',      name:'Airtable',            kind:'action',  tone:'blue',   desc:'Airtable kaydı oluştur' },
-  { defId:'email',         name:'E-posta',             kind:'action',  tone:'rose',   desc:'E-posta gönder' },
-  { defId:'filter',        name:'Filtre',              kind:'action',  tone:'teal',   desc:'Koşullu dal oluştur' },
+  // Check all localStorage keys for Supabase token
+  if (!authToken) {
+    for (const [k, v] of Object.entries(localStorage)) {
+      if (k.includes('supabase') || k.includes('sb-')) {
+        try {
+          const p = JSON.parse(v);
+          const t = p?.access_token || p?.session?.access_token || p?.currentSession?.access_token;
+          if (t) { authToken = t; break; }
+        } catch {}
+      }
+    }
+  }
+
+  // Update avatar
+  try {
+    const userRaw = localStorage.getItem('mocksheets-user') || localStorage.getItem('ms-user');
+    if (userRaw) {
+      const u = JSON.parse(userRaw);
+      const initial = (u.email || u.name || 'U')[0].toUpperCase();
+      document.getElementById('nav-avatar').textContent = initial;
+    }
+  } catch {}
+}
+
+function authHeaders() {
+  const h = { 'Content-Type': 'application/json' };
+  if (authToken) h['Authorization'] = 'Bearer ' + authToken;
+  return h;
+}
+
+// ── THEME ──────────────────────────────────────────────────────────────────
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  localStorage.setItem('ms-theme', isDark ? 'light' : 'dark');
+  document.querySelector('.theme-toggle').textContent = isDark ? '🌙' : '☀️';
+}
+(function() {
+  const t = localStorage.getItem('ms-theme');
+  if (t === 'dark') {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    document.querySelector('.theme-toggle') && (document.querySelector('.theme-toggle').textContent = '☀️');
+  }
+})();
+
+// ── TEMPLATES ─────────────────────────────────────────────────────────────
+const TEMPLATES = [
+  {
+    id: 'low-stock', icon: '📦', iconBg: '#fef3c7', name: 'Düşük Stok Uyarısı',
+    desc: 'Stok eşiğin altına düşünce otomatik uyarı gönder',
+    tags: ['Gmail', 'Bildirim'],
+    data: {
+      name: 'Düşük Stok Uyarısı', description: 'Stok 20 adedinin altına düştüğünde tedarikçiye bildir',
+      trigger_config: { type: 'threshold', column: 'Stok Miktarı', operator: 'less_than', value: '20' },
+      condition_config: [],
+      action_config: [
+        { type: 'gmail', to: 'tedarikci@firma.com', subject: 'Stok Uyarısı: {Ürün Adı}', body: 'Merhaba,\n\n{Ürün Adı} stoğu {Stok Miktarı} adede düştü. Lütfen sipariş açınız.\n\nMocksheets Otomasyonu' },
+        { type: 'notification', message: 'Düşük stok uyarısı: {Ürün Adı} → {Stok Miktarı} adet' }
+      ]
+    }
+  },
+  {
+    id: 'supplier-order', icon: '🛒', iconBg: '#d1fae5', name: 'Tedarikçi Sipariş Talebi',
+    desc: 'Kritik stok için tedarikçiye otomatik mail',
+    tags: ['Gmail'],
+    data: {
+      name: 'Tedarikçi Sipariş Talebi', description: 'Stok kritik seviyeye düşünce tedarikçiye sipariş maili gönder',
+      trigger_config: { type: 'threshold', column: 'Stok Miktarı', operator: 'less_than', value: '10' },
+      condition_config: [],
+      action_config: [
+        { type: 'gmail', to: 'siparis@tedarikci.com', subject: 'Acil Sipariş Talebi: {Ürün Adı}', body: 'Sayın Tedarikçi,\n\n{Ürün Adı} için acil sipariş talebimiz bulunmaktadır.\nMevcut stok: {Stok Miktarı}\nLütfen en kısa sürede bilgi veriniz.\n\nSaygılarımızla' }
+      ]
+    }
+  },
+  {
+    id: 'invoice-followup', icon: '🧾', iconBg: '#fee2e2', name: 'Fatura Takibi',
+    desc: 'Son ödeme tarihi geçen faturalar için hatırlatma',
+    tags: ['Gmail', 'Zamanlama'],
+    data: {
+      name: 'Fatura Takibi', description: 'Son ödeme tarihi geçmiş faturaları tespit et ve uyar',
+      trigger_config: { type: 'schedule', frequency: 'every_day', time: '09:00' },
+      condition_config: [{ column: 'Son Ödeme Tarihi', operator: 'date_passed', value: '', logic: 'AND' }],
+      action_config: [
+        { type: 'gmail', to: 'muhasebe@firma.com', subject: 'Vadesi Geçen Fatura: {Fatura No}', body: '{Müşteri} firmasının {Fatura No} numaralı faturası vadesi geçmiş.\nTutar: {Tutar}\nVade Tarihi: {Son Ödeme Tarihi}' }
+      ]
+    }
+  },
+  {
+    id: 'monthly-report', icon: '📊', iconBg: '#ede9fe', name: 'Aylık Raporlama',
+    desc: 'Her ayın 1\'inde otomatik rapor bildirimi',
+    tags: ['Zamanlama', 'Bildirim'],
+    data: {
+      name: 'Aylık Rapor Bildirimi', description: 'Ayın ilk günü operasyonel rapor gönder',
+      trigger_config: { type: 'schedule', frequency: 'every_month', time: '08:00' },
+      condition_config: [],
+      action_config: [
+        { type: 'notification', message: 'Aylık rapor hazırlanıyor. Lütfen Mocksheets\'teki verileri kontrol edin.' }
+      ]
+    }
+  },
+  {
+    id: 'branch-perf', icon: '📉', iconBg: '#fce7f3', name: 'Şube Performans Uyarısı',
+    desc: 'Satış hedefinin altında kalan şubeleri bildir',
+    tags: ['Slack', 'Bildirim'],
+    data: {
+      name: 'Şube Performans Uyarısı', description: 'Hedef satışın altında kalan şubeler için Slack bildirimi',
+      trigger_config: { type: 'threshold', column: 'Satış Tutarı', operator: 'less_than', value: '10000' },
+      condition_config: [],
+      action_config: [
+        { type: 'slack', channel: '#operasyon', message: '⚠️ Performans Uyarısı: {Şube Adı} bu ay {Satış Tutarı} TL satış yaptı (hedef: 10.000 TL)' },
+        { type: 'notification', message: 'Şube performans uyarısı: {Şube Adı}' }
+      ]
+    }
+  },
+  {
+    id: 'expiry-warn', icon: '⏰', iconBg: '#fef9c3', name: 'Vade Tarihi Uyarısı',
+    desc: 'Yaklaşan vade tarihleri için erken uyarı',
+    tags: ['Bildirim'],
+    data: {
+      name: 'Vade Tarihi Yaklaşıyor', description: 'Vadesi 7 gün içinde dolacak kayıtlar için bildirim',
+      trigger_config: { type: 'date_arrived', column: 'Vade Tarihi', days_before: '7' },
+      condition_config: [],
+      action_config: [
+        { type: 'notification', message: '{Ürün/Sözleşme} vadesi 7 gün içinde doluyor: {Vade Tarihi}' }
+      ]
+    }
+  },
+  {
+    id: 'procurement', icon: '🔄', iconBg: '#ecfdf5', name: 'Tedarik İş Akışı',
+    desc: 'Onay alındığında Notion\'da sipariş sayfası oluştur',
+    tags: ['Notion', 'Gmail'],
+    data: {
+      name: 'Tedarik Onay İş Akışı', description: 'Durum "Onaylandı" olduğunda Notion ve Gmail aksiyonu tetikle',
+      trigger_config: { type: 'cell_condition', column: 'Durum', operator: 'equals', value: 'Onaylandı' },
+      condition_config: [],
+      action_config: [
+        { type: 'notion_page', title: 'Sipariş: {Ürün Adı}', database_id: '' },
+        { type: 'gmail', to: 'lojistik@firma.com', subject: 'Onaylanan Sipariş: {Ürün Adı}', body: '{Ürün Adı} siparişi onaylandı. Lütfen tedarik sürecini başlatın.' }
+      ]
+    }
+  },
+  {
+    id: 'payroll', icon: '💰', iconBg: '#f0fdf4', name: 'Maaş Hatırlatma',
+    desc: 'Her ayın 25\'inde maaş hatırlatması',
+    tags: ['Zamanlama', 'Bildirim'],
+    data: {
+      name: 'Maaş Ödeme Hatırlatması', description: 'Ayın 25\'inde maaş işlemleri için hatırlatma gönder',
+      trigger_config: { type: 'schedule', cronExpr: '0 9 25 * *' },
+      condition_config: [],
+      action_config: [
+        { type: 'notification', message: 'Maaş ödeme günü yaklaşıyor. SGK ve bordro işlemlerini kontrol edin.' }
+      ]
+    }
+  },
+  {
+    id: 'missing-data', icon: '🔍', iconBg: '#eff6ff', name: 'Eksik Veri Uyarısı',
+    desc: 'Boş tedarikçi/kategori alanlarını tespit et',
+    tags: ['Slack', 'Bildirim'],
+    data: {
+      name: 'Eksik Veri Tespiti', description: 'Tedarikçi bilgisi girilmemiş satırlar için uyarı',
+      trigger_config: { type: 'cell_condition', column: 'Tedarikçi', operator: 'is_empty', value: '' },
+      condition_config: [],
+      action_config: [
+        { type: 'notification', message: 'Eksik tedarikçi bilgisi tespit edildi. Lütfen verileri tamamlayın.' },
+        { type: 'slack', channel: '#veri-kalite', message: '⚠️ Eksik tedarikçi bilgisi: {Ürün Adı} satırında tedarikçi alanı boş.' }
+      ]
+    }
+  }
 ];
 
-function getDef(defId){ return DEFS.find(d => d.defId === defId); }
-
-// ── ICONS ────────────────────────────────────────────────────
-const ICONS = {
-  'sheet-change'  :'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>',
-  'cell-condition':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>',
-  'schedule'      :'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
-  'form-submit'   :'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>',
-  'webhook'       :'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 16.98h-5.99c-1.1 0-1.95.94-2.48 1.9A4 4 0 0 1 2 17c.01-.7.2-1.4.57-2"/><path d="m6 17 3.13-5.78c.53-.97.1-2.18-.5-3.1a4 4 0 1 1 6.89-4.06"/><path d="m12 6 3.13 5.73C15.66 12.7 16.9 13 18 13a4 4 0 0 1 0 8"/></svg>',
-  'slack'   :'<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M5.042 15.165a2.528 2.528 0 01-2.52 2.523A2.528 2.528 0 010 15.165a2.527 2.527 0 012.522-2.52h2.52v2.52zm1.271 0a2.527 2.527 0 012.521-2.52 2.527 2.527 0 012.521 2.52v6.313A2.528 2.528 0 018.834 24a2.528 2.528 0 01-2.521-2.522v-6.313z" fill="#E01E5A"/><path d="M8.834 5.042a2.528 2.528 0 01-2.521-2.52A2.528 2.528 0 018.834 0a2.527 2.527 0 012.521 2.522v2.52H8.834zm0 1.271a2.527 2.527 0 012.521 2.521 2.527 2.527 0 01-2.521 2.521H2.522A2.528 2.528 0 010 8.834a2.528 2.528 0 012.522-2.521h6.312z" fill="#36C5F0"/><path d="M18.956 8.834a2.528 2.528 0 012.522-2.521A2.528 2.528 0 0124 8.834a2.528 2.528 0 01-2.522 2.521h-2.522V8.834zm-1.271 0a2.528 2.528 0 01-2.523 2.521 2.527 2.527 0 01-2.52-2.521V2.522A2.527 2.527 0 0115.165 0a2.528 2.528 0 012.523 2.522v6.312z" fill="#2EB67D"/><path d="M15.165 18.956a2.528 2.528 0 012.523 2.522A2.528 2.528 0 0115.165 24a2.527 2.527 0 01-2.52-2.522v-2.522h2.52zm0-1.271a2.527 2.527 0 01-2.52-2.523 2.527 2.527 0 012.52-2.52h6.313A2.528 2.528 0 0124 15.165a2.528 2.528 0 01-2.522 2.523h-6.313z" fill="#ECB22E"/></svg>',
-  'make'    :'<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="6" fill="#6D00CC"/><path d="M4 18V6h3l3 5 3-5h3v12h-2.5v-7.5l-3.5 5.5h-1l-3.5-5.5V18H4z" fill="white"/></svg>',
-  'teams'   :'<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19.5 8.5h-2.75a2.75 2.75 0 10-5.5 0H8.5A1.5 1.5 0 007 10v5a4 4 0 004 4h2a4 4 0 004-4v-1h2.5A1.5 1.5 0 0021 12.5v-2.5a1.5 1.5 0 00-1.5-1.5z" fill="#5558AF"/><circle cx="16.5" cy="5.5" r="2" fill="#7B83EB"/><path d="M8 10v6a3 3 0 003 3h2a3 3 0 003-3v-6H8z" fill="#5558AF"/><circle cx="12" cy="7" r="2.5" fill="#7B83EB"/></svg>',
-  'notion'  :'<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M4.459 4.208c.746.606 1.026.56 2.428.466l13.215-.793c.28 0 .047-.28-.046-.326L17.86 1.968c-.42-.326-.981-.7-2.055-.607L3.01 2.295c-.466.046-.56.28-.374.466zm.793 3.08v13.904c0 .747.373 1.027 1.214.98l14.523-.84c.841-.046.935-.56.935-1.167V6.354c0-.606-.233-.933-.748-.887l-15.177.887c-.56.047-.747.327-.747.933zm14.337.745c.093.42 0 .84-.42.888l-.7.14v10.264c-.608.327-1.168.514-1.635.514-.748 0-.935-.234-1.495-.933l-4.577-7.186v6.952L12.21 19s0 .84-1.168.84l-3.222.186c-.093-.186 0-.653.327-.746l.84-.233V9.854L7.822 9.76c-.094-.42.14-1.026.793-1.073l3.456-.233 4.764 7.279v-6.44l-1.215-.14c-.093-.514.28-.887.747-.933z" fill="#000"/></svg>',
-  'sheets'  :'<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M14 0H3a1 1 0 00-1 1v22a1 1 0 001 1h18a1 1 0 001-1V8z" fill="#23A566"/><path d="M14 0l7 8h-7z" fill="#159B54"/><path d="M6 13h5v1.5H6zm0 2.5h5V17H6zm6.5-2.5H18v1.5h-5.5zm0 2.5H18V17h-5.5z" fill="white"/></svg>',
-  'airtable':'<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M11.955 1.809L1.935 5.556c-.56.205-.556.993.006 1.192l10.08 3.59a3.094 3.094 0 002.066-.006l9.96-3.59c.557-.2.557-.983-.001-1.183l-9.96-3.748a3.094 3.094 0 00-2.131-.002z" fill="#FFBF00"/><path d="M2.4 8.995v7.26c0 .54.385.88.774.734l8.846-3.306a.84.84 0 00.558-.783V5.64c0-.54-.393-.876-.78-.729L2.952 8.217a.84.84 0 00-.552.778z" fill="#F82B60"/><path d="M20.82 6.01v7.26a.84.84 0 01-.55.782l-8.85 3.307c-.39.146-.78-.194-.78-.734V9.365a.84.84 0 01.554-.783l8.846-3.305c.39-.146.78.193.78.733z" fill="#00B8FF"/></svg>',
-  'email'   :'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>',
-  'filter'  :'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>',
-};
-function icon(defId, size){ const s=size||20; return (ICONS[defId]||ICONS['filter']).replace('<svg ',`<svg width="${s}" height="${s}" `); }
-
-// ── STATE ────────────────────────────────────────────────────
-const S = {
-  nodes:{}, edges:[],
-  selectedId:null,
-  pan:{x:140, y:80}, zoom:1,
-  drawingEdge:null,
-  dirty:false, name:'Yeni Otomasyon', running:false,
-  query:'', filter:'Tümü', nextId:1, savedRules:[],
-};
-
-// ── UTIL ─────────────────────────────────────────────────────
-function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-function $id(id){ return document.getElementById(id); }
-
-// ── TOP BAR ──────────────────────────────────────────────────
-function renderTopBar(){
-  $id('top-bar').innerHTML = `
-    <img src="images/logo.png" class="tb-logo" alt="Mocksheet">
-    <span class="tb-brand">Mocksheet</span>
-    <span class="tb-sep">/</span>
-    <span class="tb-breadcrumb">Otomasyonlar</span>
-    <span class="tb-sep">/</span>
-    <input id="tb-title" value="${esc(S.name)}" maxlength="60" spellcheck="false">
-    ${S.dirty ? '<div class="tb-dirty" title="Kaydedilmemiş değişiklikler"></div>' : ''}
-    <div class="tb-spacer"></div>
-    <button class="tb-btn tb-btn-save" onclick="saveWorkflow()">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-      Kaydet
-    </button>
-    <button class="tb-btn tb-btn-run ${S.running?'running':''}" onclick="runWorkflow()">
-      ${S.running
-        ? '<div class="pulse"></div> Çalışıyor\u2026'
-        : '<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg> Çalıştır'}
-    </button>
-    <button class="tb-btn" onclick="window.location.href='app.html'">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-      Geri
-    </button>
-    <div class="tb-avatar">M</div>
-  `;
-  $id('tb-title').addEventListener('input', e => { S.name = e.target.value; S.dirty = true; });
+// ── RENDER TEMPLATES ───────────────────────────────────────────────────────
+function renderTemplates() {
+  const el = document.getElementById('template-scroll');
+  el.innerHTML = TEMPLATES.map(t => `
+    <div class="tpl-card" onclick='openCreateModal(${JSON.stringify(t.data)})'>
+      <div class="tpl-icon" style="background:${t.iconBg}">${t.icon}</div>
+      <div class="tpl-name">${t.name}</div>
+      <div class="tpl-desc">${t.desc}</div>
+      <div class="tpl-tags">${t.tags.map(g => `<span class="tpl-tag">${g}</span>`).join('')}</div>
+    </div>
+  `).join('');
 }
 
-// ── SIDEBAR ──────────────────────────────────────────────────
-function initSidebar(){
-  $id('sb-search-input').addEventListener('input', e => { S.query = e.target.value; updateSidebarList(); });
-  document.querySelectorAll('.sb-chip').forEach(btn => {
-    btn.addEventListener('click', () => {
-      S.filter = btn.dataset.filter;
-      document.querySelectorAll('.sb-chip').forEach(b => b.classList.toggle('active', b === btn));
-      updateSidebarList();
-    });
-  });
-  updateSidebarList();
+// ── LOAD RULES ─────────────────────────────────────────────────────────────
+async function loadRules() {
+  try {
+    const res = await fetch(API + '/api/automations', { headers: authHeaders() });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    allRules = data.rules || data || [];
+  } catch (e) {
+    allRules = [];
+    console.warn('loadRules:', e.message);
+  }
+  renderRules();
+  updateStats();
 }
 
-function updateSidebarList(){
-  const q = S.query.toLowerCase();
-  const filtered = DEFS.filter(d => {
-    const km = S.filter==='Tümü' || (S.filter==='Tetikleyici'&&d.kind==='trigger') || (S.filter==='Aksiyon'&&d.kind==='action');
-    const qm = !q || d.name.toLowerCase().includes(q) || d.desc.toLowerCase().includes(q);
-    return km && qm;
-  });
-  const trigs = filtered.filter(d => d.kind==='trigger');
-  const acts  = filtered.filter(d => d.kind==='action');
-  let html = '';
-  if(trigs.length){ html += '<div class="sb-section-label">Tetikleyiciler</div>' + trigs.map(sbRow).join(''); }
-  if(acts.length){  html += '<div class="sb-section-label">Aksiyonlar</div>'    + acts.map(sbRow).join(''); }
-  if(!filtered.length) html = '<div style="padding:24px 12px;text-align:center;color:var(--muted);font-size:13px">Sonuç bulunamadı</div>';
-  $id('sb-list').innerHTML = html;
-  $id('sb-list').querySelectorAll('.sb-item').forEach(el => {
-    el.setAttribute('draggable','true');
-    el.addEventListener('dragstart', e => { e.dataTransfer.setData('defId', el.dataset.defId); e.dataTransfer.effectAllowed='copy'; });
-    el.addEventListener('dblclick', () => {
-      const wrap = $id('canvas-wrap');
-      const cx = (wrap.offsetWidth/2 - S.pan.x) / S.zoom;
-      const cy = (wrap.offsetHeight/2 - S.pan.y) / S.zoom;
-      addNode(el.dataset.defId, cx - NODE_W/2, cy - NODE_H/2);
-    });
-  });
-}
+function renderRules(filtered) {
+  const rules = filtered ?? allRules;
+  const el = document.getElementById('rules-list');
+  document.getElementById('rule-count-badge').textContent = rules.length;
 
-function sbRow(d){
-  const t = TONES[d.tone];
-  return `<div class="sb-item" data-def-id="${d.defId}">
-    <div class="sb-icon" style="background:${t.bg};color:${t.fg}">${icon(d.defId, 18)}</div>
-    <div class="sb-info"><div class="sb-name">${esc(d.name)}</div><div class="sb-desc">${esc(d.desc)}</div></div>
-  </div>`;
-}
-
-// ── INSPECTOR ────────────────────────────────────────────────
-function renderInspector(){
-  const ins = $id('inspector');
-  if(!S.selectedId || !S.nodes[S.selectedId]){
-    const nc=Object.keys(S.nodes).length, ec=S.edges.length, cfgd=Object.values(S.nodes).filter(n=>n.configured).length;
-    ins.innerHTML = `
-      <div class="ins-head"><div class="ins-head-title">Detaylar</div><div class="ins-head-sub">Bir node seçerek yapılandır</div></div>
-      <div class="ins-body">
-        <div class="ins-stat-grid">
-          <div class="ins-stat"><div class="ins-stat-val">${nc}</div><div class="ins-stat-lbl">Node</div></div>
-          <div class="ins-stat"><div class="ins-stat-val">${ec}</div><div class="ins-stat-lbl">Bağlantı</div></div>
-          <div class="ins-stat"><div class="ins-stat-val">${cfgd}</div><div class="ins-stat-lbl">Yapılandırıldı</div></div>
-          <div class="ins-stat"><div class="ins-stat-val">${nc-cfgd}</div><div class="ins-stat-lbl">Bekliyor</div></div>
-        </div>
-        <div class="ins-section-label" style="margin-top:4px">Kaydedilmiş Kurallar</div>
-        ${S.savedRules.length === 0
-          ? '<div style="font-size:12px;color:var(--muted);padding:8px 0 12px">Henüz kural yok. Canvas\'tan bir iş akışı kaydedin.</div>'
-          : S.savedRules.map(r => `
-          <div class="saved-rule-row">
-            <div class="saved-rule-info">
-              <div class="saved-rule-name">${esc(r.name)}</div>
-              <div class="saved-rule-badge">${esc(r.integration||'—')}</div>
-            </div>
-            <button class="ins-toggle ${r.enabled?'on':''}" onclick="toggleSavedRule('${r.id}',${r.enabled})" title="${r.enabled?'Devre dışı bırak':'Etkinleştir'}"></button>
-            <button class="saved-rule-del" onclick="deleteSavedRule('${r.id}')" title="Sil">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
-            </button>
-          </div>`).join('')}
-        <div class="ins-section-label" style="margin-top:12px">Kısayollar</div>
-        <div class="ins-shortcut-row"><span class="ins-shortcut-desc">Node sil</span><span class="ins-shortcut-key">Del</span></div>
-        <div class="ins-shortcut-row"><span class="ins-shortcut-desc">Kopyala</span><span class="ins-shortcut-key">Ctrl+D</span></div>
-        <div class="ins-shortcut-row"><span class="ins-shortcut-desc">Kaydet</span><span class="ins-shortcut-key">Ctrl+S</span></div>
-        <div class="ins-shortcut-row"><span class="ins-shortcut-desc">Seçimi kaldır</span><span class="ins-shortcut-key">Esc</span></div>
+  if (!rules.length) {
+    el.innerHTML = `
+      <div class="empty-state">
+        <div class="es-icon">⚡</div>
+        <h3>Henüz otomasyon yok</h3>
+        <p>İlk otomasyonunuzu oluşturun veya yukarıdaki hazır şablonlardan birini kullanın.</p>
+        <button class="btn btn-primary" onclick="openCreateModal()">+ Yeni Otomasyon</button>
       </div>`;
     return;
   }
-  const node = S.nodes[S.selectedId];
-  const def = getDef(node.defId);
-  const t = TONES[def.tone];
-  const insIconHtml = def.logo
-    ? `<img src="${def.logo}" style="width:18px;height:18px;object-fit:contain">`
-    : icon(def.defId, 18);
-  ins.innerHTML = `
-    <div class="ins-head" style="border-bottom:2px solid ${t.fg}33">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
-        <div class="node-icon" style="width:36px;height:36px;background:${t.bg};color:${t.fg}">${insIconHtml}</div>
-        <div><div class="ins-head-title">${esc(def.name)}</div><div class="ins-head-sub">${def.kind==='trigger'?'Tetikleyici':'Aksiyon'}</div></div>
-      </div>
-    </div>
-    <div class="ins-body" id="ins-body">
-      ${buildConfig(node.defId, node.config||{})}
-      <div class="ins-section">
-        <div class="ins-section-label">Çalıştırma</div>
-        <div class="ins-field">
-          <label class="ins-label">Hata durumunda</label>
-          <select class="ins-select" data-cfg="onError">
-            <option value="stop" ${(node.config?.onError||'stop')==='stop'?'selected':''}>Durdur</option>
-            <option value="skip" ${node.config?.onError==='skip'?'selected':''}>Atla</option>
-            <option value="retry" ${node.config?.onError==='retry'?'selected':''}>Tekrar dene</option>
-          </select>
+
+  el.innerHTML = rules.map(r => {
+    const tc = r.trigger_config || {};
+    const actions = Array.isArray(r.action_config) ? r.action_config : [r.action_config].filter(Boolean);
+    const triggerLabel = TRIGGER_LABELS[tc.type] || tc.type || '—';
+    const actionLabel = actions.map(a => ACTION_LABELS[a?.type] || a?.type || '—').join(', ');
+    const lastFired = r.last_fired ? relativeTime(r.last_fired) : '—';
+    const isSchedule = tc.type === 'schedule';
+    return `
+      <div class="rule-card" id="rule-${r.id}">
+        <label class="rule-toggle">
+          <input type="checkbox" ${r.enabled ? 'checked' : ''} onchange="toggleRule('${r.id}', this.checked)">
+          <span class="toggle-track"></span>
+        </label>
+        <div class="rule-info">
+          <div class="rule-name">${escHtml(r.name)}</div>
+          <div class="rule-meta">
+            <span class="rule-chip ${isSchedule ? 'chip-schedule' : 'chip-trigger'}">
+              ${isSchedule ? '⏰' : '⚡'} ${escHtml(triggerLabel)}
+            </span>
+            <span class="rule-chip chip-action">→ ${escHtml(actionLabel)}</span>
+            ${r.run_count ? `<span class="rule-last">${r.run_count} çalışma</span>` : ''}
+            ${r.last_fired ? `<span class="rule-last">Son: ${lastFired}</span>` : ''}
+          </div>
         </div>
-        <div class="ins-toggle-row"><span class="ins-toggle-lbl">Hata olursa atla</span><button class="ins-toggle ${node.config?.skipOnError?'on':''}" data-cfg="skipOnError" onclick="toggleCfg(this)"></button></div>
-        <div class="ins-toggle-row"><span class="ins-toggle-lbl">Logla</span><button class="ins-toggle ${node.config?.log!==false?'on':''}" data-cfg="log" onclick="toggleCfg(this)"></button></div>
-      </div>
-      <button class="ins-action-btn" onclick="testNode()">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg> Test Et
-      </button>
-      <div style="display:flex;gap:8px;margin-top:8px">
-        <button class="ins-action-btn" style="flex:1" onclick="duplicateNode(S.selectedId)">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Kopyala
-        </button>
-        <button class="ins-action-btn danger" style="flex:1" onclick="removeNode(S.selectedId)">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg> Sil
-        </button>
-      </div>
-    </div>`;
-  document.querySelectorAll('#ins-body [data-cfg]').forEach(el => {
-    if(el.tagName==='SELECT'||el.tagName==='INPUT') el.addEventListener('change', () => updateCfg(el));
+        <div class="rule-actions">
+          <button class="icon-btn run-btn" onclick="runRule('${r.id}')" title="Çalıştır">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          </button>
+          <button class="icon-btn" onclick="editRule('${r.id}')" title="Düzenle">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          </button>
+          <button class="icon-btn del-btn" onclick="deleteRule('${r.id}')" title="Sil">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+          </button>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function filterRules() {
+  const q = document.getElementById('search-input').value.toLowerCase();
+  const status = document.getElementById('status-filter').value;
+  const filtered = allRules.filter(r => {
+    const nameMatch = r.name.toLowerCase().includes(q);
+    const statusMatch = status === 'all' || (status === 'active' ? r.enabled : !r.enabled);
+    return nameMatch && statusMatch;
   });
+  renderRules(filtered);
 }
 
-function sel(name, opts, val){ return `<select class="ins-select" data-cfg="${name}">${opts.map(o=>`<option value="${o.v}" ${val===o.v?'selected':''}>${o.l}</option>`).join('')}</select>`; }
-function inp(name, placeholder, val, type){ return `<input class="ins-input" type="${type||'text'}" data-cfg="${name}" value="${esc(val||'')}" placeholder="${esc(placeholder||'')}"/>`; }
-function fld(label, inner){ return `<div class="ins-field"><label class="ins-label">${label}</label>${inner}</div>`; }
-function seg(label, name, opts, val){
-  const btns = opts.map(o=>`<button class="ins-seg-btn ${(val||opts[0].v)===o.v?'active':''}" data-cfg="${name}" data-val="${o.v}" onclick="clickSeg(this)">${o.l}</button>`).join('');
-  return `<div class="ins-field"><label class="ins-label">${label}</label><div class="ins-segmented">${btns}</div></div>`;
+function updateStats() {
+  const active = allRules.filter(r => r.enabled).length;
+  document.getElementById('stat-active').textContent = active + ' aktif';
+  document.getElementById('stat-dot-active').style.background = active > 0 ? '#16a34a' : '#f59e0b';
+  document.getElementById('stat-dot-active').classList.toggle('amber', active === 0);
+
+  const totalRuns = allRuns.length;
+  document.getElementById('stat-runs').textContent = totalRuns + ' çalışma';
+
+  const successRuns = allRuns.filter(r => r.status === 'success').length;
+  const rate = totalRuns > 0 ? Math.round((successRuns / totalRuns) * 100) : null;
+  document.getElementById('stat-success').textContent = rate !== null ? '%' + rate + ' başarı' : '— başarı';
 }
 
-function buildConfig(defId, c){
-  let html = '<div class="ins-section"><div class="ins-section-label">Yapılandırma</div>';
-  switch(defId){
-    case 'sheet-change':
-      html += fld('Sheet', sel('sheet',[{v:'active',l:'Aktif Sheet'},{v:'Sheet1',l:'Sheet1'},{v:'Sheet2',l:'Sheet2'},{v:'all',l:'Tümü'}], c.sheet||'active'));
-      html += fld('Kolon', inp('column','A',c.column));
-      html += seg('Olay','event',[{v:'edit',l:'Düzenlenince'},{v:'add',l:'Eklenince'},{v:'delete',l:'Silinince'}], c.event);
-      break;
-    case 'cell-condition':
-      html += fld('Sütun adı', inp('column','ÖrnekSütun',c.column));
-      html += fld('Operatör', sel('operator',[{v:'equals',l:'Eşittir'},{v:'not_equals',l:'Eşit değil'},{v:'greater_than',l:'Büyüktür'},{v:'less_than',l:'Küçüktür'},{v:'contains',l:'İçerir'},{v:'is_empty',l:'Boş'}], c.operator||'equals'));
-      html += fld('Değer', inp('value','',c.value));
-      break;
-    case 'schedule':
-      html += fld('Aralık', sel('interval',[{v:'5m',l:'Her 5 dakika'},{v:'15m',l:'Her 15 dakika'},{v:'1h',l:'Her saat'},{v:'1d',l:'Her gün'},{v:'1w',l:'Her hafta'}], c.interval||'1h'));
-      html += fld('Saat dilimi', sel('timezone',[{v:'Europe/Istanbul',l:'İstanbul (UTC+3)'},{v:'UTC',l:'UTC'},{v:'Europe/London',l:'Londra'}], c.timezone||'Europe/Istanbul'));
-      break;
-    case 'form-submit':
-      html += fld('Form ID', inp('formId','',c.formId));
-      html += fld('Yönlendirme URL', inp('redirectUrl','https://',c.redirectUrl));
-      break;
-    case 'webhook':
-      html += `<div class="ins-field"><label class="ins-label">Webhook URL</label><div style="display:flex;gap:6px"><input class="ins-input" style="font-family:'JetBrains Mono',monospace;font-size:11px" value="https://hook.mocksheet.app/wh/..." readonly><button class="ins-action-btn" style="width:78px;margin:0;flex-shrink:0" onclick="showToast('URL kopyalandı','light',2000)">Kopyala</button></div></div>`;
-      html += fld('Yöntem', sel('method',[{v:'POST',l:'POST'},{v:'GET',l:'GET'},{v:'PUT',l:'PUT'}], c.method||'POST'));
-      break;
-    case 'slack':
-      html += fld('Webhook URL', inp('webhookUrl','https://hooks.slack.com/services/…',c.webhookUrl));
-      html += fld('Kanal', inp('channel','#genel',c.channel));
-      html += fld('Mesaj', inp('message','{Ad} güncellendi',c.message));
-      break;
-    case 'make':
-      html += fld('Webhook URL', inp('webhookUrl','https://hook.make.com/…',c.webhookUrl));
-      html += fld('Olay adı', inp('event','auto_trigger',c.event));
-      break;
-    case 'teams':
-      html += fld('Webhook URL', inp('webhookUrl','https://…webhook.office.com/…',c.webhookUrl));
-      html += fld('Mesaj', inp('message','{Ad} güncellendi',c.message));
-      break;
-    case 'notion':
-      html += fld('API Token', inp('token','secret_…',c.token,'password'));
-      html += fld('Veritabanı ID', inp('databaseId','',c.databaseId));
-      html += fld('Başlık alanı', inp('titleField','Name',c.titleField));
-      break;
-    case 'sheets':
-      html += fld('Spreadsheet ID', inp('spreadsheetId','',c.spreadsheetId));
-      html += fld('Sheet adı', inp('sheetName','Sheet1',c.sheetName));
-      html += fld('İşlem', sel('operation',[{v:'append',l:'Satır ekle'},{v:'update',l:'Güncelle'},{v:'read',l:'Oku'}], c.operation||'append'));
-      break;
-    case 'airtable':
-      html += fld('API Key', inp('apiKey','pat…',c.apiKey,'password'));
-      html += fld('Base ID', inp('baseId','app…',c.baseId));
-      html += fld('Tablo adı', inp('tableName','',c.tableName));
-      html += fld('İşlem', sel('operation',[{v:'create',l:'Kayıt oluştur'},{v:'update',l:'Güncelle'},{v:'find',l:'Bul'}], c.operation||'create'));
-      break;
-    case 'email':
-      html += fld('Alıcı', inp('to','',c.to,'email'));
-      html += fld('Konu', inp('subject','',c.subject));
-      html += fld('İçerik', inp('body','',c.body));
-      break;
-    case 'filter':
-      html += fld('Girdi', inp('input','',c.input));
-      html += fld('Koşul', sel('condition',[{v:'truthy',l:'Doğruysa devam'},{v:'falsy',l:'Yanlışsa devam'},{v:'always',l:'Her zaman'}], c.condition||'truthy'));
-      break;
-  }
-  return html + '</div>';
-}
-
-function updateCfg(el){
-  if(!S.selectedId) return;
-  const node = S.nodes[S.selectedId];
-  if(!node.config) node.config = {};
-  node.config[el.dataset.cfg] = el.value;
-  node.configured = isConfigured(node);
-  S.dirty = true;
-  renderNodeCard(S.selectedId);
-  syncIntConfig(node);
-}
-
-function syncIntConfig(node){
-  const c = node.config || {};
-  const def = getDef(node.defId);
-  if(!def || def.kind !== 'action') return;
-  if(c.webhookUrl) localStorage.setItem(`int_${node.defId}`, JSON.stringify({url: c.webhookUrl}));
-  if(node.defId === 'notion'   && c.token)  localStorage.setItem('int_notion',   JSON.stringify({token: c.token,  databaseId: c.databaseId}));
-  if(node.defId === 'airtable' && c.apiKey) localStorage.setItem('int_airtable', JSON.stringify({token: c.apiKey, baseId: c.baseId}));
-}
-
-function toggleCfg(btn){
-  if(!S.selectedId) return;
-  const node = S.nodes[S.selectedId];
-  if(!node.config) node.config = {};
-  const k = btn.dataset.cfg;
-  node.config[k] = !node.config[k];
-  btn.classList.toggle('on', !!node.config[k]);
-  S.dirty = true;
-}
-
-function clickSeg(btn){
-  btn.closest('.ins-segmented').querySelectorAll('.ins-seg-btn').forEach(b => b.classList.toggle('active', b===btn));
-  if(!S.selectedId) return;
-  const node = S.nodes[S.selectedId];
-  if(!node.config) node.config = {};
-  node.config[btn.dataset.cfg] = btn.dataset.val;
-  S.dirty = true;
-}
-
-function isConfigured(node){
-  const c = node.config||{};
-  switch(node.defId){
-    case 'sheet-change':   return !!c.sheet;
-    case 'cell-condition': return !!(c.column && c.operator);
-    case 'schedule':       return !!c.interval;
-    case 'slack':          return !!(c.webhookUrl && c.channel && c.message);
-    case 'make':           return !!c.webhookUrl;
-    case 'teams':          return !!(c.webhookUrl && c.message);
-    case 'email':          return !!(c.to && c.subject);
-    case 'notion':         return !!(c.token && c.databaseId);
-    case 'sheets':         return !!c.spreadsheetId;
-    case 'airtable':       return !!(c.apiKey && c.baseId && c.tableName);
-    default:               return false;
-  }
-}
-
-// ── CANVAS WORLD ─────────────────────────────────────────────
-function applyTransform(){
-  const t = `translate(${S.pan.x}px,${S.pan.y}px) scale(${S.zoom})`;
-  $id('world').style.transform = t;
-  $id('edge-svg').style.transform = t;
-  const sz = 24 * S.zoom;
-  const c = $id('canvas');
-  c.style.backgroundImage = 'radial-gradient(circle, #CBD5E1 1px, transparent 1px)';
-  c.style.backgroundSize  = `${sz}px ${sz}px`;
-  c.style.backgroundPosition = `${S.pan.x % sz}px ${S.pan.y % sz}px`;
-  $id('hud-zoom-val').textContent = `${Math.round(S.zoom*100)}%`;
-}
-
-function renderNodes(){
-  const world = $id('world');
-  const existing = new Set([...world.querySelectorAll('.node-card')].map(el=>el.dataset.id));
-  const current  = new Set(Object.keys(S.nodes));
-  existing.forEach(id => { if(!current.has(id)){ const el=world.querySelector(`.node-card[data-id="${id}"]`); if(el) el.remove(); } });
-  current.forEach(id  => {
-    if(!existing.has(id)){
-      const el = document.createElement('div');
-      el.className = 'node-card node-new';
-      el.dataset.id = id;
-      world.appendChild(el);
-      attachNodeEvents(el, id);
-    }
-    renderNodeCard(id);
-  });
-}
-
-function renderNodeCard(id){
-  const el = $id('world').querySelector(`.node-card[data-id="${id}"]`);
-  if(!el) return;
-  const n = S.nodes[id];
-  const def = getDef(n.defId);
-  const t = TONES[def.tone];
-  el.style.left = `${n.x}px`;
-  el.style.top  = `${n.y}px`;
-  el.classList.toggle('selected', S.selectedId===id);
-  el.innerHTML = `
-    <div class="node-icon" style="background:${t.bg};color:${t.fg}">${icon(def.defId, 20)}</div>
-    <div class="node-body">
-      <div class="node-eyebrow">${def.kind==='trigger'?'Tetikleyici':'Aksiyon'}</div>
-      <div class="node-title">${esc(def.name)}</div>
-      ${n.subtitle?`<div class="node-sub">${esc(n.subtitle)}</div>`:''}
-    </div>
-    <div class="node-dot ${n.configured?'cfg':'pend'}"></div>
-    ${def.kind==='action'?`<div class="node-port port-in" data-port="in" data-node="${id}"></div>`:''}
-    <div class="node-port port-out" data-port="out" data-node="${id}"></div>`;
-}
-
-function attachNodeEvents(el, id){
-  el.addEventListener('mousedown', e => {
-    if(e.target.classList.contains('node-port')){
-      if(e.target.dataset.port !== 'out') return;
-      e.stopPropagation(); e.preventDefault();
-      startDrawEdge(id);
-      return;
-    }
-    e.stopPropagation();
-    const n = S.nodes[id];
-    const origX=n.x, origY=n.y, sx=e.clientX, sy=e.clientY;
-    let moved = false;
-    const onMove = mv => {
-      const dx=(mv.clientX-sx)/S.zoom, dy=(mv.clientY-sy)/S.zoom;
-      if(!moved && (Math.abs(dx)>3||Math.abs(dy)>3)) moved=true;
-      if(moved){ n.x=origX+dx; n.y=origY+dy; renderNodeCard(id); redrawEdges(); S.dirty=true; }
-    };
-    const onUp = () => {
-      document.removeEventListener('mousemove',onMove);
-      document.removeEventListener('mouseup',onUp);
-      if(!moved) selectNode(S.selectedId===id ? null : id);
-    };
-    document.addEventListener('mousemove',onMove);
-    document.addEventListener('mouseup',onUp);
-  });
-}
-
-function startDrawEdge(fromId){
-  S.drawingEdge = { fromId, curX:null, curY:null };
-  const wrap = $id('canvas-wrap');
-  const rect = wrap.getBoundingClientRect();
-  const onMove = mv => {
-    S.drawingEdge.curX = (mv.clientX-rect.left-S.pan.x)/S.zoom;
-    S.drawingEdge.curY = (mv.clientY-rect.top -S.pan.y)/S.zoom;
-    redrawEdges();
-  };
-  const onUp = ev => {
-    document.removeEventListener('mousemove',onMove);
-    document.removeEventListener('mouseup',onUp);
-    const target = ev.target.closest ? ev.target.closest('.node-port') : null;
-    if(target && target.dataset.port==='in' && target.dataset.node !== fromId){
-      const toId = target.dataset.node;
-      if(!S.edges.find(e=>e.from===fromId&&e.to===toId)){
-        S.edges.push({id:`e${Date.now()}`,from:fromId,to:toId});
-        S.dirty = true;
-        renderHUD();
-        renderInspector();
-      }
-    }
-    S.drawingEdge = null;
-    redrawEdges();
-  };
-  document.addEventListener('mousemove',onMove);
-  document.addEventListener('mouseup',onUp);
-}
-
-// ── EDGES ────────────────────────────────────────────────────
-function bezier(ax,ay,bx,by){
-  const dx = Math.max(60, Math.abs(bx-ax)*0.5);
-  return `M ${ax} ${ay} C ${ax+dx} ${ay}, ${bx-dx} ${by}, ${bx} ${by}`;
-}
-function portCoord(id, port){
-  const n = S.nodes[id]; if(!n) return null;
-  return port==='out' ? {x:n.x+NODE_W, y:n.y+NODE_H/2} : {x:n.x, y:n.y+NODE_H/2};
-}
-
-function redrawEdges(){
-  const svg = $id('edge-svg');
-  let out = `<defs>
-    <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="var(--muted-2)"/></marker>
-    <marker id="arr-a" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="var(--accent)"/></marker>
-  </defs>`;
-  S.edges.forEach(edge => {
-    const a=portCoord(edge.from,'out'), b=portCoord(edge.to,'in');
-    if(!a||!b) return;
-    const d = bezier(a.x,a.y,b.x,b.y);
-    const hi = S.selectedId===edge.from || S.selectedId===edge.to;
-    out += `<path d="${d}" fill="none" stroke="${hi?'var(--accent)':'var(--muted-2)'}" stroke-width="${hi?2:1.5}" marker-end="url(#${hi?'arr-a':'arr'})" ${S.running?'stroke-dasharray="6 3"':''}/>`;
-    if(S.running){
-      out += `<path d="${d}" fill="none" stroke="var(--accent)" stroke-width="2" stroke-dasharray="8 16" opacity=".5"><animate attributeName="stroke-dashoffset" values="24;0" dur=".6s" repeatCount="indefinite"/></path>`;
-    }
-  });
-  if(S.drawingEdge && S.drawingEdge.curX !== null){
-    const a=portCoord(S.drawingEdge.fromId,'out');
-    if(a) out += `<path d="${bezier(a.x,a.y,S.drawingEdge.curX,S.drawingEdge.curY)}" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="5 4" opacity=".7"/>`;
-  }
-  svg.innerHTML = out;
-}
-
-// ── HUD ──────────────────────────────────────────────────────
-function renderHUD(){
-  const nc=Object.keys(S.nodes).length, ec=S.edges.length;
-  $id('hud-count').textContent = `${nc} node · ${ec} bağlantı`;
-  $id('empty-hint').style.display = nc>0 ? 'none' : 'flex';
-}
-
-// ── NODE OPS ─────────────────────────────────────────────────
-function addNode(defId, x, y){
-  const id = `n${S.nextId++}`;
-  S.nodes[id] = {id, defId, kind:getDef(defId).kind, x, y, configured:false, config:{}};
-  S.dirty = true;
-  renderNodes(); redrawEdges(); renderHUD();
-  selectNode(id);
-}
-
-function removeNode(id){
-  if(!id||!S.nodes[id]) return;
-  delete S.nodes[id];
-  S.edges = S.edges.filter(e=>e.from!==id&&e.to!==id);
-  const el=$id('world').querySelector(`.node-card[data-id="${id}"]`);
-  if(el) el.remove();
-  if(S.selectedId===id) S.selectedId=null;
-  S.dirty=true;
-  redrawEdges(); renderHUD(); renderInspector(); renderTopBar();
-}
-
-function duplicateNode(id){
-  const n=S.nodes[id]; if(!n) return;
-  const newId=`n${S.nextId++}`;
-  S.nodes[newId]={...n, id:newId, x:n.x+30, y:n.y+30, config:{...n.config}};
-  S.dirty=true;
-  renderNodes(); redrawEdges(); renderHUD(); selectNode(newId);
-}
-
-function selectNode(id){
-  const prev=S.selectedId;
-  S.selectedId=id;
-  if(prev&&S.nodes[prev]) renderNodeCard(prev);
-  if(id&&S.nodes[id]) renderNodeCard(id);
-  renderInspector();
-  redrawEdges();
-}
-
-async function testNode(){
-  if(!S.selectedId) return;
-  const node = S.nodes[S.selectedId];
-  const def = getDef(node.defId);
-  if(!isConfigured(node)){ showToast('⚠ Node yapılandırılmamış — önce ayarları doldurun','light',2500); return; }
-  if(def.kind === 'trigger'){ showToast('✓ Tetikleyici yapılandırması geçerli','light',2000); return; }
-  syncIntConfig(node);
-  const c = node.config || {};
-  const BACKEND = window.BACKEND_URL || (window.location.hostname==='localhost' ? 'http://localhost:3001' : 'https://upsheet-ai.onrender.com');
-  const token = getAuthToken();
-  let endpoint, body;
-  switch(node.defId){
-    case 'slack':
-      endpoint = `${BACKEND}/api/integrations/slack/notify`;
-      body = { webhookUrl: c.webhookUrl, title:'Test', message:'Mocksheets otomasyon testi \u2713', fields:[] };
-      break;
-    case 'make':
-      endpoint = `${BACKEND}/api/integrations/make/trigger`;
-      body = { webhookUrl: c.webhookUrl, event:'test', data:{ source:'mocksheets_test', timestamp: new Date().toISOString() } };
-      break;
-    case 'teams':
-      endpoint = `${BACKEND}/api/integrations/teams/notify`;
-      body = { webhookUrl: c.webhookUrl, title:'Test', message:'Mocksheets otomasyon testi \u2713', fields:[] };
-      break;
-    default:
-      showToast(`\u2713 ${def.name} yap\u0131land\u0131rmas\u0131 ge\u00e7erli`,'light',2000);
-      return;
-  }
-  showToast('<div class="pulse"></div> Test g\u00f6nderiliyor\u2026','dark',2500);
+// ── LOAD RUNS ──────────────────────────────────────────────────────────────
+async function loadRuns() {
   try {
-    const res = await fetch(endpoint, {
-      method:'POST', headers:{'Content-Type':'application/json', Authorization:`Bearer ${token}`},
-      body: JSON.stringify(body)
-    });
-    if(res.ok){ showToast(`\u2713 ${def.name} test ba\u015far\u0131l\u0131 \u2014 mesaj g\u00f6nderildi`,'light',3000); }
-    else { const d = await res.json().catch(()=>({})); showToast(`\u26a0 Test ba\u015far\u0131s\u0131z: ${d.error||res.status}`,'light',3000); }
-  } catch(e){ showToast(`\u26a0 Test hatas\u0131: ${e.message}`,'light',3000); }
-}
-
-// ── WORKFLOW OPS ─────────────────────────────────────────────
-function workflowToRulePairs(){
-  const pairs=[];
-  const triggerNodes=Object.values(S.nodes).filter(n=>getDef(n.defId)?.kind==='trigger');
-  for(const trigger of triggerNodes){
-    const connectedActionIds=S.edges.filter(e=>e.from===trigger.id).map(e=>e.to);
-    const actionNodes=connectedActionIds.map(id=>S.nodes[id]).filter(n=>n&&getDef(n.defId)?.kind==='action');
-    if(!actionNodes.length) continue;
-    for(const action of actionNodes){
-      const tc=trigger.config||{}, ac=action.config||{};
-      const integration=action.defId==='sheets'?'google_sheets':action.defId;
-      pairs.push({
-        nodeId:trigger.id,
-        actionId:action.id,
-        rule:{
-          name:`${S.name}${actionNodes.length>1?' → '+getDef(action.defId).name:''}`,
-          integration,
-          trigger_config:{ type:trigger.defId, column:tc.column||'', operator:tc.operator||'equals', value:tc.value||'' },
-          action_config:{ event:`${action.defId}_trigger`, message:ac.message||`${S.name} tetiklendi`, include_columns:[] },
-          throttle_seconds:3600,
-          enabled:true
-        }
-      });
-    }
+    const res = await fetch(API + '/api/automations/runs?limit=20', { headers: authHeaders() });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    allRuns = data.runs || data || [];
+  } catch (e) {
+    allRuns = [];
   }
-  return pairs;
+  renderRuns();
+  updateStats();
 }
 
-async function saveWorkflow(){
-  const data={name:S.name, nodes:S.nodes, edges:S.edges};
-  localStorage.setItem('mocksheet_automation', JSON.stringify(data));
-  S.dirty=false;
-  renderTopBar();
+function renderRuns() {
+  const el = document.getElementById('runs-list');
+  document.getElementById('run-count-badge').textContent = allRuns.length;
 
-  if(window.Automations){
-    const pairs=workflowToRulePairs();
-    let saved=0;
-    for(const {nodeId, actionId, rule} of pairs){
-      try{
-        const actionNode=S.nodes[actionId];
-        if(actionNode?.ruleId){
-          await window.Automations.update(actionNode.ruleId, rule);
-        } else {
-          const created=await window.Automations.save(rule);
-          if(actionNode && created?.id) actionNode.ruleId=created.id;
-        }
-        saved++;
-      }catch(e){ console.warn('Kural kaydedilemedi:',e); }
-    }
-    // persist ruleIds
-    localStorage.setItem('mocksheet_automation', JSON.stringify({name:S.name, nodes:S.nodes, edges:S.edges}));
-    await loadSavedRules();
-    const msg=pairs.length
-      ?`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Otomasyon kaydedildi (${saved}/${pairs.length} kural)`
-      :'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Otomasyon kaydedildi';
-    showToast(msg,'light',3000);
-  } else {
-    showToast('<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Otomasyon kaydedildi','light',2400);
-  }
-}
-
-function loadWorkflow(){
-  try{
-    const raw=localStorage.getItem('mocksheet_automation'); if(!raw) return;
-    const data=JSON.parse(raw);
-    if(data.name) S.name=data.name;
-    if(data.nodes){
-      S.nodes=data.nodes;
-      const ids=Object.keys(data.nodes).map(id=>parseInt(id.replace('n',''))).filter(Boolean);
-      S.nextId=ids.length?Math.max(...ids)+1:1;
-    }
-    if(data.edges) S.edges=data.edges;
-  }catch(err){ console.warn('Load err',err); }
-}
-
-async function loadSavedRules(){
-  if(!window.Automations) return;
-  try{
-    S.savedRules = await window.Automations.load();
-    renderInspector();
-  }catch(e){ console.warn('Kurallar yüklenemedi:',e); }
-}
-
-async function toggleSavedRule(id, currentEnabled){
-  if(!window.Automations) return;
-  try{
-    await window.Automations.update(id, { enabled:!currentEnabled });
-    const rule=S.savedRules.find(r=>r.id===id);
-    if(rule) rule.enabled=!currentEnabled;
-    renderInspector();
-    showToast(currentEnabled?'Kural devre dışı bırakıldı':'Kural etkinleştirildi','light',2000);
-  }catch(e){ showToast('Kural güncellenemedi','light',2000); }
-}
-
-async function deleteSavedRule(id){
-  if(!window.Automations) return;
-  try{
-    await window.Automations.remove(id);
-    S.savedRules=S.savedRules.filter(r=>r.id!==id);
-    // clear ruleId from any nodes
-    Object.values(S.nodes).forEach(n=>{ if(n.ruleId===id) delete n.ruleId; });
-    renderInspector();
-    showToast('Kural silindi','light',2000);
-  }catch(e){ showToast('Kural silinemedi','light',2000); }
-}
-
-async function suggestRules(){
-  const btn=$id('sb-suggest-btn');
-  if(!window.Automations){ showToast('⚠ Otomasyon motoru yüklenemedi','light',2500); return; }
-  let headers=[];
-  try{
-    const raw=localStorage.getItem('mocksheet_state');
-    if(raw){
-      const state=JSON.parse(raw);
-      const sheetName=state.activeSheet||Object.keys(state.sheets||{})[0];
-      const rows=state.sheets?.[sheetName];
-      if(Array.isArray(rows)&&rows.length) headers=rows[0].filter(Boolean);
-    }
-  }catch(e){}
-  if(!headers.length){
-    showToast("⚠ Önce app.html'de bir tablo açın — sütun başlığı bulunamadı",'light',3500);
+  if (!allRuns.length) {
+    el.innerHTML = `<div class="empty-state" style="padding:24px"><p style="font-size:13px;color:var(--muted)">Henüz çalışma kaydı yok.</p></div>`;
     return;
   }
-  btn.disabled=true;
-  btn.textContent='Yükleniyor…';
-  showToast('<div class="pulse"></div> AI öneri hazırlanıyor…','dark',4000);
-  try{
-    const result=await window.Automations.suggest(headers,'make');
-    const suggestions=result.suggestions||[];
-    if(!suggestions.length){ showToast('Öneri bulunamadı','light',2000); return; }
-    const wrap=$id('canvas-wrap');
-    const cx=(wrap.offsetWidth/2-S.pan.x)/S.zoom;
-    const cy=(wrap.offsetHeight/2-S.pan.y)/S.zoom;
-    let added=0;
-    suggestions.forEach((sug,i)=>{
-      const triggerType=sug.trigger_config?.type||'cell-condition';
-      const trigDef=getDef(triggerType)||getDef('cell-condition');
-      const actionMap={make:'make',slack:'slack',webhook:'webhook',notion:'notion',airtable:'airtable',email:'email'};
-      const actionDefId=actionMap[sug.integration]||'filter';
-      const ox=cx-110+(i-1)*280, oy=cy-100+i*60;
-      const tid=`n${S.nextId++}`;
-      S.nodes[tid]={id:tid,defId:trigDef.defId,kind:'trigger',x:ox,y:oy,configured:true,config:{column:sug.trigger_config?.column||'',operator:sug.trigger_config?.operator||'equals',value:sug.trigger_config?.value||''}};
-      const aid=`n${S.nextId++}`;
-      S.nodes[aid]={id:aid,defId:actionDefId,kind:'action',x:ox+280,y:oy,configured:false,config:{message:sug.action_config?.message||sug.name}};
-      S.edges.push({id:`e${Date.now()+i}`,from:tid,to:aid});
-      added++;
+
+  el.innerHTML = allRuns.map(r => {
+    const statusIcon = { success: '✓', error: '✕', skipped: '→', pending: '…' }[r.status] || '?';
+    const badgeCls = 'badge-' + (r.status || 'pending');
+    const time = r.started_at ? new Date(r.started_at).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }) : '—';
+    const dur = r.duration_ms ? (r.duration_ms < 1000 ? r.duration_ms + 'ms' : (r.duration_ms / 1000).toFixed(1) + 's') : '—';
+    const trigLabel = { manual: 'Manuel', schedule: 'Zamanlama', test: 'Test', 'sheet-change': 'Sheet' }[r.triggered_by] || r.triggered_by || '—';
+    return `
+      <div class="run-row" onclick="showRunDetail('${r.id}')">
+        <div class="run-status status-${r.status || 'pending'}">${statusIcon}</div>
+        <div class="run-time">${time}</div>
+        <div class="run-name">${escHtml(r.rule_name || r.rule_id || '—')}</div>
+        <div class="run-trigger">${trigLabel}</div>
+        <span class="run-badge ${badgeCls}">${STATUS_LABELS[r.status] || r.status}</span>
+        <div class="run-duration">${dur}</div>
+      </div>`;
+  }).join('');
+}
+
+// ── RULE ACTIONS ───────────────────────────────────────────────────────────
+async function toggleRule(id, enabled) {
+  try {
+    await fetch(API + '/api/automations/' + id, {
+      method: 'PUT', headers: authHeaders(),
+      body: JSON.stringify({ enabled })
     });
-    S.dirty=true;
-    renderNodes(); redrawEdges(); renderHUD(); renderInspector(); renderTopBar();
-    showToast(`✓ ${added} kural önerildi ve canvas'a eklendi`,'light',3000);
-  }catch(e){
-    showToast(`Hata: ${e.message}`,'light',3000);
-  }finally{
-    btn.disabled=false;
-    btn.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2l1.9 5.8L20 10l-6.1 2.2L12 18l-1.9-5.8L4 10l6.1-2.2z"/></svg> AI Öner';
-  }
+    const r = allRules.find(r => r.id === id);
+    if (r) r.enabled = enabled;
+    updateStats();
+  } catch { toast('Güncelleme başarısız', 'error'); }
 }
 
-async function runWorkflow(){
-  if(S.running) return;
-  S.running=true; renderTopBar(); redrawEdges();
-  showToast('<div class="pulse"></div> Otomasyon çalışıyor\u2026','dark',3500);
-
-  try{
-    let sheetData=null;
-    try{
-      const raw=localStorage.getItem('mocksheet_state');
-      if(raw){
-        const state=JSON.parse(raw);
-        const sheetName=state.activeSheet||Object.keys(state.sheets||{})[0];
-        const rows=state.sheets?.[sheetName];
-        if(Array.isArray(rows)&&rows.length>1) sheetData=rows;
-      }
-    }catch(e){ /* sheet verisi okunamadı */ }
-
-    if(window.Automations&&sheetData){
-      await window.Automations.evaluate(sheetData);
-      showToast('<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Otomasyon tamamlandı','light',2500);
-    }else if(!sheetData){
-      showToast("⚠ Önce app.html'de bir sayfa açın — sheet verisi bulunamadı",'light',3500);
-    }else{
-      showToast('⚠ Otomasyon motoru yüklenemedi','light',3000);
+async function runRule(id) {
+  const btn = document.querySelector(`#rule-${id} .run-btn`);
+  if (btn) btn.innerHTML = '<div class="spin spin-dark"></div>';
+  try {
+    const res = await fetch(API + '/api/automations/' + id + '/run', {
+      method: 'POST', headers: authHeaders(), body: JSON.stringify({})
+    });
+    const data = await res.json();
+    if (res.ok) {
+      toast('Otomasyon çalıştırıldı', 'success');
+      await loadRuns();
+      const rule = allRules.find(r => r.id === id);
+      if (rule) { rule.last_fired = new Date().toISOString(); rule.run_count = (rule.run_count || 0) + 1; }
+      renderRules();
+    } else {
+      toast(data.error || 'Hata oluştu', 'error');
     }
-  }catch(e){
-    showToast(`Hata: ${e.message}`,'light',3000);
-  }finally{
-    S.running=false; renderTopBar(); redrawEdges();
+  } catch (e) { toast('Bağlantı hatası', 'error'); }
+  if (btn) btn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>';
+}
+
+async function deleteRule(id) {
+  if (!confirm('Bu otomasyonu silmek istediğinizden emin misiniz?')) return;
+  try {
+    await fetch(API + '/api/automations/' + id, { method: 'DELETE', headers: authHeaders() });
+    allRules = allRules.filter(r => r.id !== id);
+    renderRules();
+    updateStats();
+    toast('Otomasyon silindi');
+  } catch { toast('Silme başarısız', 'error'); }
+}
+
+function editRule(id) {
+  const rule = allRules.find(r => r.id === id);
+  if (!rule) return;
+  openCreateModal(rule, id);
+}
+
+// ── SHOW RUN DETAIL ────────────────────────────────────────────────────────
+function showRunDetail(id) {
+  const run = allRuns.find(r => r.id === id);
+  if (!run) return;
+  currentRunId = run.rule_id;
+
+  const dur = run.duration_ms ? (run.duration_ms / 1000).toFixed(2) + 's' : '—';
+  const started = run.started_at ? new Date(run.started_at).toLocaleString('tr-TR') : '—';
+  const actionResults = Array.isArray(run.action_results) ? run.action_results : [];
+
+  document.getElementById('run-detail-body').innerHTML = `
+    <div class="run-detail-grid">
+      <div class="rd-cell"><div class="rd-cell-label">Durum</div><div class="rd-cell-val"><span class="run-badge badge-${run.status}">${STATUS_LABELS[run.status] || run.status}</span></div></div>
+      <div class="rd-cell"><div class="rd-cell-label">Süre</div><div class="rd-cell-val">${dur}</div></div>
+      <div class="rd-cell"><div class="rd-cell-label">Başlangıç</div><div class="rd-cell-val" style="font-size:12px">${started}</div></div>
+      <div class="rd-cell"><div class="rd-cell-label">Tetikleyen</div><div class="rd-cell-val">${run.triggered_by || '—'}</div></div>
+    </div>
+    ${run.error_message ? `<div style="background:var(--rose-soft);border:1px solid var(--rose-line);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--rose);margin-bottom:14px"><strong>Hata:</strong> ${escHtml(run.error_message)}</div>` : ''}
+    ${actionResults.length ? `
+      <div class="section-label" style="margin-bottom:8px">Aksiyon Sonuçları</div>
+      ${actionResults.map(ar => `
+        <div class="action-result-row">
+          <div class="ar-icon status-${ar.status || 'pending'}">${ar.status === 'success' ? '✓' : ar.status === 'error' ? '✕' : '→'}</div>
+          <div class="ar-body">
+            <div class="ar-type">${ACTION_LABELS[ar.type] || ar.type}</div>
+            <div class="ar-status">${ar.status === 'error' ? (ar.error || 'Hata') : ar.status === 'skipped' ? (ar.result?.reason || 'Atlandı') : 'Başarılı'}</div>
+          </div>
+        </div>`).join('')}` : '<p style="font-size:13px;color:var(--muted)">Aksiyon detayı yok.</p>'}
+  `;
+
+  document.getElementById('run-overlay').classList.add('open');
+}
+
+async function retryRun() {
+  if (!currentRunId) return;
+  document.getElementById('run-overlay').classList.remove('open');
+  await runRule(currentRunId);
+}
+
+// ── CREATE/EDIT MODAL ──────────────────────────────────────────────────────
+function openCreateModal(prefill, id) {
+  editId = id || null;
+  currentStep = 1;
+  conditions = [];
+  actions = [];
+
+  document.getElementById('modal-title').textContent = id ? 'Otomasyonu Düzenle' : 'Yeni Otomasyon';
+  document.getElementById('create-overlay').classList.add('open');
+
+  // Reset fields
+  document.getElementById('f-name').value = '';
+  document.getElementById('f-desc').value = '';
+  document.getElementById('f-trigger-type').value = 'cell_condition';
+  document.getElementById('f-throttle').value = '3600';
+  document.getElementById('f-enabled').value = 'true';
+
+  if (prefill) {
+    document.getElementById('f-name').value = prefill.name || '';
+    document.getElementById('f-desc').value = prefill.description || '';
+    const tc = prefill.trigger_config || {};
+    document.getElementById('f-trigger-type').value = tc.type || 'cell_condition';
+    document.getElementById('f-throttle').value = prefill.throttle_seconds || 3600;
+    document.getElementById('f-enabled').value = prefill.enabled === false ? 'false' : 'true';
+    conditions = Array.isArray(prefill.condition_config) ? JSON.parse(JSON.stringify(prefill.condition_config)) : [];
+    const ac = prefill.action_config;
+    actions = Array.isArray(ac) ? JSON.parse(JSON.stringify(ac)) : (ac ? [JSON.parse(JSON.stringify(ac))] : []);
+    // Store trigger config for rendering
+    window._prefillTrigger = tc;
+  } else {
+    window._prefillTrigger = null;
+    actions = [{ type: 'notification', message: '' }];
+  }
+
+  renderTriggerFields(window._prefillTrigger);
+  renderStepUI();
+}
+
+function closeCreateModal() {
+  document.getElementById('create-overlay').classList.remove('open');
+}
+
+function renderStepUI() {
+  [1, 2, 3].forEach(s => {
+    document.getElementById(`step-${s}-body`).style.display = s === currentStep ? '' : 'none';
+    const ind = document.getElementById(`step-${s}-ind`);
+    ind.className = 'step-item' + (s < currentStep ? ' done' : s === currentStep ? ' active' : '');
+  });
+  document.getElementById('btn-prev').style.display = currentStep > 1 ? '' : 'none';
+  document.getElementById('btn-test').style.display = currentStep === 3 ? '' : 'none';
+  document.getElementById('btn-next').textContent = currentStep === 3 ? 'Kaydet ✓' : 'Devam Et →';
+
+  if (currentStep === 2) renderConditions();
+  if (currentStep === 3) renderActions();
+}
+
+function nextStep() {
+  if (currentStep === 1) {
+    if (!document.getElementById('f-name').value.trim()) { toast('Lütfen bir otomasyon adı girin', 'warning'); return; }
+  }
+  if (currentStep < 3) { currentStep++; renderStepUI(); }
+  else saveRule();
+}
+
+function prevStep() {
+  if (currentStep > 1) { currentStep--; renderStepUI(); }
+}
+
+// ── TRIGGER FIELDS ─────────────────────────────────────────────────────────
+function renderTriggerFields(prefill) {
+  const type = document.getElementById('f-trigger-type').value;
+  const p = prefill || window._prefillTrigger || {};
+  const el = document.getElementById('trigger-fields');
+
+  if (type === 'cell_condition' || type === 'threshold') {
+    el.innerHTML = `
+      <div class="field-row">
+        <div class="field">
+          <label class="lbl">Sütun Adı</label>
+          <input class="inp" type="text" id="tc-column" placeholder="örn. Stok Miktarı" value="${escHtml(p.column || '')}">
+        </div>
+        <div class="field">
+          <label class="lbl">Koşul</label>
+          <select class="inp" id="tc-operator">
+            ${OPERATORS.map(o => `<option value="${o.v}" ${p.operator === o.v ? 'selected' : ''}>${o.l}</option>`).join('')}
+          </select>
+        </div>
+        <div class="field">
+          <label class="lbl">Değer</label>
+          <input class="inp" type="text" id="tc-value" placeholder="örn. 20" value="${escHtml(p.value || '')}">
+        </div>
+      </div>`;
+  } else if (type === 'schedule') {
+    const hasCustomCron = p.cronExpr && !['every_5m','every_15m','every_hour','every_day','every_week','every_month'].includes(p.frequency);
+    el.innerHTML = `
+      <div class="field-row">
+        <div class="field">
+          <label class="lbl">Sıklık</label>
+          <select class="inp" id="tc-freq">
+            <option value="every_5m" ${p.frequency === 'every_5m' ? 'selected' : ''}>Her 5 dakika</option>
+            <option value="every_15m" ${p.frequency === 'every_15m' ? 'selected' : ''}>Her 15 dakika</option>
+            <option value="every_hour" ${p.frequency === 'every_hour' ? 'selected' : ''}>Her saat</option>
+            <option value="every_day" ${p.frequency === 'every_day' || (!p.frequency && !hasCustomCron) ? 'selected' : ''}>Her gün</option>
+            <option value="every_week" ${p.frequency === 'every_week' ? 'selected' : ''}>Her hafta</option>
+            <option value="every_month" ${p.frequency === 'every_month' ? 'selected' : ''}>Her ay</option>
+            <option value="custom" ${hasCustomCron ? 'selected' : ''}>Özel (cron)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="lbl">Saat</label>
+          <input class="inp" type="time" id="tc-time" value="${p.time || '09:00'}">
+        </div>
+      </div>
+      <div class="field" id="cron-field" style="${hasCustomCron ? '' : 'display:none'}">
+        <label class="lbl">Cron İfadesi</label>
+        <input class="inp" type="text" id="tc-cron" placeholder="örn. 0 9 * * 1-5" value="${escHtml(p.cronExpr || '')}">
+        <div class="inp-hint">Dakika Saat Gün Ay HaftaGünü — örn. <code>0 9 * * 1</code> = her Pazartesi 09:00</div>
+      </div>`;
+    document.getElementById('tc-freq')?.addEventListener('change', function() {
+      document.getElementById('cron-field').style.display = this.value === 'custom' ? '' : 'none';
+    });
+  } else if (type === 'date_arrived') {
+    el.innerHTML = `
+      <div class="field-row">
+        <div class="field">
+          <label class="lbl">Tarih Sütunu</label>
+          <input class="inp" type="text" id="tc-column" placeholder="örn. Vade Tarihi" value="${escHtml(p.column || '')}">
+        </div>
+        <div class="field">
+          <label class="lbl">Gün Önce</label>
+          <input class="inp" type="number" id="tc-days" placeholder="7" value="${p.days_before || ''}">
+          <div class="inp-hint">Vadeden kaç gün önce tetiklensin</div>
+        </div>
+      </div>`;
+  } else if (type === 'value_changed') {
+    el.innerHTML = `
+      <div class="field">
+        <label class="lbl">İzlenecek Sütun</label>
+        <input class="inp" type="text" id="tc-column" placeholder="örn. Durum" value="${escHtml(p.column || '')}">
+      </div>`;
+  } else if (type === 'row_added' || type === 'ai_anomaly') {
+    el.innerHTML = `<div class="inp-hint" style="margin-top:0">${type === 'ai_anomaly' ? 'AI, verideki anormal değişimleri ve kalıpları otomatik olarak tespit eder.' : 'Tabloya yeni satır eklendiğinde tetiklenir.'}</div>`;
   }
 }
 
-// ── TOASTS ───────────────────────────────────────────────────
-function showToast(html, style, dur){
-  const div=document.createElement('div');
-  div.className=`toast toast-${style||'light'}`;
-  div.innerHTML=html;
-  $id('toast-area').appendChild(div);
-  setTimeout(()=>div.remove(), dur||2400);
+function getTriggerConfig() {
+  const type = document.getElementById('f-trigger-type').value;
+  const config = { type };
+  const col = document.getElementById('tc-column');
+  const op = document.getElementById('tc-operator');
+  const val = document.getElementById('tc-value');
+  if (col) config.column = col.value.trim();
+  if (op) config.operator = op.value;
+  if (val) config.value = val.value.trim();
+
+  if (type === 'schedule') {
+    const freq = document.getElementById('tc-freq');
+    const time = document.getElementById('tc-time');
+    const cron = document.getElementById('tc-cron');
+    if (freq) config.frequency = freq.value;
+    if (time) config.time = time.value;
+    if (cron && freq?.value === 'custom') config.cronExpr = cron.value.trim();
+  }
+  if (type === 'date_arrived') {
+    const days = document.getElementById('tc-days');
+    if (days) config.days_before = days.value;
+  }
+  return config;
 }
 
-// ── ZOOM ─────────────────────────────────────────────────────
-function adjustZoom(dir){
-  const f=dir>0?1.15:1/1.15;
-  const wrap=$id('canvas-wrap');
-  const mx=wrap.offsetWidth/2, my=wrap.offsetHeight/2;
-  const prev=S.zoom;
-  S.zoom=Math.min(3,Math.max(0.15,S.zoom*f));
-  S.pan.x=mx-(mx-S.pan.x)*(S.zoom/prev);
-  S.pan.y=my-(my-S.pan.y)*(S.zoom/prev);
-  applyTransform();
+// ── CONDITIONS ─────────────────────────────────────────────────────────────
+function renderConditions() {
+  const el = document.getElementById('cond-list');
+  el.innerHTML = conditions.map((c, i) => `
+    <div class="cond-row">
+      ${i === 0 ? '<span style="width:40px;font-size:11px;font-weight:600;color:var(--muted);text-align:center">EĞER</span>' :
+        `<select class="cond-logic" onchange="conditions[${i}].logic=this.value"><option value="AND" ${c.logic !== 'OR' ? 'selected' : ''}>VE</option><option value="OR" ${c.logic === 'OR' ? 'selected' : ''}>VEYA</option></select>`}
+      <input class="cond-col" type="text" placeholder="Sütun" value="${escHtml(c.column || '')}" oninput="conditions[${i}].column=this.value">
+      <select class="cond-op" onchange="conditions[${i}].operator=this.value">
+        ${OPERATORS.map(o => `<option value="${o.v}" ${c.operator === o.v ? 'selected' : ''}>${o.l}</option>`).join('')}
+      </select>
+      <input class="cond-val" type="text" placeholder="Değer" value="${escHtml(c.value || '')}" oninput="conditions[${i}].value=this.value">
+      <button class="cond-remove" onclick="removeCondition(${i})">✕</button>
+    </div>`).join('');
 }
 
-function fitView(){
-  const nodes=Object.values(S.nodes);
-  if(!nodes.length){ S.pan={x:140,y:80}; S.zoom=1; applyTransform(); return; }
-  const wrap=$id('canvas-wrap');
-  const minX=Math.min(...nodes.map(n=>n.x)), minY=Math.min(...nodes.map(n=>n.y));
-  const maxX=Math.max(...nodes.map(n=>n.x+NODE_W)), maxY=Math.max(...nodes.map(n=>n.y+NODE_H));
-  const pad=80, fw=wrap.offsetWidth-pad*2, fh=wrap.offsetHeight-pad*2;
-  S.zoom=Math.min(1.5,Math.max(0.2,Math.min(fw/(maxX-minX||1),fh/(maxY-minY||1))));
-  S.pan.x=pad-minX*S.zoom+(fw-(maxX-minX)*S.zoom)/2;
-  S.pan.y=pad-minY*S.zoom+(fh-(maxY-minY)*S.zoom)/2;
-  applyTransform();
+function addCondition() {
+  conditions.push({ column: '', operator: 'equals', value: '', logic: 'AND' });
+  renderConditions();
 }
 
-// ── CANVAS EVENTS ────────────────────────────────────────────
-function initCanvas(){
-  const canvas=$id('canvas');
-  const wrap=$id('canvas-wrap');
-
-  canvas.addEventListener('dragover', e=>{ e.preventDefault(); e.dataTransfer.dropEffect='copy'; });
-  canvas.addEventListener('drop', e=>{
-    e.preventDefault();
-    const defId=e.dataTransfer.getData('defId'); if(!defId) return;
-    const rect=wrap.getBoundingClientRect();
-    addNode(defId, (e.clientX-rect.left-S.pan.x)/S.zoom - NODE_W/2, (e.clientY-rect.top-S.pan.y)/S.zoom - NODE_H/2);
-  });
-
-  canvas.addEventListener('mousedown', e=>{
-    if(e.target.closest('.node-card')) return;
-    selectNode(null);
-    const sx=e.clientX, sy=e.clientY, ox=S.pan.x, oy=S.pan.y;
-    const onMove=mv=>{ S.pan.x=ox+(mv.clientX-sx); S.pan.y=oy+(mv.clientY-sy); applyTransform(); };
-    const onUp=()=>{ document.removeEventListener('mousemove',onMove); document.removeEventListener('mouseup',onUp); };
-    document.addEventListener('mousemove',onMove);
-    document.addEventListener('mouseup',onUp);
-  });
-
-  canvas.addEventListener('wheel', e=>{
-    if(!e.ctrlKey&&!e.metaKey){ S.pan.x-=e.deltaX; S.pan.y-=e.deltaY; applyTransform(); return; }
-    e.preventDefault();
-    const f=e.deltaY<0?1.08:1/1.08;
-    const rect=wrap.getBoundingClientRect();
-    const mx=e.clientX-rect.left, my=e.clientY-rect.top;
-    const prev=S.zoom;
-    S.zoom=Math.min(3,Math.max(0.15,S.zoom*f));
-    S.pan.x=mx-(mx-S.pan.x)*(S.zoom/prev);
-    S.pan.y=my-(my-S.pan.y)*(S.zoom/prev);
-    applyTransform();
-  },{passive:false});
+function removeCondition(i) {
+  conditions.splice(i, 1);
+  renderConditions();
 }
 
-// ── KEYBOARD ─────────────────────────────────────────────────
-function initKeyboard(){
-  document.addEventListener('keydown', e=>{
-    const inInput=['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName);
-    if(e.key==='Escape'){ selectNode(null); return; }
-    if(inInput) return;
-    if((e.key==='Delete'||e.key==='Backspace')&&S.selectedId){ removeNode(S.selectedId); }
-    if((e.ctrlKey||e.metaKey)&&e.key==='d'){ e.preventDefault(); if(S.selectedId) duplicateNode(S.selectedId); }
-    if((e.ctrlKey||e.metaKey)&&e.key==='s'){ e.preventDefault(); saveWorkflow(); }
-  });
+// ── ACTIONS ────────────────────────────────────────────────────────────────
+function renderActions() {
+  const el = document.getElementById('action-list');
+  el.innerHTML = actions.map((a, i) => `
+    <div class="action-card" id="action-card-${i}">
+      <div class="action-card-head">
+        <div class="action-num">${i + 1}</div>
+        <select class="action-type-select" onchange="changeActionType(${i}, this.value)">
+          ${ACTION_TYPES.map(t => `<option value="${t.v}" ${a.type === t.v ? 'selected' : ''}>${t.icon} ${t.l}</option>`).join('')}
+        </select>
+        ${actions.length > 1 ? `<button class="action-remove" onclick="removeAction(${i})">✕</button>` : ''}
+      </div>
+      <div class="action-fields" id="action-fields-${i}">
+        ${renderActionFields(a, i)}
+      </div>
+    </div>`).join('');
 }
 
-// ── INIT ─────────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', ()=>{
-  loadWorkflow();
-  renderTopBar();
-  initSidebar();
-  renderNodes();
-  redrawEdges();
-  renderHUD();
-  renderInspector();
-  applyTransform();
-  initCanvas();
-  initKeyboard();
-  loadSavedRules();
+function renderActionFields(a, i) {
+  const v = (k) => `value="${escHtml(a[k] || '')}"`;
+  const inp = (k, ph, label) => `<div class="action-field"><label>${label}</label><input type="text" placeholder="${ph}" ${v(k)} oninput="actions[${i}]['${k}']=this.value"></div>`;
+  const ta = (k, ph, label) => `<div class="action-field"><label>${label}</label><textarea placeholder="${ph}" oninput="actions[${i}]['${k}']=this.value">${escHtml(a[k] || '')}</textarea></div>`;
+
+  switch (a.type) {
+    case 'gmail': return `
+      ${inp('to', 'ornek@sirket.com', 'Alıcı E-posta *')}
+      ${inp('subject', 'örn. Stok Uyarısı: {Ürün Adı}', 'Konu *')}
+      ${ta('body', 'E-posta içeriği... {Sütun Adı} ile değişken kullanabilirsiniz', 'İçerik')}`;
+    case 'slack': return `
+      ${inp('channel', '#kanal-adı', 'Kanal')}
+      ${ta('message', 'Mesaj metni... {Sütun Adı} ile değişken kullanabilirsiniz', 'Mesaj *')}`;
+    case 'notion_page': return `
+      ${inp('title', 'örn. Sipariş: {Ürün Adı}', 'Sayfa Başlığı *')}
+      ${inp('database_id', 'Notion database ID (opsiyonel)', 'Database ID')}`;
+    case 'webhook': return `
+      ${inp('url', 'https://...', 'Webhook URL *')}
+      <div class="action-field"><label>Method</label><select onchange="actions[${i}].method=this.value"><option value="POST" ${a.method !== 'GET' ? 'selected' : ''}>POST</option><option value="GET" ${a.method === 'GET' ? 'selected' : ''}>GET</option></select></div>`;
+    case 'make': return inp('webhook_url', 'https://hook.make.com/...', 'Make.com Webhook URL *');
+    case 'notification': return ta('message', 'Bildirim mesajı... {Sütun Adı} ile değişken kullanabilirsiniz', 'Mesaj *');
+    case 'sheets_update': return `
+      ${inp('spreadsheet_id', 'Google Sheets ID', 'Spreadsheet ID')}
+      ${inp('range', 'örn. A1:B10', 'Aralık')}`;
+    case 'pdf_export': return `<div class="action-field" style="color:var(--muted);font-size:12px">Mevcut sayfanın PDF dışa aktarımı tetiklenecek.</div>`;
+    default: return '';
+  }
+}
+
+function changeActionType(i, type) {
+  actions[i] = { type };
+  document.getElementById(`action-fields-${i}`).innerHTML = renderActionFields(actions[i], i);
+}
+
+function addAction() {
+  actions.push({ type: 'notification', message: '' });
+  renderActions();
+}
+
+function removeAction(i) {
+  actions.splice(i, 1);
+  renderActions();
+}
+
+// ── SAVE RULE ──────────────────────────────────────────────────────────────
+async function saveRule() {
+  const name = document.getElementById('f-name').value.trim();
+  if (!name) { toast('Otomasyon adı gerekli', 'warning'); return; }
+  if (!actions.length) { toast('En az bir aksiyon ekleyin', 'warning'); return; }
+
+  const body = {
+    name,
+    description: document.getElementById('f-desc').value.trim(),
+    trigger_config: getTriggerConfig(),
+    condition_config: conditions,
+    action_config: actions,
+    throttle_seconds: parseInt(document.getElementById('f-throttle').value) || 3600,
+    enabled: document.getElementById('f-enabled').value === 'true'
+  };
+
+  const btn = document.getElementById('btn-next');
+  btn.innerHTML = '<div class="spin"></div> Kaydediliyor...';
+  btn.disabled = true;
+
+  try {
+    const url = editId ? API + '/api/automations/' + editId : API + '/api/automations';
+    const method = editId ? 'PUT' : 'POST';
+    const res = await fetch(url, { method, headers: authHeaders(), body: JSON.stringify(body) });
+    const data = await res.json();
+    if (res.ok) {
+      closeCreateModal();
+      toast(editId ? 'Otomasyon güncellendi' : 'Otomasyon oluşturuldu', 'success');
+      await loadRules();
+    } else {
+      toast(data.error || 'Kaydetme başarısız', 'error');
+    }
+  } catch { toast('Bağlantı hatası', 'error'); }
+
+  btn.innerHTML = 'Kaydet ✓';
+  btn.disabled = false;
+}
+
+async function testCurrentRule() {
+  if (!editId) { toast('Önce kaydedin, sonra test edin', 'warning'); return; }
+  await runRule(editId);
+}
+
+// ── AI BUILDER ─────────────────────────────────────────────────────────────
+function openAIModal() {
+  document.getElementById('ai-overlay').classList.add('open');
+  document.getElementById('ai-preview').style.display = 'none';
+  document.getElementById('ai-loading').style.display = 'none';
+  document.getElementById('btn-ai-generate').style.display = '';
+  document.getElementById('btn-ai-use').style.display = 'none';
+  document.getElementById('ai-query').value = '';
+  generatedWorkflow = null;
+}
+
+function closeAIModal() {
+  document.getElementById('ai-overlay').classList.remove('open');
+}
+
+function setAIExample(el) {
+  document.getElementById('ai-query').value = el.textContent.trim();
+}
+
+async function generateWorkflow() {
+  const query = document.getElementById('ai-query').value.trim();
+  if (!query) { toast('Lütfen bir açıklama yazın', 'warning'); return; }
+
+  document.getElementById('ai-loading').style.display = '';
+  document.getElementById('ai-preview').style.display = 'none';
+  document.getElementById('btn-ai-generate').disabled = true;
+  document.getElementById('btn-ai-use').style.display = 'none';
+
+  try {
+    const res = await fetch(API + '/api/automations/generate', {
+      method: 'POST', headers: authHeaders(), body: JSON.stringify({ query })
+    });
+    const data = await res.json();
+    if (res.ok && data.workflow) {
+      generatedWorkflow = data.workflow;
+      renderAIPreview(data.workflow);
+      document.getElementById('ai-preview').style.display = '';
+      document.getElementById('btn-ai-use').style.display = '';
+    } else {
+      toast(data.error || 'Workflow oluşturulamadı', 'error');
+    }
+  } catch { toast('Bağlantı hatası', 'error'); }
+
+  document.getElementById('ai-loading').style.display = 'none';
+  document.getElementById('btn-ai-generate').disabled = false;
+}
+
+function renderAIPreview(wf) {
+  const tc = wf.trigger_config || {};
+  const actions = Array.isArray(wf.action_config) ? wf.action_config : [wf.action_config].filter(Boolean);
+  const trigLabel = TRIGGER_LABELS[tc.type] || tc.type;
+  const actLabel = actions.map(a => ACTION_LABELS[a?.type] || a?.type || '—').join(', ');
+
+  document.getElementById('ai-preview-content').innerHTML = `
+    <div class="preview-row"><div class="preview-label">Ad</div><div class="preview-val"><strong>${escHtml(wf.name || '—')}</strong></div></div>
+    <div class="preview-row"><div class="preview-label">Tetikleyici</div><div class="preview-val">${escHtml(trigLabel)}${tc.column ? ` → ${tc.column}` : ''}${tc.operator ? ` ${tc.operator}` : ''}${tc.value ? ` "${tc.value}"` : ''}</div></div>
+    ${Array.isArray(wf.condition_config) && wf.condition_config.length ? `<div class="preview-row"><div class="preview-label">Koşullar</div><div class="preview-val">${wf.condition_config.length} koşul</div></div>` : ''}
+    <div class="preview-row"><div class="preview-label">Aksiyonlar</div><div class="preview-val">${escHtml(actLabel)}</div></div>
+    ${wf.description ? `<div class="preview-row"><div class="preview-label">Açıklama</div><div class="preview-val" style="font-size:12px;color:var(--muted)">${escHtml(wf.description)}</div></div>` : ''}
+  `;
+}
+
+function useGeneratedWorkflow() {
+  if (!generatedWorkflow) return;
+  closeAIModal();
+  openCreateModal(generatedWorkflow);
+}
+
+// ── HELPERS ────────────────────────────────────────────────────────────────
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function relativeTime(iso) {
+  const diff = Date.now() - new Date(iso).getTime();
+  const m = Math.floor(diff / 60000);
+  if (m < 1) return 'az önce';
+  if (m < 60) return m + 'dk önce';
+  const h = Math.floor(m / 60);
+  if (h < 24) return h + 'sa önce';
+  return Math.floor(h / 24) + 'g önce';
+}
+
+function toast(msg, type) {
+  const el = document.createElement('div');
+  el.className = 'toast' + (type ? ' ' + type : '');
+  el.textContent = msg;
+  document.getElementById('toast').appendChild(el);
+  setTimeout(() => el.remove(), 3500);
+}
+
+function overlayClose(e, id) {
+  if (e.target.id === id) document.getElementById(id).classList.remove('open');
+}
+
+// ── CONSTANTS ──────────────────────────────────────────────────────────────
+const TRIGGER_LABELS = {
+  cell_condition: 'Hücre Koşulu', threshold: 'Eşik Değeri', schedule: 'Zamanlama',
+  date_arrived: 'Tarih Koşulu', row_added: 'Yeni Satır', value_changed: 'Değer Değişimi', ai_anomaly: 'AI Anomali'
+};
+const ACTION_LABELS = {
+  gmail: 'Gmail', notion_page: 'Notion', slack: 'Slack', webhook: 'Webhook',
+  make: 'Make.com', notification: 'Bildirim', sheets_update: 'Sheets', pdf_export: 'PDF'
+};
+const STATUS_LABELS = { success: 'Başarılı', error: 'Hata', skipped: 'Atlandı', pending: 'Bekliyor' };
+const OPERATORS = [
+  { v: 'less_than', l: '< Küçüktür' }, { v: 'greater_than', l: '> Büyüktür' },
+  { v: 'equals', l: '= Eşittir' }, { v: 'not_equals', l: '≠ Eşit Değil' },
+  { v: 'contains', l: 'İçeriyor' }, { v: 'is_empty', l: 'Boştur' },
+  { v: 'is_not_empty', l: 'Dolu' }, { v: 'date_passed', l: 'Tarihi Geçmiş' },
+  { v: 'date_is_today', l: 'Bugün' }
+];
+const ACTION_TYPES = [
+  { v: 'notification', l: 'Bildirim', icon: '🔔' }, { v: 'gmail', l: 'Gmail Gönder', icon: '📧' },
+  { v: 'slack', l: 'Slack', icon: '💬' }, { v: 'notion_page', l: 'Notion Sayfası', icon: '📝' },
+  { v: 'webhook', l: 'Webhook', icon: '🔗' }, { v: 'make', l: 'Make.com', icon: '⚙️' },
+  { v: 'sheets_update', l: 'Sheets Güncelle', icon: '📊' }, { v: 'pdf_export', l: 'PDF Dışa Aktar', icon: '📄' }
+];
+
+// ── INIT ───────────────────────────────────────────────────────────────────
+async function init() {
+  await initAuth();
+  renderTemplates();
+  await Promise.all([loadRules(), loadRuns()]);
+}
+
+document.addEventListener('DOMContentLoaded', init);
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    ['create-overlay','ai-overlay','run-overlay'].forEach(id => {
+      document.getElementById(id)?.classList.remove('open');
+    });
+  }
 });
 </script>
 </body>
