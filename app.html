@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Mocksheets">
 <link rel="apple-touch-icon" href="/icon-192.png">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='0'><stop offset='0' stop-color='%236B35CF'/><stop offset='1' stop-color='%232B80FF'/></linearGradient></defs><rect width='32' height='32' rx='4' fill='white'/><text x='1' y='27' font-family='Arial Rounded MT Bold,Arial,sans-serif' font-weight='900' font-size='28' fill='url(%23g)'>m</text></svg>">
+<link rel="icon" href="/images/logo.png">
 <meta name="description" content="Manage your Excel spreadsheets with AI-powered commands using Mocksheets">
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -317,6 +317,8 @@ body.dark .chat-chip:hover {
   animation: sparkPulse 2.5s ease infinite;
 }
 #chat-bar:focus-within #chat-spark { opacity: 1; }
+.chat-logo-icon { width:16px; height:16px; object-fit:contain; display:block; }
+body.dark .chat-logo-icon { filter: brightness(0) invert(1); }
 @keyframes sparkPulse {
   0%,100% { opacity:.7; }
   50%      { opacity:1; }
@@ -703,6 +705,7 @@ body.dark {
 .sb-user-menu-btn:hover { color:#1B1B1F; background:rgba(27,27,31,0.06); }
 
 /* COLLAPSED STATE */
+#appSidebar.collapsed .sb-logo-img,
 #appSidebar.collapsed .sb-logo-text,
 #appSidebar.collapsed .sb-new-btn span:last-child,
 #appSidebar.collapsed .sb-search-wrap,
@@ -1029,8 +1032,7 @@ body.light .sb-upgrade-btn{background:rgba(84,72,232,0.08);border-color:rgba(84,
 
 <header id="appTopbar">
   <a class="topbar-brand" href="/">
-    <img src="/images/logo.png" alt="mocksheets" class="brand-mark-img">
-    <span class="brand-name">mocksheets</span>
+    <img src="/images/logo-wordmark.png" alt="Mocksheets" class="brand-mark-img" style="height:26px;width:auto">
   </a>
   <div class="topbar-crumb">
     <span class="topbar-crumb-file" id="topbarFileName">Yeni Tablo</span>
@@ -1220,6 +1222,7 @@ body.light .sb-upgrade-btn{background:rgba(84,72,232,0.08);border-color:rgba(84,
 
   <!-- LOGO -->
   <div class="sb-logo">
+    <img src="/images/logo-wordmark.png" alt="Mocksheets" class="sb-logo-img" style="height:22px;width:auto;flex:1;min-width:0">
     <button class="sb-collapse-btn" onclick="toggleSidebar()" title="Küçült">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>
     </button>
@@ -1584,7 +1587,7 @@ body.light .sb-upgrade-btn{background:rgba(84,72,232,0.08);border-color:rgba(84,
     </div>
     <div id="chat-input-row">
       <span id="chat-spark">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="var(--violet)"><path d="M12 1l2.5 6.5L21 10l-6.5 2.5L12 19l-2.5-6.5L3 10l6.5-2.5L12 1z"/></svg>
+        <img src="/images/logo.png" alt="" class="chat-logo-icon">
       </span>
       <input
         id="chat-input"
