@@ -4,6 +4,21 @@ const express = require('express');
 const cors    = require('cors');
 const fetch   = require('node-fetch');
 const { processExcelCommand } = require('./rag/pipeline');
+const tokenManager = require('./services/tokenManager');
+const { createClient: _createSbClient } = require('@supabase/supabase-js');
+
+let _sbForAuth = null;
+function getSbForAuth() {
+  if (!_sbForAuth) _sbForAuth = _createSbClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
+  return _sbForAuth;
+}
+async function getUserIdFromState(state) {
+  if (!state) return null;
+  try {
+    const { data: { user } } = await getSbForAuth().auth.getUser(state);
+    return user?.id || null;
+  } catch { return null; }
+}
 
 const UPSHEET_KNOWLEDGE_BASE = {
 
@@ -142,47 +157,75 @@ const automationsRouter = require('./routes/automations');
 const { checkLimit, incrementUsage, requireFeature, getOrCreateUsage } = require('./middleware/limits');
 const PLANS = require('./config/plans');
 // OAuth endpoints — auth middleware'den önce kayıtlı (browser popup header gönderemez)
-app.get('/api/integrations/drive/auth', (_req, res) => {
+app.get('/api/integrations/drive/auth', (req, res) => {
   const clientId = process.env.GOOGLE_CLIENT_ID;
   if (!clientId) return res.status(500).send('<p>Google OAuth yapılandırılmamış</p>');
   const base = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 3001}`;
   const redirectUri = base + '/api/integrations/drive/callback';
   const scope = 'https://www.googleapis.com/auth/drive.file';
-  res.redirect(`https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${encodeURIComponent(scope)}&access_type=offline&prompt=consent`);
+  const state = req.query.token || '';
+  res.redirect(`https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${encodeURIComponent(scope)}&access_type=offline&prompt=consent&state=${encodeURIComponent(state)}`);
 });
 
 app.get('/api/integrations/drive/callback', async (req, res) => {
   const origin = process.env.FRONTEND_URL || 'https://mocksheets.com';
-  const { code, error } = req.query;
+  const { code, error, state } = req.query;
   if (error || !code) return res.send(`<script>window.opener?.postMessage({type:'drive_auth',error:${JSON.stringify(error || 'cancelled')}},${JSON.stringify(origin)});window.close();</script>`);
   const base = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 3001}`;
   try {
     const r = await fetch('https://oauth2.googleapis.com/token', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams({ code, client_id: process.env.GOOGLE_CLIENT_ID, client_secret: process.env.GOOGLE_CLIENT_SECRET, redirect_uri: base + '/api/integrations/drive/callback', grant_type: 'authorization_code' }) });
-    const token = await r.json();
-    if (token.access_token) res.send(`<script>window.opener?.postMessage({type:'drive_auth',token:${JSON.stringify(token.access_token)}},${JSON.stringify(origin)});window.close();</script>`);
-    else res.send(`<script>window.opener?.postMessage({type:'drive_auth',error:'Token alınamadı'},${JSON.stringify(origin)});window.close();</script>`);
+    const tokens = await r.json();
+    if (tokens.access_token) {
+      const userId = await getUserIdFromState(state);
+      if (userId) {
+        await tokenManager.saveToken(userId, 'google-drive', {
+          accessToken: tokens.access_token,
+          refreshToken: tokens.refresh_token || null,
+          expiresAt: tokens.expires_in ? new Date(Date.now() + tokens.expires_in * 1000) : null,
+          scopes: (tokens.scope || '').split(' ').filter(Boolean),
+          metadata: {},
+        }).catch(e => console.error('[drive/callback] saveToken failed:', e.message));
+      }
+      res.send(`<script>window.opener?.postMessage({type:'drive_auth',token:${JSON.stringify(tokens.access_token)},connected:true},${JSON.stringify(origin)});window.close();</script>`);
+    } else {
+      res.send(`<script>window.opener?.postMessage({type:'drive_auth',error:'Token alınamadı'},${JSON.stringify(origin)});window.close();</script>`);
+    }
   } catch (err) { res.send(`<script>window.opener?.postMessage({type:'drive_auth',error:${JSON.stringify(err.message)}},${JSON.stringify(origin)});window.close();</script>`); }
 });
 
-app.get('/api/integrations/sheets/auth', (_req, res) => {
+app.get('/api/integrations/sheets/auth', (req, res) => {
   const clientId = process.env.GOOGLE_CLIENT_ID;
   if (!clientId) return res.status(500).send('<p>Google OAuth yapılandırılmamış</p>');
   const base = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 3001}`;
   const redirectUri = base + '/api/integrations/sheets/callback';
   const scopes = 'https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/drive.file';
-  res.redirect(`https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${encodeURIComponent(scopes)}&access_type=offline&prompt=consent`);
+  const state = req.query.token || '';
+  res.redirect(`https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${encodeURIComponent(scopes)}&access_type=offline&prompt=consent&state=${encodeURIComponent(state)}`);
 });
 
 app.get('/api/integrations/sheets/callback', async (req, res) => {
   const origin = process.env.FRONTEND_URL || 'https://mocksheets.com';
-  const { code, error } = req.query;
+  const { code, error, state } = req.query;
   if (error || !code) return res.send(`<script>window.opener?.postMessage({type:'sheets_auth',error:${JSON.stringify(error || 'cancelled')}},${JSON.stringify(origin)});window.close();</script>`);
   const base = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 3001}`;
   try {
     const r = await fetch('https://oauth2.googleapis.com/token', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams({ code, client_id: process.env.GOOGLE_CLIENT_ID, client_secret: process.env.GOOGLE_CLIENT_SECRET, redirect_uri: base + '/api/integrations/sheets/callback', grant_type: 'authorization_code' }) });
     const tokens = await r.json();
-    if (tokens.access_token) res.send(`<script>window.opener?.postMessage({type:'sheets_auth',tokens:${JSON.stringify(tokens)}},${JSON.stringify(origin)});window.close();</script>`);
-    else res.send(`<script>window.opener?.postMessage({type:'sheets_auth',error:${JSON.stringify(tokens.error_description || 'Token alınamadı')}},${JSON.stringify(origin)});window.close();</script>`);
+    if (tokens.access_token) {
+      const userId = await getUserIdFromState(state);
+      if (userId) {
+        await tokenManager.saveToken(userId, 'google-sheets', {
+          accessToken: tokens.access_token,
+          refreshToken: tokens.refresh_token || null,
+          expiresAt: tokens.expires_in ? new Date(Date.now() + tokens.expires_in * 1000) : null,
+          scopes: (tokens.scope || '').split(' ').filter(Boolean),
+          metadata: {},
+        }).catch(e => console.error('[sheets/callback] saveToken failed:', e.message));
+      }
+      res.send(`<script>window.opener?.postMessage({type:'sheets_auth',tokens:${JSON.stringify(tokens)},connected:true},${JSON.stringify(origin)});window.close();</script>`);
+    } else {
+      res.send(`<script>window.opener?.postMessage({type:'sheets_auth',error:${JSON.stringify(tokens.error_description || 'Token alınamadı')}},${JSON.stringify(origin)});window.close();</script>`);
+    }
   } catch (err) { res.send(`<script>window.opener?.postMessage({type:'sheets_auth',error:${JSON.stringify(err.message)}},${JSON.stringify(origin)});window.close();</script>`); }
 });
 
@@ -213,6 +256,96 @@ app.get('/api/integrations/excel/callback', async (req, res) => {
       res.send(`<script>window.opener?.postMessage({type:'excel_auth',error:${JSON.stringify(msg)}},${JSON.stringify(origin)});window.close();</script>`);
     }
   } catch (err) { res.send(`<script>window.opener?.postMessage({type:'excel_auth',error:${JSON.stringify(err.message)}},${JSON.stringify(origin)});window.close();</script>`); }
+});
+
+// Gmail OAuth
+app.get('/api/integrations/gmail/auth', (req, res) => {
+  const clientId = process.env.GOOGLE_CLIENT_ID;
+  if (!clientId) return res.status(500).send('<p>Google OAuth yapılandırılmamış</p>');
+  const base = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 3001}`;
+  const redirectUri = base + '/api/integrations/gmail/callback';
+  const scopes = [
+    'https://www.googleapis.com/auth/gmail.send',
+    'https://www.googleapis.com/auth/gmail.compose',
+    'https://www.googleapis.com/auth/gmail.readonly',
+  ].join(' ');
+  const state = req.query.token || '';
+  res.redirect(`https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${encodeURIComponent(scopes)}&access_type=offline&prompt=consent&state=${encodeURIComponent(state)}`);
+});
+
+app.get('/api/integrations/gmail/callback', async (req, res) => {
+  const origin = process.env.FRONTEND_URL || 'https://mocksheets.com';
+  const { code, error, state } = req.query;
+  if (error || !code) return res.send(`<script>window.opener?.postMessage({type:'gmail_auth',error:${JSON.stringify(error || 'cancelled')}},${JSON.stringify(origin)});window.close();</script>`);
+  const base = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 3001}`;
+  try {
+    const r = await fetch('https://oauth2.googleapis.com/token', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams({ code, client_id: process.env.GOOGLE_CLIENT_ID, client_secret: process.env.GOOGLE_CLIENT_SECRET, redirect_uri: base + '/api/integrations/gmail/callback', grant_type: 'authorization_code' }) });
+    const tokens = await r.json();
+    if (tokens.access_token) {
+      const userId = await getUserIdFromState(state);
+      if (userId) {
+        await tokenManager.saveToken(userId, 'gmail', {
+          accessToken: tokens.access_token,
+          refreshToken: tokens.refresh_token || null,
+          expiresAt: tokens.expires_in ? new Date(Date.now() + tokens.expires_in * 1000) : null,
+          scopes: (tokens.scope || '').split(' ').filter(Boolean),
+          metadata: {},
+        }).catch(e => console.error('[gmail/callback] saveToken failed:', e.message));
+      }
+      res.send(`<script>window.opener?.postMessage({type:'gmail_auth',connected:true},${JSON.stringify(origin)});window.close();</script>`);
+    } else {
+      res.send(`<script>window.opener?.postMessage({type:'gmail_auth',error:${JSON.stringify(tokens.error_description || 'Token alınamadı')}},${JSON.stringify(origin)});window.close();</script>`);
+    }
+  } catch (err) { res.send(`<script>window.opener?.postMessage({type:'gmail_auth',error:${JSON.stringify(err.message)}},${JSON.stringify(origin)});window.close();</script>`); }
+});
+
+// Notion OAuth
+app.get('/api/integrations/notion/auth', (req, res) => {
+  const clientId = process.env.NOTION_CLIENT_ID;
+  if (!clientId) return res.status(500).send('<p>Notion OAuth yapılandırılmamış. NOTION_CLIENT_ID eksik.</p>');
+  const base = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 3001}`;
+  const redirectUri = process.env.NOTION_REDIRECT_URI || (base + '/api/integrations/notion/callback');
+  const state = req.query.token || '';
+  const params = new URLSearchParams({ client_id: clientId, response_type: 'code', owner: 'user', redirect_uri: redirectUri, state });
+  res.redirect(`https://api.notion.com/v1/oauth/authorize?${params}`);
+});
+
+app.get('/api/integrations/notion/callback', async (req, res) => {
+  const origin = process.env.FRONTEND_URL || 'https://mocksheets.com';
+  const { code, error, state } = req.query;
+  if (error || !code) return res.send(`<script>window.opener?.postMessage({type:'notion_auth',error:${JSON.stringify(error || 'cancelled')}},${JSON.stringify(origin)});window.close();</script>`);
+  const base = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 3001}`;
+  const redirectUri = process.env.NOTION_REDIRECT_URI || (base + '/api/integrations/notion/callback');
+  try {
+    const r = await fetch('https://api.notion.com/v1/oauth/token', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Basic ' + Buffer.from(`${process.env.NOTION_CLIENT_ID}:${process.env.NOTION_CLIENT_SECRET}`).toString('base64'),
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ grant_type: 'authorization_code', code, redirect_uri: redirectUri }),
+    });
+    const data = await r.json();
+    if (data.access_token) {
+      const userId = await getUserIdFromState(state);
+      if (userId) {
+        await tokenManager.saveToken(userId, 'notion', {
+          accessToken: data.access_token,
+          refreshToken: null,
+          expiresAt: null,
+          scopes: ['read_content', 'insert_content', 'update_content'],
+          metadata: {
+            workspace_name: data.workspace_name,
+            workspace_id: data.workspace_id,
+            bot_id: data.bot_id,
+          },
+        }).catch(e => console.error('[notion/callback] saveToken failed:', e.message));
+      }
+      res.send(`<script>window.opener?.postMessage({type:'notion_auth',connected:true},${JSON.stringify(origin)});window.close();</script>`);
+    } else {
+      res.send(`<script>window.opener?.postMessage({type:'notion_auth',error:${JSON.stringify(data.error || 'Token alınamadı')}},${JSON.stringify(origin)});window.close();</script>`);
+    }
+  } catch (err) { res.send(`<script>window.opener?.postMessage({type:'notion_auth',error:${JSON.stringify(err.message)}},${JSON.stringify(origin)});window.close();</script>`); }
 });
 
 app.use('/api/integrations', checkLimit, requireFeature('integrations'), integrationsRouter);

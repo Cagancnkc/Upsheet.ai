@@ -1267,6 +1267,7 @@ const STORAGE_KEY = {
   'trello':        'int_trello',
   'google-sheets': 'int_sheets',
   'google-drive':  'int_drive',
+  'gmail':         'int_gmail',
 };
 
 const INT_CONFIG = {
@@ -1318,6 +1319,7 @@ const INT_CONFIG = {
   },
   'google-sheets': { type: 'oauth', authPath: '/api/integrations/sheets/auth', label: 'Google' },
   'google-drive':  { type: 'oauth', authPath: '/api/integrations/drive/auth',  label: 'Google' },
+  'gmail':         { type: 'oauth', authPath: '/api/integrations/gmail/auth',   label: 'Google' },
 };
 
 async function testIntegration(id, form, token) {
@@ -1366,10 +1368,19 @@ function ConnectModal({ integration, onClose, onSave }) {
   async function handleConnect() {
     setConnecting(true); setResult(null);
     try {
-      const res = await testIntegration(integration.id, form, getAuthToken());
+      const authToken = getAuthToken();
+      const res = await testIntegration(integration.id, form, authToken);
       if (!res) { setResult({ ok:false, msg:'Test desteklenmiyor.' }); return; }
       const data = await res.json().catch(() => ({}));
       if (res.ok) {
+        // Save config to DB
+        if (authToken) {
+          fetch(`${BACKEND_URL}/api/integrations/${integration.id}/save-config`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${authToken}` },
+            body: JSON.stringify({ webhookUrl: form.url || null, token: form.token || null, apiKey: form.apiKey || null, metadata: form }),
+          }).catch(() => {});
+        }
         if (storageKey) localStorage.setItem(storageKey, JSON.stringify(form));
         setResult({ ok:true, msg:'Bağlantı başarılı! Kaydedildi.' });
         setTimeout(() => { onSave(integration.id, form); }, 800);
@@ -1382,15 +1393,25 @@ function ConnectModal({ integration, onClose, onSave }) {
   }
 
   function handleOAuth() {
-    const popup = window.open(`${BACKEND_URL}${cfg.authPath}`, 'oauth', 'width=520,height=640');
+    const authToken = getAuthToken();
+    const url = `${BACKEND_URL}${cfg.authPath}${authToken ? '?token=' + encodeURIComponent(authToken) : ''}`;
+    const popup = window.open(url, 'oauth', 'width=520,height=640');
     setOauthWaiting(true);
     function onMsg(e) {
       if (e.origin !== new URL(BACKEND_URL).origin) return;
       if (!e.data || typeof e.data !== 'object') return;
-      const { access_token, refresh_token, expiry, token } = e.data;
-      const at = access_token || token;
+      const { access_token, refresh_token, expiry, token, tokens, connected: isConnected } = e.data;
+      // DB-backed OAuth: callback already saved to DB, just update UI
+      if (isConnected) {
+        window.removeEventListener('message', onMsg);
+        setOauthWaiting(false);
+        onSave(integration.id, {});
+        return;
+      }
+      // Legacy token flow (backward compat for app.js sheets write)
+      const at = access_token || token || tokens?.access_token;
       if (!at) return;
-      const saved = { access_token: at, refresh_token: refresh_token||null, expiry: expiry||null };
+      const saved = { access_token: at, refresh_token: refresh_token || tokens?.refresh_token || null, expiry: expiry || null };
       if (storageKey) localStorage.setItem(storageKey, JSON.stringify(saved));
       window.removeEventListener('message', onMsg);
       setOauthWaiting(false);
@@ -1546,6 +1567,13 @@ const INTEGRATIONS = [
     triggers: ['Dosya yüklendi', 'İçe aktarım başladı'],
     useCase: 'Drive\'daki Excel dosyalarına doğrudan eriş',
   },
+  {
+    id: 'gmail', name: 'Gmail', category: 'İletişim', tier: 'pro', popular: false,
+    logo: 'images/integrations/gmail.svg',
+    actions: ['E-posta gönder', 'Taslak oluştur', 'Toplu gönderim'],
+    triggers: ['Rapor hazır', 'Dışa aktarım tamamlandı'],
+    useCase: 'AI raporlarını otomatik e-posta ile paylaş',
+  },
 ];
 
 function IntegrationCard({ integration, connected, onConnect, onDisconnect, listView }) {
@@ -1681,6 +1709,24 @@ function App() {
       .catch(() => {});
   }, []);
 
+  useEffect(() => {
+    const token = getAuthToken();
+    if (!token) return;
+    fetch(`${BACKEND_URL}/api/integrations/status`, { headers: { Authorization: `Bearer ${token}` } })
+      .then(r => r.json())
+      .then(statuses => {
+        setConnected(prev => {
+          const s = new Set(prev);
+          Object.entries(statuses).forEach(([provider, info]) => {
+            if (info.connected) s.add(provider);
+            else s.delete(provider);
+          });
+          return s;
+        });
+      })
+      .catch(() => {});
+  }, []);
+
   const filtered = INTEGRATIONS.filter(it => {
     const matchCat = activeCat === 'Tümü' || it.category === activeCat;
     const q = query.toLowerCase();
@@ -1698,6 +1744,13 @@ function App() {
   function handleDisconnect(id) {
     const name = INTEGRATIONS.find(i => i.id === id)?.name || 'Bu entegrasyon';
     if (!window.confirm(`${name} bağlantısını kesmek istediğinizden emin misiniz?`)) return;
+    const token = getAuthToken();
+    if (token) {
+      fetch(`${BACKEND_URL}/api/integrations/${id}/disconnect`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      }).catch(() => {});
+    }
     try { const k = STORAGE_KEY[id]; if (k) localStorage.removeItem(k); } catch {}
     setConnected(prev => { const s = new Set(prev); s.delete(id); return s; });
   }

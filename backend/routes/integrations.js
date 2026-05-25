@@ -4,6 +4,7 @@ const MSFT_SCOPES = 'Files.ReadWrite User.Read offline_access';
 const express = require('express');
 const router = express.Router();
 const fetch = require('node-fetch');
+const tokenManager = require('../services/tokenManager');
 
 // Exponential backoff — harici API rate limit (429/503) durumunda retry
 async function fetchWithRetry(url, options, maxRetries = 3) {
@@ -564,16 +565,28 @@ router.post('/trello/export', async (req, res) => {
 
 // ── Google Sheets: Gerçek yazma (Sheets API v4) ─
 router.post('/sheets/write', async (req, res) => {
-  const { accessToken, refreshToken, tokenExpiry, sheetId, sheetName, startCell, data } = req.body;
+  const { accessToken: bodyAccessToken, refreshToken: bodyRefreshToken, tokenExpiry, sheetId, sheetName, startCell, data } = req.body;
 
-  if (!accessToken && !refreshToken) {
-    return res.status(400).json({ error: 'Google token gerekli. Önce "Google ile Bağlan" butonuna tıklayın.' });
-  }
   if (!data?.length) return res.status(400).json({ error: 'Dışa aktarılacak veri yok' });
 
   let { google } = require('googleapis');
   const redirectUri = (process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 3001}`)
     + '/api/integrations/sheets/callback';
+
+  // DB token öncelikli, fallback request body (backward compat)
+  let accessToken = bodyAccessToken;
+  let refreshToken = bodyRefreshToken;
+  if (req.user?.id) {
+    const dbToken = await tokenManager.getValidAccessToken(req.user.id, 'google-sheets').catch(() => null);
+    if (dbToken) {
+      accessToken = dbToken;
+      refreshToken = null; // DB handles refresh
+    }
+  }
+
+  if (!accessToken && !refreshToken) {
+    return res.status(400).json({ error: 'Google token gerekli. Önce "Google ile Bağlan" butonuna tıklayın.' });
+  }
 
   const oauth2Client = new google.auth.OAuth2(
     process.env.GOOGLE_CLIENT_ID,
@@ -780,6 +793,161 @@ router.post('/excel/files', async (req, res) => {
       .filter(f => /\.(csv|xlsx?|ods)$/i.test(f.name))
       .map(f => ({ id: f.id, name: f.name, url: f.webUrl, modified: f.lastModifiedDateTime, size: f.size }));
     res.json({ success: true, files });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ── Integration Status (tüm providerlar) ─────────────────────────────────────
+router.get('/status', async (req, res) => {
+  try {
+    const statuses = await tokenManager.getAllStatuses(req.user.id);
+    res.json(statuses);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ── Disconnect ────────────────────────────────────────────────────────────────
+router.delete('/:provider/disconnect', async (req, res) => {
+  try {
+    await tokenManager.deleteToken(req.user.id, req.params.provider);
+    res.json({ ok: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ── Save config (webhook URL, API key, personal token) ────────────────────────
+router.post('/:provider/save-config', async (req, res) => {
+  const { provider } = req.params;
+  const { webhookUrl, token, apiKey, metadata } = req.body;
+  const accessToken = token || apiKey || webhookUrl;
+  if (!accessToken) return res.status(400).json({ error: 'Token, apiKey veya webhookUrl gerekli' });
+
+  try {
+    await tokenManager.saveToken(req.user.id, provider, {
+      accessToken,
+      refreshToken: null,
+      expiresAt: null,
+      scopes: [],
+      metadata: metadata || (webhookUrl ? { webhookUrl } : {}),
+      status: 'active',
+    });
+    res.json({ ok: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ── Gmail: E-posta gönder ─────────────────────────────────────────────────────
+router.post('/gmail/send', async (req, res) => {
+  const { to, subject, body, html } = req.body;
+  if (!to || !subject) return res.status(400).json({ error: 'to ve subject zorunlu' });
+
+  const accessToken = await tokenManager.getValidAccessToken(req.user.id, 'gmail').catch(() => null);
+  if (!accessToken) return res.status(401).json({ error: 'Gmail bağlı değil. Önce Gmail hesabınızı bağlayın.' });
+
+  try {
+    const { google } = require('googleapis');
+    const oauth2Client = new google.auth.OAuth2(process.env.GOOGLE_CLIENT_ID, process.env.GOOGLE_CLIENT_SECRET);
+    oauth2Client.setCredentials({ access_token: accessToken });
+
+    const gmail = google.gmail({ version: 'v1', auth: oauth2Client });
+    const boundary = 'mocksheets_' + Date.now();
+    const contentType = html ? `multipart/alternative; boundary="${boundary}"` : 'text/plain; charset=UTF-8';
+    let rawBody;
+
+    if (html) {
+      rawBody = [
+        `To: ${to}`,
+        `Subject: ${subject}`,
+        'MIME-Version: 1.0',
+        `Content-Type: multipart/alternative; boundary="${boundary}"`,
+        '',
+        `--${boundary}`,
+        'Content-Type: text/plain; charset=UTF-8',
+        '',
+        body || '',
+        '',
+        `--${boundary}`,
+        'Content-Type: text/html; charset=UTF-8',
+        '',
+        html,
+        '',
+        `--${boundary}--`,
+      ].join('\r\n');
+    } else {
+      rawBody = [
+        `To: ${to}`,
+        `Subject: ${subject}`,
+        'MIME-Version: 1.0',
+        `Content-Type: ${contentType}`,
+        '',
+        body || '',
+      ].join('\r\n');
+    }
+
+    const raw = Buffer.from(rawBody).toString('base64url');
+    await gmail.users.messages.send({ userId: 'me', requestBody: { raw } });
+    res.json({ ok: true });
+  } catch (err) {
+    const code = err.code || err.status;
+    if (code === 401) return res.status(401).json({ error: 'Gmail token süresi doldu. Lütfen yeniden bağlanın.', code: 'TOKEN_EXPIRED' });
+    res.status(500).json({ error: 'Gmail gönderim hatası: ' + err.message });
+  }
+});
+
+// ── Gmail: Taslak oluştur ─────────────────────────────────────────────────────
+router.post('/gmail/draft', async (req, res) => {
+  const { to, subject, body, html } = req.body;
+  if (!subject) return res.status(400).json({ error: 'subject zorunlu' });
+
+  const accessToken = await tokenManager.getValidAccessToken(req.user.id, 'gmail').catch(() => null);
+  if (!accessToken) return res.status(401).json({ error: 'Gmail bağlı değil.' });
+
+  try {
+    const { google } = require('googleapis');
+    const oauth2Client = new google.auth.OAuth2(process.env.GOOGLE_CLIENT_ID, process.env.GOOGLE_CLIENT_SECRET);
+    oauth2Client.setCredentials({ access_token: accessToken });
+
+    const gmail = google.gmail({ version: 'v1', auth: oauth2Client });
+    const rawBody = [
+      to ? `To: ${to}` : '',
+      `Subject: ${subject}`,
+      'MIME-Version: 1.0',
+      'Content-Type: text/plain; charset=UTF-8',
+      '',
+      body || '',
+    ].filter(Boolean).join('\r\n');
+
+    const raw = Buffer.from(rawBody).toString('base64url');
+    const draft = await gmail.users.drafts.create({ userId: 'me', requestBody: { message: { raw } } });
+    res.json({ ok: true, draftId: draft.data.id });
+  } catch (err) {
+    res.status(500).json({ error: 'Taslak oluşturma hatası: ' + err.message });
+  }
+});
+
+// ── Drive: Dosya listesi (DB token kullanarak) ────────────────────────────────
+router.get('/drive/files', async (req, res) => {
+  const accessToken = await tokenManager.getValidAccessToken(req.user.id, 'google-drive').catch(() => null);
+  if (!accessToken) return res.status(401).json({ error: 'Google Drive bağlı değil.' });
+
+  try {
+    const { google } = require('googleapis');
+    const oauth2Client = new google.auth.OAuth2(process.env.GOOGLE_CLIENT_ID, process.env.GOOGLE_CLIENT_SECRET);
+    oauth2Client.setCredentials({ access_token: accessToken });
+
+    const drive = google.drive({ version: 'v3', auth: oauth2Client });
+    const result = await drive.files.list({
+      q: "mimeType='application/vnd.google-apps.spreadsheet' or mimeType='text/csv'",
+      fields: 'files(id,name,webViewLink,modifiedTime)',
+      orderBy: 'modifiedTime desc',
+      pageSize: 20,
+    });
+
+    res.json({ success: true, files: result.data.files || [] });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
