@@ -3,13 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="Mocksheets entegrasyon merkezi: Google Sheets, Slack, Notion ve 30'dan fazla araçla bağlantı kurun. Excel iş akışlarınızı otomatize edin.">
+<meta name="description" content="Mocksheets entegrasyon merkezi — Google Sheets, Slack, Notion, Zapier ve daha fazla araçla bağlayın. Ops iş akışlarınızı otomatize edin.">
 <link rel="canonical" href="https://mocksheets.com/integrations">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='0'><stop offset='0' stop-color='%236B35CF'/><stop offset='1' stop-color='%232B80FF'/></linearGradient></defs><rect width='32' height='32' rx='4' fill='white'/><text x='1' y='27' font-family='Arial Rounded MT Bold,Arial,sans-serif' font-weight='900' font-size='28' fill='url(%23g)'>m</text></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='4' fill='%2316a34a'/><text x='4' y='25' font-family='Arial' font-weight='900' font-size='22' fill='white'>m</text></svg>">
 <title>Entegrasyonlar — Mocksheets</title>
 <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script>(function(){try{var t=localStorage.getItem('ms-int-theme')||'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}})()</script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 
@@ -31,7 +32,7 @@
   --bg:#0c0c18;
   --surface:#16162a;
   --surface2:#1e1e35;
-  --brand-soft:rgba(124,92,255,0.15);
+  --brand-soft:rgba(22,163,74,0.12);
   --text:#e2e8f0;
   --text-muted:#94a3b8;
   --border:#2a2a45;
@@ -46,7 +47,9 @@ body{
   transition:background .2s,color .2s;
 }
 
-/* NAV */
+/* ============================
+   NAV
+   ============================ */
 .int-nav{
   display:flex;align-items:center;gap:12px;
   padding:0 24px;height:64px;
@@ -95,12 +98,111 @@ body{
   pointer-events:none;
 }
 
-/* MAIN */
-.int-main{max-width:1100px;margin:0 auto;padding:32px 24px 80px;}
+/* ============================
+   HERO
+   ============================ */
+.hero-section{
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+}
+.hero-container{
+  max-width:1100px;margin:0 auto;
+  padding:72px 24px 64px;
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:64px;align-items:center;
+}
+.hero-eyebrow{
+  font-size:11px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.12em;color:var(--brand);margin-bottom:16px;
+}
+.hero-h1{
+  font-size:42px;font-weight:900;letter-spacing:-.03em;
+  line-height:1.1;margin-bottom:18px;
+}
+.hero-sub{
+  font-size:16px;color:var(--text-muted);line-height:1.65;
+  margin-bottom:28px;
+}
+.hero-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:32px;}
+.hero-chip{
+  padding:5px 12px;border-radius:100px;font-size:12px;font-weight:500;
+  background:var(--brand-soft);color:var(--brand);
+  border:1px solid rgba(22,163,74,0.2);
+}
+.hero-ctas{display:flex;gap:12px;flex-wrap:wrap;}
+.hero-cta-primary{
+  padding:12px 22px;border-radius:var(--radius-sm);
+  background:var(--brand);color:#fff;
+  font-size:14px;font-weight:600;text-decoration:none;
+  transition:opacity .15s;
+}
+.hero-cta-primary:hover{opacity:.88;}
+.hero-cta-secondary{
+  padding:12px 22px;border-radius:var(--radius-sm);
+  background:transparent;color:var(--text-muted);
+  font-size:14px;font-weight:500;text-decoration:none;
+  border:1px solid var(--border);transition:all .15s;
+}
+.hero-cta-secondary:hover{border-color:var(--brand);color:var(--brand);}
 
-.int-header{margin-bottom:24px;}
-.int-header h1{font-size:26px;font-weight:800;margin-bottom:6px;letter-spacing:-.02em;}
-.int-header p{font-size:14px;color:var(--text-muted);}
+/* Flow Visual */
+.fv-card{
+  background:var(--surface2);
+  border:1.5px solid var(--border);
+  border-radius:18px;padding:32px 24px;
+  display:flex;align-items:center;gap:8px;
+}
+.fv-left{flex-shrink:0;}
+.fv-ms-node{
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+}
+.fv-ms-icon{
+  width:52px;height:52px;background:var(--brand);border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:900;font-size:24px;color:#fff;letter-spacing:-.04em;
+}
+.fv-ms-label{font-size:11px;font-weight:600;color:var(--text-muted);text-align:center;}
+
+.fv-connector{
+  flex:1;height:160px;min-width:60px;
+}
+.fv-connector line,.fv-connector polyline{
+  stroke:var(--brand);stroke-dasharray:4 3;fill:none;opacity:.65;
+}
+.fv-connector .fv-dot{fill:var(--brand);}
+.fv-dot-anim{animation:fvDot 1.8s ease-in-out infinite;}
+.fv-dot-anim-2{animation:fvDot 1.8s ease-in-out .6s infinite;}
+.fv-dot-anim-3{animation:fvDot 1.8s ease-in-out 1.2s infinite;}
+@keyframes fvDot{0%,100%{opacity:1;}50%{opacity:.15;}}
+
+.fv-right{
+  flex-shrink:0;
+  display:flex;flex-direction:column;gap:20px;
+}
+.fv-target-row{
+  display:flex;align-items:center;gap:10px;
+}
+.fv-tool-icon{
+  width:40px;height:40px;background:var(--surface);
+  border:1.5px solid var(--border);border-radius:10px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.fv-tool-icon img{width:22px;height:22px;object-fit:contain;}
+[data-theme="dark"] .fv-tool-icon{background:#fff;}
+.fv-tool-label{font-size:12px;font-weight:500;color:var(--text);white-space:nowrap;}
+
+/* ============================
+   INT BROWSER (React root wrapper)
+   ============================ */
+#int-browser{
+  background:var(--bg);
+  border-bottom:1px solid var(--border);
+}
+
+/* ============================
+   REACT INNER STYLES
+   ============================ */
+.int-main{max-width:1100px;margin:0 auto;padding:32px 24px 48px;}
 
 .stats-bar{
   display:flex;gap:24px;padding:12px 0;
@@ -109,7 +211,6 @@ body{
 .stat{font-size:13px;color:var(--text-muted);}
 .stat strong{color:var(--text);font-weight:700;}
 
-/* TOOLBAR */
 .int-toolbar{
   display:flex;align-items:center;justify-content:space-between;
   gap:12px;margin-bottom:20px;flex-wrap:wrap;
@@ -134,14 +235,13 @@ body{
 .view-btn.active{background:var(--brand-soft);border-color:var(--brand);color:var(--brand);}
 .view-btn:hover:not(.active){background:var(--surface2);}
 
-/* CARDS */
+/* Cards Grid */
 .cards-grid{
   display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+  grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
   gap:16px;
 }
 @media(max-width:560px){.cards-grid{grid-template-columns:1fr;}}
-
 .cards-list{display:flex;flex-direction:column;gap:8px;}
 
 .int-card{
@@ -151,32 +251,27 @@ body{
   padding:22px;
   cursor:pointer;
   transition:all .2s;
-  position:relative;
-  overflow:hidden;
-  display:flex;
-  flex-direction:column;
+  position:relative;overflow:hidden;
+  display:flex;flex-direction:column;
 }
 .int-card::before{
   content:'';position:absolute;inset:0;
-  background:radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(124,92,255,0.07) 0%,transparent 60%);
+  background:radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(22,163,74,0.07) 0%,transparent 60%);
   opacity:0;transition:opacity .3s;pointer-events:none;
 }
-.int-card:hover{border-color:#bbf7d0;box-shadow:var(--shadow-hover);transform:translateY(-3px);}
+.int-card:hover{border-color:#bbf7d0;box-shadow:var(--shadow-hover);transform:translateY(-2px);}
 .int-card:hover::before{opacity:1;}
 .int-card.connected{border-color:#22c55e;box-shadow:0 0 0 3px rgba(34,197,94,0.08);}
 
-/* LOGO */
 .card-logo{
   width:52px;height:52px;border-radius:12px;
   background:#fff;padding:10px;
   box-shadow:0 1px 4px rgba(0,0,0,.1);
-  display:flex;align-items:center;justify-content:center;
-  flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
 }
 .card-logo img{width:32px;height:32px;object-fit:contain;}
 [data-theme="dark"] .card-logo{background:#fff;box-shadow:0 1px 6px rgba(0,0,0,.3);}
 
-/* PULSE DOT */
 .pulse-dot{
   width:8px;height:8px;background:#22c55e;border-radius:50%;
   animation:pulse 2s ease-in-out infinite;flex-shrink:0;
@@ -186,21 +281,37 @@ body{
 .card-badges{display:flex;flex-direction:column;gap:4px;align-items:flex-end;}
 .badge{
   font-size:10px;font-weight:600;text-transform:uppercase;
-  letter-spacing:.05em;padding:2px 8px;border-radius:100px;
-  white-space:nowrap;
+  letter-spacing:.05em;padding:2px 8px;border-radius:100px;white-space:nowrap;
 }
-.badge-pro{background:rgba(124,92,255,0.12);color:var(--brand);}
+.badge-pro{background:rgba(124,92,255,0.12);color:#7c3aed;}
 .badge-free{background:rgba(34,197,94,0.12);color:#16a34a;}
 .badge-connected{background:rgba(34,197,94,0.12);color:#16a34a;display:flex;align-items:center;gap:5px;}
 .badge-popular{background:rgba(251,191,36,0.15);color:#d97706;}
 
 .card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;}
 .card-body{flex:1;}
-.card-name{font-size:15px;font-weight:700;margin-bottom:4px;}
-.card-cat{font-size:11px;color:var(--text-muted);margin-bottom:6px;}
-.card-desc{font-size:12px;color:var(--text-muted);line-height:1.55;}
+.card-name{font-size:15px;font-weight:700;margin-bottom:2px;}
+.card-cat{font-size:11px;color:var(--text-muted);margin-bottom:10px;}
 
-.card-footer{display:flex;align-items:center;justify-content:flex-end;margin-top:16px;}
+.card-section{margin-top:10px;}
+.card-section-label{
+  font-size:9px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.1em;color:var(--text-muted);margin-bottom:5px;
+}
+.card-list{list-style:none;display:flex;flex-direction:column;gap:3px;}
+.card-list li{
+  font-size:11.5px;color:var(--text);
+  display:flex;align-items:flex-start;gap:5px;line-height:1.4;
+}
+.check-icon{color:var(--brand);font-size:11px;flex-shrink:0;margin-top:1px;}
+.trigger-icon{color:#f59e0b;font-size:11px;flex-shrink:0;margin-top:1px;}
+.card-usecase{
+  margin-top:10px;font-size:11.5px;color:var(--text-muted);
+  font-style:italic;line-height:1.5;
+  border-left:2px solid var(--brand-soft);padding-left:8px;
+}
+
+.card-footer{display:flex;align-items:center;justify-content:flex-end;margin-top:14px;padding-top:14px;border-top:1px solid var(--border);}
 
 .connect-btn{
   padding:7px 16px;border-radius:var(--radius-sm);
@@ -215,7 +326,7 @@ body{
 .empty-state{text-align:center;padding:60px 24px;color:var(--text-muted);}
 .empty-state p{font-size:14px;}
 
-/* MODAL */
+/* Modal */
 .modal-overlay{
   position:fixed;inset:0;
   background:rgba(0,0,0,.5);backdrop-filter:blur(4px);
@@ -224,18 +335,14 @@ body{
   animation:fadeIn .15s ease;
 }
 @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
-
 .modal-box{
-  background:var(--surface);
-  border:1.5px solid var(--border);
-  border-radius:var(--radius);
-  padding:28px;
+  background:var(--surface);border:1.5px solid var(--border);
+  border-radius:var(--radius);padding:28px;
   max-width:480px;width:100%;
   box-shadow:0 24px 64px rgba(0,0,0,.2);
   animation:slideUp .2s ease;
 }
 @keyframes slideUp{from{transform:translateY(16px);opacity:0;}to{transform:translateY(0);opacity:1;}}
-
 .modal-header{display:flex;align-items:center;gap:14px;margin-bottom:8px;}
 .modal-title{font-size:18px;font-weight:700;}
 .modal-close{
@@ -246,8 +353,6 @@ body{
 }
 .modal-close:hover{background:var(--surface2);}
 .modal-divider{border:none;border-top:1px solid var(--border);margin:14px 0 18px;}
-.modal-desc{font-size:13px;color:var(--text-muted);line-height:1.6;margin-bottom:18px;}
-
 .modal-form-group{margin-bottom:14px;}
 .modal-label-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;}
 .modal-label{font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em;}
@@ -265,7 +370,7 @@ body{
 .connect-result{padding:10px 12px;border-radius:var(--radius-sm);font-size:12px;margin-bottom:14px;line-height:1.5;}
 .connect-result.success{background:rgba(34,197,94,0.1);color:#15803d;border:1px solid #86efac;}
 .connect-result.error{background:rgba(239,68,68,0.1);color:#b91c1c;border:1px solid #fca5a5;}
-.oauth-info{background:var(--brand-soft);border:1px solid rgba(124,92,255,0.2);border-radius:var(--radius-sm);padding:12px;font-size:13px;line-height:1.6;margin-bottom:16px;}
+.oauth-info{background:var(--brand-soft);border:1px solid rgba(22,163,74,0.2);border-radius:var(--radius-sm);padding:12px;font-size:13px;line-height:1.6;margin-bottom:16px;}
 .modal-actions{display:flex;gap:8px;}
 .modal-btn{
   flex:1;padding:11px;border-radius:var(--radius-sm);
@@ -277,10 +382,863 @@ body{
 .modal-btn-primary:disabled{opacity:.5;cursor:default;}
 .modal-btn-secondary{background:var(--surface2);color:var(--text);border:1px solid var(--border);}
 .modal-btn-secondary:hover{border-color:var(--brand);color:var(--brand);}
+
+/* ============================
+   STATIC SECTIONS COMMON
+   ============================ */
+.static-section{
+  max-width:1100px;margin:0 auto;
+  padding:72px 24px;
+}
+.static-section-full{
+  background:var(--surface);
+  border-top:1px solid var(--border);
+}
+.static-section-full .static-section{border-top:none;}
+
+.section-eyebrow{
+  font-size:11px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.12em;color:var(--brand);margin-bottom:14px;
+}
+.section-h2{
+  font-size:32px;font-weight:900;letter-spacing:-.025em;
+  line-height:1.15;margin-bottom:14px;
+}
+.section-sub{
+  font-size:16px;color:var(--text-muted);line-height:1.6;
+  max-width:580px;margin-bottom:48px;
+}
+
+/* ============================
+   SCROLL REVEAL
+   ============================ */
+.reveal{
+  opacity:0;transform:translateY(24px);
+  transition:opacity .55s ease,transform .55s ease;
+}
+.reveal.revealed{opacity:1;transform:none;}
+.reveal-delay-1{transition-delay:.1s;}
+.reveal-delay-2{transition-delay:.2s;}
+.reveal-delay-3{transition-delay:.3s;}
+.reveal-delay-4{transition-delay:.4s;}
+.reveal-delay-5{transition-delay:.5s;}
+.reveal-delay-6{transition-delay:.6s;}
+
+/* ============================
+   WORKFLOW CARDS
+   ============================ */
+.wf-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(480px,1fr));
+  gap:20px;
+}
+.wf-card{
+  background:var(--surface);
+  border:1.5px solid var(--border);
+  border-radius:var(--radius);
+  padding:24px;
+  transition:box-shadow .2s;
+}
+.wf-card:hover{box-shadow:var(--shadow-hover);}
+.wf-card-title{font-size:13px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:18px;}
+.wf-flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+.wf-node{
+  display:flex;flex-direction:column;align-items:center;gap:5px;
+  min-width:64px;
+}
+.wf-node-icon{
+  width:44px;height:44px;background:var(--surface2);
+  border:1.5px solid var(--border);border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+}
+.wf-node-icon img{width:24px;height:24px;object-fit:contain;}
+[data-theme="dark"] .wf-node-icon{background:#fff;}
+.wf-ms-icon-sm{
+  width:28px;height:28px;background:var(--brand);border-radius:6px;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:900;font-size:15px;color:#fff;
+}
+.wf-node-label{font-size:10px;color:var(--text-muted);text-align:center;line-height:1.3;max-width:70px;}
+.wf-arrow{
+  font-size:18px;color:var(--brand);opacity:.7;flex-shrink:0;
+  margin-bottom:14px;
+}
+.wf-desc{font-size:12px;color:var(--text-muted);line-height:1.55;border-top:1px solid var(--border);padding-top:12px;}
+.wf-desc em{color:var(--text);font-style:normal;font-weight:600;}
+
+/* ============================
+   TRIGGER / ACTION TABLE
+   ============================ */
+.ta-table{
+  width:100%;border-collapse:collapse;
+  background:var(--surface);
+  border:1.5px solid var(--border);
+  border-radius:var(--radius);
+  overflow:hidden;
+}
+.ta-table th{
+  background:var(--surface2);
+  padding:12px 18px;font-size:11px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.07em;color:var(--text-muted);
+  text-align:left;border-bottom:1px solid var(--border);
+}
+.ta-table td{
+  padding:13px 18px;font-size:13px;
+  border-bottom:1px solid var(--border);vertical-align:middle;
+}
+.ta-table tr:last-child td{border-bottom:none;}
+.ta-table tr:hover td{background:var(--brand-soft);}
+.ta-trigger{
+  display:inline-flex;align-items:center;gap:7px;
+  font-weight:500;color:var(--text);
+}
+.ta-trigger-dot{
+  width:7px;height:7px;background:var(--brand);
+  border-radius:50%;flex-shrink:0;
+}
+.ta-arrow{color:var(--text-muted);font-size:14px;}
+.ta-action{
+  display:inline-flex;align-items:center;gap:8px;font-weight:500;
+}
+.ta-icon{
+  width:26px;height:26px;background:#fff;
+  border:1px solid var(--border);border-radius:6px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.ta-icon img{width:16px;height:16px;object-fit:contain;}
+[data-theme="dark"] .ta-icon{background:#fff;}
+
+/* ============================
+   API / DEV SECTION
+   ============================ */
+.api-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:40px;}
+.api-chip{
+  padding:6px 14px;border-radius:100px;font-size:12px;font-weight:600;
+  background:var(--surface2);color:var(--text);
+  border:1.5px solid var(--border);
+}
+.api-layout{
+  display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;
+}
+.api-code-card{
+  background:#1a1a2e;border-radius:var(--radius);
+  padding:24px;overflow-x:auto;
+  border:1px solid #2d2d4a;
+}
+[data-theme="dark"] .api-code-card{background:#0d0d1a;border-color:#1a1a2a;}
+.api-code-label{
+  font-size:10px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.1em;color:#64748b;margin-bottom:14px;
+}
+.api-code-pre{
+  font-family:'Fira Code','Cascadia Code','Consolas',monospace;
+  font-size:12.5px;line-height:1.65;color:#e2e8f0;
+  white-space:pre;
+}
+.api-code-method{color:#86efac;}
+.api-code-url{color:#93c5fd;}
+.api-code-key{color:#f9a8d4;}
+.api-code-val{color:#fde68a;}
+.api-code-str{color:#86efac;}
+.api-code-comment{color:#4a5568;}
+
+.api-features{display:flex;flex-direction:column;gap:16px;}
+.api-feature-card{
+  background:var(--surface);border:1.5px solid var(--border);
+  border-radius:var(--radius-sm);padding:18px;
+}
+.api-feature-title{font-size:14px;font-weight:700;margin-bottom:5px;}
+.api-feature-desc{font-size:12.5px;color:var(--text-muted);line-height:1.55;}
+.api-feature-link{
+  display:inline-block;margin-top:10px;
+  font-size:12px;font-weight:600;color:var(--brand);text-decoration:none;
+}
+.api-feature-link:hover{text-decoration:underline;}
+
+/* ============================
+   USE CASES
+   ============================ */
+.uc-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
+  gap:20px;
+}
+.uc-card{
+  background:var(--surface);border:1.5px solid var(--border);
+  border-radius:var(--radius);padding:24px;
+  transition:box-shadow .2s;
+}
+.uc-card:hover{box-shadow:var(--shadow-hover);}
+.uc-card-num{
+  font-size:11px;font-weight:800;color:var(--brand);
+  letter-spacing:.06em;margin-bottom:10px;
+}
+.uc-card-title{font-size:15px;font-weight:800;margin-bottom:14px;letter-spacing:-.01em;}
+.uc-row{display:flex;gap:10px;margin-bottom:10px;font-size:13px;}
+.uc-label{
+  font-size:10px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.07em;flex-shrink:0;margin-top:2px;
+}
+.uc-label-pain{color:#ef4444;}
+.uc-label-auto{color:var(--brand);}
+.uc-label-result{color:#f59e0b;}
+.uc-text{color:var(--text-muted);line-height:1.5;}
+.uc-time{
+  display:inline-block;margin-top:8px;
+  font-size:11px;font-weight:700;color:var(--brand);
+  background:var(--brand-soft);padding:3px 10px;border-radius:100px;
+}
+
+/* ============================
+   TRUST / SECURITY
+   ============================ */
+.trust-section{
+  text-align:center;
+}
+.trust-badges{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+  gap:16px;margin-bottom:56px;
+}
+.trust-badge{
+  background:var(--surface);border:1.5px solid var(--border);
+  border-radius:var(--radius-sm);padding:18px 16px;text-align:center;
+}
+.trust-badge-icon{font-size:24px;margin-bottom:8px;}
+.trust-badge-title{font-size:13px;font-weight:700;margin-bottom:4px;}
+.trust-badge-desc{font-size:11.5px;color:var(--text-muted);line-height:1.45;}
+
+.trust-cta-box{
+  background:var(--surface);border:1.5px solid var(--border);
+  border-radius:18px;padding:48px 32px;
+  max-width:680px;margin:0 auto;
+}
+.trust-cta-h2{font-size:26px;font-weight:900;letter-spacing:-.02em;margin-bottom:10px;}
+.trust-cta-sub{font-size:15px;color:var(--text-muted);margin-bottom:28px;}
+.trust-cta-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+
+/* ============================
+   FOOTER
+   ============================ */
+.site-footer{
+  background:var(--surface);
+  border-top:1px solid var(--border);
+}
+.footer-inner{
+  max-width:1100px;margin:0 auto;
+  padding:48px 24px 32px;
+  display:grid;grid-template-columns:200px 1fr;gap:48px;
+}
+.footer-brand img{height:48px;object-fit:contain;}
+.footer-brand-desc{font-size:13px;color:var(--text-muted);margin-top:12px;line-height:1.6;max-width:180px;}
+.footer-cols{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:32px;
+}
+.footer-col-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:14px;color:var(--text-muted);}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:9px;}
+.footer-col ul li a{font-size:13px;color:var(--text-muted);text-decoration:none;transition:color .15s;}
+.footer-col ul li a:hover{color:var(--brand);}
+.footer-bottom{
+  max-width:1100px;margin:0 auto;
+  padding:16px 24px;border-top:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;
+}
+.footer-copy{font-size:12px;color:var(--text-muted);}
+.footer-links{display:flex;gap:16px;}
+.footer-links a{font-size:12px;color:var(--text-muted);text-decoration:none;}
+.footer-links a:hover{color:var(--brand);}
+
+/* ============================
+   RESPONSIVE
+   ============================ */
+@media(max-width:900px){
+  .hero-container{grid-template-columns:1fr;gap:40px;}
+  .hero-right{order:-1;}
+  .hero-h1{font-size:32px;}
+  .section-h2{font-size:26px;}
+  .api-layout{grid-template-columns:1fr;}
+  .wf-grid{grid-template-columns:1fr;}
+  .footer-inner{grid-template-columns:1fr;gap:32px;}
+  .footer-cols{grid-template-columns:repeat(2,1fr);}
+}
+@media(max-width:600px){
+  .hero-container{padding:48px 20px 40px;}
+  .static-section{padding:48px 20px;}
+  .trust-badges{grid-template-columns:repeat(2,1fr);}
+  .footer-cols{grid-template-columns:repeat(2,1fr);}
+  .fv-card{flex-direction:column;gap:16px;}
+  .fv-connector{height:80px;width:160px;}
+  .uc-grid{grid-template-columns:1fr;}
+}
 </style>
 </head>
 <body>
-<div id="root"></div>
+
+<!-- ==================== STATIC NAV ==================== -->
+<nav class="int-nav">
+  <a class="nav-logo" href="index.html">
+    <img src="images/logo-wordmark.png" alt="Mocksheets" />
+  </a>
+  <div style="flex:1"></div>
+  <div class="search-wrap">
+    <span class="search-icon">&#x1F50D;</span>
+    <input id="static-search" class="search-input" type="text" placeholder="Entegrasyon ara..." autocomplete="off" />
+    <span class="search-kbd" id="search-kbd">&#x2318;K</span>
+  </div>
+  <button class="theme-btn" id="theme-toggle-btn" onclick="toggleTheme()" title="Tema">&#x1F319;</button>
+  <a class="back-btn" href="app.html">&#8592; Uygulamaya Dön</a>
+</nav>
+
+<!-- ==================== HERO ==================== -->
+<section class="hero-section">
+  <div class="hero-container">
+    <div class="hero-left">
+      <div class="hero-eyebrow">— entegrasyonlar</div>
+      <h1 class="hero-h1">Operasyon altyapınıza<br>bağlanın.</h1>
+      <p class="hero-sub">Mocksheets, ekibinizin zaten kullandığı araçlarla otomatik çalışır. Veriler akar, raporlar senkronize olur, iş akışları tetiklenir.</p>
+      <div class="hero-chips">
+        <span class="hero-chip">10 canlı bağlantı</span>
+        <span class="hero-chip">Gerçek OAuth</span>
+        <span class="hero-chip">2 yönlü senkron</span>
+        <span class="hero-chip">Webhook desteği</span>
+      </div>
+      <div class="hero-ctas">
+        <a href="app.html" class="hero-cta-primary">Google Sheets bağla &#x2192;</a>
+        <a href="#int-browser" class="hero-cta-secondary">Tüm bağlantıları keşfet &#x2193;</a>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="fv-card">
+        <div class="fv-left">
+          <div class="fv-ms-node">
+            <div class="fv-ms-icon">m</div>
+            <div class="fv-ms-label" style="font-size:10px;font-weight:600;color:var(--text-muted);margin-top:4px;white-space:nowrap;">Mocksheets AI</div>
+          </div>
+        </div>
+        <svg class="fv-connector" viewBox="0 0 120 200" preserveAspectRatio="none">
+          <line x1="0" y1="100" x2="60" y2="100" stroke-width="1.5"/>
+          <line x1="60" y1="33" x2="60" y2="167" stroke-width="1.5"/>
+          <line x1="60" y1="33" x2="118" y2="33" stroke-width="1.5"/>
+          <line x1="60" y1="100" x2="118" y2="100" stroke-width="1.5"/>
+          <line x1="60" y1="167" x2="118" y2="167" stroke-width="1.5"/>
+          <polyline points="113,28 119,33 113,38" stroke-width="1.5"/>
+          <polyline points="113,95 119,100 113,105" stroke-width="1.5"/>
+          <polyline points="113,162 119,167 113,172" stroke-width="1.5"/>
+          <circle class="fv-dot fv-dot-anim" cx="30" cy="100" r="3.5"/>
+          <circle class="fv-dot fv-dot-anim-2" cx="89" cy="33" r="3.5"/>
+          <circle class="fv-dot fv-dot-anim-3" cx="89" cy="100" r="3.5"/>
+          <circle class="fv-dot fv-dot-anim" cx="89" cy="167" r="3.5" style="animation-delay:.9s"/>
+        </svg>
+        <div class="fv-right">
+          <div class="fv-target-row">
+            <div class="fv-tool-icon"><img src="images/integrations/googlesheets.svg" width="22" height="22" alt="Google Sheets"></div>
+            <span class="fv-tool-label">Google Sheets</span>
+          </div>
+          <div class="fv-target-row">
+            <div class="fv-tool-icon"><img src="images/integrations/slack.svg" width="22" height="22" alt="Slack"></div>
+            <span class="fv-tool-label">Slack</span>
+          </div>
+          <div class="fv-target-row">
+            <div class="fv-tool-icon"><img src="images/integrations/zapier.svg" width="22" height="22" alt="Zapier"></div>
+            <span class="fv-tool-label">Zapier &rarr; 5000+ uygulama</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== INT BROWSER (React) ==================== -->
+<div id="int-browser">
+  <div id="root"></div>
+</div>
+
+<!-- ==================== WORKFLOW CARDS ==================== -->
+<div class="static-section-full">
+  <section class="static-section">
+    <div class="section-eyebrow reveal">— iş akışları</div>
+    <h2 class="section-h2 reveal">Tek komutla başlayan<br>otomasyon zincirleri.</h2>
+    <p class="section-sub reveal">Mocksheets bir adımı tetikler, diğerleri otomatik devreye girer. Ekibiniz her sabah hazır veriyle başlar.</p>
+
+    <div class="wf-grid">
+      <!-- Kart 1 -->
+      <div class="wf-card reveal">
+        <div class="wf-card-title">Haftalık Raporlama</div>
+        <div class="wf-flow">
+          <div class="wf-node">
+            <div class="wf-node-icon"><div class="wf-ms-icon-sm">m</div></div>
+            <div class="wf-node-label">Mocksheets AI</div>
+          </div>
+          <span class="wf-arrow">&#x2192;</span>
+          <div class="wf-node">
+            <div class="wf-node-icon"><img src="images/integrations/googlesheets.svg" width="24" height="24" alt="Google Sheets"></div>
+            <div class="wf-node-label">Google Sheets</div>
+          </div>
+          <span class="wf-arrow">&#x2192;</span>
+          <div class="wf-node">
+            <div class="wf-node-icon"><img src="images/integrations/slack.svg" width="24" height="24" alt="Slack"></div>
+            <div class="wf-node-label">Slack #ops-weekly</div>
+          </div>
+        </div>
+        <div class="wf-desc">"Haftalık rapor oluştur" komutu &rarr; <em>Sheets'e</em> kaydedilir &rarr; Ekip <em>Slack</em>'te bilgilendirilir</div>
+      </div>
+
+      <!-- Kart 2 -->
+      <div class="wf-card reveal reveal-delay-1">
+        <div class="wf-card-title">Müşteri Kabul Takibi</div>
+        <div class="wf-flow">
+          <div class="wf-node">
+            <div class="wf-node-icon"><div class="wf-ms-icon-sm">m</div></div>
+            <div class="wf-node-label">Mocksheets AI</div>
+          </div>
+          <span class="wf-arrow">&#x2192;</span>
+          <div class="wf-node">
+            <div class="wf-node-icon"><img src="images/integrations/airtable.svg" width="24" height="24" alt="Airtable"></div>
+            <div class="wf-node-label">Airtable</div>
+          </div>
+          <span class="wf-arrow">&#x2192;</span>
+          <div class="wf-node">
+            <div class="wf-node-icon"><img src="images/integrations/zapier.svg" width="24" height="24" alt="Zapier"></div>
+            <div class="wf-node-label">Zapier &rarr; HubSpot</div>
+          </div>
+        </div>
+        <div class="wf-desc">Takip listesi hazır &rarr; <em>Airtable</em>'a senkronize &rarr; <em>HubSpot</em> CRM otomatik güncellenir</div>
+      </div>
+
+      <!-- Kart 3 -->
+      <div class="wf-card reveal reveal-delay-2">
+        <div class="wf-card-title">Görev Yönetimi</div>
+        <div class="wf-flow">
+          <div class="wf-node">
+            <div class="wf-node-icon"><div class="wf-ms-icon-sm">m</div></div>
+            <div class="wf-node-label">Mocksheets AI</div>
+          </div>
+          <span class="wf-arrow">&#x2192;</span>
+          <div class="wf-node">
+            <div class="wf-node-icon"><img src="images/integrations/trello.svg" width="24" height="24" alt="Trello"></div>
+            <div class="wf-node-label">Trello</div>
+          </div>
+          <span class="wf-arrow">&#x2192;</span>
+          <div class="wf-node">
+            <div class="wf-node-icon"><img src="images/integrations/microsoftteams.svg" width="24" height="24" alt="Teams"></div>
+            <div class="wf-node-label">MS Teams bildirimi</div>
+          </div>
+        </div>
+        <div class="wf-desc">Görev listesi analiz &rarr; <em>Trello</em> kartları güncellenir &rarr; <em>Teams</em>'te ekip bildirimi gelir</div>
+      </div>
+
+      <!-- Kart 4 -->
+      <div class="wf-card reveal reveal-delay-3">
+        <div class="wf-card-title">Ops Panosu</div>
+        <div class="wf-flow">
+          <div class="wf-node">
+            <div class="wf-node-icon"><div class="wf-ms-icon-sm">m</div></div>
+            <div class="wf-node-label">Mocksheets AI</div>
+          </div>
+          <span class="wf-arrow">&#x2192;</span>
+          <div class="wf-node">
+            <div class="wf-node-icon"><img src="images/integrations/notion.svg" width="24" height="24" alt="Notion"></div>
+            <div class="wf-node-label">Notion</div>
+          </div>
+          <span class="wf-arrow">&#x2192;</span>
+          <div class="wf-node">
+            <div class="wf-node-icon"><img src="images/integrations/make.svg" width="24" height="24" alt="Make"></div>
+            <div class="wf-node-label">Make &rarr; özel sistem</div>
+          </div>
+        </div>
+        <div class="wf-desc">Ops verisi &rarr; <em>Notion</em> wiki'ye eklenir &rarr; <em>Make</em> senaryosu özel sistemi tetikler</div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ==================== TRIGGER / ACTION TABLE ==================== -->
+<section class="static-section" id="trigger-db">
+  <div class="section-eyebrow reveal">— tetikleyici &amp; aksiyon</div>
+  <h2 class="section-h2 reveal">Her Mocksheets olayı<br>bir sonraki adımı başlatır.</h2>
+  <p class="section-sub reveal">Tablo güncellemesinden rapor tamamlanmasına kadar her olay, bağlı araçlarınızda otomatik aksiyon tetikler.</p>
+
+  <div class="reveal">
+    <table class="ta-table">
+      <thead>
+        <tr>
+          <th>Tetikleyici</th>
+          <th></th>
+          <th>Aksiyon</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="ta-trigger"><span class="ta-trigger-dot"></span>Tablo oluşturuldu</span></td>
+          <td class="ta-arrow">&#x2192;</td>
+          <td><span class="ta-action"><span class="ta-icon"><img src="images/integrations/googlesheets.svg" width="16" height="16" alt="Sheets"></span>Google Sheets'e aktar</span></td>
+        </tr>
+        <tr>
+          <td><span class="ta-trigger"><span class="ta-trigger-dot"></span>Rapor tamamlandı</span></td>
+          <td class="ta-arrow">&#x2192;</td>
+          <td><span class="ta-action"><span class="ta-icon"><img src="images/integrations/slack.svg" width="16" height="16" alt="Slack"></span>Slack mesajı gönder</span></td>
+        </tr>
+        <tr>
+          <td><span class="ta-trigger"><span class="ta-trigger-dot"></span>AI görevi bitti</span></td>
+          <td class="ta-arrow">&#x2192;</td>
+          <td><span class="ta-action"><span class="ta-icon"><img src="images/integrations/zapier.svg" width="16" height="16" alt="Zapier"></span>Zapier iş akışını tetikle</span></td>
+        </tr>
+        <tr>
+          <td><span class="ta-trigger"><span class="ta-trigger-dot"></span>Dışa aktarım tamamlandı</span></td>
+          <td class="ta-arrow">&#x2192;</td>
+          <td><span class="ta-action"><span class="ta-icon" style="background:#FF4A00;border-color:#FF4A00;"><svg viewBox="0 0 16 16" width="12" height="12" fill="none"><circle cx="8" cy="8" r="8" fill="#FF4A00"/><path d="M5 7 C5 5.5 6.3 4.5 8 4.5 S11 5.5 11 7" stroke="#fff" stroke-width="1.2" fill="none" stroke-linecap="round"/><circle cx="8" cy="11" r="1.2" fill="#fff"/></svg></span>Webhook gönder</span></td>
+        </tr>
+        <tr>
+          <td><span class="ta-trigger"><span class="ta-trigger-dot"></span>Veri güncellendi</span></td>
+          <td class="ta-arrow">&#x2192;</td>
+          <td><span class="ta-action"><span class="ta-icon"><img src="images/integrations/notion.svg" width="16" height="16" alt="Notion"></span>Notion'a senkronize et</span></td>
+        </tr>
+        <tr>
+          <td><span class="ta-trigger"><span class="ta-trigger-dot"></span>Limit yaklaşıldı</span></td>
+          <td class="ta-arrow">&#x2192;</td>
+          <td><span class="ta-action"><span class="ta-icon"><img src="images/integrations/microsoftteams.svg" width="16" height="16" alt="Teams"></span>MS Teams uyarısı</span></td>
+        </tr>
+        <tr>
+          <td><span class="ta-trigger"><span class="ta-trigger-dot"></span>PDF dönüştürüldü</span></td>
+          <td class="ta-arrow">&#x2192;</td>
+          <td><span class="ta-action"><span class="ta-icon"><img src="images/integrations/airtable.svg" width="16" height="16" alt="Airtable"></span>Airtable'a kaydet</span></td>
+        </tr>
+        <tr>
+          <td><span class="ta-trigger"><span class="ta-trigger-dot"></span>Komut çalıştırıldı</span></td>
+          <td class="ta-arrow">&#x2192;</td>
+          <td><span class="ta-action"><span class="ta-icon"><img src="images/integrations/make.svg" width="16" height="16" alt="Make"></span>Make senaryosu başlat</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ==================== API / DEV ==================== -->
+<div class="static-section-full">
+  <section class="static-section" id="api-dev">
+    <div class="section-eyebrow reveal">— geliştirici araçları</div>
+    <h2 class="section-h2 reveal">Kendi iş akışını kendin yaz.</h2>
+    <p class="section-sub reveal">REST API, webhook ve OAuth 2.0 altyapısıyla Mocksheets'i kendi sistemlerinize tam entegre edin.</p>
+    <div class="api-chips reveal">
+      <span class="api-chip">REST API</span>
+      <span class="api-chip">Webhook</span>
+      <span class="api-chip">OAuth 2.0</span>
+      <span class="api-chip">HMAC &Imzalı</span>
+    </div>
+    <div class="api-layout">
+      <div class="api-code-card reveal">
+        <div class="api-code-label">Örnek istek</div>
+        <pre class="api-code-pre"><span class="api-code-method">POST</span> <span class="api-code-url">https://api.mocksheets.com/v1/export</span>
+<span class="api-code-key">Authorization:</span> <span class="api-code-str">Bearer {token}</span>
+<span class="api-code-key">Content-Type:</span> <span class="api-code-str">application/json</span>
+
+{
+  <span class="api-code-key">"format"</span>: <span class="api-code-val">"google-sheets"</span>,
+  <span class="api-code-key">"spreadsheetId"</span>: <span class="api-code-val">"1BxiMV..."</span>,
+  <span class="api-code-key">"range"</span>: <span class="api-code-val">"A1:Z100"</span>
+}
+
+<span class="api-code-comment">// Yanıt</span>
+{
+  <span class="api-code-key">"success"</span>: <span class="api-code-val">true</span>,
+  <span class="api-code-key">"exportedRows"</span>: <span class="api-code-val">247</span>,
+  <span class="api-code-key">"spreadsheetUrl"</span>: <span class="api-code-str">"https://..."</span>
+}</pre>
+      </div>
+      <div class="api-features">
+        <div class="api-feature-card reveal reveal-delay-1">
+          <div class="api-feature-title">Güvenli Kimlik Doğrulama</div>
+          <div class="api-feature-desc">Bearer token ile her API çağrısı doğrulanır. Google OAuth 2.0 ile üçüncü taraf erişimleri izin tabanlı çalışır. Token'lar şifreli saklanır.</div>
+        </div>
+        <div class="api-feature-card reveal reveal-delay-2">
+          <div class="api-feature-title">Olay Tabanlı Webhook</div>
+          <div class="api-feature-desc">Tablo güncellemesi, rapor tamamlanması veya dışa aktarım gibi olaylarda anında bildirim alın. HMAC-SHA256 imzasıyla güvenli veri iletimi.</div>
+        </div>
+        <div class="api-feature-card reveal reveal-delay-3">
+          <div class="api-feature-title">API Dokümantasyonu</div>
+          <div class="api-feature-desc">Tüm endpoint'ler, parametre açıklamaları ve örnek kodlarla eksiksiz dokümantasyon. Postman koleksiyonu dahil.</div>
+          <a href="app.html" class="api-feature-link">Dokümantasyonu İncele &#x2192;</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ==================== USE CASES ==================== -->
+<section class="static-section" id="use-cases">
+  <div class="section-eyebrow reveal">— kullanım senaryoları</div>
+  <h2 class="section-h2 reveal">Ops ekiplerinin gerçekten<br>çözdüğü problemler.</h2>
+  <p class="section-sub reveal">Manuel tekrarlayan işlerden sıkılan ekipler Mocksheets entegrasyonlarıyla bu sorunları kalıcı olarak çözüyor.</p>
+
+  <div class="uc-grid">
+    <div class="uc-card reveal">
+      <div class="uc-card-num">01</div>
+      <div class="uc-card-title">Haftalık Raporlama</div>
+      <div class="uc-row">
+        <span class="uc-label uc-label-pain">Sorun</span>
+        <span class="uc-text">Her pazartesi 2 saat manuel veri toplama ve rapor hazırlama</span>
+      </div>
+      <div class="uc-row">
+        <span class="uc-label uc-label-auto">Otomasyon</span>
+        <span class="uc-text">Mocksheets &rarr; Google Sheets &rarr; Slack #ops-weekly</span>
+      </div>
+      <div class="uc-row">
+        <span class="uc-label uc-label-result">Sonuç</span>
+        <span class="uc-text">Rapor otomatik hazır, ekip bilgilendirildi</span>
+      </div>
+      <span class="uc-time">2 saat &rarr; 4 dakika</span>
+    </div>
+
+    <div class="uc-card reveal reveal-delay-1">
+      <div class="uc-card-num">02</div>
+      <div class="uc-card-title">Müşteri Kabul Takibi</div>
+      <div class="uc-row">
+        <span class="uc-label uc-label-pain">Sorun</span>
+        <span class="uc-text">Farklı dosyalara dağılmış müşteri verisi, güncellemeler kaçıyor</span>
+      </div>
+      <div class="uc-row">
+        <span class="uc-label uc-label-auto">Otomasyon</span>
+        <span class="uc-text">Mocksheets &rarr; Airtable &rarr; Zapier &rarr; HubSpot</span>
+      </div>
+      <div class="uc-row">
+        <span class="uc-label uc-label-result">Sonuç</span>
+        <span class="uc-text">CRM her zaman güncel, sıfır manuel giriş</span>
+      </div>
+      <span class="uc-time">Sıfır manuel veri girişi</span>
+    </div>
+
+    <div class="uc-card reveal reveal-delay-2">
+      <div class="uc-card-num">03</div>
+      <div class="uc-card-title">Finans Raporu</div>
+      <div class="uc-row">
+        <span class="uc-label uc-label-pain">Sorun</span>
+        <span class="uc-text">Muhasebe verisini manuel kopyalayıp ERP sistemine aktarma</span>
+      </div>
+      <div class="uc-row">
+        <span class="uc-label uc-label-auto">Otomasyon</span>
+        <span class="uc-text">Mocksheets &rarr; Webhook &rarr; ERP sistemi</span>
+      </div>
+      <div class="uc-row">
+        <span class="uc-label uc-label-result">Sonuç</span>
+        <span class="uc-text">Gerçek zamanlı veri senkronizasyonu, hata yok</span>
+      </div>
+      <span class="uc-time">Gerçek zamanlı senkron</span>
+    </div>
+
+    <div class="uc-card reveal reveal-delay-3">
+      <div class="uc-card-num">04</div>
+      <div class="uc-card-title">Görev Güncelleme</div>
+      <div class="uc-row">
+        <span class="uc-label uc-label-pain">Sorun</span>
+        <span class="uc-text">Toplantı öncesi Trello kartlarını tek tek güncellemek</span>
+      </div>
+      <div class="uc-row">
+        <span class="uc-label uc-label-auto">Otomasyon</span>
+        <span class="uc-text">Mocksheets &rarr; Trello &rarr; MS Teams bildirimi</span>
+      </div>
+      <div class="uc-row">
+        <span class="uc-label uc-label-result">Sonuç</span>
+        <span class="uc-text">Kartlar otomatik güncellendi, ekip hazır</span>
+      </div>
+      <span class="uc-time">Toplantı otomatik hazır</span>
+    </div>
+
+    <div class="uc-card reveal reveal-delay-4">
+      <div class="uc-card-num">05</div>
+      <div class="uc-card-title">Müşteri Başarı Panosu</div>
+      <div class="uc-row">
+        <span class="uc-label uc-label-pain">Sorun</span>
+        <span class="uc-text">Müşteri sağlık puanları haftada bir manuel hesaplanıyor</span>
+      </div>
+      <div class="uc-row">
+        <span class="uc-label uc-label-auto">Otomasyon</span>
+        <span class="uc-text">Mocksheets &rarr; Notion &rarr; Slack #cs-team</span>
+      </div>
+      <div class="uc-row">
+        <span class="uc-label uc-label-result">Sonuç</span>
+        <span class="uc-text">Günlük otomatik güncelleme, risk erken fark edilir</span>
+      </div>
+      <span class="uc-time">Haftada 1 &rarr; Günlük otomatik</span>
+    </div>
+
+    <div class="uc-card reveal reveal-delay-5">
+      <div class="uc-card-num">06</div>
+      <div class="uc-card-title">Kampanya Raporlama</div>
+      <div class="uc-row">
+        <span class="uc-label uc-label-pain">Sorun</span>
+        <span class="uc-text">10 farklı CSV dosyasını birleştirip raporlamak 3 saat sürüyor</span>
+      </div>
+      <div class="uc-row">
+        <span class="uc-label uc-label-auto">Otomasyon</span>
+        <span class="uc-text">Mocksheets &rarr; Google Sheets &rarr; Make &rarr; dashboard</span>
+      </div>
+      <div class="uc-row">
+        <span class="uc-label uc-label-result">Sonuç</span>
+        <span class="uc-text">Birleşik rapor otomatik oluştu, dashboard güncellendi</span>
+      </div>
+      <span class="uc-time">3 saat &rarr; 5 dakika</span>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== TRUST ==================== -->
+<div class="static-section-full">
+  <section class="static-section trust-section" id="trust">
+    <div class="section-eyebrow reveal" style="text-align:center">— güvenlik</div>
+    <h2 class="section-h2 reveal" style="text-align:center">Verileriniz güvende,<br>entegrasyonlarınız güvenilir.</h2>
+    <p class="section-sub reveal" style="margin:0 auto 48px;text-align:center">Kurumsal güvenlik standartlarıyla her bağlantı güvenli ve denetlenebilir biçimde çalışır.</p>
+
+    <div class="trust-badges">
+      <div class="trust-badge reveal">
+        <div class="trust-badge-icon">&#x1F512;</div>
+        <div class="trust-badge-title">Güvenli OAuth</div>
+        <div class="trust-badge-desc">Tüm üçüncü taraf bağlantıları endüstri standardı OAuth 2.0 akışıyla kurulur</div>
+      </div>
+      <div class="trust-badge reveal reveal-delay-1">
+        <div class="trust-badge-icon">&#x1F501;</div>
+        <div class="trust-badge-title">İzin Tabanlı Erişim</div>
+        <div class="trust-badge-desc">Her entegrasyon yalnızca ihtiyaç duyduğu izinleri ister, geniş erişim yok</div>
+      </div>
+      <div class="trust-badge reveal reveal-delay-2">
+        <div class="trust-badge-icon">&#x1F510;</div>
+        <div class="trust-badge-title">Şifreli Transfer</div>
+        <div class="trust-badge-desc">Webhook'lar HMAC-SHA256 imzasıyla gönderilir, aktarım TLS ile şifrelenir</div>
+      </div>
+      <div class="trust-badge reveal reveal-delay-3">
+        <div class="trust-badge-icon">&#x1F4CB;</div>
+        <div class="trust-badge-title">GDPR Uyumlu</div>
+        <div class="trust-badge-desc">Veri işleme politikamız GDPR gereksinimlerine uygun şekilde tasarlanmıştır</div>
+      </div>
+      <div class="trust-badge reveal reveal-delay-4">
+        <div class="trust-badge-icon">&#x2705;</div>
+        <div class="trust-badge-title">Sıfır Manuel Transfer</div>
+        <div class="trust-badge-desc">Veriler sistemler arasında otomatik akar, manuel müdahale gerektirmez</div>
+      </div>
+      <div class="trust-badge reveal reveal-delay-5">
+        <div class="trust-badge-icon">&#x1F465;</div>
+        <div class="trust-badge-title">Ekip Güvenli</div>
+        <div class="trust-badge-desc">Entegrasyon kimlik bilgileri yalnızca yetkili hesap üyelerine görünür</div>
+      </div>
+    </div>
+
+    <div class="trust-cta-box reveal">
+      <div class="trust-cta-h2">Ekibinizin araçlarına bağlanın.</div>
+      <div class="trust-cta-sub">Kurulum 5 dakika. Kredi kartı gerekmez. 14 gün Pro ücretsiz.</div>
+      <div class="trust-cta-btns">
+        <a href="auth.html" class="hero-cta-primary">Ücretsiz Başla &#x2192;</a>
+        <a href="index.html#pricing" class="hero-cta-secondary">Planları Görüntüle</a>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ==================== FOOTER ==================== -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <img src="images/logo-wordmark.png" alt="Mocksheets">
+      <p class="footer-brand-desc">AI destekli ops otomasyon aracı. Ekibinizin araçlarıyla çalışır, verilerinizi harekete geçirir.</p>
+    </div>
+    <div class="footer-cols">
+      <div class="footer-col">
+        <div class="footer-col-title">Ürün</div>
+        <ul>
+          <li><a href="index.html#features">Özellikler</a></li>
+          <li><a href="integrations.html">Entegrasyonlar</a></li>
+          <li><a href="index.html#pricing">Fiyatlandırma</a></li>
+          <li><a href="app.html">Uygulamayı Dene</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Kaynaklar</div>
+        <ul>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="app.html">Dokümantasyon</a></li>
+          <li><a href="contact.html">Destek</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Şirket</div>
+        <ul>
+          <li><a href="about.html">Hakkımızda</a></li>
+          <li><a href="privacy/index.html">Gizlilik</a></li>
+          <li><a href="terms/index.html">Kullanım Şartları</a></li>
+          <li><a href="contact.html">İletişim</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Araçlar</div>
+        <ul>
+          <li><a href="app.html">Excel Asistanı</a></li>
+          <li><a href="app.html">CSV Analizi</a></li>
+          <li><a href="app.html">Rapor Oluşturucu</a></li>
+          <li><a href="automations/index.html">Otomasyonlar</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span class="footer-copy">&copy; 2025 Mocksheets. Tüm hakları saklıdır.</span>
+    <div class="footer-links">
+      <a href="privacy/index.html">Gizlilik</a>
+      <a href="terms/index.html">Şartlar</a>
+      <a href="contact.html">İletişim</a>
+    </div>
+  </div>
+</footer>
+
+<!-- ==================== VANILLA JS ==================== -->
+<script>
+function toggleTheme() {
+  var html = document.documentElement;
+  var next = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+  html.setAttribute('data-theme', next);
+  try { localStorage.setItem('ms-int-theme', next); } catch(e) {}
+  var btn = document.getElementById('theme-toggle-btn');
+  if (btn) btn.innerHTML = next === 'dark' ? '&#x2600;&#xFE0F;' : '&#x1F319;';
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  // Sync theme button icon
+  var t = document.documentElement.getAttribute('data-theme') || 'light';
+  var btn = document.getElementById('theme-toggle-btn');
+  if (btn) btn.innerHTML = t === 'dark' ? '&#x2600;&#xFE0F;' : '&#x1F319;';
+
+  // Scroll reveal
+  var io = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('revealed');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.07 });
+  document.querySelectorAll('.reveal').forEach(function(el) { io.observe(el); });
+});
+
+// Search keyboard shortcut
+document.addEventListener('keydown', function(e) {
+  if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+    e.preventDefault();
+    var el = document.getElementById('static-search');
+    if (el) el.focus();
+  }
+  if (e.key === 'Escape') {
+    if (window._msDismiss) window._msDismiss();
+  }
+});
+
+// Search input → React
+var staticSearch = document.getElementById('static-search');
+var kbdEl = document.getElementById('search-kbd');
+if (staticSearch) {
+  staticSearch.addEventListener('input', function() {
+    if (window._msSetQuery) window._msSetQuery(this.value);
+    if (kbdEl) kbdEl.style.display = this.value ? 'none' : '';
+  });
+}
+</script>
+
+<!-- ==================== REACT ==================== -->
 <script type="text/babel">
 const { useState, useEffect, useRef } = React;
 
@@ -313,23 +1271,19 @@ const STORAGE_KEY = {
 
 const INT_CONFIG = {
   'slack': {
-    type: 'webhook',
-    docsUrl: 'https://api.slack.com/messaging/webhooks',
+    type: 'webhook', docsUrl: 'https://api.slack.com/messaging/webhooks',
     fields: [{ key: 'url', label: 'Webhook URL', placeholder: 'https://hooks.slack.com/services/...' }],
   },
   'ms-teams': {
-    type: 'webhook',
-    docsUrl: 'https://learn.microsoft.com/en-us/microsoftteams/platform/webhooks-and-connectors/how-to/add-incoming-webhook',
+    type: 'webhook', docsUrl: 'https://learn.microsoft.com/en-us/microsoftteams/platform/webhooks-and-connectors/how-to/add-incoming-webhook',
     fields: [{ key: 'url', label: 'Webhook URL', placeholder: 'https://outlook.office.com/webhook/...' }],
   },
   'make': {
-    type: 'webhook',
-    docsUrl: 'https://www.make.com/en/help/tools/webhooks',
+    type: 'webhook', docsUrl: 'https://www.make.com/en/help/tools/webhooks',
     fields: [{ key: 'url', label: 'Make Webhook URL', placeholder: 'https://hook.eu1.make.com/...' }],
   },
   'zapier': {
-    type: 'webhook',
-    docsUrl: 'https://zapier.com/help/create/code-webhooks/trigger-zaps-from-webhooks',
+    type: 'webhook', docsUrl: 'https://zapier.com/help/create/code-webhooks/trigger-zaps-from-webhooks',
     fields: [{ key: 'url', label: 'Zap Webhook URL', placeholder: 'https://hooks.zapier.com/hooks/catch/...' }],
   },
   'webhook': {
@@ -340,16 +1294,14 @@ const INT_CONFIG = {
     ],
   },
   'notion': {
-    type: 'token',
-    docsUrl: 'https://www.notion.so/my-integrations',
+    type: 'token', docsUrl: 'https://www.notion.so/my-integrations',
     fields: [
       { key: 'token', label: 'Integration Token', placeholder: 'secret_...', hint: 'notion.so/my-integrations adresinden alın' },
-      { key: 'dbId', label: 'Veritabanı ID', placeholder: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx', hint: 'Notion veritabanı URL\'inden kopyalayın' },
+      { key: 'dbId', label: 'Veritabanı ID', placeholder: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx', hint: "Notion veritabanı URL'inden kopyalayın" },
     ],
   },
   'airtable': {
-    type: 'token',
-    docsUrl: 'https://airtable.com/create/tokens',
+    type: 'token', docsUrl: 'https://airtable.com/create/tokens',
     fields: [
       { key: 'token', label: 'Personal Access Token', placeholder: 'pat...', hint: 'airtable.com/create/tokens adresinden oluşturun' },
       { key: 'baseId', label: 'Base ID', placeholder: 'appXXXXXXXX' },
@@ -357,12 +1309,11 @@ const INT_CONFIG = {
     ],
   },
   'trello': {
-    type: 'token',
-    docsUrl: 'https://trello.com/app-key',
+    type: 'token', docsUrl: 'https://trello.com/app-key',
     fields: [
       { key: 'apiKey', label: 'API Key', placeholder: '...', hint: 'trello.com/power-ups/admin adresinden alın' },
       { key: 'token', label: 'Token', placeholder: '...' },
-      { key: 'boardId', label: 'Board ID', placeholder: '...', hint: 'Board URL\'indeki son kısım' },
+      { key: 'boardId', label: 'Board ID', placeholder: '...', hint: "Board URL'indeki son kısım" },
     ],
   },
   'google-sheets': { type: 'oauth', authPath: '/api/integrations/sheets/auth', label: 'Google' },
@@ -373,26 +1324,18 @@ async function testIntegration(id, form, token) {
   const h = { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` };
   const base = BACKEND_URL;
   switch (id) {
-    case 'slack':
-      return fetch(`${base}/api/integrations/slack/test`, { method: 'POST', headers: h, body: JSON.stringify({ webhookUrl: form.url }) });
-    case 'ms-teams':
-      return fetch(`${base}/api/integrations/teams/test`, { method: 'POST', headers: h, body: JSON.stringify({ webhookUrl: form.url }) });
-    case 'make':
-      return fetch(`${base}/api/integrations/make/trigger`, { method: 'POST', headers: h, body: JSON.stringify({ webhookUrl: form.url, event: 'test', data: { test: true } }) });
+    case 'slack':    return fetch(`${base}/api/integrations/slack/test`,   { method:'POST', headers:h, body:JSON.stringify({ webhookUrl: form.url }) });
+    case 'ms-teams': return fetch(`${base}/api/integrations/teams/test`,   { method:'POST', headers:h, body:JSON.stringify({ webhookUrl: form.url }) });
+    case 'make':     return fetch(`${base}/api/integrations/make/trigger`, { method:'POST', headers:h, body:JSON.stringify({ webhookUrl: form.url, event:'test', data:{test:true} }) });
     case 'zapier':
-    case 'webhook':
-      return fetch(`${base}/api/integrations/webhook/send`, { method: 'POST', headers: h, body: JSON.stringify({ url: form.url, secret: form.secret || '', event: 'test', data: { test: true } }) });
-    case 'notion':
-      return fetch(`${base}/api/integrations/notion/test`, { method: 'POST', headers: h, body: JSON.stringify({ token: form.token, databaseId: form.dbId }) });
-    case 'airtable':
-      return fetch(`${base}/api/integrations/airtable/test`, { method: 'POST', headers: h, body: JSON.stringify({ token: form.token, baseId: form.baseId, tableName: form.tableName || 'Table 1' }) });
-    case 'trello':
-      return fetch(`${base}/api/integrations/trello/test`, { method: 'POST', headers: h, body: JSON.stringify({ apiKey: form.apiKey, token: form.token, boardId: form.boardId }) });
+    case 'webhook':  return fetch(`${base}/api/integrations/webhook/send`, { method:'POST', headers:h, body:JSON.stringify({ url: form.url, secret: form.secret||'', event:'test', data:{test:true} }) });
+    case 'notion':   return fetch(`${base}/api/integrations/notion/test`,   { method:'POST', headers:h, body:JSON.stringify({ token: form.token, databaseId: form.dbId }) });
+    case 'airtable': return fetch(`${base}/api/integrations/airtable/test`,{ method:'POST', headers:h, body:JSON.stringify({ token: form.token, baseId: form.baseId, tableName: form.tableName||'Table 1' }) });
+    case 'trello':   return fetch(`${base}/api/integrations/trello/test`,  { method:'POST', headers:h, body:JSON.stringify({ apiKey: form.apiKey, token: form.token, boardId: form.boardId }) });
     default: return null;
   }
 }
 
-// Webhook için generic SVG ikonu
 function WebhookIcon() {
   return (
     <svg viewBox="0 0 32 32" width="32" height="32" fill="none">
@@ -416,7 +1359,6 @@ function ConnectModal({ integration, onClose, onSave }) {
   const [oauthWaiting, setOauthWaiting] = useState(false);
 
   const updateField = (key, val) => { setForm(prev => ({ ...prev, [key]: val })); setResult(null); };
-
   const sensitiveKeys = ['token', 'apiKey', 'secret'];
   const requiredKeys = cfg?.fields?.filter(f => f.key !== 'secret' && f.key !== 'tableName').map(f => f.key) || [];
   const hasRequired = requiredKeys.every(k => form[k]?.trim());
@@ -425,21 +1367,18 @@ function ConnectModal({ integration, onClose, onSave }) {
     setConnecting(true); setResult(null);
     try {
       const res = await testIntegration(integration.id, form, getAuthToken());
-      if (!res) { setResult({ ok: false, msg: 'Test desteklenmiyor.' }); return; }
+      if (!res) { setResult({ ok:false, msg:'Test desteklenmiyor.' }); return; }
       const data = await res.json().catch(() => ({}));
       if (res.ok) {
         if (storageKey) localStorage.setItem(storageKey, JSON.stringify(form));
-        setResult({ ok: true, msg: 'Bağlantı başarılı! Kaydedildi.' });
+        setResult({ ok:true, msg:'Bağlantı başarılı! Kaydedildi.' });
         setTimeout(() => { onSave(integration.id, form); }, 800);
-        return;
       } else {
-        setResult({ ok: false, msg: data.error || 'Bağlantı başarısız. Bilgileri kontrol edin.' });
+        setResult({ ok:false, msg: data.error || 'Bağlantı başarısız. Bilgileri kontrol edin.' });
       }
-    } catch (e) {
-      setResult({ ok: false, msg: e.message || 'Bağlantı kurulamadı.' });
-    } finally {
-      setConnecting(false);
-    }
+    } catch(e) {
+      setResult({ ok:false, msg: e.message || 'Bağlantı kurulamadı.' });
+    } finally { setConnecting(false); }
   }
 
   function handleOAuth() {
@@ -451,7 +1390,7 @@ function ConnectModal({ integration, onClose, onSave }) {
       const { access_token, refresh_token, expiry, token } = e.data;
       const at = access_token || token;
       if (!at) return;
-      const saved = { access_token: at, refresh_token: refresh_token || null, expiry: expiry || null };
+      const saved = { access_token: at, refresh_token: refresh_token||null, expiry: expiry||null };
       if (storageKey) localStorage.setItem(storageKey, JSON.stringify(saved));
       window.removeEventListener('message', onMsg);
       setOauthWaiting(false);
@@ -467,29 +1406,26 @@ function ConnectModal({ integration, onClose, onSave }) {
   const isOauth = cfg?.type === 'oauth';
   const logoEl = integration.id === 'webhook'
     ? <WebhookIcon />
-    : <img src={integration.logo} width="32" height="32" style={{ objectFit: 'contain' }} alt={integration.name} />;
+    : <img src={integration.logo} width="32" height="32" style={{ objectFit:'contain' }} alt={integration.name} />;
 
   return (
     <div className="modal-overlay" onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
       <div className="modal-box">
         <div className="modal-header">
-          <div className="card-logo" style={{ width: 44, height: 44, borderRadius: 10, padding: 8 }}>
-            {logoEl}
-          </div>
+          <div className="card-logo" style={{ width:44, height:44, borderRadius:10, padding:8 }}>{logoEl}</div>
           <div>
             <div className="modal-title">{integration.name}</div>
-            <span className={`badge badge-${integration.tier}`} style={{ fontSize: 10 }}>
+            <span className={`badge badge-${integration.tier}`} style={{ fontSize:10 }}>
               {integration.tier === 'free' ? 'Ücretsiz' : 'Pro'}
             </span>
           </div>
           <button className="modal-close" onClick={onClose}>×</button>
         </div>
         <hr className="modal-divider" />
-
         {isOauth ? (
           <>
             <div className="oauth-info">
-              {integration.name} hesabınızı güvenli OAuth 2.0 ile bağlayın. Aşağıdaki butona tıkladığınızda açılan pencerede <strong>{cfg.label}</strong> hesabınızla giriş yapın ve gerekli izinleri verin.
+              {integration.name} hesabınızı güvenli OAuth 2.0 ile bağlayın. Açılan pencerede <strong>{cfg.label}</strong> hesabınızla giriş yapın.
             </div>
             <div className="modal-actions">
               <button className="modal-btn modal-btn-secondary" onClick={onClose}>Vazgeç</button>
@@ -505,9 +1441,7 @@ function ConnectModal({ integration, onClose, onSave }) {
                 <div className="modal-label-row">
                   <label className="modal-label">{field.label}</label>
                   {cfg.docsUrl && field === cfg.fields[0] && (
-                    <a className="modal-label-link" href={cfg.docsUrl} target="_blank" rel="noopener noreferrer">
-                      Nasıl alınır? →
-                    </a>
+                    <a className="modal-label-link" href={cfg.docsUrl} target="_blank" rel="noopener noreferrer">Nasıl alınır? →</a>
                   )}
                 </div>
                 <input
@@ -543,74 +1477,74 @@ const CATEGORIES = ['Tümü', 'Bildirim', 'Veritabanı', 'Otomasyon', 'Bulut'];
 
 const INTEGRATIONS = [
   {
-    id: 'slack',
-    name: 'Slack',
-    desc: 'Raporları ve analizleri Slack kanallarına otomatik olarak gönderin.',
-    category: 'Bildirim', tier: 'pro', popular: true,
+    id: 'slack', name: 'Slack', category: 'Bildirim', tier: 'pro', popular: true,
     logo: 'images/integrations/slack.svg',
+    actions: ['Uyarı gönder', 'Rapor paylaş', 'Ekip bildir'],
+    triggers: ['Rapor tamamlandı', 'Limit aşıldı'],
+    useCase: 'Ops ekibi anında bilgilendirilir',
   },
   {
-    id: 'ms-teams',
-    name: 'Microsoft Teams',
-    desc: 'Raporları ve analizleri Teams kanallarına otomatik olarak gönderin.',
-    category: 'Bildirim', tier: 'pro',
+    id: 'ms-teams', name: 'Microsoft Teams', category: 'Bildirim', tier: 'pro',
     logo: 'images/integrations/microsoftteams.svg',
+    actions: ['Kanal mesajı gönder', 'Rapor paylaş', 'Uyarı ilet'],
+    triggers: ['Rapor hazır', 'Hata oluştu'],
+    useCase: 'Teams kanalına ops güncellemesi gönder',
   },
   {
-    id: 'notion',
-    name: 'Notion',
-    desc: 'Notion veritabanlarını Excel formatına dönüştürün ve AI ile analiz edin.',
-    category: 'Veritabanı', tier: 'pro', popular: true,
+    id: 'notion', name: 'Notion', category: 'Veritabanı', tier: 'pro', popular: true,
     logo: 'images/integrations/notion.svg',
+    actions: ['Veritabanına kaydet', 'Sayfa güncelle', 'Veri aktar'],
+    triggers: ['Dışa aktarma bitti', 'Komut çalıştı'],
+    useCase: 'Haftalık raporlar Notion wiki\'ye eklenir',
   },
   {
-    id: 'airtable',
-    name: 'Airtable',
-    desc: 'Airtable tabloları ile Mocksheets arasında veri senkronizasyonu sağlayın.',
-    category: 'Veritabanı', tier: 'pro',
+    id: 'airtable', name: 'Airtable', category: 'Veritabanı', tier: 'pro',
     logo: 'images/integrations/airtable.svg',
+    actions: ['Tablo senkronize et', 'Kayıt güncelle', 'Veri ekle'],
+    triggers: ['Veri değişti', 'Tablo oluşturuldu'],
+    useCase: 'Airtable base\'i Mocksheets ile canlı senkronize',
   },
   {
-    id: 'trello',
-    name: 'Trello',
-    desc: 'Trello kartlarını ve görev verilerini Excel\'e aktarın, AI ile analiz edin.',
-    category: 'Veritabanı', tier: 'pro',
+    id: 'trello', name: 'Trello', category: 'Veritabanı', tier: 'pro',
     logo: 'images/integrations/trello.svg',
+    actions: ['Kart ekle', 'Listeyi güncelle', 'Arşivle'],
+    triggers: ['Görev atandı', 'Komut çalıştı'],
+    useCase: 'Trello görevlerini Excel\'e aktarıp analiz et',
   },
   {
-    id: 'make',
-    name: 'Make',
-    desc: 'Make senaryolarıyla karmaşık otomasyon iş akışları ve veri pipeline\'ları oluşturun.',
-    category: 'Otomasyon', tier: 'pro',
+    id: 'make', name: 'Make', category: 'Otomasyon', tier: 'pro',
     logo: 'images/integrations/make.svg',
+    actions: ['Senaryo başlat', 'Webhook tetikle', 'Veri ilet'],
+    triggers: ['İş akışı tamamlandı', 'Tablo hazır'],
+    useCase: 'Mocksheets çıktısıyla Make senaryosu tetiklenir',
   },
   {
-    id: 'zapier',
-    name: 'Zapier',
-    desc: '5000+ uygulamaya bağlanın ve iş akışlarınızı Zapier ile otomatize edin.',
-    category: 'Otomasyon', tier: 'pro', popular: true,
+    id: 'zapier', name: 'Zapier', category: 'Otomasyon', tier: 'pro', popular: true,
     logo: 'images/integrations/zapier.svg',
+    actions: ['5000+ uygulamaya aktar', 'CRM güncelle', 'Zap başlat'],
+    triggers: ['Tablo hazır', 'Dışa aktarım tamam'],
+    useCase: 'Zapier Zap\'ini Mocksheets\'ten otomatik tetikle',
   },
   {
-    id: 'webhook',
-    name: 'Özel Webhook',
-    desc: 'Herhangi bir uygulamaya özel webhook\'lar ile veri gönderin, isteğe bağlı HMAC imzası.',
-    category: 'Otomasyon', tier: 'pro',
+    id: 'webhook', name: 'Özel Webhook', category: 'Otomasyon', tier: 'pro',
     logo: null,
+    actions: ['Herhangi URL\'ye gönder', 'HMAC imzalı veri aktar', 'Olay tetikle'],
+    triggers: ['Tablo güncellendi', 'Dışa aktarıldı'],
+    useCase: 'Kendi sistemine güvenli gerçek zamanlı veri akışı',
   },
   {
-    id: 'google-sheets',
-    name: 'Google Sheets',
-    desc: "Google Sheets dosyalarını içe aktarın veya Mocksheets verilerinizi Google Sheets'e aktarın.",
-    category: 'Bulut', tier: 'pro', popular: true,
+    id: 'google-sheets', name: 'Google Sheets', category: 'Bulut', tier: 'pro', popular: true,
     logo: 'images/integrations/googlesheets.svg',
+    actions: ['Tablo aktar', 'Satır senkronize et', 'Rapor güncelle'],
+    triggers: ['Tablo oluşturuldu', 'Veri güncellendi'],
+    useCase: 'AI raporları otomatik Sheets\'e gönderilir',
   },
   {
-    id: 'google-drive',
-    name: 'Google Drive',
-    desc: "Google Drive'daki Excel ve CSV dosyalarına doğrudan erişin ve içe aktarın.",
-    category: 'Bulut', tier: 'pro',
+    id: 'google-drive', name: 'Google Drive', category: 'Bulut', tier: 'pro',
     logo: 'images/integrations/googledrive.svg',
+    actions: ['Dosya oku', 'Excel aktar', 'CSV yükle'],
+    triggers: ['Dosya yüklendi', 'İçe aktarım başladı'],
+    useCase: 'Drive\'daki Excel dosyalarına doğrudan eriş',
   },
 ];
 
@@ -629,10 +1563,10 @@ function IntegrationCard({ integration, connected, onConnect, onDisconnect, list
 
   const logoEl = integration.id === 'webhook'
     ? <WebhookIcon />
-    : <img src={integration.logo} width="32" height="32" style={{ objectFit: 'contain' }} alt={integration.name} />;
+    : <img src={integration.logo} width="32" height="32" style={{ objectFit:'contain' }} alt={integration.name} />;
 
   const logoContainer = (
-    <div className="card-logo" style={listView ? { width: 44, height: 44, borderRadius: 10, padding: 8 } : {}}>
+    <div className="card-logo" style={listView ? { width:44, height:44, borderRadius:10, padding:8 } : {}}>
       {logoEl}
     </div>
   );
@@ -647,18 +1581,17 @@ function IntegrationCard({ integration, connected, onConnect, onDisconnect, list
     </button>
   );
 
-  const cardClass = `int-card${isConnected ? ' connected' : ''}`;
-
   if (listView) {
     return (
-      <div ref={ref} className={cardClass} onMouseMove={handleMouseMove}
-        style={{ flexDirection: 'row', alignItems: 'center', gap: 16, padding: '14px 20px' }}>
+      <div ref={ref} className={`int-card${isConnected ? ' connected' : ''}`} onMouseMove={handleMouseMove}
+        style={{ flexDirection:'row', alignItems:'center', gap:16, padding:'14px 20px' }}>
         {logoContainer}
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div className="card-name" style={{ marginBottom: 2 }}>{integration.name}</div>
-          <div className="card-desc">{integration.desc}</div>
+        <div style={{ flex:1, minWidth:0 }}>
+          <div className="card-name" style={{ marginBottom:2 }}>{integration.name}</div>
+          <div className="card-cat">{integration.category}</div>
+          {integration.useCase && <div style={{ fontSize:11.5, color:'var(--text-muted)', fontStyle:'italic' }}>{integration.useCase}</div>}
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+        <div style={{ display:'flex', alignItems:'center', gap:8, flexShrink:0 }}>
           {isConnected && <div className="pulse-dot" />}
           {!isConnected && integration.popular && <span className="badge badge-popular">⭐</span>}
           <span className={`badge badge-${integration.tier}`}>{integration.tier === 'free' ? 'Ücretsiz' : 'Pro'}</span>
@@ -669,13 +1602,13 @@ function IntegrationCard({ integration, connected, onConnect, onDisconnect, list
   }
 
   return (
-    <div ref={ref} className={cardClass} onMouseMove={handleMouseMove}>
+    <div ref={ref} className={`int-card${isConnected ? ' connected' : ''}`} onMouseMove={handleMouseMove}>
       <div className="card-top">
         {logoContainer}
         <div className="card-badges">
           {isConnected && (
             <span className="badge badge-connected">
-              <div className="pulse-dot" style={{ width: 6, height: 6 }} />Bağlı
+              <div className="pulse-dot" style={{ width:6, height:6 }} />Bağlı
             </span>
           )}
           {!isConnected && integration.popular && <span className="badge badge-popular">⭐ Popüler</span>}
@@ -685,7 +1618,32 @@ function IntegrationCard({ integration, connected, onConnect, onDisconnect, list
       <div className="card-body">
         <div className="card-name">{integration.name}</div>
         <div className="card-cat">{integration.category}</div>
-        <div className="card-desc">{integration.desc}</div>
+
+        {integration.actions && (
+          <div className="card-section">
+            <div className="card-section-label">Aksiyonlar</div>
+            <ul className="card-list">
+              {integration.actions.map((a, i) => (
+                <li key={i}><span className="check-icon">✓</span>{a}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {integration.triggers && (
+          <div className="card-section">
+            <div className="card-section-label">Tetikleyiciler</div>
+            <ul className="card-list">
+              {integration.triggers.map((t, i) => (
+                <li key={i}><span className="trigger-icon">⚡</span>{t}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {integration.useCase && (
+          <div className="card-usecase">"{integration.useCase}"</div>
+        )}
       </div>
       <div className="card-footer">
         {connectBtn}
@@ -695,9 +1653,6 @@ function IntegrationCard({ integration, connected, onConnect, onDisconnect, list
 }
 
 function App() {
-  const [theme, setTheme] = useState(() => {
-    try { return localStorage.getItem('ms-int-theme') || 'light'; } catch { return 'light'; }
-  });
   const [query, setQuery] = useState('');
   const [activeCat, setActiveCat] = useState('Tümü');
   const [view, setView] = useState('grid');
@@ -710,21 +1665,12 @@ function App() {
   const [modal, setModal] = useState(null);
   const [userPlan, setUserPlan] = useState(null);
   const [showUpgrade, setShowUpgrade] = useState(false);
-  const searchRef = useRef(null);
 
   useEffect(() => {
-    try { localStorage.setItem('ms-int-theme', theme); } catch {}
-    document.documentElement.setAttribute('data-theme', theme);
-  }, [theme]);
-
-  useEffect(() => {
-    function onKey(e) {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') { e.preventDefault(); if (searchRef.current) searchRef.current.focus(); }
-      if (e.key === 'Escape') { setModal(null); setShowUpgrade(false); }
-    }
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, []);
+    window._msSetQuery = setQuery;
+    window._msDismiss = () => { setModal(null); setShowUpgrade(false); };
+    return () => { window._msSetQuery = null; window._msDismiss = null; };
+  }, [setQuery]);
 
   useEffect(() => {
     const token = getAuthToken();
@@ -738,7 +1684,9 @@ function App() {
   const filtered = INTEGRATIONS.filter(it => {
     const matchCat = activeCat === 'Tümü' || it.category === activeCat;
     const q = query.toLowerCase();
-    const matchQ = !q || it.name.toLowerCase().includes(q) || it.desc.toLowerCase().includes(q) || it.category.toLowerCase().includes(q);
+    const matchQ = !q || it.name.toLowerCase().includes(q) ||
+      it.category.toLowerCase().includes(q) ||
+      (it.useCase && it.useCase.toLowerCase().includes(q));
     return matchCat && matchQ;
   });
 
@@ -761,37 +1709,12 @@ function App() {
 
   return (
     <>
-      <nav className="int-nav">
-        <a className="nav-logo" href="index.html">
-          <img src="images/logo-wordmark.png" alt="Mocksheets" />
-        </a>
-        <div style={{ flex: 1 }} />
-        <div className="search-wrap">
-          <span className="search-icon">🔍</span>
-          <input
-            ref={searchRef}
-            className="search-input"
-            type="text"
-            placeholder="Entegrasyon ara..."
-            value={query}
-            onChange={e => setQuery(e.target.value)}
-          />
-          {!query && <span className="search-kbd">⌘K</span>}
-        </div>
-        <button className="theme-btn" onClick={() => setTheme(t => t === 'light' ? 'dark' : 'light')} title="Tema değiştir">
-          {theme === 'light' ? '🌙' : '☀️'}
-        </button>
-        <a className="back-btn" href="app.html">← Uygulamaya Dön</a>
-      </nav>
-
       <div className="int-main">
-        <div className="int-header">
-          <h1>Entegrasyonlar</h1>
-          <p>Mocksheets'i favori araçlarınızla bağlayın ve iş akışlarınızı otomatize edin</p>
-        </div>
-
         <div className="stats-bar">
-          <span className="stat"><strong>{filtered.length}</strong>{filtered.length < INTEGRATIONS.length ? ` / ${INTEGRATIONS.length}` : ''} entegrasyon</span>
+          <span className="stat">
+            <strong>{filtered.length}</strong>
+            {filtered.length < INTEGRATIONS.length ? ` / ${INTEGRATIONS.length}` : ''} entegrasyon
+          </span>
           <span className="stat"><strong>{connected.size}</strong> bağlı</span>
         </div>
 
@@ -833,21 +1756,21 @@ function App() {
         <div className="modal-overlay" onClick={() => setShowUpgrade(false)}>
           <div className="modal-box" onClick={e => e.stopPropagation()}>
             <div className="modal-header">
-              <div style={{fontSize:32}}>⭐</div>
+              <div style={{ fontSize:32 }}>⭐</div>
               <div>
                 <div className="modal-title">Pro Plan Gerekli</div>
-                <span className="badge badge-pro" style={{fontSize:10}}>Pro</span>
+                <span className="badge badge-pro" style={{ fontSize:10 }}>Pro</span>
               </div>
               <button className="modal-close" onClick={() => setShowUpgrade(false)}>×</button>
             </div>
-            <hr className="modal-divider"/>
-            <p style={{fontSize:14,color:'var(--text-muted)',lineHeight:1.6,marginBottom:20}}>
+            <hr className="modal-divider" />
+            <p style={{ fontSize:14, color:'var(--text-muted)', lineHeight:1.6, marginBottom:20 }}>
               Tüm entegrasyonlar <strong>Pro</strong> veya <strong>İş</strong> planı gerektirir.
               Slack, Notion, Google Drive ve diğer entegrasyonlara erişmek için planınızı yükseltin.
             </p>
             <div className="modal-actions">
               <button className="modal-btn modal-btn-secondary" onClick={() => setShowUpgrade(false)}>Vazgeç</button>
-              <a className="modal-btn modal-btn-primary" href="index.html#pricing" style={{textDecoration:'none',textAlign:'center'}}>Planı Yükselt →</a>
+              <a className="modal-btn modal-btn-primary" href="index.html#pricing" style={{ textDecoration:'none', textAlign:'center' }}>Planı Yükselt →</a>
             </div>
           </div>
         </div>
