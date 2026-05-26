@@ -59,6 +59,11 @@ let chatAttachments = [];
 let clipboard = null;
 let cutSource = null;
 let dirtyCells = new Set(); // tracks modified cells for optimized localStorage saves
+let currentUser = null;
+let currentFileId = null;
+let isSyncing = false;
+let autoSaveTimer = null;
+let sb = window._sb || null;
 
 const VH_ICONS = {
   ai:     {emoji:'⚡', cls:'ai'},
@@ -1032,8 +1037,8 @@ function renderRecentFiles() {
     el.innerHTML = `<div style="padding:6px 10px;font-size:11px;color:#6b6b6b;">${t('ui_no_files_yet')}</div>`;
     return;
   }
-  el.innerHTML = recentFiles.map(f => `
-    <div class="rf-item${f.name === activeName ? ' active' : ''}" onclick="">
+  el.innerHTML = recentFiles.map((f, idx) => `
+    <div class="rf-item${f.name === activeName ? ' active' : ''}" onclick="loadRecentFile(${idx})">
       <div class="file-icon-xs">XL</div>
       <div class="rf-item-info">
         <div class="rf-item-name">${escHtml(f.name)}</div>
@@ -1251,12 +1256,12 @@ function toast(msg, type = 'ok', undoable = false) {
   const container = document.getElementById('toastContainer');
   if (!container) return;
   while (container.children.length >= 3) container.firstChild.remove();
-  const t = document.createElement('div');
-  t.className = `toast ${type}`;
+  const toastEl = document.createElement('div');
+  toastEl.className = `toast ${type}`;
   const undoBtn = undoable ? `<button class="toast-undo" onclick="undo();this.closest('.toast').remove()">${t('undo')}</button>` : '';
-  t.innerHTML = `<div class="toast-bar"></div><div class="toast-body">${icons[type]||icons.ok}<span>${msg}</span>${undoBtn}</div>`;
-  container.appendChild(t);
-  const hide = () => { t.classList.add('leaving'); setTimeout(() => t.remove(), 310); };
+  toastEl.innerHTML = `<div class="toast-bar"></div><div class="toast-body">${icons[type]||icons.ok}<span>${msg}</span>${undoBtn}</div>`;
+  container.appendChild(toastEl);
+  const hide = () => { toastEl.classList.add('leaving'); setTimeout(() => toastEl.remove(), 310); };
   setTimeout(hide, 3000);
 }
 function showToast(msg, type, undoable) { toast(msg, type, undoable); }
@@ -2906,7 +2911,7 @@ function renderVersionHistory() {
     return `<div class="vh-item" onclick="showHistoryPreview(${i})">
       <div class="vh-icon ${icon.cls}">${icon.emoji}</div>
       <div class="vh-info">
-        <div class="vh-desc" title="${entry.desc}">${entry.desc}</div>
+        <div class="vh-desc" title="${escHtml(entry.desc)}">${escHtml(entry.desc)}</div>
         <div class="vh-time">${fmtHistoryTime(entry.time)}</div>
       </div>
     </div>`;
@@ -2932,7 +2937,7 @@ function showHistoryPreview(idx) {
     html += `<tr><th>${r + 1}</th>`;
     for (let c = 0; c < PREV_COLS; c++) {
       const v = (data[r] && data[r][c]) ? data[r][c] : '';
-      html += `<td class="${v ? 'hv' : ''}" title="${v}">${v.length > 10 ? v.substring(0,10)+'…' : v}</td>`;
+      html += `<td class="${v ? 'hv' : ''}" title="${escHtml(v)}">${v.length > 10 ? escHtml(v.substring(0,10))+'…' : escHtml(v)}</td>`;
     }
     html += '</tr>';
   }
@@ -2984,7 +2989,7 @@ function checkEmptyState() {
     const esRecent = document.getElementById('esRecent');
     if (rec && esRecent) {
       rec.innerHTML = recentFiles.slice(0, 3).map(function(f, i) {
-        return `<div class="es-recent-item" onclick="loadRecentFile(${i})">📄 ${f.name || 'File'}</div>`;
+        return `<div class="es-recent-item" onclick="loadRecentFile(${i})">📄 ${escHtml(f.name || 'File')}</div>`;
       }).join('');
       esRecent.style.display = recentFiles.length ? '' : 'none';
     }
@@ -3351,15 +3356,15 @@ function toast(msg, type, undoable, duration) {
   const container = document.getElementById('toastContainer');
   if (!container) return;
   while (container.children.length >= 3) container.firstChild.remove();
-  const t = document.createElement('div');
-  t.className = 'toast ' + type;
+  const toastEl = document.createElement('div');
+  toastEl.className = 'toast ' + type;
   const undoBtn  = undoable ? `<button class="toast-undo" onclick="undo();this.closest('.toast').remove()">${t('undo')}</button>` : '';
   const closeBtn = `<button class="toast-close" onclick="this.closest('.toast').remove()">×</button>`;
-  t.innerHTML = `<div class="toast-bar"></div><div class="toast-body">${ICONS[type]||ICONS.ok}<span class="toast-msg">${msg}</span>${undoBtn}${closeBtn}</div><div class="toast-progress-wrap"><div class="toast-progress"></div></div>`;
-  container.appendChild(t);
-  const pb = t.querySelector('.toast-progress');
+  toastEl.innerHTML = `<div class="toast-bar"></div><div class="toast-body">${ICONS[type]||ICONS.ok}<span class="toast-msg">${msg}</span>${undoBtn}${closeBtn}</div><div class="toast-progress-wrap"><div class="toast-progress"></div></div>`;
+  container.appendChild(toastEl);
+  const pb = toastEl.querySelector('.toast-progress');
   if (pb) requestAnimationFrame(function() { pb.style.transition = 'width ' + duration + 'ms linear'; pb.style.width = '0%'; });
-  var hide = function() { t.classList.add('leaving'); setTimeout(function() { if (t.parentNode) t.remove(); }, 310); };
+  var hide = function() { toastEl.classList.add('leaving'); setTimeout(function() { if (toastEl.parentNode) toastEl.remove(); }, 310); };
   setTimeout(hide, duration);
 }
 function showToast(msg, type, undoable) { toast(msg, type, undoable); }
@@ -3435,7 +3440,8 @@ function showToast(msg, type, undoable) { toast(msg, type, undoable); }
 function selectAllCells() {
   if (!sheets || !sheets[activeSheet]) { toast(t('toast_load_first'), 'info'); return; }
   selRow = 0; selCol = 0;
-  selRow2 = ROWS - 1; selCol2 = COLS - 1;
+  selStart = {r: 0, c: 0};
+  selEnd = {r: ROWS - 1, c: COLS - 1};
   if (typeof highlightSelection === 'function') highlightSelection();
   toast(t('toast_all_selected'), 'info');
 }
@@ -3477,10 +3483,10 @@ document.addEventListener('keydown', function(e) {
 
   // Delete → clear selected range (not in input)
   if (e.key === 'Delete' && !inInput && sheets && sheets[activeSheet]) {
-    var r1 = Math.min(selRow, selRow2 !== undefined ? selRow2 : selRow);
-    var r2 = Math.max(selRow, selRow2 !== undefined ? selRow2 : selRow);
-    var c1 = Math.min(selCol, selCol2 !== undefined ? selCol2 : selCol);
-    var c2 = Math.max(selCol, selCol2 !== undefined ? selCol2 : selCol);
+    var r1 = selStart ? Math.min(selStart.r, selEnd.r) : selRow;
+    var r2 = selStart ? Math.max(selStart.r, selEnd.r) : selRow;
+    var c1 = selStart ? Math.min(selStart.c, selEnd.c) : selCol;
+    var c2 = selStart ? Math.max(selStart.c, selEnd.c) : selCol;
     for (var r = r1; r <= r2; r++) {
       for (var c = c1; c <= c2; c++) {
         if (sheets[activeSheet][r]) sheets[activeSheet][r][c] = '';
@@ -4239,7 +4245,14 @@ function addMessage(text, type) {
   } else {
     const wrapper = document.createElement('div');
     wrapper.className = 'msg-ai';
-    wrapper.innerHTML = `<div class="msg-ai-avatar">M</div><div class="msg-ai-bubble">${text}</div>`;
+    const avatarEl = document.createElement('div');
+    avatarEl.className = 'msg-ai-avatar';
+    avatarEl.textContent = 'M';
+    const bubbleEl = document.createElement('div');
+    bubbleEl.className = 'msg-ai-bubble';
+    bubbleEl.textContent = text;
+    wrapper.appendChild(avatarEl);
+    wrapper.appendChild(bubbleEl);
     msgs.appendChild(wrapper);
   }
   msgs.scrollTop = msgs.scrollHeight;
@@ -4582,7 +4595,7 @@ function doExplain(data) {
     pivot:       'Pivot Tablo — Büyük verileri kategorilere göre özetler. Veri > Özet Tablo menüsünden oluşturulur.'
   };
   const text = explanations[formulaName] || 'Bu işlev seçili veriler üzerinde çalışır. Daha spesifik soru sormak için örn: "vlookup açıkla", "sumif nedir" diyebilirsiniz.';
-  addMsg('ai', '💡 ' + text);
+  addMessage('💡 ' + text, 'ai');
   showToast(data.reply || '✓ Açıklama hazırlandı', 'success');
 }
 
@@ -5072,8 +5085,8 @@ function exportToExcelOnline() {
   const exportData = data.slice(0, Math.max(lastRow, 1));
   const ws = XLSX.utils.aoa_to_sheet(exportData);
   const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, sheetNames[activeSheet] || 'Sheet1');
-  const fileName = (sheetNames[activeSheet] || 'Mocksheets') + '.xlsx';
+  XLSX.utils.book_append_sheet(wb, ws, activeSheet || 'Sheet1');
+  const fileName = (activeSheet || 'Mocksheets') + '.xlsx';
   XLSX.writeFile(wb, fileName);
   toast(`"${fileName}" indirildi (${exportData.length} satır)`, 'ok');
 }
@@ -6140,7 +6153,7 @@ function renderSheetList() {
     const escapedName = name.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
     html += `<div class="sb-sheet-tab ${isActive ? 'active' : ''}" data-sheet="${escapedName}" onclick="switchSheet(this.dataset.sheet)">
       <span class="sb-sheet-tab-icon">📄</span>
-      <span class="sb-sheet-tab-name">${name}</span>
+      <span class="sb-sheet-tab-name">${escHtml(name)}</span>
       <span class="sb-sheet-tab-close" onclick="event.stopPropagation();deleteSheetDirect(this.closest('.sb-sheet-tab').dataset.sheet)">×</span>
     </div>`;
   });
@@ -6386,7 +6399,7 @@ function _pdfShowStep2(data) {
   document.getElementById('pdfDocDesc').textContent = sum.description || '';
 
   if (data.warnings && data.warnings.length > 0) {
-    document.getElementById('pdfWarningsList').innerHTML = data.warnings.map(w => `<li>${w}</li>`).join('');
+    document.getElementById('pdfWarningsList').innerHTML = data.warnings.map(w => `<li>${escHtml(String(w))}</li>`).join('');
     document.getElementById('pdfWarningsBox').style.display = '';
   } else {
     document.getElementById('pdfWarningsBox').style.display = 'none';
@@ -6410,7 +6423,7 @@ function _pdfShowStep2(data) {
       <label class="pdf-table-radio${i === 0 ? ' selected' : ''}" onclick="pdfSelectTable(${t.id}, this)">
         <input type="radio" name="pdfTableChoice" value="${t.id}" ${i === 0 ? 'checked' : ''}>
         <div>
-          <div class="pdf-table-radio-label">${t.title}</div>
+          <div class="pdf-table-radio-label">${escHtml(String(t.title))}</div>
           <div class="pdf-table-radio-meta">${t.row_count} satır · ${t.col_count} sütun${t.page ? ' · Sayfa ' + t.page : ''}</div>
         </div>
       </label>
@@ -6439,9 +6452,9 @@ function _pdfRenderPreview(table) {
   const headers = table.headers || [];
   const rows = (table.rows || []).slice(0, 10);
 
-  let html = '<thead><tr>' + headers.map(h => `<th>${h}</th>`).join('') + '</tr></thead><tbody>';
+  let html = '<thead><tr>' + headers.map(h => `<th>${escHtml(String(h))}</th>`).join('') + '</tr></thead><tbody>';
   html += rows.map(row =>
-    '<tr>' + headers.map((_, i) => `<td>${row[i] ?? ''}</td>`).join('') + '</tr>'
+    '<tr>' + headers.map((_, i) => `<td>${escHtml(String(row[i] ?? ''))}</td>`).join('') + '</tr>'
   ).join('');
   html += '</tbody>';
   document.getElementById('pdfPreviewTable').innerHTML = html;

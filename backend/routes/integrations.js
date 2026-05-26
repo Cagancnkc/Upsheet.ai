@@ -328,6 +328,12 @@ router.post('/slack/notify', async (req, res) => {
   const { webhookUrl, title, message, fields } = req.body;
   if (!webhookUrl) return res.status(400).json({ error: 'Webhook URL gerekli' });
 
+  try {
+    const parsed = new URL(webhookUrl);
+    if (!['http:', 'https:'].includes(parsed.protocol)) return res.status(400).json({ error: 'Geçersiz URL protokolü' });
+    if (isPrivateHost(parsed.hostname)) return res.status(403).json({ error: 'Private host hedefleri yasaklıdır', code: 'SSRF_BLOCKED' });
+  } catch { return res.status(400).json({ error: 'Geçersiz URL formatı' }); }
+
   const blocks = [
     { type: 'header', text: { type: 'plain_text', text: title || 'Mocksheets Bildirimi', emoji: true } },
     { type: 'section', text: { type: 'mrkdwn', text: message || '' } }
@@ -414,6 +420,7 @@ router.post('/make/trigger', async (req, res) => {
   try {
     const parsed = new URL(url);
     if (!['http:', 'https:'].includes(parsed.protocol)) return res.status(400).json({ error: 'Geçersiz URL' });
+    if (isPrivateHost(parsed.hostname)) return res.status(403).json({ error: 'Private host hedefleri yasaklıdır', code: 'SSRF_BLOCKED' });
   } catch { return res.status(400).json({ error: 'Geçersiz URL formatı' }); }
 
   const payload = { source: 'Mocksheets', event: event || 'manual', timestamp: new Date().toISOString(), data: data || {} };
@@ -482,6 +489,12 @@ router.post('/teams/test', async (req, res) => {
 router.post('/teams/notify', async (req, res) => {
   const { webhookUrl, title, message, fields } = req.body;
   if (!webhookUrl) return res.status(400).json({ error: 'Webhook URL gerekli' });
+
+  try {
+    const parsed = new URL(webhookUrl);
+    if (!['http:', 'https:'].includes(parsed.protocol)) return res.status(400).json({ error: 'Geçersiz URL protokolü' });
+    if (isPrivateHost(parsed.hostname)) return res.status(403).json({ error: 'Private host hedefleri yasaklıdır', code: 'SSRF_BLOCKED' });
+  } catch { return res.status(400).json({ error: 'Geçersiz URL formatı' }); }
 
   const facts = (fields || []).map(f => ({ name: f.label, value: f.value }));
   facts.push({ name: 'Zaman', value: new Date().toLocaleString('tr-TR') });

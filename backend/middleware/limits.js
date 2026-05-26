@@ -72,6 +72,9 @@ async function checkLimit(req, res, next) {
 
   // Servis anahtarı ile dahili scheduler çağrıları — x-user-id header zorunlu
   if (token === process.env.SUPABASE_SERVICE_KEY) {
+    const clientIp = req.ip || req.connection?.remoteAddress || '';
+    const isInternal = clientIp === '127.0.0.1' || clientIp === '::1' || clientIp === '::ffff:127.0.0.1';
+    if (!isInternal) return res.status(403).json({ error: 'Service key sadece dahili ağdan kabul edilir', code: 'FORBIDDEN' });
     const userId = req.headers['x-user-id'];
     if (!userId) return res.status(401).json({ error: 'x-user-id header gerekli', code: 'INVALID_TOKEN' });
     const usage = await getOrCreateUsage(userId);
