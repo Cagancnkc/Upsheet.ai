@@ -212,7 +212,7 @@ router.post('/', requireAuth, async (req, res) => {
       const scheduler = require('../services/scheduler');
       scheduler.scheduleRule(data);
     }
-  } catch {}
+  } catch (err) { console.warn('[automations] Scheduler register failed:', err.message); }
 
   res.json({ rule: data });
 });
@@ -249,7 +249,7 @@ router.put('/:id', requireAuth, async (req, res) => {
     if (data.trigger_config?.type === 'schedule' && data.enabled) {
       scheduler.scheduleRule(data);
     }
-  } catch {}
+  } catch (err) { console.warn('[automations] Scheduler update failed:', err.message); }
 
   res.json({ rule: data });
 });
@@ -266,7 +266,7 @@ router.delete('/:id', requireAuth, async (req, res) => {
 
   if (error) return res.status(500).json({ error: error.message });
 
-  try { require('../services/scheduler').unschedule(id); } catch {}
+  try { require('../services/scheduler').unschedule(id); } catch (err) { console.warn('[automations] Scheduler unschedule failed:', err.message); }
 
   res.json({ success: true });
 });

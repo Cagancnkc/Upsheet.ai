@@ -29,7 +29,8 @@ router.post('/sheets/export', async (req, res) => {
 
   const csv = '\uFEFF' + data.map(row =>
     (row || []).map(cell => {
-      const str = String(cell ?? '');
+      let str = String(cell ?? '');
+      if (/^[=+\-@\t\r]/.test(str)) str = "'" + str;
       return str.includes(',') || str.includes('"') || str.includes('\n')
         ? `"${str.replace(/"/g, '""')}"`
         : str;

@@ -1037,7 +1037,7 @@ function renderRecentFiles() {
     <div class="rf-item${f.name === activeName ? ' active' : ''}" onclick="">
       <div class="file-icon-xs">XL</div>
       <div class="rf-item-info">
-        <div class="rf-item-name">${f.name}</div>
+        <div class="rf-item-name">${escHtml(f.name)}</div>
         <div class="rf-item-time">${fmtTime(f.time)}</div>
       </div>
     </div>`).join('');
@@ -1457,7 +1457,7 @@ async function sendChat() {
   input.style.height = '34px';
 
   const displayMsg = msg || chatAttachments.map(a => `📎 ${a.name}`).join(', ');
-  addMsg('user', displayMsg);
+  addMsg('user', escHtml(displayMsg));
   const finalMessage = await buildMessageWithAttachments(msg);
   chatHistory.push({role: 'user', content: finalMessage});
   clearChatAttachments();

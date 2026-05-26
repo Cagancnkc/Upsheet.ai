@@ -190,7 +190,7 @@ app.get('/api/integrations/drive/callback', async (req, res) => {
     } else {
       res.send(`<script>window.opener?.postMessage({type:'drive_auth',error:'Token alınamadı'},${JSON.stringify(origin)});window.close();</script>`);
     }
-  } catch (err) { res.send(`<script>window.opener?.postMessage({type:'drive_auth',error:${JSON.stringify(err.message)}},${JSON.stringify(origin)});window.close();</script>`); }
+  } catch (err) { res.send(`<script>window.opener?.postMessage({type:'drive_auth',error:'Kimlik doğrulama başarısız'},${JSON.stringify(origin)});window.close();</script>`); }
 });
 
 app.get('/api/integrations/sheets/auth', (req, res) => {
@@ -226,7 +226,7 @@ app.get('/api/integrations/sheets/callback', async (req, res) => {
     } else {
       res.send(`<script>window.opener?.postMessage({type:'sheets_auth',error:${JSON.stringify(tokens.error_description || 'Token alınamadı')}},${JSON.stringify(origin)});window.close();</script>`);
     }
-  } catch (err) { res.send(`<script>window.opener?.postMessage({type:'sheets_auth',error:${JSON.stringify(err.message)}},${JSON.stringify(origin)});window.close();</script>`); }
+  } catch (err) { res.send(`<script>window.opener?.postMessage({type:'sheets_auth',error:'Kimlik doğrulama başarısız'},${JSON.stringify(origin)});window.close();</script>`); }
 });
 
 app.get('/api/integrations/excel/auth', (_req, res) => {
@@ -255,7 +255,7 @@ app.get('/api/integrations/excel/callback', async (req, res) => {
       const msg = tokens.error_description || tokens.error || 'Token alınamadı';
       res.send(`<script>window.opener?.postMessage({type:'excel_auth',error:${JSON.stringify(msg)}},${JSON.stringify(origin)});window.close();</script>`);
     }
-  } catch (err) { res.send(`<script>window.opener?.postMessage({type:'excel_auth',error:${JSON.stringify(err.message)}},${JSON.stringify(origin)});window.close();</script>`); }
+  } catch (err) { res.send(`<script>window.opener?.postMessage({type:'excel_auth',error:'Kimlik doğrulama başarısız'},${JSON.stringify(origin)});window.close();</script>`); }
 });
 
 // Gmail OAuth
@@ -296,7 +296,7 @@ app.get('/api/integrations/gmail/callback', async (req, res) => {
     } else {
       res.send(`<script>window.opener?.postMessage({type:'gmail_auth',error:${JSON.stringify(tokens.error_description || 'Token alınamadı')}},${JSON.stringify(origin)});window.close();</script>`);
     }
-  } catch (err) { res.send(`<script>window.opener?.postMessage({type:'gmail_auth',error:${JSON.stringify(err.message)}},${JSON.stringify(origin)});window.close();</script>`); }
+  } catch (err) { res.send(`<script>window.opener?.postMessage({type:'gmail_auth',error:'Kimlik doğrulama başarısız'},${JSON.stringify(origin)});window.close();</script>`); }
 });
 
 // Notion OAuth
@@ -345,7 +345,7 @@ app.get('/api/integrations/notion/callback', async (req, res) => {
     } else {
       res.send(`<script>window.opener?.postMessage({type:'notion_auth',error:${JSON.stringify(data.error || 'Token alınamadı')}},${JSON.stringify(origin)});window.close();</script>`);
     }
-  } catch (err) { res.send(`<script>window.opener?.postMessage({type:'notion_auth',error:${JSON.stringify(err.message)}},${JSON.stringify(origin)});window.close();</script>`); }
+  } catch (err) { res.send(`<script>window.opener?.postMessage({type:'notion_auth',error:'Kimlik doğrulama başarısız'},${JSON.stringify(origin)});window.close();</script>`); }
 });
 
 app.use('/api/integrations', checkLimit, requireFeature('integrations'), integrationsRouter);
