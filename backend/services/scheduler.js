@@ -1,6 +1,7 @@
 'use strict';
 const cron = require('node-cron');
 const { createClient } = require('@supabase/supabase-js');
+const { executeAction } = require('../routes/automations');
 
 let _sb = null;
 function getSb() {
@@ -97,19 +98,13 @@ async function runRuleServerSide(rule) {
     let overallStatus = 'success';
 
     const base = process.env.BACKEND_URL || 'http://localhost:3001';
+    const serviceToken = process.env.SUPABASE_SERVICE_KEY;
 
     for (const action of actions) {
-      const row = matched[0] || {};
-      const interpolate = (s = '') => s.replace(/\{([^}]+)\}/g, (_, k) => row[k] ?? k);
-
       try {
-        let result = null;
-        if (action.type === 'notification') {
-          result = { message: interpolate(action.message || 'Otomasyon tetiklendi') };
-          actionResults.push({ type: action.type, status: 'success', result });
-        } else {
-          actionResults.push({ type: action.type, status: 'skipped', result: { reason: 'Server-side execution limited to notification type for schedule triggers' } });
-        }
+        const result = await executeAction(action, matched, serviceToken, base, rule.user_id);
+        actionResults.push(result);
+        if (result.status === 'error') overallStatus = 'error';
       } catch (e) {
         overallStatus = 'error';
         actionResults.push({ type: action.type, status: 'error', error: e.message });

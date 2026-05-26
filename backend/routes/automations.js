@@ -24,9 +24,11 @@ async function requireAuth(req, res, next) {
 }
 
 // Execute a single action against the backend integrations API
-async function executeAction(action, matchedRows, authToken, backendUrl) {
+// userId is only needed when authToken is the service key (scheduler context)
+async function executeAction(action, matchedRows, authToken, backendUrl, userId) {
   const base = backendUrl || process.env.BACKEND_URL || 'http://localhost:3001';
   const headers = { 'Content-Type': 'application/json', Authorization: `Bearer ${authToken}` };
+  if (userId) headers['x-user-id'] = userId;
   const type = action.type;
 
   try {
@@ -475,3 +477,4 @@ router.post('/:id/log', requireAuth, async (req, res) => {
 });
 
 module.exports = router;
+module.exports.executeAction = executeAction;

@@ -214,6 +214,13 @@ router.post('/webhook',
       case 'invoice.payment_failed': {
         const invoice = event.data.object;
         console.log('💳 Ödeme başarısız:', invoice.customer_email);
+        if (invoice.subscription) {
+          const { createClient: sbFail } = require('@supabase/supabase-js');
+          const sbF = sbFail(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
+          await sbF.from('user_usage')
+            .update({ subscription_status: 'past_due' })
+            .eq('stripe_subscription_id', invoice.subscription);
+        }
         break;
       }
 
@@ -237,12 +244,12 @@ router.get('/plans', (req, res) => {
     pro: {
       weekly:  { amount: 149, currency: '₺', period: 'hafta' },
       monthly: { amount: 499, currency: '₺', period: 'ay' },
-      yearly:  { amount: 299, currency: '₺', period: 'ay', note: 'Yıllık ödeme' }
+      yearly:  { amount: 299, currency: '₺', period: 'yıl', note: 'Yıllık ödeme' }
     },
     business: {
       weekly:  { amount: 349, currency: '₺', period: 'hafta' },
       monthly: { amount: 1099, currency: '₺', period: 'ay' },
-      yearly:  { amount: 699, currency: '₺', period: 'ay', note: 'Yıllık ödeme' }
+      yearly:  { amount: 699, currency: '₺', period: 'yıl', note: 'Yıllık ödeme' }
     }
   });
 });

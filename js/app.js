@@ -339,7 +339,6 @@ function cellKeydown(e, r, c) {
     if (e.key === 'c') { e.preventDefault(); copyCell(); }
     if (e.key === 'x') { e.preventDefault(); cutCell(); }
     if (e.key === 'v') { e.preventDefault(); pasteCell(); }
-    if (e.key === 'z') { e.preventDefault(); toast(t('toast_undo_soon'), 'ok'); }
   }
 }
 
@@ -6220,7 +6219,16 @@ function focusChatInput() {
 }
 
 function showKeyboardShortcuts() {
-  alert('Keyboard Shortcuts\n\nEnter — Send command\nEscape — Close chat\nCtrl+Z — Undo\nCtrl+S — Save\nCtrl+E — Export');
+  showModal(
+    '<h2 style="margin-bottom:12px">⌨️ Klavye Kısayolları</h2>' +
+    '<table style="width:100%;font-size:13px;border-collapse:collapse">' +
+    '<tr><td style="padding:6px 12px 6px 0;color:#94a3b8">Enter</td><td>Komut gönder</td></tr>' +
+    '<tr><td style="padding:6px 12px 6px 0;color:#94a3b8">Escape</td><td>Sohbeti kapat</td></tr>' +
+    '<tr><td style="padding:6px 12px 6px 0;color:#94a3b8">Ctrl+S</td><td>Kaydet</td></tr>' +
+    '<tr><td style="padding:6px 12px 6px 0;color:#94a3b8">Ctrl+E</td><td>Dışa aktar</td></tr>' +
+    '</table>' +
+    '<div class="modal-foot"><button class="btn btn-ghost" onclick="closeModal()">Kapat</button></div>'
+  );
 }
 
 document.addEventListener('DOMContentLoaded', () => {

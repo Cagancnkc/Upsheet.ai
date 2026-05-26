@@ -70,6 +70,18 @@ async function checkLimit(req, res, next) {
     });
   }
 
+  // Servis anahtarı ile dahili scheduler çağrıları — x-user-id header zorunlu
+  if (token === process.env.SUPABASE_SERVICE_KEY) {
+    const userId = req.headers['x-user-id'];
+    if (!userId) return res.status(401).json({ error: 'x-user-id header gerekli', code: 'INVALID_TOKEN' });
+    const usage = await getOrCreateUsage(userId);
+    const plan = PLANS[usage?.plan] || PLANS.free;
+    req.user = { id: userId };
+    req.usage = usage;
+    req.plan = plan;
+    return next();
+  }
+
   const { data: { user }, error } = await supabase.auth.getUser(token);
   if (error || !user) {
     return res.status(401).json({
