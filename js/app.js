@@ -60,19 +60,6 @@ let clipboard = null;
 let cutSource = null;
 let dirtyCells = new Set(); // tracks modified cells for optimized localStorage saves
 
-// ── Supabase file-system state ────────────────────────────────
-let currentUser    = null;  // set by updateSidebarUser() after auth
-let currentFileId  = null;  // active cloud file id
-let isSyncing      = false; // prevents concurrent autoSave calls
-let autoSaveTimer  = null;  // debounce timer for scheduleAutoSave
-// sb is a lazy proxy to window._sb so it is always available after Supabase loads
-var sb = new Proxy({}, {
-  get: function(_, prop) {
-    if (!window._sb) throw new Error('Supabase client not initialised (window._sb is undefined)');
-    return window._sb[prop];
-  }
-});
-
 const VH_ICONS = {
   ai:     {emoji:'⚡', cls:'ai'},
   manual: {emoji:'✏️', cls:'manual'},
@@ -1045,8 +1032,8 @@ function renderRecentFiles() {
     el.innerHTML = `<div style="padding:6px 10px;font-size:11px;color:#6b6b6b;">${t('ui_no_files_yet')}</div>`;
     return;
   }
-  el.innerHTML = recentFiles.map((f, idx) => `
-    <div class="rf-item${f.name === activeName ? ' active' : ''}" onclick="loadRecentFile(${idx})">
+  el.innerHTML = recentFiles.map(f => `
+    <div class="rf-item${f.name === activeName ? ' active' : ''}" onclick="">
       <div class="file-icon-xs">XL</div>
       <div class="rf-item-info">
         <div class="rf-item-name">${escHtml(f.name)}</div>
@@ -2919,7 +2906,7 @@ function renderVersionHistory() {
     return `<div class="vh-item" onclick="showHistoryPreview(${i})">
       <div class="vh-icon ${icon.cls}">${icon.emoji}</div>
       <div class="vh-info">
-        <div class="vh-desc" title="${escHtml(entry.desc)}">${escHtml(entry.desc)}</div>
+        <div class="vh-desc" title="${entry.desc}">${entry.desc}</div>
         <div class="vh-time">${fmtHistoryTime(entry.time)}</div>
       </div>
     </div>`;
@@ -2945,7 +2932,7 @@ function showHistoryPreview(idx) {
     html += `<tr><th>${r + 1}</th>`;
     for (let c = 0; c < PREV_COLS; c++) {
       const v = (data[r] && data[r][c]) ? data[r][c] : '';
-      html += `<td class="${v ? 'hv' : ''}" title="${escHtml(v)}">${v.length > 10 ? escHtml(v.substring(0,10))+'…' : escHtml(v)}</td>`;
+      html += `<td class="${v ? 'hv' : ''}" title="${v}">${v.length > 10 ? v.substring(0,10)+'…' : v}</td>`;
     }
     html += '</tr>';
   }
@@ -2997,7 +2984,7 @@ function checkEmptyState() {
     const esRecent = document.getElementById('esRecent');
     if (rec && esRecent) {
       rec.innerHTML = recentFiles.slice(0, 3).map(function(f, i) {
-        return `<div class="es-recent-item" onclick="loadRecentFile(${i})">📄 ${escHtml(f.name || 'File')}</div>`;
+        return `<div class="es-recent-item" onclick="loadRecentFile(${i})">📄 ${f.name || 'File'}</div>`;
       }).join('');
       esRecent.style.display = recentFiles.length ? '' : 'none';
     }
@@ -3364,15 +3351,15 @@ function toast(msg, type, undoable, duration) {
   const container = document.getElementById('toastContainer');
   if (!container) return;
   while (container.children.length >= 3) container.firstChild.remove();
-  const toastEl = document.createElement('div');
-  toastEl.className = 'toast ' + type;
+  const t = document.createElement('div');
+  t.className = 'toast ' + type;
   const undoBtn  = undoable ? `<button class="toast-undo" onclick="undo();this.closest('.toast').remove()">${t('undo')}</button>` : '';
   const closeBtn = `<button class="toast-close" onclick="this.closest('.toast').remove()">×</button>`;
-  toastEl.innerHTML = `<div class="toast-bar"></div><div class="toast-body">${ICONS[type]||ICONS.ok}<span class="toast-msg">${msg}</span>${undoBtn}${closeBtn}</div><div class="toast-progress-wrap"><div class="toast-progress"></div></div>`;
-  container.appendChild(toastEl);
-  const pb = toastEl.querySelector('.toast-progress');
+  t.innerHTML = `<div class="toast-bar"></div><div class="toast-body">${ICONS[type]||ICONS.ok}<span class="toast-msg">${msg}</span>${undoBtn}${closeBtn}</div><div class="toast-progress-wrap"><div class="toast-progress"></div></div>`;
+  container.appendChild(t);
+  const pb = t.querySelector('.toast-progress');
   if (pb) requestAnimationFrame(function() { pb.style.transition = 'width ' + duration + 'ms linear'; pb.style.width = '0%'; });
-  var hide = function() { toastEl.classList.add('leaving'); setTimeout(function() { if (toastEl.parentNode) toastEl.remove(); }, 310); };
+  var hide = function() { t.classList.add('leaving'); setTimeout(function() { if (t.parentNode) t.remove(); }, 310); };
   setTimeout(hide, duration);
 }
 function showToast(msg, type, undoable) { toast(msg, type, undoable); }
@@ -3448,8 +3435,7 @@ function showToast(msg, type, undoable) { toast(msg, type, undoable); }
 function selectAllCells() {
   if (!sheets || !sheets[activeSheet]) { toast(t('toast_load_first'), 'info'); return; }
   selRow = 0; selCol = 0;
-  selStart = { r: 0, c: 0 };
-  selEnd = { r: ROWS - 1, c: COLS - 1 };
+  selRow2 = ROWS - 1; selCol2 = COLS - 1;
   if (typeof highlightSelection === 'function') highlightSelection();
   toast(t('toast_all_selected'), 'info');
 }
@@ -3491,12 +3477,10 @@ document.addEventListener('keydown', function(e) {
 
   // Delete → clear selected range (not in input)
   if (e.key === 'Delete' && !inInput && sheets && sheets[activeSheet]) {
-    var _sr = selStart ? selStart.r : selRow, _er = selEnd ? selEnd.r : selRow;
-    var _sc = selStart ? selStart.c : selCol, _ec = selEnd ? selEnd.c : selCol;
-    var r1 = Math.min(selRow, _sr, _er);
-    var r2 = Math.max(selRow, _sr, _er);
-    var c1 = Math.min(selCol, _sc, _ec);
-    var c2 = Math.max(selCol, _sc, _ec);
+    var r1 = Math.min(selRow, selRow2 !== undefined ? selRow2 : selRow);
+    var r2 = Math.max(selRow, selRow2 !== undefined ? selRow2 : selRow);
+    var c1 = Math.min(selCol, selCol2 !== undefined ? selCol2 : selCol);
+    var c2 = Math.max(selCol, selCol2 !== undefined ? selCol2 : selCol);
     for (var r = r1; r <= r2; r++) {
       for (var c = c1; c <= c2; c++) {
         if (sheets[activeSheet][r]) sheets[activeSheet][r][c] = '';
@@ -4255,14 +4239,7 @@ function addMessage(text, type) {
   } else {
     const wrapper = document.createElement('div');
     wrapper.className = 'msg-ai';
-    const avatar = document.createElement('div');
-    avatar.className = 'msg-ai-avatar';
-    avatar.textContent = 'M';
-    const bubble = document.createElement('div');
-    bubble.className = 'msg-ai-bubble';
-    bubble.textContent = text;
-    wrapper.appendChild(avatar);
-    wrapper.appendChild(bubble);
+    wrapper.innerHTML = `<div class="msg-ai-avatar">M</div><div class="msg-ai-bubble">${text}</div>`;
     msgs.appendChild(wrapper);
   }
   msgs.scrollTop = msgs.scrollHeight;
@@ -4605,7 +4582,7 @@ function doExplain(data) {
     pivot:       'Pivot Tablo — Büyük verileri kategorilere göre özetler. Veri > Özet Tablo menüsünden oluşturulur.'
   };
   const text = explanations[formulaName] || 'Bu işlev seçili veriler üzerinde çalışır. Daha spesifik soru sormak için örn: "vlookup açıkla", "sumif nedir" diyebilirsiniz.';
-  addMessage('💡 ' + text, 'ai');
+  addMsg('ai', '💡 ' + text);
   showToast(data.reply || '✓ Açıklama hazırlandı', 'success');
 }
 
@@ -5095,8 +5072,8 @@ function exportToExcelOnline() {
   const exportData = data.slice(0, Math.max(lastRow, 1));
   const ws = XLSX.utils.aoa_to_sheet(exportData);
   const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, activeSheet || 'Sheet1');
-  const fileName = (activeSheet || 'Mocksheets') + '.xlsx';
+  XLSX.utils.book_append_sheet(wb, ws, sheetNames[activeSheet] || 'Sheet1');
+  const fileName = (sheetNames[activeSheet] || 'Mocksheets') + '.xlsx';
   XLSX.writeFile(wb, fileName);
   toast(`"${fileName}" indirildi (${exportData.length} satır)`, 'ok');
 }
@@ -6163,7 +6140,7 @@ function renderSheetList() {
     const escapedName = name.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
     html += `<div class="sb-sheet-tab ${isActive ? 'active' : ''}" data-sheet="${escapedName}" onclick="switchSheet(this.dataset.sheet)">
       <span class="sb-sheet-tab-icon">📄</span>
-      <span class="sb-sheet-tab-name">${escHtml(name)}</span>
+      <span class="sb-sheet-tab-name">${name}</span>
       <span class="sb-sheet-tab-close" onclick="event.stopPropagation();deleteSheetDirect(this.closest('.sb-sheet-tab').dataset.sheet)">×</span>
     </div>`;
   });
@@ -6177,8 +6154,6 @@ function updateSidebarUser() {
     const session = JSON.parse(localStorage.getItem(key));
     const email = session?.user?.email || '';
     if (!email) return;
-    // populate global currentUser so uploadFileToSupabase / autoSave can access it
-    if (session?.user) currentUser = session.user;
     const name = email.split('@')[0];
     const initial = name[0].toUpperCase();
 
@@ -6411,7 +6386,7 @@ function _pdfShowStep2(data) {
   document.getElementById('pdfDocDesc').textContent = sum.description || '';
 
   if (data.warnings && data.warnings.length > 0) {
-    document.getElementById('pdfWarningsList').innerHTML = data.warnings.map(w => `<li>${escHtml(w)}</li>`).join('');
+    document.getElementById('pdfWarningsList').innerHTML = data.warnings.map(w => `<li>${w}</li>`).join('');
     document.getElementById('pdfWarningsBox').style.display = '';
   } else {
     document.getElementById('pdfWarningsBox').style.display = 'none';
@@ -6435,8 +6410,8 @@ function _pdfShowStep2(data) {
       <label class="pdf-table-radio${i === 0 ? ' selected' : ''}" onclick="pdfSelectTable(${t.id}, this)">
         <input type="radio" name="pdfTableChoice" value="${t.id}" ${i === 0 ? 'checked' : ''}>
         <div>
-          <div class="pdf-table-radio-label">${escHtml(t.title)}</div>
-          <div class="pdf-table-radio-meta">${escHtml(String(t.row_count))} satır · ${escHtml(String(t.col_count))} sütun${t.page ? ' · Sayfa ' + escHtml(String(t.page)) : ''}</div>
+          <div class="pdf-table-radio-label">${t.title}</div>
+          <div class="pdf-table-radio-meta">${t.row_count} satır · ${t.col_count} sütun${t.page ? ' · Sayfa ' + t.page : ''}</div>
         </div>
       </label>
     `).join('');
@@ -6464,9 +6439,9 @@ function _pdfRenderPreview(table) {
   const headers = table.headers || [];
   const rows = (table.rows || []).slice(0, 10);
 
-  let html = '<thead><tr>' + headers.map(h => `<th>${escHtml(String(h ?? ''))}</th>`).join('') + '</tr></thead><tbody>';
+  let html = '<thead><tr>' + headers.map(h => `<th>${h}</th>`).join('') + '</tr></thead><tbody>';
   html += rows.map(row =>
-    '<tr>' + headers.map((_, i) => `<td>${escHtml(String(row[i] ?? ''))}</td>`).join('') + '</tr>'
+    '<tr>' + headers.map((_, i) => `<td>${row[i] ?? ''}</td>`).join('') + '</tr>'
   ).join('');
   html += '</tbody>';
   document.getElementById('pdfPreviewTable').innerHTML = html;

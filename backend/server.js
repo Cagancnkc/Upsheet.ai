@@ -477,7 +477,7 @@ ${limited.map((t, i) => `${i + 1}. ${String(t).slice(0, 200)}`).join('\n')}`
     res.json({ labels });
   } catch (e) {
     console.error('/api/sentiment hatası:', e.message);
-    res.status(500).json({ error: 'İşlem başarısız. Lütfen tekrar deneyin.' });
+    res.status(500).json({ error: e.message });
   }
 });
 
