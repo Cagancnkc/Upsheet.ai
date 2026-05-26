@@ -279,23 +279,24 @@ body.dark .exp-separator{background:#2a2a2a;}
 .exp-int-header span{font-size:10px;font-weight:600;color:#9CA3AF;letter-spacing:.05em;text-transform:uppercase;}
 .exp-int-header a{font-size:10px;color:#059669;text-decoration:none;opacity:.8;transition:opacity .12s;}
 .exp-int-header a:hover{opacity:1;text-decoration:underline;}
-.exp-int-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:6px 10px 12px;}
+.exp-int-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;padding:6px 10px 14px;}
 .exp-int-card{
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
-  padding:10px 4px 8px;border-radius:8px;border:none;background:none;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
+  padding:11px 4px 9px;border-radius:11px;border:1.5px solid transparent;background:none;
   cursor:pointer;text-align:center;position:relative;
-  transition:background .12s,opacity .12s;
+  transition:background .15s,box-shadow .15s,border-color .15s,opacity .15s,transform .12s;
 }
-.exp-int-card:hover{background:#F0FDF4;}
-.exp-int-card.disconnected{opacity:.4;}
-.exp-int-card.disconnected:hover{opacity:.7;background:#F9FAFB;}
-.exp-int-card img,.exp-int-card svg{width:22px !important;height:22px !important;object-fit:contain;flex-shrink:0;display:block;}
-.exp-int-card-name{font-size:10px;font-weight:500;color:#374151;text-align:center;line-height:1.2;}
-.exp-int-dot{position:absolute;top:6px;right:6px;width:6px;height:6px;border-radius:50%;background:#10B981;}
+.exp-int-card:hover{background:#F0FDF4;border-color:#BBF7D0;box-shadow:0 3px 12px rgba(16,185,129,.12);transform:translateY(-1px);}
+.exp-int-card.disconnected{opacity:.38;}
+.exp-int-card.disconnected:hover{opacity:.65;background:#F9FAFB;border-color:#F3F4F6;box-shadow:none;transform:none;}
+.exp-int-card img,.exp-int-card svg{width:30px !important;height:30px !important;object-fit:contain;flex-shrink:0;display:block;border-radius:7px;box-shadow:0 1px 4px rgba(0,0,0,.13);}
+.exp-int-card-name{font-size:9.5px;font-weight:600;color:#374151;text-align:center;line-height:1.2;letter-spacing:.01em;}
+.exp-int-dot{position:absolute;top:7px;right:7px;width:7px;height:7px;border-radius:50%;background:#10B981;box-shadow:0 0 0 2px white;}
 body.dark .exp-int-card{color:#e2e8f0;}
-body.dark .exp-int-card-name{color:#e2e8f0;}
-body.dark .exp-int-card:hover{background:rgba(5,150,105,0.12);}
-body.dark .exp-int-card.disconnected:hover{background:rgba(255,255,255,0.04);}
+body.dark .exp-int-card-name{color:#CBD5E1;}
+body.dark .exp-int-card:hover{background:rgba(16,185,129,0.12);border-color:rgba(52,211,153,0.28);box-shadow:0 3px 12px rgba(0,0,0,.25);}
+body.dark .exp-int-card.disconnected:hover{background:rgba(255,255,255,0.04);border-color:rgba(255,255,255,0.1);box-shadow:none;transform:none;}
+body.dark .exp-int-dot{box-shadow:0 0 0 2px #1a1f2e;}
 body.dark .exp-int-header a{color:#34D399;}
 
 /* ── FORMULA BAR (now inline in toolbar as .tb-formula-bar) ── */

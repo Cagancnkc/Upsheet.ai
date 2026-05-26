@@ -4966,25 +4966,25 @@ function renderIntegrationShortcuts() {
   if (!el) return;
   const configs = [
     { key:'int_gs',       name:'Google Sheets', fn:'exportToGSheets',
-      icon:'<img width="22" height="22" style="width:22px;height:22px" src="https://upload.wikimedia.org/wikipedia/commons/a/ae/Google_Sheets_2020_Logo.svg">' },
+      icon:'<svg width="30" height="30" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="5" fill="#0F9D58"/><rect x="5.5" y="8" width="13" height="1.6" rx=".8" fill="white"/><rect x="5.5" y="11.2" width="13" height="1.6" rx=".8" fill="white"/><rect x="5.5" y="14.4" width="9" height="1.6" rx=".8" fill="white"/><line x1="12" y1="8" x2="12" y2="16.8" stroke="rgba(255,255,255,.3)" stroke-width="1"/></svg>' },
     { key:'int_excel',    name:'Excel Online',   fn:'exportToExcelOnline',
-      icon:'<img width="22" height="22" style="width:22px;height:22px" src="https://upload.wikimedia.org/wikipedia/commons/3/34/Microsoft_Office_Excel_%282019%E2%80%93present%29.svg">' },
+      icon:'<svg width="30" height="30" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="5" fill="#217346"/><path fill="white" d="M6.5 7l3.2 5-3.2 5.5H9l2-3.8 2.1 3.8H15.5L12.3 12l3.2-5H13l-2 3.5L9 7z"/></svg>' },
     { key:'int_notion',   name:'Notion',         fn:'exportToNotion',
-      icon:'<img width="22" height="22" style="width:22px;height:22px;filter:invert(.7)" src="https://upload.wikimedia.org/wikipedia/commons/e/e9/Notion-logo.svg">' },
+      icon:'<svg width="30" height="30" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="5" fill="#FFFFFF" stroke="#E5E7EB" stroke-width="1.5"/><path fill="#111827" d="M5.5 5.5h3.5L15 16V5.5h2v13h-3.5L7 8.5V18.5H5.5z"/></svg>' },
     { key:'int_slack',    name:'Slack',           fn:'exportToSlack',
-      icon:'<img width="22" height="22" style="width:22px;height:22px" src="https://upload.wikimedia.org/wikipedia/commons/d/d5/Slack_icon_2019.svg">' },
+      icon:'<svg width="30" height="30" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="5" fill="#4A154B"/><path fill="#E01E5A" d="M6.6 14.4a1.6 1.6 0 01-1.6-1.6c0-.88.72-1.6 1.6-1.6h1.6v1.6a1.6 1.6 0 01-1.6 1.6zm1.8-4.4a1.6 1.6 0 01-1.6-1.6A1.6 1.6 0 018.4 6.8c.88 0 1.6.72 1.6 1.6V10H8.4z"/><path fill="#36C5F0" d="M17.4 10a1.6 1.6 0 011.6 1.6c0 .88-.72 1.6-1.6 1.6h-1.6v-1.6A1.6 1.6 0 0117.4 10zm-1.8 4.4a1.6 1.6 0 011.6 1.6 1.6 1.6 0 01-1.6 1.6 1.6 1.6 0 01-1.6-1.6V14h1.6z"/><path fill="#2EB67D" d="M10 6.6A1.6 1.6 0 0111.6 5c.88 0 1.6.72 1.6 1.6v1.6H11.6A1.6 1.6 0 0110 6.6zm4.4 1.8a1.6 1.6 0 011.6-1.6 1.6 1.6 0 011.6 1.6 1.6 1.6 0 01-1.6 1.6H14V8.4z"/><path fill="#ECB22E" d="M14 17.4a1.6 1.6 0 01-1.6 1.6c-.88 0-1.6-.72-1.6-1.6v-1.6h1.6A1.6 1.6 0 0114 17.4zm-4.4-1.8a1.6 1.6 0 01-1.6 1.6 1.6 1.6 0 01-1.6-1.6 1.6 1.6 0 011.6-1.6H10v1.6z"/></svg>' },
     { key:'int_airtable', name:'Airtable',        fn:'exportToAirtable',
-      icon:'<img width="22" height="22" style="width:22px;height:22px" src="https://upload.wikimedia.org/wikipedia/commons/4/4b/Airtable_Logo.svg">' },
+      icon:'<svg width="30" height="30" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="5" fill="#18BFFF"/><path fill="#FCB400" d="M11 4.5L4 7.2v3.3l7-2.8 7 2.8V7.2z"/><path fill="#F82B60" d="M12.5 11.3v8l5.5-2.3V9z"/><path fill="#FFFFFF" d="M11.5 11.3L6 9v8l5.5 2.3z"/></svg>' },
     { key:'int_teams',    name:'Teams',           fn:'exportToTeams',
-      icon:'<img width="22" height="22" style="width:22px;height:22px" src="https://upload.wikimedia.org/wikipedia/commons/c/c9/Microsoft_Office_Teams_%282018%E2%80%93present%29.svg">' },
+      icon:'<svg width="30" height="30" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="5" fill="#5059C9"/><circle cx="15.5" cy="8" r="2" fill="white"/><path fill="white" d="M9.5 8.5a2.5 2.5 0 100 5 2.5 2.5 0 000-5z"/><path fill="white" d="M15 12.5h-2.5A3.5 3.5 0 019 16h9.5a1 1 0 001-1v-1A2.5 2.5 0 0017 12.5H15z"/><path fill="white" d="M5 15.5A1.5 1.5 0 016.5 14h6a1.5 1.5 0 011.5 1.5v1A1.5 1.5 0 0112.5 18h-6A1.5 1.5 0 015 16.5v-1z"/></svg>' },
     { key:'int_trello',   name:'Trello',          fn:'exportToTrello',
-      icon:'<img width="22" height="22" style="width:22px;height:22px" src="https://upload.wikimedia.org/wikipedia/en/8/8c/Trello_logo.svg">' },
+      icon:'<svg width="30" height="30" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="5" fill="#0052CC"/><rect x="5" y="5" width="5.5" height="11" rx="1.5" fill="white"/><rect x="13.5" y="5" width="5.5" height="7" rx="1.5" fill="white"/></svg>' },
     { key:'int_make',     name:'Make',            fn:'triggerMake',
-      icon:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M8 12h8M12 8v8"/></svg>' },
+      icon:'<svg width="30" height="30" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="5" fill="#6D00CC"/><circle cx="8.5" cy="12" r="3" stroke="white" stroke-width="1.5" fill="none"/><circle cx="15.5" cy="12" r="3" stroke="white" stroke-width="1.5" fill="none"/><rect x="9" y="11.3" width="6" height="1.4" fill="#6D00CC"/></svg>' },
     { key:'int_drive',    name:'Drive',           fn:'exportToDrive',
-      icon:'<img width="22" height="22" style="width:22px;height:22px" src="https://upload.wikimedia.org/wikipedia/commons/1/12/Google_Drive_icon_%282020%29.svg">' },
+      icon:'<svg width="30" height="30" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="5" fill="#FFFFFF" stroke="#E5E7EB" stroke-width="1.5"/><path fill="#4285F4" d="M15.5 4.5L20.5 13.5H15l-5-9z"/><path fill="#34A853" d="M8.5 4.5l5 9H3.5l5-9z"/><path fill="#FBBC04" d="M3.5 13.5l2.5 4.5h12l2.5-4.5z"/></svg>' },
     { key:'int_webhook',  name:'Webhook',         fn:'triggerWebhook',
-      icon:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6366F1" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>' }
+      icon:'<svg width="30" height="30" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="5" fill="#4F46E5"/><path stroke="white" stroke-width="1.6" stroke-linecap="round" fill="none" d="M9.5 8.5A4 4 0 008 12a4 4 0 004 4h2"/><path stroke="white" stroke-width="1.6" stroke-linecap="round" fill="none" d="M14.5 15.5A4 4 0 0016 12a4 4 0 00-4-4H10"/><circle cx="7.5" cy="8" r="1.5" fill="white"/><circle cx="16.5" cy="16" r="1.5" fill="white"/></svg>' }
   ];
 
   const cards = configs.map(c => {
