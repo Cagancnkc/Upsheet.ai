@@ -4916,7 +4916,7 @@ function toggleExportMenu(e) {
     return;
   }
 
-  renderIntegrationShortcuts();
+  try { renderIntegrationShortcuts(); } catch(err) { console.warn('[exp] renderIntegrationShortcuts error:', err); }
 
   const trigger = (e && e.currentTarget) || document.getElementById('exportArrowBtn');
   const toolbarBtn = document.getElementById('exportArrowBtn');
@@ -4966,7 +4966,7 @@ function renderIntegrationShortcuts() {
   if (!el) return;
   const configs = [
     { key:'int_gs',       name:'Google Sheets', fn:'exportToGSheets',
-      icon:'<svg width="30" height="30" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="5" fill="#0F9D58"/><rect x="5.5" y="8" width="13" height="1.6" rx=".8" fill="white"/><rect x="5.5" y="11.2" width="13" height="1.6" rx=".8" fill="white"/><rect x="5.5" y="14.4" width="9" height="1.6" rx=".8" fill="white"/><line x1="12" y1="8" x2="12" y2="16.8" stroke="rgba(255,255,255,.3)" stroke-width="1"/></svg>' },
+      icon:'<svg width="30" height="30" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="5" fill="#0F9D58"/><rect x="5.5" y="8" width="13" height="1.6" rx=".8" fill="white"/><rect x="5.5" y="11.2" width="13" height="1.6" rx=".8" fill="white"/><rect x="5.5" y="14.4" width="9" height="1.6" rx=".8" fill="white"/><line x1="12" y1="8" x2="12" y2="16.8" stroke="white" stroke-opacity=".3" stroke-width="1"/></svg>' },
     { key:'int_excel',    name:'Excel Online',   fn:'exportToExcelOnline',
       icon:'<svg width="30" height="30" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="5" fill="#217346"/><path fill="white" d="M6.5 7l3.2 5-3.2 5.5H9l2-3.8 2.1 3.8H15.5L12.3 12l3.2-5H13l-2 3.5L9 7z"/></svg>' },
     { key:'int_notion',   name:'Notion',         fn:'exportToNotion',
