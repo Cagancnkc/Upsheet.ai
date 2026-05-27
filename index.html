@@ -1,6 +1,9 @@
 <!doctype html>
-<html lang="tr">
+<html lang="tr" data-theme="light">
 <head>
+<script>
+  (function(){var t=localStorage.getItem('theme')||'light';document.documentElement.setAttribute('data-theme',t);document.documentElement.classList.add(t);}());
+</script>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Mocksheets — Ekipler için AI Operasyon Asistanı | Haftada 18+ Saat Tasarruf</title>
@@ -148,7 +151,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&family=Geist+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
 <style>
-  :root{
+  :root,[data-theme="light"]{
     --paper:#fafafa;
     --paper-2:#f4f4f5;
     --ink:#09090b;
@@ -156,6 +159,7 @@
     --mute:#71717a;
     --line:#1f1e1c14;
     --line-strong:#1f1e1c22;
+    --nav-bg:rgba(246,244,238,0.72);
     --violet:#16a34a;
     --violet-deep:#15803d;
     --violet-soft:#dcfce7;
@@ -163,6 +167,23 @@
     --peach:#FFD0B0;
     --sky:#BFE5FF;
     --grid:#1f1e1c0e;
+  }
+  [data-theme="dark"]{
+    --paper:#0d0f14;
+    --paper-2:#161920;
+    --ink:#f1f3f6;
+    --ink-2:#a1a7b3;
+    --mute:#6b7280;
+    --line:rgba(255,255,255,0.07);
+    --line-strong:rgba(255,255,255,0.12);
+    --nav-bg:rgba(13,15,20,0.82);
+    --violet:#22c55e;
+    --violet-deep:#16a34a;
+    --violet-soft:#14532d;
+    --lime:#14532d;
+    --peach:#7c3a1e;
+    --sky:#1e3a5f;
+    --grid:rgba(255,255,255,0.05);
   }
   *{box-sizing:border-box}
   html,body{margin:0;padding:0}
@@ -174,6 +195,7 @@
     -webkit-font-smoothing:antialiased;
     text-rendering:optimizeLegibility;
     overflow-x:hidden;
+    transition:background .2s,color .2s;
   }
   a{color:inherit;text-decoration:none}
   button{font-family:inherit;cursor:pointer;border:0;background:none;color:inherit}
@@ -192,7 +214,7 @@
   }
   .nav-inner{
     display:flex;align-items:center;gap:16px;
-    background:rgba(246,244,238,0.72);
+    background:var(--nav-bg);
     backdrop-filter:saturate(140%) blur(14px);
     -webkit-backdrop-filter:saturate(140%) blur(14px);
     border:1px solid var(--line-strong);
@@ -223,6 +245,13 @@
   }
   .nav-links a:hover{background:#1f1e1c0a;color:var(--ink)}
   .nav-cta{display:flex;gap:8px;align-items:center}
+  .theme-pill{
+    display:inline-flex;align-items:center;gap:6px;
+    padding:8px 14px;border-radius:999px;font-size:13.5px;font-weight:500;
+    color:var(--ink-2);border:1px solid var(--line-strong);
+    background:none;cursor:pointer;transition:background .2s,color .2s;
+  }
+  .theme-pill:hover{background:var(--line);color:var(--ink)}
   .btn{
     display:inline-flex;align-items:center;gap:8px;
     padding:11px 18px;border-radius:999px;font-size:14.5px;font-weight:500;
@@ -689,6 +718,10 @@
       <a href="#stories">Hikayeler</a>
     </div>
     <div class="nav-cta">
+      <button class="theme-pill" id="indexThemeBtn" onclick="toggleIndexTheme()" aria-label="Temayı değiştir">
+        <svg id="indexThemeIcon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg>
+        <span id="indexThemeLabel">Koyu</span>
+      </button>
       <a href="/auth" class="btn btn-ghost">Giriş Yap</a>
       <a href="/auth" class="btn btn-dark" style="display:inline-flex;align-items:center;gap:8px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="16" height="16" style="flex-shrink:0"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>Ücretsiz Başla</a>
     </div>
@@ -1758,6 +1791,29 @@ function setPricingPeriod(p) {
     el.style.opacity=show?'1':'0';
     el.style.pointerEvents=show?'auto':'none';
   });
+</script>
+<script>
+  function toggleIndexTheme(){
+    var isDark=document.documentElement.getAttribute('data-theme')==='dark';
+    var next=isDark?'light':'dark';
+    document.documentElement.setAttribute('data-theme',next);
+    document.documentElement.classList.toggle('dark',next==='dark');
+    document.documentElement.classList.toggle('light',next==='light');
+    localStorage.setItem('theme',next);
+    updateIndexThemeBtn(next==='dark');
+  }
+  function updateIndexThemeBtn(isDark){
+    var moonSVG='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg>';
+    var sunSVG='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>';
+    var icon=document.getElementById('indexThemeIcon');
+    var label=document.getElementById('indexThemeLabel');
+    if(icon) icon.outerHTML=(isDark?sunSVG:moonSVG).replace('<svg','<svg id="indexThemeIcon"');
+    if(label) label.textContent=isDark?'Açık':'Koyu';
+  }
+  (function(){
+    var isDark=document.documentElement.getAttribute('data-theme')==='dark';
+    updateIndexThemeBtn(isDark);
+  }());
 </script>
 
 </body>
