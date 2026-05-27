@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="tr" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,6 +21,7 @@
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <link rel="stylesheet" href="css/style.css?v=4">
+<link rel="stylesheet" href="css/redesign.css?v=1">
 <script src="api.js"></script>
 <style>
 /* ── SIDEBAR ENTEGRASYON ITEMS ── */
@@ -1035,194 +1036,8 @@ body.light .sb-upgrade-btn{background:rgba(84,72,232,0.08);border-color:rgba(84,
 </head>
 <body class="light">
 
-<header id="appTopbar">
-  <a class="topbar-brand" href="/">
-    <img src="/images/logo-wordmark.png" alt="Mocksheets" class="brand-mark-img" style="height:34px;width:auto">
-  </a>
-  <div class="topbar-crumb">
-    <span class="topbar-crumb-file" id="topbarFileName">Yeni Tablo</span>
-    <button class="topbar-star" title="Favorilere ekle">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-    </button>
-    <span class="topbar-crumb-saved" id="topbarSaved"></span>
-  </div>
-  <div class="topbar-collab">
-    <span class="collab-av" style="background:#FFD0B0">AK</span>
-    <span class="collab-av" style="background:#BFE5FF">MT</span>
-    <span class="collab-av" style="background:var(--violet);color:#fff">SY</span>
-  </div>
-  <div class="topbar-actions">
-    <button class="topbar-btn-share" onclick="shareFile()">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M16 6l-4-4-4 4"/><path d="M12 2v13"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>
-      Paylaş
-    </button>
-    <div class="export-wrapper">
-      <button class="topbar-btn-download" onclick="downloadFile()">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        İndir
-      </button>
-      <button class="export-arrow tb-btn" id="exportArrowBtn" onclick="toggleExportMenu(event)" title="Dışa aktarma seçenekleri">
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-      </button>
-    </div>
-  </div>
-</header>
+<div class="app-shell">
 
-<div id="appToolbar">
-
-  <!-- LEFT: Undo/Redo + File name -->
-  <div class="tb-left">
-    <div class="tb-group">
-      <button class="tb-btn tb-icon-only" onclick="undo()" title="Geri Al (Ctrl+Z)">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-15-6.7L3 13"/></svg>
-      </button>
-      <button class="tb-btn tb-icon-only" onclick="redo && redo()" title="Yeniden Yap (Ctrl+Y)">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 7v6h-6"/><path d="M3 17a9 9 0 0 1 15-6.7L21 13"/></svg>
-      </button>
-    </div>
-    <div class="tb-sep"></div>
-    <div class="tb-file-icon">📊</div>
-    <input
-      id="fileNameInput"
-      class="tb-filename"
-      value="Untitled Spreadsheet"
-      onblur="renameFile(this.value)"
-      onkeydown="if(event.key==='Enter') this.blur()"
-      title="Yeniden adlandırmak için tıkla"
-    />
-    <span class="tb-saved" id="tbSaved">✓ Kaydedildi</span>
-  </div>
-
-  <div class="tb-sep"></div>
-
-  <!-- FONT + SIZE pickers (static visual) -->
-  <div class="tb-group">
-    <select id="tbFontSelect" class="tb-select" title="Yazı tipi" onchange="applyFont(this.value)">
-      <option value="Geist">Geist</option>
-      <option value="Arial">Arial</option>
-      <option value="Helvetica">Helvetica</option>
-      <option value="Georgia">Georgia</option>
-      <option value="Times New Roman">Times New Roman</option>
-      <option value="Courier New">Courier New</option>
-      <option value="Verdana">Verdana</option>
-    </select>
-    <select id="tbSizeSelect" class="tb-select" title="Boyut" onchange="applyFontSize(this.value)" style="width:52px">
-      <option>8</option><option>9</option><option>10</option><option>11</option>
-      <option selected>12</option><option>14</option><option>16</option><option>18</option>
-      <option>20</option><option>24</option><option>28</option><option>32</option>
-      <option>36</option><option>48</option><option>72</option>
-    </select>
-  </div>
-
-  <div class="tb-sep"></div>
-
-  <!-- FORMATTING: B I U S -->
-  <div class="tb-group">
-    <button id="tbBold" class="tb-btn tb-icon-only tb-format" onclick="toggleFormat('bold')" title="Kalın (Ctrl+B)"><strong>B</strong></button>
-    <button id="tbItalic" class="tb-btn tb-icon-only tb-format" onclick="toggleFormat('italic')" title="İtalik (Ctrl+I)"><em>I</em></button>
-    <button id="tbUnderline" class="tb-btn tb-icon-only tb-format" onclick="toggleFormat('underline')" title="Altı çizili (Ctrl+U)"><u>U</u></button>
-    <button id="tbStrikethrough" class="tb-btn tb-icon-only tb-format" onclick="toggleFormat('strikethrough')" title="Üstü çizili"><s>S</s></button>
-  </div>
-
-  <div class="tb-sep"></div>
-
-  <!-- COLORS -->
-  <div class="tb-group">
-    <button class="tb-btn tb-icon-only" title="Yazı rengi" onclick="document.getElementById('tbTextColorInput').click()" style="flex-direction:column;gap:1px;height:30px;padding:3px 8px">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
-      <span id="tbTextColorSwatch" style="width:14px;height:3px;background:#0f172a;border-radius:1px;display:block"></span>
-    </button>
-    <input type="color" id="tbTextColorInput" value="#0f172a" style="display:none" onchange="setTextColor(this.value);document.getElementById('tbTextColorSwatch').style.background=this.value">
-    <button class="tb-btn tb-icon-only" title="Dolgu rengi" onclick="document.getElementById('tbFillColorInput').click()" style="flex-direction:column;gap:1px;height:30px;padding:3px 8px">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 11h2v3M21 14a2 2 0 1 1-2-2"/><path d="M3 5a2 2 0 0 1 2-2h7l4 4v5"/><path d="M14 17v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8"/></svg>
-      <span id="tbFillColorSwatch" style="width:14px;height:3px;background:#fef08a;border-radius:1px;display:block"></span>
-    </button>
-    <input type="color" id="tbFillColorInput" value="#fef08a" style="display:none" onchange="setCellBgColor(this.value);document.getElementById('tbFillColorSwatch').style.background=this.value">
-  </div>
-
-  <div class="tb-sep"></div>
-
-  <!-- ALIGNMENT -->
-  <div class="tb-group">
-    <button class="tb-btn tb-icon-only" onclick="applyAlign('left')" title="Sola hizala">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></svg>
-    </button>
-    <button class="tb-btn tb-icon-only" onclick="applyAlign('center')" title="Ortala">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="10" x2="6" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="18" y1="18" x2="6" y2="18"/></svg>
-    </button>
-    <button class="tb-btn tb-icon-only" onclick="applyAlign('right')" title="Sağa hizala">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="21" y1="10" x2="7" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="21" y1="18" x2="7" y2="18"/></svg>
-    </button>
-  </div>
-
-  <div class="tb-sep"></div>
-
-  <!-- NUMBER FORMAT -->
-  <div class="tb-group">
-    <button class="tb-btn tb-icon-only" onclick="useChip('TL formatına çevir')" title="Para birimi">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-    </button>
-    <button class="tb-btn tb-icon-only" onclick="useChip('Yüzde formatına çevir')" title="Yüzde">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>
-    </button>
-    <button class="tb-btn tb-icon-only" style="font-size:10px;font-family:'Geist Mono',monospace" onclick="useChip('Ondalık ekle')" title="Ondalık artır">0.0</button>
-  </div>
-
-  <div class="tb-sep"></div>
-
-  <!-- SORT / FILTER / FREEZE -->
-  <div class="tb-group">
-    <button class="tb-btn tb-icon-only" onclick="useChip('A\'dan Z\'ye sırala')" title="Sırala">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18"/><path d="M7 12h10"/><path d="M10 18h4"/></svg>
-    </button>
-    <button class="tb-btn tb-icon-only" onclick="useChip('Filtrele')" title="Filtrele">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
-    </button>
-    <button class="tb-btn tb-icon-only" id="tbFreezeBtn" onclick="toggleFreeze()" title="Satırı dondur">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
-    </button>
-  </div>
-
-  <div class="tb-sep"></div>
-
-  <!-- ADD COL / DELETE -->
-  <div class="tb-group">
-    <button class="tb-btn tb-icon-only" onclick="ctxAction('insertColRight')" title="Sütun ekle">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-    </button>
-    <button class="tb-btn tb-icon-only tb-btn-red" onclick="ctxAction('deleteRow')" title="Satırı sil">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
-    </button>
-  </div>
-
-  <!-- FORMULA BAR — inline, visible -->
-  <div id="formulaBar" class="tb-formula-bar">
-    <input id="cellRef" class="tb-cell-ref" value="A1" readonly title="Seçili hücre">
-    <span class="tb-fx-icon">ƒx</span>
-    <input id="formulaInput" class="tb-formula-input" placeholder="formül veya değer…"
-           onkeydown="if(event.key==='Enter')this.blur()">
-  </div>
-
-  <!-- RIGHT: AI button + sel info -->
-  <div class="tb-right">
-    <span class="tb-sel-info" id="selectionInfo"></span>
-    <button class="tb-ai-btn" onclick="focusChatInput()" title="AI Komut (⌘K)">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="#fff"><path d="M12 1l2.5 6.5L21 10l-6.5 2.5L12 19l-2.5-6.5L3 10l6.5-2.5L12 1z"/></svg>
-      AI <kbd>⌘K</kbd>
-    </button>
-    <button class="tb-btn tb-icon-only" onclick="document.getElementById('fileInput').click()" title="Dosya Yükle">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></svg>
-    </button>
-    <button class="tb-btn tb-icon-only tb-btn-red" onclick="openPdfModal()" title="PDF İçe Aktar">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-    </button>
-  </div>
-
-</div>
-
-<div id="main">
-
-<!-- SIDEBAR -->
 <aside id="appSidebar">
 
   <!-- LOGO -->
@@ -1522,98 +1337,291 @@ body.light .sb-upgrade-btn{background:rgba(84,72,232,0.08);border-color:rgba(84,
 
 </aside>
 
-<!-- CONTENT -->
-<div id="content">
+<!-- MAIN COLUMN -->
+<div class="main-col">
 
-  <!-- GRID -->
-  <div id="gridWrap" oncontextmenu="showCtx(event)">
-    <table id="grid"></table>
-    <div id="emptyState">
-      <div class="es-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
-      </div>
-      <div class="es-title">Henüz veri yok</div>
-      <div class="es-sub">Excel dosyası yükleyin veya örnek veriyle başlayın</div>
-      <div class="es-actions">
-        <button class="es-btn-primary" onclick="triggerUpload()">
-          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-right:5px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-          Excel Yükle
-        </button>
-        <button class="es-btn-ghost" onclick="loadSampleData()">Örnek Veri</button>
-      </div>
-      <div id="esRecent" class="es-recent" style="display:none">
-        <div class="es-recent-title">Son Dosyalar</div>
-        <div id="esRecentList"></div>
-      </div>
-    </div>
-  </div>
-
-  <div id="sheetTabs"></div>
-
-  <!-- STATUS BAR -->
-  <div id="statusBar">
-    <div id="sbLeft">
-      <div class="sb-chip"><span class="sb-chip-label">📍</span> <span class="sb-val" id="sbRef">A1</span></div>
-      <div class="sb-chip" id="sbSelChip" style="display:none"><span class="sb-val" id="sbSelCount">1</span><span class="sb-chip-label"> cell</span></div>
-      <div class="sb-chip" id="sbSumChip" style="display:none"><span class="sb-chip-label">∑</span> <span class="sb-val" id="sbSumVal">0</span></div>
-      <div class="sb-chip" id="sbAvgChip" style="display:none"><span class="sb-chip-label">⌀</span> <span class="sb-val" id="sbAvgVal">0</span></div>
-      <div class="sb-chip" id="sbMinChip" style="display:none"><span class="sb-chip-label">↓</span> <span class="sb-val" id="sbMinVal">0</span></div>
-      <div class="sb-chip" id="sbMaxChip" style="display:none"><span class="sb-chip-label">↑</span> <span class="sb-val" id="sbMaxVal">0</span></div>
-    </div>
-    <div id="sbRight">
-      <span class="sb-info"><span class="sb-val" id="sbFilled">0</span> dolu hücre</span>
-      <span class="sb-info"><span class="sb-val" id="sbRowsInfo">0</span> satır</span>
-      <span id="sbLastAI">Son: —</span>
-      <div id="sbZoom">
-        <button class="zoom-btn" onclick="changeZoom(-10)">−</button>
-        <span id="zoomLabel">100%</span>
-        <button class="zoom-btn" onclick="changeZoom(+10)">+</button>
-      </div>
-    </div>
-    <!-- Legacy IDs for JS backward compatibility -->
-    <span id="stCells" style="display:none"></span>
-    <span id="stSel"   style="display:none"></span>
-    <span id="stSum"   style="display:none"></span>
-    <span id="stAvg"   style="display:none"></span>
-    <span id="stCount" style="display:none"></span>
-  </div>
-
-  <!-- CHAT BAR -->
-  <div id="chat-bar">
-    <div id="chat-messages"></div>
-    <div id="chat-chips">
-      <span class="chat-chips-label">Öneriler</span>
-      <button class="chat-chip" onclick="useChip('KDV ekle')">💸 KDV ekle</button>
-      <button class="chat-chip" onclick="useChip('fiyata göre sırala')">↕ Tutara göre sırala</button>
-      <button class="chat-chip" onclick="useChip('boş satırları sil')">🗑 Boşları sil</button>
-      <button class="chat-chip" onclick="useChip('aylık rapor oluştur')">📊 Rapor oluştur</button>
-      <button class="chat-chip" onclick="useChip('negatifleri kırmızıya boya')">🎨 Renklendir</button>
-      <button class="chat-chip" onclick="useChip('tekrar edenleri sil')">🔁 Tekrarları sil</button>
-    </div>
-    <div id="chat-input-row">
-      <span id="chat-spark">
-        <img src="/images/logo.png" alt="" class="chat-logo-icon">
-      </span>
-      <input
-        id="chat-input"
-        type="text"
-        placeholder="Bir komut yazın — örn. 'Mart KDV'sini hesapla, %18 olanları sarıya boya'…"
-        autocomplete="off"
-        onkeydown="if(event.key==='Enter'&&!event.shiftKey)sendChatMessage()"
-        oninput="handleChatInput(this.value)"
-        onfocus="expandChat()"
-      />
-      <span class="chat-mode-badge" id="chatCellRef"></span>
-      <kbd class="chat-enter-kbd">↵</kbd>
-      <button id="chat-send" onclick="sendChatMessage()" title="Gönder (Enter)">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+  <!-- TOPBAR NEW -->
+  <div class="topbar-new">
+    <div class="topbar-breadcrumb">
+      <span class="topbar-ws">Mocksheets</span>
+      <svg class="topbar-sep-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+      <span class="topbar-crumb-file" id="topbarFileName">Untitled Spreadsheet</span>
+      <button class="topbar-star" onclick="toggleStarFile && toggleStarFile()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
       </button>
+      <span class="topbar-crumb-saved" id="topbarSaved"></span>
     </div>
-    <div id="chat-progress"></div>
+
+    <button class="theme-toggle-pill" onclick="toggleDarkMode()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      Tema
+    </button>
+
+    <button class="topbar-btn-share" onclick="shareFile && shareFile()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+      Paylaş
+    </button>
+
+    <div class="split-btn" style="position:relative">
+      <button class="split-btn-main" onclick="downloadFile && downloadFile()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        İndir
+      </button>
+      <button class="split-btn-caret" id="exportArrowBtn" onclick="toggleExportMenu(event)">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div id="export-dropdown" class="export-dd" style="display:none;position:absolute;top:calc(100% + 6px);right:0;z-index:200"></div>
+    </div>
   </div>
 
-</div>
-</div>
+  <!-- WORKSHEET CARD -->
+  <div class="work">
+
+    <!-- TOOLBAR -->
+    <div id="appToolbar">
+
+      <!-- LEFT: Undo/Redo + File name -->
+      <div class="tb-left">
+        <div class="tb-group">
+          <button class="tb-btn tb-icon-only" onclick="undo()" title="Geri Al (Ctrl+Z)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-15-6.7L3 13"/></svg>
+          </button>
+          <button class="tb-btn tb-icon-only" onclick="redo && redo()" title="Yeniden Yap (Ctrl+Y)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 7v6h-6"/><path d="M3 17a9 9 0 0 1 15-6.7L21 13"/></svg>
+          </button>
+        </div>
+        <div class="tb-sep"></div>
+        <div class="tb-file-icon">📊</div>
+        <input
+          id="fileNameInput"
+          class="tb-filename"
+          value="Untitled Spreadsheet"
+          onblur="renameFile(this.value)"
+          onkeydown="if(event.key==='Enter') this.blur()"
+          title="Yeniden adlandırmak için tıkla"
+        />
+        <span class="tb-saved" id="tbSaved">✓ Kaydedildi</span>
+      </div>
+
+      <div class="tb-sep"></div>
+
+      <!-- FONT + SIZE -->
+      <div class="tb-group">
+        <select id="tbFontSelect" class="tb-select" title="Yazı tipi" onchange="applyFont(this.value)">
+          <option value="Geist">Geist</option>
+          <option value="Arial">Arial</option>
+          <option value="Helvetica">Helvetica</option>
+          <option value="Georgia">Georgia</option>
+          <option value="Times New Roman">Times New Roman</option>
+          <option value="Courier New">Courier New</option>
+          <option value="Verdana">Verdana</option>
+        </select>
+        <select id="tbSizeSelect" class="tb-select" title="Boyut" onchange="applyFontSize(this.value)" style="width:52px">
+          <option>8</option><option>9</option><option>10</option><option>11</option>
+          <option selected>12</option><option>14</option><option>16</option><option>18</option>
+          <option>20</option><option>24</option><option>28</option><option>32</option>
+          <option>36</option><option>48</option><option>72</option>
+        </select>
+      </div>
+
+      <div class="tb-sep"></div>
+
+      <!-- FORMATTING: B I U S -->
+      <div class="tb-group">
+        <button id="tbBold" class="tb-btn tb-icon-only tb-format" onclick="toggleFormat('bold')" title="Kalın (Ctrl+B)"><strong>B</strong></button>
+        <button id="tbItalic" class="tb-btn tb-icon-only tb-format" onclick="toggleFormat('italic')" title="İtalik (Ctrl+I)"><em>I</em></button>
+        <button id="tbUnderline" class="tb-btn tb-icon-only tb-format" onclick="toggleFormat('underline')" title="Altı çizili (Ctrl+U)"><u>U</u></button>
+        <button id="tbStrikethrough" class="tb-btn tb-icon-only tb-format" onclick="toggleFormat('strikethrough')" title="Üstü çizili"><s>S</s></button>
+      </div>
+
+      <div class="tb-sep"></div>
+
+      <!-- COLORS -->
+      <div class="tb-group">
+        <button class="tb-btn tb-icon-only" title="Yazı rengi" onclick="document.getElementById('tbTextColorInput').click()" style="flex-direction:column;gap:1px;height:30px;padding:3px 8px">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
+          <span id="tbTextColorSwatch" style="width:14px;height:3px;background:#0f172a;border-radius:1px;display:block"></span>
+        </button>
+        <input type="color" id="tbTextColorInput" value="#0f172a" style="display:none" onchange="setTextColor(this.value);document.getElementById('tbTextColorSwatch').style.background=this.value">
+        <button class="tb-btn tb-icon-only" title="Dolgu rengi" onclick="document.getElementById('tbFillColorInput').click()" style="flex-direction:column;gap:1px;height:30px;padding:3px 8px">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 11h2v3M21 14a2 2 0 1 1-2-2"/><path d="M3 5a2 2 0 0 1 2-2h7l4 4v5"/><path d="M14 17v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8"/></svg>
+          <span id="tbFillColorSwatch" style="width:14px;height:3px;background:#fef08a;border-radius:1px;display:block"></span>
+        </button>
+        <input type="color" id="tbFillColorInput" value="#fef08a" style="display:none" onchange="setCellBgColor(this.value);document.getElementById('tbFillColorSwatch').style.background=this.value">
+      </div>
+
+      <div class="tb-sep"></div>
+
+      <!-- ALIGNMENT -->
+      <div class="tb-group">
+        <button class="tb-btn tb-icon-only" onclick="applyAlign('left')" title="Sola hizala">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></svg>
+        </button>
+        <button class="tb-btn tb-icon-only" onclick="applyAlign('center')" title="Ortala">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="10" x2="6" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="18" y1="18" x2="6" y2="18"/></svg>
+        </button>
+        <button class="tb-btn tb-icon-only" onclick="applyAlign('right')" title="Sağa hizala">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="21" y1="10" x2="7" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="21" y1="18" x2="7" y2="18"/></svg>
+        </button>
+      </div>
+
+      <div class="tb-sep"></div>
+
+      <!-- NUMBER FORMAT -->
+      <div class="tb-group">
+        <button class="tb-btn tb-icon-only" onclick="useChip('TL formatına çevir')" title="Para birimi">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </button>
+        <button class="tb-btn tb-icon-only" onclick="useChip('Yüzde formatına çevir')" title="Yüzde">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>
+        </button>
+        <button class="tb-btn tb-icon-only" style="font-size:10px;font-family:'Geist Mono',monospace" onclick="useChip('Ondalık ekle')" title="Ondalık artır">0.0</button>
+      </div>
+
+      <div class="tb-sep"></div>
+
+      <!-- SORT / FILTER / FREEZE -->
+      <div class="tb-group">
+        <button class="tb-btn tb-icon-only" onclick="useChip('A\'dan Z\'ye sırala')" title="Sırala">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18"/><path d="M7 12h10"/><path d="M10 18h4"/></svg>
+        </button>
+        <button class="tb-btn tb-icon-only" onclick="useChip('Filtrele')" title="Filtrele">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+        </button>
+        <button class="tb-btn tb-icon-only" id="tbFreezeBtn" onclick="toggleFreeze()" title="Satırı dondur">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+        </button>
+      </div>
+
+      <div class="tb-sep"></div>
+
+      <!-- ADD COL / DELETE -->
+      <div class="tb-group">
+        <button class="tb-btn tb-icon-only" onclick="ctxAction('insertColRight')" title="Sütun ekle">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        </button>
+        <button class="tb-btn tb-icon-only tb-btn-red" onclick="ctxAction('deleteRow')" title="Satırı sil">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+        </button>
+      </div>
+
+      <!-- FORMULA BAR -->
+      <div id="formulaBar" class="tb-formula-bar">
+        <input id="cellRef" class="tb-cell-ref" value="A1" readonly title="Seçili hücre">
+        <span class="tb-fx-icon">ƒx</span>
+        <input id="formulaInput" class="tb-formula-input" placeholder="formül veya değer…"
+               onkeydown="if(event.key==='Enter')this.blur()">
+      </div>
+
+      <!-- RIGHT: AI button + sel info -->
+      <div class="tb-right">
+        <span class="tb-sel-info" id="selectionInfo"></span>
+        <button class="tb-ai-btn" onclick="focusChatInput()" title="AI Komut (⌘K)">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="#fff"><path d="M12 1l2.5 6.5L21 10l-6.5 2.5L12 19l-2.5-6.5L3 10l6.5-2.5L12 1z"/></svg>
+          AI <kbd>⌘K</kbd>
+        </button>
+        <button class="tb-btn tb-icon-only" onclick="document.getElementById('fileInput').click()" title="Dosya Yükle">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></svg>
+        </button>
+        <button class="tb-btn tb-icon-only tb-btn-red" onclick="openPdfModal()" title="PDF İçe Aktar">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        </button>
+      </div>
+
+    </div><!-- /#appToolbar -->
+
+    <!-- GRID -->
+    <div id="gridWrap" oncontextmenu="showCtx(event)">
+      <table id="grid"></table>
+      <div id="emptyState">
+        <div class="es-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+        </div>
+        <div class="es-title">Henüz veri yok</div>
+        <div class="es-sub">Excel dosyası yükleyin veya örnek veriyle başlayın</div>
+        <div class="es-actions">
+          <button class="es-btn-primary" onclick="triggerUpload()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-right:5px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            Excel Yükle
+          </button>
+          <button class="es-btn-ghost" onclick="loadSampleData()">Örnek Veri</button>
+        </div>
+        <div id="esRecent" class="es-recent" style="display:none">
+          <div class="es-recent-title">Son Dosyalar</div>
+          <div id="esRecentList"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="sheetTabs"></div>
+
+    <!-- STATUS BAR -->
+    <div id="statusBar">
+      <div id="sbLeft">
+        <div class="sb-chip"><span class="sb-chip-label">📍</span> <span class="sb-val" id="sbRef">A1</span></div>
+        <div class="sb-chip" id="sbSelChip" style="display:none"><span class="sb-val" id="sbSelCount">1</span><span class="sb-chip-label"> cell</span></div>
+        <div class="sb-chip" id="sbSumChip" style="display:none"><span class="sb-chip-label">∑</span> <span class="sb-val" id="sbSumVal">0</span></div>
+        <div class="sb-chip" id="sbAvgChip" style="display:none"><span class="sb-chip-label">⌀</span> <span class="sb-val" id="sbAvgVal">0</span></div>
+        <div class="sb-chip" id="sbMinChip" style="display:none"><span class="sb-chip-label">↓</span> <span class="sb-val" id="sbMinVal">0</span></div>
+        <div class="sb-chip" id="sbMaxChip" style="display:none"><span class="sb-chip-label">↑</span> <span class="sb-val" id="sbMaxVal">0</span></div>
+      </div>
+      <div id="sbRight">
+        <span class="sb-info"><span class="sb-val" id="sbFilled">0</span> dolu hücre</span>
+        <span class="sb-info"><span class="sb-val" id="sbRowsInfo">0</span> satır</span>
+        <span id="sbLastAI">Son: —</span>
+        <div id="sbZoom">
+          <button class="zoom-btn" onclick="changeZoom(-10)">−</button>
+          <span id="zoomLabel">100%</span>
+          <button class="zoom-btn" onclick="changeZoom(+10)">+</button>
+        </div>
+      </div>
+      <!-- Legacy IDs for JS backward compatibility -->
+      <span id="stCells" style="display:none"></span>
+      <span id="stSel"   style="display:none"></span>
+      <span id="stSum"   style="display:none"></span>
+      <span id="stAvg"   style="display:none"></span>
+      <span id="stCount" style="display:none"></span>
+    </div>
+
+    <!-- AI DOCK (floating) -->
+    <div id="chat-bar" class="ai-dock">
+      <div id="chat-messages"></div>
+      <div id="chat-chips">
+        <span class="chat-chips-label">Öneriler</span>
+        <button class="chat-chip" onclick="useChip('KDV ekle')">💸 KDV ekle</button>
+        <button class="chat-chip" onclick="useChip('fiyata göre sırala')">↕ Tutara göre sırala</button>
+        <button class="chat-chip" onclick="useChip('boş satırları sil')">🗑 Boşları sil</button>
+        <button class="chat-chip" onclick="useChip('aylık rapor oluştur')">📊 Rapor oluştur</button>
+        <button class="chat-chip" onclick="useChip('negatifleri kırmızıya boya')">🎨 Renklendir</button>
+        <button class="chat-chip" onclick="useChip('tekrar edenleri sil')">🔁 Tekrarları sil</button>
+      </div>
+      <div id="chat-input-row">
+        <span id="chat-spark">
+          <img src="/images/logo.png" alt="" class="chat-logo-icon">
+        </span>
+        <input
+          id="chat-input"
+          type="text"
+          placeholder="Bir komut yazın — örn. 'Mart KDV'sini hesapla, %18 olanları sarıya boya'…"
+          autocomplete="off"
+          onkeydown="if(event.key==='Enter'&&!event.shiftKey)sendChatMessage()"
+          oninput="handleChatInput(this.value)"
+          onfocus="expandChat()"
+        />
+        <span class="chat-mode-badge" id="chatCellRef"></span>
+        <kbd class="chat-enter-kbd">↵</kbd>
+        <button id="chat-send" onclick="sendChatMessage()" title="Gönder (Enter)">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+      <div id="chat-progress"></div>
+    </div>
+
+  </div><!-- /.work -->
+
+</div><!-- /.main-col -->
+
+</div><!-- /.app-shell -->
 
 <!-- CONTEXT MENU -->
 <div id="ctxMenu">

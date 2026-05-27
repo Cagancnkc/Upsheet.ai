@@ -1179,10 +1179,12 @@ function toggleTheme() {
     document.body.classList.remove('dark');
     document.body.classList.add('light');
     localStorage.setItem('theme', 'light');
+    document.documentElement.setAttribute('data-theme', 'light');
   } else {
     document.body.classList.remove('light');
     document.body.classList.add('dark');
     localStorage.setItem('theme', 'dark');
+    document.documentElement.setAttribute('data-theme', 'dark');
   }
   updateThemeIcon();
   const list = document.getElementById('templateList');
