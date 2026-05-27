@@ -491,3 +491,139 @@ body {
 .app-shell ::-webkit-scrollbar-track { background: transparent; }
 .app-shell ::-webkit-scrollbar-thumb { background: var(--line); border-radius: 3px; }
 .app-shell ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+/* ── PREMIUM EXPORT DROPDOWN ── */
+#export-dropdown {
+  border-radius: 16px !important;
+  border: 1px solid rgba(0,0,0,0.06) !important;
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,0.02),
+    0 2px 4px rgba(0,0,0,0.04),
+    0 8px 20px rgba(0,0,0,0.08),
+    0 28px 56px -4px rgba(0,0,0,0.13) !important;
+  width: 296px !important;
+  padding-bottom: 4px !important;
+}
+
+[data-theme="dark"] #export-dropdown,
+body.dark #export-dropdown {
+  background: rgba(13,16,22,0.97) !important;
+  border-color: rgba(255,255,255,0.07) !important;
+  backdrop-filter: blur(28px) saturate(200%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(200%) !important;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.05),
+    0 4px 8px rgba(0,0,0,0.5),
+    0 24px 56px rgba(0,0,0,0.75) !important;
+}
+
+.exp-header {
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  letter-spacing: .08em !important;
+  padding: 12px 16px 6px !important;
+}
+
+.exp-item {
+  margin: 1px 6px !important;
+  width: calc(100% - 12px) !important;
+  border-radius: 8px !important;
+  padding: 9px 12px !important;
+  font-weight: 500 !important;
+  color: #111827 !important;
+}
+.exp-item:hover {
+  background: rgba(22,163,74,.07) !important;
+  box-shadow: inset 0 0 0 1px rgba(22,163,74,.1) !important;
+}
+[data-theme="dark"] .exp-item,
+body.dark .exp-item { color: var(--ink,#F1F3F6) !important; }
+[data-theme="dark"] .exp-item:hover,
+body.dark .exp-item:hover { background: rgba(22,163,74,.1) !important; }
+
+.exp-separator {
+  background: rgba(0,0,0,.05) !important;
+  margin: 8px 0 2px !important;
+}
+[data-theme="dark"] .exp-separator,
+body.dark .exp-separator { background: rgba(255,255,255,.05) !important; }
+
+.exp-int-header { padding: 8px 16px 4px !important; }
+.exp-int-header span { font-weight: 700 !important; letter-spacing: .07em !important; }
+
+/* 5-column integration grid */
+.exp-int-grid {
+  grid-template-columns: repeat(5,1fr) !important;
+  gap: 2px !important;
+  padding: 4px 10px 12px !important;
+}
+
+.exp-int-card {
+  padding: 10px 2px 8px !important;
+  border-radius: 10px !important;
+  gap: 5px !important;
+  transition: background .14s, border-color .14s, box-shadow .14s, transform .14s, opacity .15s, filter .15s !important;
+}
+.exp-int-card:not(.disconnected):hover {
+  background: rgba(22,163,74,.07) !important;
+  border-color: rgba(22,163,74,.22) !important;
+  box-shadow: 0 3px 10px rgba(22,163,74,.13) !important;
+  transform: translateY(-1px) !important;
+}
+.exp-int-card.disconnected {
+  opacity: .38 !important;
+  filter: grayscale(30%) !important;
+}
+.exp-int-card.disconnected:hover {
+  opacity: .68 !important;
+  filter: grayscale(0%) !important;
+  background: rgba(0,0,0,.025) !important;
+  border-color: rgba(0,0,0,.07) !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.exp-int-card img,
+.exp-int-card svg {
+  width: 28px !important;
+  height: 28px !important;
+  border-radius: 7px !important;
+  box-shadow: 0 0 0 .5px rgba(0,0,0,.06), 0 1px 4px rgba(0,0,0,.15) !important;
+  transition: box-shadow .14s !important;
+}
+.exp-int-card:not(.disconnected):hover img,
+.exp-int-card:not(.disconnected):hover svg {
+  box-shadow: 0 0 0 .5px rgba(22,163,74,.15), 0 2px 8px rgba(22,163,74,.22) !important;
+}
+
+.exp-int-card-name {
+  font-size: 8.5px !important;
+  font-weight: 600 !important;
+  color: #6B7280 !important;
+}
+
+.exp-int-dot {
+  width: 6px !important;
+  height: 6px !important;
+  top: 5px !important;
+  right: 5px !important;
+  box-shadow: 0 0 0 2px #fff, 0 0 0 3.5px rgba(16,185,129,.2) !important;
+}
+
+[data-theme="dark"] .exp-int-card:not(.disconnected):hover,
+body.dark .exp-int-card:not(.disconnected):hover {
+  background: rgba(22,163,74,.1) !important;
+  border-color: rgba(22,163,74,.24) !important;
+  box-shadow: 0 4px 16px rgba(0,0,0,.45) !important;
+}
+[data-theme="dark"] .exp-int-card-name,
+body.dark .exp-int-card-name { color: #9CA3AF !important; }
+[data-theme="dark"] .exp-int-dot,
+body.dark .exp-int-dot {
+  box-shadow: 0 0 0 2px var(--panel,#161920), 0 0 0 3.5px rgba(16,185,129,.2) !important;
+}
+[data-theme="dark"] .exp-int-card.disconnected:hover,
+body.dark .exp-int-card.disconnected:hover {
+  background: rgba(255,255,255,.03) !important;
+  border-color: rgba(255,255,255,.07) !important;
+}
