@@ -4961,17 +4961,17 @@ function closeExportMenu() {
 function renderIntegrationShortcuts() {
   const el = document.getElementById('exp-integrations-section');
   if (!el) return;
-  const s2 = (domain) => `<img src="https://www.google.com/s2/favicons?domain=${domain}&sz=64" width="28" height="28" style="border-radius:7px;object-fit:contain">`;
+  const localIcon = (file) => `<img src="/images/integrations/${file}" width="28" height="28" style="border-radius:7px;object-fit:contain">`;
   const configs = [
-    { key:'int_gs',      name:'Google Sheets',    fn:'exportToGSheets',      icon: s2('sheets.google.com') },
-    { key:'int_excel',   name:'Excel Online',     fn:'exportToExcelOnline',  icon: s2('microsoft365.com') },
-    { key:'int_notion',  name:'Notion',           fn:'exportToNotion',       icon: s2('notion.so') },
-    { key:'int_slack',   name:'Slack',            fn:'exportToSlack',        icon: s2('slack.com') },
-    { key:'int_airtable',name:'Airtable',         fn:'exportToAirtable',     icon: s2('airtable.com') },
-    { key:'int_teams',   name:'Teams',            fn:'exportToTeams',        icon: s2('teams.microsoft.com') },
-    { key:'int_trello',  name:'Trello',           fn:'exportToTrello',       icon: s2('trello.com') },
-    { key:'int_make',    name:'Make',             fn:'triggerMake',          icon: s2('make.com') },
-    { key:'int_drive',   name:'Drive',            fn:'exportToDrive',        icon: s2('drive.google.com') },
+    { key:'int_gs',      name:'Google Sheets',    fn:'exportToGSheets',      icon: localIcon('googlesheets.svg') },
+    { key:'int_excel',   name:'Excel Online',     fn:'exportToExcelOnline',  icon: localIcon('microsoftexcel.svg') },
+    { key:'int_notion',  name:'Notion',           fn:'exportToNotion',       icon: localIcon('notion.svg') },
+    { key:'int_slack',   name:'Slack',            fn:'exportToSlack',        icon: localIcon('slack.svg') },
+    { key:'int_airtable',name:'Airtable',         fn:'exportToAirtable',     icon: localIcon('airtable.svg') },
+    { key:'int_teams',   name:'Teams',            fn:'exportToTeams',        icon: localIcon('microsoftteams.svg') },
+    { key:'int_trello',  name:'Trello',           fn:'exportToTrello',       icon: localIcon('trello.svg') },
+    { key:'int_make',    name:'Make',             fn:'triggerMake',          icon: localIcon('make.svg') },
+    { key:'int_drive',   name:'Drive',            fn:'exportToDrive',        icon: localIcon('googledrive.svg') },
     { key:'int_webhook', name:'Webhook',          fn:'triggerWebhook',       icon:'<svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="5" fill="#4F46E5"/><path d="M9.5 8.5A4.2 4.2 0 008 12a4.2 4.2 0 004.2 4.2H14" stroke="white" stroke-width="1.8" stroke-linecap="round"/><path d="M14.5 15.5A4.2 4.2 0 0016 12a4.2 4.2 0 00-4.2-4.2H10" stroke="white" stroke-width="1.8" stroke-linecap="round"/><circle cx="7.5" cy="8" r="1.8" fill="white"/><circle cx="16.5" cy="16" r="1.8" fill="white"/></svg>' }
   ];
 
