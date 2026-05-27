@@ -59,11 +59,6 @@ let chatAttachments = [];
 let clipboard = null;
 let cutSource = null;
 let dirtyCells = new Set(); // tracks modified cells for optimized localStorage saves
-let currentUser = null;
-let currentFileId = null;
-let isSyncing = false;
-let autoSaveTimer = null;
-let sb = window._sb || null;
 
 const VH_ICONS = {
   ai:     {emoji:'⚡', cls:'ai'},
