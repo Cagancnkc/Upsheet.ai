@@ -628,3 +628,21 @@ body.dark .exp-int-card.disconnected:hover {
   background: rgba(255,255,255,.03) !important;
   border-color: rgba(255,255,255,.07) !important;
 }
+
+/* ── Logo Icon Placements ───────────────────────────── */
+.chat-logo-icon {
+  width: 22px !important;
+  height: 22px !important;
+  object-fit: contain;
+  display: block;
+  flex-shrink: 0;
+}
+
+.topbar-breadcrumb img {
+  flex-shrink: 0;
+}
+
+[data-theme="dark"] .topbar-breadcrumb img,
+body.dark .topbar-breadcrumb img {
+  filter: invert(1);
+}
