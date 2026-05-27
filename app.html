@@ -22,6 +22,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <link rel="stylesheet" href="css/style.css?v=4">
 <link rel="stylesheet" href="css/redesign.css?v=1">
+<link rel="stylesheet" href="css/dashboard.css?v=1">
 <script src="api.js"></script>
 <style>
 /* ── SIDEBAR ENTEGRASYON ITEMS ── */
@@ -1543,8 +1544,83 @@ body.light .sb-upgrade-btn{background:rgba(84,72,232,0.08);border-color:rgba(84,
 
   </div><!-- /.work -->
 
-  <!-- AI DOCK — floating, positioned relative to .main-col -->
-  <div id="chat-bar" class="ai-dock">
+  <!-- HIZLI BAŞLANGIÇ -->
+  <div class="below-sheet-section" id="quickStartSection">
+    <div class="bss-header">
+      <span class="bss-title">Hızlı Başlangıç</span>
+      <span class="bss-desc">Hazır şablonlarla hemen başla</span>
+    </div>
+    <div class="qs-grid">
+      <div class="qs-card" onclick="loadTemplate('inventory')">
+        <div class="qs-icon">📦</div>
+        <div class="qs-name">Stok Takip</div>
+        <div class="qs-desc">Ürün ve stok yönetimi</div>
+      </div>
+      <div class="qs-card" onclick="loadTemplate('orders')">
+        <div class="qs-icon">🛒</div>
+        <div class="qs-name">Sipariş Takip</div>
+        <div class="qs-desc">Müşteri sipariş akışı</div>
+      </div>
+      <div class="qs-card" onclick="loadTemplate('customers')">
+        <div class="qs-icon">👥</div>
+        <div class="qs-name">Müşteri Listesi</div>
+        <div class="qs-desc">CRM ve müşteri verileri</div>
+      </div>
+      <div class="qs-card" onclick="loadTemplate('revenue')">
+        <div class="qs-icon">📊</div>
+        <div class="qs-name">Gelir Tablosu</div>
+        <div class="qs-desc">Aylık gelir &amp; gider</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OTOMASYONLAR -->
+  <div class="below-sheet-section" id="automationsSection">
+    <div class="bss-header">
+      <span class="bss-title">Otomasyonlar</span>
+      <span class="bss-badge">Yakında</span>
+    </div>
+    <div class="auto-list">
+      <div class="auto-card">
+        <div class="auto-status-dot"></div>
+        <div class="auto-info">
+          <div class="auto-name">Düşük stok uyarısı</div>
+          <div class="auto-meta">14 kez çalıştı &middot; Son: 2 saat önce</div>
+        </div>
+        <div class="auto-badge-active">Aktif</div>
+      </div>
+      <div class="auto-card">
+        <div class="auto-status-dot" style="background:var(--muted);box-shadow:none"></div>
+        <div class="auto-info">
+          <div class="auto-name">Haftalık rapor oluşturma</div>
+          <div class="auto-meta">3 kez çalıştı &middot; Pasif</div>
+        </div>
+      </div>
+      <div class="auto-card">
+        <div class="auto-status-dot" style="background:var(--muted);box-shadow:none"></div>
+        <div class="auto-info">
+          <div class="auto-name">Tedarikçi bildirimi</div>
+          <div class="auto-meta">Henüz çalışmadı &middot; Pasif</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /.main-col -->
+
+<!-- RIGHT PANEL -->
+<aside id="rightPanel" class="right-panel">
+
+  <!-- Header -->
+  <div class="rp-header">
+    <span class="rp-title">AI Asistan</span>
+    <button class="rp-close-btn" onclick="toggleRightPanel()" title="Paneli gizle">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+
+  <!-- AI CHAT (moved from .main-col, IDs preserved) -->
+  <div id="chat-bar" class="ai-dock rp-chat">
     <div id="chat-messages"></div>
     <div id="chat-chips">
       <span class="chat-chips-label">Öneriler</span>
@@ -1562,7 +1638,7 @@ body.light .sb-upgrade-btn{background:rgba(84,72,232,0.08);border-color:rgba(84,
       <input
         id="chat-input"
         type="text"
-        placeholder="Bir komut yazın — örn. 'Mart KDV'sini hesapla, %18 olanları sarıya boya'…"
+        placeholder="Bir komut yazın…"
         autocomplete="off"
         onkeydown="if(event.key==='Enter'&&!event.shiftKey)sendChatMessage()"
         oninput="handleChatInput(this.value)"
@@ -1577,7 +1653,46 @@ body.light .sb-upgrade-btn{background:rgba(84,72,232,0.08);border-color:rgba(84,
     <div id="chat-progress"></div>
   </div>
 
-</div><!-- /.main-col -->
+  <!-- Hazır Aksiyonlar -->
+  <div class="rp-section">
+    <span class="rp-section-title">Hazır Aksiyonlar</span>
+    <div class="action-chip-grid">
+      <div class="action-chip-card" onclick="useChip('Veri doğrulama yap')">✅ Veri doğrulama</div>
+      <div class="action-chip-card" onclick="useChip('boş satırları temizle')">🧹 Boşları temizle</div>
+      <div class="action-chip-card" onclick="useChip('tekrar edenleri bul ve göster')">🔍 Yinelenenleri bul</div>
+      <div class="action-chip-card" onclick="useChip('bu veriler için formül öner')">➕ Formül önerileri</div>
+    </div>
+  </div>
+
+  <!-- Son Etkinlikler -->
+  <div class="rp-section">
+    <span class="rp-section-title">Son Etkinlikler</span>
+    <div class="activity-feed" id="activityFeed">
+      <div class="activity-item">
+        <div class="activity-icon">📄</div>
+        <div>
+          <div class="act-label">Tablo yüklendi</div>
+          <div class="act-time">Bugün, 10:42</div>
+        </div>
+      </div>
+      <div class="activity-item">
+        <div class="activity-icon">🤖</div>
+        <div>
+          <div class="act-label">AI komutu çalıştırıldı</div>
+          <div class="act-time">Bugün, 10:38</div>
+        </div>
+      </div>
+      <div class="activity-item">
+        <div class="activity-icon">⬇️</div>
+        <div>
+          <div class="act-label">Excel olarak indirildi</div>
+          <div class="act-time">Dün, 17:15</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</aside>
 
 </div><!-- /.app-shell -->
 
@@ -2536,6 +2651,12 @@ document.addEventListener('keydown', function(e) {
     if (m && m.classList.contains('open')) closeShareModal();
   }
 });
+</script>
+
+<script>
+function toggleRightPanel() {
+  document.querySelector('.app-shell').classList.toggle('right-collapsed');
+}
 </script>
 </body>
 </html>
