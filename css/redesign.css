@@ -50,12 +50,19 @@ html, body {
 .app-shell {
   display: grid;
   grid-template-columns: 272px 1fr;
+  grid-template-rows: 1fr;
   gap: 12px;
   padding: 12px;
   height: 100vh;
   box-sizing: border-box;
   background: var(--bg);
   overflow: hidden;
+}
+
+/* Prevent grid children from overflowing their tracks */
+.app-shell > * {
+  min-width: 0;
+  min-height: 0;
 }
 
 /* ── SIDEBAR CARD ── */
@@ -93,7 +100,9 @@ body.dark #appSidebar {
   flex-direction: column;
   gap: 10px;
   min-height: 0;
+  min-width: 0;
   height: 100%;
+  position: relative;
 }
 
 /* ── TOPBAR NEW ── */
@@ -273,6 +282,7 @@ body.dark #appSidebar {
   display: flex;
   flex-direction: column;
   min-height: 0;
+  min-width: 0;
   position: relative;
   overflow: hidden;
   transition: background .2s, border-color .2s;
@@ -299,7 +309,7 @@ body.dark .work #appToolbar {
   flex: 1;
   min-height: 0;
   overflow: auto;
-  padding-bottom: 110px; /* space for ai-dock */
+  padding-bottom: 20px;
 }
 
 /* Sheet tabs */
@@ -313,31 +323,80 @@ body.dark .work #appToolbar {
   flex-shrink: 0;
 }
 
-/* ── AI DOCK (floating) ── */
-.ai-dock {
+/* ── AI DOCK (floating) — 21stdev-inspired modern chat bar ── */
+.ai-dock,
+#chat-bar {
   position: absolute !important;
-  bottom: 20px !important;
+  bottom: 24px !important;
   left: 50% !important;
   transform: translateX(-50%) !important;
-  width: min(760px, calc(100% - 32px)) !important;
-  z-index: 20 !important;
+  width: min(740px, calc(100% - 40px)) !important;
+  z-index: 50 !important;
   background: var(--panel) !important;
   border: 1px solid var(--line) !important;
-  border-radius: var(--radius-l) !important;
-  box-shadow: var(--shadow-2) !important;
-  overflow: visible !important;
+  border-radius: 18px !important;
+  box-shadow:
+    0 4px 6px -1px rgba(0,0,0,0.06),
+    0 12px 40px -8px rgba(0,0,0,0.12),
+    0 0 0 1px rgba(0,0,0,0.03) !important;
+  overflow: hidden !important;
+  transition: box-shadow .2s ease, border-color .2s ease !important;
 }
 
-/* Override #chat-bar position when inside .ai-dock */
-#appSidebar ~ .main-col .work #chat-bar,
-.work .ai-dock {
-  position: absolute;
+/* Focus glow — green accent */
+#chat-bar:focus-within {
+  border-color: rgba(22,163,74,0.4) !important;
+  box-shadow:
+    0 4px 6px -1px rgba(0,0,0,0.06),
+    0 12px 40px -8px rgba(22,163,74,0.15),
+    0 0 0 3px rgba(22,163,74,0.08) !important;
 }
 
-/* Ensure the chat bar content fits */
+body.dark .ai-dock,
+body.dark #chat-bar {
+  background: rgba(22,25,32,0.95) !important;
+  border-color: rgba(255,255,255,0.1) !important;
+  box-shadow: 0 4px 30px rgba(0,0,0,0.4) !important;
+  backdrop-filter: blur(16px);
+}
+
+body.dark #chat-bar:focus-within {
+  border-color: rgba(22,163,74,0.35) !important;
+  box-shadow: 0 4px 30px rgba(0,0,0,0.4), 0 0 0 3px rgba(22,163,74,0.12) !important;
+}
+
+/* Messages */
 .ai-dock #chat-messages {
-  max-height: 120px;
+  max-height: 200px;
   overflow-y: auto;
+}
+
+/* Send button — green accent */
+.ai-dock #chat-send,
+#chat-bar #chat-send {
+  background: linear-gradient(135deg, var(--accent), #15803d) !important;
+}
+.ai-dock #chat-send.active:hover,
+#chat-bar #chat-send.active:hover {
+  box-shadow: 0 6px 16px -4px rgba(22,163,74,0.5) !important;
+}
+
+/* Chip hover — green accent */
+#chat-bar .chat-chip:hover {
+  background: var(--accent-soft) !important;
+  border-color: rgba(22,163,74,0.25) !important;
+  color: #15803d !important;
+}
+body.dark #chat-bar .chat-chip:hover {
+  background: rgba(22,163,74,0.15) !important;
+  border-color: rgba(22,163,74,0.3) !important;
+  color: #86efac !important;
+}
+
+/* Progress bar — green */
+#chat-bar #chat-progress {
+  background: linear-gradient(90deg, var(--accent), #86efac, var(--accent)) !important;
+  background-size: 200% 100% !important;
 }
 
 /* ── SIDEBAR ONLINE DOT ── */
@@ -393,9 +452,19 @@ body {
 /* Position sidebar within app-shell grid */
 .app-shell > #appSidebar {
   grid-column: 1;
+  grid-row: 1;
   height: 100% !important;
   overflow: hidden;
   width: auto !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+
+.app-shell > .main-col {
+  grid-column: 2;
+  grid-row: 1;
+  min-width: 0;
+  min-height: 0;
 }
 
 /* Make content area fill main-col */

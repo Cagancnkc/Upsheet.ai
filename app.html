@@ -152,39 +152,16 @@ body.light .sb-hint-kbd{color:#5448E8!important;background:rgba(84,72,232,0.08)!
   to   { opacity: 0; transform: translateY(8px) scale(0.95); }
 }
 
-/* ── CHAT BAR — Floating / Centered ── */
+/* ── CHAT BAR — handled by redesign.css ── */
 #chat-bar {
-  position: fixed;
-  bottom: 20px;
+  position: absolute;
+  bottom: 24px;
   left: 50%;
   transform: translateX(-50%);
-  width: min(720px, calc(100vw - 48px));
-  background: var(--panel);
-  border: 1px solid var(--line-2);
-  border-radius: 16px;
-  box-shadow:
-    0 2px 8px rgba(14,14,16,0.06),
-    0 16px 48px rgba(14,14,16,0.1),
-    0 0 0 4px rgba(255,255,255,0.6);
+  width: min(740px, calc(100% - 40px));
   overflow: hidden;
   transition: box-shadow .2s ease, border-color .2s ease;
-  z-index: 100;
-}
-#chat-bar:focus-within {
-  border-color: var(--violet-mid);
-  box-shadow:
-    0 2px 8px rgba(14,14,16,0.06),
-    0 20px 56px rgba(91,60,255,0.14),
-    0 0 0 4px rgba(255,255,255,0.8);
-}
-body.dark #chat-bar {
-  background: #1e1e2e;
-  border-color: rgba(255,255,255,0.08);
-  box-shadow: 0 4px 24px rgba(0,0,0,0.4);
-}
-body.dark #chat-bar:focus-within {
-  border-color: rgba(99,102,241,0.4);
-  box-shadow: 0 4px 24px rgba(0,0,0,0.4), 0 0 0 3px rgba(99,102,241,0.12);
+  z-index: 50;
 }
 
 /* Messages expand upward */
@@ -352,7 +329,7 @@ body.dark .chat-enter-kbd { background: rgba(255,255,255,0.04); border-color: rg
 
 #chat-send {
   width: 34px; height: 34px; flex-shrink: 0;
-  background: linear-gradient(180deg, #6c4dff, #3a22b8);
+  background: linear-gradient(135deg, #16a34a, #15803d);
   border: none; border-radius: 9px;
   color: white; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
@@ -364,14 +341,14 @@ body.dark .chat-enter-kbd { background: rgba(255,255,255,0.04); border-color: rg
 }
 #chat-send.active:hover {
   transform: translateY(-1px);
-  box-shadow: 0 6px 16px -6px rgba(91,60,255,0.5);
+  box-shadow: 0 6px 16px -6px rgba(22,163,74,0.5);
 }
 #chat-send.active:active { transform: scale(0.96); }
 
 /* Progress bar */
 #chat-progress {
   height: 2px;
-  background: linear-gradient(90deg, #6366F1, #8B5CF6, #6366F1);
+  background: linear-gradient(90deg, #16a34a, #86efac, #16a34a);
   background-size: 200% 100%;
   width: 0%; transition: width .3s ease;
   animation: progressShimmer 1.5s infinite;
@@ -382,8 +359,6 @@ body.dark .chat-enter-kbd { background: rgba(255,255,255,0.04); border-color: rg
   100% { background-position: -200% 0; }
 }
 
-/* Grid area — bottom padding so content isn't hidden behind fixed bar */
-#gridWrap { padding-bottom: 88px; }
 
 /* ── Share Modal ─────────────────────────────────────────────── */
 #shareModal {
@@ -1583,41 +1558,41 @@ body.light .sb-upgrade-btn{background:rgba(84,72,232,0.08);border-color:rgba(84,
       <span id="stCount" style="display:none"></span>
     </div>
 
-    <!-- AI DOCK (floating) -->
-    <div id="chat-bar" class="ai-dock">
-      <div id="chat-messages"></div>
-      <div id="chat-chips">
-        <span class="chat-chips-label">Öneriler</span>
-        <button class="chat-chip" onclick="useChip('KDV ekle')">💸 KDV ekle</button>
-        <button class="chat-chip" onclick="useChip('fiyata göre sırala')">↕ Tutara göre sırala</button>
-        <button class="chat-chip" onclick="useChip('boş satırları sil')">🗑 Boşları sil</button>
-        <button class="chat-chip" onclick="useChip('aylık rapor oluştur')">📊 Rapor oluştur</button>
-        <button class="chat-chip" onclick="useChip('negatifleri kırmızıya boya')">🎨 Renklendir</button>
-        <button class="chat-chip" onclick="useChip('tekrar edenleri sil')">🔁 Tekrarları sil</button>
-      </div>
-      <div id="chat-input-row">
-        <span id="chat-spark">
-          <img src="/images/logo.png" alt="" class="chat-logo-icon">
-        </span>
-        <input
-          id="chat-input"
-          type="text"
-          placeholder="Bir komut yazın — örn. 'Mart KDV'sini hesapla, %18 olanları sarıya boya'…"
-          autocomplete="off"
-          onkeydown="if(event.key==='Enter'&&!event.shiftKey)sendChatMessage()"
-          oninput="handleChatInput(this.value)"
-          onfocus="expandChat()"
-        />
-        <span class="chat-mode-badge" id="chatCellRef"></span>
-        <kbd class="chat-enter-kbd">↵</kbd>
-        <button id="chat-send" onclick="sendChatMessage()" title="Gönder (Enter)">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-        </button>
-      </div>
-      <div id="chat-progress"></div>
-    </div>
-
   </div><!-- /.work -->
+
+  <!-- AI DOCK — floating, positioned relative to .main-col -->
+  <div id="chat-bar" class="ai-dock">
+    <div id="chat-messages"></div>
+    <div id="chat-chips">
+      <span class="chat-chips-label">Öneriler</span>
+      <button class="chat-chip" onclick="useChip('KDV ekle')">💸 KDV ekle</button>
+      <button class="chat-chip" onclick="useChip('fiyata göre sırala')">↕ Tutara göre sırala</button>
+      <button class="chat-chip" onclick="useChip('boş satırları sil')">🗑 Boşları sil</button>
+      <button class="chat-chip" onclick="useChip('aylık rapor oluştur')">📊 Rapor oluştur</button>
+      <button class="chat-chip" onclick="useChip('negatifleri kırmızıya boya')">🎨 Renklendir</button>
+      <button class="chat-chip" onclick="useChip('tekrar edenleri sil')">🔁 Tekrarları sil</button>
+    </div>
+    <div id="chat-input-row">
+      <span id="chat-spark">
+        <img src="/images/logo.png" alt="" class="chat-logo-icon">
+      </span>
+      <input
+        id="chat-input"
+        type="text"
+        placeholder="Bir komut yazın — örn. 'Mart KDV'sini hesapla, %18 olanları sarıya boya'…"
+        autocomplete="off"
+        onkeydown="if(event.key==='Enter'&&!event.shiftKey)sendChatMessage()"
+        oninput="handleChatInput(this.value)"
+        onfocus="expandChat()"
+      />
+      <span class="chat-mode-badge" id="chatCellRef"></span>
+      <kbd class="chat-enter-kbd">↵</kbd>
+      <button id="chat-send" onclick="sendChatMessage()" title="Gönder (Enter)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </div>
+    <div id="chat-progress"></div>
+  </div>
 
 </div><!-- /.main-col -->
 
