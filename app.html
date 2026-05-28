@@ -859,16 +859,185 @@
 (function () {
   'use strict';
 
-  // ── Grid data model ─────────────────────────────────────────────────────
-  var GRID_ROWS = 28, GRID_COLS = 14;
-  var gridData = [];
-  for (var _r = 0; _r < GRID_ROWS; _r++) {
-    gridData.push([]);
-    for (var _c = 0; _c < GRID_COLS; _c++) {
-      gridData[_r].push({ v: '', bg: '' });
-    }
+  // ── W: Toast ─────────────────────────────────────────────────────────────
+  function showToast(msg) {
+    var t = document.createElement('div');
+    t.textContent = msg;
+    t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1a1a1a;color:#fff;padding:8px 16px;border-radius:8px;font-size:12px;z-index:9999;pointer-events:none;transition:opacity .3s;';
+    document.body.appendChild(t);
+    setTimeout(function () { t.style.opacity = '0'; setTimeout(function () { if (t.parentNode) t.parentNode.removeChild(t); }, 300); }, 2200);
   }
 
+  // ── A: Grid data model ────────────────────────────────────────────────────
+  var GRID_ROWS = 28, GRID_COLS = 14;
+
+  function emptyGridData() {
+    var g = [];
+    for (var r = 0; r < GRID_ROWS; r++) {
+      g.push([]);
+      for (var c = 0; c < GRID_COLS; c++) {
+        g[r].push({ v: '', bg: '', bold: false, italic: false, underline: false, strike: false, align: '', color: '', numFmt: '', fontSize: 0 });
+      }
+    }
+    return g;
+  }
+
+  var gridData = emptyGridData();
+
+  // ── H: Multiple sheets ────────────────────────────────────────────────────
+  var sheetsData = [
+    { name: 'Stok',      color: 'var(--accent)', data: null },
+    { name: 'Tedarikçi', color: '#f59e0b',       data: null },
+    { name: 'Sipariş',   color: '#8b5cf6',       data: null },
+    { name: 'Özet',      color: '#3b82f6',       data: null }
+  ];
+  var activeSheetIdx = 0;
+  sheetsData[0].data = gridData;
+
+  function switchSheet(idx) {
+    if (idx === activeSheetIdx) return;
+    sheetsData[activeSheetIdx].data = JSON.parse(JSON.stringify(gridData));
+    activeSheetIdx = idx;
+    if (!sheetsData[idx].data) sheetsData[idx].data = emptyGridData();
+    gridData = sheetsData[idx].data;
+    renderGrid();
+    renderSheetTabs();
+  }
+
+  function renderSheetTabs() {
+    var container = document.querySelector('.sheet-tabs');
+    if (!container) return;
+    container.querySelectorAll('.stab').forEach(function (el) { el.remove(); });
+    var addBtn = container.querySelector('.add');
+    sheetsData.forEach(function (sheet, idx) {
+      var stab = document.createElement('div');
+      stab.className = 'stab' + (idx === activeSheetIdx ? ' active' : '');
+      stab.innerHTML = '<span style="width:8px;height:8px;border-radius:50%;background:' + sheet.color + ';display:inline-block;margin-right:5px;flex-shrink:0;"></span><span class="stab-name">' + sheet.name + '</span><span class="chev" style="margin-left:4px;opacity:.5;font-size:9px;cursor:pointer;">▾</span>';
+      stab.addEventListener('click', function (e) {
+        if (e.target.classList.contains('chev')) return;
+        switchSheet(idx);
+      });
+      var chev = stab.querySelector('.chev');
+      chev.addEventListener('click', function (e) { e.stopPropagation(); openStabMenu(idx, e); });
+      if (addBtn) container.insertBefore(stab, addBtn);
+      else container.appendChild(stab);
+    });
+  }
+
+  // ── J: Sheet tab context menu ─────────────────────────────────────────────
+  var stabMenuTarget = -1;
+  var stabMenu = document.getElementById('stab-menu');
+  if (stabMenu) {
+    stabMenu.querySelectorAll('[data-action]').forEach(function (item) {
+      item.addEventListener('click', function () {
+        var action = this.dataset.action;
+        stabMenu.style.display = 'none';
+        if (action === 'rename') {
+          var name = prompt('Sayfa adı:', sheetsData[stabMenuTarget] ? sheetsData[stabMenuTarget].name : '');
+          if (name && name.trim()) { sheetsData[stabMenuTarget].name = name.trim(); renderSheetTabs(); }
+        } else if (action === 'delete') {
+          if (sheetsData.length <= 1) return;
+          sheetsData.splice(stabMenuTarget, 1);
+          if (activeSheetIdx >= sheetsData.length) activeSheetIdx = sheetsData.length - 1;
+          gridData = sheetsData[activeSheetIdx].data || emptyGridData();
+          sheetsData[activeSheetIdx].data = gridData;
+          renderGrid(); renderSheetTabs();
+        }
+      });
+    });
+    document.addEventListener('click', function (e) {
+      if (stabMenu.style.display === 'block' && !stabMenu.contains(e.target)) stabMenu.style.display = 'none';
+    });
+  }
+
+  function openStabMenu(idx, e) {
+    if (!stabMenu) return;
+    stabMenuTarget = idx;
+    var rect = e.target.getBoundingClientRect();
+    stabMenu.style.top = (rect.bottom + 4) + 'px';
+    stabMenu.style.left = rect.left + 'px';
+    var delItem = stabMenu.querySelector('[data-action="delete"]');
+    if (delItem) delItem.style.opacity = sheetsData.length <= 1 ? '0.4' : '1';
+    stabMenu.style.display = 'block';
+  }
+
+  // ── F: Undo / Redo ────────────────────────────────────────────────────────
+  var undoStack = [], redoStack = [];
+  function pushHistory() {
+    undoStack.push(JSON.parse(JSON.stringify(gridData)));
+    if (undoStack.length > 50) undoStack.shift();
+    redoStack = [];
+  }
+  function undoAction() {
+    if (!undoStack.length) return;
+    redoStack.push(JSON.parse(JSON.stringify(gridData)));
+    gridData = undoStack.pop();
+    if (sheetsData[activeSheetIdx]) sheetsData[activeSheetIdx].data = gridData;
+    renderGrid(); showToast('Geri alındı');
+  }
+  function redoAction() {
+    if (!redoStack.length) return;
+    undoStack.push(JSON.parse(JSON.stringify(gridData)));
+    gridData = redoStack.pop();
+    if (sheetsData[activeSheetIdx]) sheetsData[activeSheetIdx].data = gridData;
+    renderGrid(); showToast('Yinelendi');
+  }
+
+  // ── A: Format helper ──────────────────────────────────────────────────────
+  function formatCellValue(v, fmt) {
+    if (!fmt || !v) return v || '';
+    var n = parseFloat(v);
+    if (isNaN(n)) return v;
+    if (fmt === 'currency') return '₺' + n.toLocaleString('tr-TR', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+    if (fmt === 'percent')  return n.toFixed(1) + '%';
+    if (fmt === 'decimal')  return n.toFixed(2);
+    return v;
+  }
+
+  // ── B: Selected cell tracking ─────────────────────────────────────────────
+  var selectedCell = { r: 0, c: 0 };
+  var COL_LETTERS = 'ABCDEFGHIJKLMN'.split('');
+
+  function updateFormulaBar(r, c) {
+    var nameEl = document.querySelector('.name-box .cell');
+    if (nameEl) nameEl.textContent = COL_LETTERS[c] + (r + 1);
+    var fi = document.querySelector('.formula-input');
+    if (fi) fi.textContent = gridData[r] && gridData[r][c] ? (gridData[r][c].v || '') : '';
+    var metas = document.querySelectorAll('.formula-meta span');
+    if (metas[0]) metas[0].textContent = 'Sat: ' + (r + 1);
+    if (metas[1]) metas[1].textContent = 'Süt: ' + (c + 1);
+  }
+
+  function updateToolbarState(r, c) {
+    var cell = (gridData[r] && gridData[r][c]) ? gridData[r][c] : {};
+    var map = { 'Kalın': cell.bold, 'İtalik': cell.italic, 'Altı çizili': cell.underline, 'Üstü çizili': cell.strike, 'Sola hizala': cell.align === 'left', 'Ortala': cell.align === 'center', 'Sağa hizala': cell.align === 'right', 'Para birimi': cell.numFmt === 'currency', 'Yüzde': cell.numFmt === 'percent', 'Ondalık': cell.numFmt === 'decimal' };
+    document.querySelectorAll('[title]').forEach(function (btn) {
+      var t = btn.getAttribute('title');
+      if (t in map) btn.classList.toggle('active', !!map[t]);
+    });
+    var fsBtn = document.querySelector('.tb-select.mono');
+    if (fsBtn) fsBtn.textContent = (cell.fontSize || 12) + '';
+  }
+
+  // ── A: Render single cell in place ────────────────────────────────────────
+  function renderSingleCell(r, c) {
+    var cell = gridData[r][c];
+    var el = document.querySelector('.grid-cell[data-r="' + r + '"][data-c="' + c + '"]');
+    if (!el) return;
+    var inp = el.querySelector('.grid-cell-input');
+    if (!inp) return;
+    el.style.background = cell.bg || '';
+    inp.value = formatCellValue(cell.v, cell.numFmt);
+    inp.style.fontWeight     = cell.bold      ? '700'    : '';
+    inp.style.fontStyle      = cell.italic    ? 'italic' : '';
+    var td = []; if (cell.underline) td.push('underline'); if (cell.strike) td.push('line-through');
+    inp.style.textDecoration = td.join(' ');
+    inp.style.textAlign      = cell.align  || '';
+    inp.style.color          = cell.color  || '';
+    inp.style.fontSize       = cell.fontSize ? cell.fontSize + 'px' : '';
+  }
+
+  // ── A: Full grid render ───────────────────────────────────────────────────
   function renderGrid() {
     var body = document.getElementById('grid-body');
     if (!body) return;
@@ -878,69 +1047,60 @@
         var cell = gridData[r][c];
         var d = document.createElement('div');
         d.className = 'grid-cell';
-        d.dataset.r = r;
-        d.dataset.c = c;
+        d.dataset.r = r; d.dataset.c = c;
         d.style.left = (40 + 96 * c) + 'px';
         d.style.top  = (28 + 28 * r) + 'px';
         if (cell.bg) d.style.background = cell.bg;
         var inp = document.createElement('input');
-        inp.type = 'text';
-        inp.className = 'grid-cell-input';
-        inp.value = cell.v || '';
+        inp.type = 'text'; inp.className = 'grid-cell-input';
+        inp.value = formatCellValue(cell.v, cell.numFmt);
+        if (cell.bold)      inp.style.fontWeight = '700';
+        if (cell.italic)    inp.style.fontStyle  = 'italic';
+        var td = []; if (cell.underline) td.push('underline'); if (cell.strike) td.push('line-through');
+        if (td.length)      inp.style.textDecoration = td.join(' ');
+        if (cell.align)     inp.style.textAlign = cell.align;
+        if (cell.color)     inp.style.color = cell.color;
+        if (cell.fontSize)  inp.style.fontSize = cell.fontSize + 'px';
         inp.addEventListener('focus', makeFocusHandler(r, c));
         inp.addEventListener('input', makeInputHandler(r, c));
         inp.addEventListener('keydown', makeKeyHandler(r, c));
-        d.appendChild(inp);
-        body.appendChild(d);
+        d.appendChild(inp); body.appendChild(d);
       }
     }
     updateEmptyState();
   }
 
-  function makeFocusHandler(r, c) {
-    return function () { selectGridCell(r, c); };
-  }
+  function makeFocusHandler(r, c) { return function () { selectGridCell(r, c); }; }
   function makeInputHandler(r, c) {
-    return function () {
-      gridData[r][c].v = this.value;
-      updateEmptyState();
-    };
+    return function () { gridData[r][c].v = this.value; updateEmptyState(); updateFormulaBar(r, c); };
   }
   function makeKeyHandler(r, c) {
     return function (e) {
       var nr = r, nc = c;
-      if (e.key === 'Tab') {
-        e.preventDefault(); nc = e.shiftKey ? c - 1 : c + 1;
-      } else if (e.key === 'Enter') {
-        e.preventDefault(); nr = r + 1;
-      } else if (e.key === 'ArrowUp') {
-        e.preventDefault(); nr = r - 1;
-      } else if (e.key === 'ArrowDown') {
-        e.preventDefault(); nr = r + 1;
-      } else if (e.key === 'ArrowLeft' && this.selectionStart === 0 && this.selectionEnd === 0) {
-        e.preventDefault(); nc = c - 1;
-      } else if (e.key === 'ArrowRight' && this.selectionStart === this.value.length && this.selectionEnd === this.value.length) {
-        e.preventDefault(); nc = c + 1;
-      } else { return; }
+      if (e.key === 'Tab')        { e.preventDefault(); nc = e.shiftKey ? c - 1 : c + 1; }
+      else if (e.key === 'Enter')      { e.preventDefault(); nr = r + 1; }
+      else if (e.key === 'ArrowUp')    { e.preventDefault(); nr = r - 1; }
+      else if (e.key === 'ArrowDown')  { e.preventDefault(); nr = r + 1; }
+      else if (e.key === 'ArrowLeft'  && this.selectionStart === 0 && this.selectionEnd === 0)                          { e.preventDefault(); nc = c - 1; }
+      else if (e.key === 'ArrowRight' && this.selectionStart === this.value.length && this.selectionEnd === this.value.length) { e.preventDefault(); nc = c + 1; }
+      else { return; }
       focusGridCell(nr, nc);
     };
   }
 
   function selectGridCell(r, c) {
-    document.querySelectorAll('.grid-cell.selected').forEach(function (el) {
-      el.classList.remove('selected');
-    });
+    selectedCell = { r: r, c: c };
+    document.querySelectorAll('.grid-cell.selected').forEach(function (el) { el.classList.remove('selected'); });
     var target = document.querySelector('.grid-cell[data-r="' + r + '"][data-c="' + c + '"]');
     if (target) target.classList.add('selected');
+    updateFormulaBar(r, c);
+    updateToolbarState(r, c);
   }
 
   function focusGridCell(r, c) {
     if (r < 0 || r >= GRID_ROWS || c < 0 || c >= GRID_COLS) return;
     var target = document.querySelector('.grid-cell[data-r="' + r + '"][data-c="' + c + '"]');
-    if (target) {
-      var inp = target.querySelector('.grid-cell-input');
-      if (inp) inp.focus();
-    }
+    if (target) { var inp = target.querySelector('.grid-cell-input'); if (inp) inp.focus(); }
   }
 
   function updateEmptyState() {
@@ -954,7 +1114,11 @@
   }
 
   function colToIdx(letter) {
-    return (letter || 'A').toUpperCase().charCodeAt(0) - 65;
+    if (!letter) return 0;
+    var s = letter.toUpperCase().trim();
+    if (s.length === 1) return s.charCodeAt(0) - 65;
+    for (var i = 0; i < COL_LETTERS.length; i++) { if (COL_LETTERS[i] === s) return i; }
+    return 0;
   }
 
   function addMsg(role, text) {
@@ -967,47 +1131,351 @@
     thread.scrollTop = thread.scrollHeight;
   }
 
+  // ── Condition evaluator (no eval) ─────────────────────────────────────────
+  function evalCondition(val, condition) {
+    if (!condition) return false;
+    var n = parseFloat(val);
+    if (isNaN(n)) return false;
+    var c = condition.replace(/value\s*/gi, '').trim();
+    if (c.slice(0, 2) === '<=') return n <= parseFloat(c.slice(2).trim());
+    if (c.slice(0, 2) === '>=') return n >= parseFloat(c.slice(2).trim());
+    if (c[0] === '<') return n < parseFloat(c.slice(1).trim());
+    if (c[0] === '>') return n > parseFloat(c.slice(1).trim());
+    if (c.slice(0, 2) === '==') return n === parseFloat(c.slice(2).trim());
+    if (c[0] === '=') return n === parseFloat(c.slice(1).trim());
+    return false;
+  }
+
+  // ── applyGridAction (all action types) ───────────────────────────────────
   function applyGridAction(result) {
     if (!result || !result.action) return;
+    if (result.action !== 'message') pushHistory();
     switch (result.action) {
       case 'update_cells':
         (result.changes || []).forEach(function (ch) {
-          var r = (ch.row || 1) - 1;
-          var c = colToIdx(ch.col || 'A');
+          var r = (ch.row || 1) - 1, c = colToIdx(ch.col || 'A');
           if (r >= 0 && r < GRID_ROWS && c >= 0 && c < GRID_COLS) {
             gridData[r][c].v = String(ch.value != null ? ch.value : '');
             var inp = document.querySelector('.grid-cell[data-r="' + r + '"][data-c="' + c + '"] .grid-cell-input');
             if (inp) inp.value = gridData[r][c].v;
           }
         });
-        updateEmptyState();
-        break;
-      case 'highlight':
-        (result.rows || []).forEach(function (rowNum) {
-          var r = rowNum - 1;
-          for (var c = 0; c < GRID_COLS; c++) {
-            if (r >= 0 && r < GRID_ROWS) {
-              gridData[r][c].bg = result.color || 'rgba(250,204,21,0.3)';
-              var cell = document.querySelector('.grid-cell[data-r="' + r + '"][data-c="' + c + '"]');
-              if (cell) cell.style.background = gridData[r][c].bg;
+        if (result.formula && result.factor) {
+          var fCol = result.column ? colToIdx(result.column) : -1;
+          for (var cc = 0; cc < GRID_COLS; cc++) {
+            if (fCol >= 0 && cc !== fCol) continue;
+            if (!gridData[0][cc].v) continue;
+            for (var rr = 1; rr < GRID_ROWS; rr++) {
+              var fv = parseFloat(gridData[rr][cc].v);
+              if (!isNaN(fv)) {
+                var fNewV = result.formula === 'multiply' ? fv * result.factor : fv / result.factor;
+                gridData[rr][cc].v = parseFloat(fNewV.toFixed(2)) + '';
+                var finp = document.querySelector('.grid-cell[data-r="' + rr + '"][data-c="' + cc + '"] .grid-cell-input');
+                if (finp) finp.value = gridData[rr][cc].v;
+              }
             }
           }
-        });
+        }
+        updateEmptyState(); break;
+
+      case 'highlight':
+        var hColor = result.color || 'rgba(250,204,21,0.3)';
+        if (result.rows && result.rows.length) {
+          result.rows.forEach(function (rowNum) {
+            var hr = rowNum - 1;
+            for (var hc = 0; hc < GRID_COLS; hc++) {
+              if (hr >= 0 && hr < GRID_ROWS) {
+                gridData[hr][hc].bg = hColor;
+                var hel = document.querySelector('.grid-cell[data-r="' + hr + '"][data-c="' + hc + '"]');
+                if (hel) hel.style.background = hColor;
+              }
+            }
+          });
+        } else {
+          var hCol = result.column ? colToIdx(result.column) : -1;
+          for (var hr2 = 1; hr2 < GRID_ROWS; hr2++) {
+            if (!gridData[hr2].some(function (c) { return c.v; })) continue;
+            var hVal = hCol >= 0 ? gridData[hr2][hCol].v : '';
+            if (evalCondition(hVal, result.condition)) {
+              for (var hc2 = 0; hc2 < GRID_COLS; hc2++) {
+                gridData[hr2][hc2].bg = hColor;
+                var hel2 = document.querySelector('.grid-cell[data-r="' + hr2 + '"][data-c="' + hc2 + '"]');
+                if (hel2) hel2.style.background = hColor;
+              }
+            }
+          }
+        }
         break;
+
+      case 'sort':
+        var sortCol = colToIdx(result.column || 'A');
+        var sortHeader = gridData[0];
+        var sortBody = gridData.slice(1).filter(function (row) { return row.some(function (c) { return c.v; }); });
+        sortBody.sort(function (a, b) {
+          var av = a[sortCol].v, bv = b[sortCol].v;
+          var an = parseFloat(av), bn = parseFloat(bv);
+          if (!isNaN(an) && !isNaN(bn)) return result.direction === 'desc' ? bn - an : an - bn;
+          return result.direction === 'desc' ? String(bv).localeCompare(String(av), 'tr') : String(av).localeCompare(String(bv), 'tr');
+        });
+        gridData = [sortHeader].concat(sortBody);
+        while (gridData.length < GRID_ROWS) gridData.push(emptyGridData()[0]);
+        if (sheetsData[activeSheetIdx]) sheetsData[activeSheetIdx].data = gridData;
+        renderGrid(); break;
+
+      case 'remove_duplicates':
+        var rdHeader = gridData[0], rdSeen = {};
+        var rdUnique = gridData.slice(1).filter(function (row) {
+          var key = row.map(function (c) { return c.v; }).join('|');
+          if (!key.replace(/\|/g, '').trim() || rdSeen[key]) return false;
+          rdSeen[key] = true; return true;
+        });
+        gridData = [rdHeader].concat(rdUnique);
+        while (gridData.length < GRID_ROWS) gridData.push(emptyGridData()[0]);
+        if (sheetsData[activeSheetIdx]) sheetsData[activeSheetIdx].data = gridData;
+        renderGrid(); break;
+
+      case 'delete_rows':
+        var drHeader = gridData[0];
+        var drFiltered = gridData.slice(1).filter(function (row) { return row.some(function (c) { return c.v && c.v.trim(); }); });
+        gridData = [drHeader].concat(drFiltered);
+        while (gridData.length < GRID_ROWS) gridData.push(emptyGridData()[0]);
+        if (sheetsData[activeSheetIdx]) sheetsData[activeSheetIdx].data = gridData;
+        renderGrid(); break;
+
+      case 'filter':
+        var fVal = (result.value || '').toLowerCase();
+        var fCol = result.column ? colToIdx(result.column) : -1;
+        for (var fr = 1; fr < GRID_ROWS; fr++) {
+          var fMatch = fCol >= 0 ? gridData[fr][fCol].v.toLowerCase().includes(fVal) : gridData[fr].some(function (c) { return c.v.toLowerCase().includes(fVal); });
+          for (var fc = 0; fc < GRID_COLS; fc++) {
+            var fel = document.querySelector('.grid-cell[data-r="' + fr + '"][data-c="' + fc + '"]');
+            if (fel) fel.style.display = fMatch ? '' : 'none';
+          }
+        }
+        break;
+
+      case 'remove_filter':
+        document.querySelectorAll('.grid-cell').forEach(function (el) { el.style.display = ''; }); break;
+
+      case 'sum': case 'average': case 'max': case 'min':
+        var calcCol = colToIdx(result.column || 'B'), nums = [];
+        for (var cr = 1; cr < GRID_ROWS; cr++) { var n = parseFloat(gridData[cr][calcCol].v); if (!isNaN(n)) nums.push(n); }
+        var calcVal = 0;
+        if (result.action === 'sum')     calcVal = nums.reduce(function (a, b) { return a + b; }, 0);
+        if (result.action === 'average') calcVal = nums.length ? nums.reduce(function (a, b) { return a + b; }, 0) / nums.length : 0;
+        if (result.action === 'max')     calcVal = nums.length ? Math.max.apply(null, nums) : 0;
+        if (result.action === 'min')     calcVal = nums.length ? Math.min.apply(null, nums) : 0;
+        addMsg('ai', (result.reply || '✓') + ' = ' + parseFloat(calcVal.toFixed(2)));
+        return;
+
+      case 'transform':
+        var trCol = colToIdx(result.column || 'A');
+        for (var tr = 1; tr < GRID_ROWS; tr++) {
+          var tv = gridData[tr][trCol].v;
+          if (!tv) continue;
+          if (result.transform === 'uppercase') gridData[tr][trCol].v = tv.toUpperCase();
+          else if (result.transform === 'lowercase') gridData[tr][trCol].v = tv.toLowerCase();
+          else if (result.transform === 'trim')      gridData[tr][trCol].v = tv.trim();
+        }
+        renderGrid(); break;
+
+      case 'message': default: break;
     }
+    updateEmptyState();
   }
 
-  // ── Generic tab-group switcher ──────────────────────────────────────────
-  // Each selector defines a "group" where only one item can be active.
-  // Groups are scoped to the closest common ancestor to avoid cross-group collisions.
+  // ── C: Toolbar formatting helpers ─────────────────────────────────────────
+  function toggleCellProp(prop) {
+    var cell = gridData[selectedCell.r][selectedCell.c];
+    cell[prop] = !cell[prop];
+    renderSingleCell(selectedCell.r, selectedCell.c);
+    updateToolbarState(selectedCell.r, selectedCell.c);
+  }
+  function setCellAlign(align) {
+    var cell = gridData[selectedCell.r][selectedCell.c];
+    cell.align = cell.align === align ? '' : align;
+    renderSingleCell(selectedCell.r, selectedCell.c);
+    updateToolbarState(selectedCell.r, selectedCell.c);
+  }
+  function toggleNumFmt(fmt) {
+    var cell = gridData[selectedCell.r][selectedCell.c];
+    cell.numFmt = cell.numFmt === fmt ? '' : fmt;
+    renderSingleCell(selectedCell.r, selectedCell.c);
+    updateToolbarState(selectedCell.r, selectedCell.c);
+  }
+
+  // Wire toolbar buttons by title
+  var tbTitleMap = {
+    'Kalın': function () { toggleCellProp('bold'); },
+    'İtalik': function () { toggleCellProp('italic'); },
+    'Altı çizili': function () { toggleCellProp('underline'); },
+    'Üstü çizili': function () { toggleCellProp('strike'); },
+    'Sola hizala': function () { setCellAlign('left'); },
+    'Ortala': function () { setCellAlign('center'); },
+    'Sağa hizala': function () { setCellAlign('right'); },
+    'Para birimi': function () { toggleNumFmt('currency'); },
+    'Yüzde': function () { toggleNumFmt('percent'); },
+    'Ondalık': function () { toggleNumFmt('decimal'); },
+    'Geri al': function () { undoAction(); },
+    'Yinele': function () { redoAction(); }
+  };
+  document.querySelectorAll('[title]').forEach(function (btn) {
+    var t = btn.getAttribute('title');
+    if (tbTitleMap[t]) btn.addEventListener('click', tbTitleMap[t]);
+  });
+
+  // ── D: Color pickers ──────────────────────────────────────────────────────
+  var textColorPicker = document.getElementById('text-color-picker');
+  var bgColorPicker   = document.getElementById('bg-color-picker');
+  document.querySelectorAll('[title="Metin rengi"]').forEach(function (btn) {
+    btn.addEventListener('click', function () { if (textColorPicker) textColorPicker.click(); });
+  });
+  document.querySelectorAll('[title="Vurgu"]').forEach(function (btn) {
+    btn.addEventListener('click', function () { if (bgColorPicker) bgColorPicker.click(); });
+  });
+  if (textColorPicker) textColorPicker.addEventListener('change', function () {
+    gridData[selectedCell.r][selectedCell.c].color = this.value;
+    renderSingleCell(selectedCell.r, selectedCell.c);
+  });
+  if (bgColorPicker) bgColorPicker.addEventListener('change', function () {
+    gridData[selectedCell.r][selectedCell.c].bg = this.value;
+    renderSingleCell(selectedCell.r, selectedCell.c);
+  });
+
+  // ── S: Font size popup ────────────────────────────────────────────────────
+  var fontSizeBtn   = document.querySelector('.tb-select.mono');
+  var fontSizePopup = document.getElementById('font-size-popup');
+  if (fontSizeBtn && fontSizePopup) {
+    fontSizeBtn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var rect = fontSizeBtn.getBoundingClientRect();
+      fontSizePopup.style.top  = (rect.bottom + 4) + 'px';
+      fontSizePopup.style.left = rect.left + 'px';
+      fontSizePopup.style.display = fontSizePopup.style.display === 'block' ? 'none' : 'block';
+    });
+    fontSizePopup.querySelectorAll('[data-size]').forEach(function (item) {
+      item.addEventListener('click', function () {
+        var size = parseInt(this.dataset.size, 10);
+        gridData[selectedCell.r][selectedCell.c].fontSize = size;
+        renderSingleCell(selectedCell.r, selectedCell.c);
+        fontSizeBtn.textContent = size + '';
+        fontSizePopup.style.display = 'none';
+      });
+    });
+  }
+
+  // ── G: Zoom ───────────────────────────────────────────────────────────────
+  var zoomLevel = 100;
+  var zoomSteps = [50, 75, 90, 100, 110, 125, 150, 175, 200];
+  function applyZoom() {
+    var sheet = document.querySelector('.sheet');
+    if (sheet) { sheet.style.transform = 'scale(' + zoomLevel / 100 + ')'; sheet.style.transformOrigin = 'top left'; }
+    var lvl = document.querySelector('.zoom .level');
+    if (lvl) lvl.textContent = zoomLevel + '%';
+  }
+  function zoomOut() { var p = zoomSteps.slice().reverse().find(function (z) { return z < zoomLevel; }); if (p) { zoomLevel = p; applyZoom(); } }
+  function zoomIn()  { var p = zoomSteps.find(function (z) { return z > zoomLevel; }); if (p) { zoomLevel = p; applyZoom(); } }
+  var zoomBtns = document.querySelectorAll('.zoom .tt-btn');
+  if (zoomBtns[0]) zoomBtns[0].addEventListener('click', zoomOut);
+  if (zoomBtns[1]) zoomBtns[1].addEventListener('click', zoomIn);
+
+  // ── K: Star ───────────────────────────────────────────────────────────────
+  var starred = false;
+  var starBtn = document.querySelector('.star');
+  if (starBtn) starBtn.addEventListener('click', function () {
+    starred = !starred;
+    var svg = starBtn.querySelector('svg');
+    if (svg) svg.style.fill = starred ? 'var(--accent)' : 'none';
+    starBtn.title = starred ? 'Yıldızı kaldır' : 'Yıldızla';
+    showToast(starred ? '⭐ Yıldızlandı' : 'Yıldız kaldırıldı');
+  });
+
+  // ── L: Help modal ─────────────────────────────────────────────────────────
+  var helpModal = document.getElementById('help-modal');
+  function openHelp()  { if (helpModal) helpModal.style.display = 'flex'; }
+  function closeHelp() { if (helpModal) helpModal.style.display = 'none'; }
+  var helpTrigger = document.querySelector('[title="Yardım"]');
+  if (helpTrigger) helpTrigger.addEventListener('click', openHelp);
+  var closeHelpBtn = document.getElementById('close-help-btn');
+  if (closeHelpBtn) closeHelpBtn.addEventListener('click', closeHelp);
+  if (helpModal) helpModal.addEventListener('click', function (e) { if (e.target === helpModal) closeHelp(); });
+
+  // ── M: Notifications ─────────────────────────────────────────────────────
+  var notifPanel   = document.getElementById('notif-panel');
+  var notifTrigger = document.querySelector('[title="Bildirimler"]');
+  var notifDot     = notifTrigger ? notifTrigger.querySelector('.dot') : null;
+  var notifOpened  = false;
+  if (notifTrigger) notifTrigger.addEventListener('click', function (e) {
+    e.stopPropagation();
+    if (!notifPanel) return;
+    var vis = notifPanel.style.display === 'block';
+    notifPanel.style.display = vis ? 'none' : 'block';
+    if (!notifOpened && notifDot) { notifDot.style.display = 'none'; notifOpened = true; }
+  });
+
+  // ── N: More options dropdown ──────────────────────────────────────────────
+  var moreDropdown = document.getElementById('more-dropdown');
+  var moreTrigger  = document.querySelector('[title="Daha fazla"]');
+  if (moreTrigger && moreDropdown) {
+    moreTrigger.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var vis = moreDropdown.style.display === 'block';
+      if (!vis) { var rect = moreTrigger.getBoundingClientRect(); moreDropdown.style.top = (rect.bottom + 4) + 'px'; moreDropdown.style.left = rect.left + 'px'; }
+      moreDropdown.style.display = vis ? 'none' : 'block';
+    });
+    moreDropdown.querySelectorAll('[data-action]').forEach(function (item) {
+      item.addEventListener('click', function () {
+        var action = this.dataset.action;
+        moreDropdown.style.display = 'none';
+        if (action === 'rename') {
+          var cur = document.querySelector('.breadcrumb .current');
+          var name = prompt('Dosya adı:', cur ? cur.textContent : '');
+          if (name && name.trim()) { if (cur) cur.textContent = name.trim(); showToast('Yeniden adlandırıldı'); }
+        } else if (action === 'copy-link') {
+          navigator.clipboard.writeText(window.location.href).catch(function () {});
+          showToast('Bağlantı kopyalandı');
+        } else if (action === 'print') { window.print(); }
+      });
+    });
+  }
+
+  // ── U: Comments modal ─────────────────────────────────────────────────────
+  var commentsModal    = document.getElementById('comments-modal');
+  var closeCommentsBtn = document.getElementById('close-comments-btn');
+  document.querySelectorAll('.btn.btn-ghost').forEach(function (btn) {
+    if (btn.textContent.includes('Yorum') || btn.textContent.includes('yorum')) {
+      btn.addEventListener('click', function () { if (commentsModal) commentsModal.style.display = 'flex'; });
+    }
+  });
+  if (closeCommentsBtn) closeCommentsBtn.addEventListener('click', function () { if (commentsModal) commentsModal.style.display = 'none'; });
+  if (commentsModal) commentsModal.addEventListener('click', function (e) { if (e.target === commentsModal) commentsModal.style.display = 'none'; });
+
+  // ── O: Automation toggles ─────────────────────────────────────────────────
+  document.querySelectorAll('.autom-card .switch, .automation .switch, .autom-row .switch').forEach(function (sw) {
+    sw.style.cursor = 'pointer';
+    sw.addEventListener('click', function (e) { e.stopPropagation(); this.classList.toggle('on'); });
+  });
+
+  // ── B: Formula bar wiring ─────────────────────────────────────────────────
+  var fxBtn = document.querySelector('.fx');
+  if (fxBtn) fxBtn.addEventListener('click', function () { focusGridCell(selectedCell.r, selectedCell.c); });
+  var formulaInput = document.querySelector('.formula-input');
+  if (formulaInput) {
+    formulaInput.contentEditable = 'true';
+    formulaInput.addEventListener('input', function () {
+      gridData[selectedCell.r][selectedCell.c].v = this.textContent;
+      var inp = document.querySelector('.grid-cell[data-r="' + selectedCell.r + '"][data-c="' + selectedCell.c + '"] .grid-cell-input');
+      if (inp) inp.value = this.textContent;
+      updateEmptyState();
+    });
+  }
+
+  // ── Generic tab-group switcher ────────────────────────────────────────────
   function wireTabGroup(selector) {
     document.querySelectorAll(selector).forEach(function (el) {
       el.addEventListener('click', function () {
-        // find siblings: same selector under same parent
         var parent = el.parentElement;
-        parent.querySelectorAll(selector).forEach(function (sib) {
-          sib.classList.remove('active');
-        });
+        parent.querySelectorAll(selector).forEach(function (sib) { sib.classList.remove('active'); });
         el.classList.add('active');
       });
     });
@@ -1016,13 +1484,11 @@
   wireTabGroup('.nav-item');
   wireTabGroup('.file-row');
   wireTabGroup('.view-tab');
-  wireTabGroup('.stab');
   wireTabGroup('.rail-tab');
   wireTabGroup('.autom-filter');
 
-  // ── Chip click → fill AI textarea ──────────────────────────────────────
+  // ── Chip click → fill AI textarea ────────────────────────────────────────
   var aiTextarea = document.querySelector('.ai-input textarea');
-
   document.querySelectorAll('.chip').forEach(function (chip) {
     chip.addEventListener('click', function () {
       if (!aiTextarea) return;
@@ -1031,25 +1497,17 @@
     });
   });
 
-  // ── Toolbar AI pill → focus textarea ───────────────────────────────────
+  // ── Toolbar AI pill ───────────────────────────────────────────────────────
   var tbPill = document.querySelector('.tb-pill');
-  if (tbPill && aiTextarea) {
-    tbPill.addEventListener('click', function () {
-      aiTextarea.focus();
-    });
-  }
+  if (tbPill && aiTextarea) tbPill.addEventListener('click', function () { aiTextarea.focus(); });
 
-  // ── Usage counter (localStorage) ───────────────────────────────────────
+  // ── Usage counter ─────────────────────────────────────────────────────────
   var LIMIT = 20;
-  var upsellTitle  = document.querySelector('.upsell-title em');
-  var progressBar  = document.querySelector('.progress div');
-  var progressPct  = document.querySelector('.progress-meta span:last-child');
-  var upsellEl     = document.querySelector('.upsell');
-
-  function getCount() {
-    return Math.min(parseInt(localStorage.getItem('ms_cmd_count') || '0', 10), LIMIT);
-  }
-
+  var upsellTitle = document.querySelector('.upsell-title em');
+  var progressBar = document.querySelector('.progress div');
+  var progressPct = document.querySelector('.progress-meta span:last-child');
+  var upsellEl    = document.querySelector('.upsell');
+  function getCount() { return Math.min(parseInt(localStorage.getItem('ms_cmd_count') || '0', 10), LIMIT); }
   function renderCount(n) {
     var pct = Math.round((n / LIMIT) * 100);
     if (upsellTitle) upsellTitle.textContent = n;
@@ -1057,28 +1515,18 @@
     if (progressPct) progressPct.textContent = '%' + pct;
     if (upsellEl) upsellEl.classList.toggle('limit-reached', n >= LIMIT);
   }
-
-  function incrementCount() {
-    var next = Math.min(getCount() + 1, LIMIT);
-    localStorage.setItem('ms_cmd_count', next);
-    renderCount(next);
-  }
-
+  function incrementCount() { var next = Math.min(getCount() + 1, LIMIT); localStorage.setItem('ms_cmd_count', next); renderCount(next); }
   renderCount(getCount());
 
-  // ── Init interactive grid ────────────────────────────────────────────────
+  // ── Init grid + sheet tabs ────────────────────────────────────────────────
   renderGrid();
+  renderSheetTabs();
 
-  // ── Upsell CTA → pricing page ───────────────────────────────────────────
+  // ── Upsell CTA ───────────────────────────────────────────────────────────
   var upsellCta = document.querySelector('.upsell-cta');
-  if (upsellCta) {
-    upsellCta.style.cursor = 'pointer';
-    upsellCta.addEventListener('click', function () {
-      window.location.href = 'index.html#pricing';
-    });
-  }
+  if (upsellCta) { upsellCta.style.cursor = 'pointer'; upsellCta.addEventListener('click', function () { window.location.href = 'index.html#pricing'; }); }
 
-  // ── AI send → POST /api/command ─────────────────────────────────────────
+  // ── AI send ───────────────────────────────────────────────────────────────
   var aiSend = document.querySelector('.ai-send');
 
   function getAuthToken() {
@@ -1089,8 +1537,7 @@
           var raw = localStorage.getItem(keys[i]);
           if (!raw) continue;
           var parsed = JSON.parse(raw);
-          var token = (parsed && parsed.access_token) ||
-                      (parsed && parsed.session && parsed.session.access_token);
+          var token = (parsed && parsed.access_token) || (parsed && parsed.session && parsed.session.access_token);
           if (token) return token;
         }
       }
@@ -1102,24 +1549,19 @@
     if (!aiTextarea) return;
     var cmd = aiTextarea.value.trim();
     if (!cmd) return;
-
     addMsg('user', cmd);
     aiTextarea.value = '';
     if (aiSend) aiSend.classList.add('loading');
     aiTextarea.disabled = true;
-
     var headers = { 'Content-Type': 'application/json' };
     var token = getAuthToken();
     if (token) headers['Authorization'] = 'Bearer ' + token;
-
     fetch('http://localhost:3001/api/chat', {
-      method: 'POST',
-      headers: headers,
+      method: 'POST', headers: headers,
       body: JSON.stringify({ message: cmd, sheetData: getGridForAPI() })
     })
       .then(function (res) { return res.json(); })
       .then(function (data) {
-        console.log('[Mocksheets AI]', data);
         var msg = data.reply || (data.action ? 'İşlem uygulandı: ' + data.action : 'Tamamlandı');
         addMsg('ai', msg);
         applyGridAction(data);
@@ -1149,22 +1591,16 @@
     });
   }
 
-  // ── Ctrl+K Search Modal ─────────────────────────────────────────────────
-  var searchModal  = document.getElementById('search-modal');
-  var searchInput  = document.getElementById('search-input');
+  // ── Search Modal ──────────────────────────────────────────────────────────
+  var searchModal   = document.getElementById('search-modal');
+  var searchInput   = document.getElementById('search-input');
   var searchResults = document.getElementById('search-results');
 
-  function openSearch() {
-    searchModal.style.display = 'flex';
-    setTimeout(function () { searchInput.focus(); }, 40);
-    renderSearchResults('');
-  }
-  function closeSearch() {
-    searchModal.style.display = 'none';
-    searchInput.value = '';
-  }
+  function openSearch() { if (searchModal) { searchModal.style.display = 'flex'; setTimeout(function () { if (searchInput) searchInput.focus(); }, 40); renderSearchResults(''); } }
+  function closeSearch() { if (searchModal) { searchModal.style.display = 'none'; if (searchInput) searchInput.value = ''; } }
 
   function renderSearchResults(q) {
+    if (!searchResults) return;
     var items = [];
     document.querySelectorAll('.nav-item').forEach(function (el) {
       var t = el.textContent.trim().replace(/\s+/g, ' ').slice(0, 60);
@@ -1178,67 +1614,75 @@
       var t = el.textContent.trim();
       if (t && (!q || t.toLowerCase().includes(q.toLowerCase()))) items.push({ label: t, type: 'Sütun' });
     });
-    if (items.length === 0) {
+    if (!items.length) {
       searchResults.innerHTML = '<div style="padding:18px;color:var(--ink-4);font-size:12px;text-align:center;">Sonuç bulunamadı</div>';
     } else {
       searchResults.innerHTML = items.slice(0, 12).map(function (item) {
-        return '<div class="ms-result-item"><span>' + item.label + '</span><span class="ms-result-type">' + item.type + '</span></div>';
+        return '<div class="ms-result-item" style="cursor:pointer"><span>' + item.label + '</span><span class="ms-result-type">' + item.type + '</span></div>';
       }).join('');
+      // ── P: clickable results ────────────────────────────────────────────
+      searchResults.querySelectorAll('.ms-result-item').forEach(function (el) {
+        el.addEventListener('click', function () { closeSearch(); showToast('Gidildi: ' + el.querySelector('span').textContent.trim()); });
+      });
     }
   }
 
-  document.querySelector('.cmd').addEventListener('click', openSearch);
-  searchInput.addEventListener('input', function () { renderSearchResults(this.value.trim()); });
-  searchModal.addEventListener('click', function (e) { if (e.target === searchModal) closeSearch(); });
+  var cmdBtn = document.querySelector('.cmd');
+  if (cmdBtn) cmdBtn.addEventListener('click', openSearch);
+  if (searchInput) searchInput.addEventListener('input', function () { renderSearchResults(this.value.trim()); });
+  if (searchModal) searchModal.addEventListener('click', function (e) { if (e.target === searchModal) closeSearch(); });
 
-  // ── Share Modal ─────────────────────────────────────────────────────────
-  var shareBtn    = document.getElementById('share-btn');
-  var shareModal  = document.getElementById('share-modal');
+  // ── Share Modal ───────────────────────────────────────────────────────────
+  var shareBtn       = document.getElementById('share-btn');
+  var shareModal     = document.getElementById('share-modal');
   var shareLinkInput = document.getElementById('share-link-input');
-  var copyShareBtn = document.getElementById('copy-share-btn');
-
-  function openShare() {
-    var id = Math.random().toString(36).slice(2, 9);
-    shareLinkInput.value = 'mocksheets.app/s/' + id;
-    shareModal.style.display = 'flex';
-  }
-  function closeShare() { shareModal.style.display = 'none'; }
-
+  var copyShareBtn   = document.getElementById('copy-share-btn');
+  function openShare()  { if (!shareModal) return; var id = Math.random().toString(36).slice(2, 9); if (shareLinkInput) shareLinkInput.value = 'mocksheets.app/s/' + id; shareModal.style.display = 'flex'; }
+  function closeShare() { if (shareModal) shareModal.style.display = 'none'; }
   if (shareBtn) shareBtn.addEventListener('click', openShare);
-  shareModal.addEventListener('click', function (e) { if (e.target === shareModal) closeShare(); });
-  copyShareBtn.addEventListener('click', function () {
+  if (shareModal) shareModal.addEventListener('click', function (e) { if (e.target === shareModal) closeShare(); });
+  if (copyShareBtn) copyShareBtn.addEventListener('click', function () {
+    if (!shareLinkInput) return;
     navigator.clipboard.writeText(shareLinkInput.value).then(function () {
-      copyShareBtn.textContent = 'Kopyalandı ✓';
-      setTimeout(function () { copyShareBtn.textContent = 'Kopyala'; }, 2000);
+      copyShareBtn.textContent = 'Kopyalandı ✓'; setTimeout(function () { copyShareBtn.textContent = 'Kopyala'; }, 2000);
     }).catch(function () {
-      shareLinkInput.select();
-      document.execCommand('copy');
-      copyShareBtn.textContent = 'Kopyalandı ✓';
-      setTimeout(function () { copyShareBtn.textContent = 'Kopyala'; }, 2000);
+      shareLinkInput.select(); document.execCommand('copy');
+      copyShareBtn.textContent = 'Kopyalandı ✓'; setTimeout(function () { copyShareBtn.textContent = 'Kopyala'; }, 2000);
     });
   });
 
-  // ── Download Dropdown ───────────────────────────────────────────────────
+  // ── Download Dropdown ─────────────────────────────────────────────────────
   var dlSplit    = document.getElementById('download-split-btn');
   var dlDropdown = document.getElementById('download-dropdown');
+  function closeDownload() { if (dlDropdown) dlDropdown.style.display = 'none'; }
+  if (dlSplit) dlSplit.addEventListener('click', function (e) {
+    e.stopPropagation();
+    if (!dlDropdown) return;
+    dlDropdown.style.display = dlDropdown.style.display === 'block' ? 'none' : 'block';
+  });
+  if (dlDropdown) dlDropdown.addEventListener('click', function (e) { e.stopPropagation(); });
 
-  function closeDownload() { dlDropdown.style.display = 'none'; }
+  // ── T: Main download button ───────────────────────────────────────────────
+  var dlMainBtn = document.getElementById('download-main-btn');
+  if (dlMainBtn) dlMainBtn.addEventListener('click', function (e) {
+    var split = document.getElementById('download-split-btn');
+    if (split && (e.target === split || split.contains(e.target))) return;
+    var rows = gridToRows();
+    if (!rows.length) { showToast('⚠️ Tabloda veri yok'); return; }
+    var ws = XLSX.utils.aoa_to_sheet(rows);
+    var wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+    XLSX.writeFile(wb, 'mocksheets.xlsx');
+  });
 
-  if (dlSplit) {
-    dlSplit.addEventListener('click', function (e) {
-      e.stopPropagation();
-      dlDropdown.style.display = dlDropdown.style.display === 'block' ? 'none' : 'block';
-    });
-  }
-  dlDropdown.addEventListener('click', function (e) { e.stopPropagation(); });
-  // download handlers moved below (real implementations)
-  document.getElementById('dd-integrations').addEventListener('click', function () { closeDownload(); });
+  // ── Q: Integrations ───────────────────────────────────────────────────────
+  var ddInt = document.getElementById('dd-integrations');
+  if (ddInt) ddInt.addEventListener('click', function () { closeDownload(); window.location.href = 'index.html#integrations'; });
 
-  // ── PDF Ekle ─────────────────────────────────────────────────────────────
+  // ── PDF Ekle ──────────────────────────────────────────────────────────────
   var pdfAddBtn = document.getElementById('pdf-add-btn');
   var pdfInput  = document.createElement('input');
-  pdfInput.type = 'file';
-  pdfInput.accept = '.pdf';
+  pdfInput.type = 'file'; pdfInput.accept = '.pdf';
   pdfInput.addEventListener('change', function () {
     if (this.files && this.files[0] && aiTextarea) {
       aiTextarea.value = '"' + this.files[0].name + '" dosyasını tabloya aktar ve analiz et';
@@ -1247,26 +1691,52 @@
   });
   if (pdfAddBtn) pdfAddBtn.addEventListener('click', function () { pdfInput.click(); });
 
-  // ── Global Escape / Ctrl+K ───────────────────────────────────────────────
-  document.addEventListener('keydown', function (e) {
-    if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault(); openSearch(); }
-    if (e.key === 'Escape') { closeSearch(); closeShare(); closeDownload(); }
+  // ── V: Tab scroll ─────────────────────────────────────────────────────────
+  var tabScrollBtn = document.querySelector('.sheet-tabs > span.tt-btn');
+  if (tabScrollBtn) tabScrollBtn.addEventListener('click', function () {
+    var tabs = document.querySelector('.sheet-tabs');
+    if (tabs) tabs.scrollLeft -= 100;
   });
-  document.addEventListener('click', function () { closeDownload(); });
 
-  // ── Grid veri yükleme yardımcısı ─────────────────────────────────────────
-  function loadDataIntoGrid(rows) {
-    for (var r = 0; r < GRID_ROWS; r++) {
-      for (var c = 0; c < GRID_COLS; c++) {
-        gridData[r][c] = { v: '', bg: '' };
-      }
+  // ── R: Global keyboard shortcuts ──────────────────────────────────────────
+  document.addEventListener('keydown', function (e) {
+    var ctrl = e.ctrlKey || e.metaKey;
+    if (ctrl && e.key === 'k') { e.preventDefault(); openSearch(); return; }
+    if (ctrl && e.key === 'j') { e.preventDefault(); if (aiTextarea) aiTextarea.focus(); return; }
+    if (ctrl && !e.shiftKey && e.key === 'z') { e.preventDefault(); undoAction(); return; }
+    if (ctrl && (e.key === 'y' || (e.shiftKey && e.key === 'z'))) { e.preventDefault(); redoAction(); return; }
+    var activeEl = document.activeElement;
+    var inGrid = activeEl && activeEl.classList.contains('grid-cell-input');
+    if (ctrl && e.key === 'b' && inGrid) { e.preventDefault(); toggleCellProp('bold'); return; }
+    if (ctrl && e.key === 'i' && inGrid) { e.preventDefault(); toggleCellProp('italic'); return; }
+    if (ctrl && e.key === 'u' && inGrid) { e.preventDefault(); toggleCellProp('underline'); return; }
+    if (e.key === 'Escape') {
+      closeSearch(); closeShare(); closeDownload(); closeHelp();
+      if (notifPanel)     notifPanel.style.display = 'none';
+      if (moreDropdown)   moreDropdown.style.display = 'none';
+      if (stabMenu)       stabMenu.style.display = 'none';
+      if (fontSizePopup)  fontSizePopup.style.display = 'none';
+      if (commentsModal)  commentsModal.style.display = 'none';
     }
+  });
+  document.addEventListener('click', function (e) {
+    closeDownload();
+    if (notifPanel && notifPanel.style.display === 'block' && !notifPanel.contains(e.target) && e.target !== notifTrigger) notifPanel.style.display = 'none';
+    if (moreDropdown && moreDropdown.style.display === 'block' && !moreDropdown.contains(e.target) && e.target !== moreTrigger) moreDropdown.style.display = 'none';
+    if (fontSizePopup && fontSizePopup.style.display === 'block' && !fontSizePopup.contains(e.target) && e.target !== fontSizeBtn) fontSizePopup.style.display = 'none';
+  });
+
+  // ── Grid data loader ──────────────────────────────────────────────────────
+  function loadDataIntoGrid(rows) {
+    pushHistory();
+    gridData = emptyGridData();
     for (var r = 0; r < Math.min(rows.length, GRID_ROWS); r++) {
       var row = rows[r];
       for (var c = 0; c < Math.min(row.length, GRID_COLS); c++) {
         gridData[r][c].v = String(row[c] != null ? row[c] : '');
       }
     }
+    if (sheetsData[activeSheetIdx]) sheetsData[activeSheetIdx].data = gridData;
     renderGrid();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -1414,13 +1884,11 @@
   document.getElementById('dd-csv').addEventListener('click', function () {
     closeDownload();
     var rows = gridToRows();
-    if (!rows.length) { addMsg('ai', '⚠️ Tabloda veri yok'); return; }
+    if (!rows.length) { showToast('⚠️ Tabloda veri yok'); return; }
     var csv = rows.map(function (row) {
       return row.map(function (v) {
         var s = String(v);
-        if (s.includes(',') || s.includes('"') || s.includes('\n')) {
-          s = '"' + s.replace(/"/g, '""') + '"';
-        }
+        if (s.includes(',') || s.includes('"') || s.includes('\n')) s = '"' + s.replace(/"/g, '""') + '"';
         return s;
       }).join(',');
     }).join('\r\n');
@@ -1430,7 +1898,7 @@
   document.getElementById('dd-json').addEventListener('click', function () {
     closeDownload();
     var rows = gridToRows();
-    if (!rows.length) { addMsg('ai', '⚠️ Tabloda veri yok'); return; }
+    if (!rows.length) { showToast('⚠️ Tabloda veri yok'); return; }
     var headers = rows[0];
     var data = rows.slice(1).map(function (row) {
       var obj = {};
@@ -1443,14 +1911,110 @@
   document.getElementById('dd-xlsx').addEventListener('click', function () {
     closeDownload();
     var rows = gridToRows();
-    if (!rows.length) { addMsg('ai', '⚠️ Tabloda veri yok'); return; }
+    if (!rows.length) { showToast('⚠️ Tabloda veri yok'); return; }
     var ws = XLSX.utils.aoa_to_sheet(rows);
     var wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
     XLSX.writeFile(wb, 'mocksheets.xlsx');
   });
 
+  // ── I: New sheet button ───────────────────────────────────────────────────
+  var addSheetBtn = document.querySelector('.sheet-tabs .add');
+  if (addSheetBtn) addSheetBtn.addEventListener('click', function () {
+    var colors = ['var(--accent)', '#f59e0b', '#8b5cf6', '#3b82f6', '#ef4444', '#ec4899', '#14b8a6'];
+    sheetsData.push({ name: 'Sayfa ' + (sheetsData.length + 1), color: colors[sheetsData.length % colors.length], data: emptyGridData() });
+    switchSheet(sheetsData.length - 1);
+    showToast('Yeni sayfa eklendi');
+  });
+
 })();
 </script>
+
+<!-- ── Help Modal ── -->
+<div id="help-modal" class="ms-overlay" style="display:none;">
+  <div class="ms-modal" style="max-width:500px;">
+    <div class="ms-share-body">
+      <div class="ms-share-title">Klavye Kısayolları</div>
+      <table style="width:100%;border-collapse:collapse;font-size:12px;">
+        <tr style="color:var(--ink-4);font-size:10.5px;font-weight:600;text-transform:uppercase;"><th style="text-align:left;padding:4px 8px;">İşlem</th><th style="text-align:left;padding:4px 8px;">Kısayol</th></tr>
+        <tr><td style="padding:6px 8px;color:var(--ink-2);">Ara</td><td style="padding:6px 8px;"><span class="kbd-key">⌘</span><span class="kbd-key">K</span></td></tr>
+        <tr style="background:var(--surface-2)"><td style="padding:6px 8px;color:var(--ink-2);">AI Yaz</td><td style="padding:6px 8px;"><span class="kbd-key">⌘</span><span class="kbd-key">J</span></td></tr>
+        <tr><td style="padding:6px 8px;color:var(--ink-2);">Geri Al</td><td style="padding:6px 8px;"><span class="kbd-key">⌘</span><span class="kbd-key">Z</span></td></tr>
+        <tr style="background:var(--surface-2)"><td style="padding:6px 8px;color:var(--ink-2);">Yenile</td><td style="padding:6px 8px;"><span class="kbd-key">⌘</span><span class="kbd-key">Y</span></td></tr>
+        <tr><td style="padding:6px 8px;color:var(--ink-2);">Kalın</td><td style="padding:6px 8px;"><span class="kbd-key">⌘</span><span class="kbd-key">B</span></td></tr>
+        <tr style="background:var(--surface-2)"><td style="padding:6px 8px;color:var(--ink-2);">İtalik</td><td style="padding:6px 8px;"><span class="kbd-key">⌘</span><span class="kbd-key">I</span></td></tr>
+        <tr><td style="padding:6px 8px;color:var(--ink-2);">Altı Çizili</td><td style="padding:6px 8px;"><span class="kbd-key">⌘</span><span class="kbd-key">U</span></td></tr>
+        <tr style="background:var(--surface-2)"><td style="padding:6px 8px;color:var(--ink-2);">Tab / Enter</td><td style="padding:6px 8px;">Sütun / Satır geç</td></tr>
+        <tr><td style="padding:6px 8px;color:var(--ink-2);">Kapat</td><td style="padding:6px 8px;"><span class="kbd-key">Esc</span></td></tr>
+      </table>
+      <div style="margin-top:14px;text-align:right;"><button id="close-help-btn" class="ms-copy-btn">Kapat</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Notifications Panel ── -->
+<div id="notif-panel" style="display:none;position:fixed;top:52px;right:16px;width:288px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow-pop);z-index:8000;padding:0;overflow:hidden;">
+  <div style="padding:12px 14px 8px;border-bottom:1px solid var(--line);font-size:12.5px;font-weight:700;color:var(--ink);">Bildirimler</div>
+  <div style="padding:4px 6px;">
+    <div class="notif-item"><span>🟢</span><div><div style="font-size:12px;font-weight:500;color:var(--ink);">AI komutu tamamlandı</div><div style="font-size:11px;color:var(--ink-4);">Stok sıralaması uygulandı · 2 dk önce</div></div></div>
+    <div class="notif-item"><span>📂</span><div><div style="font-size:12px;font-weight:500;color:var(--ink);">Dosya yüklendi</div><div style="font-size:11px;color:var(--ink-4);">stok_2024.xlsx · 14 dk önce</div></div></div>
+    <div class="notif-item"><span>⚠️</span><div><div style="font-size:12px;font-weight:500;color:var(--ink);">Kritik stok uyarısı</div><div style="font-size:11px;color:var(--ink-4);">Klavye Kablosuz → 3 adet kaldı · 1 sa önce</div></div></div>
+  </div>
+</div>
+
+<!-- ── More Options Dropdown ── -->
+<div id="more-dropdown" style="display:none;position:fixed;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow-pop);min-width:200px;z-index:8000;padding:4px;">
+  <div class="dd-item" data-action="rename"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Yeniden Adlandır</div>
+  <div class="dd-item" data-action="copy-link"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Bağlantıyı Kopyala</div>
+  <div class="dd-item" data-action="print"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>PDF Olarak İndir</div>
+</div>
+
+<!-- ── Comments Modal ── -->
+<div id="comments-modal" class="ms-overlay" style="display:none;">
+  <div class="ms-modal" style="max-width:420px;">
+    <div class="ms-share-body">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+        <div class="ms-share-title" style="margin-bottom:0;">Yorumlar (3)</div>
+        <button id="close-comments-btn" class="ms-copy-btn" style="background:var(--surface-3);color:var(--ink-2);border:1px solid var(--line);">Kapat</button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div class="comment-item"><div style="display:flex;gap:8px;align-items:flex-start;"><div style="width:28px;height:28px;border-radius:50%;background:var(--brand-soft);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--brand-ink);flex-shrink:0;">ÇC</div><div><div style="font-size:12px;font-weight:600;color:var(--ink);">Çağan C. <span style="font-size:10.5px;font-weight:400;color:var(--ink-4);">· 2 gün önce</span></div><div style="font-size:12px;color:var(--ink-2);margin-top:3px;">Sütun B toplamı kontrol edilmeli, Nisan değeri eksik görünüyor.</div></div></div></div>
+        <div class="comment-item"><div style="display:flex;gap:8px;align-items:flex-start;"><div style="width:28px;height:28px;border-radius:50%;background:rgba(245,158,11,0.1);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#d97706;flex-shrink:0;">MK</div><div><div style="font-size:12px;font-weight:600;color:var(--ink);">Merve K. <span style="font-size:10.5px;font-weight:400;color:var(--ink-4);">· 1 gün önce</span></div><div style="font-size:12px;color:var(--ink-2);margin-top:3px;">Stok kritik seviyede — ST005 ve ST010 için tedarik süreci başlatılmalı.</div></div></div></div>
+        <div class="comment-item"><div style="display:flex;gap:8px;align-items:flex-start;"><div style="width:28px;height:28px;border-radius:50%;background:rgba(139,92,246,0.1);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#7c3aed;flex-shrink:0;">+2</div><div><div style="font-size:12px;font-weight:600;color:var(--ink);">Ekip <span style="font-size:10.5px;font-weight:400;color:var(--ink-4);">· 3 saat önce</span></div><div style="font-size:12px;color:var(--ink-2);margin-top:3px;">KDV hesabı doğrulandı, %20 uygulaması doğru.</div></div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Color Pickers (hidden) ── -->
+<input type="color" id="text-color-picker" style="display:none;" value="#000000">
+<input type="color" id="bg-color-picker" style="display:none;" value="#ffffff">
+
+<!-- ── Sheet Tab Context Menu ── -->
+<div id="stab-menu" style="display:none;position:fixed;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow-pop);min-width:160px;z-index:8000;padding:4px;">
+  <div class="dd-item" data-action="rename"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Yeniden Adlandır</div>
+  <div class="dd-item" data-action="delete" style="color:#dc2626;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>Sayfayı Sil</div>
+</div>
+
+<!-- ── Font Size Popup ── -->
+<div id="font-size-popup" style="display:none;position:fixed;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow-pop);min-width:72px;z-index:8000;padding:4px;">
+  <div class="dd-item" data-size="10" style="justify-content:center;">10</div>
+  <div class="dd-item" data-size="11" style="justify-content:center;">11</div>
+  <div class="dd-item" data-size="12" style="justify-content:center;">12</div>
+  <div class="dd-item" data-size="13" style="justify-content:center;">13</div>
+  <div class="dd-item" data-size="14" style="justify-content:center;">14</div>
+  <div class="dd-item" data-size="16" style="justify-content:center;">16</div>
+  <div class="dd-item" data-size="18" style="justify-content:center;">18</div>
+  <div class="dd-item" data-size="20" style="justify-content:center;">20</div>
+  <div class="dd-item" data-size="24" style="justify-content:center;">24</div>
+</div>
+
+<style>
+.notif-item { display:flex; align-items:flex-start; gap:10px; padding:8px 8px; border-radius:var(--radius-sm); cursor:pointer; }
+.notif-item:hover { background:var(--surface-3); }
+.comment-item { background:var(--surface-2); border-radius:var(--radius-sm); padding:10px 12px; border:1px solid var(--line); }
+.tb-btn.active { background:var(--brand-soft); color:var(--brand-ink); }
+</style>
+
 </body>
 </html>
