@@ -486,6 +486,7 @@ ${limited.map((t, i) => `${i + 1}. ${String(t).slice(0, 200)}`).join('\n')}`
     const raw = response.content[0].text.trim();
     const match = raw.match(/\[[\s\S]*\]/);
     const labels = match ? JSON.parse(match[0]) : limited.map(() => 'Nötr');
+    await incrementUsage(req.user.id);
     res.json({ labels });
   } catch (e) {
     console.error('/api/sentiment hatası:', e.message);
@@ -514,6 +515,7 @@ app.post('/api/batch-ai', checkLimit, async (req, res) => {
       messages: [{ role: 'user', content: prompt }]
     });
 
+    await incrementUsage(req.user.id);
     res.json({ result: response.content[0].text.trim() });
   } catch (e) {
     console.error('/api/batch-ai hatası:', e.message);
