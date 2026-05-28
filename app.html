@@ -1548,7 +1548,7 @@
 
   // ── Upsell CTA ───────────────────────────────────────────────────────────
   var upsellCta = document.querySelector('.upsell-cta');
-  if (upsellCta) { upsellCta.style.cursor = 'pointer'; upsellCta.addEventListener('click', function () { window.location.href = 'index.html#pricing'; }); }
+  if (upsellCta) { upsellCta.style.cursor = 'pointer'; upsellCta.addEventListener('click', function () { window.location.href = '/#pricing'; }); }
 
   // ── AI send ───────────────────────────────────────────────────────────────
   var aiSend = document.querySelector('.ai-send');
@@ -1580,7 +1580,8 @@
     var headers = { 'Content-Type': 'application/json' };
     var token = getAuthToken();
     if (token) headers['Authorization'] = 'Bearer ' + token;
-    fetch('http://localhost:3001/api/chat', {
+    var apiBase = window.location.hostname === 'localhost' ? 'http://localhost:3001' : 'https://upsheet-ai.onrender.com';
+    fetch(apiBase + '/api/chat', {
       method: 'POST', headers: headers,
       body: JSON.stringify({ message: cmd, sheetData: getGridForAPI() })
     })
@@ -1701,7 +1702,7 @@
 
   // ── Q: Integrations ───────────────────────────────────────────────────────
   var ddInt = document.getElementById('dd-integrations');
-  if (ddInt) ddInt.addEventListener('click', function () { closeDownload(); window.location.href = 'integrations.html'; });
+  if (ddInt) ddInt.addEventListener('click', function () { closeDownload(); window.location.href = '/integrations'; });
 
   // ── PDF Ekle ──────────────────────────────────────────────────────────────
   var pdfAddBtn = document.getElementById('pdf-add-btn');
@@ -1993,7 +1994,7 @@
   // ── AD: Resource cards → integrations ─────────────────────────────────────
   document.querySelectorAll('.resource').forEach(function (card) {
     card.style.cursor = 'pointer';
-    card.addEventListener('click', function () { window.location.href = 'integrations.html'; });
+    card.addEventListener('click', function () { window.location.href = '/integrations'; });
   });
 
   // ── AE: Automation .more dropdown ────────────────────────────────────────
