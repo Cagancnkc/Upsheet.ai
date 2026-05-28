@@ -1035,6 +1035,7 @@
     inp.style.textAlign      = cell.align  || '';
     inp.style.color          = cell.color  || '';
     inp.style.fontSize       = cell.fontSize ? cell.fontSize + 'px' : '';
+    if (cell.fontFamily) inp.style.fontFamily = cell.fontFamily;
   }
 
   // ── A: Full grid render ───────────────────────────────────────────────────
@@ -1061,6 +1062,7 @@
         if (cell.align)     inp.style.textAlign = cell.align;
         if (cell.color)     inp.style.color = cell.color;
         if (cell.fontSize)  inp.style.fontSize = cell.fontSize + 'px';
+        if (cell.fontFamily) inp.style.fontFamily = cell.fontFamily;
         inp.addEventListener('focus', makeFocusHandler(r, c));
         inp.addEventListener('input', makeInputHandler(r, c));
         inp.addEventListener('keydown', makeKeyHandler(r, c));
@@ -1317,7 +1319,29 @@
     'Yüzde': function () { toggleNumFmt('percent'); },
     'Ondalık': function () { toggleNumFmt('decimal'); },
     'Geri al': function () { undoAction(); },
-    'Yinele': function () { redoAction(); }
+    'Yinele': function () { redoAction(); },
+    'Filtrele': function () {
+      var h = gridData[0] && gridData[0][selectedCell.c] ? gridData[0][selectedCell.c].v : '';
+      var val = prompt('Filtre değeri' + (h ? ' (' + h + ' sütunu)' : '') + ':');
+      if (val === null) return;
+      pushHistory();
+      applyGridAction({ action: 'filter', condition: 'contains', value: val, column: h || String(selectedCell.c) });
+    },
+    'Sırala': function () {
+      var h = gridData[0] && gridData[0][selectedCell.c] ? gridData[0][selectedCell.c].v : '';
+      var dir = confirm('A→Z sıralama?\n(Tamam = A→Z, İptal = Z→A)') ? 'asc' : 'desc';
+      pushHistory();
+      applyGridAction({ action: 'sort', direction: dir, column: h || String(selectedCell.c) });
+    },
+    'Koşullu biçimlendirme': function () {
+      var h = gridData[0] && gridData[0][selectedCell.c] ? gridData[0][selectedCell.c].v : '';
+      var val = prompt('Koşul (örn: > 100, < 0):');
+      if (!val) return;
+      pushHistory();
+      applyGridAction({ action: 'highlight', condition: val.trim(), color: '#fef08a', column: h || String(selectedCell.c) });
+    },
+    'Pivot': function () { showToast('Pivot tablo — yakında'); },
+    'Grafik ekle': function () { showToast('Grafik ekle — yakında'); }
   };
   document.querySelectorAll('[title]').forEach(function (btn) {
     var t = btn.getAttribute('title');
@@ -1927,6 +1951,104 @@
     showToast('Yeni sayfa eklendi');
   });
 
+  // ── AB: Font family selector ──────────────────────────────────────────────
+  var fontFamilyBtn   = document.querySelector('.tb-select:not(.mono)');
+  var fontFamilyPopup = document.getElementById('font-family-popup');
+  if (fontFamilyBtn && fontFamilyPopup) {
+    fontFamilyBtn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var rect = fontFamilyBtn.getBoundingClientRect();
+      fontFamilyPopup.style.top  = (rect.bottom + 4) + 'px';
+      fontFamilyPopup.style.left = rect.left + 'px';
+      fontFamilyPopup.style.display = fontFamilyPopup.style.display === 'block' ? 'none' : 'block';
+    });
+    fontFamilyPopup.querySelectorAll('.ff-item').forEach(function (item) {
+      item.addEventListener('click', function () {
+        var ff = this.dataset.ff;
+        gridData[selectedCell.r][selectedCell.c].fontFamily = ff;
+        renderSingleCell(selectedCell.r, selectedCell.c);
+        var lbl = fontFamilyBtn.querySelector('.label');
+        if (lbl) lbl.textContent = this.textContent.trim();
+        fontFamilyPopup.style.display = 'none';
+      });
+    });
+    document.addEventListener('click', function () { fontFamilyPopup.style.display = 'none'; });
+  }
+
+  // ── AC: AI tool buttons ───────────────────────────────────────────────────
+  var aiToolAttach = document.querySelector('.ai-tool[title="Dosya ekle"]');
+  if (aiToolAttach) aiToolAttach.addEventListener('click', function () { fileInput.click(); });
+
+  var aiToolRef = document.querySelector('.ai-tool[title="Hücre referansla"]');
+  if (aiToolRef) aiToolRef.addEventListener('click', function () {
+    var ref = COL_LETTERS[selectedCell.c] + (selectedCell.r + 1);
+    var ta = document.querySelector('.ai-input textarea');
+    if (!ta) return;
+    var pos = ta.selectionStart;
+    ta.value = ta.value.slice(0, pos) + ref + ta.value.slice(ta.selectionEnd);
+    ta.selectionStart = ta.selectionEnd = pos + ref.length;
+    ta.focus();
+  });
+
+  // ── AD: Resource cards → integrations ─────────────────────────────────────
+  document.querySelectorAll('.resource').forEach(function (card) {
+    card.style.cursor = 'pointer';
+    card.addEventListener('click', function () { window.location.href = 'index.html#integrations'; });
+  });
+
+  // ── AE: Automation .more dropdown ────────────────────────────────────────
+  var automMoreMenu = document.getElementById('autom-more-menu');
+  document.querySelectorAll('.autom-row .more').forEach(function (btn) {
+    btn.style.cursor = 'pointer';
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      if (!automMoreMenu) return;
+      var rect = btn.getBoundingClientRect();
+      automMoreMenu.style.top  = (rect.bottom + 4) + 'px';
+      automMoreMenu.style.left = (rect.left - 100) + 'px';
+      automMoreMenu.style.display = automMoreMenu.style.display === 'block' ? 'none' : 'block';
+    });
+  });
+  if (automMoreMenu) {
+    automMoreMenu.querySelectorAll('.am-item').forEach(function (item) {
+      item.addEventListener('click', function () {
+        automMoreMenu.style.display = 'none';
+        var a = this.dataset.action;
+        if (a === 'edit')   showToast('Otomasyon düzenleme — yakında');
+        if (a === 'run')    showToast('✓ Otomasyon başlatıldı');
+        if (a === 'delete') showToast('Otomasyon silindi');
+      });
+    });
+    document.addEventListener('click', function () { automMoreMenu.style.display = 'none'; });
+  }
+
+  // ── AF: Sidebar "Yeni" add button ────────────────────────────────────────
+  var sidebarAdd = document.querySelector('.sidebar-section .add');
+  if (sidebarAdd) sidebarAdd.addEventListener('click', function (e) {
+    e.stopPropagation();
+    fileInput.click();
+  });
+
+  // ── AG: Section .link spans + autom-foot .cta ────────────────────────────
+  document.querySelectorAll('.section-head .link').forEach(function (lnk) {
+    lnk.style.cursor = 'pointer';
+    lnk.addEventListener('click', function () {
+      var txt = lnk.textContent.trim();
+      if (txt.indexOf('şablon') !== -1) {
+        var sec = document.querySelector('[data-screen-label="01 Hızlı Başlangıç"]');
+        if (sec) sec.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        showToast('Otomasyon oluştur — yakında');
+      }
+    });
+  });
+
+  var automFootCta = document.querySelector('.autom-foot .cta');
+  if (automFootCta) {
+    automFootCta.style.cursor = 'pointer';
+    automFootCta.addEventListener('click', function () { showToast('Otomasyon geçmişi — yakında'); });
+  }
+
 })();
 </script>
 
@@ -2014,7 +2136,24 @@
 .notif-item:hover { background:var(--surface-3); }
 .comment-item { background:var(--surface-2); border-radius:var(--radius-sm); padding:10px 12px; border:1px solid var(--line); }
 .tb-btn.active { background:var(--brand-soft); color:var(--brand-ink); }
+.ff-item:hover, .am-item:hover { background:var(--surface-2); }
 </style>
+
+<!-- Font family popup -->
+<div id="font-family-popup" style="display:none;position:fixed;background:var(--surface);border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow-2);z-index:9999;min-width:160px;padding:4px 0;">
+  <div class="ff-item" data-ff="Inter" style="padding:7px 14px;font-size:12.5px;cursor:pointer;">Inter</div>
+  <div class="ff-item" data-ff="'Instrument Serif', serif" style="padding:7px 14px;font-size:12.5px;font-family:'Instrument Serif',serif;cursor:pointer;">Instrument Serif</div>
+  <div class="ff-item" data-ff="Georgia, serif" style="padding:7px 14px;font-size:12.5px;font-family:Georgia,serif;cursor:pointer;">Georgia</div>
+  <div class="ff-item" data-ff="'JetBrains Mono', monospace" style="padding:7px 14px;font-size:12.5px;font-family:'JetBrains Mono',monospace;cursor:pointer;">JetBrains Mono</div>
+  <div class="ff-item" data-ff="Arial, sans-serif" style="padding:7px 14px;font-size:12.5px;font-family:Arial,sans-serif;cursor:pointer;">Arial</div>
+</div>
+
+<!-- Automation more dropdown -->
+<div id="autom-more-menu" style="display:none;position:fixed;background:var(--surface);border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow-2);z-index:9999;min-width:130px;padding:4px 0;">
+  <div class="am-item" data-action="edit"   style="padding:7px 14px;font-size:12px;cursor:pointer;">Düzenle</div>
+  <div class="am-item" data-action="run"    style="padding:7px 14px;font-size:12px;cursor:pointer;">Çalıştır</div>
+  <div class="am-item" data-action="delete" style="padding:7px 14px;font-size:12px;cursor:pointer;color:#ef4444;">Sil</div>
+</div>
 
 </body>
 </html>
