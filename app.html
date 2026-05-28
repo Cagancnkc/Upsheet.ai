@@ -1,2662 +1,879 @@
-<!DOCTYPE html>
-<html lang="tr" data-theme="light">
+<!doctype html>
+<html lang="tr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mocksheets — AI Excel Assistant</title>
-<meta name="theme-color" content="#f97316">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Mocksheets">
-<link rel="apple-touch-icon" href="/icon-192.png">
-<link rel="icon" type="image/png" href="/images/favicon.png">
-<meta name="description" content="Manage your Excel spreadsheets with AI-powered commands using Mocksheets">
-<link rel="canonical" href="https://upsheet.ai/app.html">
-<meta name="robots" content="noindex, nofollow">
-<meta property="og:title" content="Mocksheets — AI Excel Assistant">
-<meta property="og:description" content="Manage your Excel spreadsheets with AI-powered commands using Mocksheets">
-<meta property="og:type" content="website">
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<link rel="stylesheet" href="css/style.css?v=4">
-<link rel="stylesheet" href="css/redesign.css?v=1">
-<link rel="stylesheet" href="css/dashboard.css?v=1">
-<script src="api.js"></script>
-<style>
-/* ── SIDEBAR ENTEGRASYON ITEMS ── */
-.sb-int-item{
-  display:flex;align-items:center;gap:9px;
-  padding:8px 10px 8px 12px;margin:1px 6px;border-radius:8px;cursor:pointer;
-  font-size:12px;color:rgba(27,27,31,0.6);
-  border-left:2px solid transparent;
-  transition:background .15s,color .15s,border-color .15s;
-  user-select:none;
-}
-.sb-int-item:hover{
-  background:rgba(27,27,31,0.06);color:#1B1B1F;
-  border-left-color:rgba(84,72,232,0.4);
-}
-.sb-int-logo{width:18px;height:18px;object-fit:contain;flex-shrink:0;border-radius:4px;}
-.sb-int-letter{
-  width:18px;height:18px;border-radius:5px;display:flex;align-items:center;
-  justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0;
-}
-.sb-int-name{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500;}
-.sb-int-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;background:rgba(27,27,31,0.15);}
-.sb-int-dot.on{background:#22c55e;box-shadow:0 0 5px rgba(34,197,94,0.6);}
-.sb-badge-live{
-  font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px;flex-shrink:0;
-  background:rgba(16,185,129,0.1);color:#059669;
-  border:1px solid rgba(16,185,129,0.2);letter-spacing:0.02em;
-}
-.sb-badge-soon{
-  font-size:9px;font-weight:600;padding:2px 7px;border-radius:20px;flex-shrink:0;
-  background:transparent;color:rgba(27,27,31,0.35);
-  border:1px dashed rgba(27,27,31,0.2);letter-spacing:0.02em;
-}
-.sb-int-item-more{
-  display:flex;align-items:center;gap:5px;
-  font-size:11px;font-weight:500;color:rgba(84,72,232,0.65);
-  padding:6px 12px;margin:3px 6px;border-radius:7px;cursor:pointer;
-  transition:color .12s,background .12s;border-left:2px solid transparent;
-}
-.sb-int-item-more:hover{color:#5448E8;background:rgba(84,72,232,0.08);border-left-color:rgba(84,72,232,0.3);}
-/* light mode overrides for integration items */
-body.light .sb-int-item{color:rgba(27,27,31,0.6);}
-body.light .sb-int-item:hover{background:rgba(27,27,31,0.06);color:#1B1B1F;border-left-color:rgba(84,72,232,0.4);}
-body.light .sb-int-dot{background:rgba(27,27,31,0.15);}
-body.light .sb-badge-live{background:rgba(16,185,129,0.1);color:#059669;border-color:rgba(16,185,129,0.2);}
-body.light .sb-badge-soon{color:rgba(27,27,31,0.35);border-color:rgba(27,27,31,0.2);}
-body.light .sb-int-item-more{color:rgba(84,72,232,0.65);}
-body.light .sb-int-item-more:hover{color:#5448E8;background:rgba(84,72,232,0.08);border-left-color:rgba(84,72,232,0.3);}
-#appSidebar.collapsed .sb-int-item{justify-content:center;padding:9px 4px;border-left-color:transparent!important;}
-#appSidebar.collapsed .sb-int-name,
-#appSidebar.collapsed .sb-int-dot,
-#appSidebar.collapsed .sb-badge-live,
-#appSidebar.collapsed .sb-badge-soon,
-#appSidebar.collapsed .sb-int-item-more{display:none;}
-
-/* ── PREFERENCES GROUP ── */
-.sb-pref-group{
-  margin:3px 6px;border-radius:9px;overflow:hidden;
-  background:rgba(27,27,31,0.025);
-  border:1px solid rgba(27,27,31,0.06);
-}
-.sb-pref-group .sb-item{margin:0;border-radius:0;}
-.sb-pref-group .sb-item:hover{background:rgba(27,27,31,0.05);}
-.sb-pref-divider{height:1px;background:rgba(27,27,31,0.06);margin:0 10px;}
-.sb-hint-kbd{
-  font-size:10px!important;padding:2px 6px!important;border-radius:5px!important;
-  color:#5448E8!important;background:rgba(84,72,232,0.08)!important;
-  border:1px solid rgba(84,72,232,0.2)!important;font-weight:600!important;
-}
-body.light .sb-pref-group{background:rgba(27,27,31,0.025);border-color:rgba(27,27,31,0.06);}
-body.light .sb-pref-group .sb-item:hover{background:rgba(27,27,31,0.05);}
-body.light .sb-pref-divider{background:rgba(27,27,31,0.06);}
-body.light .sb-hint-kbd{color:#5448E8!important;background:rgba(84,72,232,0.08)!important;border-color:rgba(84,72,232,0.2)!important;}
-
-/* ── TOAST BİLDİRİM ── */
-.toast-container {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  z-index: 99999;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  pointer-events: none;
-}
-.toast {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 12px 16px;
-  border-radius: 12px;
-  font-size: 13px;
-  font-weight: 500;
-  min-width: 240px;
-  max-width: 340px;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.12);
-  animation: toastIn 0.3s cubic-bezier(0.34,1.56,0.64,1) forwards;
-  pointer-events: all;
-}
-.toast.success {
-  background: #0D0D2B;
-  color: #fff;
-  border-left: 4px solid #22c55e;
-}
-.toast.error {
-  background: #0D0D2B;
-  color: #fff;
-  border-left: 4px solid #ef4444;
-}
-.toast-icon { font-size: 16px; flex-shrink: 0; }
-.toast-msg { flex: 1; line-height: 1.4; }
-.toast-close {
-  background: none;
-  border: none;
-  color: rgba(255,255,255,0.5);
-  cursor: pointer;
-  font-size: 14px;
-  padding: 0 2px;
-  pointer-events: all;
-}
-.toast-close:hover { color: white; }
-@keyframes toastIn {
-  from { opacity: 0; transform: translateY(16px) scale(0.95); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
-}
-@keyframes toastOut {
-  from { opacity: 1; transform: translateY(0) scale(1); }
-  to   { opacity: 0; transform: translateY(8px) scale(0.95); }
-}
-
-/* ── CHAT BAR — handled by redesign.css ── */
-#chat-bar {
-  position: absolute;
-  bottom: 24px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: min(740px, calc(100% - 40px));
-  overflow: hidden;
-  transition: box-shadow .2s ease, border-color .2s ease;
-  z-index: 50;
-}
-
-/* Messages expand upward */
-#chat-messages {
-  max-height: 0;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  transition: max-height .3s cubic-bezier(.4,0,.2,1), padding .3s ease;
-  scrollbar-width: thin;
-  scrollbar-color: #E5E7EB transparent;
-}
-#chat-messages.has-messages {
-  max-height: 40vh;
-  overflow-y: auto;
-  padding: 12px 14px 4px;
-}
-
-.msg-user {
-  align-self: flex-end;
-  background: linear-gradient(135deg, #6366F1, #8B5CF6);
-  color: white; padding: 8px 14px;
-  border-radius: 16px 16px 4px 16px;
-  font-size: 13px; max-width: 75%; line-height: 1.5;
-  animation: msgIn .2s ease;
-}
-.msg-ai {
-  align-self: flex-start;
-  display: flex; gap: 8px; align-items: flex-start;
-  max-width: 80%; animation: msgIn .2s ease;
-}
-.msg-ai-avatar {
-  width: 24px; height: 24px; flex-shrink: 0;
-  background: linear-gradient(135deg, #6366F1, #8B5CF6);
-  border-radius: 6px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 11px; font-weight: 700; color: white;
-}
-.msg-ai-bubble {
-  background: #F9FAFB; border: 1px solid #E5E7EB;
-  padding: 8px 14px;
-  border-radius: 4px 16px 16px 16px;
-  font-size: 13px; color: #374151; line-height: 1.5;
-}
-body.dark .msg-ai-bubble {
-  background: rgba(255,255,255,0.05);
-  border-color: rgba(255,255,255,0.08);
-  color: rgba(255,255,255,0.8);
-}
-@keyframes msgIn {
-  from { opacity:0; transform:translateY(6px); }
-  to   { opacity:1; transform:translateY(0); }
-}
-.msg-typing .msg-ai-bubble {
-  display: flex; align-items: center; gap: 3px; padding: 10px 14px;
-}
-.typing-dot {
-  width: 6px; height: 6px;
-  background: #9CA3AF; border-radius: 50%;
-  animation: typingBounce 1.2s infinite;
-}
-.typing-dot:nth-child(2) { animation-delay: .2s; }
-.typing-dot:nth-child(3) { animation-delay: .4s; }
-@keyframes typingBounce {
-  0%,60%,100% { transform:translateY(0); }
-  30%          { transform:translateY(-4px); }
-}
-
-/* Chips */
-#chat-chips {
-  display: flex; align-items: center; gap: 6px;
-  padding: 8px 14px 0;
-  overflow-x: auto; scrollbar-width: none;
-  transition: opacity .2s, max-height .2s, padding .2s;
-  max-height: 40px; opacity: 1;
-  border-bottom: 1px solid var(--line);
-}
-#chat-chips::-webkit-scrollbar { display: none; }
-#chat-chips.hidden {
-  opacity: 0; max-height: 0;
-  padding-top: 0; padding-bottom: 0;
-  overflow: hidden; border-bottom: none;
-}
-.chat-chips-label {
-  font-size: 10.5px; font-weight: 600; color: var(--mute);
-  text-transform: uppercase; letter-spacing: .1em;
-  white-space: nowrap; flex-shrink: 0; margin-right: 2px;
-  font-family: 'Geist Mono', monospace;
-}
-.chat-chip {
-  display: inline-flex; align-items: center; gap: 4px;
-  padding: 5px 10px;
-  background: rgba(31,30,28,0.05); border: 1px solid transparent;
-  border-radius: 7px; font-size: 12px; color: var(--ink-2);
-  cursor: pointer; white-space: nowrap;
-  transition: all .14s; font-family: inherit;
-  animation: chipFadeIn .3s ease forwards; opacity: 0;
-  margin-bottom: 8px;
-}
-.chat-chip:hover {
-  background: var(--violet-soft); border-color: rgba(91,60,255,0.2);
-  color: var(--violet-deep); transform: translateY(-1px);
-}
-@keyframes chipFadeIn {
-  from { opacity:0; transform:translateY(4px); }
-  to   { opacity:1; transform:translateY(0); }
-}
-.chat-chip:nth-child(2) { animation-delay: .04s; }
-.chat-chip:nth-child(3) { animation-delay: .08s; }
-.chat-chip:nth-child(4) { animation-delay: .12s; }
-.chat-chip:nth-child(5) { animation-delay: .16s; }
-.chat-chip:nth-child(6) { animation-delay: .20s; }
-.chat-chip:nth-child(7) { animation-delay: .24s; }
-body.dark .chat-chips-label { color: rgba(255,255,255,0.2); }
-body.dark #chat-chips { border-bottom-color: rgba(255,255,255,0.06); }
-body.dark .chat-chip {
-  background: rgba(255,255,255,0.05);
-  border-color: rgba(255,255,255,0.08);
-  color: rgba(255,255,255,0.4);
-}
-body.dark .chat-chip:hover {
-  background: rgba(99,102,241,0.15);
-  border-color: rgba(99,102,241,0.3);
-  color: #A5B4FC;
-}
-
-/* Input row */
-#chat-input-row {
-  display: flex; align-items: center; gap: 8px;
-  padding: 10px 14px 12px;
-}
-#chat-spark {
-  flex-shrink: 0; display: flex; align-items: center;
-  opacity: 0.7; transition: opacity .2s;
-  animation: sparkPulse 2.5s ease infinite;
-}
-#chat-bar:focus-within #chat-spark { opacity: 1; }
-.chat-logo-icon { width:22px; height:22px; object-fit:contain; display:block; }
-body.dark .chat-logo-icon { filter: brightness(0) invert(1); }
-@keyframes sparkPulse {
-  0%,100% { opacity:.7; }
-  50%      { opacity:1; }
-}
-#chat-input {
-  flex: 1; border: none; outline: none;
-  background: transparent;
-  font-size: 13.5px; color: var(--ink);
-  font-family: inherit; line-height: 1.5; min-width: 0; padding: 0;
-}
-#chat-input::placeholder { color: var(--mute); }
-body.dark #chat-input { color: rgba(255,255,255,0.85); }
-body.dark #chat-input::placeholder { color: rgba(255,255,255,0.25); }
-
-.chat-mode-badge {
-  font-size: 11px; color: var(--mute); white-space: nowrap; flex-shrink: 0;
-  font-family: 'Geist Mono', monospace;
-}
-.chat-enter-kbd {
-  font-size: 11px; color: var(--mute); background: var(--bg);
-  border: 1px solid var(--line-2); border-radius: 4px; padding: 2px 5px;
-  flex-shrink: 0; font-family: 'Geist Mono', monospace;
-}
-body.dark .chat-enter-kbd { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.08); color: rgba(255,255,255,0.25); }
-
-#chat-send {
-  width: 34px; height: 34px; flex-shrink: 0;
-  background: linear-gradient(135deg, #16a34a, #15803d);
-  border: none; border-radius: 9px;
-  color: white; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  transition: all .15s;
-  opacity: 0.35; pointer-events: none;
-}
-#chat-send.active {
-  opacity: 1; pointer-events: auto;
-}
-#chat-send.active:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 16px -6px rgba(22,163,74,0.5);
-}
-#chat-send.active:active { transform: scale(0.96); }
-
-/* Progress bar */
-#chat-progress {
-  height: 2px;
-  background: linear-gradient(90deg, #16a34a, #86efac, #16a34a);
-  background-size: 200% 100%;
-  width: 0%; transition: width .3s ease;
-  animation: progressShimmer 1.5s infinite;
-}
-#chat-progress.active { width: 100%; }
-@keyframes progressShimmer {
-  0%   { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
-}
-
-
-/* ── Share Modal ─────────────────────────────────────────────── */
-#shareModal {
-  position: fixed; inset: 0;
-  background: rgba(15,12,30,0.55);
-  backdrop-filter: blur(10px) saturate(1.3);
-  z-index: 1200;
-  display: none; align-items: center; justify-content: center;
-}
-#shareModal.open { display: flex; animation: fo .18s; }
-#shareModalPanel {
-  background: var(--panel, #fff);
-  border: 1px solid var(--line-2, rgba(0,0,0,.1));
-  border-radius: 18px;
-  box-shadow: 0 32px 80px rgba(91,60,255,0.13), 0 2px 12px rgba(0,0,0,.12);
-  width: 480px; max-width: 94vw;
-  padding: 24px 24px 20px;
-  animation: ms .22s cubic-bezier(.16,1,.3,1);
-}
-body.dark #shareModalPanel { background:#1a1825; border-color:rgba(255,255,255,.08); }
-.sm-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; }
-.sm-header-left { display:flex; align-items:center; gap:12px; }
-.sm-icon {
-  width:40px; height:40px; border-radius:11px;
-  background:linear-gradient(135deg,#7c5fff,#3a22b8);
-  display:flex; align-items:center; justify-content:center; flex-shrink:0; color:#fff;
-}
-.sm-title { font-size:15px; font-weight:700; color:var(--ink); }
-.sm-sub { font-size:12px; color:var(--ink-2); margin-top:1px; }
-.sm-close {
-  width:30px; height:30px; border-radius:8px; border:none;
-  background:transparent; color:var(--ink-2); font-size:18px; cursor:pointer;
-  display:flex; align-items:center; justify-content:center; transition:background .15s,color .15s;
-}
-.sm-close:hover { background:var(--line, rgba(0,0,0,.06)); color:var(--ink); }
-.sm-section { margin-bottom:16px; }
-.sm-label {
-  font-size:11.5px; font-weight:600; color:var(--ink-2); text-transform:uppercase;
-  letter-spacing:.04em; margin-bottom:8px; display:flex; align-items:center; gap:6px;
-}
-.sm-badge {
-  background:var(--violet-soft, #ede9ff); color:var(--violet, #5B3CFF);
-  border-radius:10px; font-size:10px; padding:1px 7px; font-weight:700;
-}
-.sm-invite-row { display:flex; gap:6px; align-items:center; }
-.sm-email-input {
-  flex:1; height:36px; border:1px solid var(--line-2, rgba(0,0,0,.1));
-  border-radius:9px; padding:0 12px; font-size:13px; outline:none;
-  background:var(--bg, #fafaf7); color:var(--ink); transition:border-color .15s;
-}
-.sm-email-input:focus { border-color:var(--violet, #5B3CFF); }
-body.dark .sm-email-input { background:rgba(255,255,255,.05); border-color:rgba(255,255,255,.1); }
-.sm-role-select {
-  height:36px; border:1px solid var(--line-2, rgba(0,0,0,.1));
-  border-radius:9px; padding:0 8px; font-size:12px; outline:none;
-  background:var(--bg, #fafaf7); color:var(--ink); cursor:pointer;
-}
-body.dark .sm-role-select { background:rgba(255,255,255,.05); border-color:rgba(255,255,255,.1); color:#e2e0f0; }
-.sm-invite-btn {
-  height:36px; padding:0 14px; border-radius:9px; border:none;
-  background:var(--violet, #5B3CFF); color:#fff; font-size:13px; font-weight:600; cursor:pointer;
-  transition:opacity .15s; white-space:nowrap;
-}
-.sm-invite-btn:hover { opacity:.88; }
-.sm-collab-list { display:flex; flex-direction:column; gap:2px; }
-.sm-collab-row {
-  display:flex; align-items:center; gap:10px; padding:7px 10px;
-  border-radius:10px; transition:background .12s;
-}
-.sm-collab-row:hover { background:var(--line, rgba(0,0,0,.04)); }
-.sm-av {
-  width:32px; height:32px; border-radius:50%; font-size:11px; font-weight:700;
-  display:flex; align-items:center; justify-content:center; flex-shrink:0;
-  border:2px solid var(--panel, #fff);
-}
-.sm-collab-info { flex:1; min-width:0; }
-.sm-collab-name { font-size:13px; font-weight:600; color:var(--ink); }
-.sm-collab-email { font-size:11px; color:var(--ink-2); }
-.sm-role-mini {
-  font-size:11.5px; border:1px solid var(--line-2); border-radius:7px;
-  padding:3px 8px; background:var(--panel); color:var(--ink); outline:none; cursor:pointer;
-}
-body.dark .sm-role-mini { background:rgba(255,255,255,.06); border-color:rgba(255,255,255,.1); color:#e2e0f0; }
-.sm-link-section {
-  background:var(--bg, #fafaf7); border-radius:12px; padding:12px 14px 14px;
-}
-body.dark .sm-link-section { background:rgba(255,255,255,.04); }
-.sm-link-row { display:flex; align-items:center; gap:8px; }
-.sm-link-icon { color:var(--ink-2); flex-shrink:0; }
-.sm-link-input {
-  flex:1; border:none; outline:none; font-size:12px; background:transparent;
-  color:var(--ink-2); font-family:'Geist Mono',monospace; min-width:0;
-  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
-}
-.sm-copy-btn {
-  display:flex; align-items:center; gap:5px; height:32px; padding:0 12px;
-  border-radius:8px; border:none;
-  background:linear-gradient(180deg,#6c4dff,#3a22b8); color:#fff;
-  font-size:12px; font-weight:600; cursor:pointer; flex-shrink:0; transition:opacity .15s;
-}
-.sm-copy-btn:hover { opacity:.88; }
-.sm-footer { display:flex; align-items:center; justify-content:space-between; margin-top:18px; }
-.sm-stop-btn {
-  font-size:12.5px; color:#ef4444; background:none; border:none; cursor:pointer;
-  padding:6px 10px; border-radius:7px; font-weight:500; transition:background .12s;
-}
-.sm-stop-btn:hover { background:rgba(239,68,68,.08); }
-.sm-close-btn {
-  font-size:12.5px; font-weight:600; color:var(--ink-2);
-  background:var(--line, rgba(0,0,0,.06)); border:none; cursor:pointer;
-  padding:7px 16px; border-radius:8px; transition:background .12s;
-}
-.sm-close-btn:hover { background:var(--line-2); color:var(--ink); }
-
-/* Mobile */
-@media (max-width: 768px) {
-  #chat-bar {
-    width: calc(100vw - 24px);
-    bottom: 16px;
-    border-radius: 14px;
-  }
-  #chat-input { font-size: 16px; }
-  #chat-send { width: 32px; height: 32px; }
-  .chat-chip { font-size: 11px; padding: 4px 10px; }
-}
-
-/* ── DİL SEÇİCİ ── */
-.lang-switcher {
-  display: flex; align-items: center;
-  background: rgba(0,0,0,0.05);
-  border-radius: 100px; padding: 3px; gap: 2px;
-}
-.lang-btn {
-  padding: 4px 10px; border: none;
-  background: transparent; border-radius: 100px;
-  font-size: 12px; font-weight: 600; color: #6B7280;
-  cursor: pointer; transition: all 0.15s; letter-spacing: 0.02em;
-}
-.lang-btn.active { background: white; color: #1A1A1A; box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
-.lang-btn:hover:not(.active) { color: #1A1A1A; }
-body.dark .lang-switcher { background: rgba(255,255,255,0.06); }
-body.dark .lang-btn { color: #9ca3af; }
-body.dark .lang-btn.active { background: rgba(255,255,255,0.12); color: #fff; box-shadow: 0 1px 4px rgba(0,0,0,0.4); }
-/* export styles now in css/style.css */
-/* ── TEMPLATE PANEL CSS DEĞİŞKENLERİ ── */
-:root {
-  --tmpl-bg: #ffffff;
-  --tmpl-border: #E5E7EB;
-  --tmpl-header-bg: #F9FAFB;
-  --tmpl-text: #111827;
-  --tmpl-text-muted: #6B7280;
-  --tmpl-text-hint: #9CA3AF;
-  --tmpl-hover: #F5F3FF;
-  --tmpl-hover-border: #A5B4FC;
-  --tmpl-active-bg: #EEF2FF;
-  --tmpl-active-border: #6366F1;
-  --tmpl-cat-text: #374151;
-  --tmpl-badge-bg: #EEF2FF;
-  --tmpl-badge-text: #6366F1;
-  --tmpl-new-bg: #FEF3C7;
-  --tmpl-new-text: #92400E;
-  --tmpl-search-bg: #F9FAFB;
-  --tmpl-search-border: #E5E7EB;
-  --tmpl-tab-active: #6366F1;
-  --tmpl-tab-text: #6B7280;
-  --tmpl-divider: #F3F4F6;
-}
-body.dark {
-  --tmpl-bg: #1a1a2e;
-  --tmpl-border: #2d2d44;
-  --tmpl-header-bg: #16213e;
-  --tmpl-text: #F9FAFB;
-  --tmpl-text-muted: #9CA3AF;
-  --tmpl-text-hint: #6B7280;
-  --tmpl-hover: #1e1b4b;
-  --tmpl-hover-border: #6366F1;
-  --tmpl-active-bg: #1e1b4b;
-  --tmpl-active-border: #818CF8;
-  --tmpl-cat-text: #D1D5DB;
-  --tmpl-badge-bg: #1e1b4b;
-  --tmpl-badge-text: #818CF8;
-  --tmpl-new-bg: #422006;
-  --tmpl-new-text: #FCD34D;
-  --tmpl-search-bg: #0f0f23;
-  --tmpl-search-border: #2d2d44;
-  --tmpl-tab-active: #818CF8;
-  --tmpl-tab-text: #6B7280;
-  --tmpl-divider: #2d2d44;
-}
-/* ══════════════════════════════════════════
-   MOCKSHEETS SIDEBAR — Professional Dark UI
-   ══════════════════════════════════════════ */
-#appSidebar {
-  width: 280px; min-width: 280px; max-width: 280px; height: 100%;
-  background: #F6F2E9;
-  border-right: 1px solid rgba(27,27,31,0.1);
-  display: flex; flex-direction: column;
-  overflow: hidden;
-  transition: width 0.25s cubic-bezier(0.4,0,0.2,1), min-width 0.25s cubic-bezier(0.4,0,0.2,1);
-  flex-shrink: 0; position: relative; z-index: 20;
-}
-#appSidebar.collapsed { width: 64px; min-width: 64px; }
-
-.sb-logo { display:flex; align-items:center; gap:10px; padding:16px 12px 12px;
-  border-bottom:1px solid rgba(27,27,31,0.08); flex-shrink:0; }
-.sb-logo-icon { width:40px; height:40px;
-  border-radius:9px; display:block; flex-shrink:0; object-fit:contain; }
-.sb-logo-text { font-size:14px; font-weight:700; color:#1B1B1F;
-  letter-spacing:-0.2px; white-space:nowrap; flex:1; overflow:hidden; }
-.sb-collapse-btn { background:transparent; border:none;
-  color:rgba(27,27,31,0.3); cursor:pointer; padding:4px; border-radius:5px;
-  display:flex; align-items:center; transition:color .15s, background .15s; flex-shrink:0; }
-.sb-collapse-btn:hover { color:#1B1B1F; background:rgba(27,27,31,0.06); }
-
-.sb-new-wrap { padding:10px 10px 4px; flex-shrink:0; }
-.sb-new-btn { display:flex; align-items:center; gap:7px; width:100%; padding:8px 12px;
-  background:rgba(84,72,232,0.08); border:1px solid rgba(84,72,232,0.2);
-  border-radius:8px; color:#5448E8; font-size:12px; font-weight:600; cursor:pointer;
-  font-family:inherit; transition:all .15s; white-space:nowrap; }
-.sb-new-btn:hover { background:rgba(84,72,232,0.14); border-color:rgba(84,72,232,0.35); color:#4038C8; }
-
-.sb-search-wrap { padding:6px 10px; flex-shrink:0; }
-.sb-search-inner { position:relative; }
-.sb-search-icon { position:absolute; left:9px; top:50%; transform:translateY(-50%);
-  color:rgba(27,27,31,0.3); pointer-events:none; }
-.sb-search-input { width:100%; box-sizing:border-box; padding:6px 8px 6px 28px;
-  background:rgba(27,27,31,0.05); border:1px solid rgba(27,27,31,0.1);
-  border-radius:7px; color:#1B1B1F; font-size:12px;
-  font-family:inherit; outline:none; transition:border-color .15s, background .15s; }
-.sb-search-input::placeholder { color:rgba(27,27,31,0.3); }
-.sb-search-input:focus { border-color:rgba(84,72,232,0.4); background:rgba(84,72,232,0.05); }
-
-.sb-nav { flex:1; overflow-y:auto; padding:4px 0 8px;
-  scrollbar-width:thin; scrollbar-color:rgba(27,27,31,0.1) transparent; }
-.sb-nav::-webkit-scrollbar { width:3px; }
-.sb-nav::-webkit-scrollbar-thumb { background:rgba(27,27,31,0.1); border-radius:3px; }
-
-.sb-section { padding:2px 0; }
-.sb-section-label { font-size:9px; font-weight:700; color:rgba(27,27,31,0.35);
-  text-transform:uppercase; letter-spacing:0.1em; padding:8px 14px 3px; white-space:nowrap; }
-.sb-divider { height:1px; background:rgba(27,27,31,0.08); margin:3px 10px; }
-
-.sb-item { display:flex; align-items:center; gap:9px; padding:7px 10px 7px 12px;
-  margin:1px 6px; border-radius:7px; cursor:pointer;
-  transition:background .12s, color .12s; color:rgba(27,27,31,0.6);
-  font-size:12.5px; font-weight:500; user-select:none; }
-.sb-item:hover { background:rgba(27,27,31,0.06); color:#1B1B1F; }
-.sb-item.active { background:rgba(84,72,232,0.1); color:#5448E8; }
-.sb-item-icon { flex-shrink:0; display:flex; align-items:center; opacity:0.65; }
-.sb-item:hover .sb-item-icon { opacity:1; }
-.sb-item-label { flex:1; white-space:nowrap; overflow:hidden; }
-.sb-item-badge { font-size:9px; font-weight:700; padding:2px 6px; border-radius:5px;
-  background:rgba(84,72,232,0.1); color:#5448E8; }
-.sb-item-badge-green { font-size:9px; font-weight:700; padding:2px 6px; border-radius:5px;
-  background:rgba(16,185,129,0.1); color:#059669; }
-.sb-item-count { font-size:10px; color:rgba(27,27,31,0.3); margin-right:2px; }
-.sb-item-hint { font-size:10px; color:rgba(27,27,31,0.4);
-  background:rgba(27,27,31,0.06); padding:1px 5px; border-radius:4px; }
-.sb-item-arrow { color:rgba(27,27,31,0.3); transition:transform .2s; flex-shrink:0; }
-.sb-item-expandable.open .sb-item-arrow { transform:rotate(180deg); }
-
-.sb-add-sheet { display:flex; align-items:center; gap:6px;
-  padding:5px 10px 5px 12px; margin:1px 6px; background:transparent; border:none;
-  color:rgba(27,27,31,0.35); font-size:11px; cursor:pointer; border-radius:6px;
-  font-family:inherit; transition:all .12s; width:calc(100% - 12px); text-align:left; }
-.sb-add-sheet:hover { color:#1B1B1F; background:rgba(27,27,31,0.05); }
-
-.sb-sheet-tab { display:flex; align-items:center; gap:8px;
-  padding:6px 10px 6px 12px; margin:1px 6px; border-radius:7px; cursor:pointer;
-  font-size:12px; color:rgba(27,27,31,0.55); transition:all .12s;
-  white-space:nowrap; overflow:hidden; }
-.sb-sheet-tab:hover { background:rgba(27,27,31,0.06); color:#1B1B1F; }
-.sb-sheet-tab.active { background:rgba(84,72,232,0.1); color:#5448E8; }
-.sb-sheet-tab-icon { font-size:12px; flex-shrink:0; opacity:0.5; }
-.sb-sheet-tab-name { flex:1; overflow:hidden; text-overflow:ellipsis; }
-.sb-sheet-tab-close { opacity:0; font-size:14px; line-height:1;
-  color:rgba(27,27,31,0.4); padding:0 2px; transition:opacity .12s; flex-shrink:0; }
-.sb-sheet-tab:hover .sb-sheet-tab-close { opacity:1; }
-
-.sb-sub-section { max-height:0; overflow:hidden;
-  transition:max-height 0.3s cubic-bezier(0.4,0,0.2,1); padding:0 6px; }
-.sb-sub-section.open { max-height:1400px; }
-
-.sb-tmpl-cat { display:flex; align-items:center; justify-content:space-between;
-  padding:5px 8px; margin:2px 0 1px; border-radius:6px; cursor:pointer;
-  font-size:11px; font-weight:600; color:rgba(27,27,31,0.45);
-  transition:all .12s; user-select:none; }
-.sb-tmpl-cat:hover { background:rgba(27,27,31,0.05); color:#1B1B1F; }
-.sb-cat-arrow { color:rgba(27,27,31,0.3); transition:transform .2s; flex-shrink:0; }
-.sb-cat-arrow.open { transform:rotate(180deg); }
-.sb-tmpl-items { max-height:0; overflow:hidden; transition:max-height .25s ease; }
-.sb-tmpl-items.open { max-height:500px; }
-.sb-tmpl-item { display:flex; align-items:center; gap:6px;
-  padding:5px 8px 5px 16px; border-radius:5px; cursor:pointer; font-size:11.5px;
-  color:rgba(27,27,31,0.5); transition:all .12s;
-  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.sb-tmpl-item:hover { background:rgba(27,27,31,0.06); color:#1B1B1F; }
-.sb-tmpl-item.active { background:rgba(84,72,232,0.1); color:#5448E8; }
-.sb-new-badge { font-size:8px; background:rgba(245,158,11,0.15); color:#92400E;
-  padding:1px 4px; border-radius:3px; font-weight:700; letter-spacing:0.04em;
-  flex-shrink:0; margin-left:auto; }
-
-.sb-toggle { width:36px; height:20px; background:rgba(27,27,31,0.15);
-  border-radius:10px; position:relative; cursor:pointer; transition:background .22s; flex-shrink:0; }
-.sb-toggle.on { background:rgba(84,72,232,0.7); }
-.sb-toggle-thumb { position:absolute; top:2px; left:2px; width:16px; height:16px;
-  background:white; border-radius:50%; transition:transform .22s;
-  box-shadow:0 1px 4px rgba(0,0,0,0.2); }
-.sb-toggle.on .sb-toggle-thumb { transform:translateX(16px); }
-
-.sb-user { display:flex; align-items:center; gap:9px; padding:11px 12px;
-  border-top:1px solid rgba(27,27,31,0.08); cursor:pointer;
-  transition:background .15s; flex-shrink:0; }
-.sb-user:hover { background:rgba(27,27,31,0.04); }
-.sb-user-avatar { width:28px; height:28px; border-radius:7px;
-  background:linear-gradient(135deg,#5448E8,#7C3AED);
-  display:flex; align-items:center; justify-content:center;
-  font-size:12px; font-weight:700; color:white; flex-shrink:0; }
-.sb-user-name { font-size:12px; font-weight:600; color:#1B1B1F;
-  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.sb-user-plan { font-size:10px; color:rgba(27,27,31,0.4); white-space:nowrap; }
-.sb-user-info { flex:1; min-width:0; }
-.sb-user-menu-btn { background:transparent; border:none; color:rgba(27,27,31,0.3);
-  cursor:pointer; padding:3px; border-radius:4px; display:flex; transition:all .12s; flex-shrink:0; }
-.sb-user-menu-btn:hover { color:#1B1B1F; background:rgba(27,27,31,0.06); }
-
-/* COLLAPSED STATE */
-#appSidebar.collapsed .sb-logo-img,
-#appSidebar.collapsed .sb-logo-text,
-#appSidebar.collapsed .sb-new-btn span:last-child,
-#appSidebar.collapsed .sb-search-wrap,
-#appSidebar.collapsed .sb-section-label,
-#appSidebar.collapsed .sb-item-label,
-#appSidebar.collapsed .sb-item-badge,
-#appSidebar.collapsed .sb-item-badge-green,
-#appSidebar.collapsed .sb-item-count,
-#appSidebar.collapsed .sb-item-hint,
-#appSidebar.collapsed .sb-item-arrow,
-#appSidebar.collapsed .sb-add-sheet span,
-#appSidebar.collapsed .sb-sheet-tab-name,
-#appSidebar.collapsed .sb-sheet-tab-close,
-#appSidebar.collapsed .sb-sub-section,
-#appSidebar.collapsed .sb-tmpl-cat,
-#appSidebar.collapsed .sb-user-info,
-#appSidebar.collapsed .sb-user-menu-btn,
-#appSidebar.collapsed .sb-toggle,
-#appSidebar.collapsed .sb-upgrade-wrap,
-#appSidebar.collapsed .sb-user-dropdown { display:none; }
-#appSidebar.collapsed .sb-item { justify-content:center; padding:9px; margin:1px 4px; }
-#appSidebar.collapsed .sb-item-icon { opacity:0.7; }
-#appSidebar.collapsed .sb-logo { justify-content:center; padding:14px 8px; }
-#appSidebar.collapsed .sb-new-btn { justify-content:center; padding:8px; }
-#appSidebar.collapsed .sb-collapse-btn { display:none; }
-.sb-expand-btn { display:none; background:none; border:none; cursor:pointer; color:rgba(27,27,31,0.35); padding:4px; border-radius:6px; transition:color 0.15s,background 0.15s; }
-.sb-expand-btn:hover { color:#1B1B1F; background:rgba(27,27,31,0.08); }
-#appSidebar.collapsed .sb-expand-btn { display:flex; align-items:center; justify-content:center; }
-body.light .sb-expand-btn { color:rgba(27,27,31,0.35); }
-body.light .sb-expand-btn:hover { color:#1B1B1F; background:rgba(27,27,31,0.08); }
-#appSidebar.collapsed .sb-user { justify-content:center; padding:11px 8px; }
-#appSidebar.collapsed .sb-sheet-tab { justify-content:center; padding:8px; }
-#appSidebar.collapsed .sb-sheet-tab-icon { opacity:0.7; }
-#appSidebar.collapsed .sb-divider { margin:3px 8px; }
-#appSidebar.collapsed .sb-item[data-tooltip] { position:relative; }
-#appSidebar.collapsed .sb-item[data-tooltip]:hover::after {
-  content:attr(data-tooltip); position:absolute; left:calc(100% + 8px); top:50%;
-  transform:translateY(-50%); background:#1B1B1F; color:rgba(255,255,255,0.88);
-  font-size:11px; font-weight:500; padding:5px 10px; border-radius:6px;
-  white-space:nowrap; pointer-events:none; opacity:1; z-index:100;
-  border:1px solid rgba(255,255,255,0.1); box-shadow:0 4px 12px rgba(0,0,0,0.2); }
-
-/* ── USER SECTION (bottom of sidebar) ─────────────────────── */
-.sb-user-wrap{flex-shrink:0;border-top:1px solid rgba(27,27,31,0.08);position:relative;}
-.sb-upgrade-wrap{padding:8px 10px 4px;}
-.sb-upgrade-btn{
-  display:flex;align-items:center;gap:6px;width:100%;padding:7px 12px;
-  background:rgba(84,72,232,0.08);
-  border:1px solid rgba(84,72,232,0.2);border-radius:8px;
-  color:#5448E8;font-size:11px;font-weight:600;cursor:pointer;
-  font-family:inherit;transition:all .18s;white-space:nowrap;justify-content:center;
-}
-.sb-upgrade-btn:hover{
-  background:rgba(84,72,232,0.14);
-  border-color:rgba(84,72,232,0.35);color:#4038C8;
-  transform:translateY(-1px);box-shadow:0 4px 16px rgba(84,72,232,0.15);
-}
-.sb-upgrade-btn svg{opacity:0.8;}
-.sb-user{display:flex;align-items:center;gap:9px;padding:10px 12px;cursor:pointer;transition:background .15s;}
-.sb-user:hover{background:rgba(27,27,31,0.04);}
-.sb-user-plan{display:flex;align-items:center;gap:4px;font-size:10px;color:rgba(27,27,31,0.4);white-space:nowrap;}
-.sb-plan-dot{width:5px;height:5px;border-radius:50%;background:rgba(27,27,31,0.2);flex-shrink:0;}
-.sb-plan-dot.free{background:#9ca3af;}
-.sb-plan-dot.pro{background:#5448E8;box-shadow:0 0 6px rgba(84,72,232,0.4);}
-.sb-plan-dot.business{background:#10b981;box-shadow:0 0 6px rgba(16,185,129,0.5);}
-.sb-user-dropdown{
-  position:absolute;bottom:calc(100% + 6px);left:8px;right:8px;
-  background:#FAF8F3;border:1px solid rgba(27,27,31,0.1);
-  border-radius:12px;box-shadow:0 -8px 40px rgba(27,27,31,0.12);
-  overflow:hidden;z-index:100;
-  animation:udIn .15s cubic-bezier(0.16,1,0.3,1);
-}
-@keyframes udIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-.sb-user-dropdown-header{
-  display:flex;align-items:center;gap:10px;padding:12px 14px;
-  background:rgba(27,27,31,0.02);
-}
-.sb-ud-avatar{
-  width:32px;height:32px;border-radius:8px;flex-shrink:0;
-  background:linear-gradient(135deg,#5448E8,#7C3AED);
-  display:flex;align-items:center;justify-content:center;
-  font-size:13px;font-weight:700;color:white;
-}
-.sb-ud-name{font-size:12px;font-weight:600;color:rgba(27,27,31,0.85);}
-.sb-ud-email{font-size:10px;color:rgba(27,27,31,0.4);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px;}
-.sb-ud-divider{height:1px;background:rgba(27,27,31,0.07);margin:2px 0;}
-.sb-ud-item{
-  display:flex;align-items:center;gap:9px;width:100%;padding:9px 14px;
-  background:transparent;border:none;color:rgba(27,27,31,0.65);
-  font-size:12px;font-family:inherit;cursor:pointer;transition:all .12s;text-align:left;
-}
-.sb-ud-item:hover{background:rgba(27,27,31,0.05);color:#1B1B1F;}
-.sb-ud-item svg{opacity:0.6;flex-shrink:0;}
-.sb-ud-item:hover svg{opacity:1;}
-.sb-ud-item.danger{color:rgba(220,38,38,0.7);}
-.sb-ud-item.danger:hover{background:rgba(220,38,38,0.06);color:#dc2626;}
-#appSidebar.collapsed .sb-upgrade-wrap{display:none;}
-#appSidebar.collapsed .sb-user-info,.sb-user-menu-btn{overflow:hidden;}
-#appSidebar.collapsed .sb-user-dropdown{display:none!important;}
-
-/* ── LIGHT MODE SIDEBAR ─────────────────── */
-body.light #appSidebar{background:#F6F2E9;border-right-color:rgba(27,27,31,0.1);}
-body.light .sb-logo{border-bottom-color:rgba(27,27,31,0.08);}
-body.light .sb-logo-text{color:#1B1B1F;}
-body.light .sb-collapse-btn{color:rgba(27,27,31,0.3);}
-body.light .sb-collapse-btn:hover{color:#1B1B1F;background:rgba(27,27,31,0.06);}
-body.light .sb-new-btn{background:rgba(84,72,232,0.08);border-color:rgba(84,72,232,0.2);color:#5448E8;}
-body.light .sb-new-btn:hover{background:rgba(84,72,232,0.14);}
-body.light .sb-search-input{background:rgba(27,27,31,0.05);border-color:rgba(27,27,31,0.1);color:#1B1B1F;}
-body.light .sb-search-input::placeholder{color:rgba(27,27,31,0.3);}
-body.light .sb-search-icon{color:rgba(27,27,31,0.3);}
-body.light .sb-section-label{color:rgba(27,27,31,0.35);}
-body.light .sb-divider{background:rgba(27,27,31,0.08);}
-body.light .sb-item{color:rgba(27,27,31,0.6);}
-body.light .sb-item:hover{background:rgba(27,27,31,0.06);color:#1B1B1F;}
-body.light .sb-item.active{background:rgba(84,72,232,0.1);color:#5448E8;}
-body.light .sb-item-badge{background:rgba(84,72,232,0.1);color:#5448E8;}
-body.light .sb-item-count{color:rgba(27,27,31,0.3);}
-body.light .sb-item-arrow{color:rgba(27,27,31,0.3);}
-body.light .sb-add-sheet{color:rgba(27,27,31,0.35);}
-body.light .sb-add-sheet:hover{color:#1B1B1F;background:rgba(27,27,31,0.05);}
-body.light .sb-sheet-tab{color:rgba(27,27,31,0.55);}
-body.light .sb-sheet-tab:hover{background:rgba(27,27,31,0.06);color:#1B1B1F;}
-body.light .sb-sheet-tab.active{background:rgba(84,72,232,0.1);color:#5448E8;}
-body.light .sb-sheet-tab-close{color:rgba(27,27,31,0.4);}
-body.light .sb-tmpl-cat{color:rgba(27,27,31,0.45);}
-body.light .sb-tmpl-cat:hover{background:rgba(27,27,31,0.05);color:#1B1B1F;}
-body.light .sb-cat-arrow{color:rgba(27,27,31,0.3);}
-body.light .sb-tmpl-item{color:rgba(27,27,31,0.5);}
-body.light .sb-tmpl-item:hover{background:rgba(27,27,31,0.06);color:#1B1B1F;}
-body.light .sb-tmpl-item.active{background:rgba(84,72,232,0.1);color:#5448E8;}
-body.light .sb-toggle{background:rgba(27,27,31,0.15);}
-body.light .sb-user-wrap{border-top-color:rgba(27,27,31,0.08);}
-body.light .sb-user:hover{background:rgba(27,27,31,0.04);}
-body.light .sb-user-name{color:#1B1B1F;}
-body.light .sb-user-plan{color:rgba(27,27,31,0.4);}
-body.light .sb-user-menu-btn{color:rgba(27,27,31,0.3);}
-body.light .sb-user-menu-btn:hover{color:#1B1B1F;background:rgba(27,27,31,0.06);}
-body.light .sb-nav::-webkit-scrollbar-thumb{background:rgba(27,27,31,0.1);}
-body.light #appSidebar.collapsed .sb-item[data-tooltip]:hover::after{
-  background:#1B1B1F;color:rgba(255,255,255,0.88);
-  border-color:rgba(255,255,255,0.1);box-shadow:0 4px 12px rgba(0,0,0,0.2);
-}
-body.light .sb-user-dropdown{background:#FAF8F3;border-color:rgba(27,27,31,0.1);box-shadow:0 -8px 40px rgba(27,27,31,0.12);}
-body.light .sb-user-dropdown-header{background:rgba(27,27,31,0.02);}
-body.light .sb-ud-name{color:rgba(27,27,31,0.85);}
-body.light .sb-ud-email{color:rgba(27,27,31,0.4);}
-body.light .sb-ud-divider{background:rgba(27,27,31,0.07);}
-body.light .sb-ud-item{color:rgba(27,27,31,0.65);}
-body.light .sb-ud-item:hover{background:rgba(27,27,31,0.05);color:#1B1B1F;}
-body.light .sb-upgrade-btn{background:rgba(84,72,232,0.08);border-color:rgba(84,72,232,0.2);color:#5448E8;}
-
-/* ── PDF Modal ─────────────────────────────────────────────── */
-#pdfModal {
-  position:fixed;inset:0;z-index:800;
-  background:rgba(0,0,0,0.82);backdrop-filter:blur(6px);
-  display:flex;align-items:center;justify-content:center;
-  opacity:0;pointer-events:none;transition:opacity .2s;
-}
-#pdfModal.open { opacity:1;pointer-events:all; }
-#pdfModalPanel {
-  background:#111111;
-  border:1px solid rgba(255,255,255,0.1);
-  border-radius:16px;
-  width:min(680px,94vw);max-height:88vh;
-  display:flex;flex-direction:column;overflow:hidden;
-  box-shadow:0 32px 80px rgba(0,0,0,.7);
-  transform:scale(.96);transition:transform .22s cubic-bezier(0.16,1,0.3,1);
-}
-#pdfModal.open #pdfModalPanel { transform:scale(1); }
-
-/* Header */
-#pdfModalHeader {
-  height:52px;display:flex;align-items:center;
-  padding:0 18px;border-bottom:1px solid rgba(255,255,255,0.08);
-  flex-shrink:0;gap:10px;background:#111111;
-}
-.pdf-hdr-dot { width:7px;height:7px;border-radius:50%;background:#4F46E5;flex-shrink:0; }
-#pdfModalTitle { flex:1;font-size:14px;font-weight:600;color:#e2e2e2; }
-#pdfModalClose {
-  width:28px;height:28px;border-radius:7px;border:none;background:transparent;
-  cursor:pointer;display:flex;align-items:center;justify-content:center;
-  color:#555;font-size:18px;transition:.15s;line-height:1;
-}
-#pdfModalClose:hover { background:rgba(239,68,68,0.12);color:#ef4444; }
-
-/* Step wraps */
-.pdf-step-wrap { padding:20px;overflow-y:auto;flex:1;background:#111111; }
-
-/* Drop zone */
-#pdfDropZone {
-  border:2px dashed rgba(79,70,229,0.35);border-radius:14px;
-  padding:48px 20px;text-align:center;cursor:pointer;transition:.2s;
-  background:rgba(79,70,229,0.04);
-}
-#pdfDropZone:hover,#pdfDropZone.dragover {
-  border-color:rgba(79,70,229,0.7);
-  background:rgba(79,70,229,0.09);
-}
-.pdf-dz-icon { font-size:40px;margin-bottom:12px;opacity:.85; }
-.pdf-dz-title { font-size:15px;font-weight:600;color:#e2e2e2;margin-bottom:6px; }
-.pdf-dz-hint { font-size:12px;color:#555; }
-.pdf-dz-btn {
-  display:inline-flex;align-items:center;gap:6px;margin-top:16px;
-  background:rgba(79,70,229,0.12);border:1px solid rgba(79,70,229,0.28);
-  color:#8b83f5;padding:7px 18px;border-radius:8px;font-size:12px;font-weight:600;
-}
-
-/* Progress */
-#pdfUploadProgress { margin-top:20px;text-align:center; }
-.pdf-prog-bar {
-  height:3px;background:rgba(255,255,255,0.07);border-radius:3px;
-  overflow:hidden;margin-bottom:12px;
-}
-#pdfProgressFill {
-  height:100%;border-radius:3px;width:0%;transition:width .4s ease;
-  background:linear-gradient(90deg,#4F46E5,#818CF8,#4F46E5);
-  background-size:200% 100%;animation:pdfShimmer 1.4s infinite;
-}
-@keyframes pdfShimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
-#pdfProgressLabel { font-size:12px;color:#666; }
-
-/* Upload error */
-.pdf-upload-error {
-  background:rgba(239,68,68,0.09);border:1px solid rgba(239,68,68,0.25);
-  color:#f87171;border-radius:8px;padding:10px 14px;font-size:13px;margin-top:14px;
-}
-
-/* Step 2 — doc summary */
-#pdfDocSummary { display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px; }
-.pdf-badge {
-  display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;
-  font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;
-  background:rgba(79,70,229,0.14);color:#818CF8;border:1px solid rgba(79,70,229,0.22);
-}
-.pdf-badge-sec {
-  background:rgba(255,255,255,0.06);color:#777;border:1px solid rgba(255,255,255,0.1);
-}
-.pdf-badge-q-high { background:rgba(16,185,129,0.12);color:#34d399;border:1px solid rgba(16,185,129,0.22); }
-.pdf-badge-q-mid  { background:rgba(234,179,8,0.12); color:#fbbf24;border:1px solid rgba(234,179,8,0.22); }
-.pdf-badge-q-low  { background:rgba(239,68,68,0.12); color:#f87171;border:1px solid rgba(239,68,68,0.22); }
-
-#pdfDocDesc { font-size:12px;color:#666;margin-bottom:16px;line-height:1.6; }
-
-/* Warnings */
-#pdfWarningsBox {
-  background:rgba(234,179,8,0.07);border:1px solid rgba(234,179,8,0.2);
-  border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:#fbbf24;
-}
-#pdfWarningsList { padding-left:16px;margin:0; }
-
-/* Section label */
-.pdf-sec-label {
-  font-size:11px;font-weight:600;color:#444;
-  text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px;
-}
-
-/* Table selector radios */
-.pdf-table-radio {
-  display:flex;align-items:flex-start;gap:10px;padding:10px 14px;
-  border:1px solid rgba(255,255,255,0.08);border-radius:10px;margin-bottom:7px;
-  cursor:pointer;transition:.12s;background:rgba(255,255,255,0.02);
-}
-.pdf-table-radio:hover { border-color:rgba(79,70,229,0.4);background:rgba(79,70,229,0.06); }
-.pdf-table-radio.selected { border-color:rgba(79,70,229,0.5);background:rgba(79,70,229,0.1); }
-.pdf-table-radio input[type="radio"] { margin-top:2px;accent-color:#4F46E5; }
-.pdf-table-radio-label { font-size:13px;font-weight:500;color:#d1d5db; }
-.pdf-table-radio-meta { font-size:11px;color:#555; }
-
-/* Preview table */
-#pdfPreviewScroll {
-  overflow:auto;max-height:220px;
-  border:1px solid rgba(255,255,255,0.08);border-radius:8px;
-  background:#0a0a0a;
-}
-#pdfPreviewTable { width:100%;border-collapse:collapse;font-size:12px; }
-#pdfPreviewTable th {
-  background:rgba(79,70,229,0.1);color:#818CF8;font-weight:600;
-  padding:7px 10px;text-align:left;
-  border-bottom:1px solid rgba(255,255,255,0.07);
-  white-space:nowrap;position:sticky;top:0;
-}
-#pdfPreviewTable td {
-  padding:6px 10px;border-bottom:1px solid rgba(255,255,255,0.04);
-  color:rgba(255,255,255,0.65);white-space:nowrap;
-}
-#pdfPreviewTable tr:last-child td { border-bottom:none; }
-#pdfPreviewTable tr:hover td { background:rgba(255,255,255,0.03); }
-
-.pdf-no-table { text-align:center;padding:30px;color:#444;font-size:13px; }
-
-/* Footer */
-#pdfModalFooter {
-  display:flex;align-items:center;gap:8px;
-  padding:12px 18px;border-top:1px solid rgba(255,255,255,0.07);
-  flex-shrink:0;background:#111111;
-}
-#pdfBackBtn,#pdfCancelBtn {
-  padding:7px 16px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);
-  background:transparent;font-size:12px;font-weight:500;cursor:pointer;
-  color:#666;font-family:inherit;transition:.15s;
-}
-#pdfBackBtn:hover,#pdfCancelBtn:hover { background:rgba(255,255,255,0.05);color:#e2e2e2; }
-#pdfImportBtn {
-  padding:7px 20px;border-radius:8px;border:none;
-  background:linear-gradient(135deg,#4F46E5,#6366f1);
-  color:#fff;font-size:12px;font-weight:600;
-  cursor:pointer;font-family:inherit;transition:.15s;
-  box-shadow:0 2px 12px rgba(79,70,229,0.35);
-}
-#pdfImportBtn:hover { background:linear-gradient(135deg,#4338CA,#4F46E5);box-shadow:0 4px 18px rgba(79,70,229,0.5); }
-
-</style>
-<!-- Microsoft Clarity -->
-<script type="text/javascript">
-    (function(c,l,a,r,i,t,y){
-        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-    })(window, document, "clarity", "script", "w9w9hcd4ac");
-</script>
+<meta charset="utf-8" />
+<title>Mocksheets â Stok Takip Tablosu</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;550;600;700&family=JetBrains+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="mocksheets-styles.css" />
 </head>
-<body class="light">
+<body>
+<div class="app" data-screen-label="Mocksheets Dashboard">
 
-<div class="app-shell">
-
-<aside id="appSidebar">
-
-  <!-- LOGO -->
-  <div class="sb-logo">
-    <img src="/images/logo-wordmark.png" alt="Mocksheets" class="sb-logo-img" style="width:150px;height:100px;object-fit:contain;flex:1;min-width:0">
-    <button class="sb-collapse-btn" onclick="toggleSidebar()" title="Küçült">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>
-    </button>
-    <button class="sb-expand-btn" onclick="toggleSidebar()" title="Genişlet">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
-    </button>
-  </div>
-
-  <!-- NEW TABLE BUTTON -->
-  <div class="sb-new-wrap">
-    <button class="sb-new-btn" onclick="loadTemplate('blank')">
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-      <span>Yeni Tablo</span>
-    </button>
-  </div>
-
-  <!-- SEARCH -->
-  <div class="sb-search-wrap">
-    <div class="sb-search-inner">
-      <svg class="sb-search-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-      </svg>
-      <input id="sidebarSearch" class="sb-search-input" placeholder="Ara..." autocomplete="off" oninput="handleSidebarSearch(this.value)">
-    </div>
-  </div>
-
-  <!-- SCROLLABLE NAV -->
-  <nav class="sb-nav" id="sbNav">
-
-    <!-- SECTION: MY SHEETS -->
-    <div class="sb-section">
-      <div class="sb-section-label">Sayfalarım</div>
-      <div id="sheetListContainer"></div>
-      <button class="sb-add-sheet" onclick="addSheet()">
-        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        <span>Sayfa Ekle</span>
-      </button>
+  <!-- ============ TOP BAR ============ -->
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark"></div>
+      <div class="brand-name">mocksheets<span class="dot">.</span></div>
     </div>
 
-    <div class="sb-divider"></div>
-
-    <!-- SECTION: TOOLS -->
-    <div class="sb-section">
-      <div class="sb-section-label">Araçlar</div>
-
-      <div class="sb-item" data-tooltip="AI Komutları" onclick="focusChatInput()">
-        <span class="sb-item-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>
-        <span class="sb-item-label">AI Komutları</span>
-        <span class="sb-item-badge">Pro</span>
-      </div>
-
-      <div class="sb-item" data-tooltip="PDF Çıkarımı" onclick="openPdfModal()">
-        <span class="sb-item-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span>
-        <span class="sb-item-label">PDF Çıkarımı</span>
-      </div>
-
-      <div class="sb-item" data-tooltip="Geçmiş" onclick="renderVersionHistory && renderVersionHistory()">
-        <span class="sb-item-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><polyline points="12 6 12 12 16 14"/></svg></span>
-        <span class="sb-item-label">Geçmiş</span>
-        <span class="sb-item-count" id="sbHistoryCount"></span>
-      </div>
-
-      <div class="sb-item" data-tooltip="Otomasyonlar" onclick="window.location.href='automations.html'">
-        <span class="sb-item-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span>
-        <span class="sb-item-label">Otomasyonlar</span>
-      </div>
-
-      <div class="sb-item sb-item-expandable open" id="tmplTrigger" data-tooltip="Şablonlar" onclick="toggleSbSection('tmplSection', this)">
-        <span class="sb-item-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg></span>
-        <span class="sb-item-label">Şablonlar</span>
-        <span class="sb-item-count">38</span>
-        <svg class="sb-item-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-
-      <div id="tmplSection" class="sb-sub-section open">
-
-        <div class="sb-tmpl-cat" onclick="toggleTmplCat('cat_finance')">
-          <span>💰 Muhasebe &amp; Finans</span>
-          <svg class="sb-cat-arrow open" id="catarrow_finance" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-        </div>
-        <div class="sb-tmpl-items open" id="cat_finance">
-          <div class="sb-tmpl-item" onclick="loadTemplate('kdv_takip')">🧾 KDV Takibi</div>
-          <div class="sb-tmpl-item" onclick="loadTemplate('gelir_gider')">📊 Gelir &amp; Gider</div>
-          <div class="sb-tmpl-item" onclick="loadTemplate('nakit_akis')">💵 Nakit Akışı</div>
-          <div class="sb-tmpl-item" onclick="loadTemplate('cari_hesap')">🏦 Cari Hesap</div>
-          <div class="sb-tmpl-item" onclick="loadTemplate('banka_mutabakat')">🏧 Banka Mutabakatı</div>
-          <div class="sb-tmpl-item" onclick="loadTemplate('fatura_takip')">🗂️ Fatura Takip <span class="sb-new-badge">YENİ</span></div>
-          <div class="sb-tmpl-item" onclick="loadTemplate('aylik_butce')">📆 Aylık Bütçe Planı <span class="sb-new-badge">YENİ</span></div>
-        </div>
-
-        <div class="sb-tmpl-cat" onclick="toggleTmplCat('cat_hr')">
-          <span>👥 Bordro &amp; İK</span>
-          <svg class="sb-cat-arrow" id="catarrow_hr" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-        </div>
-        <div class="sb-tmpl-items" id="cat_hr">
-          <div class="sb-tmpl-item" onclick="loadTemplate('maas_bordro')">💼 Bordro Tablosu</div>
-          <div class="sb-tmpl-item" onclick="loadTemplate('izin_takip')">🏖️ İzin Takibi</div>
-          <div class="sb-tmpl-item" onclick="loadTemplate('kidem_ihbar')">📋 Kıdem Tazminatı</div>
-          <div class="sb-tmpl-item" onclick="loadTemplate('personel_liste')">👤 Personel Listesi</div>
-          <div class="sb-tmpl-item" onclick="loadTemplate('fazla_mesai')">⏰ Fazla Mesai</div>
-          <div class="sb-tmpl-item" onclick="loadTemplate('ise_alim')">🎯 İşe Alım Süreci <span class="sb-new-badge">YENİ</span></div>
-          <div class="sb-tmpl-item" onclick="loadTemplate('performans_degerlendirme')">⭐ Performans Değerlendirme <span class="sb-new-badge">YENİ</span></div>
-        </div>
-
-        <div class="sb-tmpl-cat" onclick="toggleTmplCat('cat_sales')">
-          <span>📦 Satış &amp; Stok</span>
-          <svg class="sb-cat-arrow" id="catarrow_sales" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-        </div>
-        <div class="sb-tmpl-items" id="cat_sales">
-          <div class="sb-tmpl-item" onclick="loadTemplate('satis_takip')">📈 Satış Takibi</div>
-          <div class="sb-tmpl-item" onclick="loadTemplate('stok_kart')">📦 Stok Kartı</div>
-          <div class="sb-tmpl-item" onclick="loadTemplate('fiyat_listesi')">🏷️ Fiyat Listesi</div>
-          <div class="sb-tmpl-item" onclick="loadTemplate('satis_hedef')">🎯 Satış Hedefi</div>
-          <div class="sb-tmpl-item" onclick="loadTemplate('tedarikci')">🚚 Tedarikçi Takibi</div>
-          <div class="sb-tmpl-item" onclick="loadTemplate('siparis_yonetim')">🛒 Sipariş Yönetimi <span class="sb-new-badge">YENİ</span></div>
-          <div class="sb-tmpl-item" onclick="loadTemplate('depo_envanter')">🏭 Depo Envanter <span class="sb-new-badge">YENİ</span></div>
-        </div>
-
-        <div class="sb-tmpl-cat" onclick="toggleTmplCat('cat_project')">
-          <span>📋 Proje Yönetimi</span>
-          <svg class="sb-cat-arrow" id="catarrow_project" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-        </div>
-        <div class="sb-tmpl-items" id="cat_project">
-          <div class="sb-tmpl-item" onclick="loadTemplate('proje_takvim')">📅 Proje Zaman Çizelgesi</div>
-          <div class="sb-tmpl-item" onclick="loadTemplate('butce_takip')">💰 Bütçe Takibi</div>
-          <div class="sb-tmpl-item" onclick="loadTemplate('risk_matrisi')">⚠️ Risk Matrisi</div>
-          <div class="sb-tmpl-item" onclick="loadTemplate('toplanti_tutanak')">📝 Toplantı Tutanağı</div>
-          <div class="sb-tmpl-item" onclick="loadTemplate('yapilacaklar')">✅ Yapılacaklar Listesi <span class="sb-new-badge">YENİ</span></div>
-          <div class="sb-tmpl-item" onclick="loadTemplate('sprint_backlog')">🚀 Sprint Backlog <span class="sb-new-badge">YENİ</span></div>
-        </div>
-
-        <div class="sb-tmpl-cat" onclick="toggleTmplCat('cat_analytics')">
-          <span>📊 Veri Analizi</span>
-          <svg class="sb-cat-arrow" id="catarrow_analytics" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-        </div>
-        <div class="sb-tmpl-items" id="cat_analytics">
-          <div class="sb-tmpl-item" onclick="loadTemplate('satis_analiz')">📉 Satış Trendi</div>
-          <div class="sb-tmpl-item" onclick="loadTemplate('musteri_analiz')">👥 Müşteri RFM</div>
-          <div class="sb-tmpl-item" onclick="loadTemplate('kpi_dashboard')">🎯 KPI Gösterge Paneli</div>
-          <div class="sb-tmpl-item" onclick="loadTemplate('anket_analiz')">📋 Anket Analizi</div>
-          <div class="sb-tmpl-item" onclick="loadTemplate('urun_karlilik')">📊 Ürün Karlılık Analizi <span class="sb-new-badge">YENİ</span></div>
-          <div class="sb-tmpl-item" onclick="loadTemplate('sikayet_takip')">📢 Müşteri Şikayet Takibi <span class="sb-new-badge">YENİ</span></div>
-        </div>
-
-        <div class="sb-tmpl-cat" onclick="toggleTmplCat('cat_general')">
-          <span>🏢 Genel İşletme</span>
-          <svg class="sb-cat-arrow" id="catarrow_general" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-        </div>
-        <div class="sb-tmpl-items" id="cat_general">
-          <div class="sb-tmpl-item" onclick="loadTemplate('toplanti_takvim')">📅 Toplantı Takvimi</div>
-          <div class="sb-tmpl-item" onclick="loadTemplate('gider_takip')">💳 Gider Takibi</div>
-          <div class="sb-tmpl-item" onclick="loadTemplate('iletisim_listesi')">📞 İletişim Listesi</div>
-          <div class="sb-tmpl-item" onclick="loadTemplate('vardiya_plani')">🕐 Vardiya Planı <span class="sb-new-badge">YENİ</span></div>
-          <div class="sb-tmpl-item" onclick="loadTemplate('arac_takip')">🚗 Araç Takibi <span class="sb-new-badge">YENİ</span></div>
-        </div>
-
-      </div><!-- /tmplSection -->
-
-      <div class="sb-item" data-tooltip="Dışa Aktar" onclick="toggleExportMenu(event)">
-        <span class="sb-item-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span>
-        <span class="sb-item-label">Dışa Aktar</span>
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
-      </div>
-
-      <div class="sb-item sb-item-expandable open" onclick="toggleSbSection('intSection', this)" data-tooltip="Entegrasyonlar">
-        <span class="sb-item-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="2" width="9" height="9" rx="2"/><rect x="13" y="2" width="9" height="9" rx="2"/><rect x="2" y="13" width="9" height="9" rx="2"/><rect x="13" y="13" width="9" height="9" rx="2"/></svg></span>
-        <span class="sb-item-label">Entegrasyonlar</span>
-        <svg class="sb-item-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div id="intSection" class="sb-sub-section open">
-        <div class="sb-int-item">
-          <img src="https://www.gstatic.com/images/branding/product/1x/sheets_2020q4_48dp.png" class="sb-int-logo" alt="Google Sheets">
-          <span class="sb-int-name">Google Sheets</span>
-          <span class="sb-badge-live">bağlı</span>
-        </div>
-        <div class="sb-int-item">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/3/34/Microsoft_Office_Excel_%282019%E2%80%93present%29.svg" class="sb-int-logo" alt="Excel">
-          <span class="sb-int-name">Excel Online</span>
-          <span class="sb-badge-soon">bağlan</span>
-        </div>
-        <div class="sb-int-item">
-          <span class="sb-int-letter" style="background:#003366">LT</span>
-          <span class="sb-int-name">Logo Tiger</span>
-          <span class="sb-badge-soon">yakında</span>
-        </div>
-        <div class="sb-int-item">
-          <span class="sb-int-letter" style="background:#C8102E">M</span>
-          <span class="sb-int-name">Mikro ERP</span>
-          <span class="sb-badge-soon">yakında</span>
-        </div>
-        <div class="sb-int-item">
-          <span class="sb-int-letter" style="background:#FF4A00;font-size:12px;">⚡</span>
-          <span class="sb-int-name">Zapier</span>
-          <span class="sb-badge-live">canlı</span>
-        </div>
-        <div class="sb-int-item">
-          <span class="sb-int-letter" style="background:#4A154B">S</span>
-          <span class="sb-int-name">Slack</span>
-          <span class="sb-badge-soon">yakında</span>
-        </div>
-        <div class="sb-int-item sb-int-item-more" onclick="window.location.href='integrations.html'">
-          <span style="flex:1">Tüm entegrasyonlar</span>
-          <span style="font-size:10px;opacity:0.7">+8</span>
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
-        </div>
-      </div>
-
-    </div><!-- /tools section -->
-
-    <div class="sb-divider"></div>
-
-    <!-- SECTION: PREFERENCES -->
-    <div class="sb-section">
-      <div class="sb-section-label">Tercihler</div>
-
-      <div class="sb-pref-group">
-        <div class="sb-item" data-tooltip="Karanlık Mod" onclick="toggleDarkMode()">
-          <span class="sb-item-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg></span>
-          <span class="sb-item-label">Karanlık Mod</span>
-          <div class="sb-toggle" id="darkToggle"><div class="sb-toggle-thumb"></div></div>
-        </div>
-
-        <div class="sb-pref-divider"></div>
-
-        <div class="sb-item" data-tooltip="Kısayollar" onclick="showKeyboardShortcuts()">
-          <span class="sb-item-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M8 12h.01M12 12h.01M16 12h.01M7 16h10"/></svg></span>
-          <span class="sb-item-label">Kısayollar</span>
-          <span class="sb-item-hint sb-hint-kbd">⌘K</span>
-        </div>
-      </div>
-
-    </div>
-
-  </nav><!-- /sb-nav -->
-
-  <!-- USER PROFILE (bottom) -->
-  <div class="sb-user-wrap">
-    <div class="user-pill" onclick="toggleUserMenu()">
-      <div class="av" id="sbAvatar">U</div>
-      <div class="info">
-        <div class="name" id="sbUserName">User</div>
-        <div class="role" id="sbUserPlan">
-          <span class="sb-plan-dot free" id="sbPlanDot"></span>
-          <span id="sbUserEmail">—</span>
-        </div>
-      </div>
-      <button class="dots sb-user-menu-btn" title="Ayarlar">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>
-      </button>
-    </div>
-    <div id="userDropdown" class="sb-user-dropdown" style="display:none">
-      <div class="sb-user-dropdown-header">
-        <div class="sb-ud-avatar" id="sbUdAvatar">U</div>
-        <div>
-          <div class="sb-ud-name" id="sbUdName">User</div>
-          <div class="sb-ud-email" id="sbUdEmail">—</div>
-        </div>
-      </div>
-      <div class="sb-ud-divider"></div>
-      <button class="sb-ud-item" onclick="window.location.href='index.html#pricing'" id="sbUdUpgrade">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-        Planı Yükselt
-      </button>
-      <button class="sb-ud-item" onclick="showKeyboardShortcuts()">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M8 12h.01M12 12h.01M16 12h.01M7 16h10"/></svg>
-        Klavye Kısayolları
-      </button>
-      <div class="sb-ud-divider"></div>
-      <button class="sb-ud-item danger" onclick="logOut()">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-        Çıkış Yap
-      </button>
-    </div>
-  </div>
-
-</aside>
-
-<!-- MAIN COLUMN -->
-<div class="main-col">
-
-  <!-- TOPBAR NEW -->
-  <div class="topbar-new">
-    <div class="topbar-breadcrumb">
-      <img src="/images/logo.png" alt="" style="height:20px;width:auto;margin-right:6px;vertical-align:middle;opacity:0.85">
-      <span class="topbar-ws">Mocksheets</span>
-      <svg class="topbar-sep-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
-      <span class="topbar-crumb-file" id="topbarFileName">Untitled Spreadsheet</span>
-      <button class="topbar-star" onclick="toggleStarFile && toggleStarFile()">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-      </button>
-      <span class="topbar-crumb-saved" id="topbarSaved"></span>
-    </div>
-
-    <button class="theme-toggle-pill" onclick="toggleDarkMode()">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-      Tema
-    </button>
-
-    <button class="topbar-btn-share" onclick="shareFile && shareFile()">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-      Paylaş
-    </button>
-
-    <div class="split-btn" style="position:relative">
-      <button class="split-btn-main" onclick="downloadFile && downloadFile()">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        İndir
-      </button>
-      <button class="split-btn-caret" id="exportArrowBtn" onclick="toggleExportMenu(event)">
-        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
-      </button>
-    </div>
-  </div>
-
-  <!-- WORKSHEET CARD -->
-  <div class="work">
-
-    <!-- TOOLBAR -->
-    <div id="appToolbar">
-
-      <!-- LEFT: Undo/Redo + File name -->
-      <div class="tb-left">
-        <div class="tb-group">
-          <button class="tb-btn tb-icon-only" onclick="undo()" title="Geri Al (Ctrl+Z)">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-15-6.7L3 13"/></svg>
-          </button>
-          <button class="tb-btn tb-icon-only" onclick="redo && redo()" title="Yeniden Yap (Ctrl+Y)">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 7v6h-6"/><path d="M3 17a9 9 0 0 1 15-6.7L21 13"/></svg>
-          </button>
-        </div>
-        <div class="tb-sep"></div>
-        <div class="tb-file-icon">📊</div>
-        <input
-          id="fileNameInput"
-          class="tb-filename"
-          value="Untitled Spreadsheet"
-          onblur="renameFile(this.value)"
-          onkeydown="if(event.key==='Enter') this.blur()"
-          title="Yeniden adlandırmak için tıkla"
-        />
-        <span class="tb-saved" id="tbSaved">✓ Kaydedildi</span>
-      </div>
-
-      <div class="tb-sep"></div>
-
-      <!-- FONT + SIZE -->
-      <div class="tb-group">
-        <select id="tbFontSelect" class="tb-select" title="Yazı tipi" onchange="applyFont(this.value)">
-          <option value="Geist">Geist</option>
-          <option value="Arial">Arial</option>
-          <option value="Helvetica">Helvetica</option>
-          <option value="Georgia">Georgia</option>
-          <option value="Times New Roman">Times New Roman</option>
-          <option value="Courier New">Courier New</option>
-          <option value="Verdana">Verdana</option>
-        </select>
-        <select id="tbSizeSelect" class="tb-select" title="Boyut" onchange="applyFontSize(this.value)" style="width:52px">
-          <option>8</option><option>9</option><option>10</option><option>11</option>
-          <option selected>12</option><option>14</option><option>16</option><option>18</option>
-          <option>20</option><option>24</option><option>28</option><option>32</option>
-          <option>36</option><option>48</option><option>72</option>
-        </select>
-      </div>
-
-      <div class="tb-sep"></div>
-
-      <!-- FORMATTING: B I U S -->
-      <div class="tb-group">
-        <button id="tbBold" class="tb-btn tb-icon-only tb-format" onclick="toggleFormat('bold')" title="Kalın (Ctrl+B)"><strong>B</strong></button>
-        <button id="tbItalic" class="tb-btn tb-icon-only tb-format" onclick="toggleFormat('italic')" title="İtalik (Ctrl+I)"><em>I</em></button>
-        <button id="tbUnderline" class="tb-btn tb-icon-only tb-format" onclick="toggleFormat('underline')" title="Altı çizili (Ctrl+U)"><u>U</u></button>
-        <button id="tbStrikethrough" class="tb-btn tb-icon-only tb-format" onclick="toggleFormat('strikethrough')" title="Üstü çizili"><s>S</s></button>
-      </div>
-
-      <div class="tb-sep"></div>
-
-      <!-- COLORS -->
-      <div class="tb-group">
-        <button class="tb-btn tb-icon-only" title="Yazı rengi" onclick="document.getElementById('tbTextColorInput').click()" style="flex-direction:column;gap:1px;height:30px;padding:3px 8px">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
-          <span id="tbTextColorSwatch" style="width:14px;height:3px;background:#0f172a;border-radius:1px;display:block"></span>
-        </button>
-        <input type="color" id="tbTextColorInput" value="#0f172a" style="display:none" onchange="setTextColor(this.value);document.getElementById('tbTextColorSwatch').style.background=this.value">
-        <button class="tb-btn tb-icon-only" title="Dolgu rengi" onclick="document.getElementById('tbFillColorInput').click()" style="flex-direction:column;gap:1px;height:30px;padding:3px 8px">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 11h2v3M21 14a2 2 0 1 1-2-2"/><path d="M3 5a2 2 0 0 1 2-2h7l4 4v5"/><path d="M14 17v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8"/></svg>
-          <span id="tbFillColorSwatch" style="width:14px;height:3px;background:#fef08a;border-radius:1px;display:block"></span>
-        </button>
-        <input type="color" id="tbFillColorInput" value="#fef08a" style="display:none" onchange="setCellBgColor(this.value);document.getElementById('tbFillColorSwatch').style.background=this.value">
-      </div>
-
-      <div class="tb-sep"></div>
-
-      <!-- ALIGNMENT -->
-      <div class="tb-group">
-        <button class="tb-btn tb-icon-only" onclick="applyAlign('left')" title="Sola hizala">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></svg>
-        </button>
-        <button class="tb-btn tb-icon-only" onclick="applyAlign('center')" title="Ortala">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="10" x2="6" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="18" y1="18" x2="6" y2="18"/></svg>
-        </button>
-        <button class="tb-btn tb-icon-only" onclick="applyAlign('right')" title="Sağa hizala">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="21" y1="10" x2="7" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="21" y1="18" x2="7" y2="18"/></svg>
-        </button>
-      </div>
-
-      <div class="tb-sep"></div>
-
-      <!-- NUMBER FORMAT -->
-      <div class="tb-group">
-        <button class="tb-btn tb-icon-only" onclick="useChip('TL formatına çevir')" title="Para birimi">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-        </button>
-        <button class="tb-btn tb-icon-only" onclick="useChip('Yüzde formatına çevir')" title="Yüzde">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>
-        </button>
-        <button class="tb-btn tb-icon-only" style="font-size:10px;font-family:'Geist Mono',monospace" onclick="useChip('Ondalık ekle')" title="Ondalık artır">0.0</button>
-      </div>
-
-      <div class="tb-sep"></div>
-
-      <!-- SORT / FILTER / FREEZE -->
-      <div class="tb-group">
-        <button class="tb-btn tb-icon-only" onclick="useChip('A\'dan Z\'ye sırala')" title="Sırala">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18"/><path d="M7 12h10"/><path d="M10 18h4"/></svg>
-        </button>
-        <button class="tb-btn tb-icon-only" onclick="useChip('Filtrele')" title="Filtrele">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
-        </button>
-        <button class="tb-btn tb-icon-only" id="tbFreezeBtn" onclick="toggleFreeze()" title="Satırı dondur">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
-        </button>
-      </div>
-
-      <div class="tb-sep"></div>
-
-      <!-- ADD COL / DELETE -->
-      <div class="tb-group">
-        <button class="tb-btn tb-icon-only" onclick="ctxAction('insertColRight')" title="Sütun ekle">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-        </button>
-        <button class="tb-btn tb-icon-only tb-btn-red" onclick="ctxAction('deleteRow')" title="Satırı sil">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
-        </button>
-      </div>
-
-      <!-- FORMULA BAR -->
-      <div id="formulaBar" class="tb-formula-bar">
-        <input id="cellRef" class="tb-cell-ref" value="A1" readonly title="Seçili hücre">
-        <span class="tb-fx-icon">ƒx</span>
-        <input id="formulaInput" class="tb-formula-input" placeholder="formül veya değer…"
-               onkeydown="if(event.key==='Enter')this.blur()">
-      </div>
-
-      <!-- RIGHT: AI button + sel info -->
-      <div class="tb-right">
-        <span class="tb-sel-info" id="selectionInfo"></span>
-        <button class="tb-ai-btn" onclick="focusChatInput()" title="AI Komut (⌘K)">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="#fff"><path d="M12 1l2.5 6.5L21 10l-6.5 2.5L12 19l-2.5-6.5L3 10l6.5-2.5L12 1z"/></svg>
-          AI <kbd>⌘K</kbd>
-        </button>
-        <button class="tb-btn tb-icon-only" onclick="document.getElementById('fileInput').click()" title="Dosya Yükle">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></svg>
-        </button>
-        <button class="tb-btn tb-icon-only tb-btn-red" onclick="openPdfModal()" title="PDF İçe Aktar">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-        </button>
-      </div>
-
-    </div><!-- /#appToolbar -->
-
-    <!-- GRID -->
-    <div id="gridWrap" oncontextmenu="showCtx(event)">
-      <table id="grid"></table>
-      <div id="emptyState">
-        <div class="es-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
-        </div>
-        <div class="es-title">Henüz veri yok</div>
-        <div class="es-sub">Excel dosyası yükleyin veya örnek veriyle başlayın</div>
-        <div class="es-actions">
-          <button class="es-btn-primary" onclick="triggerUpload()">
-            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-right:5px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-            Excel Yükle
-          </button>
-          <button class="es-btn-ghost" onclick="loadSampleData()">Örnek Veri</button>
-        </div>
-        <div id="esRecent" class="es-recent" style="display:none">
-          <div class="es-recent-title">Son Dosyalar</div>
-          <div id="esRecentList"></div>
-        </div>
-      </div>
-    </div>
-
-    <div id="sheetTabs"></div>
-
-    <!-- STATUS BAR -->
-    <div id="statusBar">
-      <div id="sbLeft">
-        <div class="sb-chip"><span class="sb-chip-label">📍</span> <span class="sb-val" id="sbRef">A1</span></div>
-        <div class="sb-chip" id="sbSelChip" style="display:none"><span class="sb-val" id="sbSelCount">1</span><span class="sb-chip-label"> cell</span></div>
-        <div class="sb-chip" id="sbSumChip" style="display:none"><span class="sb-chip-label">∑</span> <span class="sb-val" id="sbSumVal">0</span></div>
-        <div class="sb-chip" id="sbAvgChip" style="display:none"><span class="sb-chip-label">⌀</span> <span class="sb-val" id="sbAvgVal">0</span></div>
-        <div class="sb-chip" id="sbMinChip" style="display:none"><span class="sb-chip-label">↓</span> <span class="sb-val" id="sbMinVal">0</span></div>
-        <div class="sb-chip" id="sbMaxChip" style="display:none"><span class="sb-chip-label">↑</span> <span class="sb-val" id="sbMaxVal">0</span></div>
-      </div>
-      <div id="sbRight">
-        <span class="sb-info"><span class="sb-val" id="sbFilled">0</span> dolu hücre</span>
-        <span class="sb-info"><span class="sb-val" id="sbRowsInfo">0</span> satır</span>
-        <span id="sbLastAI">Son: —</span>
-        <div id="sbZoom">
-          <button class="zoom-btn" onclick="changeZoom(-10)">−</button>
-          <span id="zoomLabel">100%</span>
-          <button class="zoom-btn" onclick="changeZoom(+10)">+</button>
-        </div>
-      </div>
-      <!-- Legacy IDs for JS backward compatibility -->
-      <span id="stCells" style="display:none"></span>
-      <span id="stSel"   style="display:none"></span>
-      <span id="stSum"   style="display:none"></span>
-      <span id="stAvg"   style="display:none"></span>
-      <span id="stCount" style="display:none"></span>
-    </div>
-
-  </div><!-- /.work -->
-
-  <!-- HIZLI BAŞLANGIÇ -->
-  <div class="below-sheet-section" id="quickStartSection">
-    <div class="bss-header">
-      <span class="bss-title">Hızlı Başlangıç</span>
-      <span class="bss-desc">Hazır şablonlarla hemen başla</span>
-    </div>
-    <div class="qs-grid">
-      <div class="qs-card" onclick="loadTemplate('inventory')">
-        <div class="qs-icon">📦</div>
-        <div class="qs-name">Stok Takip</div>
-        <div class="qs-desc">Ürün ve stok yönetimi</div>
-      </div>
-      <div class="qs-card" onclick="loadTemplate('orders')">
-        <div class="qs-icon">🛒</div>
-        <div class="qs-name">Sipariş Takip</div>
-        <div class="qs-desc">Müşteri sipariş akışı</div>
-      </div>
-      <div class="qs-card" onclick="loadTemplate('customers')">
-        <div class="qs-icon">👥</div>
-        <div class="qs-name">Müşteri Listesi</div>
-        <div class="qs-desc">CRM ve müşteri verileri</div>
-      </div>
-      <div class="qs-card" onclick="loadTemplate('revenue')">
-        <div class="qs-icon">📊</div>
-        <div class="qs-name">Gelir Tablosu</div>
-        <div class="qs-desc">Aylık gelir &amp; gider</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- OTOMASYONLAR -->
-  <div class="below-sheet-section" id="automationsSection">
-    <div class="bss-header">
-      <span class="bss-title">Otomasyonlar</span>
-      <span class="bss-badge">Yakında</span>
-    </div>
-    <div class="auto-list">
-      <div class="auto-card">
-        <div class="auto-status-dot"></div>
-        <div class="auto-info">
-          <div class="auto-name">Düşük stok uyarısı</div>
-          <div class="auto-meta">14 kez çalıştı &middot; Son: 2 saat önce</div>
-        </div>
-        <div class="auto-badge-active">Aktif</div>
-      </div>
-      <div class="auto-card">
-        <div class="auto-status-dot" style="background:var(--muted);box-shadow:none"></div>
-        <div class="auto-info">
-          <div class="auto-name">Haftalık rapor oluşturma</div>
-          <div class="auto-meta">3 kez çalıştı &middot; Pasif</div>
-        </div>
-      </div>
-      <div class="auto-card">
-        <div class="auto-status-dot" style="background:var(--muted);box-shadow:none"></div>
-        <div class="auto-info">
-          <div class="auto-name">Tedarikçi bildirimi</div>
-          <div class="auto-meta">Henüz çalışmadı &middot; Pasif</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-</div><!-- /.main-col -->
-
-<!-- RIGHT PANEL -->
-<aside id="rightPanel" class="right-panel">
-
-  <!-- Header -->
-  <div class="rp-header">
-    <span class="rp-title">AI Asistan</span>
-    <button class="rp-close-btn" onclick="toggleRightPanel()" title="Paneli gizle">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
-    </button>
-  </div>
-
-  <!-- AI CHAT (moved from .main-col, IDs preserved) -->
-  <div id="chat-bar" class="ai-dock rp-chat">
-    <div id="chat-messages"></div>
-    <div id="chat-chips">
-      <span class="chat-chips-label">Öneriler</span>
-      <button class="chat-chip" onclick="useChip('KDV ekle')">💸 KDV ekle</button>
-      <button class="chat-chip" onclick="useChip('fiyata göre sırala')">↕ Tutara göre sırala</button>
-      <button class="chat-chip" onclick="useChip('boş satırları sil')">🗑 Boşları sil</button>
-      <button class="chat-chip" onclick="useChip('aylık rapor oluştur')">📊 Rapor oluştur</button>
-      <button class="chat-chip" onclick="useChip('negatifleri kırmızıya boya')">🎨 Renklendir</button>
-      <button class="chat-chip" onclick="useChip('tekrar edenleri sil')">🔁 Tekrarları sil</button>
-    </div>
-    <div id="chat-input-row">
-      <span id="chat-spark">
-        <img src="/images/logo.png" alt="" class="chat-logo-icon">
+    <div class="crumbs">
+      <span class="home">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 12 3l9 6.5"/><path d="M5 9v11h14V9"/></svg>
+        ÃalÄ±Åma AlanÄ±m
       </span>
-      <input
-        id="chat-input"
-        type="text"
-        placeholder="Bir komut yazın…"
-        autocomplete="off"
-        onkeydown="if(event.key==='Enter'&&!event.shiftKey)sendChatMessage()"
-        oninput="handleChatInput(this.value)"
-        onfocus="expandChat()"
-      />
-      <span class="chat-mode-badge" id="chatCellRef"></span>
-      <kbd class="chat-enter-kbd">↵</kbd>
-      <button id="chat-send" onclick="sendChatMessage()" title="Gönder (Enter)">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      <span class="sep">/</span>
+      <span>TablolarÄ±m</span>
+      <span class="sep">/</span>
+      <span class="current">
+        Stok Takip Tablosu
+        <span class="badge">XLSX</span>
+      </span>
+      <span class="star" title="YÄ±ldÄ±zla">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      </span>
+    </div>
+
+    <div class="top-actions">
+      <div class="cmd">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        Tablo, formÃ¼l veya komut ara
+        <span class="kbd">
+          <span class="kbd-key">â</span>
+          <span class="kbd-key">K</span>
+        </span>
+      </div>
+      <button class="icon-btn" title="YardÄ±m">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
       </button>
-    </div>
-    <div id="chat-progress"></div>
-  </div>
-
-  <!-- Hazır Aksiyonlar -->
-  <div class="rp-section">
-    <span class="rp-section-title">Hazır Aksiyonlar</span>
-    <div class="action-chip-grid">
-      <div class="action-chip-card" onclick="useChip('Veri doğrulama yap')">✅ Veri doğrulama</div>
-      <div class="action-chip-card" onclick="useChip('boş satırları temizle')">🧹 Boşları temizle</div>
-      <div class="action-chip-card" onclick="useChip('tekrar edenleri bul ve göster')">🔍 Yinelenenleri bul</div>
-      <div class="action-chip-card" onclick="useChip('bu veriler için formül öner')">➕ Formül önerileri</div>
-    </div>
-  </div>
-
-  <!-- Son Etkinlikler -->
-  <div class="rp-section">
-    <span class="rp-section-title">Son Etkinlikler</span>
-    <div class="activity-feed" id="activityFeed">
-      <div class="activity-item">
-        <div class="activity-icon">📄</div>
-        <div>
-          <div class="act-label">Tablo yüklendi</div>
-          <div class="act-time">Bugün, 10:42</div>
-        </div>
-      </div>
-      <div class="activity-item">
-        <div class="activity-icon">🤖</div>
-        <div>
-          <div class="act-label">AI komutu çalıştırıldı</div>
-          <div class="act-time">Bugün, 10:38</div>
-        </div>
-      </div>
-      <div class="activity-item">
-        <div class="activity-icon">⬇️</div>
-        <div>
-          <div class="act-label">Excel olarak indirildi</div>
-          <div class="act-time">Dün, 17:15</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-</aside>
-
-</div><!-- /.app-shell -->
-
-<!-- CONTEXT MENU -->
-<div id="ctxMenu">
-  <div class="citem" onclick="ctxAction('cut')">
-    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/></svg>
-    Kes
-  </div>
-  <div class="citem" onclick="ctxAction('copy')">
-    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-    Kopyala
-  </div>
-  <div class="citem" onclick="ctxAction('paste')">
-    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
-    Yapıştır
-  </div>
-  <div class="csep"></div>
-  <div class="citem" onclick="ctxAction('insertRowAbove')">↑ Üste Satır Ekle</div>
-  <div class="citem" onclick="ctxAction('insertRowBelow')">↓ Alta Satır Ekle</div>
-  <div class="citem" onclick="ctxAction('insertColLeft')">← Sola Sütun Ekle</div>
-  <div class="citem" onclick="ctxAction('insertColRight')">→ Sağa Sütun Ekle</div>
-  <div class="csep"></div>
-  <div class="citem danger" onclick="ctxAction('deleteRow')">Satırı Sil</div>
-  <div class="citem danger" onclick="ctxAction('deleteCol')">Sütunu Sil</div>
-  <div class="citem danger" onclick="ctxAction('clearCell')">Hücreyi Temizle</div>
-</div>
-
-<!-- COMMAND PALETTE -->
-<div id="cmdOverlay" onclick="cmdClickOutside(event)">
-  <div id="cmdPanel">
-    <div id="cmdSearchRow">
-      <div id="cmdSearchIcon">
-        <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      </div>
-      <input id="cmdInput" placeholder="Komut çalıştır veya AI'a sor..."
-        oninput="cmdFilter()" onkeydown="cmdKeydown(event)" autocomplete="off" spellcheck="false">
-      <span id="cmdKbd">ESC</span>
-    </div>
-    <div id="cmdResults"></div>
-    <div id="cmdShortcuts">
-      <div class="cmd-sh-title">Klavye Kısayolları</div>
-      <div class="cmd-sh-row"><span>Kaydet</span><span class="cmd-sh-key"><kbd class="cmd-sh-kbd">Ctrl</kbd><kbd class="cmd-sh-kbd">S</kbd></span></div>
-      <div class="cmd-sh-row"><span>Geri Al</span><span class="cmd-sh-key"><kbd class="cmd-sh-kbd">Ctrl</kbd><kbd class="cmd-sh-kbd">Z</kbd></span></div>
-      <div class="cmd-sh-row"><span>Yeniden Yap</span><span class="cmd-sh-key"><kbd class="cmd-sh-kbd">Ctrl</kbd><kbd class="cmd-sh-kbd">Y</kbd></span></div>
-      <div class="cmd-sh-row"><span>Kalın</span><span class="cmd-sh-key"><kbd class="cmd-sh-kbd">Ctrl</kbd><kbd class="cmd-sh-kbd">B</kbd></span></div>
-      <div class="cmd-sh-row"><span>İtalik</span><span class="cmd-sh-key"><kbd class="cmd-sh-kbd">Ctrl</kbd><kbd class="cmd-sh-kbd">I</kbd></span></div>
-      <div class="cmd-sh-row"><span>Bul &amp; Değiştir</span><span class="cmd-sh-key"><kbd class="cmd-sh-kbd">Ctrl</kbd><kbd class="cmd-sh-kbd">F</kbd></span></div>
-      <div class="cmd-sh-row"><span>Komut Paleti</span><span class="cmd-sh-key"><kbd class="cmd-sh-kbd">Ctrl</kbd><kbd class="cmd-sh-kbd">K</kbd></span></div>
-      <div class="cmd-sh-row"><span>AI Asistan</span><span class="cmd-sh-key"><kbd class="cmd-sh-kbd">Ctrl</kbd><kbd class="cmd-sh-kbd">D</kbd></span></div>
-      <div class="cmd-sh-row"><span>Hücreyi Temizle</span><span class="cmd-sh-key"><kbd class="cmd-sh-kbd">Delete</kbd></span></div>
-      <div class="cmd-sh-row"><span>Sonraki Hücre</span><span class="cmd-sh-key"><kbd class="cmd-sh-kbd">Tab</kbd></span></div>
-    </div>
-    <div class="cmd-footer">
-      <span class="cmd-hint"><kbd>↑↓</kbd> Gezin</span>
-      <span class="cmd-hint"><kbd>↵</kbd> Çalıştır</span>
-      <span class="cmd-hint"><kbd>ESC</kbd> Kapat</span>
-    </div>
-  </div>
-</div>
-
-<!-- SHEET CONTEXT MENU -->
-<div id="sheetCtxMenu">
-  <div class="scm-item" id="scmRename" onclick="scmAction('rename')">
-    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-    Yeniden Adlandır
-  </div>
-  <div class="scm-item" onclick="scmAction('duplicate')">
-    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-    Çoğalt
-  </div>
-  <div class="scm-sep"></div>
-  <div class="scm-item danger" onclick="scmAction('delete')">
-    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>
-    Sil
-  </div>
-</div>
-
-<!-- CHART SIDE PANEL -->
-<div id="chartSidePanel">
-  <div id="cspHeader">
-    <div class="csp-title">
-      <span class="csp-title-dot"></span>
-      Grafik Oluştur
-    </div>
-    <button id="cspCloseBtn" onclick="toggleChartBuilder()">
-      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-    </button>
-  </div>
-  <div id="cspBody">
-    <div>
-      <div class="csp-label">Grafik Türü</div>
-      <div class="csp-type-grid">
-        <div class="csp-type-card active" data-type="bar" onclick="cspSelectType('bar',this)">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-          Sütun
-        </div>
-        <div class="csp-type-card" data-type="line" onclick="cspSelectType('line',this)">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-          Çizgi
-        </div>
-        <div class="csp-type-card" data-type="pie" onclick="cspSelectType('pie',this)">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
-          Pasta
-        </div>
-        <div class="csp-type-card" data-type="polarArea" onclick="cspSelectType('polarArea',this)">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
-          Alan
-        </div>
-      </div>
-    </div>
-    <div>
-      <div class="csp-label">Veri Aralığı</div>
-      <input class="csp-input" id="chartRange" placeholder="örn. A1:B10" value="A1:B10">
-      <div class="csp-hint">İlk sütun etiket olarak kullanılır, diğerleri değer</div>
-    </div>
-    <div>
-      <div class="csp-label">Grafik Başlığı</div>
-      <input class="csp-input" id="chartTitle" placeholder="Başlık (isteğe bağlı)">
-    </div>
-    <div>
-      <div class="csp-label">Veri Seti Etiketi</div>
-      <input class="csp-input" id="chartDataLabel" placeholder="örn. Satış, Gelir...">
-    </div>
-  </div>
-  <div id="cspFooter">
-    <button id="cspCreateBtn" onclick="createChart()">
-      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-      Grafik Oluştur
-    </button>
-  </div>
-</div>
-
-<!-- CHART MODAL -->
-<div id="chartModal" onclick="chartModalClickOutside(event)">
-  <div id="chartModalPanel">
-    <div id="chartModalHeader">
-      <span class="chart-modal-dot"></span>
-      <span id="chartModalTitle">Grafik</span>
-      <div id="chartModalTypeSwitcher">
-        <button class="cm-type-btn active" data-t="bar" onclick="cmSwitchType('bar',this)">
-          <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-          Sütun
-        </button>
-        <button class="cm-type-btn" data-t="line" onclick="cmSwitchType('line',this)">
-          <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-          Çizgi
-        </button>
-        <button class="cm-type-btn" data-t="pie" onclick="cmSwitchType('pie',this)">
-          <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
-          Pasta
-        </button>
-        <button class="cm-type-btn" data-t="polarArea" onclick="cmSwitchType('polarArea',this)">
-          <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>
-          Alan
-        </button>
-      </div>
-      <button id="chartModalClose" onclick="closeChartPanel()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      <button class="icon-btn" title="Bildirimler">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+        <span class="dot"></span>
       </button>
-    </div>
-    <div id="chartModalCanvas">
-      <canvas id="myChartCanvas"></canvas>
-    </div>
-  </div>
-</div>
-
-<!-- Legacy stubs (IDs referenced in old JS kept alive invisibly) -->
-<div id="chartBuilderPanel" style="display:none"></div>
-<div id="chartPanel" style="display:none">
-  <div id="chartDragBar"></div>
-  <span id="chartPanelTitle"></span>
-  <span id="chartDot"></span>
-  <div id="chartCanvas"><canvas id="_legacyCanvas"></canvas></div>
-  <div id="chartLivePreviewBadge"></div>
-</div>
-
-<!-- HISTORY PREVIEW MODAL -->
-<div id="historyModal" onclick="historyModalClickOutside(event)">
-  <div id="historyModalPanel">
-    <div id="hmHeader">
-      <div class="hm-title" id="hmTitle">İşlem Önizlemesi</div>
-      <div class="hm-sub" id="hmSub"></div>
-    </div>
-    <div id="hmPreview"></div>
-    <div id="hmFooter">
-      <button class="hm-restore" onclick="restoreHistory()">Geri Yükle</button>
-      <button class="hm-cancel" onclick="closeHistoryModal()">İptal</button>
-    </div>
-  </div>
-</div>
-
-<!-- FILE INPUT -->
-<input type="file" id="fileInput" accept=".xlsx,.xls,.csv" style="display:none" onchange="handleFile(event)">
-
-<!-- CUSTOM TOOLTIP -->
-<div id="customTooltip"></div>
-
-<!-- DROP OVERLAY -->
-<div id="dropOverlay">
-  <div class="drop-text">📂 Dosyayı Buraya Bırakın</div>
-  <div class="drop-sub">.xlsx, .xls, .csv dosyaları desteklenir</div>
-</div>
-
-<!-- TOAST CONTAINER -->
-<div id="toastContainer" class="toast-container"></div>
-
-<!-- FLOATING CELL TOOLBAR -->
-<div id="floatToolbar">
-  <button class="ft-btn" id="ftBold"      title="Kalın"       onclick="toggleFormat('bold')"><b>B</b></button>
-  <button class="ft-btn" id="ftItalic"    title="İtalik"     onclick="toggleFormat('italic')"><i>I</i></button>
-  <button class="ft-btn" id="ftUnderline" title="Altı Çizili"  onclick="toggleFormat('underline')"><u>U</u></button>
-  <div class="ft-sep"></div>
-  <button class="ft-btn" title="Sola Hizala" onclick="applyAlign('left')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="13" y1="18" x2="3" y2="18"/></svg>
-  </button>
-  <button class="ft-btn" title="Ortala" onclick="applyAlign('center')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><line x1="18" y1="10" x2="6" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="18" y1="18" x2="6" y2="18"/></svg>
-  </button>
-  <button class="ft-btn" title="Sağa Hizala" onclick="applyAlign('right')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><line x1="21" y1="10" x2="7" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="21" y1="18" x2="11" y2="18"/></svg>
-  </button>
-  <div class="ft-sep"></div>
-  <input type="color" class="ft-color" title="Yazı rengi" value="#0f172a" onchange="setTextColor(this.value)">
-  <div class="ft-sep"></div>
-  <button class="ft-btn" title="Temizle" onclick="ctxAction('clearCell')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>
-  </button>
-</div>
-
-<!-- RESIZE LINE -->
-<div id="resizeLine"></div>
-
-<!-- ONBOARDING OVERLAY — 2-step Excel connect flow -->
-<div id="onboardOverlay" style="display:none; position:fixed; inset:0; z-index:99999; background:rgba(9,9,11,0.85); backdrop-filter:blur(20px); align-items:center; justify-content:center;">
-
-  <!-- STEP 1: Excel Bağla -->
-  <div id="obStep1" class="ob-premium-panel">
-    <div class="ob-brand"><div class="logo-mark" style="display:inline-flex;align-items:center;gap:8px;"><div style="width:28px;height:28px;flex-shrink:0;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" style="width:100%;height:100%;border-radius:6px;"><rect width="100" height="100" fill="black"/><path d="M 30 65 Q 28 40 50 28 Q 65 22 75 32 L 68 40 Q 60 33 50 37 Q 35 45 36 63 Z" fill="white"/></svg></div><span style="font-weight:700;font-size:16px;color:#ffffff;letter-spacing:-0.3px;">Mocksheets</span></div></div>
-    <h1 class="ob-main-title">Excel dosyanızı bağlayın,<br>gerisini AI halletsin</h1>
-    <p class="ob-main-sub">Formül yok. Makro yok. Sadece ihtiyacınızı yazın.</p>
-
-    <div id="obDropZone" class="ob-dropzone" onclick="document.getElementById('fileInput').click()">
-      <div class="ob-upload-icon">📂</div>
-      <div class="ob-upload-label">Dosyanızı buraya sürükleyin</div>
-      <div class="ob-upload-or">veya</div>
-      <button class="ob-upload-btn" onclick="event.stopPropagation(); document.getElementById('fileInput').click()">
-        📂 Excel Dosyası Seç
+      <button class="btn">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 6 12 2 8 6"/><path d="M12 2v13"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></svg>
+        PaylaÅ
+        <span class="kbd-key" style="margin-left:2px;">â</span>
       </button>
-      <div class="ob-format-badges">
-        <span class="ob-badge">.xlsx</span>
-        <span class="ob-badge">.xls</span>
-        <span class="ob-badge">.csv</span>
-      </div>
-    </div>
-
-    <button class="ob-sample-link" onclick="obUseSample()">
-      Önce örnek veriyle deneyeyim →
-    </button>
-  </div>
-
-  <!-- STEP 2: Başarılı -->
-  <div id="obStep2" class="ob-premium-panel" style="display:none; text-align:center;">
-    <div class="ob-success-circle">
-      <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-        <polyline points="10,24 20,34 38,16" stroke="#22c55e" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" class="ob-check-line"/>
-      </svg>
-    </div>
-    <h2 class="ob-success-title">Bağlandı! ✓</h2>
-    <div class="ob-file-info">
-      <div class="ob-file-name" id="obFileName">—</div>
-      <div class="ob-file-stats" id="obFileStats">—</div>
-    </div>
-    <button class="ob-start-btn" onclick="obFinish()">AI Asistanı Başlat →</button>
-  </div>
-
-</div>
-
-<!-- FILE LOADING OVERLAY -->
-<div id="fileLoadingOverlay" style="display:none;position:fixed;inset:0;z-index:9998;background:rgba(9,9,11,0.72);backdrop-filter:blur(4px);align-items:center;justify-content:center;flex-direction:column;gap:14px;">
-  <div class="file-load-spinner"></div>
-  <div style="color:#e2e2e2;font-size:14px;font-weight:500;letter-spacing:.01em;">Dosya işleniyor...</div>
-</div>
-
-<!-- PWA INSTALL BANNER -->
-<div id="pwaBanner" style="display:none;position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:9999;background:#18181b;border:1px solid #27272a;border-radius:14px;padding:12px 20px;align-items:center;gap:12px;box-shadow:0 8px 32px rgba(0,0,0,0.5);backdrop-filter:blur(12px);white-space:nowrap;">
-  <span style="font-size:14px;color:#e4e4e7;">📱 Mocksheets'i ana ekrana ekle</span>
-  <button onclick="installPWA()" style="background:#f97316;color:#fff;border:none;border-radius:8px;padding:6px 16px;font-size:13px;font-weight:600;cursor:pointer;">Yükle</button>
-  <button onclick="dismissPWA()" style="background:transparent;color:#71717a;border:none;font-size:16px;cursor:pointer;line-height:1;padding:2px 4px;" title="Kapat">✕</button>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<script>
-// ── SUPABASE ─────────────────────────────────────────────────────
-const { createClient: _sbCreate } = supabase;
-const sb = _sbCreate(
-  'https://ogizbfzoywylljvnidak.supabase.co',
-  'sb_publishable_WauaqVsDx_vgHsilyJl0gg_1DvfSIzC'
-);
-
-// ── File system state ─────────────────────────────────────────────
-let currentUser    = null;
-let currentFileId  = null;
-let autoSaveTimer  = null;
-let isSyncing      = false;
-
-// Session guard + init
-sb.auth.getSession().then(({ data }) => {
-  if (!data.session) {
-    location.href = 'auth.html';
-    return;
-  }
-  // Show onboarding overlay only for first-time users
-  if (localStorage.getItem('onboarded') !== 'true') {
-    var ov = document.getElementById('onboardOverlay');
-    if (ov) ov.style.display = 'flex';
-  }
-  // Kullanıcı bilgilerini sidebar'a yaz
-  const user = data.session.user;
-  const name  = (user.user_metadata && user.user_metadata.full_name)
-                  ? user.user_metadata.full_name
-                  : user.email.split('@')[0];
-  const email = user.email;
-  const nameEl   = document.querySelector('.user-name-sb');
-  const roleEl   = document.querySelector('.user-role-sb');
-  const avatarEl = document.querySelector('.avatar');
-  if (nameEl)   nameEl.textContent   = name;
-  if (roleEl)   roleEl.textContent   = email;
-  if (avatarEl) avatarEl.textContent = name.substring(0, 2).toUpperCase();
-
-  // Set current user and boot file system
-  currentUser = user;
-  window.currentUser = user;
-  if (typeof initFileSystem === 'function') initFileSystem();
-
-  // Son açık dosyayı otomatik yükle
-  setTimeout(async () => {
-    try {
-      const lastId = localStorage.getItem('lastFileId');
-      if (lastId && typeof loadFileById === 'function') {
-        console.log('[AutoLoad] Son dosya yükleniyor:', lastId);
-        await loadFileById(lastId);
-      }
-    } catch(e) {
-      console.warn('[AutoLoad] Hata:', e.message);
-    }
-  }, 800);
-});
-
-// SIGNED_OUT event — auth sayfasına yönlendir
-sb.auth.onAuthStateChange(function(event, session) {
-  if (event === 'SIGNED_OUT') location.href = 'auth.html';
-});
-
-// Çıkış fonksiyonu
-async function sbSignOut() {
-  await sb.auth.signOut();
-  location.href = 'auth.html';
-}
-
-// ─────────────────────────────────────────────────────────────────
-
-function toggleFloatingChat() {
-  const p = document.getElementById('chatPanel');
-  if (!p) return;
-  p.style.display = p.style.display === 'none' ? 'flex' : 'none';
-}
-function openFloatingChat() {
-  const p = document.getElementById('chatPanel');
-  if (!p) return;
-  p.style.display = 'flex';
-}
-
-// Drag support
-(function() {
-  const hdr  = document.getElementById('fcHeader');
-  const wrap = document.getElementById('floatingChat');
-  if (!hdr || !wrap) return;
-  let drag = false, sx, sy, or, ob;
-  hdr.addEventListener('mousedown', function(e) {
-    if (e.target.closest('.fc-icon-btn')) return;
-    drag = true;
-    sx = e.clientX; sy = e.clientY;
-    const r = wrap.getBoundingClientRect();
-    or = window.innerWidth  - r.right;
-    ob = window.innerHeight - r.bottom;
-    e.preventDefault();
-  });
-  document.addEventListener('mousemove', function(e) {
-    if (!drag) return;
-    wrap.style.right  = Math.max(0, or - (e.clientX - sx)) + 'px';
-    wrap.style.bottom = Math.max(0, ob - (e.clientY - sy)) + 'px';
-  });
-  document.addEventListener('mouseup', function() { drag = false; });
-}());
-
-// ── ONBOARDING v2 — 2-step Excel connect flow ───
-(function() {
-  var dz = document.getElementById('obDropZone');
-  if (dz) {
-    dz.addEventListener('dragover', function(e) {
-      e.preventDefault();
-      dz.classList.add('ob-drag-active');
-    });
-    dz.addEventListener('dragleave', function() {
-      dz.classList.remove('ob-drag-active');
-    });
-    dz.addEventListener('drop', function(e) {
-      e.preventDefault();
-      dz.classList.remove('ob-drag-active');
-      var file = e.dataTransfer.files[0];
-      if (file) {
-        document.getElementById('fileInput').value = '';
-        handleFileObject(file);
-      }
-    });
-  }
-})();
-
-function obShowStep2(fileName, rows, cols) {
-  document.getElementById('obStep1').style.display = 'none';
-  document.getElementById('obStep2').style.display = '';
-  document.getElementById('obFileName').textContent = fileName || 'Dosya';
-  document.getElementById('obFileStats').textContent = rows + ' satır · ' + cols + ' sütun';
-}
-
-function obFinish() {
-  var overlay = document.getElementById('onboardOverlay');
-  if (overlay) {
-    overlay.style.opacity = '0';
-    overlay.style.transition = 'opacity 0.3s';
-    setTimeout(function() { overlay.style.display = 'none'; }, 320);
-  }
-  localStorage.setItem('onboarded', 'true');
-  if (typeof openFloatingChat === 'function') openFloatingChat();
-}
-
-function obUseSample() {
-  if (typeof loadSampleData === 'function') loadSampleData();
-  obFinish();
-}
-
-function handleFileObject(file) {
-  handleFile({ target: { files: [file] } });
-}
-
-
-// ── PWA: Install banner ──────────────────────────────────────────
-var deferredPrompt;
-window.addEventListener('beforeinstallprompt', function(e) {
-  e.preventDefault();
-  deferredPrompt = e;
-  setTimeout(function() {
-    if (!localStorage.getItem('pwa-dismissed')) {
-      document.getElementById('pwaBanner').style.display = 'flex';
-    }
-  }, 30000);
-});
-
-function installPWA() {
-  if (!deferredPrompt) return;
-  deferredPrompt.prompt();
-  deferredPrompt.userChoice.then(function(choice) {
-    if (choice.outcome === 'accepted' && typeof showToast === 'function')
-      showToast('Uygulama kuruldu! ✓', 'success');
-    document.getElementById('pwaBanner').style.display = 'none';
-    localStorage.setItem('pwa-dismissed', 'true');
-    deferredPrompt = null;
-  });
-}
-
-function dismissPWA() {
-  document.getElementById('pwaBanner').style.display = 'none';
-  localStorage.setItem('pwa-dismissed', 'true');
-}
-
-// ── PWA: IndexedDB queue for offline AI messages ─────────────────
-function queueOfflineMessage(payload) {
-  var req = indexedDB.open('upsheet-sync', 1);
-  req.onupgradeneeded = function(e) {
-    e.target.result.createObjectStore('pending', { keyPath: 'id', autoIncrement: true });
-  };
-  req.onsuccess = function(e) {
-    var db = e.target.result;
-    db.transaction('pending', 'readwrite').objectStore('pending').add({ payload: payload });
-    if ('serviceWorker' in navigator && 'SyncManager' in window) {
-      navigator.serviceWorker.ready.then(function(sw) {
-        sw.sync.register('ai-message-sync');
-      });
-    }
-  };
-}
-</script>
-
-<script src="i18n.js"></script>
-<script src="js/automations.js"></script>
-<script src="js/app.js?v=4"></script>
-
-<!-- Rakip Karşılaştırması Modal -->
-<div id="compareModal" class="compare-modal-overlay"
-     style="display:none;" onclick="closeCompareModal(event)">
-  <div class="compare-modal-box">
-    <div class="compare-modal-header">
-      <h3>📊 Rakip Karşılaştırması</h3>
-      <button class="compare-close-btn" onclick="closeCompareModal()">✕</button>
-    </div>
-    <div class="compare-modal-body">
-      <div class="compare-table-wrapper">
-        <table class="compare-table">
-          <thead>
-            <tr>
-              <th>Özellik</th>
-              <th class="highlight-col">🐸 Mocksheet</th>
-              <th>Excel Copilot</th>
-              <th>SheetAI</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Türkçe komut desteği</td>
-              <td class="highlight-col">✅ Tam</td>
-              <td>⚠️ Kısmi</td>
-              <td>❌ Yok</td>
-            </tr>
-            <tr>
-              <td>Türk muhasebe (KDV, SGK)</td>
-              <td class="highlight-col">✅ Yerleşik</td>
-              <td>❌ Yok</td>
-              <td>❌ Yok</td>
-            </tr>
-            <tr>
-              <td>Ücretsiz başlangıç</td>
-              <td class="highlight-col">✅ Kredi kartı yok</td>
-              <td>❌ Microsoft 365</td>
-              <td>⚠️ Sınırlı</td>
-            </tr>
-            <tr>
-              <td>Kurulum gerektirmez</td>
-              <td class="highlight-col">✅ Tarayıcıda</td>
-              <td>❌ Office kurulumu</td>
-              <td>⚠️ Eklenti</td>
-            </tr>
-            <tr>
-              <td>Otomatik rapor</td>
-              <td class="highlight-col">✅ Tek tık</td>
-              <td>⚠️ Manuel</td>
-              <td>⚠️ Manuel</td>
-            </tr>
-            <tr>
-              <td>Fiyat (aylık)</td>
-              <td class="highlight-col">✅ Ücretsiz / ₺499</td>
-              <td>❌ ₺650+</td>
-              <td>❌ $10+</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="compare-upload-section">
-        <div class="compare-upload-box">
-          <label for="myDataFile" class="upload-box-label">
-            <span class="upload-box-icon">📁</span>
-            <span class="upload-box-title">Benim Verim</span>
-            <span class="upload-box-desc">Excel veya CSV yükleyin</span>
-            <span class="upload-box-btn">Dosya Seç</span>
-          </label>
-          <input type="file" id="myDataFile" accept=".xlsx,.xls,.csv"
-                 style="display:none" onchange="handleCompareFile(this, 'my')">
-          <span id="myDataFileName" class="upload-file-name"></span>
-        </div>
-        <div class="compare-upload-box">
-          <label for="rivalDataFile" class="upload-box-label">
-            <span class="upload-box-icon">🔍</span>
-            <span class="upload-box-title">Rakip Verisi</span>
-            <span class="upload-box-desc">Rakibinizin Excel veya CSV dosyasını yükleyin</span>
-            <span class="upload-box-btn">Dosya Seç</span>
-          </label>
-          <input type="file" id="rivalDataFile" accept=".xlsx,.xls,.csv"
-                 style="display:none" onchange="handleCompareFile(this, 'rival')">
-          <span id="rivalDataFileName" class="upload-file-name"></span>
-        </div>
-      </div>
-      <div class="compare-report-section">
-        <p class="compare-report-desc">Mevcut verinizin otomatik raporunu oluşturun</p>
-        <button class="compare-report-btn" onclick="generateAutoReport(); closeCompareModal();">
-          📋 Otomatik Rapor Oluştur
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<style>
-.compare-modal-overlay {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.5);
-  z-index: 9999; display: flex; align-items: center;
-  justify-content: center; padding: 20px;
-}
-.compare-modal-box {
-  background: white; border-radius: 16px; width: 100%;
-  max-width: 720px; max-height: 85vh; overflow-y: auto;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
-}
-.compare-modal-header {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 20px 24px; border-bottom: 1px solid #E5E7EB;
-}
-.compare-modal-header h3 { font-size: 18px; font-weight: 700; color: #0D0D2B; margin: 0; }
-.compare-close-btn {
-  background: none; border: none; font-size: 18px; cursor: pointer;
-  color: #9CA3AF; padding: 4px 8px; border-radius: 6px; transition: background 0.2s;
-}
-.compare-close-btn:hover { background: #F3F4F6; }
-.compare-modal-body { padding: 24px; display: flex; flex-direction: column; gap: 24px; }
-.compare-table-wrapper { overflow-x: auto; border-radius: 12px; border: 1px solid #E5E7EB; }
-.compare-table { width: 100%; border-collapse: collapse; font-size: 14px; }
-.compare-table th {
-  padding: 12px 16px; font-weight: 700; color: #0D0D2B;
-  background: #F9FAFB; border-bottom: 2px solid #E5E7EB;
-  text-align: center; white-space: nowrap;
-}
-.compare-table th:first-child { text-align: left; }
-.compare-table td {
-  padding: 12px 16px; color: #4B5563;
-  border-bottom: 1px solid #F3F4F6; text-align: center;
-}
-.compare-table td:first-child { text-align: left; font-weight: 500; color: #0D0D2B; }
-.compare-table tr:last-child td { border-bottom: none; }
-.compare-table tr:hover td { background: #FAFAFA; }
-.highlight-col { background: #F0F0FF !important; color: #4F46E5 !important; font-weight: 700 !important; }
-.compare-table th.highlight-col { background: #4F46E5 !important; color: white !important; }
-.compare-report-section {
-  text-align: center; padding: 20px; background: #F9FAFB;
-  border-radius: 12px; border: 1px solid #E5E7EB;
-}
-.compare-report-desc { font-size: 14px; color: #6B7280; margin-bottom: 12px; }
-.compare-report-btn {
-  background: #4F46E5; color: white; border: none; border-radius: 10px;
-  padding: 12px 28px; font-size: 15px; font-weight: 600; cursor: pointer;
-  transition: background 0.2s, transform 0.15s;
-}
-.compare-report-btn:hover { background: #4338CA; transform: translateY(-1px); }
-.compare-upload-section { display:flex; gap:16px; flex-wrap:wrap; }
-.compare-upload-box {
-  flex:1; min-width:200px;
-  border:2px dashed #D1D5DB; border-radius:12px;
-  text-align:center; padding:4px;
-}
-.upload-box-label {
-  display:flex; flex-direction:column; align-items:center;
-  gap:6px; padding:20px 16px; cursor:pointer;
-}
-.upload-box-label:hover { background:#F9FAFB; border-radius:10px; }
-.upload-box-icon { font-size:28px; }
-.upload-box-title { font-weight:700; font-size:14px; color:#0D0D2B; }
-.upload-box-desc { font-size:12px; color:#6B7280; }
-.upload-box-btn {
-  background:#4F46E5; color:white; border-radius:8px;
-  padding:6px 16px; font-size:13px; font-weight:600; margin-top:4px;
-}
-.upload-file-name {
-  display:block; font-size:12px; color:#4F46E5;
-  padding:4px 8px; font-weight:500;
-  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
-}
-@media (max-width: 600px) {
-  .compare-table th, .compare-table td { padding: 8px 10px; font-size: 12px; }
-}
-</style>
-
-<!-- ── FLOATING AI CHAT PANEL ─────────────────── -->
-<div id="floatingChat" style="display:none">
-  <button id="fcBubble" onclick="toggleFloatingChat()" title="AI Asistan">
-    <div class="fc-ping"></div>
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-      <path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.37 5.07L2 22l4.93-1.37C8.42 21.5 10.15 22 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2z" fill="currentColor" opacity=".9"/>
-    </svg>
-  </button>
-  <div id="chatPanel" style="display:none">
-    <div id="fcHeader">
-      <div class="fc-header-left">
-        <div class="fc-avatar-wrap">
-          <div class="fc-avatar">AI</div>
-          <div class="fc-online-dot"></div>
-        </div>
-        <div>
-          <div class="fc-title">Mocksheet AI</div>
-          <div class="fc-subtitle" id="fcSubtitle">Online</div>
-        </div>
-      </div>
-      <div class="fc-header-right">
-        <button class="fc-icon-btn" onclick="clearChat()" title="Sohbeti temizle">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-            <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </button>
-        <button class="fc-icon-btn" onclick="toggleFloatingChat()" title="Kapat">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-            <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          </svg>
-        </button>
-      </div>
-    </div>
-    <div id="chatMsgs"></div>
-    <div class="chips" id="chatChips">
-      <span class="chip" onclick="useChipCmd('B sütununu toplam')">∑ Toplam</span>
-      <span class="chip" onclick="useChipCmd('A-Z sırala')">↕ Sırala</span>
-      <span class="chip" onclick="useChipCmd('Boş satırları sil')">🗑 Temizle</span>
-      <span class="chip" onclick="useChipCmd('Tekrarları kaldır')">✦ Tekrar</span>
-    </div>
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════════════════════ -->
-<!-- PDF IMPORT MODAL                                    -->
-<!-- ═══════════════════════════════════════════════════ -->
-<div id="pdfModal" onclick="pdfModalClickOutside(event)">
-  <div id="pdfModalPanel">
-
-    <div id="pdfModalHeader">
-      <div class="pdf-hdr-dot"></div>
-      <span id="pdfModalTitle">PDF'ten Veri İçe Aktar</span>
-      <button id="pdfModalClose" onclick="closePdfModal()">×</button>
-    </div>
-
-    <!-- ADIM 1: Yükleme -->
-    <div id="pdfStep1" class="pdf-step-wrap">
-      <div id="pdfDropZone"
-           ondragover="pdfDragOver(event)" ondragleave="pdfDragLeave(event)" ondrop="pdfDrop(event)"
-           onclick="document.getElementById('pdfFileInput').click()">
-        <div class="pdf-dz-icon">📄</div>
-        <div class="pdf-dz-title">PDF dosyasını buraya sürükle veya tıkla</div>
-        <div class="pdf-dz-hint">Maksimum 30MB · Fatura, bordro, rapor, banka ekstresi</div>
-        <div class="pdf-dz-btn">📁 Dosya Seç</div>
-      </div>
-      <input type="file" id="pdfFileInput" accept=".pdf,application/pdf" style="display:none" onchange="pdfFileSelected(event)">
-
-      <div id="pdfUploadProgress" style="display:none">
-        <div class="pdf-prog-bar"><div id="pdfProgressFill"></div></div>
-        <div id="pdfProgressLabel">PDF analiz ediliyor...</div>
-      </div>
-      <div id="pdfUploadError" class="pdf-upload-error" style="display:none"></div>
-    </div>
-
-    <!-- ADIM 2: Önizleme ve Seçim -->
-    <div id="pdfStep2" class="pdf-step-wrap" style="display:none">
-      <div id="pdfDocSummary">
-        <span id="pdfDocType" class="pdf-badge"></span>
-        <span id="pdfDocPages" class="pdf-badge pdf-badge-sec"></span>
-        <span id="pdfDocQuality" class="pdf-badge"></span>
-      </div>
-      <div id="pdfDocDesc"></div>
-
-      <div id="pdfWarningsBox" style="display:none">
-        <ul id="pdfWarningsList"></ul>
-      </div>
-
-      <div id="pdfTableSelector" style="display:none">
-        <div class="pdf-sec-label">Hangi tabloyu içe aktarmak istiyorsunuz?</div>
-        <div id="pdfTableList"></div>
-      </div>
-
-      <div id="pdfTablePreview" style="display:none">
-        <div class="pdf-sec-label" style="margin-top:14px">
-          Önizleme <span id="pdfPreviewMeta" style="font-weight:400;text-transform:none;letter-spacing:0;color:#94a3b8"></span>
-        </div>
-        <div id="pdfPreviewScroll">
-          <table id="pdfPreviewTable"></table>
-        </div>
-      </div>
-
-      <div id="pdfNoTableMsg" class="pdf-no-table" style="display:none">
-        Bu belgede tablo bulunamadı. Belge özeti yukarıda gösterilmektedir.
-      </div>
-    </div>
-
-    <div id="pdfModalFooter">
-      <button id="pdfBackBtn" style="display:none" onclick="pdfGoBack()">← Geri</button>
-      <div style="flex:1"></div>
-      <button id="pdfCancelBtn" onclick="closePdfModal()">İptal</button>
-      <button id="pdfImportBtn" style="display:none" onclick="pdfImport()">✓ Tabloya Aktar</button>
-    </div>
-
-  </div>
-</div>
-
-<!-- ── Share Modal ─────────────────────────────────────────── -->
-<div id="shareModal" onclick="shareModalClickOutside(event)">
-  <div id="shareModalPanel">
-
-    <div class="sm-header">
-      <div class="sm-header-left">
-        <div class="sm-icon">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-        </div>
-        <div>
-          <div class="sm-title">Paylaşım &amp; İşbirliği</div>
-          <div class="sm-sub">Arkadaşlarınla birlikte çalış</div>
-        </div>
-      </div>
-      <button class="sm-close" onclick="closeShareModal()" title="Kapat">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      <button class="btn-primary btn">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>
+        Ä°ndir
+        <span class="split"></span>
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
       </button>
-    </div>
-
-    <div class="sm-section">
-      <div class="sm-label">Davet Et</div>
-      <div class="sm-invite-row">
-        <input class="sm-email-input" type="email" placeholder="E-posta adresi girin…" autocomplete="off"/>
-        <select class="sm-role-select">
-          <option>Düzenleyebilir</option>
-          <option>Görüntüleyebilir</option>
-        </select>
-        <button class="sm-invite-btn" onclick="this.textContent='Gönderildi ✓';setTimeout(()=>this.textContent='Davet Et',2000)">Davet Et</button>
+      <div class="avatar-pill">
+        <div class="avatar">ÃC</div>
+        <span class="name">cagan</span>
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--ink-4)"><polyline points="6 9 12 15 18 9"/></svg>
       </div>
     </div>
+  </header>
 
-    <div class="sm-section">
-      <div class="sm-label">Mevcut erişim <span class="sm-badge">3</span></div>
-      <div class="sm-collab-list">
-        <div class="sm-collab-row">
-          <span class="sm-av" style="background:#FFD0B0;color:#7a4a1e">AK</span>
-          <div class="sm-collab-info">
-            <div class="sm-collab-name">Ahmet Kaya</div>
-            <div class="sm-collab-email">ahmet@sirket.com</div>
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar">
+    <div class="ws-switcher">
+      <div class="ws-logo">CN</div>
+      <div class="ws-meta">
+        <span class="ws-name">cnkc.io</span>
+        <span class="ws-plan">KiÅisel Â· Free</span>
+      </div>
+      <svg class="ws-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m8 9 4-4 4 4"/><path d="m16 15-4 4-4-4"/></svg>
+    </div>
+
+    <div class="sidebar-section">ÃalÄ±Åma alanÄ±</div>
+
+    <div class="nav-item">
+      <svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 9h18"/><path d="M9 3v18"/></svg>
+      TablolarÄ±m
+      <span class="count">12</span>
+      <span class="kbd-key">G T</span>
+    </div>
+    <div class="nav-item active">
+      <svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11v1a10 10 0 1 1-9-9.95"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      Son AÃ§Ä±lanlar
+      <span class="count">8</span>
+    </div>
+    <div class="nav-item">
+      <svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      YÄ±ldÄ±zlÄ±
+      <span class="count">3</span>
+    </div>
+    <div class="nav-item">
+      <svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="14" rx="2"/><path d="M3 10h18"/><path d="M8 2v4"/><path d="M16 2v4"/></svg>
+      Åablonlar
+      <span class="count">42</span>
+    </div>
+    <div class="nav-item">
+      <svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      Otomasyonlar
+    </div>
+    <div class="nav-item">
+      <svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.59 13.51 6.83 3.98"/><path d="m15.41 6.51-6.82 3.98"/></svg>
+      Entegrasyonlar
+      <span class="count">5</span>
+    </div>
+
+    <div class="sidebar-section">
+      Son tablolar
+      <span class="add" title="Yeni">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </span>
+    </div>
+
+    <div class="file-row active">
+      <span class="dot"></span>
+      <span class="name">Stok Takip Tablosu</span>
+      <span class="meta">Åimdi</span>
+    </div>
+    <div class="file-row">
+      <span class="dot"></span>
+      <span class="name">MayÄ±s BÃ¼tÃ§e PlanÄ±</span>
+      <span class="meta">2s</span>
+    </div>
+    <div class="file-row">
+      <span class="dot"></span>
+      <span class="name">MÃ¼Återi CRM</span>
+      <span class="meta">dÃ¼n</span>
+    </div>
+    <div class="file-row">
+      <span class="dot"></span>
+      <span class="name">TedarikÃ§i Listesi 2026</span>
+      <span class="meta">3g</span>
+    </div>
+    <div class="file-row">
+      <span class="dot"></span>
+      <span class="name">Q2 SatÄ±Å Raporu</span>
+      <span class="meta">1h</span>
+    </div>
+
+    <div class="sidebar-spacer"></div>
+
+    <div class="upsell">
+      <div class="upsell-eyebrow">Free plan</div>
+      <div class="upsell-title"><em>20</em> / 20 AI komutu kullanÄ±ldÄ±</div>
+      <div class="upsell-sub">Bu ay limitin sÄ±fÄ±rlanmasÄ±na 4 gÃ¼n kaldÄ±</div>
+      <div class="progress"><div></div></div>
+      <div class="progress-meta">
+        <span>kullanÄ±m</span>
+        <span>%100</span>
+      </div>
+      <div class="upsell-cta">
+        <span>Pro'ya yÃ¼kselt</span>
+        <span class="price">$1/ay â</span>
+      </div>
+    </div>
+  </aside>
+
+
+  <!-- ============ MAIN ============ -->
+  <main class="main">
+
+    <!-- File header -->
+    <div class="file-header">
+      <div class="file-title-row">
+        <div class="file-icon">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 3v18"/></svg>
+        </div>
+        <div class="file-title">Stok Takip Tablosu</div>
+        <div class="file-meta">
+          <span class="saved"><span class="pulse"></span> Otomatik kaydedildi</span>
+          <span class="dot-sep">Â·</span>
+          <span>14 sÃ¼tun Â· 0 satÄ±r</span>
+          <span class="dot-sep">Â·</span>
+          <span>Versiyon 3</span>
+        </div>
+        <div class="file-actions">
+          <div class="collab-stack">
+            <div class="collab c1">ÃC</div>
+            <div class="collab c2">MK</div>
+            <div class="collab c3">+2</div>
           </div>
-          <select class="sm-role-mini"><option>Düzenleyebilir</option><option>Görüntüleyebilir</option></select>
+          <button class="btn btn-ghost">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            Yorumlar
+            <span style="color:var(--ink-4); font-size:11px; font-variant-numeric:tabular-nums; margin-left:2px;">3</span>
+          </button>
+          <button class="btn btn-ghost" title="Daha fazla">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+          </button>
         </div>
-        <div class="sm-collab-row">
-          <span class="sm-av" style="background:#BFE5FF;color:#1a4a7a">MT</span>
-          <div class="sm-collab-info">
-            <div class="sm-collab-name">Mehmet Tunç</div>
-            <div class="sm-collab-email">mehmet@sirket.com</div>
-          </div>
-          <select class="sm-role-mini"><option>Düzenleyebilir</option><option>Görüntüleyebilir</option></select>
+      </div>
+
+      <div class="view-tabs">
+        <div class="view-tab active">
+          <svg class="ico" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 3v18"/></svg>
+          Sayfa 1
         </div>
-        <div class="sm-collab-row">
-          <span class="sm-av" style="background:#5B3CFF;color:#fff">SY</span>
-          <div class="sm-collab-info">
-            <div class="sm-collab-name">Selin Yıldız</div>
-            <div class="sm-collab-email">selin@sirket.com</div>
-          </div>
-          <select class="sm-role-mini"><option>Düzenleyebilir</option><option selected>Görüntüleyebilir</option></select>
+        <div class="view-tab">
+          <svg class="ico" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/></svg>
+          Ãzet
+        </div>
+        <div class="view-tab">
+          <svg class="ico" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 16V9"/><path d="M12 16V5"/><path d="M17 16v-5"/></svg>
+          Grafikler
+          <span class="count">2</span>
+        </div>
+        <div class="view-tab">
+          <svg class="ico" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11H5a2 2 0 0 0-2 2v7h4z"/><path d="M14 4h-4v16h4z"/><path d="M19 8h-4v12h4a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2"/></svg>
+          Pano
+        </div>
+        <div class="view-tab" style="margin-left:8px;">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Yeni gÃ¶rÃ¼nÃ¼m
         </div>
       </div>
     </div>
 
-    <div class="sm-section sm-link-section">
-      <div class="sm-label">Paylaşım bağlantısı</div>
-      <div class="sm-link-row">
-        <svg class="sm-link-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-        <input id="shareUrlInput" class="sm-link-input" readonly placeholder="Bağlantı oluşturuluyor…"/>
-        <button class="sm-copy-btn" onclick="copyShareUrl()">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          Kopyala
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <div class="tb-group">
+        <button class="tb-btn" title="Geri al">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-15-6.7L3 13"/></svg>
+        </button>
+        <button class="tb-btn" title="Yinele">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 7v6h-6"/><path d="M3 17a9 9 0 0 1 15-6.7L21 13"/></svg>
         </button>
       </div>
+      <div class="tb-sep"></div>
+
+      <div class="tb-group">
+        <button class="tb-select">
+          <span class="label">Inter</span>
+          <svg class="chev" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <button class="tb-select mono">
+          <span class="label">12</span>
+          <svg class="chev" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+      </div>
+      <div class="tb-sep"></div>
+
+      <div class="tb-group">
+        <button class="tb-btn" title="KalÄ±n"><b style="font-size:13px;">B</b></button>
+        <button class="tb-btn" title="Ä°talik"><i style="font-size:13px; font-family:'Instrument Serif', serif;">I</i></button>
+        <button class="tb-btn" title="AltÄ± Ã§izili"><u style="font-size:13px;">U</u></button>
+        <button class="tb-btn" title="ÃstÃ¼ Ã§izili"><s style="font-size:13px;">S</s></button>
+        <button class="tb-btn" title="Metin rengi" style="flex-direction:column; gap:0; padding-bottom:2px;">
+          <span style="font-size:11px; line-height:1;">A</span>
+          <span style="display:block; width:13px; height:2px; background: var(--brand); margin-top:1px;"></span>
+        </button>
+        <button class="tb-btn" title="Vurgu">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 11-6 6v3h3l6-6m-3-3 4.5-4.5a2.121 2.121 0 0 1 3 3L8 16l-5 1 1-5L13.5 3.5a2.121 2.121 0 0 1 3 3z"/></svg>
+        </button>
+      </div>
+      <div class="tb-sep"></div>
+
+      <div class="tb-group">
+        <button class="tb-btn active" title="Sola hizala">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></svg>
+        </button>
+        <button class="tb-btn" title="Ortala">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="10" x2="6" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="18" y1="18" x2="6" y2="18"/></svg>
+        </button>
+        <button class="tb-btn" title="SaÄa hizala">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" y1="10" x2="7" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="21" y1="18" x2="7" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="tb-sep"></div>
+
+      <div class="tb-group">
+        <button class="tb-btn" title="Para birimi">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </button>
+        <button class="tb-btn" title="YÃ¼zde">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>
+        </button>
+        <button class="tb-btn" title="OndalÄ±k">
+          <span style="font-family:'JetBrains Mono'; font-size:11px;">.0</span>
+        </button>
+      </div>
+      <div class="tb-sep"></div>
+
+      <div class="tb-group">
+        <button class="tb-btn" title="Filtrele">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+        </button>
+        <button class="tb-btn" title="SÄ±rala">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M7 12h10"/><path d="M11 18h2"/></svg>
+        </button>
+        <button class="tb-btn" title="KoÅullu biÃ§imlendirme">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/><path d="M3 9h18"/></svg>
+        </button>
+        <button class="tb-btn" title="Pivot">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        </button>
+        <button class="tb-btn" title="Grafik ekle">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 16V9"/><path d="M12 16V5"/><path d="M17 16v-5"/></svg>
+        </button>
+      </div>
+
+      <div class="tb-spacer"></div>
+
+      <button class="tb-pill">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4"/><path d="m16.24 7.76 2.83-2.83"/><path d="M18 12h4"/><path d="m16.24 16.24 2.83 2.83"/><path d="M12 18v4"/><path d="m7.76 16.24-2.83 2.83"/><path d="M6 12H2"/><path d="m7.76 7.76-4.95-2.83"/></svg>
+        AI ile yaz
+        <span class="kbd-key">â J</span>
+      </button>
     </div>
 
-    <div class="sm-footer">
-      <button class="sm-stop-btn" onclick="stopSharing&&stopSharing();closeShareModal()">Paylaşımı Kaldır</button>
-      <button class="sm-close-btn" onclick="closeShareModal()">Kapat</button>
+    <!-- Formula bar -->
+    <div class="formula-bar">
+      <div class="name-box">
+        <span class="cell">E3</span>
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--ink-5)"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="fx" title="Fonksiyon ekle">Æx</div>
+      <div class="formula-input"><span>= </span>boÅ hÃ¼cre Â· deÄer veya formÃ¼l girin</div>
+      <div class="formula-meta">
+        <span>Sat: 1</span>
+        <span>Sut: 1</span>
+      </div>
     </div>
 
-  </div>
+    <!-- Canvas -->
+    <div class="canvas-wrap">
+      <div class="sheet">
+        <div class="sheet-corner">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <div class="col-headers">
+          <div>A</div><div>B</div><div>C</div><div>D</div>
+          <div>E</div><div>F</div><div>G</div><div>H</div>
+          <div>I</div><div>J</div><div>K</div><div>L</div>
+          <div>M</div><div>N</div>
+        </div>
+        <div class="row-headers">
+          <div>1</div><div>2</div><div>3</div><div>4</div><div>5</div>
+          <div>6</div><div>7</div><div>8</div><div>9</div><div>10</div>
+          <div>11</div><div>12</div><div>13</div><div>14</div><div>15</div>
+          <div>16</div><div>17</div><div>18</div><div>19</div><div>20</div>
+          <div>21</div><div>22</div><div>23</div><div>24</div><div>25</div>
+          <div>26</div><div>27</div><div>28</div>
+        </div>
+
+        <div class="sel-cell"></div>
+
+        <!-- empty state card -->
+        <div class="empty">
+          <div class="empty-art">
+            <div class="plus">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </div>
+          </div>
+          <h2>Bu tablo henÃ¼z <em>boÅ.</em></h2>
+          <p>Bir Excel dosyasÄ± iÃ§e aktarÄ±n, hazÄ±r Åablonla baÅlayÄ±n, ya da AI'a ne tÃ¼r bir tablo istediÄinizi anlatÄ±n â baÅlangÄ±Ã§ verisini sizin iÃ§in kuralÄ±m.</p>
+          <div class="empty-cta">
+            <button class="cta-primary">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              Dosya yÃ¼kle
+            </button>
+            <button class="cta-secondary">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 3v18"/></svg>
+              Åablondan baÅla
+            </button>
+          </div>
+          <div class="empty-hint">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4"/><path d="m16.24 7.76 2.83-2.83"/><path d="M18 12h4"/><path d="m16.24 16.24 2.83 2.83"/><path d="M12 18v4"/><path d="m7.76 16.24-2.83 2.83"/><path d="M6 12H2"/><path d="m7.76 7.76-4.95-2.83"/></svg>
+            HÄ±zlÄ± baÅlangÄ±Ã§ iÃ§in
+            <span class="kbd-key">â</span><span class="kbd-key">J</span>
+            ile AI'a sorun
+          </div>
+        </div>
+      </div>
+
+      <!-- Sheet tabs footer -->
+      <div class="sheet-tabs">
+        <span class="tt-btn">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </span>
+        <div class="stab active">
+          <span class="swatch" style="background: var(--brand);"></span>
+          Stok
+          <svg class="chev" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="stab">
+          <span class="swatch" style="background: var(--amber);"></span>
+          TedarikÃ§i
+        </div>
+        <div class="stab">
+          <span class="swatch" style="background: var(--violet);"></span>
+          SipariÅ
+        </div>
+        <div class="stab">
+          <span class="swatch" style="background: var(--blue);"></span>
+          Ãzet
+        </div>
+        <div class="add">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Yeni sayfa
+        </div>
+
+        <div class="right">
+          <div class="zoom">
+            <span class="tt-btn">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </span>
+            <span class="level">100%</span>
+            <span class="tt-btn">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ BELOW CANVAS ============ -->
+    <div class="below">
+
+      <!-- HÄ±zlÄ± BaÅlangÄ±Ã§ -->
+      <section data-screen-label="01 HÄ±zlÄ± BaÅlangÄ±Ã§">
+        <div class="section-head">
+          <h3>HÄ±zlÄ± BaÅlangÄ±Ã§</h3>
+          <span class="sub">HazÄ±r Åablonlardan birini seÃ§in â verisi ve formÃ¼lleri ile birlikte gelir</span>
+          <span class="link">
+            TÃ¼m ÅablonlarÄ± gÃ¶r
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </span>
+        </div>
+
+        <div class="tpl-grid">
+
+          <div class="tpl">
+            <div class="tpl-head">
+              <div class="tpl-ico brand">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+              </div>
+              <span class="tpl-tag">42 sÃ¼tun</span>
+            </div>
+            <div class="tpl-name">Stok Takip</div>
+            <div class="tpl-desc">SKU, stok seviyesi, depo lokasyonu ve dÃ¼ÅÃ¼k stok uyarÄ±larÄ±</div>
+            <div class="tpl-foot">
+              <span class="cols">14 Ã¶rnek satÄ±r</span>
+              <span class="dot-sep">Â·</span>
+              <span>3 formÃ¼l</span>
+              <span class="use">Kullan
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+              </span>
+            </div>
+          </div>
+
+          <div class="tpl">
+            <div class="tpl-head">
+              <div class="tpl-ico amber">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+              </div>
+              <span class="tpl-tag">28 sÃ¼tun</span>
+            </div>
+            <div class="tpl-name">SipariÅ Takip</div>
+            <div class="tpl-desc">SipariÅ no, mÃ¼Återi, durum, kargo entegrasyonu ve fatura</div>
+            <div class="tpl-foot">
+              <span class="cols">10 Ã¶rnek satÄ±r</span>
+              <span class="dot-sep">Â·</span>
+              <span>Otomasyonlu</span>
+              <span class="use">Kullan
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+              </span>
+            </div>
+          </div>
+
+          <div class="tpl">
+            <div class="tpl-head">
+              <div class="tpl-ico violet">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              </div>
+              <span class="tpl-tag">18 sÃ¼tun</span>
+            </div>
+            <div class="tpl-name">MÃ¼Återi Listesi</div>
+            <div class="tpl-desc">CRM ile senkron, lead aÅamalarÄ± ve son temas takibi</div>
+            <div class="tpl-foot">
+              <span class="cols">25 Ã¶rnek satÄ±r</span>
+              <span class="dot-sep">Â·</span>
+              <span>HubSpot</span>
+              <span class="use">Kullan
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+              </span>
+            </div>
+          </div>
+
+          <div class="tpl">
+            <div class="tpl-head">
+              <div class="tpl-ico blue">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 16V9"/><path d="M12 16V5"/><path d="M17 16v-5"/></svg>
+              </div>
+              <span class="tpl-tag">22 sÃ¼tun</span>
+            </div>
+            <div class="tpl-name">Gelir Tablosu</div>
+            <div class="tpl-desc">AylÄ±k P&amp;L, kategori bazlÄ± gelir &amp; gider, marj analizi</div>
+            <div class="tpl-foot">
+              <span class="cols">12 ay Ã 8 kategori</span>
+              <span class="use">Kullan
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+              </span>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Otomasyonlar -->
+      <section data-screen-label="02 Otomasyonlar">
+        <div class="section-head">
+          <h3>Otomasyonlar</h3>
+          <span class="sub">Bu tabloya baÄlÄ± tetikleyiciler ve gÃ¶revler</span>
+          <span class="link">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Yeni otomasyon
+          </span>
+        </div>
+
+        <div class="autom-card">
+          <div class="autom-toolbar">
+            <span class="autom-filter active">TÃ¼mÃ¼ <span class="num">3</span></span>
+            <span class="autom-filter">Aktif <span class="num">1</span></span>
+            <span class="autom-filter">Pasif <span class="num">2</span></span>
+            <span class="autom-filter">Hata <span class="num">0</span></span>
+            <div class="right">
+              <span class="autom-filter">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+                Filtre
+              </span>
+              <span class="autom-filter">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M7 12h10"/><path d="M11 18h2"/></svg>
+                Son Ã§alÄ±Åma
+              </span>
+            </div>
+          </div>
+
+          <div class="autom-row">
+            <div class="autom-ico brand" style="background: var(--brand-soft); color: var(--brand); border-color: var(--brand-line);">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+            </div>
+            <div class="autom-name">
+              <div class="autom-title-row">
+                <span class="autom-title">DÃ¼ÅÃ¼k stok uyarÄ±sÄ±</span>
+                <span class="badge-status active"><span class="pip"></span> Aktif</span>
+              </div>
+              <div class="autom-desc">Stok &lt; 20 olduÄunda Slack #ops kanalÄ±na bildirim gÃ¶nder</div>
+            </div>
+            <div class="autom-trigger">
+              <span class="label">Tetikleyici</span>
+              <span class="val">on_change(stok)</span>
+            </div>
+            <div class="autom-runs">
+              <span class="label">ÃalÄ±Åma</span>
+              <span class="val"><b>14</b> Â· son 2 sa Ã¶nce</span>
+            </div>
+            <div class="switch on"></div>
+            <div class="more">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+            </div>
+          </div>
+
+          <div class="autom-row">
+            <div class="autom-ico amber" style="background: var(--amber-soft); color: oklch(52% 0.12 75); border-color: oklch(88% 0.05 80);">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>
+            </div>
+            <div class="autom-name">
+              <div class="autom-title-row">
+                <span class="autom-title">HaftalÄ±k rapor oluÅturma</span>
+                <span class="badge-status paused"><span class="pip"></span> Pasif</span>
+              </div>
+              <div class="autom-desc">Her Pazartesi 09:00'da PDF + Excel Ã¶zeti e-posta ile yolla</div>
+            </div>
+            <div class="autom-trigger">
+              <span class="label">Tetikleyici</span>
+              <span class="val">cron(0 9 * * 1)</span>
+            </div>
+            <div class="autom-runs">
+              <span class="label">ÃalÄ±Åma</span>
+              <span class="val"><b>3</b> Â· son 1 hf Ã¶nce</span>
+            </div>
+            <div class="switch"></div>
+            <div class="more">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+            </div>
+          </div>
+
+          <div class="autom-row">
+            <div class="autom-ico violet" style="background: var(--violet-soft); color: var(--violet); border-color: oklch(88% 0.04 295);">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            </div>
+            <div class="autom-name">
+              <div class="autom-title-row">
+                <span class="autom-title">TedarikÃ§i bildirimi</span>
+                <span class="badge-status draft"><span class="pip"></span> Taslak</span>
+              </div>
+              <div class="autom-desc">Yeni sipariÅ oluÅturulduÄunda tedarikÃ§iye otomatik e-posta</div>
+            </div>
+            <div class="autom-trigger">
+              <span class="label">Tetikleyici</span>
+              <span class="val">on_insert(siparis)</span>
+            </div>
+            <div class="autom-runs">
+              <span class="label">ÃalÄ±Åma</span>
+              <span class="val" style="color: var(--ink-4);">â hiÃ§ Ã§alÄ±ÅmadÄ±</span>
+            </div>
+            <div class="switch"></div>
+            <div class="more">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+            </div>
+          </div>
+
+          <div class="autom-foot">
+            <span>Bu ay <b style="color: var(--ink);">17 Ã§alÄ±Åma</b> Â· ortalama %98 baÅarÄ± oranÄ±</span>
+            <span class="sep">Â·</span>
+            <span class="cta">
+              Otomasyon geÃ§miÅi
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Kaynaklar -->
+      <section data-screen-label="03 Kaynaklar">
+        <div class="section-head">
+          <h3>Veri kaynaklarÄ±</h3>
+          <span class="sub">Bu tabloyu canlÄ± bir veri kaynaÄÄ±na baÄlayÄ±n</span>
+        </div>
+        <div class="resources">
+          <div class="resource">
+            <div class="resource-ico">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/></svg>
+            </div>
+            <div class="resource-meta">
+              <span class="resource-title">PostgreSQL baÄla</span>
+              <span class="resource-desc">VeritabanÄ± sorgusunu canlÄ± sÃ¼tun olarak ekle</span>
+            </div>
+            <div class="resource-arrow">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </div>
+          <div class="resource">
+            <div class="resource-ico">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 3v18"/></svg>
+            </div>
+            <div class="resource-meta">
+              <span class="resource-title">Google Sheets iÃ§e aktar</span>
+              <span class="resource-desc">Her 15 dakikada bir senkron â iki yÃ¶nlÃ¼</span>
+            </div>
+            <div class="resource-arrow">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </div>
+          <div class="resource">
+            <div class="resource-ico">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+            </div>
+            <div class="resource-meta">
+              <span class="resource-title">REST API endpoint</span>
+              <span class="resource-desc">Webhook + auth ile JSON dataset Ã§ek</span>
+            </div>
+            <div class="resource-arrow">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+
+  <!-- ============ RIGHT RAIL ============ -->
+  <aside class="rail">
+    <div class="rail-tabs">
+      <div class="rail-tab active">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4"/><path d="m16.24 7.76 2.83-2.83"/><path d="M18 12h4"/><path d="m12 18 0 4"/><path d="m7.76 16.24-2.83 2.83"/></svg>
+        Asistan
+        <span class="pip">BETA</span>
+      </div>
+      <div class="rail-tab">
+        Aksiyonlar
+        <span class="count">4</span>
+      </div>
+      <div class="rail-tab">Etkinlik</div>
+    </div>
+
+    <div class="rail-body">
+
+      <!-- AI Hero -->
+      <div class="ai-hero">
+        <div class="ai-head">
+          <div class="ai-icon">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4"/><path d="m16.24 7.76 2.83-2.83"/><path d="M18 12h4"/><path d="m12 18 0 4"/><path d="m7.76 16.24-2.83 2.83"/></svg>
+          </div>
+          <div class="ai-title">Mocksheets Asistan</div>
+          <span class="ai-status">
+            <span class="dot"></span> BaÄlÄ±
+          </span>
+        </div>
+
+        <div class="ai-suggest">Ãnerilen istemler</div>
+        <div class="chip-row">
+          <span class="chip">
+            <svg class="ico" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            DÃ¼ÅÃ¼k stok iÃ§in uyarÄ± oluÅtur
+          </span>
+          <span class="chip">
+            <svg class="ico" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m7 12 4-4 4 4 5-5"/></svg>
+            AylÄ±k satÄ±Å trendini Ã¶zetle
+          </span>
+          <span class="chip">
+            <svg class="ico" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/></svg>
+            SÃ¼tun baÅlÄ±klarÄ± oluÅtur
+          </span>
+        </div>
+
+        <div class="ai-input">
+          <textarea rows="2" placeholder="Tabloya ne yapmak istersin? Ãrn: A:F arasÄ±na haftalÄ±k satÄ±Å verisi ekleâ¦"></textarea>
+          <div class="ai-input-foot">
+            <span class="ai-tool" title="Dosya ekle">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+            </span>
+            <span class="ai-tool" title="HÃ¼cre referansla">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 3v18"/></svg>
+            </span>
+            <span class="ai-model">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4"/><path d="m16.24 7.76 2.83-2.83"/><path d="M18 12h4"/><path d="m12 18 0 4"/><path d="m7.76 16.24-2.83 2.83"/></svg>
+              Sonnet 4.5
+              <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </span>
+            <span class="ai-send">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick actions card -->
+      <div class="card">
+        <div class="card-head">
+          <span class="card-title">HÄ±zlÄ± Aksiyonlar</span>
+          <span class="pip">4</span>
+          <span class="more">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+          </span>
+        </div>
+        <div class="action-list">
+          <div class="action-item">
+            <div class="action-icon brand">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div class="action-body">
+              <div class="t">Veri DoÄrulama <span class="kbd-key">ââ§V</span></div>
+              <div class="d">HatalÄ± tip, eksik alan, kural ihlallerini bul</div>
+            </div>
+            <div class="action-go">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </div>
+          <div class="action-item">
+            <div class="action-icon amber">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="m6 6 1 13a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-13"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+            </div>
+            <div class="action-body">
+              <div class="t">BoÅluklarÄ± Temizle</div>
+              <div class="d">BoÅ satÄ±r + tekrarlÄ± whitespace karakterleri kaldÄ±r</div>
+            </div>
+            <div class="action-go">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </div>
+          <div class="action-item">
+            <div class="action-icon violet">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            </div>
+            <div class="action-body">
+              <div class="t">Yinelenenleri Bul</div>
+              <div class="d">SKU, e-posta veya seÃ§ili sÃ¼tunda kopyalarÄ± iÅaretle</div>
+            </div>
+            <div class="action-go">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </div>
+          <div class="action-item">
+            <div class="action-icon blue">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="m5 12 7-7 7 7"/></svg>
+            </div>
+            <div class="action-body">
+              <div class="t">FormÃ¼l Ãnerileri</div>
+              <div class="d">SeÃ§ili sÃ¼tun iÃ§in akÄ±llÄ± formÃ¼l + Ã¶rnek deÄer</div>
+            </div>
+            <div class="action-go">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </div>
+        </div>
+        <div class="card-foot">
+          TÃ¼m araÃ§larÄ± aÃ§
+          <svg class="arrow" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </div>
+      </div>
+
+      <!-- Activity card -->
+      <div class="card">
+        <div class="card-head">
+          <span class="card-title">Etkinlik</span>
+          <span class="more">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+          </span>
+        </div>
+        <div class="activity">
+          <div class="act-item">
+            <div class="act-avatar a1">ÃC</div>
+            <div class="act-msg"><b>Sen</b> tabloyu oluÅturdun Â· <span class="tag">Stok_Takip.xlsx</span></div>
+            <div class="act-time">2 dk</div>
+          </div>
+          <div class="act-item">
+            <div class="act-avatar sys">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1z"/></svg>
+            </div>
+            <div class="act-msg"><b>DÃ¼ÅÃ¼k stok</b> otomasyonu Ã§alÄ±ÅtÄ± Â· <span class="tag">trigger:cron</span></div>
+            <div class="act-time">5 dk</div>
+          </div>
+          <div class="act-item">
+            <div class="act-avatar a2">MK</div>
+            <div class="act-msg"><b>Mert K.</b> tabloyu yorum modunda gÃ¶rÃ¼ntÃ¼ledi</div>
+            <div class="act-time">38 dk</div>
+          </div>
+          <div class="act-item">
+            <div class="act-avatar sys">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            </div>
+            <div class="act-msg">HaftalÄ±k rapor oluÅturuldu</div>
+            <div class="act-time">1 sa</div>
+          </div>
+        </div>
+        <div class="card-foot">
+          TÃ¼m etkinlikleri gÃ¶r
+          <svg class="arrow" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+
+  <!-- ============ STATUS BAR ============ -->
+  <footer class="statusbar">
+    <span class="status-item"><span class="dot ok"></span> <b>BaÄlÄ±</b> Â· gerÃ§ek zamanlÄ± eÅitleme</span>
+    <span class="status-item"><span class="dot idle"></span> SeÃ§im: <b>E3</b></span>
+    <span class="status-item">Toplam: <b>â</b></span>
+    <span class="status-item">Ortalama: <b>â</b></span>
+    <span class="status-item">SayÄ±: <b>0</b></span>
+    <span class="status-spacer"></span>
+    <span class="status-item">UTF-8</span>
+    <span class="status-item">TR Â· TÃ¼rkÃ§e</span>
+    <span class="status-item">v3.214</span>
+    <span class="status-item">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+      Geri bildirim
+    </span>
+  </footer>
+
 </div>
-
-<script>
-(function() {
-  var logos = document.querySelectorAll('.tb-int-logo');
-  if (!logos.length) return;
-  var idx = 0;
-  function showNext() {
-    logos.forEach(function(l) { l.classList.remove('active'); });
-    logos[idx].classList.add('active');
-    idx = (idx + 1) % logos.length;
-  }
-  showNext();
-  setInterval(showNext, 2000);
-})();
-</script>
-
-<!-- Export dropdown — body'e taşındı, toolbar overflow/stacking context'inden kaçınmak için -->
-<div id="export-dropdown">
-  <div class="exp-header">İndir</div>
-  <button class="exp-item" onclick="downloadFile()">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
-    <span>Excel olarak indir</span><small>.xlsx</small>
-  </button>
-  <button class="exp-item" onclick="downloadCSV()">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-    <span>CSV olarak indir</span><small>.csv</small>
-  </button>
-  <div id="exp-integrations-section"></div>
-</div>
-
-<script>
-(function(){
-  function syncTopbar(){
-    var fi = document.getElementById('fileNameInput');
-    var tn = document.getElementById('topbarFileName');
-    if(fi && tn) tn.textContent = fi.value || 'Yeni Tablo';
-  }
-  var fi = document.getElementById('fileNameInput');
-  if(fi){
-    fi.addEventListener('input', syncTopbar);
-    fi.addEventListener('change', syncTopbar);
-    syncTopbar();
-  }
-  var tb = document.getElementById('tbSaved');
-  var ts = document.getElementById('topbarSaved');
-  if(tb && ts){
-    var obs = new MutationObserver(function(){
-      ts.textContent = tb.classList.contains('visible') ? '• kaydedildi' : '';
-    });
-    obs.observe(tb, {attributes:true,attributeFilter:['class']});
-  }
-  setTimeout(syncTopbar, 800);
-})();
-</script>
-
-<script>
-// ── Share Modal helpers ──────────────────────────────────────
-window.showShareModal = function(shareUrl) {
-  var inp = document.getElementById('shareUrlInput');
-  if (inp) inp.value = shareUrl;
-  var m = document.getElementById('shareModal');
-  if (m) m.classList.add('open');
-};
-function closeShareModal() {
-  var m = document.getElementById('shareModal');
-  if (m) m.classList.remove('open');
-}
-function shareModalClickOutside(e) {
-  if (e.target.id === 'shareModal') closeShareModal();
-}
-function copyShareUrl() {
-  var inp = document.getElementById('shareUrlInput');
-  if (!inp || !inp.value) return;
-  var btn = document.querySelector('.sm-copy-btn');
-  if (navigator.clipboard) {
-    navigator.clipboard.writeText(inp.value)
-      .then(function() {
-        if (typeof toast === 'function') toast('Bağlantı kopyalandı ✓', 'ok');
-        if (btn) { btn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Kopyalandı'; setTimeout(function(){ btn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Kopyala'; }, 2000); }
-      })
-      .catch(function() { inp.select(); document.execCommand('copy'); if (typeof toast === 'function') toast('Kopyalandı ✓', 'ok'); });
-  } else {
-    inp.select(); document.execCommand('copy');
-    if (typeof toast === 'function') toast('Kopyalandı ✓', 'ok');
-  }
-}
-document.addEventListener('keydown', function(e) {
-  if (e.key === 'Escape') {
-    var m = document.getElementById('shareModal');
-    if (m && m.classList.contains('open')) closeShareModal();
-  }
-});
-</script>
-
-<script>
-function toggleRightPanel() {
-  document.querySelector('.app-shell').classList.toggle('right-collapsed');
-}
-</script>
 </body>
 </html>
