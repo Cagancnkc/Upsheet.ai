@@ -6160,7 +6160,8 @@ function updateSidebarUser() {
     const session = JSON.parse(localStorage.getItem(key));
     const email = session?.user?.email || '';
     if (!email) return;
-    const name = email.split('@')[0];
+    const meta = session?.user?.user_metadata || {};
+    const name = meta.full_name || meta.name || email.split('@')[0];
     const initial = name[0].toUpperCase();
 
     const avatar = document.getElementById('sbAvatar');
