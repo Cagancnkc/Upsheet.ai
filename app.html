@@ -377,6 +377,7 @@
         </div>
 
         <div class="sel-cell"></div>
+        <div class="grid-body" id="grid-body"></div>
 
         <!-- empty state card -->
         <div class="empty">
@@ -707,18 +708,6 @@
 
   <!-- ============ RIGHT RAIL ============ -->
   <aside class="rail">
-    <div class="rail-tabs">
-      <div class="rail-tab active">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4"/><path d="m16.24 7.76 2.83-2.83"/><path d="M18 12h4"/><path d="m12 18 0 4"/><path d="m7.76 16.24-2.83 2.83"/></svg>
-        Asistan
-        <span class="pip">BETA</span>
-      </div>
-      <div class="rail-tab">
-        Aksiyonlar
-        <span class="count">4</span>
-      </div>
-      <div class="rail-tab">Etkinlik</div>
-    </div>
 
     <div class="rail-body">
 
@@ -726,7 +715,7 @@
       <div class="ai-hero">
         <div class="ai-head">
           <div class="ai-icon">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4"/><path d="m16.24 7.76 2.83-2.83"/><path d="M18 12h4"/><path d="m12 18 0 4"/><path d="m7.76 16.24-2.83 2.83"/></svg>
+            <img src="images/logo-icon.svg" style="width:14px;height:14px;display:block;" />
           </div>
           <div class="ai-title">Mocksheets Asistan</div>
           <span class="ai-status">
@@ -734,24 +723,10 @@
           </span>
         </div>
 
-        <div class="ai-suggest">Önerilen istemler</div>
-        <div class="chip-row">
-          <span class="chip">
-            <svg class="ico" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-            Düşük stok için uyarı oluştur
-          </span>
-          <span class="chip">
-            <svg class="ico" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m7 12 4-4 4 4 5-5"/></svg>
-            Aylık satış trendini özetle
-          </span>
-          <span class="chip">
-            <svg class="ico" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/></svg>
-            Sütun başlıkları oluştur
-          </span>
-        </div>
+        <div class="ai-thread" id="ai-thread"></div>
 
         <div class="ai-input">
-          <textarea rows="2" placeholder="Tabloya ne yapmak istersin? Örn: A:F arasına haftalık satış verisi ekle…"></textarea>
+          <textarea rows="3" placeholder="Tabloya ne yapmak istersin? Örn: A:F arasına haftalık satış verisi ekle…"></textarea>
           <div class="ai-input-foot">
             <span class="ai-tool" title="Dosya ekle">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
@@ -769,112 +744,25 @@
             </span>
           </div>
         </div>
-      </div>
 
-      <!-- Quick actions card -->
-      <div class="card">
-        <div class="card-head">
-          <span class="card-title">Hızlı Aksiyonlar</span>
-          <span class="pip">4</span>
-          <span class="more">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+        <div class="ai-suggest">Önerilen istemler</div>
+        <div class="chip-row">
+          <span class="chip">
+            <svg class="ico" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            Düşük stok için uyarı oluştur
           </span>
-        </div>
-        <div class="action-list">
-          <div class="action-item">
-            <div class="action-icon brand">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-            </div>
-            <div class="action-body">
-              <div class="t">Veri Doğrulama <span class="kbd-key">⌘⇧V</span></div>
-              <div class="d">Hatalı tip, eksik alan, kural ihlallerini bul</div>
-            </div>
-            <div class="action-go">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-            </div>
-          </div>
-          <div class="action-item">
-            <div class="action-icon amber">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="m6 6 1 13a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-13"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
-            </div>
-            <div class="action-body">
-              <div class="t">Boşlukları Temizle</div>
-              <div class="d">Boş satır + tekrarlı whitespace karakterleri kaldır</div>
-            </div>
-            <div class="action-go">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-            </div>
-          </div>
-          <div class="action-item">
-            <div class="action-icon violet">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-            </div>
-            <div class="action-body">
-              <div class="t">Yinelenenleri Bul</div>
-              <div class="d">SKU, e-posta veya seçili sütunda kopyaları işaretle</div>
-            </div>
-            <div class="action-go">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-            </div>
-          </div>
-          <div class="action-item">
-            <div class="action-icon blue">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="m5 12 7-7 7 7"/></svg>
-            </div>
-            <div class="action-body">
-              <div class="t">Formül Önerileri</div>
-              <div class="d">Seçili sütun için akıllı formül + örnek değer</div>
-            </div>
-            <div class="action-go">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-            </div>
-          </div>
-        </div>
-        <div class="card-foot">
-          Tüm araçları aç
-          <svg class="arrow" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          <span class="chip">
+            <svg class="ico" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m7 12 4-4 4 4 5-5"/></svg>
+            Aylık satış trendini özetle
+          </span>
+          <span class="chip">
+            <svg class="ico" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/></svg>
+            Sütun başlıkları oluştur
+          </span>
         </div>
       </div>
 
-      <!-- Activity card -->
-      <div class="card">
-        <div class="card-head">
-          <span class="card-title">Etkinlik</span>
-          <span class="more">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
-          </span>
-        </div>
-        <div class="activity">
-          <div class="act-item">
-            <div class="act-avatar a1">ÇC</div>
-            <div class="act-msg"><b>Sen</b> tabloyu oluşturdun · <span class="tag">Stok_Takip.xlsx</span></div>
-            <div class="act-time">2 dk</div>
-          </div>
-          <div class="act-item">
-            <div class="act-avatar sys">
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1z"/></svg>
-            </div>
-            <div class="act-msg"><b>Düşük stok</b> otomasyonu çalıştı · <span class="tag">trigger:cron</span></div>
-            <div class="act-time">5 dk</div>
-          </div>
-          <div class="act-item">
-            <div class="act-avatar a2">MK</div>
-            <div class="act-msg"><b>Mert K.</b> tabloyu yorum modunda görüntüledi</div>
-            <div class="act-time">38 dk</div>
-          </div>
-          <div class="act-item">
-            <div class="act-avatar sys">
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-            </div>
-            <div class="act-msg">Haftalık rapor oluşturuldu</div>
-            <div class="act-time">1 sa</div>
-          </div>
-        </div>
-        <div class="card-foot">
-          Tüm etkinlikleri gör
-          <svg class="arrow" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-        </div>
-      </div>
+
     </div>
   </aside>
 
@@ -952,11 +840,98 @@
 
 /* ── cmd bar pointer ── */
 .cmd { cursor:pointer; user-select:none; }
+
+/* ── AI thread (message bubbles) ── */
+.ai-thread { max-height:160px; overflow-y:auto; display:flex; flex-direction:column; gap:6px; padding:6px 0 2px; margin-bottom:8px; scrollbar-width:thin; scrollbar-color:var(--line) transparent; }
+.ai-thread:empty { display:none; }
+.ai-msg { font-size:12px; line-height:1.45; padding:6px 9px; border-radius:8px; max-width:94%; word-break:break-word; }
+.ai-msg-user { background:var(--brand-soft); color:var(--brand-ink); align-self:flex-end; }
+.ai-msg-ai { background:var(--surface-3); color:var(--ink-2); align-self:flex-start; }
+
+/* ── Grid cells (rendered by JS) ── */
+.grid-body { position:absolute; left:0; top:0; right:0; bottom:0; pointer-events:none; }
+.grid-cell { position:absolute; width:96px; height:28px; display:flex; align-items:center; padding:0 6px; font-size:11.5px; color:var(--ink); overflow:hidden; white-space:nowrap; box-sizing:border-box; }
 </style>
 
 <script>
 (function () {
   'use strict';
+
+  // ── Grid data model ─────────────────────────────────────────────────────
+  var GRID_ROWS = 28, GRID_COLS = 14;
+  var gridData = [];
+  for (var _r = 0; _r < GRID_ROWS; _r++) {
+    gridData.push([]);
+    for (var _c = 0; _c < GRID_COLS; _c++) {
+      gridData[_r].push({ v: '', bg: '' });
+    }
+  }
+
+  function renderGrid() {
+    var body = document.getElementById('grid-body');
+    if (!body) return;
+    body.innerHTML = '';
+    var hasData = false;
+    for (var r = 0; r < GRID_ROWS; r++) {
+      for (var c = 0; c < GRID_COLS; c++) {
+        var cell = gridData[r][c];
+        if (!cell.v && !cell.bg) continue;
+        hasData = true;
+        var d = document.createElement('div');
+        d.className = 'grid-cell';
+        d.style.left = (40 + 96 * c) + 'px';
+        d.style.top = (28 + 28 * r) + 'px';
+        if (cell.bg) d.style.background = cell.bg;
+        d.textContent = cell.v;
+        body.appendChild(d);
+      }
+    }
+    var empty = document.querySelector('.empty');
+    if (empty) empty.style.display = hasData ? 'none' : '';
+  }
+
+  function getGridForAPI() {
+    return gridData.map(function (row) { return row.map(function (c) { return c.v; }); });
+  }
+
+  function colToIdx(letter) {
+    return (letter || 'A').toUpperCase().charCodeAt(0) - 65;
+  }
+
+  function addMsg(role, text) {
+    var thread = document.getElementById('ai-thread');
+    if (!thread) return;
+    var d = document.createElement('div');
+    d.className = 'ai-msg ai-msg-' + role;
+    d.textContent = text;
+    thread.appendChild(d);
+    thread.scrollTop = thread.scrollHeight;
+  }
+
+  function applyGridAction(result) {
+    if (!result || !result.action) return;
+    switch (result.action) {
+      case 'update_cells':
+        (result.changes || []).forEach(function (ch) {
+          var r = (ch.row || 1) - 1;
+          var c = colToIdx(ch.col || 'A');
+          if (r >= 0 && r < GRID_ROWS && c >= 0 && c < GRID_COLS)
+            gridData[r][c].v = String(ch.value != null ? ch.value : '');
+        });
+        renderGrid();
+        break;
+      case 'highlight':
+        (result.rows || []).forEach(function (rowNum) {
+          var r = rowNum - 1;
+          for (var c = 0; c < GRID_COLS; c++) {
+            if (r >= 0 && r < GRID_ROWS)
+              gridData[r][c].bg = result.color || 'rgba(250,204,21,0.3)';
+          }
+        });
+        renderGrid();
+        break;
+    }
+  }
 
   // ── Generic tab-group switcher ──────────────────────────────────────────
   // Each selector defines a "group" where only one item can be active.
@@ -1044,22 +1019,27 @@
     var cmd = aiTextarea.value.trim();
     if (!cmd) return;
 
+    addMsg('user', cmd);
+    aiTextarea.value = '';
     if (aiSend) aiSend.classList.add('loading');
     aiTextarea.disabled = true;
 
     fetch('/api/command', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ command: cmd, data: [] })
+      body: JSON.stringify({ command: cmd, data: getGridForAPI() })
     })
       .then(function (res) { return res.json(); })
       .then(function (data) {
         console.log('[Mocksheets AI]', data);
-        aiTextarea.value = '';
+        var msg = data.message || (data.action ? 'İşlem uygulandı: ' + data.action : 'Tamamlandı');
+        addMsg('ai', msg);
+        applyGridAction(data);
         incrementCount();
       })
       .catch(function (err) {
-        console.error('[Mocksheets AI] Hata:', err);
+        addMsg('ai', 'Bağlantı hatası. Backend çalışıyor mu?');
+        console.error('[Mocksheets AI]', err);
       })
       .finally(function () {
         if (aiSend) aiSend.classList.remove('loading');
