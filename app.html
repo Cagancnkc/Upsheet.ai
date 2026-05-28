@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;550;600;700&family=JetBrains+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="mocksheets-styles.css" />
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 </head>
 <body>
 <div class="app" data-screen-label="Mocksheets Dashboard">
@@ -1230,9 +1231,7 @@
     });
   }
   dlDropdown.addEventListener('click', function (e) { e.stopPropagation(); });
-  document.getElementById('dd-xlsx').addEventListener('click', function () { alert('Excel (.xlsx) indirme — backend bağlantısı hazır değil'); closeDownload(); });
-  document.getElementById('dd-csv').addEventListener('click', function () { alert('CSV indirme — backend bağlantısı hazır değil'); closeDownload(); });
-  document.getElementById('dd-json').addEventListener('click', function () { alert('JSON indirme — backend bağlantısı hazır değil'); closeDownload(); });
+  // download handlers moved below (real implementations)
   document.getElementById('dd-integrations').addEventListener('click', function () { closeDownload(); });
 
   // ── PDF Ekle ─────────────────────────────────────────────────────────────
@@ -1254,6 +1253,202 @@
     if (e.key === 'Escape') { closeSearch(); closeShare(); closeDownload(); }
   });
   document.addEventListener('click', function () { closeDownload(); });
+
+  // ── Grid veri yükleme yardımcısı ─────────────────────────────────────────
+  function loadDataIntoGrid(rows) {
+    for (var r = 0; r < GRID_ROWS; r++) {
+      for (var c = 0; c < GRID_COLS; c++) {
+        gridData[r][c] = { v: '', bg: '' };
+      }
+    }
+    for (var r = 0; r < Math.min(rows.length, GRID_ROWS); r++) {
+      var row = rows[r];
+      for (var c = 0; c < Math.min(row.length, GRID_COLS); c++) {
+        gridData[r][c].v = String(row[c] != null ? row[c] : '');
+      }
+    }
+    renderGrid();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ── Dosya yükle (xlsx / xls / csv) ───────────────────────────────────────
+  var fileInput = document.createElement('input');
+  fileInput.type = 'file';
+  fileInput.accept = '.xlsx,.xls,.csv';
+  fileInput.style.display = 'none';
+  document.body.appendChild(fileInput);
+
+  fileInput.addEventListener('change', function () {
+    var file = this.files && this.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function (e) {
+      try {
+        var data = new Uint8Array(e.target.result);
+        var wb = XLSX.read(data, { type: 'array' });
+        var ws = wb.Sheets[wb.SheetNames[0]];
+        var rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+        loadDataIntoGrid(rows);
+        addMsg('ai', '✓ "' + file.name + '" dosyası yüklendi — ' + (rows.length - 1) + ' satır, ' + (rows[0] ? rows[0].length : 0) + ' sütun');
+      } catch (err) {
+        addMsg('ai', '⚠️ Dosya okunamadı: ' + err.message);
+      }
+    };
+    reader.readAsArrayBuffer(file);
+    this.value = '';
+  });
+
+  var ctaPrimary = document.querySelector('.cta-primary');
+  if (ctaPrimary) ctaPrimary.addEventListener('click', function () { fileInput.click(); });
+
+  // ── Şablondan başla ───────────────────────────────────────────────────────
+  var TEMPLATES = {
+    0: {
+      name: 'Stok Takip',
+      rows: [
+        ['SKU','Ürün Adı','Kategori','Stok','Birim Fiyat (₺)','Toplam Değer (₺)','Depo','Durum'],
+        ['ST001','Laptop Stand','Elektronik','45','299','13455','A-12','Normal'],
+        ['ST002','Mouse Pad XL','Aksesuar','120','89','10680','B-03','Normal'],
+        ['ST003','USB Hub 4-Port','Elektronik','8','149','1192','A-07','Düşük Stok'],
+        ['ST004','Monitör Kolu','Ofis','23','450','10350','C-15','Normal'],
+        ['ST005','Klavye Kablosuz','Elektronik','3','389','1167','A-02','Kritik'],
+        ['ST006','Webcam HD','Elektronik','67','599','40133','A-19','Normal'],
+        ['ST007','Kulaklık BT','Aksesuar','15','699','10485','B-11','Normal'],
+        ['ST008','HDMI Kablo 2m','Aksesuar','200','49','9800','C-04','Normal'],
+        ['ST009','Masaüstü Fan','Ofis','32','129','4128','D-08','Normal'],
+        ['ST010','Telefon Standı','Aksesuar','5','75','375','B-17','Kritik']
+      ]
+    },
+    1: {
+      name: 'Sipariş Takip',
+      rows: [
+        ['Sipariş No','Müşteri','Tarih','Ürün','Adet','Tutar (₺)','Durum','Kargo No'],
+        ['SP-1001','Ahmet Yılmaz','2024-01-15','Laptop Stand','2','598','Teslim Edildi','YK-11223'],
+        ['SP-1002','Fatma Kaya','2024-01-16','USB Hub 4-Port','1','149','Kargoda','MNG-44512'],
+        ['SP-1003','Mehmet Demir','2024-01-17','Monitör Kolu','1','450','Hazırlanıyor','-'],
+        ['SP-1004','Ayşe Çelik','2024-01-18','Mouse Pad XL','3','267','Teslim Edildi','YK-11890'],
+        ['SP-1005','Can Öztürk','2024-01-19','Webcam HD','1','599','Kargoda','PTT-88234'],
+        ['SP-1006','Zeynep Arslan','2024-01-20','Klavye Kablosuz','2','778','İptal','-'],
+        ['SP-1007','Ali Şahin','2024-01-21','HDMI Kablo','5','245','Teslim Edildi','YK-12001'],
+        ['SP-1008','Elif Koç','2024-01-22','Kulaklık BT','1','699','Kargoda','MNG-44899'],
+        ['SP-1009','Burak Yıldız','2024-01-23','Laptop Stand','1','299','Hazırlanıyor','-'],
+        ['SP-1010','Selin Doğan','2024-01-24','USB Hub 4-Port','2','298','Teslim Edildi','YK-12450']
+      ]
+    },
+    2: {
+      name: 'Müşteri Listesi',
+      rows: [
+        ['Ad Soyad','Şirket','E-posta','Telefon','Şehir','Durum','Son Temas'],
+        ['Ahmet Yılmaz','TechCo A.Ş.','ahmet@techco.com','0532-111-2233','İstanbul','Aktif','2024-01-15'],
+        ['Fatma Kaya','BizPro Ltd.','fatma@bizpro.com','0541-222-3344','Ankara','Lead','2024-01-10'],
+        ['Mehmet Demir','StartupX','mehmet@startupx.com','0555-333-4455','İzmir','Aktif','2024-01-18'],
+        ['Ayşe Çelik','GrowthCo','ayse@growthco.com','0533-444-5566','Bursa','Pasif','2023-12-20'],
+        ['Can Öztürk','DevHouse','can@devhouse.com','0542-555-6677','İstanbul','Aktif','2024-01-19'],
+        ['Zeynep Arslan','MarketX','zeynep@marketx.com','0543-666-7788','Antalya','Lead','2024-01-05'],
+        ['Ali Şahin','ProSoft','ali@prosoft.com.tr','0531-777-8899','İstanbul','Aktif','2024-01-17'],
+        ['Elif Koç','DigitalAd','elif@digitalad.com','0548-888-9900','Ankara','Müzakere','2024-01-14'],
+        ['Burak Yıldız','WebAgency','burak@webagency.com','0539-999-0011','İzmir','Aktif','2024-01-20'],
+        ['Selin Doğan','E-Commerce Co','selin@ecommerce.com','0537-000-1122','İstanbul','Lead','2024-01-08']
+      ]
+    },
+    3: {
+      name: 'Gelir Tablosu',
+      rows: [
+        ['Ay','Gelir (₺)','Maliyet (₺)','Brüt Kar (₺)','Gider (₺)','Net Kar (₺)','Marj %','Hedef (₺)'],
+        ['Ocak','85000','42000','43000','18000','25000','29.4','80000'],
+        ['Şubat','92000','45000','47000','19500','27500','29.9','90000'],
+        ['Mart','78000','38000','40000','17000','23000','29.5','85000'],
+        ['Nisan','105000','51000','54000','22000','32000','30.5','100000'],
+        ['Mayıs','98000','48000','50000','20500','29500','30.1','95000'],
+        ['Haziran','115000','56000','59000','24000','35000','30.4','110000'],
+        ['Temmuz','122000','59000','63000','25500','37500','30.7','115000'],
+        ['Ağustos','108000','52000','56000','23000','33000','30.6','110000'],
+        ['Eylül','95000','46000','49000','20000','29000','30.5','100000'],
+        ['Ekim','130000','63000','67000','27000','40000','30.8','125000'],
+        ['Kasım','145000','70000','75000','30000','45000','31.0','140000'],
+        ['Aralık','160000','77000','83000','33000','50000','31.3','155000']
+      ]
+    }
+  };
+
+  var ctaSecondary = document.querySelector('.cta-secondary');
+  if (ctaSecondary) {
+    ctaSecondary.addEventListener('click', function () {
+      var tpl = TEMPLATES[0];
+      loadDataIntoGrid(tpl.rows);
+      addMsg('ai', '✓ "' + tpl.name + '" şablonu yüklendi');
+    });
+  }
+
+  document.querySelectorAll('.tpl .use').forEach(function (btn, i) {
+    btn.style.cursor = 'pointer';
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var tpl = TEMPLATES[i];
+      if (!tpl) return;
+      loadDataIntoGrid(tpl.rows);
+      addMsg('ai', '✓ "' + tpl.name + '" şablonu yüklendi');
+    });
+  });
+
+  // ── İndirme — gerçek CSV / JSON / XLSX ────────────────────────────────────
+  function gridToRows() {
+    var out = [];
+    for (var r = 0; r < GRID_ROWS; r++) {
+      var row = gridData[r].map(function (c) { return c.v; });
+      if (row.some(Boolean)) out.push(row);
+    }
+    return out;
+  }
+
+  function downloadBlob(blob, filename) {
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function () { document.body.removeChild(a); URL.revokeObjectURL(url); }, 500);
+  }
+
+  document.getElementById('dd-csv').addEventListener('click', function () {
+    closeDownload();
+    var rows = gridToRows();
+    if (!rows.length) { addMsg('ai', '⚠️ Tabloda veri yok'); return; }
+    var csv = rows.map(function (row) {
+      return row.map(function (v) {
+        var s = String(v);
+        if (s.includes(',') || s.includes('"') || s.includes('\n')) {
+          s = '"' + s.replace(/"/g, '""') + '"';
+        }
+        return s;
+      }).join(',');
+    }).join('\r\n');
+    downloadBlob(new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' }), 'mocksheets.csv');
+  });
+
+  document.getElementById('dd-json').addEventListener('click', function () {
+    closeDownload();
+    var rows = gridToRows();
+    if (!rows.length) { addMsg('ai', '⚠️ Tabloda veri yok'); return; }
+    var headers = rows[0];
+    var data = rows.slice(1).map(function (row) {
+      var obj = {};
+      headers.forEach(function (h, i) { obj[h || ('col' + i)] = row[i] || ''; });
+      return obj;
+    });
+    downloadBlob(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }), 'mocksheets.json');
+  });
+
+  document.getElementById('dd-xlsx').addEventListener('click', function () {
+    closeDownload();
+    var rows = gridToRows();
+    if (!rows.length) { addMsg('ai', '⚠️ Tabloda veri yok'); return; }
+    var ws = XLSX.utils.aoa_to_sheet(rows);
+    var wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+    XLSX.writeFile(wb, 'mocksheets.xlsx');
+  });
 
 })();
 </script>
