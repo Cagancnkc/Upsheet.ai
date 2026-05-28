@@ -582,18 +582,34 @@
   .foot-contact a{color:var(--violet);font-weight:600;text-decoration:none;margin-left:0.4rem}
   .foot-contact a:hover{text-decoration:underline}
 
-  /* trust strip */
-  .trust{
-    margin-top:80px;padding:24px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
-    display:flex;align-items:center;gap:40px;flex-wrap:wrap;
-    font-family:'Geist Mono',monospace;font-size:12.5px;letter-spacing:.06em;color:var(--mute);
-  }
-  .trust .label{text-transform:uppercase;letter-spacing:.18em}
-  .trust .logos{display:flex;gap:40px;align-items:center;flex-wrap:wrap;flex:1}
-  .trust .logo{font-family:'Geist';font-weight:600;letter-spacing:-0.01em;font-size:17px;color:var(--ink-2);opacity:.8;display:flex;align-items:center;gap:6px}
-  .trust .logo .dot{width:8px;height:8px;border-radius:50%;background:currentColor;opacity:.6}
-  .trust .logo-brand{height:26px;width:auto;opacity:.55;filter:grayscale(100%);transition:opacity .2s,filter .2s;}
-  .trust .logo-brand:hover{opacity:1;filter:grayscale(0%);}
+  /* logo cloud */
+  .logo-cloud{position:relative;display:grid;grid-template-columns:1fr 1fr;border-left:1px solid var(--line);border-right:1px solid var(--line);margin-top:80px}
+  @media (min-width:768px){.logo-cloud{grid-template-columns:repeat(4,1fr)}}
+  .logo-cloud::before,.logo-cloud::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:100vw;height:1px;background:var(--line);pointer-events:none}
+  .logo-cloud::before{top:0}.logo-cloud::after{bottom:0}
+  .lcc{position:relative;display:flex;align-items:center;justify-content:center;padding:32px 16px;background:var(--paper)}
+  @media (min-width:768px){.lcc{padding:32px}}
+  .lcc img{height:16px;width:auto;pointer-events:none;user-select:none}
+  @media (min-width:768px){.lcc img{height:20px}}
+  [data-theme="dark"] .lcc img{filter:brightness(0) invert(1)}
+  .lcc-br{border-right:1px solid var(--line)}
+  .lcc-bb{border-bottom:1px solid var(--line)}
+  .lcc-muted{background:var(--paper-2)}
+  .lcc-mob-bb{border-bottom:1px solid var(--line)}
+  @media (min-width:768px){.lcc-mob-bb{border-bottom:none}}
+  .lcc-mob-muted{background:var(--paper-2)}
+  @media (min-width:768px){.lcc-mob-muted{background:var(--paper)}}
+  .lcc-dsk-br{border-right:none}
+  @media (min-width:768px){.lcc-dsk-br{border-right:1px solid var(--line)}}
+  .lcc-dsk-muted{background:var(--paper)}
+  @media (min-width:768px){.lcc-dsk-muted{background:var(--paper-2)}}
+  .lcc-plus{position:absolute;width:24px;height:24px;color:var(--line-strong);z-index:10}
+  .lcc-plus-br{right:-12px;bottom:-12px}
+  .lcc-plus-bl{left:-12px;bottom:-12px}
+  .lcc-plus-dsk{display:none}
+  @media (min-width:768px){.lcc-plus-dsk{display:block}}
+  .lcc-plus-mob{display:block}
+  @media (min-width:768px){.lcc-plus-mob{display:none}}
 
   /* feature illustration helpers */
   .ill-grid{
@@ -837,15 +853,35 @@
       </div>
     </div>
 
-    <!-- trust -->
-    <div class="trust">
-      <span class="label">Güvenen markalar</span>
-      <div class="logos">
-        <img class="logo-brand" src="https://cdn.simpleicons.org/apple" alt="Apple">
-        <img class="logo-brand" src="https://cdn.simpleicons.org/microsoft" alt="Microsoft">
-        <img class="logo-brand" src="https://cdn.simpleicons.org/nvidia" alt="NVIDIA">
-        <img class="logo-brand" src="https://cdn.simpleicons.org/amazon" alt="Amazon">
-        <img class="logo-brand" src="https://cdn.simpleicons.org/google" alt="Google">
+    <!-- trust / logo cloud -->
+    <div class="logo-cloud">
+      <div class="lcc lcc-muted lcc-br lcc-bb">
+        <img src="https://svgl.app/library/nvidia-wordmark-light.svg" alt="Nvidia">
+        <svg class="lcc-plus lcc-plus-br" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </div>
+      <div class="lcc lcc-bb lcc-dsk-br">
+        <img src="https://svgl.app/library/supabase_wordmark_light.svg" alt="Supabase">
+      </div>
+      <div class="lcc lcc-dsk-muted lcc-br lcc-bb">
+        <img src="https://svgl.app/library/github_wordmark_light.svg" alt="GitHub">
+        <svg class="lcc-plus lcc-plus-br" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        <svg class="lcc-plus lcc-plus-bl lcc-plus-dsk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </div>
+      <div class="lcc lcc-mob-muted lcc-bb">
+        <img src="https://svgl.app/library/openai_wordmark_light.svg" alt="OpenAI">
+      </div>
+      <div class="lcc lcc-mob-muted lcc-br lcc-mob-bb">
+        <img src="https://svgl.app/library/turso-wordmark-light.svg" alt="Turso">
+        <svg class="lcc-plus lcc-plus-br lcc-plus-mob" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </div>
+      <div class="lcc lcc-dsk-muted lcc-mob-bb lcc-dsk-br">
+        <img src="https://svgl.app/library/clerk-wordmark-light.svg" alt="Clerk">
+      </div>
+      <div class="lcc lcc-br">
+        <img src="https://svgl.app/library/claude-ai-wordmark-icon_light.svg" alt="Claude AI">
+      </div>
+      <div class="lcc lcc-muted">
+        <img src="https://svgl.app/library/vercel_wordmark.svg" alt="Vercel">
       </div>
     </div>
   </div>
