@@ -57,7 +57,11 @@ body{
   border-bottom:1px solid var(--border);
   position:sticky;top:0;z-index:100;
 }
-.nav-logo img{height:72px;width:auto;object-fit:contain;}
+.nav-logo{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:600;color:var(--text);}
+.nav-logo .brand-mark{width:24px;height:24px;border-radius:6px;background:#0E0E10;position:relative;flex-shrink:0;}
+.nav-logo .brand-mark::before{content:"";position:absolute;inset:5px;background:linear-gradient(90deg,transparent 49%,rgba(255,255,255,.55) 49%,rgba(255,255,255,.55) 51%,transparent 51%),linear-gradient(0deg,transparent 49%,rgba(255,255,255,.55) 49%,rgba(255,255,255,.55) 51%,transparent 51%);border:1px solid rgba(255,255,255,.7);border-radius:2px;}
+.nav-logo .brand-mark::after{content:"";position:absolute;right:-2px;bottom:-2px;width:9px;height:9px;border-radius:50%;background:#22c55e;border:2px solid var(--surface);}
+.nav-logo .brand-dot{color:#16a34a;}
 
 .back-btn{
   display:inline-flex;align-items:center;gap:6px;
@@ -628,7 +632,11 @@ body{
   padding:48px 24px 32px;
   display:grid;grid-template-columns:200px 1fr;gap:48px;
 }
-.footer-brand img{height:48px;object-fit:contain;}
+.footer-brand .brand-mark{width:24px;height:24px;border-radius:6px;background:#0E0E10;position:relative;flex-shrink:0;}
+.footer-brand .brand-mark::before{content:"";position:absolute;inset:5px;background:linear-gradient(90deg,transparent 49%,rgba(255,255,255,.55) 49%,rgba(255,255,255,.55) 51%,transparent 51%),linear-gradient(0deg,transparent 49%,rgba(255,255,255,.55) 49%,rgba(255,255,255,.55) 51%,transparent 51%);border:1px solid rgba(255,255,255,.7);border-radius:2px;}
+.footer-brand .brand-mark::after{content:"";position:absolute;right:-2px;bottom:-2px;width:9px;height:9px;border-radius:50%;background:#22c55e;border:2px solid var(--surface);}
+.footer-wordmark{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:600;color:var(--text);text-decoration:none;}
+.footer-wordmark .brand-dot{color:#16a34a;}
 .footer-brand-desc{font-size:13px;color:var(--text-muted);margin-top:12px;line-height:1.6;max-width:180px;}
 .footer-cols{
   display:grid;grid-template-columns:repeat(4,1fr);gap:32px;
@@ -676,7 +684,8 @@ body{
 <!-- ==================== STATIC NAV ==================== -->
 <nav class="int-nav">
   <a class="nav-logo" href="index.html">
-    <img src="images/logo-wordmark.png" alt="Mocksheets" style="width:150px;height:100px;object-fit:contain">
+    <div class="brand-mark"></div>
+    <span>mocksheets<span class="brand-dot">.</span></span>
   </a>
   <div style="flex:1"></div>
   <div class="search-wrap">
@@ -1135,7 +1144,10 @@ body{
 <footer class="site-footer">
   <div class="footer-inner">
     <div class="footer-brand">
-      <img src="images/logo-wordmark.png" alt="Mocksheets">
+      <a href="index.html" class="footer-wordmark">
+        <div class="brand-mark"></div>
+        <span>mocksheets<span class="brand-dot">.</span></span>
+      </a>
       <p class="footer-brand-desc">AI destekli ops otomasyon aracı. Ekibinizin araçlarıyla çalışır, verilerinizi harekete geçirir.</p>
     </div>
     <div class="footer-cols">

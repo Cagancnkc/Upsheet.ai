@@ -46,6 +46,10 @@ input,select,textarea{font-family:inherit}
 .nav-back:hover{background:var(--surface-2);color:var(--ink-2)}
 .nav-sep{width:1px;height:20px;background:var(--line);margin:0 8px}
 .nav-brand{display:flex;align-items:center;gap:8px;font-weight:700;font-size:15px}
+.nav-brand .brand-mark{width:24px;height:24px;border-radius:6px;background:#0E0E10;position:relative;flex-shrink:0;}
+.nav-brand .brand-mark::before{content:"";position:absolute;inset:5px;background:linear-gradient(90deg,transparent 49%,rgba(255,255,255,.55) 49%,rgba(255,255,255,.55) 51%,transparent 51%),linear-gradient(0deg,transparent 49%,rgba(255,255,255,.55) 49%,rgba(255,255,255,.55) 51%,transparent 51%);border:1px solid rgba(255,255,255,.7);border-radius:2px;}
+.nav-brand .brand-mark::after{content:"";position:absolute;right:-2px;bottom:-2px;width:9px;height:9px;border-radius:50%;background:#22c55e;border:2px solid var(--surface);}
+.nav-brand .brand-dot{color:#16a34a;}
 .nav-logo{width:28px;height:28px;border-radius:7px;background:var(--accent);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:13px}
 .nav-page{color:var(--muted);font-size:13px;font-weight:500;margin-left:4px}
 .nav-title{font-size:13px;font-weight:600;color:var(--ink)}
@@ -293,7 +297,8 @@ textarea.inp{height:auto;padding:10px 12px;resize:vertical;min-height:72px}
   </button>
   <div class="nav-sep"></div>
   <div class="nav-brand">
-    <img src="/images/logo-wordmark.png" alt="Mocksheets" style="width:150px;height:100px;object-fit:contain">
+    <div class="brand-mark"></div>
+    <span>mocksheets<span class="brand-dot">.</span></span>
   </div>
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--muted);margin:0 4px"><path d="M9 18l6-6-6-6"/></svg>
   <span class="nav-title">Otomasyonlar</span>

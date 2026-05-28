@@ -93,7 +93,25 @@
       text-decoration: none;
       color: var(--ink);
     }
-    .wordmark img { height: 32px; width: auto; object-fit: contain; }
+    .wordmark .brand-mark {
+      width: 24px; height: 24px; border-radius: 6px;
+      background: #0E0E10;
+      position: relative; flex-shrink: 0;
+    }
+    .wordmark .brand-mark::before {
+      content: ""; position: absolute; inset: 5px;
+      background:
+        linear-gradient(90deg, transparent 49%, rgba(255,255,255,.55) 49%, rgba(255,255,255,.55) 51%, transparent 51%),
+        linear-gradient(0deg, transparent 49%, rgba(255,255,255,.55) 49%, rgba(255,255,255,.55) 51%, transparent 51%);
+      border: 1px solid rgba(255,255,255,.7);
+      border-radius: 2px;
+    }
+    .wordmark .brand-mark::after {
+      content: ""; position: absolute; right: -2px; bottom: -2px;
+      width: 9px; height: 9px; border-radius: 50%;
+      background: #22c55e; border: 2px solid var(--bg, #F6F4EE);
+    }
+    .wordmark .dot { color: #16a34a; }
     .wordmark-text {
       font-size: 18px;
       font-weight: 600;
@@ -534,8 +552,8 @@
 
       <!-- Wordmark -->
       <a href="index.html" class="wordmark">
-        <img src="images/logo-wordmark.png" alt="Mocksheets" style="width:150px;height:100px;object-fit:contain;display:block" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-        <span class="wordmark-text" style="display:none">mocksheets</span>
+        <div class="brand-mark"></div>
+        <span class="wordmark-text">mocksheets<span class="dot">.</span></span>
       </a>
 
       <!-- Eyebrow -->

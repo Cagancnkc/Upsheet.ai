@@ -14,8 +14,11 @@ body{background:#09090b;color:#e2e8f0;font-family:'Inter',sans-serif;min-height:
 
 /* Topbar */
 #topbar{display:flex;align-items:center;gap:12px;padding:0 16px;height:48px;background:#111;border-bottom:1px solid #1e1e2e;flex-shrink:0;}
-.logo{display:flex;align-items:center;gap:8px;font-size:16px;font-weight:700;color:#f97316;}
-.logo-icon{width:28px;height:28px;background:#f97316;border-radius:7px;display:flex;align-items:center;justify-content:center;}
+.logo{display:flex;align-items:center;gap:8px;font-size:16px;font-weight:600;color:#e2e8f0;}
+.logo .brand-mark{width:24px;height:24px;border-radius:6px;background:#0E0E10;border:1px solid rgba(255,255,255,.1);position:relative;flex-shrink:0;}
+.logo .brand-mark::before{content:"";position:absolute;inset:5px;background:linear-gradient(90deg,transparent 49%,rgba(255,255,255,.55) 49%,rgba(255,255,255,.55) 51%,transparent 51%),linear-gradient(0deg,transparent 49%,rgba(255,255,255,.55) 49%,rgba(255,255,255,.55) 51%,transparent 51%);border:1px solid rgba(255,255,255,.7);border-radius:2px;}
+.logo .brand-mark::after{content:"";position:absolute;right:-2px;bottom:-2px;width:9px;height:9px;border-radius:50%;background:#22c55e;border:2px solid #111;}
+.logo .brand-dot{color:#22c55e;}
 #shareInfo{flex:1;display:flex;align-items:center;gap:8px;}
 #sharedFileName{font-size:13px;font-weight:500;color:#cbd5e1;}
 .ro-badge{font-size:11px;background:rgba(249,115,22,.15);color:#f97316;border:1px solid rgba(249,115,22,.3);border-radius:20px;padding:2px 9px;font-weight:500;}
@@ -63,7 +66,8 @@ body{background:#09090b;color:#e2e8f0;font-family:'Inter',sans-serif;min-height:
 <!-- TOPBAR -->
 <div id="topbar">
   <div class="logo">
-    <img src="images/logo-wordmark.png" style="height:88px;width:auto;object-fit:contain;" alt="Mocksheets">
+    <div class="brand-mark"></div>
+    <span>mocksheets<span class="brand-dot">.</span></span>
   </div>
   <div id="shareInfo">
     <span id="sharedFileName">Yükleniyor...</span>
