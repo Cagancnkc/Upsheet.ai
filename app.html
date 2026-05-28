@@ -922,6 +922,42 @@
     });
   }
 
+  // ── Usage counter (localStorage) ───────────────────────────────────────
+  var LIMIT = 20;
+  var upsellTitle  = document.querySelector('.upsell-title em');
+  var progressBar  = document.querySelector('.progress div');
+  var progressPct  = document.querySelector('.progress-meta span:last-child');
+  var upsellEl     = document.querySelector('.upsell');
+
+  function getCount() {
+    return Math.min(parseInt(localStorage.getItem('ms_cmd_count') || '0', 10), LIMIT);
+  }
+
+  function renderCount(n) {
+    var pct = Math.round((n / LIMIT) * 100);
+    if (upsellTitle) upsellTitle.textContent = n;
+    if (progressBar) progressBar.style.width = pct + '%';
+    if (progressPct) progressPct.textContent = '%' + pct;
+    if (upsellEl) upsellEl.classList.toggle('limit-reached', n >= LIMIT);
+  }
+
+  function incrementCount() {
+    var next = Math.min(getCount() + 1, LIMIT);
+    localStorage.setItem('ms_cmd_count', next);
+    renderCount(next);
+  }
+
+  renderCount(getCount());
+
+  // ── Upsell CTA → pricing page ───────────────────────────────────────────
+  var upsellCta = document.querySelector('.upsell-cta');
+  if (upsellCta) {
+    upsellCta.style.cursor = 'pointer';
+    upsellCta.addEventListener('click', function () {
+      window.location.href = 'index.html#pricing';
+    });
+  }
+
   // ── AI send → POST /api/command ─────────────────────────────────────────
   var aiSend = document.querySelector('.ai-send');
 
@@ -942,6 +978,7 @@
       .then(function (data) {
         console.log('[Mocksheets AI]', data);
         aiTextarea.value = '';
+        incrementCount();
       })
       .catch(function (err) {
         console.error('[Mocksheets AI] Hata:', err);
