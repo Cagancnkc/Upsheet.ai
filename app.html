@@ -875,5 +875,97 @@
   </footer>
 
 </div>
+
+<script>
+(function () {
+  'use strict';
+
+  // ── Generic tab-group switcher ──────────────────────────────────────────
+  // Each selector defines a "group" where only one item can be active.
+  // Groups are scoped to the closest common ancestor to avoid cross-group collisions.
+  function wireTabGroup(selector) {
+    document.querySelectorAll(selector).forEach(function (el) {
+      el.addEventListener('click', function () {
+        // find siblings: same selector under same parent
+        var parent = el.parentElement;
+        parent.querySelectorAll(selector).forEach(function (sib) {
+          sib.classList.remove('active');
+        });
+        el.classList.add('active');
+      });
+    });
+  }
+
+  wireTabGroup('.nav-item');
+  wireTabGroup('.file-row');
+  wireTabGroup('.view-tab');
+  wireTabGroup('.stab');
+  wireTabGroup('.rail-tab');
+  wireTabGroup('.autom-filter');
+
+  // ── Chip click → fill AI textarea ──────────────────────────────────────
+  var aiTextarea = document.querySelector('.ai-input textarea');
+
+  document.querySelectorAll('.chip').forEach(function (chip) {
+    chip.addEventListener('click', function () {
+      if (!aiTextarea) return;
+      aiTextarea.value = chip.textContent.trim();
+      aiTextarea.focus();
+    });
+  });
+
+  // ── Toolbar AI pill → focus textarea ───────────────────────────────────
+  var tbPill = document.querySelector('.tb-pill');
+  if (tbPill && aiTextarea) {
+    tbPill.addEventListener('click', function () {
+      aiTextarea.focus();
+    });
+  }
+
+  // ── AI send → POST /api/command ─────────────────────────────────────────
+  var aiSend = document.querySelector('.ai-send');
+
+  function sendCommand() {
+    if (!aiTextarea) return;
+    var cmd = aiTextarea.value.trim();
+    if (!cmd) return;
+
+    if (aiSend) aiSend.classList.add('loading');
+    aiTextarea.disabled = true;
+
+    fetch('/api/command', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ command: cmd, data: [] })
+    })
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        console.log('[Mocksheets AI]', data);
+        aiTextarea.value = '';
+      })
+      .catch(function (err) {
+        console.error('[Mocksheets AI] Hata:', err);
+      })
+      .finally(function () {
+        if (aiSend) aiSend.classList.remove('loading');
+        aiTextarea.disabled = false;
+        aiTextarea.focus();
+      });
+  }
+
+  if (aiSend) {
+    aiSend.addEventListener('click', sendCommand);
+  }
+
+  if (aiTextarea) {
+    aiTextarea.addEventListener('keydown', function (e) {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        e.preventDefault();
+        sendCommand();
+      }
+    });
+  }
+})();
+</script>
 </body>
 </html>
