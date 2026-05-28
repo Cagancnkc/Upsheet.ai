@@ -108,6 +108,18 @@ const UPSHEET_KNOWLEDGE_BASE = {
 const helmet = require('helmet');
 const app    = express();
 const PORT = process.env.PORT || 3001;
+
+app.set('trust proxy', 1);
+
+const REQUIRED_ENV = ['ANTHROPIC_API_KEY', 'SUPABASE_URL', 'SUPABASE_SERVICE_KEY'];
+const missingEnv = REQUIRED_ENV.filter(k => !process.env[k]);
+if (missingEnv.length > 0) {
+  console.error('[FATAL] Zorunlu env var\'lar eksik:', missingEnv.join(', '));
+  process.exit(1);
+}
+if (!process.env.BACKEND_URL) {
+  console.warn('[WARN] BACKEND_URL env var eksik — OAuth callback\'leri localhost\'a yönlenecek, production\'da OAuth çalışmaz');
+}
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 const allowedOrigins = [
