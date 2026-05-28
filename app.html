@@ -2058,6 +2058,22 @@
     });
   });
 
+  // ── AI: View tabs — "Yeni görünüm" intercept + placeholder toasts ─────────
+  document.querySelectorAll('.view-tab').forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      var txt = tab.textContent.trim();
+      if (txt.indexOf('Yeni görünüm') !== -1) {
+        // Re-activate first tab instead of the "+" tab
+        var first = tab.parentElement.querySelector('.view-tab');
+        tab.parentElement.querySelectorAll('.view-tab').forEach(function (t) { t.classList.remove('active'); });
+        if (first) first.classList.add('active');
+        showToast('Yeni görünüm — yakında');
+      } else if (txt === 'Özet' || txt === 'Grafikler' || txt === 'Pano') {
+        showToast(txt + ' görünümü — yakında');
+      }
+    });
+  });
+
 })();
 </script>
 
