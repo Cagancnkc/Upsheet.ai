@@ -3709,10 +3709,12 @@ async function autoSave() {
 }
 
 // ── Sync from Supabase (background refresh) ───────────────────
-async function syncFromSupabase(fileId) {
+async function syncFromSupabase(fileId, localTimestamp = null) {
   try {
     var recRes = await sb.from('files').select('*').eq('id', fileId).single();
     if (recRes.error) return;
+    // Cloud versiyonu local'den daha yeni değilse overwrite etme (race condition fix)
+    if (localTimestamp && recRes.data.updated_at <= localTimestamp) return;
     var blobRes = await sb.storage.from('excel-files').download(recRes.data.storage_path);
     if (blobRes.error) return;
     var ab = await blobRes.data.arrayBuffer();
@@ -3759,8 +3761,8 @@ async function loadFileById(fileId) {
       if (list) list.querySelectorAll('.sb-file-item').forEach(function(el) {
         el.classList.toggle('active', el.dataset.id === String(fileId));
       });
-      // Background sync from cloud
-      syncFromSupabase(fileId);
+      // Background sync from cloud — sadece cloud daha yeniyse overwrite et
+      syncFromSupabase(fileId, cached.updatedAt);
       return;
     }
 
@@ -4185,6 +4187,10 @@ async function sendChatMessage() {
     if (data.action && data.action !== 'message') {
       if (typeof applyAIChanges === 'function') {
         applyAIChanges(data);
+        // AI değişikliklerini localStorage + Supabase'e kaydet
+        clearTimeout(_saveTimer);
+        _saveTimer = setTimeout(saveData, 2000);
+        if (typeof scheduleAutoSave === 'function') scheduleAutoSave();
       }
       try {
         const _wh = JSON.parse(localStorage.getItem('int_webhook') || '{}');
