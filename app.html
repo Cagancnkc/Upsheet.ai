@@ -1111,15 +1111,15 @@
     var token = getAuthToken();
     if (token) headers['Authorization'] = 'Bearer ' + token;
 
-    fetch('/api/command', {
+    fetch('http://localhost:3001/api/chat', {
       method: 'POST',
       headers: headers,
-      body: JSON.stringify({ command: cmd, data: getGridForAPI() })
+      body: JSON.stringify({ message: cmd, sheetData: getGridForAPI() })
     })
       .then(function (res) { return res.json(); })
       .then(function (data) {
         console.log('[Mocksheets AI]', data);
-        var msg = data.message || (data.action ? 'İşlem uygulandı: ' + data.action : 'Tamamlandı');
+        var msg = data.reply || (data.action ? 'İşlem uygulandı: ' + data.action : 'Tamamlandı');
         addMsg('ai', msg);
         applyGridAction(data);
         incrementCount();
