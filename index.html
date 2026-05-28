@@ -592,6 +592,8 @@
   .trust .logos{display:flex;gap:40px;align-items:center;flex-wrap:wrap;flex:1}
   .trust .logo{font-family:'Geist';font-weight:600;letter-spacing:-0.01em;font-size:17px;color:var(--ink-2);opacity:.8;display:flex;align-items:center;gap:6px}
   .trust .logo .dot{width:8px;height:8px;border-radius:50%;background:currentColor;opacity:.6}
+  .trust .logo-brand{height:26px;width:auto;opacity:.55;filter:grayscale(100%);transition:opacity .2s,filter .2s;}
+  .trust .logo-brand:hover{opacity:1;filter:grayscale(0%);}
 
   /* feature illustration helpers */
   .ill-grid{
@@ -839,12 +841,11 @@
     <div class="trust">
       <span class="label">Güvenen markalar</span>
       <div class="logos">
-        <span class="logo"><span class="dot"></span>Orbit Works</span>
-        <span class="logo"><span class="dot"></span>Maple Agency</span>
-        <span class="logo"><span class="dot"></span>Peak Ops</span>
-        <span class="logo"><span class="dot"></span>Clearfield Co</span>
-        <span class="logo"><span class="dot"></span>NorthBridge</span>
-        <span class="logo"><span class="dot"></span>Grove Digital</span>
+        <img class="logo-brand" src="https://logo.clearbit.com/apple.com" alt="Apple">
+        <img class="logo-brand" src="https://logo.clearbit.com/microsoft.com" alt="Microsoft">
+        <img class="logo-brand" src="https://logo.clearbit.com/nvidia.com" alt="NVIDIA">
+        <img class="logo-brand" src="https://logo.clearbit.com/amazon.com" alt="Amazon">
+        <img class="logo-brand" src="https://logo.clearbit.com/google.com" alt="Google">
       </div>
     </div>
   </div>
@@ -916,7 +917,7 @@
     <div class="section-head">
       <div>
         <div class="section-eyebrow">— canlı demo</div>
-        <h2 class="section-title">Görmek <em class="accent">inanmaktır.</em></h2>
+        <h2 class="section-title">Sonuçlar <em class="accent">kendini gösterir.</em></h2>
       </div>
       <p class="section-sub">
         Eksiksiz bir Mocksheets oturumu — sıfırdan rapora 10 saniyede.
