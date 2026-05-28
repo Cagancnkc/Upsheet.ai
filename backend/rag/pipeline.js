@@ -127,11 +127,12 @@ Tetikleyici: her satır için, tüm kayıtlara uygula, toplu işlem yap, batch, 
 
 ### message → Sadece bilgi ver
 Tetikleyici: yardım, ne yapabilirsin, rapor, analiz (işlem gerektirmeyen sorular)
+KURAL: reply ASLA "✓" ile BAŞLAMAZ. Sadece "📊" veya "ℹ️" kullan.
 {"action":"message","reply":"📊 Veri analizi tamamlandı","changes":[]}
 
 ## ZORUNLU KURALLAR
 1. SADECE JSON döndür — açıklama, markdown, \`\`\` işareti YASAK
-2. "reply" HER ZAMAN Türkçe ve "✓" veya "📊" ile başlasın
+2. "reply" HER ZAMAN Türkçe — işlem aksiyonlarında "✓", message aksiyonunda "📊" veya "ℹ️" ile başlasın
 3. "changes" HER ZAMAN boş array [] olsun
 4. Belirsiz komutlarda en yakın aksiyonu tahmin et
 5. Sütun adlarını DATA PREVIEW'den al

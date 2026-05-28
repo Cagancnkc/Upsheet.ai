@@ -1848,8 +1848,13 @@ function applyUpdateCellsAction(data) {
 
   console.log('[UPDATE_CELLS] değiştirilen hücre:', changed);
   refreshGrid();
-  if (typeof showToast === 'function')
-    showToast((data.reply || '✓ Değerler güncellendi') + ' (' + changed + ' hücre)', 'success');
+  if (typeof showToast === 'function') {
+    if (changed === 0) {
+      showToast('⚠️ Sayısal veri bulunamadı. Önce tabloya veri girin.', 'error');
+    } else {
+      showToast((data.reply || '✓ Değerler güncellendi') + ' (' + changed + ' hücre)', 'success');
+    }
+  }
 }
 
 function applyHighlightAction(data) {
