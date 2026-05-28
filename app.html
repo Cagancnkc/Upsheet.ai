@@ -2049,6 +2049,15 @@
     automFootCta.addEventListener('click', function () { showToast('Otomasyon geçmişi — yakında'); });
   }
 
+  // ── AH: Notification items ────────────────────────────────────────────────
+  document.querySelectorAll('.notif-item').forEach(function (item) {
+    item.addEventListener('click', function () {
+      item.style.opacity = '0.45';
+      item.style.pointerEvents = 'none';
+      showToast('Bildirim okundu olarak işaretlendi');
+    });
+  });
+
 })();
 </script>
 
