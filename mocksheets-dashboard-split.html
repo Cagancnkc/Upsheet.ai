@@ -1,0 +1,879 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8" />
+<title>Mocksheets â Stok Takip Tablosu</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;550;600;700&family=JetBrains+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="mocksheets-styles.css" />
+</head>
+<body>
+<div class="app" data-screen-label="Mocksheets Dashboard">
+
+  <!-- ============ TOP BAR ============ -->
+  <header class="topbar">
+    <div class="brand">
+      <img src="/images/brand/logo-128x128.png" alt="mocksheets" style="width:24px;height:24px;object-fit:contain;flex-shrink:0">
+      <div class="brand-name">mocksheets<span class="dot">.</span></div>
+    </div>
+
+    <div class="crumbs">
+      <span class="home">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 12 3l9 6.5"/><path d="M5 9v11h14V9"/></svg>
+        ÃalÄ±Åma AlanÄ±m
+      </span>
+      <span class="sep">/</span>
+      <span>TablolarÄ±m</span>
+      <span class="sep">/</span>
+      <span class="current">
+        Stok Takip Tablosu
+        <span class="badge">XLSX</span>
+      </span>
+      <span class="star" title="YÄ±ldÄ±zla">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      </span>
+    </div>
+
+    <div class="top-actions">
+      <div class="cmd">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        Tablo, formÃ¼l veya komut ara
+        <span class="kbd">
+          <span class="kbd-key">â</span>
+          <span class="kbd-key">K</span>
+        </span>
+      </div>
+      <button class="icon-btn" title="YardÄ±m">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
+      </button>
+      <button class="icon-btn" title="Bildirimler">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+        <span class="dot"></span>
+      </button>
+      <button class="btn">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 6 12 2 8 6"/><path d="M12 2v13"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></svg>
+        PaylaÅ
+        <span class="kbd-key" style="margin-left:2px;">â</span>
+      </button>
+      <button class="btn-primary btn">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>
+        Ä°ndir
+        <span class="split"></span>
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="avatar-pill">
+        <div class="avatar">ÃC</div>
+        <span class="name">cagan</span>
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--ink-4)"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+  </header>
+
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar">
+    <div class="ws-switcher">
+      <div class="ws-logo">CN</div>
+      <div class="ws-meta">
+        <span class="ws-name">cnkc.io</span>
+        <span class="ws-plan">KiÅisel Â· Free</span>
+      </div>
+      <svg class="ws-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m8 9 4-4 4 4"/><path d="m16 15-4 4-4-4"/></svg>
+    </div>
+
+    <div class="sidebar-section">ÃalÄ±Åma alanÄ±</div>
+
+    <div class="nav-item">
+      <svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 9h18"/><path d="M9 3v18"/></svg>
+      TablolarÄ±m
+      <span class="count">12</span>
+      <span class="kbd-key">G T</span>
+    </div>
+    <div class="nav-item active">
+      <svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11v1a10 10 0 1 1-9-9.95"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      Son AÃ§Ä±lanlar
+      <span class="count">8</span>
+    </div>
+    <div class="nav-item">
+      <svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      YÄ±ldÄ±zlÄ±
+      <span class="count">3</span>
+    </div>
+    <div class="nav-item">
+      <svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="14" rx="2"/><path d="M3 10h18"/><path d="M8 2v4"/><path d="M16 2v4"/></svg>
+      Åablonlar
+      <span class="count">42</span>
+    </div>
+    <div class="nav-item">
+      <svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      Otomasyonlar
+    </div>
+    <div class="nav-item">
+      <svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.59 13.51 6.83 3.98"/><path d="m15.41 6.51-6.82 3.98"/></svg>
+      Entegrasyonlar
+      <span class="count">5</span>
+    </div>
+
+    <div class="sidebar-section">
+      Son tablolar
+      <span class="add" title="Yeni">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </span>
+    </div>
+
+    <div class="file-row active">
+      <span class="dot"></span>
+      <span class="name">Stok Takip Tablosu</span>
+      <span class="meta">Åimdi</span>
+    </div>
+    <div class="file-row">
+      <span class="dot"></span>
+      <span class="name">MayÄ±s BÃ¼tÃ§e PlanÄ±</span>
+      <span class="meta">2s</span>
+    </div>
+    <div class="file-row">
+      <span class="dot"></span>
+      <span class="name">MÃ¼Återi CRM</span>
+      <span class="meta">dÃ¼n</span>
+    </div>
+    <div class="file-row">
+      <span class="dot"></span>
+      <span class="name">TedarikÃ§i Listesi 2026</span>
+      <span class="meta">3g</span>
+    </div>
+    <div class="file-row">
+      <span class="dot"></span>
+      <span class="name">Q2 SatÄ±Å Raporu</span>
+      <span class="meta">1h</span>
+    </div>
+
+    <div class="sidebar-spacer"></div>
+
+    <div class="upsell">
+      <div class="upsell-eyebrow">Free plan</div>
+      <div class="upsell-title"><em>20</em> / 20 AI komutu kullanÄ±ldÄ±</div>
+      <div class="upsell-sub">Bu ay limitin sÄ±fÄ±rlanmasÄ±na 4 gÃ¼n kaldÄ±</div>
+      <div class="progress"><div></div></div>
+      <div class="progress-meta">
+        <span>kullanÄ±m</span>
+        <span>%100</span>
+      </div>
+      <div class="upsell-cta">
+        <span>Pro'ya yÃ¼kselt</span>
+        <span class="price">$1/ay â</span>
+      </div>
+    </div>
+  </aside>
+
+
+  <!-- ============ MAIN ============ -->
+  <main class="main">
+
+    <!-- File header -->
+    <div class="file-header">
+      <div class="file-title-row">
+        <div class="file-icon">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 3v18"/></svg>
+        </div>
+        <div class="file-title">Stok Takip Tablosu</div>
+        <div class="file-meta">
+          <span class="saved"><span class="pulse"></span> Otomatik kaydedildi</span>
+          <span class="dot-sep">Â·</span>
+          <span>14 sÃ¼tun Â· 0 satÄ±r</span>
+          <span class="dot-sep">Â·</span>
+          <span>Versiyon 3</span>
+        </div>
+        <div class="file-actions">
+          <div class="collab-stack">
+            <div class="collab c1">ÃC</div>
+            <div class="collab c2">MK</div>
+            <div class="collab c3">+2</div>
+          </div>
+          <button class="btn btn-ghost">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            Yorumlar
+            <span style="color:var(--ink-4); font-size:11px; font-variant-numeric:tabular-nums; margin-left:2px;">3</span>
+          </button>
+          <button class="btn btn-ghost" title="Daha fazla">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="view-tabs">
+        <div class="view-tab active">
+          <svg class="ico" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 3v18"/></svg>
+          Sayfa 1
+        </div>
+        <div class="view-tab">
+          <svg class="ico" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/></svg>
+          Ãzet
+        </div>
+        <div class="view-tab">
+          <svg class="ico" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 16V9"/><path d="M12 16V5"/><path d="M17 16v-5"/></svg>
+          Grafikler
+          <span class="count">2</span>
+        </div>
+        <div class="view-tab">
+          <svg class="ico" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11H5a2 2 0 0 0-2 2v7h4z"/><path d="M14 4h-4v16h4z"/><path d="M19 8h-4v12h4a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2"/></svg>
+          Pano
+        </div>
+        <div class="view-tab" style="margin-left:8px;">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Yeni gÃ¶rÃ¼nÃ¼m
+        </div>
+      </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <div class="tb-group">
+        <button class="tb-btn" title="Geri al">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-15-6.7L3 13"/></svg>
+        </button>
+        <button class="tb-btn" title="Yinele">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 7v6h-6"/><path d="M3 17a9 9 0 0 1 15-6.7L21 13"/></svg>
+        </button>
+      </div>
+      <div class="tb-sep"></div>
+
+      <div class="tb-group">
+        <button class="tb-select">
+          <span class="label">Inter</span>
+          <svg class="chev" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <button class="tb-select mono">
+          <span class="label">12</span>
+          <svg class="chev" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+      </div>
+      <div class="tb-sep"></div>
+
+      <div class="tb-group">
+        <button class="tb-btn" title="KalÄ±n"><b style="font-size:13px;">B</b></button>
+        <button class="tb-btn" title="Ä°talik"><i style="font-size:13px; font-family:'Instrument Serif', serif;">I</i></button>
+        <button class="tb-btn" title="AltÄ± Ã§izili"><u style="font-size:13px;">U</u></button>
+        <button class="tb-btn" title="ÃstÃ¼ Ã§izili"><s style="font-size:13px;">S</s></button>
+        <button class="tb-btn" title="Metin rengi" style="flex-direction:column; gap:0; padding-bottom:2px;">
+          <span style="font-size:11px; line-height:1;">A</span>
+          <span style="display:block; width:13px; height:2px; background: var(--brand); margin-top:1px;"></span>
+        </button>
+        <button class="tb-btn" title="Vurgu">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 11-6 6v3h3l6-6m-3-3 4.5-4.5a2.121 2.121 0 0 1 3 3L8 16l-5 1 1-5L13.5 3.5a2.121 2.121 0 0 1 3 3z"/></svg>
+        </button>
+      </div>
+      <div class="tb-sep"></div>
+
+      <div class="tb-group">
+        <button class="tb-btn active" title="Sola hizala">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></svg>
+        </button>
+        <button class="tb-btn" title="Ortala">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="10" x2="6" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="18" y1="18" x2="6" y2="18"/></svg>
+        </button>
+        <button class="tb-btn" title="SaÄa hizala">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" y1="10" x2="7" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="21" y1="18" x2="7" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="tb-sep"></div>
+
+      <div class="tb-group">
+        <button class="tb-btn" title="Para birimi">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </button>
+        <button class="tb-btn" title="YÃ¼zde">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>
+        </button>
+        <button class="tb-btn" title="OndalÄ±k">
+          <span style="font-family:'JetBrains Mono'; font-size:11px;">.0</span>
+        </button>
+      </div>
+      <div class="tb-sep"></div>
+
+      <div class="tb-group">
+        <button class="tb-btn" title="Filtrele">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+        </button>
+        <button class="tb-btn" title="SÄ±rala">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M7 12h10"/><path d="M11 18h2"/></svg>
+        </button>
+        <button class="tb-btn" title="KoÅullu biÃ§imlendirme">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/><path d="M3 9h18"/></svg>
+        </button>
+        <button class="tb-btn" title="Pivot">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        </button>
+        <button class="tb-btn" title="Grafik ekle">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 16V9"/><path d="M12 16V5"/><path d="M17 16v-5"/></svg>
+        </button>
+      </div>
+
+      <div class="tb-spacer"></div>
+
+      <button class="tb-pill">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4"/><path d="m16.24 7.76 2.83-2.83"/><path d="M18 12h4"/><path d="m16.24 16.24 2.83 2.83"/><path d="M12 18v4"/><path d="m7.76 16.24-2.83 2.83"/><path d="M6 12H2"/><path d="m7.76 7.76-4.95-2.83"/></svg>
+        AI ile yaz
+        <span class="kbd-key">â J</span>
+      </button>
+    </div>
+
+    <!-- Formula bar -->
+    <div class="formula-bar">
+      <div class="name-box">
+        <span class="cell">E3</span>
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--ink-5)"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="fx" title="Fonksiyon ekle">Æx</div>
+      <div class="formula-input"><span>= </span>boÅ hÃ¼cre Â· deÄer veya formÃ¼l girin</div>
+      <div class="formula-meta">
+        <span>Sat: 1</span>
+        <span>Sut: 1</span>
+      </div>
+    </div>
+
+    <!-- Canvas -->
+    <div class="canvas-wrap">
+      <div class="sheet">
+        <div class="sheet-corner">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <div class="col-headers">
+          <div>A</div><div>B</div><div>C</div><div>D</div>
+          <div>E</div><div>F</div><div>G</div><div>H</div>
+          <div>I</div><div>J</div><div>K</div><div>L</div>
+          <div>M</div><div>N</div>
+        </div>
+        <div class="row-headers">
+          <div>1</div><div>2</div><div>3</div><div>4</div><div>5</div>
+          <div>6</div><div>7</div><div>8</div><div>9</div><div>10</div>
+          <div>11</div><div>12</div><div>13</div><div>14</div><div>15</div>
+          <div>16</div><div>17</div><div>18</div><div>19</div><div>20</div>
+          <div>21</div><div>22</div><div>23</div><div>24</div><div>25</div>
+          <div>26</div><div>27</div><div>28</div>
+        </div>
+
+        <div class="sel-cell"></div>
+
+        <!-- empty state card -->
+        <div class="empty">
+          <div class="empty-art">
+            <div class="plus">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </div>
+          </div>
+          <h2>Bu tablo henÃ¼z <em>boÅ.</em></h2>
+          <p>Bir Excel dosyasÄ± iÃ§e aktarÄ±n, hazÄ±r Åablonla baÅlayÄ±n, ya da AI'a ne tÃ¼r bir tablo istediÄinizi anlatÄ±n â baÅlangÄ±Ã§ verisini sizin iÃ§in kuralÄ±m.</p>
+          <div class="empty-cta">
+            <button class="cta-primary">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              Dosya yÃ¼kle
+            </button>
+            <button class="cta-secondary">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 3v18"/></svg>
+              Åablondan baÅla
+            </button>
+          </div>
+          <div class="empty-hint">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4"/><path d="m16.24 7.76 2.83-2.83"/><path d="M18 12h4"/><path d="m16.24 16.24 2.83 2.83"/><path d="M12 18v4"/><path d="m7.76 16.24-2.83 2.83"/><path d="M6 12H2"/><path d="m7.76 7.76-4.95-2.83"/></svg>
+            HÄ±zlÄ± baÅlangÄ±Ã§ iÃ§in
+            <span class="kbd-key">â</span><span class="kbd-key">J</span>
+            ile AI'a sorun
+          </div>
+        </div>
+      </div>
+
+      <!-- Sheet tabs footer -->
+      <div class="sheet-tabs">
+        <span class="tt-btn">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </span>
+        <div class="stab active">
+          <span class="swatch" style="background: var(--brand);"></span>
+          Stok
+          <svg class="chev" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="stab">
+          <span class="swatch" style="background: var(--amber);"></span>
+          TedarikÃ§i
+        </div>
+        <div class="stab">
+          <span class="swatch" style="background: var(--violet);"></span>
+          SipariÅ
+        </div>
+        <div class="stab">
+          <span class="swatch" style="background: var(--blue);"></span>
+          Ãzet
+        </div>
+        <div class="add">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Yeni sayfa
+        </div>
+
+        <div class="right">
+          <div class="zoom">
+            <span class="tt-btn">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </span>
+            <span class="level">100%</span>
+            <span class="tt-btn">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ BELOW CANVAS ============ -->
+    <div class="below">
+
+      <!-- HÄ±zlÄ± BaÅlangÄ±Ã§ -->
+      <section data-screen-label="01 HÄ±zlÄ± BaÅlangÄ±Ã§">
+        <div class="section-head">
+          <h3>HÄ±zlÄ± BaÅlangÄ±Ã§</h3>
+          <span class="sub">HazÄ±r Åablonlardan birini seÃ§in â verisi ve formÃ¼lleri ile birlikte gelir</span>
+          <span class="link">
+            TÃ¼m ÅablonlarÄ± gÃ¶r
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </span>
+        </div>
+
+        <div class="tpl-grid">
+
+          <div class="tpl">
+            <div class="tpl-head">
+              <div class="tpl-ico brand">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+              </div>
+              <span class="tpl-tag">42 sÃ¼tun</span>
+            </div>
+            <div class="tpl-name">Stok Takip</div>
+            <div class="tpl-desc">SKU, stok seviyesi, depo lokasyonu ve dÃ¼ÅÃ¼k stok uyarÄ±larÄ±</div>
+            <div class="tpl-foot">
+              <span class="cols">14 Ã¶rnek satÄ±r</span>
+              <span class="dot-sep">Â·</span>
+              <span>3 formÃ¼l</span>
+              <span class="use">Kullan
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+              </span>
+            </div>
+          </div>
+
+          <div class="tpl">
+            <div class="tpl-head">
+              <div class="tpl-ico amber">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+              </div>
+              <span class="tpl-tag">28 sÃ¼tun</span>
+            </div>
+            <div class="tpl-name">SipariÅ Takip</div>
+            <div class="tpl-desc">SipariÅ no, mÃ¼Återi, durum, kargo entegrasyonu ve fatura</div>
+            <div class="tpl-foot">
+              <span class="cols">10 Ã¶rnek satÄ±r</span>
+              <span class="dot-sep">Â·</span>
+              <span>Otomasyonlu</span>
+              <span class="use">Kullan
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+              </span>
+            </div>
+          </div>
+
+          <div class="tpl">
+            <div class="tpl-head">
+              <div class="tpl-ico violet">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              </div>
+              <span class="tpl-tag">18 sÃ¼tun</span>
+            </div>
+            <div class="tpl-name">MÃ¼Återi Listesi</div>
+            <div class="tpl-desc">CRM ile senkron, lead aÅamalarÄ± ve son temas takibi</div>
+            <div class="tpl-foot">
+              <span class="cols">25 Ã¶rnek satÄ±r</span>
+              <span class="dot-sep">Â·</span>
+              <span>HubSpot</span>
+              <span class="use">Kullan
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+              </span>
+            </div>
+          </div>
+
+          <div class="tpl">
+            <div class="tpl-head">
+              <div class="tpl-ico blue">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 16V9"/><path d="M12 16V5"/><path d="M17 16v-5"/></svg>
+              </div>
+              <span class="tpl-tag">22 sÃ¼tun</span>
+            </div>
+            <div class="tpl-name">Gelir Tablosu</div>
+            <div class="tpl-desc">AylÄ±k P&amp;L, kategori bazlÄ± gelir &amp; gider, marj analizi</div>
+            <div class="tpl-foot">
+              <span class="cols">12 ay Ã 8 kategori</span>
+              <span class="use">Kullan
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+              </span>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Otomasyonlar -->
+      <section data-screen-label="02 Otomasyonlar">
+        <div class="section-head">
+          <h3>Otomasyonlar</h3>
+          <span class="sub">Bu tabloya baÄlÄ± tetikleyiciler ve gÃ¶revler</span>
+          <span class="link">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Yeni otomasyon
+          </span>
+        </div>
+
+        <div class="autom-card">
+          <div class="autom-toolbar">
+            <span class="autom-filter active">TÃ¼mÃ¼ <span class="num">3</span></span>
+            <span class="autom-filter">Aktif <span class="num">1</span></span>
+            <span class="autom-filter">Pasif <span class="num">2</span></span>
+            <span class="autom-filter">Hata <span class="num">0</span></span>
+            <div class="right">
+              <span class="autom-filter">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+                Filtre
+              </span>
+              <span class="autom-filter">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M7 12h10"/><path d="M11 18h2"/></svg>
+                Son Ã§alÄ±Åma
+              </span>
+            </div>
+          </div>
+
+          <div class="autom-row">
+            <div class="autom-ico brand" style="background: var(--brand-soft); color: var(--brand); border-color: var(--brand-line);">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+            </div>
+            <div class="autom-name">
+              <div class="autom-title-row">
+                <span class="autom-title">DÃ¼ÅÃ¼k stok uyarÄ±sÄ±</span>
+                <span class="badge-status active"><span class="pip"></span> Aktif</span>
+              </div>
+              <div class="autom-desc">Stok &lt; 20 olduÄunda Slack #ops kanalÄ±na bildirim gÃ¶nder</div>
+            </div>
+            <div class="autom-trigger">
+              <span class="label">Tetikleyici</span>
+              <span class="val">on_change(stok)</span>
+            </div>
+            <div class="autom-runs">
+              <span class="label">ÃalÄ±Åma</span>
+              <span class="val"><b>14</b> Â· son 2 sa Ã¶nce</span>
+            </div>
+            <div class="switch on"></div>
+            <div class="more">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+            </div>
+          </div>
+
+          <div class="autom-row">
+            <div class="autom-ico amber" style="background: var(--amber-soft); color: oklch(52% 0.12 75); border-color: oklch(88% 0.05 80);">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>
+            </div>
+            <div class="autom-name">
+              <div class="autom-title-row">
+                <span class="autom-title">HaftalÄ±k rapor oluÅturma</span>
+                <span class="badge-status paused"><span class="pip"></span> Pasif</span>
+              </div>
+              <div class="autom-desc">Her Pazartesi 09:00'da PDF + Excel Ã¶zeti e-posta ile yolla</div>
+            </div>
+            <div class="autom-trigger">
+              <span class="label">Tetikleyici</span>
+              <span class="val">cron(0 9 * * 1)</span>
+            </div>
+            <div class="autom-runs">
+              <span class="label">ÃalÄ±Åma</span>
+              <span class="val"><b>3</b> Â· son 1 hf Ã¶nce</span>
+            </div>
+            <div class="switch"></div>
+            <div class="more">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+            </div>
+          </div>
+
+          <div class="autom-row">
+            <div class="autom-ico violet" style="background: var(--violet-soft); color: var(--violet); border-color: oklch(88% 0.04 295);">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            </div>
+            <div class="autom-name">
+              <div class="autom-title-row">
+                <span class="autom-title">TedarikÃ§i bildirimi</span>
+                <span class="badge-status draft"><span class="pip"></span> Taslak</span>
+              </div>
+              <div class="autom-desc">Yeni sipariÅ oluÅturulduÄunda tedarikÃ§iye otomatik e-posta</div>
+            </div>
+            <div class="autom-trigger">
+              <span class="label">Tetikleyici</span>
+              <span class="val">on_insert(siparis)</span>
+            </div>
+            <div class="autom-runs">
+              <span class="label">ÃalÄ±Åma</span>
+              <span class="val" style="color: var(--ink-4);">â hiÃ§ Ã§alÄ±ÅmadÄ±</span>
+            </div>
+            <div class="switch"></div>
+            <div class="more">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+            </div>
+          </div>
+
+          <div class="autom-foot">
+            <span>Bu ay <b style="color: var(--ink);">17 Ã§alÄ±Åma</b> Â· ortalama %98 baÅarÄ± oranÄ±</span>
+            <span class="sep">Â·</span>
+            <span class="cta">
+              Otomasyon geÃ§miÅi
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Kaynaklar -->
+      <section data-screen-label="03 Kaynaklar">
+        <div class="section-head">
+          <h3>Veri kaynaklarÄ±</h3>
+          <span class="sub">Bu tabloyu canlÄ± bir veri kaynaÄÄ±na baÄlayÄ±n</span>
+        </div>
+        <div class="resources">
+          <div class="resource">
+            <div class="resource-ico">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/></svg>
+            </div>
+            <div class="resource-meta">
+              <span class="resource-title">PostgreSQL baÄla</span>
+              <span class="resource-desc">VeritabanÄ± sorgusunu canlÄ± sÃ¼tun olarak ekle</span>
+            </div>
+            <div class="resource-arrow">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </div>
+          <div class="resource">
+            <div class="resource-ico">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 3v18"/></svg>
+            </div>
+            <div class="resource-meta">
+              <span class="resource-title">Google Sheets iÃ§e aktar</span>
+              <span class="resource-desc">Her 15 dakikada bir senkron â iki yÃ¶nlÃ¼</span>
+            </div>
+            <div class="resource-arrow">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </div>
+          <div class="resource">
+            <div class="resource-ico">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+            </div>
+            <div class="resource-meta">
+              <span class="resource-title">REST API endpoint</span>
+              <span class="resource-desc">Webhook + auth ile JSON dataset Ã§ek</span>
+            </div>
+            <div class="resource-arrow">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+
+  <!-- ============ RIGHT RAIL ============ -->
+  <aside class="rail">
+    <div class="rail-tabs">
+      <div class="rail-tab active">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4"/><path d="m16.24 7.76 2.83-2.83"/><path d="M18 12h4"/><path d="m12 18 0 4"/><path d="m7.76 16.24-2.83 2.83"/></svg>
+        Asistan
+        <span class="pip">BETA</span>
+      </div>
+      <div class="rail-tab">
+        Aksiyonlar
+        <span class="count">4</span>
+      </div>
+      <div class="rail-tab">Etkinlik</div>
+    </div>
+
+    <div class="rail-body">
+
+      <!-- AI Hero -->
+      <div class="ai-hero">
+        <div class="ai-head">
+          <div class="ai-icon">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4"/><path d="m16.24 7.76 2.83-2.83"/><path d="M18 12h4"/><path d="m12 18 0 4"/><path d="m7.76 16.24-2.83 2.83"/></svg>
+          </div>
+          <div class="ai-title">Mocksheets Asistan</div>
+          <span class="ai-status">
+            <span class="dot"></span> BaÄlÄ±
+          </span>
+        </div>
+
+        <div class="ai-suggest">Ãnerilen istemler</div>
+        <div class="chip-row">
+          <span class="chip">
+            <svg class="ico" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            DÃ¼ÅÃ¼k stok iÃ§in uyarÄ± oluÅtur
+          </span>
+          <span class="chip">
+            <svg class="ico" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m7 12 4-4 4 4 5-5"/></svg>
+            AylÄ±k satÄ±Å trendini Ã¶zetle
+          </span>
+          <span class="chip">
+            <svg class="ico" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/></svg>
+            SÃ¼tun baÅlÄ±klarÄ± oluÅtur
+          </span>
+        </div>
+
+        <div class="ai-input">
+          <textarea rows="2" placeholder="Tabloya ne yapmak istersin? Ãrn: A:F arasÄ±na haftalÄ±k satÄ±Å verisi ekleâ¦"></textarea>
+          <div class="ai-input-foot">
+            <span class="ai-tool" title="Dosya ekle">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+            </span>
+            <span class="ai-tool" title="HÃ¼cre referansla">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 3v18"/></svg>
+            </span>
+            <span class="ai-model">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4"/><path d="m16.24 7.76 2.83-2.83"/><path d="M18 12h4"/><path d="m12 18 0 4"/><path d="m7.76 16.24-2.83 2.83"/></svg>
+              Sonnet 4.5
+              <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </span>
+            <span class="ai-send">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick actions card -->
+      <div class="card">
+        <div class="card-head">
+          <span class="card-title">HÄ±zlÄ± Aksiyonlar</span>
+          <span class="pip">4</span>
+          <span class="more">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+          </span>
+        </div>
+        <div class="action-list">
+          <div class="action-item">
+            <div class="action-icon brand">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div class="action-body">
+              <div class="t">Veri DoÄrulama <span class="kbd-key">ââ§V</span></div>
+              <div class="d">HatalÄ± tip, eksik alan, kural ihlallerini bul</div>
+            </div>
+            <div class="action-go">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </div>
+          <div class="action-item">
+            <div class="action-icon amber">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="m6 6 1 13a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-13"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+            </div>
+            <div class="action-body">
+              <div class="t">BoÅluklarÄ± Temizle</div>
+              <div class="d">BoÅ satÄ±r + tekrarlÄ± whitespace karakterleri kaldÄ±r</div>
+            </div>
+            <div class="action-go">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </div>
+          <div class="action-item">
+            <div class="action-icon violet">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            </div>
+            <div class="action-body">
+              <div class="t">Yinelenenleri Bul</div>
+              <div class="d">SKU, e-posta veya seÃ§ili sÃ¼tunda kopyalarÄ± iÅaretle</div>
+            </div>
+            <div class="action-go">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </div>
+          <div class="action-item">
+            <div class="action-icon blue">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="m5 12 7-7 7 7"/></svg>
+            </div>
+            <div class="action-body">
+              <div class="t">FormÃ¼l Ãnerileri</div>
+              <div class="d">SeÃ§ili sÃ¼tun iÃ§in akÄ±llÄ± formÃ¼l + Ã¶rnek deÄer</div>
+            </div>
+            <div class="action-go">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </div>
+        </div>
+        <div class="card-foot">
+          TÃ¼m araÃ§larÄ± aÃ§
+          <svg class="arrow" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </div>
+      </div>
+
+      <!-- Activity card -->
+      <div class="card">
+        <div class="card-head">
+          <span class="card-title">Etkinlik</span>
+          <span class="more">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+          </span>
+        </div>
+        <div class="activity">
+          <div class="act-item">
+            <div class="act-avatar a1">ÃC</div>
+            <div class="act-msg"><b>Sen</b> tabloyu oluÅturdun Â· <span class="tag">Stok_Takip.xlsx</span></div>
+            <div class="act-time">2 dk</div>
+          </div>
+          <div class="act-item">
+            <div class="act-avatar sys">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1z"/></svg>
+            </div>
+            <div class="act-msg"><b>DÃ¼ÅÃ¼k stok</b> otomasyonu Ã§alÄ±ÅtÄ± Â· <span class="tag">trigger:cron</span></div>
+            <div class="act-time">5 dk</div>
+          </div>
+          <div class="act-item">
+            <div class="act-avatar a2">MK</div>
+            <div class="act-msg"><b>Mert K.</b> tabloyu yorum modunda gÃ¶rÃ¼ntÃ¼ledi</div>
+            <div class="act-time">38 dk</div>
+          </div>
+          <div class="act-item">
+            <div class="act-avatar sys">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            </div>
+            <div class="act-msg">HaftalÄ±k rapor oluÅturuldu</div>
+            <div class="act-time">1 sa</div>
+          </div>
+        </div>
+        <div class="card-foot">
+          TÃ¼m etkinlikleri gÃ¶r
+          <svg class="arrow" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+
+  <!-- ============ STATUS BAR ============ -->
+  <footer class="statusbar">
+    <span class="status-item"><span class="dot ok"></span> <b>BaÄlÄ±</b> Â· gerÃ§ek zamanlÄ± eÅitleme</span>
+    <span class="status-item"><span class="dot idle"></span> SeÃ§im: <b>E3</b></span>
+    <span class="status-item">Toplam: <b>â</b></span>
+    <span class="status-item">Ortalama: <b>â</b></span>
+    <span class="status-item">SayÄ±: <b>0</b></span>
+    <span class="status-spacer"></span>
+    <span class="status-item">UTF-8</span>
+    <span class="status-item">TR Â· TÃ¼rkÃ§e</span>
+    <span class="status-item">v3.214</span>
+    <span class="status-item">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+      Geri bildirim
+    </span>
+  </footer>
+
+</div>
+</body>
+</html>
