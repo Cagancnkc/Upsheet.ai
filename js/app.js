@@ -155,6 +155,12 @@ function buildGrid(data) {
         document.getElementById('formulaInput').value = inp.value;
         updateStatus();
       });
+      inp.addEventListener('blur', () => {
+        clearTimeout(window._autoEvalTimer);
+        window._autoEvalTimer = setTimeout(() => {
+          if (window.Automations?.evaluate) window.Automations.evaluate(sheets[activeSheet]);
+        }, 400);
+      });
       inp.addEventListener('keydown', e => cellKeydown(e, r, c));
       td.appendChild(inp);
 
@@ -813,6 +819,12 @@ function renderChunked(data, onDone, chunkSize) {
           document.getElementById('formulaInput').value = input.value;
           updateStatus();
         }; }(r, c, inp)));
+        inp.addEventListener('blur', function() {
+          clearTimeout(window._autoEvalTimer);
+          window._autoEvalTimer = setTimeout(function() {
+            if (window.Automations && window.Automations.evaluate) window.Automations.evaluate(sheets[activeSheet]);
+          }, 400);
+        });
         inp.addEventListener('keydown', (function(row, col) { return function(e) { cellKeydown(e, row, col); }; }(r, c)));
         td.appendChild(inp);
       }
@@ -1788,6 +1800,11 @@ function applyAIChanges(result) {
     refreshGrid();
     if (typeof showToast === 'function') showToast(result.reply || '✓ Güncellendi', 'success');
   }
+
+  // AI değişikliği sonrası otomasyon kurallarını değerlendir
+  setTimeout(function() {
+    if (window.Automations && window.Automations.evaluate) window.Automations.evaluate(sheets[activeSheet]);
+  }, 100);
 }
 
 function applyUpdateCellsAction(data) {

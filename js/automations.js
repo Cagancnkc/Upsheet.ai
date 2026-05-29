@@ -181,122 +181,125 @@ function setThrottle(ruleId) {
   localStorage.setItem(`auto_throttle_${ruleId}`, String(Date.now()));
 }
 
-// ── Entegrasyon tetikleme ─────────────────────────────────────────────────────
-async function fireRuleIntegration(rule, matchingRows, headers) {
-  const { integration, action_config } = rule;
-  const intKey = `int_${integration}`;
-  const config = JSON.parse(localStorage.getItem(intKey) || 'null');
-
-  if (!config) {
-    console.warn(`[Otomasyon] ${integration} entegrasyonu yapılandırılmamış, kural atlanıyor.`);
-    return;
-  }
-
-  // Mesaj şablonunu ilk eşleşen satır için doldur
-  const firstRow = matchingRows[0];
-  const filledMessage = (action_config.message || '').replace(
-    /\{([^}]+)\}/g,
-    (_, col) => {
-      const idx = headers.indexOf(col);
-      return idx >= 0 ? String(firstRow[idx] ?? '') : '';
-    }
-  );
-
-  // Her entegrasyon için payload oluştur
-  const payload = buildPayload(rule, matchingRows, headers, filledMessage);
-
+// ── Tek aksiyon tetikleme ─────────────────────────────────────────────────────
+// action: { type, ...config } — action_config dizisinden gelen tek eleman
+async function fireAction(action, rule, matchingRows, headers) {
   const BACKEND = (typeof API_URL !== 'undefined' && API_URL)
     || window.BACKEND_URL
     || (window.location.hostname === 'localhost' ? 'http://localhost:3001' : 'https://upsheet-ai.onrender.com');
   const token = getAuthToken();
+  const firstRow = matchingRows[0] || [];
+
+  const interp = (s) => (s || '').replace(/\{([^}]+)\}/g, (_, col) => {
+    const idx = headers.indexOf(col);
+    return idx >= 0 ? String(firstRow[idx] ?? '') : '';
+  });
+
+  const lsGet = (key) => { try { return JSON.parse(localStorage.getItem(key) || 'null'); } catch { return null; } };
 
   try {
-    let endpoint = '';
-    let body = {};
-
-    switch (integration) {
-      case 'make':
-        endpoint = `${BACKEND}/api/integrations/make/trigger`;
-        body = { webhookUrl: config.url, event: action_config.event || 'auto_trigger', data: payload };
+    switch (action.type) {
+      case 'slack': {
+        const webhookUrl = action.webhookUrl || action.url || lsGet('int_slack')?.url;
+        if (!webhookUrl) { console.warn('[Otomasyon] Slack webhook URL eksik'); return; }
+        await fetch(`${BACKEND}/api/integrations/slack/notify`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ webhookUrl, title: rule.name, message: interp(action.message), fields: buildFields(firstRow, headers, action.include_columns) })
+        });
         break;
-      case 'slack':
-        endpoint = `${BACKEND}/api/integrations/slack/notify`;
-        body = {
-          webhookUrl: config.url,
-          title: rule.name,
-          message: filledMessage,
-          fields: buildFields(firstRow, headers, action_config.include_columns)
-        };
+      }
+      case 'teams': {
+        const webhookUrl = action.webhookUrl || action.url || lsGet('int_teams')?.url;
+        if (!webhookUrl) { console.warn('[Otomasyon] Teams webhook URL eksik'); return; }
+        await fetch(`${BACKEND}/api/integrations/teams/notify`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ webhookUrl, title: rule.name, message: interp(action.message), fields: buildFields(firstRow, headers, action.include_columns) })
+        });
         break;
-      case 'teams':
-        endpoint = `${BACKEND}/api/integrations/teams/notify`;
-        body = {
-          webhookUrl: config.url,
-          title: rule.name,
-          message: filledMessage,
-          fields: buildFields(firstRow, headers, action_config.include_columns)
-        };
+      }
+      case 'webhook': {
+        const url = action.url || lsGet('int_webhook')?.url;
+        if (!url) { console.warn('[Otomasyon] Webhook URL eksik'); return; }
+        await fetch(`${BACKEND}/api/integrations/webhook/send`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ url, secret: action.secret, event: action.event || 'auto_trigger', data: buildPayload(rule, matchingRows, headers, interp(action.message || '')) })
+        });
         break;
-      case 'webhook':
-        endpoint = `${BACKEND}/api/integrations/webhook/send`;
-        body = {
-          url: config.url,
-          secret: config.secret,
-          event: action_config.event || 'auto_trigger',
-          data: payload
-        };
+      }
+      case 'gmail': {
+        await fetch(`${BACKEND}/api/integrations/gmail/send`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ to: interp(action.to), subject: interp(action.subject), body: interp(action.body) })
+        });
         break;
-      case 'notion':
-        endpoint = `${BACKEND}/api/integrations/notion/export`;
-        body = {
-          token: config.token,
-          dbId: config.dbId,
-          headers,
-          data: matchingRows.map(r => (action_config.include_columns || headers)
-            .map(col => r[headers.indexOf(col)] ?? ''))
-        };
+      }
+      case 'make': {
+        const webhookUrl = action.webhookUrl || action.url || lsGet('int_make')?.url;
+        if (!webhookUrl) { console.warn('[Otomasyon] Make webhook URL eksik'); return; }
+        await fetch(`${BACKEND}/api/integrations/make/trigger`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ webhookUrl, event: action.event || 'auto_trigger', data: buildPayload(rule, matchingRows, headers, interp(action.message || '')) })
+        });
         break;
-      case 'airtable':
-        endpoint = `${BACKEND}/api/integrations/airtable/export`;
-        body = {
-          token: config.token,
-          baseId: config.baseId,
-          tableName: config.tableName,
-          headers: action_config.include_columns || headers,
-          data: matchingRows
-        };
+      }
+      case 'notion': {
+        const cfg = lsGet('int_notion') || {};
+        await fetch(`${BACKEND}/api/integrations/notion/export`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ token: action.token || cfg.token, dbId: action.dbId || cfg.dbId, headers, data: matchingRows.map(r => (action.include_columns || headers).map(col => r[headers.indexOf(col)] ?? '')) })
+        });
         break;
+      }
+      case 'airtable': {
+        const cfg = lsGet('int_airtable') || {};
+        await fetch(`${BACKEND}/api/integrations/airtable/export`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ token: action.token || cfg.token, baseId: action.baseId || cfg.baseId, tableName: action.tableName || cfg.tableName, headers: action.include_columns || headers, data: matchingRows })
+        });
+        break;
+      }
+      case 'update_cells': {
+        if (typeof sheets === 'undefined' || typeof activeSheet === 'undefined') break;
+        const colIdx = headers.indexOf(action.column);
+        if (colIdx < 0) { console.warn(`[Otomasyon] Sütun bulunamadı: ${action.column}`); break; }
+        const data = sheets[activeSheet];
+        matchingRows.forEach(mRow => {
+          const rowIdx = data.indexOf(mRow);
+          if (rowIdx >= 0) data[rowIdx][colIdx] = String(action.value || '');
+        });
+        if (typeof buildGrid === 'function') buildGrid();
+        break;
+      }
+      case 'notification': {
+        if (typeof showToast === 'function') showToast(interp(action.message || rule.name), 'info');
+        break;
+      }
       default:
-        console.warn(`[Otomasyon] Desteklenmeyen entegrasyon: ${integration}`);
-        return;
+        console.warn(`[Otomasyon] Desteklenmeyen aksiyon tipi: ${action.type}`);
     }
-
-    await fetch(endpoint, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-      body: JSON.stringify(body)
-    });
-
-    console.log(`[Otomasyon] "${rule.name}" tetiklendi → ${integration}`);
+    console.log(`[Otomasyon] "${rule.name}" → ${action.type} tamamlandı`);
   } catch (e) {
-    console.error(`[Otomasyon] Tetikleme hatası (${rule.name}):`, e.message);
+    console.error(`[Otomasyon] Aksiyon hatası (${rule.name} → ${action.type}):`, e.message);
   }
 }
 
 function buildPayload(rule, matchingRows, headers, message) {
   return {
     rule_name: rule.name,
-    integration: rule.integration,
-    event: rule.action_config?.event || 'auto_trigger',
+    event: 'auto_trigger',
     message,
     matching_row_count: matchingRows.length,
     timestamp: new Date().toISOString(),
     rows: matchingRows.slice(0, 10).map(row => {
       const obj = {};
-      (rule.action_config?.include_columns || headers).forEach(col => {
-        const idx = headers.indexOf(col);
-        if (idx >= 0) obj[col] = row[idx] ?? '';
-      });
+      headers.forEach((col, idx) => { obj[col] = row[idx] ?? ''; });
       return obj;
     })
   };
@@ -329,8 +332,11 @@ async function evaluateAutomationRules(sheetData) {
     if (isThrottled(rule.id, rule.throttle_seconds)) continue;
 
     const { trigger_config } = rule;
+    // schedule tipi kurallar backend'de çalışır, client atlar
+    if (!trigger_config || trigger_config.type === 'schedule') continue;
+
     const colIdx = headers.indexOf(trigger_config.column);
-    if (colIdx < 0) continue; // sütun bu tabloda yok
+    if (colIdx < 0) continue;
 
     const matchingRows = dataRows.filter(row =>
       evaluateCondition(row[colIdx], trigger_config.operator, trigger_config.value)
@@ -340,9 +346,16 @@ async function evaluateAutomationRules(sheetData) {
 
     setThrottle(rule.id);
     await logRuleFired(rule.id);
-    await fireRuleIntegration(rule, matchingRows, headers);
 
-    // UI'da bildirim göster (app.js'de tanımlanmış showToast varsa)
+    // action_config hem array hem tek obje olabilir (backwards compat)
+    const actions = Array.isArray(rule.action_config)
+      ? rule.action_config
+      : (rule.action_config ? [rule.action_config] : []);
+
+    for (const action of actions) {
+      if (action) await fireAction(action, rule, matchingRows, headers);
+    }
+
     if (typeof showToast === 'function') {
       showToast(`Otomasyon tetiklendi: ${rule.name}`, 'info');
     }

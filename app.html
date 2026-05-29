@@ -547,110 +547,18 @@
         <div class="section-head">
           <h3>Otomasyonlar</h3>
           <span class="sub">Bu tabloya bağlı tetikleyiciler ve görevler</span>
-          <span class="link">
+          <span class="link" onclick="window.open('automations.html','_blank')" style="cursor:pointer;">
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             Yeni otomasyon
           </span>
         </div>
 
         <div class="autom-card">
-          <div class="autom-toolbar">
-            <span class="autom-filter active">Tümü <span class="num">3</span></span>
-            <span class="autom-filter">Aktif <span class="num">1</span></span>
-            <span class="autom-filter">Pasif <span class="num">2</span></span>
-            <span class="autom-filter">Hata <span class="num">0</span></span>
-            <div class="right">
-              <span class="autom-filter">
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
-                Filtre
-              </span>
-              <span class="autom-filter">
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M7 12h10"/><path d="M11 18h2"/></svg>
-                Son çalışma
-              </span>
-            </div>
-          </div>
-
-          <div class="autom-row">
-            <div class="autom-ico brand" style="background: var(--brand-soft); color: var(--brand); border-color: var(--brand-line);">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
-            </div>
-            <div class="autom-name">
-              <div class="autom-title-row">
-                <span class="autom-title">Düşük stok uyarısı</span>
-                <span class="badge-status active"><span class="pip"></span> Aktif</span>
-              </div>
-              <div class="autom-desc">Stok &lt; 20 olduğunda Slack #ops kanalına bildirim gönder</div>
-            </div>
-            <div class="autom-trigger">
-              <span class="label">Tetikleyici</span>
-              <span class="val">on_change(stok)</span>
-            </div>
-            <div class="autom-runs">
-              <span class="label">Çalışma</span>
-              <span class="val"><b>14</b> · son 2 sa önce</span>
-            </div>
-            <div class="switch on"></div>
-            <div class="more">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
-            </div>
-          </div>
-
-          <div class="autom-row">
-            <div class="autom-ico amber" style="background: var(--amber-soft); color: oklch(52% 0.12 75); border-color: oklch(88% 0.05 80);">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>
-            </div>
-            <div class="autom-name">
-              <div class="autom-title-row">
-                <span class="autom-title">Haftalık rapor oluşturma</span>
-                <span class="badge-status paused"><span class="pip"></span> Pasif</span>
-              </div>
-              <div class="autom-desc">Her Pazartesi 09:00'da PDF + Excel özeti e-posta ile yolla</div>
-            </div>
-            <div class="autom-trigger">
-              <span class="label">Tetikleyici</span>
-              <span class="val">cron(0 9 * * 1)</span>
-            </div>
-            <div class="autom-runs">
-              <span class="label">Çalışma</span>
-              <span class="val"><b>3</b> · son 1 hf önce</span>
-            </div>
-            <div class="switch"></div>
-            <div class="more">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
-            </div>
-          </div>
-
-          <div class="autom-row">
-            <div class="autom-ico violet" style="background: var(--violet-soft); color: var(--violet); border-color: oklch(88% 0.04 295);">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-            </div>
-            <div class="autom-name">
-              <div class="autom-title-row">
-                <span class="autom-title">Tedarikçi bildirimi</span>
-                <span class="badge-status draft"><span class="pip"></span> Taslak</span>
-              </div>
-              <div class="autom-desc">Yeni sipariş oluşturulduğunda tedarikçiye otomatik e-posta</div>
-            </div>
-            <div class="autom-trigger">
-              <span class="label">Tetikleyici</span>
-              <span class="val">on_insert(siparis)</span>
-            </div>
-            <div class="autom-runs">
-              <span class="label">Çalışma</span>
-              <span class="val" style="color: var(--ink-4);">— hiç çalışmadı</span>
-            </div>
-            <div class="switch"></div>
-            <div class="more">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
-            </div>
-          </div>
+          <div id="automationList" style="min-height:60px;"></div>
 
           <div class="autom-foot">
-            <span>Bu ay <b style="color: var(--ink);">17 çalışma</b> · ortalama %98 başarı oranı</span>
-            <span class="sep">·</span>
-            <span class="cta">
-              Otomasyon geçmişi
+            <span class="cta" onclick="window.open('automations.html','_blank')" style="cursor:pointer;">
+              Otomasyonları yönet
               <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
             </span>
           </div>
@@ -1548,6 +1456,65 @@
   function incrementCount() { var next = Math.min(getCount() + 1, LIMIT); localStorage.setItem('ms_cmd_count', next); renderCount(next); }
   renderCount(getCount());
 
+  // ── Otomasyon listesi (dinamik) ───────────────────────────────────────────
+  function renderAutomationList() {
+    var list = document.getElementById('automationList');
+    if (!list) return;
+    if (!window.Automations || !window.Automations.load) {
+      list.innerHTML = '<div style="padding:.75rem 1rem;color:var(--ink-4);font-size:.8rem;">Otomasyon motoru yükleniyor…</div>';
+      return;
+    }
+    list.innerHTML = '<div style="padding:.75rem 1rem;color:var(--ink-4);font-size:.8rem;">Yükleniyor…</div>';
+    window.Automations.load().then(function(rules) {
+      if (!rules || !rules.length) {
+        list.innerHTML = '<div style="padding:.75rem 1rem;color:var(--ink-4);font-size:.8rem;">Henüz otomasyon yok. "Yeni otomasyon" ile başla.</div>';
+        return;
+      }
+      list.innerHTML = rules.map(function(r) {
+        var tc = r.trigger_config || {};
+        var triggerStr = tc.type ? tc.type + (tc.column ? '(' + tc.column + ')' : '') : '—';
+        var lastFired = r.last_fired ? new Date(r.last_fired).toLocaleString('tr-TR') : 'hiç çalışmadı';
+        return '<div class="autom-row" data-id="' + r.id + '" style="align-items:center;gap:.75rem;">' +
+          '<div class="autom-name" style="flex:1;min-width:0;">' +
+            '<div class="autom-title-row">' +
+              '<span class="autom-title" style="font-weight:550;font-size:.82rem;">' + (r.name || 'Otomasyon') + '</span>' +
+              '<span class="badge-status ' + (r.enabled ? 'active' : 'paused') + '" style="font-size:.72rem;">' +
+                '<span class="pip"></span>' + (r.enabled ? 'Aktif' : 'Pasif') +
+              '</span>' +
+            '</div>' +
+            '<div class="autom-desc" style="font-size:.75rem;color:var(--ink-3);margin-top:2px;">' + (r.description || '') + '</div>' +
+          '</div>' +
+          '<div class="autom-trigger" style="flex-shrink:0;font-size:.75rem;">' +
+            '<span class="label" style="color:var(--ink-4);">Tetikleyici</span>' +
+            '<span class="val"><code style="font-size:.72rem;">' + triggerStr + '</code></span>' +
+          '</div>' +
+          '<div class="autom-runs" style="flex-shrink:0;font-size:.75rem;">' +
+            '<span class="label" style="color:var(--ink-4);">Çalışma</span>' +
+            '<span class="val"><b>' + (r.run_count || 0) + '</b> · ' + lastFired + '</span>' +
+          '</div>' +
+          '<div class="switch ' + (r.enabled ? 'on' : '') + '" onclick="toggleAutomationRule(\'' + r.id + '\',this)" style="cursor:pointer;flex-shrink:0;"></div>' +
+          '<button onclick="deleteAutomationRule(\'' + r.id + '\')" style="flex-shrink:0;background:none;border:1px solid var(--border);border-radius:5px;padding:3px 8px;font-size:.72rem;cursor:pointer;color:var(--ink-3);">Sil</button>' +
+        '</div>';
+      }).join('');
+    }).catch(function() {
+      list.innerHTML = '<div style="padding:.75rem 1rem;color:var(--ink-4);font-size:.8rem;">Kurallar yüklenemedi. Giriş yapın.</div>';
+    });
+  }
+
+  function toggleAutomationRule(id, el) {
+    var isOn = el.classList.toggle('on');
+    if (window.Automations && window.Automations.update) {
+      window.Automations.update(id, { enabled: isOn });
+    }
+  }
+
+  function deleteAutomationRule(id) {
+    if (!confirm('Bu otomasyonu silmek istediğine emin misin?')) return;
+    if (window.Automations && window.Automations.remove) {
+      window.Automations.remove(id).then(function() { renderAutomationList(); });
+    }
+  }
+
   // ── Init grid + sheet tabs ────────────────────────────────────────────────
   renderGrid();
   renderSheetTabs();
@@ -2187,5 +2154,7 @@
   <div class="am-item" data-action="delete" style="padding:7px 14px;font-size:12px;cursor:pointer;color:var(--rose);">Sil</div>
 </div>
 
+<script src="js/automations.js"></script>
+<script>if (typeof renderAutomationList === 'function') renderAutomationList();</script>
 </body>
 </html>
