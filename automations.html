@@ -10,7 +10,7 @@
 <meta property="og:type" content="website">
 <title>Otomasyonlar – Mocksheets</title>
 <link rel="icon" type="image/png" href="/images/brand/logo-128x128.png">
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&family=Geist+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
 <style>
 :root {
   --bg:#fafafa;--surface:#FFFFFF;--surface-2:#f4f4f5;--surface-3:#e4e4e7;
@@ -302,6 +302,73 @@ textarea.inp{height:auto;padding:10px 12px;resize:vertical;min-height:72px}
   .run-detail-grid{grid-template-columns:1fr}
   .field-row{flex-direction:column;gap:12px}
 }
+
+/* ── HERO YENİ ── */
+.hero-eyebrow{display:inline-flex;align-items:center;gap:7px;background:var(--accent-soft);border:1px solid var(--accent-line);color:var(--accent);border-radius:999px;padding:5px 14px;font-size:12px;font-weight:600;letter-spacing:.01em;margin-bottom:18px}
+.hero-h1{font-family:'Geist',sans-serif;font-size:clamp(26px,4vw,42px);font-weight:800;line-height:1.15;color:var(--ink);margin-bottom:12px}
+.hero-h1 em{font-family:'Instrument Serif',Georgia,serif;font-style:italic;font-weight:400;color:var(--accent)}
+
+/* ── APPS GALLERY ── */
+#apps-gallery{margin-bottom:36px}
+.apps-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px}
+.app-tile{background:var(--surface);border:1px solid var(--line-2);border-radius:14px;padding:14px 10px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;transition:all .15s;text-align:center}
+.app-tile:hover{border-color:var(--accent-line);box-shadow:0 0 0 2px var(--accent-soft);transform:translateY(-2px)}
+.app-tile-icon{font-size:22px;width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:var(--surface-2)}
+.app-tile-name{font-size:11px;font-weight:600;color:var(--ink-2)}
+.app-tile-cat{font-size:10px;color:var(--muted)}
+
+/* ── INLINE BUILDER ── */
+#builder-section{display:none;margin-bottom:36px;background:var(--surface);border:1.5px solid var(--accent-line);border-radius:var(--radius-lg);overflow:hidden}
+#builder-section.open{display:block}
+.builder-toolbar{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--line);background:var(--accent-soft);flex-wrap:wrap}
+.builder-toolbar-title{font-size:14px;font-weight:700;color:var(--ink)}
+.builder-name-inp{flex:1;min-width:160px;height:34px;background:var(--surface);border:1px solid var(--line-2);border-radius:8px;padding:0 12px;font-size:13px;color:var(--ink);outline:none}
+.builder-name-inp:focus{border-color:var(--accent)}
+.builder-canvas{background-image:radial-gradient(circle,var(--line-2) 1.5px,transparent 1.5px);background-size:24px 24px;background-color:var(--surface-2);padding:32px 28px;overflow-x:auto;min-height:180px;display:flex;align-items:center;gap:0}
+.c-node{flex-shrink:0;background:var(--surface);border:2px solid var(--line-2);border-radius:14px;padding:14px 16px;min-width:160px;cursor:pointer;transition:all .15s;position:relative}
+.c-node:hover{border-color:var(--accent-line);box-shadow:0 0 0 3px var(--accent-soft)}
+.c-node.selected{border-color:var(--accent);box-shadow:0 0 0 3px rgba(22,163,74,.18)}
+.c-node.trigger-node{border-color:var(--accent-line);background:var(--accent-soft)}
+.c-node.trigger-node.selected{border-color:var(--accent)}
+.c-node.action-node{border-color:var(--blue-line);background:var(--blue-soft)}
+.c-node.action-node.selected{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.15)}
+.c-node-badge{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:6px}
+.c-node-icon{font-size:26px;margin-bottom:6px;line-height:1}
+.c-node-label{font-size:12px;font-weight:700;color:var(--ink);line-height:1.3}
+.c-node-sub{font-size:10.5px;color:var(--muted);margin-top:2px}
+.c-node-del{position:absolute;top:6px;right:6px;width:18px;height:18px;border-radius:4px;border:none;background:none;color:var(--muted);font-size:11px;cursor:pointer;display:none;align-items:center;justify-content:center}
+.c-node:hover .c-node-del{display:flex}
+.c-node-del:hover{background:var(--rose-soft);color:var(--rose)}
+.c-connector{display:flex;align-items:center;flex-shrink:0;padding:0 4px}
+.c-conn-line{width:36px;height:2px;background:var(--line-2)}
+.c-conn-arrow{width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:7px solid var(--line-2)}
+.c-add-btn{flex-shrink:0;width:44px;height:44px;border-radius:50%;border:2px dashed var(--line-2);background:var(--surface);color:var(--muted);font-size:22px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;margin:0 10px;line-height:1}
+.c-add-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft);transform:scale(1.08)}
+.builder-config{border-top:1px solid var(--line);padding:20px 24px;display:none}
+.builder-config.open{display:block}
+.cfg-title{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.app-picker-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:8px;margin-bottom:16px}
+.app-card{background:var(--surface-2);border:1.5px solid var(--line);border-radius:10px;padding:10px 8px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;transition:all .12s;text-align:center}
+.app-card:hover{border-color:var(--accent-line);background:var(--accent-soft)}
+.app-card.selected{border-color:var(--accent);background:var(--accent-soft);box-shadow:0 0 0 2px rgba(22,163,74,.15)}
+.app-card-icon{font-size:20px}
+.app-card-name{font-size:10px;font-weight:600;color:var(--ink-2)}
+.trigger-type-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin-bottom:16px}
+.trigger-type-card{background:var(--surface-2);border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:8px;cursor:pointer;transition:all .12s}
+.trigger-type-card:hover{border-color:var(--accent-line);background:var(--accent-soft)}
+.trigger-type-card.selected{border-color:var(--accent);background:var(--accent-soft)}
+.trigger-type-card-icon{font-size:18px;flex-shrink:0}
+.trigger-type-card-name{font-size:11px;font-weight:600;color:var(--ink-2);line-height:1.3}
+.builder-foot{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-top:1px solid var(--line);background:var(--surface)}
+
+@media(max-width:640px){
+  .hero-h1{font-size:24px}
+  .apps-grid{grid-template-columns:repeat(auto-fill,minmax(85px,1fr))}
+  .builder-canvas{padding:20px 14px}
+  .c-node{min-width:130px;padding:10px 12px}
+  .builder-toolbar{gap:8px}
+  .app-picker-grid,.trigger-type-grid{grid-template-columns:repeat(auto-fill,minmax(80px,1fr))}
+}
 </style>
 <script>
 (function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","wz4bh4ifpe");
@@ -326,9 +393,9 @@ textarea.inp{height:auto;padding:10px 12px;resize:vertical;min-height:72px}
     <div class="nav-spacer"></div>
     <button class="theme-toggle" onclick="toggleTheme()" title="Tema değiştir">🌙</button>
     <div style="width:8px"></div>
-    <button class="nav-btn nav-btn-primary" onclick="openCreateModal()">
+    <button class="nav-btn nav-btn-primary" onclick="openBuilder()">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
-      Yeni Otomasyon
+      Yeni Workflow
     </button>
     <div style="width:8px"></div>
     <div class="nav-avatar" id="nav-avatar">U</div>
@@ -340,26 +407,26 @@ textarea.inp{height:auto;padding:10px 12px;resize:vertical;min-height:72px}
 
   <!-- HERO -->
   <section id="hero">
-    <div class="hero-top">
-      <div class="hero-left">
-        <h1>Otomasyon Merkezi</h1>
-        <p>Tekrar eden operasyonel görevleri otomatikleştirin. Stok uyarıları, tedarikçi bildirimleri, raporlama ve daha fazlası.</p>
-        <div class="hero-stats">
-          <span class="stat-chip"><span class="stat-dot" id="stat-dot-active"></span><span id="stat-active">0 aktif</span></span>
-          <span class="stat-chip"><span class="stat-dot" id="stat-dot-runs" style="background:#2563EB"></span><span id="stat-runs">0 çalışma</span></span>
-          <span class="stat-chip"><span class="stat-dot" id="stat-dot-success" style="background:#16a34a"></span><span id="stat-success">— başarı</span></span>
-        </div>
-      </div>
-      <div class="hero-actions">
-        <button class="btn btn-ai" onclick="openAIModal()">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-          AI ile Oluştur
-        </button>
-        <button class="btn btn-primary" onclick="openCreateModal()">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
-          Yeni
-        </button>
-      </div>
+    <div class="hero-eyebrow">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      Workflow Otomasyonu
+    </div>
+    <h1 class="hero-h1">İşlemleri <em>otomatikleştir</em>,<br>zamandan kazan</h1>
+    <p style="font-size:15px;color:var(--muted);max-width:520px;line-height:1.65;margin-bottom:20px">Tetikleyici, koşul ve uygulama aksiyonlarını görsel olarak bağlayarak tekrar eden operasyonel görevleri otomatikleştirin.</p>
+    <div class="hero-stats" style="margin-bottom:20px">
+      <span class="stat-chip"><span class="stat-dot" id="stat-dot-active"></span><span id="stat-active">0 aktif</span></span>
+      <span class="stat-chip"><span class="stat-dot" style="background:#2563EB"></span><span id="stat-runs">0 çalışma</span></span>
+      <span class="stat-chip"><span class="stat-dot" style="background:#16a34a"></span><span id="stat-success">— başarı</span></span>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn btn-primary" onclick="openBuilder()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+        Yeni Workflow
+      </button>
+      <button class="btn btn-ai" onclick="openAIModal()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        AI ile Oluştur
+      </button>
     </div>
   </section>
 
@@ -373,6 +440,49 @@ textarea.inp{height:auto;padding:10px 12px;resize:vertical;min-height:72px}
       <span class="tag">9 şablon</span>
     </div>
     <div class="template-scroll" id="template-scroll"></div>
+  </section>
+
+  <!-- APPS GALLERY -->
+  <section id="apps-gallery">
+    <div class="section-header">
+      <div class="section-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+        Bağlanabilir Uygulamalar
+      </div>
+      <span class="tag">8 entegrasyon</span>
+    </div>
+    <div class="apps-grid">
+      <div class="app-tile" onclick="openBuilder('gmail')"><div class="app-tile-icon">📧</div><div class="app-tile-name">Gmail</div><div class="app-tile-cat">E-posta</div></div>
+      <div class="app-tile" onclick="openBuilder('slack')"><div class="app-tile-icon">💬</div><div class="app-tile-name">Slack</div><div class="app-tile-cat">Mesajlaşma</div></div>
+      <div class="app-tile" onclick="openBuilder('teams')"><div class="app-tile-icon">🔷</div><div class="app-tile-name">Teams</div><div class="app-tile-cat">Mesajlaşma</div></div>
+      <div class="app-tile" onclick="openBuilder('notion')"><div class="app-tile-icon">📝</div><div class="app-tile-name">Notion</div><div class="app-tile-cat">Veritabanı</div></div>
+      <div class="app-tile" onclick="openBuilder('airtable')"><div class="app-tile-icon">🗃️</div><div class="app-tile-name">Airtable</div><div class="app-tile-cat">Veritabanı</div></div>
+      <div class="app-tile" onclick="openBuilder('make')"><div class="app-tile-icon">⚙️</div><div class="app-tile-name">Make</div><div class="app-tile-cat">Otomasyon</div></div>
+      <div class="app-tile" onclick="openBuilder('webhook')"><div class="app-tile-icon">🔗</div><div class="app-tile-name">Webhook</div><div class="app-tile-cat">API</div></div>
+      <div class="app-tile" onclick="openBuilder('notification')"><div class="app-tile-icon">🔔</div><div class="app-tile-name">Bildirim</div><div class="app-tile-cat">Uygulama içi</div></div>
+    </div>
+  </section>
+
+  <!-- INLINE BUILDER -->
+  <section id="builder-section">
+    <div class="builder-toolbar">
+      <div class="builder-toolbar-title">Workflow Oluşturucu</div>
+      <input class="builder-name-inp" type="text" id="builder-name" placeholder="Workflow adı...">
+      <button class="btn btn-sm" onclick="closeBuilder()">İptal</button>
+      <button class="btn btn-primary btn-sm" onclick="saveWorkflow()">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        Kaydet
+      </button>
+    </div>
+    <div class="builder-canvas" id="builder-canvas"></div>
+    <div class="builder-config" id="builder-config"></div>
+    <div class="builder-foot">
+      <span style="font-size:12px;color:var(--muted)" id="builder-hint">Tetikleyici node'una tıklayarak başlayın</span>
+      <button class="btn btn-sm btn-ghost" id="btn-test-builder" onclick="testCurrentRule()" style="display:none">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Test Et
+      </button>
+    </div>
   </section>
 
   <!-- MY AUTOMATIONS -->
@@ -617,6 +727,12 @@ let currentRunId = null;
 let conditions = [];
 let actions = [];
 
+// ── BUILDER STATE ──────────────────────────────────────────────────────────
+let builderTrigger = null;
+let builderActions = [];
+let builderSelectedNode = null;
+let builderEditId = null;
+
 // ── AUTH ───────────────────────────────────────────────────────────────────
 async function initAuth() {
   try {
@@ -804,7 +920,7 @@ const TEMPLATES = [
 function renderTemplates() {
   const el = document.getElementById('template-scroll');
   el.innerHTML = TEMPLATES.map(t => `
-    <div class="tpl-card" onclick='openCreateModal(${JSON.stringify(t.data)})'>
+    <div class="tpl-card" onclick='openBuilder(${JSON.stringify(t.data)})'>
       <div class="tpl-icon" style="background:${t.iconBg}">${t.icon}</div>
       <div class="tpl-name">${t.name}</div>
       <div class="tpl-desc">${t.desc}</div>
@@ -839,7 +955,7 @@ function renderRules(filtered) {
         <div class="es-icon">⚡</div>
         <h3>Henüz otomasyon yok</h3>
         <p>İlk otomasyonunuzu oluşturun veya yukarıdaki hazır şablonlardan birini kullanın.</p>
-        <button class="btn btn-primary" onclick="openCreateModal()">+ Yeni Otomasyon</button>
+        <button class="btn btn-primary" onclick="openBuilder()">+ Yeni Workflow</button>
       </div>`;
     return;
   }
@@ -1011,7 +1127,7 @@ async function deleteRule(id) {
 function editRule(id) {
   const rule = allRules.find(r => r.id === id);
   if (!rule) return;
-  openCreateModal(rule, id);
+  openBuilder(rule, id);
 }
 
 // ── SHOW RUN DETAIL ────────────────────────────────────────────────────────
@@ -1051,6 +1167,346 @@ async function retryRun() {
   if (!currentRunId) return;
   document.getElementById('run-overlay').classList.remove('open');
   await runRule(currentRunId);
+}
+
+// ── INLINE BUILDER ──────────────────────────────────────────────────────────
+
+const BUILDER_TRIGGER_TYPES = [
+  { v: 'cell_condition', l: 'Hücre Koşulu', icon: '📋' },
+  { v: 'threshold',      l: 'Eşik Değeri',  icon: '📊' },
+  { v: 'schedule',       l: 'Zamanlama',    icon: '🕐' },
+  { v: 'date_arrived',   l: 'Tarih Koşulu', icon: '📅' },
+  { v: 'row_added',      l: 'Yeni Satır',   icon: '➕' },
+  { v: 'value_changed',  l: 'Değer Değişimi', icon: '🔄' },
+  { v: 'ai_anomaly',     l: 'AI Anomali',   icon: '🤖' }
+];
+
+const BUILDER_APP_TYPES = [
+  { v: 'notification', l: 'Bildirim',   icon: '🔔' },
+  { v: 'gmail',        l: 'Gmail',      icon: '📧' },
+  { v: 'slack',        l: 'Slack',      icon: '💬' },
+  { v: 'teams',        l: 'Teams',      icon: '🔷' },
+  { v: 'notion',       l: 'Notion',     icon: '📝' },
+  { v: 'airtable',     l: 'Airtable',   icon: '🗃️' },
+  { v: 'make',         l: 'Make',       icon: '⚙️' },
+  { v: 'webhook',      l: 'Webhook',    icon: '🔗' }
+];
+
+function openBuilder(prefillOrApp, id) {
+  builderTrigger = null;
+  builderActions = [];
+  builderSelectedNode = null;
+  builderEditId = id || null;
+  document.getElementById('builder-name').value = '';
+
+  if (prefillOrApp && typeof prefillOrApp === 'object' && (prefillOrApp.trigger_config || prefillOrApp.name)) {
+    // Full rule prefill (edit or template)
+    const p = prefillOrApp;
+    document.getElementById('builder-name').value = p.name || '';
+    if (p.trigger_config) builderTrigger = JSON.parse(JSON.stringify(p.trigger_config));
+    const ac = p.action_config;
+    builderActions = Array.isArray(ac) ? JSON.parse(JSON.stringify(ac)) : (ac ? [JSON.parse(JSON.stringify(ac))] : []);
+  } else if (typeof prefillOrApp === 'string') {
+    // App tile clicked — preset first action
+    builderActions = [{ type: prefillOrApp }];
+  } else {
+    builderActions = [];
+  }
+
+  const section = document.getElementById('builder-section');
+  section.classList.add('open');
+  section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  renderBuilderCanvas();
+  renderBuilderConfig();
+}
+
+function closeBuilder() {
+  document.getElementById('builder-section').classList.remove('open');
+  document.getElementById('builder-config').classList.remove('open');
+  builderTrigger = null;
+  builderActions = [];
+  builderSelectedNode = null;
+  builderEditId = null;
+}
+
+function renderBuilderCanvas() {
+  const canvas = document.getElementById('builder-canvas');
+  let html = '';
+
+  // Trigger node
+  const tSel = builderSelectedNode === 'trigger';
+  const tType = builderTrigger ? BUILDER_TRIGGER_TYPES.find(t => t.v === builderTrigger.type) : null;
+  html += `<div class="c-node trigger-node${tSel ? ' selected' : ''}" onclick="selectBuilderNode('trigger')">
+    <div class="c-node-badge">Tetikleyici</div>
+    <div class="c-node-icon">${tType ? tType.icon : '⚡'}</div>
+    <div class="c-node-label">${tType ? tType.l : 'Tetikleyici Seç'}</div>
+    ${builderTrigger?.column ? `<div class="c-node-sub">${escHtml(builderTrigger.column)}</div>` : ''}
+  </div>`;
+
+  // Action nodes
+  builderActions.forEach((act, i) => {
+    const aSel = builderSelectedNode === i;
+    const aType = act.type ? BUILDER_APP_TYPES.find(a => a.v === act.type) : null;
+    html += `<div class="c-connector"><div class="c-conn-line"></div><div class="c-conn-arrow"></div></div>
+    <div class="c-node action-node${aSel ? ' selected' : ''}" onclick="selectBuilderNode(${i})">
+      <button class="c-node-del" onclick="event.stopPropagation();removeBuilderAction(${i})">✕</button>
+      <div class="c-node-badge">Aksiyon ${builderActions.length > 1 ? i + 1 : ''}</div>
+      <div class="c-node-icon">${aType ? aType.icon : '📤'}</div>
+      <div class="c-node-label">${aType ? aType.l : 'Uygulama Seç'}</div>
+      ${act.to ? `<div class="c-node-sub">${escHtml(act.to)}</div>` : act.webhookUrl ? `<div class="c-node-sub">webhook</div>` : ''}
+    </div>`;
+  });
+
+  // Add action button
+  html += `<div class="c-connector"><div class="c-conn-line"></div><div class="c-conn-arrow"></div></div>
+  <button class="c-add-btn" onclick="addBuilderAction()" title="Aksiyon Ekle">+</button>`;
+
+  canvas.innerHTML = html;
+
+  const hint = document.getElementById('builder-hint');
+  const testBtn = document.getElementById('btn-test-builder');
+  if (!builderTrigger) {
+    hint.textContent = 'Tetikleyici node\'una tıklayarak başlayın';
+  } else if (!builderActions.length || !builderActions[0]?.type) {
+    hint.textContent = '→ Şimdi bir aksiyon uygulaması seçin';
+  } else {
+    hint.textContent = '✓ Workflow hazır — Kaydet\'e tıklayın';
+  }
+  testBtn.style.display = builderEditId ? '' : 'none';
+}
+
+function selectBuilderNode(nodeId) {
+  builderSelectedNode = nodeId;
+  renderBuilderCanvas();
+  renderBuilderConfig();
+}
+
+function renderBuilderConfig() {
+  const el = document.getElementById('builder-config');
+  if (builderSelectedNode === null) { el.classList.remove('open'); el.innerHTML = ''; return; }
+  el.classList.add('open');
+  if (builderSelectedNode === 'trigger') {
+    el.innerHTML = renderTriggerPicker();
+  } else {
+    el.innerHTML = renderActionPicker(builderSelectedNode) + renderActionConfigFields(builderSelectedNode);
+  }
+}
+
+function renderTriggerPicker() {
+  const sel = builderTrigger?.type;
+  const grid = BUILDER_TRIGGER_TYPES.map(t => `
+    <div class="trigger-type-card${sel === t.v ? ' selected' : ''}" onclick="selectBuilderTrigger('${t.v}')">
+      <span class="trigger-type-card-icon">${t.icon}</span>
+      <span class="trigger-type-card-name">${t.l}</span>
+    </div>`).join('');
+
+  const fields = builderTrigger ? renderTriggerConfigFieldsInner() : '';
+  return `<div class="cfg-title">⚡ Tetikleyici Tipi</div>
+    <div class="trigger-type-grid">${grid}</div>${fields}`;
+}
+
+function selectBuilderTrigger(type) {
+  builderTrigger = { type };
+  renderBuilderCanvas();
+  renderBuilderConfig();
+}
+
+function renderTriggerConfigFieldsInner() {
+  const t = builderTrigger;
+  if (!t) return '';
+  const p = t;
+  const esc = escHtml;
+  let html = '<div class="field-row" style="margin-top:12px">';
+  if (t.type === 'cell_condition' || t.type === 'threshold') {
+    html += `
+      <div class="field"><label class="lbl">Sütun Adı</label>
+        <input class="inp" type="text" placeholder="örn. Stok" value="${esc(p.column||'')}" oninput="builderTrigger.column=this.value;renderBuilderCanvas()">
+      </div>
+      <div class="field"><label class="lbl">Koşul</label>
+        <select class="inp" onchange="builderTrigger.operator=this.value">
+          ${OPERATORS.map(o => `<option value="${o.v}" ${p.operator===o.v?'selected':''}>${o.l}</option>`).join('')}
+        </select>
+      </div>
+      <div class="field"><label class="lbl">Değer</label>
+        <input class="inp" type="text" placeholder="örn. 20" value="${esc(p.value||'')}" oninput="builderTrigger.value=this.value">
+      </div>`;
+  } else if (t.type === 'schedule') {
+    html += `
+      <div class="field"><label class="lbl">Sıklık</label>
+        <select class="inp" onchange="builderTrigger.frequency=this.value">
+          <option value="every_hour" ${p.frequency==='every_hour'?'selected':''}>Her saat</option>
+          <option value="every_day" ${!p.frequency||p.frequency==='every_day'?'selected':''}>Her gün</option>
+          <option value="every_week" ${p.frequency==='every_week'?'selected':''}>Her hafta</option>
+          <option value="every_month" ${p.frequency==='every_month'?'selected':''}>Her ay</option>
+        </select>
+      </div>
+      <div class="field"><label class="lbl">Saat</label>
+        <input class="inp" type="time" value="${esc(p.time||'09:00')}" oninput="builderTrigger.time=this.value">
+      </div>`;
+  } else if (t.type === 'date_arrived') {
+    html += `
+      <div class="field"><label class="lbl">Sütun Adı (Tarih)</label>
+        <input class="inp" type="text" placeholder="örn. Vade Tarihi" value="${esc(p.column||'')}" oninput="builderTrigger.column=this.value">
+      </div>
+      <div class="field"><label class="lbl">Gün Önce</label>
+        <input class="inp" type="number" placeholder="0" value="${esc(String(p.days_before||0))}" oninput="builderTrigger.days_before=this.value">
+      </div>`;
+  } else if (t.type === 'value_changed') {
+    html += `
+      <div class="field"><label class="lbl">Sütun Adı</label>
+        <input class="inp" type="text" placeholder="örn. Durum" value="${esc(p.column||'')}" oninput="builderTrigger.column=this.value;renderBuilderCanvas()">
+      </div>`;
+  }
+  html += '</div>';
+  return html;
+}
+
+function renderActionPicker(idx) {
+  const act = builderActions[idx] || {};
+  const sel = act.type;
+  const grid = BUILDER_APP_TYPES.map(a => `
+    <div class="app-card${sel === a.v ? ' selected' : ''}" onclick="selectBuilderAction(${idx},'${a.v}')">
+      <span class="app-card-icon">${a.icon}</span>
+      <span class="app-card-name">${a.l}</span>
+    </div>`).join('');
+  return `<div class="cfg-title">📤 Aksiyon Uygulaması ${builderActions.length > 1 ? idx + 1 : ''}</div>
+    <div class="app-picker-grid">${grid}</div>`;
+}
+
+function selectBuilderAction(idx, type) {
+  builderActions[idx] = { type };
+  renderBuilderCanvas();
+  renderBuilderConfig();
+}
+
+function renderActionConfigFields(idx) {
+  const act = builderActions[idx];
+  if (!act || !act.type) return '';
+  const esc = escHtml;
+  let html = '<div class="field-row" style="margin-top:4px">';
+  switch (act.type) {
+    case 'gmail':
+      html += `
+        <div class="field"><label class="lbl">Alıcı (To)</label>
+          <input class="inp" type="email" placeholder="alici@ornek.com" value="${esc(act.to||'')}" oninput="builderActions[${idx}].to=this.value">
+        </div>
+        <div class="field"><label class="lbl">Konu</label>
+          <input class="inp" type="text" placeholder="Konu..." value="${esc(act.subject||'')}" oninput="builderActions[${idx}].subject=this.value">
+        </div>
+        <div class="field" style="grid-column:1/-1"><label class="lbl">İçerik</label>
+          <textarea class="inp" rows="2" style="resize:vertical" placeholder="Mesaj metni..." oninput="builderActions[${idx}].body=this.value">${esc(act.body||'')}</textarea>
+        </div>`;
+      break;
+    case 'slack':
+    case 'teams':
+      html += `
+        <div class="field"><label class="lbl">Webhook URL</label>
+          <input class="inp" type="url" placeholder="https://hooks.slack.com/..." value="${esc(act.webhookUrl||'')}" oninput="builderActions[${idx}].webhookUrl=this.value">
+        </div>
+        <div class="field"><label class="lbl">Mesaj</label>
+          <input class="inp" type="text" placeholder="Mesaj metni, {Sütun} kullanabilirsiniz" value="${esc(act.message||'')}" oninput="builderActions[${idx}].message=this.value">
+        </div>`;
+      break;
+    case 'notification':
+      html += `
+        <div class="field"><label class="lbl">Bildirim Metni</label>
+          <input class="inp" type="text" placeholder="Mesaj, {Sütun} kullanabilirsiniz" value="${esc(act.message||'')}" oninput="builderActions[${idx}].message=this.value">
+        </div>`;
+      break;
+    case 'webhook':
+      html += `
+        <div class="field"><label class="lbl">URL</label>
+          <input class="inp" type="url" placeholder="https://..." value="${esc(act.url||'')}" oninput="builderActions[${idx}].url=this.value">
+        </div>
+        <div class="field"><label class="lbl">Olay (Event)</label>
+          <input class="inp" type="text" placeholder="auto_trigger" value="${esc(act.event||'')}" oninput="builderActions[${idx}].event=this.value">
+        </div>`;
+      break;
+    case 'make':
+      html += `
+        <div class="field"><label class="lbl">Webhook URL</label>
+          <input class="inp" type="url" placeholder="https://hook.make.com/..." value="${esc(act.webhookUrl||'')}" oninput="builderActions[${idx}].webhookUrl=this.value">
+        </div>`;
+      break;
+    case 'notion':
+      html += `
+        <div class="field"><label class="lbl">Notion Token</label>
+          <input class="inp" type="text" placeholder="secret_..." value="${esc(act.token||'')}" oninput="builderActions[${idx}].token=this.value">
+        </div>
+        <div class="field"><label class="lbl">Database ID</label>
+          <input class="inp" type="text" placeholder="xxxxxxxx-xxxx-..." value="${esc(act.dbId||'')}" oninput="builderActions[${idx}].dbId=this.value">
+        </div>`;
+      break;
+    case 'airtable':
+      html += `
+        <div class="field"><label class="lbl">API Token</label>
+          <input class="inp" type="text" placeholder="pat..." value="${esc(act.token||'')}" oninput="builderActions[${idx}].token=this.value">
+        </div>
+        <div class="field"><label class="lbl">Base ID</label>
+          <input class="inp" type="text" placeholder="appXXX..." value="${esc(act.baseId||'')}" oninput="builderActions[${idx}].baseId=this.value">
+        </div>
+        <div class="field"><label class="lbl">Tablo Adı</label>
+          <input class="inp" type="text" placeholder="Table 1" value="${esc(act.tableName||'')}" oninput="builderActions[${idx}].tableName=this.value">
+        </div>`;
+      break;
+    default:
+      break;
+  }
+  html += '</div>';
+  return html;
+}
+
+function addBuilderAction() {
+  builderActions.push({});
+  builderSelectedNode = builderActions.length - 1;
+  renderBuilderCanvas();
+  renderBuilderConfig();
+}
+
+function removeBuilderAction(idx) {
+  builderActions.splice(idx, 1);
+  if (builderSelectedNode === idx) builderSelectedNode = null;
+  else if (typeof builderSelectedNode === 'number' && builderSelectedNode > idx) builderSelectedNode--;
+  renderBuilderCanvas();
+  renderBuilderConfig();
+}
+
+async function saveWorkflow() {
+  const name = document.getElementById('builder-name').value.trim();
+  if (!name) { toast('Workflow adı gerekli', 'warning'); return; }
+  if (!builderTrigger?.type) { toast('Tetikleyici seçin', 'warning'); return; }
+  if (!builderActions.length || !builderActions[0]?.type) { toast('En az bir aksiyon seçin', 'warning'); return; }
+
+  const body = {
+    name,
+    trigger_config: builderTrigger,
+    condition_config: [],
+    action_config: builderActions,
+    throttle_seconds: 3600,
+    enabled: true
+  };
+
+  const btn = document.querySelector('#builder-section .btn-primary');
+  const origHtml = btn.innerHTML;
+  btn.innerHTML = '<div class="spin"></div>';
+  btn.disabled = true;
+
+  try {
+    const url = builderEditId ? API + '/api/automations/' + builderEditId : API + '/api/automations';
+    const method = builderEditId ? 'PUT' : 'POST';
+    const res = await fetch(url, { method, headers: authHeaders(), body: JSON.stringify(body) });
+    const data = await res.json();
+    if (res.ok) {
+      closeBuilder();
+      toast(builderEditId ? 'Workflow güncellendi' : 'Workflow oluşturuldu', 'success');
+      await loadRules();
+    } else {
+      toast(data.error || 'Kaydetme başarısız', 'error');
+    }
+  } catch { toast('Bağlantı hatası', 'error'); }
+
+  btn.innerHTML = origHtml;
+  btn.disabled = false;
 }
 
 // ── CREATE/EDIT MODAL ──────────────────────────────────────────────────────
@@ -1419,7 +1875,7 @@ function renderAIPreview(wf) {
 function useGeneratedWorkflow() {
   if (!generatedWorkflow) return;
   closeAIModal();
-  openCreateModal(generatedWorkflow);
+  openBuilder(generatedWorkflow);
 }
 
 // ── HELPERS ────────────────────────────────────────────────────────────────
