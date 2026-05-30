@@ -371,6 +371,23 @@ textarea.inp{height:auto;padding:10px 12px;resize:vertical;min-height:72px}
   .builder-toolbar{gap:8px}
   .app-picker-grid,.trigger-type-grid{grid-template-columns:repeat(auto-fill,minmax(80px,1fr))}
 }
+/* ── TEMPLATE KATEGORİ FİLTRESİ ── */
+.tpl-cats{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.tpl-cat{padding:4px 14px;border-radius:999px;border:1px solid var(--line-2);background:var(--surface);font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;transition:all .15s}
+.tpl-cat.active{border-color:var(--accent-line);background:rgba(22,163,74,.08);color:var(--accent)}
+/* ── SCHEDULE ÖNİZLEME ── */
+.schedule-preview{margin-top:10px;padding:8px 14px;border-radius:8px;background:rgba(22,163,74,.06);border:1px solid rgba(22,163,74,.18);font-size:12px;color:var(--accent);font-weight:500}
+.flow-schedule-badge{font-size:10px;color:var(--accent);font-weight:600;display:block;margin-top:2px;opacity:.8}
+/* ── DEĞİŞKEN CHİPS ── */
+.var-chips-wrap{margin-top:8px}
+.var-chips{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:4px}
+.var-chip{padding:2px 9px;border-radius:6px;border:1px solid var(--line-2);background:var(--surface-2);font-size:11px;font-weight:600;color:var(--ink-2);cursor:pointer;font-family:monospace;transition:all .12s}
+.var-chip:hover{border-color:var(--accent-line);color:var(--accent);background:rgba(22,163,74,.07)}
+.var-chips-hint{font-size:10px;color:var(--muted)}
+/* ── MESAJ ÖNİZLEME ── */
+.msg-preview-box{margin-top:10px;padding:10px 14px;border-radius:10px;background:var(--surface-2);border:1px solid var(--line-2)}
+.msg-preview-label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+.msg-preview-text{font-size:12px;color:var(--ink-2);line-height:1.6;font-style:italic}
 </style>
 <script>
 (function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","wz4bh4ifpe");
@@ -439,7 +456,14 @@ textarea.inp{height:auto;padding:10px 12px;resize:vertical;min-height:72px}
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
         Hazır Şablonlar
       </div>
-      <span class="tag">9 şablon</span>
+      <span class="tag" id="tpl-count-badge">11 şablon</span>
+    </div>
+    <div class="tpl-cats">
+      <button class="tpl-cat active" data-cat="all" onclick="filterTemplates('all')">Tümü</button>
+      <button class="tpl-cat" data-cat="muhasebe" onclick="filterTemplates('muhasebe')">Muhasebe</button>
+      <button class="tpl-cat" data-cat="stok" onclick="filterTemplates('stok')">Stok</button>
+      <button class="tpl-cat" data-cat="satis" onclick="filterTemplates('satis')">Satış</button>
+      <button class="tpl-cat" data-cat="ik" onclick="filterTemplates('ik')">İK</button>
     </div>
     <div class="template-scroll" id="template-scroll"></div>
   </section>
@@ -798,7 +822,7 @@ const TEMPLATES = [
   {
     id: 'low-stock', icon: '📦', iconBg: '#fef3c7', name: 'Düşük Stok Uyarısı',
     desc: 'Stok eşiğin altına düşünce otomatik uyarı gönder',
-    tags: ['Gmail', 'Bildirim'],
+    tags: ['Gmail', 'Bildirim'], category: 'stok',
     data: {
       name: 'Düşük Stok Uyarısı', description: 'Stok 20 adedinin altına düştüğünde tedarikçiye bildir',
       trigger_config: { type: 'threshold', column: 'Stok Miktarı', operator: 'less_than', value: '20' },
@@ -812,7 +836,7 @@ const TEMPLATES = [
   {
     id: 'supplier-order', icon: '🛒', iconBg: '#d1fae5', name: 'Tedarikçi Sipariş Talebi',
     desc: 'Kritik stok için tedarikçiye otomatik mail',
-    tags: ['Gmail'],
+    tags: ['Gmail'], category: 'stok',
     data: {
       name: 'Tedarikçi Sipariş Talebi', description: 'Stok kritik seviyeye düşünce tedarikçiye sipariş maili gönder',
       trigger_config: { type: 'threshold', column: 'Stok Miktarı', operator: 'less_than', value: '10' },
@@ -825,7 +849,7 @@ const TEMPLATES = [
   {
     id: 'invoice-followup', icon: '🧾', iconBg: '#fee2e2', name: 'Fatura Takibi',
     desc: 'Son ödeme tarihi geçen faturalar için hatırlatma',
-    tags: ['Gmail', 'Zamanlama'],
+    tags: ['Gmail', 'Zamanlama'], category: 'muhasebe',
     data: {
       name: 'Fatura Takibi', description: 'Son ödeme tarihi geçmiş faturaları tespit et ve uyar',
       trigger_config: { type: 'schedule', frequency: 'every_day', time: '09:00' },
@@ -838,7 +862,7 @@ const TEMPLATES = [
   {
     id: 'monthly-report', icon: '📊', iconBg: '#ede9fe', name: 'Aylık Raporlama',
     desc: 'Her ayın 1\'inde otomatik rapor bildirimi',
-    tags: ['Zamanlama', 'Bildirim'],
+    tags: ['Zamanlama', 'Bildirim'], category: 'satis',
     data: {
       name: 'Aylık Rapor Bildirimi', description: 'Ayın ilk günü operasyonel rapor gönder',
       trigger_config: { type: 'schedule', frequency: 'every_month', time: '08:00' },
@@ -851,7 +875,7 @@ const TEMPLATES = [
   {
     id: 'branch-perf', icon: '📉', iconBg: '#fce7f3', name: 'Şube Performans Uyarısı',
     desc: 'Satış hedefinin altında kalan şubeleri bildir',
-    tags: ['Slack', 'Bildirim'],
+    tags: ['Slack', 'Bildirim'], category: 'satis',
     data: {
       name: 'Şube Performans Uyarısı', description: 'Hedef satışın altında kalan şubeler için Slack bildirimi',
       trigger_config: { type: 'threshold', column: 'Satış Tutarı', operator: 'less_than', value: '10000' },
@@ -865,7 +889,7 @@ const TEMPLATES = [
   {
     id: 'expiry-warn', icon: '⏰', iconBg: '#fef9c3', name: 'Vade Tarihi Uyarısı',
     desc: 'Yaklaşan vade tarihleri için erken uyarı',
-    tags: ['Bildirim'],
+    tags: ['Bildirim'], category: 'muhasebe',
     data: {
       name: 'Vade Tarihi Yaklaşıyor', description: 'Vadesi 7 gün içinde dolacak kayıtlar için bildirim',
       trigger_config: { type: 'date_arrived', column: 'Vade Tarihi', days_before: '7' },
@@ -878,7 +902,7 @@ const TEMPLATES = [
   {
     id: 'procurement', icon: '🔄', iconBg: '#ecfdf5', name: 'Tedarik İş Akışı',
     desc: 'Onay alındığında Notion\'da sipariş sayfası oluştur',
-    tags: ['Notion', 'Gmail'],
+    tags: ['Notion', 'Gmail'], category: 'stok',
     data: {
       name: 'Tedarik Onay İş Akışı', description: 'Durum "Onaylandı" olduğunda Notion ve Gmail aksiyonu tetikle',
       trigger_config: { type: 'cell_condition', column: 'Durum', operator: 'equals', value: 'Onaylandı' },
@@ -892,7 +916,7 @@ const TEMPLATES = [
   {
     id: 'payroll', icon: '💰', iconBg: '#f0fdf4', name: 'Maaş Hatırlatma',
     desc: 'Her ayın 25\'inde maaş hatırlatması',
-    tags: ['Zamanlama', 'Bildirim'],
+    tags: ['Zamanlama', 'Bildirim'], category: 'ik',
     data: {
       name: 'Maaş Ödeme Hatırlatması', description: 'Ayın 25\'inde maaş işlemleri için hatırlatma gönder',
       trigger_config: { type: 'schedule', cronExpr: '0 9 25 * *' },
@@ -905,7 +929,7 @@ const TEMPLATES = [
   {
     id: 'missing-data', icon: '🔍', iconBg: '#eff6ff', name: 'Eksik Veri Uyarısı',
     desc: 'Boş tedarikçi/kategori alanlarını tespit et',
-    tags: ['Slack', 'Bildirim'],
+    tags: ['Slack', 'Bildirim'], category: 'stok',
     data: {
       name: 'Eksik Veri Tespiti', description: 'Tedarikçi bilgisi girilmemiş satırlar için uyarı',
       trigger_config: { type: 'cell_condition', column: 'Tedarikçi', operator: 'is_empty', value: '' },
@@ -915,13 +939,51 @@ const TEMPLATES = [
         { type: 'slack', channel: '#veri-kalite', message: '⚠️ Eksik tedarikçi bilgisi: {Ürün Adı} satırında tedarikçi alanı boş.' }
       ]
     }
+  },
+  {
+    id: 'sgk-reminder', icon: '📋', iconBg: '#fef3c7', name: 'SGK Bildirge Hatırlatıcısı',
+    desc: 'Her ayın 23\'ünde SGK bildirge hatırlatması',
+    tags: ['Gmail', 'Zamanlama'], category: 'muhasebe',
+    data: {
+      name: 'SGK Aylık Bildirge', description: 'Her ayın 23\'ünde SGK bildirge son günü hatırlatması',
+      trigger_config: { type: 'schedule', cronExpr: '0 8 23 * *' },
+      condition_config: [],
+      action_config: [
+        { type: 'gmail', to: 'muhasebe@firma.com', subject: 'SGK Bildirge Hatırlatması', body: 'Bu ayın SGK muhtasar ve prim hizmet beyannamesi için son 2 gün. Lütfen bildirgeyi kontrol edin.' },
+        { type: 'notification', message: 'SGK bildirge son tarihi yaklaşıyor (her ayın 23\'ü)' }
+      ]
+    }
+  },
+  {
+    id: 'sales-target', icon: '🏆', iconBg: '#d1fae5', name: 'Satış Hedefi Aşıldı',
+    desc: 'Satış hedefini geçince Slack\'e kutlama mesajı',
+    tags: ['Slack'], category: 'satis',
+    data: {
+      name: 'Satış Hedefi Kutlaması', description: 'Aylık satış tutarı hedefi geçince Slack bildirimi',
+      trigger_config: { type: 'threshold', column: 'Aylık Satış', operator: 'greater_than', value: '50000' },
+      condition_config: [],
+      action_config: [
+        { type: 'slack', message: '🎉 Harika! {Temsilci} bu ay {Aylık Satış} ₺ ile satış hedefini aştı!' },
+        { type: 'notification', message: 'Satış hedefi aşıldı: {Temsilci} — {Aylık Satış} ₺' }
+      ]
+    }
   }
 ];
 
 // ── RENDER TEMPLATES ───────────────────────────────────────────────────────
+let activeTplCat = 'all';
+
+function filterTemplates(cat) {
+  activeTplCat = cat;
+  document.querySelectorAll('.tpl-cat').forEach(b => b.classList.toggle('active', b.dataset.cat === cat));
+  renderTemplates();
+}
+
 function renderTemplates() {
   const el = document.getElementById('template-scroll');
-  el.innerHTML = TEMPLATES.map(t => `
+  const list = activeTplCat === 'all' ? TEMPLATES : TEMPLATES.filter(t => t.category === activeTplCat);
+  document.getElementById('tpl-count-badge').textContent = list.length + ' şablon';
+  el.innerHTML = list.map(t => `
     <div class="tpl-card" onclick='openBuilder(${JSON.stringify(t.data)})'>
       <div class="tpl-icon" style="background:${t.iconBg}">${t.icon}</div>
       <div class="tpl-name">${t.name}</div>
@@ -1007,7 +1069,11 @@ function renderRules(filtered) {
         <div class="flow-nodes">
           <div class="flow-node node-trigger">
             <span class="node-icon">${isSchedule ? '⏰' : '⚡'}</span>
-            <div><div class="node-label">Tetikleyici</div><div class="node-value">${escHtml(triggerLabel)}</div></div>
+            <div>
+              <div class="node-label">Tetikleyici</div>
+              <div class="node-value">${escHtml(triggerLabel)}</div>
+              ${isSchedule && tc.frequency ? `<span class="flow-schedule-badge">${({'every_5m':'Her 5dk','every_15m':'Her 15dk','every_hour':'Her saat','every_day':'Her gün','every_week':'Her Pazartesi','every_month':'Her ay 1.'}[tc.frequency] || tc.frequency)}${tc.time ? ' ' + tc.time : ''}</span>` : ''}
+            </div>
           </div>
           ${actionNodes}
         </div>
@@ -1381,6 +1447,50 @@ function selectBuilderAction(idx, type) {
   renderBuilderConfig();
 }
 
+// ── DEĞİŞKEN CHIPS YARDIMCILARI ──────────────────────────────────────────
+const COMMON_VARS = ['Müşteri', 'Ürün', 'Tutar', 'Tarih', 'Durum', 'Stok', 'Temsilci'];
+
+function getBuilderVars() {
+  const triggerCol = builderTrigger?.column;
+  const cols = triggerCol ? [triggerCol, ...COMMON_VARS.filter(c => c !== triggerCol)] : COMMON_VARS;
+  return cols.slice(0, 6);
+}
+
+function renderVarChipsHtml(idx, targetId) {
+  const vars = getBuilderVars();
+  const chips = vars.map(v =>
+    `<button type="button" class="var-chip" onclick="insertVar('${targetId}','${v}',${idx})">{${v}}</button>`
+  ).join('');
+  return `<div class="var-chips-wrap"><div class="var-chips">${chips}</div><div class="var-chips-hint">Sütun adına tıklayarak mesaja ekle</div></div>`;
+}
+
+function insertVar(targetId, varName, idx) {
+  const el = document.getElementById(targetId);
+  if (!el) return;
+  const pos = el.selectionStart ?? el.value.length;
+  const ins = `{${varName}}`;
+  el.value = el.value.slice(0, pos) + ins + el.value.slice(pos);
+  el.dispatchEvent(new Event('input'));
+  el.focus();
+  el.setSelectionRange(pos + ins.length, pos + ins.length);
+}
+
+function previewMsg(msg) {
+  if (!msg) return '<span style="color:var(--muted)">Mesaj yazınca önizleme burada görünür</span>';
+  const vars = getBuilderVars();
+  let out = escHtml(msg);
+  const samples = { Müşteri:'ACME Ltd.', Ürün:'Laptop Kılıfı', Tutar:'1.500 ₺', Tarih:'31.05.2026', Durum:'Onaylandı', Stok:'3', Temsilci:'Ahmet Y.' };
+  vars.forEach(v => { out = out.replace(new RegExp(`\\{${v}\\}`, 'g'), `<strong>${samples[v] || v}</strong>`); });
+  return out;
+}
+
+function updateMsgPreview(inputId, previewId) {
+  const inp = document.getElementById(inputId);
+  const box = document.getElementById(previewId);
+  if (!inp || !box) return;
+  box.querySelector('.msg-preview-text').innerHTML = previewMsg(inp.value);
+}
+
 function renderActionConfigFields(idx) {
   const act = builderActions[idx];
   if (!act || !act.type) return '';
@@ -1393,10 +1503,12 @@ function renderActionConfigFields(idx) {
           <input class="inp" type="email" placeholder="alici@ornek.com" value="${esc(act.to||'')}" oninput="builderActions[${idx}].to=this.value">
         </div>
         <div class="field"><label class="lbl">Konu</label>
-          <input class="inp" type="text" placeholder="Konu..." value="${esc(act.subject||'')}" oninput="builderActions[${idx}].subject=this.value">
+          <input class="inp" type="text" placeholder="Konu... {Sütun} kullanabilirsiniz" value="${esc(act.subject||'')}" oninput="builderActions[${idx}].subject=this.value">
         </div>
         <div class="field" style="grid-column:1/-1"><label class="lbl">İçerik</label>
-          <textarea class="inp" rows="2" style="resize:vertical" placeholder="Mesaj metni..." oninput="builderActions[${idx}].body=this.value">${esc(act.body||'')}</textarea>
+          <textarea class="inp" id="act-body-${idx}" rows="2" style="resize:vertical" placeholder="Mesaj metni..." oninput="builderActions[${idx}].body=this.value;updateMsgPreview('act-body-${idx}','msg-prev-${idx}')">${esc(act.body||'')}</textarea>
+          ${renderVarChipsHtml(idx, 'act-body-' + idx)}
+          <div class="msg-preview-box" id="msg-prev-${idx}"><div class="msg-preview-label">Önizleme</div><div class="msg-preview-text">${previewMsg(act.body||'')}</div></div>
         </div>`;
       break;
     case 'slack':
@@ -1406,13 +1518,17 @@ function renderActionConfigFields(idx) {
           <input class="inp" type="url" placeholder="https://hooks.slack.com/..." value="${esc(act.webhookUrl||'')}" oninput="builderActions[${idx}].webhookUrl=this.value">
         </div>
         <div class="field"><label class="lbl">Mesaj</label>
-          <input class="inp" type="text" placeholder="Mesaj metni, {Sütun} kullanabilirsiniz" value="${esc(act.message||'')}" oninput="builderActions[${idx}].message=this.value">
+          <input class="inp" id="act-msg-${idx}" type="text" placeholder="Mesaj metni, {Sütun} kullanabilirsiniz" value="${esc(act.message||'')}" oninput="builderActions[${idx}].message=this.value;updateMsgPreview('act-msg-${idx}','msg-prev-${idx}')">
+          ${renderVarChipsHtml(idx, 'act-msg-' + idx)}
+          <div class="msg-preview-box" id="msg-prev-${idx}"><div class="msg-preview-label">Önizleme</div><div class="msg-preview-text">${previewMsg(act.message||'')}</div></div>
         </div>`;
       break;
     case 'notification':
       html += `
         <div class="field"><label class="lbl">Bildirim Metni</label>
-          <input class="inp" type="text" placeholder="Mesaj, {Sütun} kullanabilirsiniz" value="${esc(act.message||'')}" oninput="builderActions[${idx}].message=this.value">
+          <input class="inp" id="act-msg-${idx}" type="text" placeholder="Mesaj, {Sütun} kullanabilirsiniz" value="${esc(act.message||'')}" oninput="builderActions[${idx}].message=this.value;updateMsgPreview('act-msg-${idx}','msg-prev-${idx}')">
+          ${renderVarChipsHtml(idx, 'act-msg-' + idx)}
+          <div class="msg-preview-box" id="msg-prev-${idx}"><div class="msg-preview-label">Önizleme</div><div class="msg-preview-text">${previewMsg(act.message||'')}</div></div>
         </div>`;
       break;
     case 'webhook':
@@ -1628,10 +1744,16 @@ function renderTriggerFields(prefill) {
         <label class="lbl">Cron İfadesi</label>
         <input class="inp" type="text" id="tc-cron" placeholder="örn. 0 9 * * 1-5" value="${escHtml(p.cronExpr || '')}">
         <div class="inp-hint">Dakika Saat Gün Ay HaftaGünü — örn. <code>0 9 * * 1</code> = her Pazartesi 09:00</div>
-      </div>`;
-    document.getElementById('tc-freq')?.addEventListener('change', function() {
+      </div>
+      <div class="schedule-preview" id="schedule-preview"></div>`;
+    const freqEl = document.getElementById('tc-freq');
+    const timeEl = document.getElementById('tc-time');
+    freqEl?.addEventListener('change', function() {
       document.getElementById('cron-field').style.display = this.value === 'custom' ? '' : 'none';
+      updateSchedulePreview();
     });
+    timeEl?.addEventListener('change', updateSchedulePreview);
+    updateSchedulePreview();
   } else if (type === 'date_arrived') {
     el.innerHTML = `
       <div class="field-row">
@@ -1654,6 +1776,23 @@ function renderTriggerFields(prefill) {
   } else if (type === 'row_added' || type === 'ai_anomaly') {
     el.innerHTML = `<div class="inp-hint" style="margin-top:0">${type === 'ai_anomaly' ? 'AI, verideki anormal değişimleri ve kalıpları otomatik olarak tespit eder.' : 'Tabloya yeni satır eklendiğinde tetiklenir.'}</div>`;
   }
+}
+
+function updateSchedulePreview() {
+  const el = document.getElementById('schedule-preview');
+  if (!el) return;
+  const freq = document.getElementById('tc-freq')?.value || 'every_day';
+  const time = document.getElementById('tc-time')?.value || '09:00';
+  const labels = {
+    every_5m:  'Her 5 dakikada bir',
+    every_15m: 'Her 15 dakikada bir',
+    every_hour:'Her saat başı',
+    every_day: `Her gün saat ${time}`,
+    every_week:`Her Pazartesi saat ${time}`,
+    every_month:`Her ayın 1'inde saat ${time}`,
+    custom:    'Özel cron ifadesiyle'
+  };
+  el.textContent = `⏰  ${labels[freq] || freq} (İstanbul saatiyle) çalışır.`;
 }
 
 function getTriggerConfig() {
