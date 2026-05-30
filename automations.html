@@ -113,23 +113,38 @@ input,select,textarea{font-family:inherit}
 .search-box input{flex:1;border:none;background:none;font-size:13px;color:var(--ink);outline:none}
 .search-box input::placeholder{color:var(--muted)}
 .filter-select{height:36px;padding:0 14px;border:1px solid var(--line-2);border-radius:999px;background:var(--surface);font-size:13px;color:var(--ink-2);outline:none;cursor:pointer}
-.rules-list{display:flex;flex-direction:column;gap:6px}
-.rule-card{background:var(--surface);border:1px solid var(--line-2);border-radius:var(--radius);padding:14px 16px;display:flex;align-items:center;gap:12px;transition:all .15s}
-.rule-card:hover{box-shadow:0 22px 50px -28px #0e0e1033;transform:translateY(-1px)}
+/* ── CANVAS RULES LIST ── */
+.rules-list{background-image:radial-gradient(circle,var(--line-2) 1.5px,transparent 1.5px);background-size:22px 22px;background-color:var(--surface-2);border-radius:var(--radius-lg);padding:20px;border:1px solid var(--line-2);display:flex;flex-direction:column;gap:14px;min-height:120px}
+/* ── FLOW CARD ── */
+.flow-card{background:var(--surface);border:1px solid var(--line-2);border-radius:14px;padding:14px 16px;transition:box-shadow .15s}
+.flow-card:hover{box-shadow:0 22px 50px -28px #0e0e1033,0 0 0 1.5px var(--accent-line)}
+.flow-card.disabled{opacity:0.55}
+.flow-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.flow-card-left{display:flex;align-items:center;gap:10px;min-width:0;flex:1}
+.flow-name{font-size:14px;font-weight:600;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.flow-stat{font-size:11px;color:var(--muted);background:var(--surface-2);padding:2px 8px;border-radius:999px;white-space:nowrap;flex-shrink:0}
+/* ── FLOW NODES ROW ── */
+.flow-nodes{display:flex;align-items:center;overflow-x:auto;padding-bottom:2px;gap:0}
+.flow-nodes::-webkit-scrollbar{height:3px}
+.flow-nodes::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:2px}
+/* ── SINGLE NODE ── */
+.flow-node{display:flex;align-items:center;gap:9px;border:1.5px solid var(--line-2);border-radius:10px;padding:9px 14px;min-width:148px;flex-shrink:0;background:var(--bg)}
+.node-trigger{border-color:var(--accent-line);background:var(--accent-soft)}
+.node-action{border-color:var(--blue-line);background:var(--blue-soft)}
+.node-icon{font-size:19px;flex-shrink:0;line-height:1}
+.node-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:2px}
+.node-value{font-size:12.5px;font-weight:600;color:var(--ink)}
+/* ── CONNECTOR ARROW ── */
+.flow-connector{display:flex;align-items:center;padding:0 2px;flex-shrink:0}
+.connector-line{width:32px;height:2px;background:var(--line-2)}
+.connector-arrow{width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:7px solid var(--line-2);flex-shrink:0}
+/* ── TOGGLE ── */
 .rule-toggle{position:relative;width:36px;height:20px;flex-shrink:0}
 .rule-toggle input{opacity:0;width:0;height:0;position:absolute}
 .toggle-track{display:block;width:36px;height:20px;background:var(--surface-3);border-radius:10px;cursor:pointer;transition:background .2s}
 .rule-toggle input:checked + .toggle-track{background:var(--accent)}
 .toggle-track::after{content:'';position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
 .rule-toggle input:checked + .toggle-track::after{transform:translateX(16px)}
-.rule-info{flex:1;min-width:0}
-.rule-name{font-size:14px;font-weight:600;color:var(--ink);margin-bottom:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.rule-meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.rule-chip{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:500;padding:2px 8px;border-radius:5px}
-.chip-trigger{background:var(--blue-soft);color:var(--blue)}
-.chip-action{background:var(--green-soft);color:var(--green)}
-.chip-schedule{background:var(--amber-soft);color:var(--amber)}
-.rule-last{font-size:11px;color:var(--muted);white-space:nowrap}
 .rule-actions{display:flex;gap:4px;flex-shrink:0}
 .icon-btn{width:30px;height:30px;border-radius:7px;border:1px solid transparent;background:none;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:14px;transition:all .12s;cursor:pointer}
 .icon-btn:hover{background:var(--surface-2);border-color:var(--line);color:var(--ink-2)}
@@ -829,40 +844,54 @@ function renderRules(filtered) {
     return;
   }
 
+  const ACTION_ICONS = { slack:'💬', teams:'🟣', gmail:'📧', webhook:'🔗', make:'⚙️', notion:'◻', airtable:'📊', update_cells:'✏️', notification:'🔔' };
   el.innerHTML = rules.map(r => {
     const tc = r.trigger_config || {};
     const actions = Array.isArray(r.action_config) ? r.action_config : [r.action_config].filter(Boolean);
     const triggerLabel = TRIGGER_LABELS[tc.type] || tc.type || '—';
-    const actionLabel = actions.map(a => ACTION_LABELS[a?.type] || a?.type || '—').join(', ');
-    const lastFired = r.last_fired ? relativeTime(r.last_fired) : '—';
+    const lastFired = r.last_fired ? relativeTime(r.last_fired) : null;
     const isSchedule = tc.type === 'schedule';
+
+    const actionNodes = actions.map(a => {
+      const aLabel = ACTION_LABELS[a?.type] || a?.type || '—';
+      const aIcon = ACTION_ICONS[a?.type] || '→';
+      return `<div class="flow-connector"><div class="connector-line"></div><div class="connector-arrow"></div></div>
+        <div class="flow-node node-action">
+          <span class="node-icon">${aIcon}</span>
+          <div><div class="node-label">Aksiyon</div><div class="node-value">${escHtml(aLabel)}</div></div>
+        </div>`;
+    }).join('');
+
     return `
-      <div class="rule-card" id="rule-${r.id}">
-        <label class="rule-toggle">
-          <input type="checkbox" ${r.enabled ? 'checked' : ''} onchange="toggleRule('${r.id}', this.checked)">
-          <span class="toggle-track"></span>
-        </label>
-        <div class="rule-info">
-          <div class="rule-name">${escHtml(r.name)}</div>
-          <div class="rule-meta">
-            <span class="rule-chip ${isSchedule ? 'chip-schedule' : 'chip-trigger'}">
-              ${isSchedule ? '⏰' : '⚡'} ${escHtml(triggerLabel)}
-            </span>
-            <span class="rule-chip chip-action">→ ${escHtml(actionLabel)}</span>
-            ${r.run_count ? `<span class="rule-last">${r.run_count} çalışma</span>` : ''}
-            ${r.last_fired ? `<span class="rule-last">Son: ${lastFired}</span>` : ''}
+      <div class="flow-card${r.enabled ? '' : ' disabled'}" id="rule-${r.id}">
+        <div class="flow-card-header">
+          <div class="flow-card-left">
+            <label class="rule-toggle">
+              <input type="checkbox" ${r.enabled ? 'checked' : ''} onchange="toggleRule('${r.id}', this.checked)">
+              <span class="toggle-track"></span>
+            </label>
+            <span class="flow-name">${escHtml(r.name)}</span>
+            ${r.run_count ? `<span class="flow-stat">${r.run_count} çalışma</span>` : ''}
+            ${lastFired ? `<span class="flow-stat">Son: ${lastFired}</span>` : ''}
+          </div>
+          <div class="rule-actions">
+            <button class="icon-btn run-btn" onclick="runRule('${r.id}')" title="Çalıştır">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            </button>
+            <button class="icon-btn" onclick="editRule('${r.id}')" title="Düzenle">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            </button>
+            <button class="icon-btn del-btn" onclick="deleteRule('${r.id}')" title="Sil">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+            </button>
           </div>
         </div>
-        <div class="rule-actions">
-          <button class="icon-btn run-btn" onclick="runRule('${r.id}')" title="Çalıştır">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-          </button>
-          <button class="icon-btn" onclick="editRule('${r.id}')" title="Düzenle">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-          </button>
-          <button class="icon-btn del-btn" onclick="deleteRule('${r.id}')" title="Sil">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
-          </button>
+        <div class="flow-nodes">
+          <div class="flow-node node-trigger">
+            <span class="node-icon">${isSchedule ? '⏰' : '⚡'}</span>
+            <div><div class="node-label">Tetikleyici</div><div class="node-value">${escHtml(triggerLabel)}</div></div>
+          </div>
+          ${actionNodes}
         </div>
       </div>`;
   }).join('');
