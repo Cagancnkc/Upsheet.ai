@@ -1211,7 +1211,7 @@
         var action = this.dataset.action;
         moreDropdown.style.display = 'none';
         if (action === 'rename') {
-          var cur = document.querySelector('.breadcrumb .current');
+          var cur = document.querySelector('.crumbs .current');
           var name = prompt('Dosya adı:', cur ? cur.textContent : '');
           if (name && name.trim()) { if (cur) cur.textContent = name.trim(); showToast('Yeniden adlandırıldı'); }
         } else if (action === 'copy-link') {
@@ -1584,6 +1584,8 @@
     if (notifPanel && notifPanel.style.display === 'block' && !notifPanel.contains(e.target) && e.target !== notifTrigger) notifPanel.style.display = 'none';
     if (moreDropdown && moreDropdown.style.display === 'block' && !moreDropdown.contains(e.target) && e.target !== moreTrigger) moreDropdown.style.display = 'none';
     if (fontSizePopup && fontSizePopup.style.display === 'block' && !fontSizePopup.contains(e.target) && e.target !== fontSizeBtn) fontSizePopup.style.display = 'none';
+    if (fontFamilyPopup && fontFamilyPopup.style.display === 'block' && !fontFamilyPopup.contains(e.target) && e.target !== fontFamilyBtn) fontFamilyPopup.style.display = 'none';
+    if (automMoreMenu && automMoreMenu.style.display === 'block' && !automMoreMenu.contains(e.target)) automMoreMenu.style.display = 'none';
   });
 
   // ── Grid data loader ──────────────────────────────────────────────────────
@@ -1808,7 +1810,6 @@
         fontFamilyPopup.style.display = 'none';
       });
     });
-    document.addEventListener('click', function () { fontFamilyPopup.style.display = 'none'; });
   }
 
   // ── AC: AI tool buttons ───────────────────────────────────────────────────
@@ -1855,7 +1856,6 @@
         if (a === 'delete') showToast('Otomasyon silindi');
       });
     });
-    document.addEventListener('click', function () { automMoreMenu.style.display = 'none'; });
   }
 
   // ── AF: Sidebar "Yeni" add button ────────────────────────────────────────
