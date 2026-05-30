@@ -360,7 +360,7 @@ app.get('/api/integrations/notion/callback', async (req, res) => {
   } catch (err) { res.send(`<script>window.opener?.postMessage({type:'notion_auth',error:'Kimlik doğrulama başarısız'},${JSON.stringify(origin)});window.close();</script>`); }
 });
 
-app.use('/api/integrations', checkLimit, requireFeature('integrations'), integrationsRouter);
+app.use('/api/integrations', checkLimit, integrationsRouter);
 app.use('/api/automations', automationsRouter);
 app.use('/api/stripe', stripeRouter);
 app.use('/api/promos', promosRouter);
