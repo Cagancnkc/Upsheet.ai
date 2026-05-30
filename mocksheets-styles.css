@@ -639,8 +639,13 @@
     display:grid; place-items:center;
     color: var(--ink-4);
   }
+  .col-headers-wrap{
+    position:absolute; left:40px; top:0; right:0; height:28px;
+    overflow:hidden;
+    z-index:2;
+  }
   .col-headers{
-    position:absolute; left:40px; top:0; right:0; height: 28px;
+    position:relative; width:2496px; height:28px;
     background: var(--surface-2);
     border-bottom: 1px solid var(--line);
     display:flex;
@@ -657,11 +662,22 @@
   }
   .row-headers{
     position: absolute; left:0; top:28px; bottom:0; width:40px;
+    overflow:hidden;
     background: var(--surface-2);
     border-right: 1px solid var(--line);
     font-family: 'Inter';
     font-size: 11px; font-weight: 450;
     color: var(--ink-4);
+    z-index:2;
+  }
+  #grid-scroll{
+    position:absolute; top:28px; left:40px; right:0; bottom:0;
+    overflow:auto;
+  }
+  .grid-body{
+    position:relative;
+    width:2496px;
+    height:784px;
   }
   .row-headers > div{
     height: 28px;
