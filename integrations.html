@@ -11,7 +11,7 @@
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 <script>(function(){try{var t=localStorage.getItem('ms-int-theme')||'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}})()</script>
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 
@@ -133,12 +133,23 @@ body{
   gap:64px;align-items:center;
 }
 .hero-eyebrow{
-  font-size:11px;font-weight:700;text-transform:uppercase;
-  letter-spacing:.12em;color:var(--brand);margin-bottom:16px;
+  display:inline-flex;align-items:center;gap:7px;
+  background:rgba(22,163,74,.08);border:1px solid rgba(22,163,74,.2);
+  color:var(--brand);border-radius:999px;
+  padding:5px 14px;font-size:12px;font-weight:600;
+  letter-spacing:.01em;margin-bottom:18px;
 }
 .hero-h1{
-  font-size:42px;font-weight:900;letter-spacing:-.03em;
+  font-size:clamp(32px,5vw,48px);font-weight:900;letter-spacing:-.03em;
   line-height:1.1;margin-bottom:18px;
+}
+.hero-h1 em{
+  font-family:'Instrument Serif',Georgia,serif;
+  font-style:italic;font-weight:400;color:var(--brand);
+}
+.section-h2 em{
+  font-family:'Instrument Serif',Georgia,serif;
+  font-style:italic;font-weight:400;color:var(--brand);
 }
 .hero-sub{
   font-size:16px;color:var(--text-muted);line-height:1.65;
@@ -165,6 +176,44 @@ body{
   border:1px solid var(--border);transition:all .15s;
 }
 .hero-cta-secondary:hover{border-color:var(--brand);color:var(--brand);}
+
+/* ── 3D Hero Visual ── */
+.hero-visual{
+  position:relative;background:var(--surface);
+  border:1.5px solid var(--border-2);border-radius:22px;padding:24px 22px;
+  box-shadow:0 32px 64px -24px rgba(0,0,0,.16),0 0 0 1px rgba(255,255,255,.55) inset;
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+}
+.hero-visual::before{
+  content:'';position:absolute;inset:0;border-radius:22px;
+  background:radial-gradient(ellipse at 70% 0%,rgba(22,163,74,.1) 0%,transparent 55%);
+  pointer-events:none;
+}
+.hv-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-bottom:14px;}
+.hv-node{
+  display:flex;align-items:center;gap:10px;
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:12px;padding:10px 14px;margin-bottom:8px;
+  transition:transform .2s,box-shadow .2s;cursor:default;
+}
+.hv-node:hover{transform:translateX(4px);box-shadow:0 4px 12px rgba(22,163,74,.12);}
+.hv-node-icon{
+  width:32px;height:32px;border-radius:8px;background:var(--surface);
+  display:flex;align-items:center;justify-content:center;
+  border:1px solid var(--border);flex-shrink:0;
+}
+.hv-node-icon img{width:18px;height:18px;display:block;object-fit:contain;}
+.hv-node-info{flex:1;}
+.hv-node-label{font-size:12px;font-weight:600;color:var(--text);}
+.hv-node-sub{font-size:10px;color:var(--text-muted);margin-top:1px;}
+.hv-arrow{color:var(--brand);font-size:13px;margin:3px 0 3px 14px;opacity:.7;}
+.hv-pulse{
+  width:6px;height:6px;border-radius:50%;background:var(--brand);
+  flex-shrink:0;animation:pulse 2s ease-in-out infinite;
+}
+[data-theme="dark"] .hero-visual{
+  box-shadow:0 32px 64px -24px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.06) inset;
+}
 
 /* Flow Visual */
 .fv-card{
@@ -723,11 +772,14 @@ body{
 <section class="hero-section">
   <div class="hero-container">
     <div class="hero-left">
-      <div class="hero-eyebrow">— entegrasyonlar</div>
-      <h1 class="hero-h1">Operasyon altyapınıza<br>bağlanın.</h1>
+      <div class="hero-eyebrow">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        10 Canlı Entegrasyon
+      </div>
+      <h1 class="hero-h1">Operasyon altyapınıza<br><em>bağlanın.</em></h1>
       <p class="hero-sub">Mocksheets, ekibinizin zaten kullandığı araçlarla otomatik çalışır. Veriler akar, raporlar senkronize olur, iş akışları tetiklenir.</p>
       <div class="hero-chips">
-        <span class="hero-chip">10 canlı bağlantı</span>
+        <span class="hero-chip">● 10 canlı bağlantı</span>
         <span class="hero-chip">Gerçek OAuth</span>
         <span class="hero-chip">2 yönlü senkron</span>
         <span class="hero-chip">Webhook desteği</span>
@@ -738,40 +790,54 @@ body{
       </div>
     </div>
     <div class="hero-right">
-      <div class="fv-card">
-        <div class="fv-left">
-          <div class="fv-ms-node">
-            <img src="/images/brand/logo-128x128.png" width="28" height="28" style="object-fit:contain;border-radius:6px;flex-shrink:0" alt="mocksheets">
-            <div class="fv-ms-label" style="font-size:10px;font-weight:600;color:var(--text-muted);margin-top:4px;white-space:nowrap;">Mocksheets AI</div>
+      <div class="hero-visual">
+        <div class="hv-label">Canlı Veri Akışı</div>
+        <!-- Mocksheets node -->
+        <div class="hv-node">
+          <div class="hv-node-icon" style="background:var(--brand);">
+            <img src="/images/brand/logo-128x128.png" alt="Mocksheets" style="width:18px;height:18px;object-fit:contain;border-radius:3px;filter:brightness(0) invert(1)">
           </div>
+          <div class="hv-node-info">
+            <div class="hv-node-label">Mocksheets AI</div>
+            <div class="hv-node-sub">Kaynak · aktif</div>
+          </div>
+          <div class="hv-pulse"></div>
         </div>
-        <svg class="fv-connector" viewBox="0 0 120 200" preserveAspectRatio="none">
-          <line x1="0" y1="100" x2="60" y2="100" stroke-width="1.5"/>
-          <line x1="60" y1="33" x2="60" y2="167" stroke-width="1.5"/>
-          <line x1="60" y1="33" x2="118" y2="33" stroke-width="1.5"/>
-          <line x1="60" y1="100" x2="118" y2="100" stroke-width="1.5"/>
-          <line x1="60" y1="167" x2="118" y2="167" stroke-width="1.5"/>
-          <polyline points="113,28 119,33 113,38" stroke-width="1.5"/>
-          <polyline points="113,95 119,100 113,105" stroke-width="1.5"/>
-          <polyline points="113,162 119,167 113,172" stroke-width="1.5"/>
-          <circle class="fv-dot fv-dot-anim" cx="30" cy="100" r="3.5"/>
-          <circle class="fv-dot fv-dot-anim-2" cx="89" cy="33" r="3.5"/>
-          <circle class="fv-dot fv-dot-anim-3" cx="89" cy="100" r="3.5"/>
-          <circle class="fv-dot fv-dot-anim" cx="89" cy="167" r="3.5" style="animation-delay:.9s"/>
-        </svg>
-        <div class="fv-right">
-          <div class="fv-target-row">
-            <div class="fv-tool-icon"><img src="images/integrations/googlesheets.svg" width="22" height="22" alt="Google Sheets"></div>
-            <span class="fv-tool-label">Google Sheets</span>
+        <div class="hv-arrow">↓</div>
+        <!-- Google Sheets node -->
+        <div class="hv-node">
+          <div class="hv-node-icon">
+            <img src="images/integrations/googlesheets.svg" alt="Google Sheets">
           </div>
-          <div class="fv-target-row">
-            <div class="fv-tool-icon"><img src="images/integrations/slack.svg" width="22" height="22" alt="Slack"></div>
-            <span class="fv-tool-label">Slack</span>
+          <div class="hv-node-info">
+            <div class="hv-node-label">Google Sheets</div>
+            <div class="hv-node-sub">2 yönlü senkron · aktif</div>
           </div>
-          <div class="fv-target-row">
-            <div class="fv-tool-icon"><img src="images/integrations/zapier.svg" width="22" height="22" alt="Zapier"></div>
-            <span class="fv-tool-label">Zapier &rarr; 5000+ uygulama</span>
+          <div class="hv-pulse" style="animation-delay:.4s"></div>
+        </div>
+        <div class="hv-arrow">↓</div>
+        <!-- Slack node -->
+        <div class="hv-node">
+          <div class="hv-node-icon">
+            <img src="images/integrations/slack.svg" alt="Slack">
           </div>
+          <div class="hv-node-info">
+            <div class="hv-node-label">Slack</div>
+            <div class="hv-node-sub">#ops-bildirim · aktif</div>
+          </div>
+          <div class="hv-pulse" style="animation-delay:.8s"></div>
+        </div>
+        <div class="hv-arrow">↓</div>
+        <!-- Notion node -->
+        <div class="hv-node">
+          <div class="hv-node-icon">
+            <img src="images/integrations/notion.svg" alt="Notion">
+          </div>
+          <div class="hv-node-info">
+            <div class="hv-node-label">Notion</div>
+            <div class="hv-node-sub">Veritabanı · aktif</div>
+          </div>
+          <div class="hv-pulse" style="animation-delay:1.2s"></div>
         </div>
       </div>
     </div>
@@ -787,7 +853,7 @@ body{
 <div class="static-section-full">
   <section class="static-section">
     <div class="section-eyebrow reveal">— iş akışları</div>
-    <h2 class="section-h2 reveal">Tek komutla başlayan<br>otomasyon zincirleri.</h2>
+    <h2 class="section-h2 reveal">Tek komutla başlayan<br><em>otomasyon zincirleri.</em></h2>
     <p class="section-sub reveal">Mocksheets bir adımı tetikler, diğerleri otomatik devreye girer. Ekibiniz her sabah hazır veriyle başlar.</p>
 
     <div class="wf-grid">
@@ -885,7 +951,7 @@ body{
 <!-- ==================== TRIGGER / ACTION TABLE ==================== -->
 <section class="static-section" id="trigger-db">
   <div class="section-eyebrow reveal">— tetikleyici &amp; aksiyon</div>
-  <h2 class="section-h2 reveal">Her Mocksheets olayı<br>bir sonraki adımı başlatır.</h2>
+  <h2 class="section-h2 reveal">Her Mocksheets olayı<br><em>bir sonraki adımı başlatır.</em></h2>
   <p class="section-sub reveal">Tablo güncellemesinden rapor tamamlanmasına kadar her olay, bağlı araçlarınızda otomatik aksiyon tetikler.</p>
 
   <div class="reveal">
@@ -947,7 +1013,7 @@ body{
 <div class="static-section-full">
   <section class="static-section" id="api-dev">
     <div class="section-eyebrow reveal">— geliştirici araçları</div>
-    <h2 class="section-h2 reveal">Kendi iş akışını kendin yaz.</h2>
+    <h2 class="section-h2 reveal">Kendi iş akışını <em>kendin yaz.</em></h2>
     <p class="section-sub reveal">REST API, webhook ve OAuth 2.0 altyapısıyla Mocksheets'i kendi sistemlerinize tam entegre edin.</p>
     <div class="api-chips reveal">
       <span class="api-chip">REST API</span>
@@ -997,7 +1063,7 @@ body{
 <!-- ==================== USE CASES ==================== -->
 <section class="static-section" id="use-cases">
   <div class="section-eyebrow reveal">— kullanım senaryoları</div>
-  <h2 class="section-h2 reveal">Ops ekiplerinin gerçekten<br>çözdüğü problemler.</h2>
+  <h2 class="section-h2 reveal">Ops ekiplerinin gerçekten<br><em>çözdüğü problemler.</em></h2>
   <p class="section-sub reveal">Manuel tekrarlayan işlerden sıkılan ekipler Mocksheets entegrasyonlarıyla bu sorunları kalıcı olarak çözüyor.</p>
 
   <div class="uc-grid">
@@ -1115,7 +1181,7 @@ body{
 <div class="static-section-full">
   <section class="static-section trust-section" id="trust">
     <div class="section-eyebrow reveal" style="text-align:center">— güvenlik</div>
-    <h2 class="section-h2 reveal" style="text-align:center">Verileriniz güvende,<br>entegrasyonlarınız güvenilir.</h2>
+    <h2 class="section-h2 reveal" style="text-align:center">Verileriniz güvende,<br><em>entegrasyonlarınız güvenilir.</em></h2>
     <p class="section-sub reveal" style="margin:0 auto 48px;text-align:center">Kurumsal güvenlik standartlarıyla her bağlantı güvenli ve denetlenebilir biçimde çalışır.</p>
 
     <div class="trust-badges">
