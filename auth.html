@@ -836,7 +836,10 @@ async function handleSubmit() {
 
     // Success
     if (currentMode === 'signup' && !result.error) {
-      fetch('/api/loops/contact', {
+      var loopsBase = window.location.hostname === 'localhost'
+        ? 'http://localhost:3001'
+        : 'https://upsheet-ai.onrender.com';
+      fetch(loopsBase + '/api/loops/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: email })
