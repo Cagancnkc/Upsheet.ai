@@ -338,9 +338,19 @@ async function evaluateAutomationRules(sheetData) {
     const colIdx = headers.indexOf(trigger_config.column);
     if (colIdx < 0) continue;
 
-    const matchingRows = dataRows.filter(row =>
+    let matchingRows = dataRows.filter(row =>
       evaluateCondition(row[colIdx], trigger_config.operator, trigger_config.value)
     );
+
+    const { condition_config } = rule;
+    if (Array.isArray(condition_config) && condition_config.length > 0) {
+      matchingRows = matchingRows.filter(row =>
+        condition_config.every(cond => {
+          const ci = headers.indexOf(cond.column);
+          return ci < 0 || evaluateCondition(row[ci], cond.operator, cond.value);
+        })
+      );
+    }
 
     if (!matchingRows.length) continue;
 

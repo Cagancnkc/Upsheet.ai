@@ -2052,7 +2052,7 @@ async function saveRule() {
 }
 
 async function testCurrentRule() {
-  if (!editId) { toast('Önce kaydedin, sonra test edin', 'warning'); return; }
+  if (!editId) { toast('Test için önce kuralı kaydedin — test gerçek aksiyon gönderir', 'warning'); return; }
   await runRule(editId);
 }
 

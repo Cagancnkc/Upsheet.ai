@@ -327,7 +327,9 @@ Sadece şu JSON formatında yanıt ver:
     const match = raw.match(/\{[\s\S]*\}/);
     if (!match) return res.status(500).json({ error: 'AI yanıtı parse edilemedi' });
 
-    const result = JSON.parse(match[0]);
+    let result;
+    try { result = JSON.parse(match[0]); }
+    catch { return res.status(500).json({ error: 'AI yanıtı geçersiz JSON döndürdü' }); }
     res.json(result);
   } catch (e) {
     console.error('/api/automations/suggest hatası:', e.message);
@@ -381,7 +383,9 @@ Yalnızca şu JSON formatında yanıt ver (başka hiçbir şey yazma):
     const match = raw.match(/\{[\s\S]*\}/);
     if (!match) return res.status(500).json({ error: 'AI yanıtı parse edilemedi' });
 
-    const workflow = JSON.parse(match[0]);
+    let workflow;
+    try { workflow = JSON.parse(match[0]); }
+    catch { return res.status(500).json({ error: 'AI yanıtı geçersiz JSON döndürdü' }); }
     res.json({ workflow });
   } catch (e) {
     console.error('/api/automations/generate hatası:', e.message);
