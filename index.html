@@ -751,48 +751,6 @@
     box-shadow:0 2px 10px rgba(200,241,53,.45);white-space:nowrap;
   }
 
-  /* ── Announce Bar ─────────────────────────────────────── */
-  .announce-bar{
-    position:sticky;top:0;z-index:200;
-    background:rgba(250,250,250,0.92);
-    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
-    color:var(--ink);
-    display:flex;align-items:center;justify-content:center;gap:12px;
-    padding:10px 20px;font-size:13px;font-weight:500;
-    border-bottom:1px solid var(--line-strong);
-  }
-  [data-theme="dark"] .announce-bar{background:rgba(10,10,10,0.92);border-bottom:1px solid var(--line-strong);}
-  .announce-text{text-align:center;flex:1;}
-  .announce-cta{
-    background:var(--violet);color:#fff;
-    font-size:12px;font-weight:700;padding:5px 14px;border-radius:8px;
-    text-decoration:none;white-space:nowrap;flex-shrink:0;
-    transition:opacity .15s;
-  }
-  .announce-cta:hover{opacity:.85;}
-  .announce-close{
-    background:none;border:none;cursor:pointer;
-    color:var(--ink-2);font-size:16px;line-height:1;padding:2px 4px;
-    flex-shrink:0;transition:color .15s;margin-left:4px;
-  }
-  [data-theme="dark"] .announce-close{color:rgba(255,255,255,.55);}
-  .announce-close:hover{color:var(--ink);}
-  [data-theme="dark"] .announce-close:hover{color:rgba(255,255,255,.9);}
-
-  /* ── Campaign Eyebrow ─────────────────────────────────── */
-  .campaign-eyebrow{
-    display:inline-flex;align-items:center;gap:8px;
-    background:linear-gradient(135deg,rgba(200,241,53,.15) 0%,rgba(200,241,53,.05) 100%);
-    border:1px solid rgba(200,241,53,.35);
-    border-radius:999px;padding:6px 16px;
-    font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
-    color:var(--brand);
-  }
-  .campaign-dot{
-    width:7px;height:7px;border-radius:50%;background:var(--brand);flex-shrink:0;
-    animation:pulse-dot 2s ease-in-out infinite;
-  }
-  @keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.6;transform:scale(.8);}}
 
   /* ── Hero Price Highlight ─────────────────────────────── */
   .hero-price-highlight{
@@ -858,12 +816,6 @@
 </head>
 <body>
 
-<!-- ANNOUNCE BAR -->
-<div class="announce-bar" id="announceBar">
-  <span class="announce-text">🎉 Lansmana Özel: İlk 3 ay boyunca aylık sadece 1$</span>
-  <a href="#pricing" class="announce-cta">Teklifi Al →</a>
-  <button class="announce-close" onclick="document.getElementById('announceBar').style.display='none'" aria-label="Kapat">✕</button>
-</div>
 
 <!-- NAV -->
 <nav class="nav">
@@ -893,10 +845,7 @@
 <!-- HERO -->
 <section class="hero">
   <div class="wrap">
-    <span class="eyebrow campaign-eyebrow">
-      <span class="campaign-dot"></span>
-      LIMITED TIME &nbsp;·&nbsp; İLK 3 AY AYLIK 1$
-    </span>
+    <span class="eyebrow">AI Operasyon Asistanı</span>
 
     <h1>
       Verinizi Düzenleyin.<br>
