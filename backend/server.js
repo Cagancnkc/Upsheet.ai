@@ -367,6 +367,22 @@ app.use('/api/promos', promosRouter);
 const pdfRouter = require('./routes/pdf');
 app.use('/api/pdf', pdfRouter);
 
+app.post('/api/loops/contact', async (req, res) => {
+  const { email, userGroup } = req.body;
+  if (!email || !process.env.LOOPS_API_KEY) return res.json({ ok: false });
+  try {
+    await fetch('https://app.loops.so/api/v1/contacts/create', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${process.env.LOOPS_API_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, source: 'signup', userGroup: userGroup || 'free' })
+    });
+    res.json({ ok: true });
+  } catch (e) {
+    console.error('[loops] contact create failed:', e.message);
+    res.json({ ok: false });
+  }
+});
+
 app.get('/', (req, res) => {
   res.json({ status: 'ok', service: 'Mocksheets API', version: '1.2.0' });
 });

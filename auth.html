@@ -835,6 +835,13 @@ async function handleSubmit() {
     }
 
     // Success
+    if (currentMode === 'signup' && !result.error) {
+      fetch('/api/loops/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email })
+      }).catch(() => {});
+    }
     btn.classList.add('success-state');
     btn.innerHTML = '<span>✓ Bağlantı gönderildi</span>';
     document.getElementById('formCardHeading').textContent = '📬 E-postanızı kontrol edin';

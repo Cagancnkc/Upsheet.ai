@@ -185,6 +185,14 @@ router.post('/webhook',
           }, { onConflict: 'user_id' });
 
           console.log(`✅ Plan güncellendi: ${userId} → ${plan} (${period})`);
+
+          if (session.customer_email && process.env.LOOPS_API_KEY) {
+            fetch('https://app.loops.so/api/v1/contacts/update', {
+              method: 'PUT',
+              headers: { Authorization: `Bearer ${process.env.LOOPS_API_KEY}`, 'Content-Type': 'application/json' },
+              body: JSON.stringify({ email: session.customer_email, userGroup: plan })
+            }).catch(e => console.error('[loops] contact update failed:', e.message));
+          }
         } else {
           console.log('✅ Ödeme tamamlandı:', session.customer_email);
         }
