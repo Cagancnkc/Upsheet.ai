@@ -751,12 +751,117 @@
     box-shadow:0 2px 10px rgba(200,241,53,.45);white-space:nowrap;
   }
 
+  /* ── Announce Bar ─────────────────────────────────────── */
+  .announce-bar{
+    position:sticky;top:0;z-index:200;
+    background:var(--ink);color:var(--bg);
+    display:flex;align-items:center;justify-content:center;gap:12px;
+    padding:10px 20px;font-size:13px;font-weight:500;
+    border-bottom:1px solid rgba(255,255,255,.08);
+  }
+  [data-theme="dark"] .announce-bar{background:#111;border-bottom:1px solid rgba(255,255,255,.1);}
+  .announce-text{text-align:center;flex:1;}
+  .announce-cta{
+    background:var(--brand);color:#0a0a09;
+    font-size:12px;font-weight:700;padding:5px 14px;border-radius:8px;
+    text-decoration:none;white-space:nowrap;flex-shrink:0;
+    transition:opacity .15s;
+  }
+  .announce-cta:hover{opacity:.85;}
+  .announce-close{
+    background:none;border:none;cursor:pointer;
+    color:rgba(255,255,255,.55);font-size:16px;line-height:1;padding:2px 4px;
+    flex-shrink:0;transition:color .15s;margin-left:4px;
+  }
+  [data-theme="light"] .announce-close{color:rgba(0,0,0,.4);}
+  .announce-close:hover{color:rgba(255,255,255,.9);}
+  [data-theme="light"] .announce-close:hover{color:rgba(0,0,0,.8);}
+
+  /* ── Campaign Eyebrow ─────────────────────────────────── */
+  .campaign-eyebrow{
+    display:inline-flex;align-items:center;gap:8px;
+    background:linear-gradient(135deg,rgba(200,241,53,.15) 0%,rgba(200,241,53,.05) 100%);
+    border:1px solid rgba(200,241,53,.35);
+    border-radius:999px;padding:6px 16px;
+    font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--brand);
+  }
+  .campaign-dot{
+    width:7px;height:7px;border-radius:50%;background:var(--brand);flex-shrink:0;
+    animation:pulse-dot 2s ease-in-out infinite;
+  }
+  @keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.6;transform:scale(.8);}}
+
+  /* ── Hero Price Highlight ─────────────────────────────── */
+  .hero-price-highlight{
+    display:inline-flex;align-items:center;gap:16px;
+    background:rgba(200,241,53,.07);
+    border:1px solid rgba(200,241,53,.2);
+    border-radius:16px;padding:14px 24px;margin-bottom:28px;
+    backdrop-filter:blur(8px);
+  }
+  .hero-price-big{
+    font-size:48px;font-weight:800;line-height:1;
+    color:var(--ink);letter-spacing:-.03em;
+  }
+  .hero-price-unit{font-size:20px;font-weight:600;color:var(--ink-3);}
+  .hero-price-sub{display:flex;flex-direction:column;gap:3px;}
+  .hero-price-sub span:first-child{font-size:14px;font-weight:600;color:var(--ink);}
+  .hero-price-after{font-size:12px;color:var(--ink-4);}
+  .hero-trust{
+    margin-top:10px;font-size:12px;color:var(--ink-4);
+    letter-spacing:.01em;
+  }
+
+  /* ── Launch Deal Section ──────────────────────────────── */
+  .launch-deal-section{
+    background:var(--ink);color:var(--bg);
+    padding:64px 24px;text-align:center;
+    border-top:1px solid rgba(255,255,255,.06);
+    border-bottom:1px solid rgba(255,255,255,.06);
+  }
+  [data-theme="light"] .launch-deal-section{background:#0d0d0c;}
+  .launch-deal-inner{max-width:640px;margin:0 auto;}
+  .launch-deal-badge{
+    display:inline-block;
+    font-family:'Geist Mono',monospace;font-size:11px;font-weight:800;
+    letter-spacing:.12em;text-transform:uppercase;
+    color:var(--brand);background:rgba(200,241,53,.12);
+    border:1px solid rgba(200,241,53,.3);
+    border-radius:999px;padding:4px 14px;margin-bottom:20px;
+  }
+  .launch-deal-section h2{
+    font-size:clamp(26px,4vw,38px);font-weight:800;letter-spacing:-.025em;
+    line-height:1.15;margin-bottom:14px;color:#fff;
+  }
+  .launch-deal-section p{
+    font-size:16px;color:rgba(255,255,255,.6);
+    line-height:1.7;margin-bottom:28px;
+  }
+  .launch-deal-pills{
+    display:flex;flex-wrap:wrap;justify-content:center;gap:10px;
+  }
+  .ldp{
+    display:flex;align-items:center;gap:8px;
+    background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
+    border-radius:10px;padding:10px 18px;
+    font-size:13.5px;font-weight:500;color:rgba(255,255,255,.85);
+  }
+  .ldp span{color:var(--brand);font-weight:700;font-size:15px;}
+
 </style>
 <script>
 (function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","wz4bh4ifpe");
 </script>
 </head>
 <body>
+
+<!-- ANNOUNCE BAR -->
+<div class="announce-bar" id="announceBar">
+  <span class="announce-text">🎉 Lansmana Özel: İlk 3 ay boyunca aylık sadece 1$</span>
+  <a href="#pricing" class="announce-cta">Teklifi Al →</a>
+  <button class="announce-close" onclick="document.getElementById('announceBar').style.display='none'" aria-label="Kapat">✕</button>
+</div>
 
 <!-- NAV -->
 <nav class="nav">
@@ -778,7 +883,7 @@
         <span id="indexThemeLabel">Koyu</span>
       </button>
       <a href="/auth" class="btn btn-ghost">Giriş Yap</a>
-      <a href="/auth" class="btn btn-dark" style="display:inline-flex;align-items:center;gap:8px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="16" height="16" style="flex-shrink:0"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>Ücretsiz Başla</a>
+      <a href="#pricing" class="btn btn-dark">1$ ile Başla →</a>
     </div>
   </div>
 </nav>
@@ -786,10 +891,9 @@
 <!-- HERO -->
 <section class="hero">
   <div class="wrap">
-    <span class="eyebrow">
-      <span class="dot"></span>
-      AI Operasyon Asistanı
-      <span class="pill">ops ekipleri için</span>
+    <span class="eyebrow campaign-eyebrow">
+      <span class="campaign-dot"></span>
+      LIMITED TIME &nbsp;·&nbsp; İLK 3 AY AYLIK 1$
     </span>
 
     <h1>
@@ -803,13 +907,21 @@
       <b style="color:var(--ink)">Haftada 18+ saat tasarruf.</b>
     </p>
 
+    <div class="hero-price-highlight">
+      <span class="hero-price-big">$1<span class="hero-price-unit">/ay</span></span>
+      <div class="hero-price-sub">
+        <span>İlk 3 ay boyunca</span>
+        <span class="hero-price-after">· Sonrasında normal fiyatlandırma</span>
+      </div>
+    </div>
+
     <div class="hero-actions">
-      <a href="/auth" class="btn btn-dark" style="display:inline-flex;align-items:center;gap:8px">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="18" height="18" style="flex-shrink:0"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
-        Ücretsiz Başla — kart gerekmez
+      <a href="#pricing" class="btn btn-dark" style="display:inline-flex;align-items:center;gap:8px">
+        1$ ile Başla →
       </a>
       <a href="#demo" class="btn btn-outline">Canlı Gör →</a>
     </div>
+    <p class="hero-trust">Lansman dönemine özel erken kullanıcı fiyatı.</p>
 
     <div class="hero-meta">
       <span><b>4.9/5</b> · 2.300+ ekip</span>
@@ -1394,6 +1506,20 @@
   }
 </style>
 
+<!-- LAUNCH DEAL -->
+<section class="launch-deal-section" id="launch-deal">
+  <div class="launch-deal-inner">
+    <div class="launch-deal-badge">🔥 ERKEN KULLANICI FIRSATI</div>
+    <h2>Şimdi Katıl, Farkı Hisset</h2>
+    <p>İlk 3 ay boyunca tüm Pro özellikleri sadece $1/ay ile kullan.<br>Sınırlı sayıda erken kullanıcı kontenjanı — kampanya bitiş tarihi belli değil.</p>
+    <div class="launch-deal-pills">
+      <div class="ldp"><span>✓</span> 3 ay $1/ay — kart şimdi kesilmez</div>
+      <div class="ldp"><span>✓</span> Dilediğinde iptal, taahhüt yok</div>
+      <div class="ldp"><span>✓</span> Tüm Pro özellikler dahil</div>
+    </div>
+  </div>
+</section>
+
 <section class="ms-pricing-a" id="pricing" aria-label="Pricing">
   <div class="ms-inner">
 
@@ -1456,9 +1582,9 @@
         <div class="ms-row-meta">
           <div class="ms-row-name">
             Profesyonel
-            <span class="ms-pop-badge"><span class="ms-pop-badge-dot"></span>EN ÇOK TERCİH EDİLEN</span>
+            <span class="ms-pop-badge"><span class="ms-pop-badge-dot"></span>🔥 LAUNCH DEAL</span>
           </div>
-          <div class="ms-row-tag">Bireysel ops uzmanları ve solo girişimciler için.</div>
+          <div class="ms-row-tag">İlk 3 ay $1/ay · Kampanya bitmeden yakala.</div>
           <ul class="ms-row-feats">
             <li class="ms-row-feat"><span class="ms-feat-dash">—</span> Neredeyse sınırsız — günde 30, ayda 200</li>
             <li class="ms-row-feat"><span class="ms-feat-dash">—</span> PDF → tablo dönüştürme</li>
