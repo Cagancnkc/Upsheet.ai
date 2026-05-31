@@ -429,6 +429,28 @@
         </div>
       </div>
 
+      <!-- ============ OTOMASYON DURUM PANELİ ============ -->
+      <div id="autoStatusBar" class="auto-status-bar collapsed">
+        <div class="auto-bar-header" id="autoBarHeader">
+          <button class="auto-bar-chevron" id="autoBarChevron" title="Genişlet / Daralt">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <span class="auto-bar-icon">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          </span>
+          <span class="auto-bar-title">Otomasyonlar</span>
+          <span class="auto-bar-badge" id="autoBarBadge" style="display:none"></span>
+          <span class="auto-bar-summary" id="autoBarSummary">Yükleniyor…</span>
+          <div class="auto-bar-actions">
+            <a href="automations.html" class="auto-bar-manage-btn" onclick="event.stopPropagation()">
+              Yönet
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
+          </div>
+        </div>
+        <div class="auto-bar-body" id="autoBarBody"></div>
+      </div>
+
       <!-- Sheet tabs footer -->
       <div class="sheet-tabs">
         <span class="tt-btn">
@@ -624,6 +646,135 @@
 .grid-cell:hover:not(.selected) { background:rgba(0,0,0,0.03); }
 .grid-cell.selected { background:rgba(22,163,74,0.08) !important; box-shadow:inset 0 0 0 1.5px var(--accent); z-index:1; }
 .grid-cell-input { width:100%; height:100%; border:none; background:transparent; font-size:11.5px; color:var(--ink); padding:0 6px; outline:none; font-family:inherit; cursor:cell; box-sizing:border-box; }
+
+/* ── Otomasyon Durum Paneli ──────────────────────────── */
+.auto-status-bar {
+  border-top: 1px solid var(--line);
+  background: var(--surface-2);
+  flex-shrink: 0;
+  overflow: hidden;
+  transition: height .22s cubic-bezier(.4,0,.2,1);
+  height: 40px;
+}
+.auto-status-bar.expanded { height: 220px; }
+
+.auto-bar-header {
+  display: flex; align-items: center;
+  height: 40px; padding: 0 14px; gap: 8px;
+  cursor: pointer; user-select: none;
+}
+.auto-bar-header:hover { background: var(--surface-3); }
+
+.auto-bar-chevron {
+  display: flex; align-items: center; justify-content: center;
+  width: 22px; height: 22px;
+  background: none; border: none; padding: 0;
+  color: var(--ink-4); cursor: pointer; border-radius: 5px;
+  transition: background .12s, transform .22s cubic-bezier(.4,0,.2,1);
+  flex-shrink: 0;
+}
+.auto-status-bar.expanded .auto-bar-chevron { transform: rotate(180deg); }
+
+.auto-bar-icon { color: var(--brand); display: flex; align-items: center; flex-shrink: 0; }
+.auto-bar-title { font-size: 12px; font-weight: 600; color: var(--ink-2); flex-shrink: 0; }
+
+.auto-bar-badge {
+  font-size: 10px; font-weight: 700; line-height: 1;
+  padding: 2px 6px; border-radius: 100px;
+  background: var(--brand-soft); color: var(--brand-ink);
+  flex-shrink: 0;
+}
+
+.auto-bar-summary {
+  font-size: 11.5px; color: var(--ink-4);
+  flex: 1; min-width: 0;
+  overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+}
+
+.auto-bar-actions { display: flex; align-items: center; margin-left: auto; flex-shrink: 0; }
+
+.auto-bar-manage-btn {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 11.5px; font-weight: 500;
+  color: var(--brand); text-decoration: none;
+  padding: 4px 9px; border-radius: 6px;
+  background: var(--brand-soft);
+  transition: background .12s;
+}
+.auto-bar-manage-btn:hover { background: oklch(93% 0.04 155); }
+
+.auto-bar-body {
+  padding: 0 14px 12px;
+  display: flex; gap: 10px;
+  overflow-x: auto; overflow-y: hidden;
+  scrollbar-width: thin;
+  height: 176px;
+}
+
+.auto-rule-card {
+  flex-shrink: 0; width: 210px;
+  background: var(--surface);
+  border: 1px solid var(--line-2);
+  border-radius: var(--radius);
+  padding: 10px 12px;
+  display: flex; flex-direction: column; gap: 7px;
+  transition: box-shadow .15s, border-color .15s;
+}
+.auto-rule-card:hover {
+  box-shadow: 0 4px 16px -8px rgba(17,18,16,.14);
+  border-color: var(--line);
+}
+
+.auto-rule-card-top { display: flex; align-items: flex-start; gap: 8px; }
+.auto-rule-name {
+  font-size: 12px; font-weight: 600; color: var(--ink);
+  flex: 1; min-width: 0;
+  overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+  padding-top: 1px;
+}
+
+.auto-pill-toggle { position: relative; display: inline-flex; align-items: center; cursor: pointer; flex-shrink: 0; }
+.auto-pill-toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
+.auto-pill-track {
+  width: 28px; height: 16px; border-radius: 100px;
+  background: var(--line); transition: background .15s;
+  position: relative;
+}
+.auto-pill-toggle input:checked + .auto-pill-track { background: var(--brand); }
+.auto-pill-track::after {
+  content: ''; position: absolute;
+  width: 10px; height: 10px; border-radius: 100px;
+  background: #fff; top: 3px; left: 3px;
+  transition: transform .15s;
+  box-shadow: 0 1px 3px rgba(0,0,0,.2);
+}
+.auto-pill-toggle input:checked + .auto-pill-track::after { transform: translateX(12px); }
+
+.auto-rule-chips { display: flex; gap: 4px; flex-wrap: wrap; }
+.auto-rule-chip {
+  display: flex; align-items: center; gap: 3px;
+  font-size: 10.5px; font-weight: 500;
+  padding: 2px 6px; border-radius: 5px;
+  background: var(--surface-3); color: var(--ink-3);
+}
+
+.auto-rule-last {
+  font-size: 10.5px; color: var(--ink-4);
+  display: flex; align-items: center; gap: 5px;
+  margin-top: auto;
+}
+.auto-rule-last-dot {
+  width: 5px; height: 5px; border-radius: 100px; flex-shrink: 0;
+  background: var(--brand);
+}
+.auto-rule-last-dot.never { background: var(--line); }
+
+.auto-bar-empty {
+  flex: 1; display: flex; align-items: center; justify-content: center;
+  color: var(--ink-4); font-size: 12px; gap: 6px;
+}
+.auto-bar-empty a { color: var(--brand); text-decoration: none; font-weight: 500; }
+.auto-bar-empty a:hover { text-decoration: underline; }
 </style>
 
 <script>
@@ -2029,6 +2180,7 @@
 </div>
 
 <script src="js/automations.js"></script>
+<script src="js/auto-panel.js"></script>
 <script>if (typeof renderAutomationList === 'function') renderAutomationList();</script>
 </body>
 </html>

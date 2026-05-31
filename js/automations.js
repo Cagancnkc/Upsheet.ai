@@ -370,6 +370,7 @@ async function evaluateAutomationRules(sheetData) {
       showToast(`Otomasyon tetiklendi: ${rule.name}`, 'info');
     }
   }
+  window.dispatchEvent(new CustomEvent('automations:evaluated'));
 }
 
 // ── Dışa aç ──────────────────────────────────────────────────────────────────
