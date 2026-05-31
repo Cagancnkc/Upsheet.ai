@@ -20,6 +20,9 @@
 <title>Otomasyonlar – Mocksheets</title>
 <link rel="icon" type="image/png" href="/images/brand/logo-128x128.png">
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&family=Geist+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 <style>
 :root {
   --bg:#fafafa;--surface:#FFFFFF;--surface-2:#f4f4f5;--surface-3:#e4e4e7;
@@ -397,6 +400,87 @@ textarea.inp{height:auto;padding:10px 12px;resize:vertical;min-height:72px}
 .msg-preview-box{margin-top:10px;padding:10px 14px;border-radius:10px;background:var(--surface-2);border:1px solid var(--line-2)}
 .msg-preview-label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
 .msg-preview-text{font-size:12px;color:var(--ink-2);line-height:1.6;font-style:italic}
+
+/* ── INTEGRATION SECTION ── */
+#integrations-section{margin-top:32px;margin-bottom:0}
+.int-main{padding:0}
+.int-stats-bar{display:flex;gap:24px;padding:8px 0 12px;border-bottom:1px solid var(--line);margin-bottom:16px}
+.int-stat{font-size:13px;color:var(--muted)}
+.int-stat strong{color:var(--ink);font-weight:700}
+.int-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.cat-pills{display:flex;gap:6px;flex-wrap:wrap}
+.cat-pill{padding:5px 14px;border-radius:100px;font-size:12px;font-weight:500;border:1px solid var(--line-2);background:var(--surface);color:var(--muted);cursor:pointer;transition:all .15s}
+.cat-pill:hover{border-color:var(--accent);color:var(--accent)}
+.cat-pill.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.view-toggle{display:flex;gap:4px}
+.view-btn{width:32px;height:32px;border-radius:999px;border:1px solid var(--line);background:transparent;cursor:pointer;color:var(--muted);font-size:15px;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.view-btn.active{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.view-btn:hover:not(.active){background:var(--surface-2)}
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+@media(max-width:560px){.cards-grid{grid-template-columns:1fr}}
+.cards-list{display:flex;flex-direction:column;gap:8px}
+.int-card{background:var(--surface);border:1.5px solid var(--line-2);border-radius:var(--radius);padding:22px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;display:flex;flex-direction:column}
+.int-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(22,163,74,0.07) 0%,transparent 60%);opacity:0;transition:opacity .3s;pointer-events:none}
+.int-card:hover{border-color:var(--accent-line);box-shadow:var(--shadow-lg);transform:translateY(-2px)}
+.int-card:hover::before{opacity:1}
+.int-card.connected{border-color:var(--accent);box-shadow:0 0 0 3px rgba(34,197,94,0.08)}
+.int-card-logo{width:52px;height:52px;border-radius:12px;background:#fff;padding:10px;box-shadow:0 1px 4px rgba(0,0,0,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.int-card-logo img{width:32px;height:32px;object-fit:contain}
+[data-theme="dark"] .int-card-logo{background:#fff;box-shadow:0 1px 6px rgba(0,0,0,.3)}
+.int-pulse-dot{width:8px;height:8px;background:#22c55e;border-radius:50%;animation:intPulse 2s ease-in-out infinite;flex-shrink:0}
+@keyframes intPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(.8)}}
+.int-badge{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;padding:2px 8px;border-radius:100px;white-space:nowrap}
+.int-badge-pro{background:rgba(124,92,255,0.12);color:#7c3aed}
+.int-badge-free{background:rgba(34,197,94,0.12);color:#16a34a}
+.int-badge-connected{background:rgba(34,197,94,0.12);color:#16a34a;display:flex;align-items:center;gap:5px}
+.int-badge-popular{background:rgba(251,191,36,0.15);color:#d97706}
+.int-card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px}
+.int-card-badges{display:flex;flex-direction:column;gap:4px;align-items:flex-end}
+.int-card-body{flex:1}
+.int-card-name{font-size:15px;font-weight:700;margin-bottom:2px}
+.int-card-cat{font-size:11px;color:var(--muted);margin-bottom:10px}
+.int-card-section{margin-top:10px}
+.int-card-section-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:5px}
+.int-card-list{list-style:none;display:flex;flex-direction:column;gap:3px}
+.int-card-list li{font-size:11.5px;color:var(--ink);display:flex;align-items:flex-start;gap:5px;line-height:1.4}
+.int-check-icon{color:var(--accent);font-size:11px;flex-shrink:0;margin-top:1px}
+.int-trigger-icon{color:#f59e0b;font-size:11px;flex-shrink:0;margin-top:1px}
+.int-card-usecase{margin-top:10px;font-size:11.5px;color:var(--muted);font-style:italic;line-height:1.5;border-left:2px solid var(--accent-soft);padding-left:8px}
+.int-card-footer{display:flex;align-items:center;justify-content:flex-end;margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
+.int-connect-btn{padding:7px 16px;border-radius:999px;font-size:12px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:all .15s}
+.int-connect-btn.btn-connect{background:var(--accent);color:#fff}
+.int-connect-btn.btn-connect:hover{opacity:.88}
+.int-connect-btn.btn-disconnect{background:transparent;color:#ef4444;border:1px solid #fca5a5}
+.int-connect-btn.btn-disconnect:hover{background:#fef2f2}
+.int-empty-state{text-align:center;padding:40px 24px;color:var(--muted)}
+.int-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:300;padding:24px;animation:fadeIn .15s ease}
+.int-modal-box{background:var(--surface);border:1.5px solid var(--line-2);border-radius:22px;padding:28px;max-width:480px;width:100%;box-shadow:0 40px 100px -50px #0e0e1066,0 4px 24px rgba(0,0,0,.1);animation:intSlideUp .2s ease}
+@keyframes intSlideUp{from{transform:translateY(16px);opacity:0}to{transform:translateY(0);opacity:1}}
+.int-modal-header{display:flex;align-items:center;gap:14px;margin-bottom:8px}
+.int-modal-title{font-size:18px;font-weight:700}
+.int-modal-close{margin-left:auto;width:28px;height:28px;border:none;background:none;cursor:pointer;color:var(--muted);font-size:20px;border-radius:6px;display:flex;align-items:center;justify-content:center;line-height:1}
+.int-modal-close:hover{background:var(--surface-2)}
+.int-modal-divider{border:none;border-top:1px solid var(--line);margin:14px 0 18px}
+.int-modal-form-group{margin-bottom:14px}
+.int-modal-label-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px}
+.int-modal-label{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.int-modal-label-link{font-size:11px;color:var(--accent);text-decoration:none}
+.int-modal-label-link:hover{text-decoration:underline}
+.int-modal-input{width:100%;padding:9px 12px;border:1.5px solid var(--line);border-radius:10px;background:var(--surface-2);color:var(--ink);font-size:13px;font-family:inherit;outline:none;transition:border-color .15s}
+.int-modal-input:focus{border-color:var(--accent);background:var(--surface)}
+.int-modal-input::placeholder{color:var(--muted)}
+.int-modal-hint{font-size:11px;color:var(--muted);margin-top:4px}
+.int-connect-result{padding:10px 12px;border-radius:10px;font-size:12px;margin-bottom:14px;line-height:1.5}
+.int-connect-result.success{background:rgba(34,197,94,0.1);color:#15803d;border:1px solid #86efac}
+.int-connect-result.error{background:rgba(239,68,68,0.1);color:#b91c1c;border:1px solid #fca5a5}
+.int-oauth-info{background:var(--accent-soft);border:1px solid var(--accent-line);border-radius:10px;padding:12px;font-size:13px;line-height:1.6;margin-bottom:16px}
+.int-modal-actions{display:flex;gap:8px}
+.int-modal-btn{flex:1;padding:11px;border-radius:999px;font-size:14px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:all .15s}
+.int-modal-btn-primary{background:var(--accent);color:#fff}
+.int-modal-btn-primary:hover:not(:disabled){opacity:.88}
+.int-modal-btn-primary:disabled{opacity:.5;cursor:default}
+.int-modal-btn-secondary{background:var(--surface-2);color:var(--ink);border:1px solid var(--line-2)}
+.int-modal-btn-secondary:hover{border-color:var(--accent);color:var(--accent)}
 </style>
 <script>
 (function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","wz4bh4ifpe");
@@ -496,6 +580,18 @@ textarea.inp{height:auto;padding:10px 12px;resize:vertical;min-height:72px}
       <div class="app-tile" onclick="openBuilder('webhook')"><div class="app-tile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></div><div class="app-tile-name">Webhook</div><div class="app-tile-cat">API</div></div>
       <div class="app-tile" onclick="openBuilder('notification')"><div class="app-tile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div><div class="app-tile-name">Bildirim</div><div class="app-tile-cat">Uygulama içi</div></div>
     </div>
+  </section>
+
+  <!-- INTEGRATIONS MANAGER -->
+  <section id="integrations-section">
+    <div class="section-header">
+      <div class="section-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.59 13.51 6.83 3.98"/><path d="m15.41 6.51-6.82 3.98"/></svg>
+        Entegrasyon Bağlantıları
+        <span class="section-badge" id="int-count-badge">11</span>
+      </div>
+    </div>
+    <div id="int-root"></div>
   </section>
 
   <!-- INLINE BUILDER -->
@@ -2098,6 +2194,406 @@ document.addEventListener('keydown', e => {
     });
   }
 });
+</script>
+
+<script type="text/babel">
+const { useState, useEffect, useRef } = React;
+
+function intGetToken() { return window.authToken || null; }
+
+const STORAGE_KEY = {
+  'slack':'int_slack','ms-teams':'int_teams','make':'int_make',
+  'zapier':'int_zapier','webhook':'int_webhook','notion':'int_notion',
+  'airtable':'int_airtable','trello':'int_trello',
+  'google-sheets':'int_sheets','google-drive':'int_drive','gmail':'int_gmail',
+};
+
+const INT_CONFIG = {
+  'slack':    { type:'webhook', docsUrl:'https://api.slack.com/messaging/webhooks', fields:[{key:'url',label:'Webhook URL',placeholder:'https://hooks.slack.com/services/...'}] },
+  'ms-teams': { type:'webhook', docsUrl:'https://learn.microsoft.com/en-us/microsoftteams/platform/webhooks-and-connectors/how-to/add-incoming-webhook', fields:[{key:'url',label:'Webhook URL',placeholder:'https://outlook.office.com/webhook/...'}] },
+  'make':     { type:'webhook', docsUrl:'https://www.make.com/en/help/tools/webhooks', fields:[{key:'url',label:'Make Webhook URL',placeholder:'https://hook.eu1.make.com/...'}] },
+  'zapier':   { type:'webhook', docsUrl:'https://zapier.com/help/create/code-webhooks/trigger-zaps-from-webhooks', fields:[{key:'url',label:'Zap Webhook URL',placeholder:'https://hooks.zapier.com/hooks/catch/...'}] },
+  'webhook':  { type:'webhook', fields:[{key:'url',label:'Hedef URL',placeholder:'https://...'},{key:'secret',label:'İmza Sırrı (opsiyonel)',placeholder:'HMAC secret — boş bırakılabilir'}] },
+  'notion':   { type:'token', docsUrl:'https://www.notion.so/my-integrations', fields:[{key:'token',label:'Integration Token',placeholder:'secret_...',hint:'notion.so/my-integrations adresinden alın'},{key:'dbId',label:'Veritabanı ID',placeholder:'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',hint:"Notion veritabanı URL'inden kopyalayın"}] },
+  'airtable': { type:'token', docsUrl:'https://airtable.com/create/tokens', fields:[{key:'token',label:'Personal Access Token',placeholder:'pat...',hint:'airtable.com/create/tokens adresinden oluşturun'},{key:'baseId',label:'Base ID',placeholder:'appXXXXXXXX'},{key:'tableName',label:'Tablo Adı',placeholder:'Table 1'}] },
+  'trello':   { type:'token', docsUrl:'https://trello.com/app-key', fields:[{key:'apiKey',label:'API Key',placeholder:'...',hint:'trello.com/power-ups/admin adresinden alın'},{key:'token',label:'Token',placeholder:'...'},{key:'boardId',label:'Board ID',placeholder:'...',hint:"Board URL'indeki son kısım"}] },
+  'google-sheets': { type:'oauth', authPath:'/api/integrations/sheets/auth', label:'Google' },
+  'google-drive':  { type:'oauth', authPath:'/api/integrations/drive/auth',  label:'Google' },
+  'gmail':         { type:'oauth', authPath:'/api/integrations/gmail/auth',   label:'Google' },
+};
+
+async function testIntegration(id, form, token) {
+  const h = { 'Content-Type':'application/json', Authorization:`Bearer ${token}` };
+  switch (id) {
+    case 'slack':    return fetch(`${API}/api/integrations/slack/test`,   { method:'POST', headers:h, body:JSON.stringify({ webhookUrl:form.url }) });
+    case 'ms-teams': return fetch(`${API}/api/integrations/teams/test`,   { method:'POST', headers:h, body:JSON.stringify({ webhookUrl:form.url }) });
+    case 'make':     return fetch(`${API}/api/integrations/make/trigger`, { method:'POST', headers:h, body:JSON.stringify({ webhookUrl:form.url, event:'test', data:{test:true} }) });
+    case 'zapier':
+    case 'webhook':  return fetch(`${API}/api/integrations/webhook/send`, { method:'POST', headers:h, body:JSON.stringify({ url:form.url, secret:form.secret||'', event:'test', data:{test:true} }) });
+    case 'notion':   return fetch(`${API}/api/integrations/notion/test`,   { method:'POST', headers:h, body:JSON.stringify({ token:form.token, databaseId:form.dbId }) });
+    case 'airtable': return fetch(`${API}/api/integrations/airtable/test`,{ method:'POST', headers:h, body:JSON.stringify({ token:form.token, baseId:form.baseId, tableName:form.tableName||'Table 1' }) });
+    case 'trello':   return fetch(`${API}/api/integrations/trello/test`,  { method:'POST', headers:h, body:JSON.stringify({ apiKey:form.apiKey, token:form.token, boardId:form.boardId }) });
+    default: return null;
+  }
+}
+
+function WebhookIcon() {
+  return (
+    <svg viewBox="0 0 32 32" width="32" height="32" fill="none">
+      <circle cx="16" cy="16" r="16" fill="#FF4A00"/>
+      <path d="M10 14.5 C10 11.5 12.7 9 16 9 S22 11.5 22 14.5" stroke="#fff" strokeWidth="2" fill="none" strokeLinecap="round"/>
+      <path d="M7 20.5 C7 15.5 11 12 16 12 S25 15.5 25 20.5" stroke="#fff" strokeWidth="2" fill="none" strokeLinecap="round"/>
+      <circle cx="16" cy="23" r="2.5" fill="#fff"/>
+    </svg>
+  );
+}
+
+function ConnectModal({ integration, onClose, onSave }) {
+  const cfg = INT_CONFIG[integration.id];
+  const storageKey = STORAGE_KEY[integration.id];
+  const [form, setForm] = useState(() => {
+    try { const s = storageKey && localStorage.getItem(storageKey); return s ? JSON.parse(s) : {}; } catch { return {}; }
+  });
+  const [connecting, setConnecting] = useState(false);
+  const [result, setResult] = useState(null);
+  const [oauthWaiting, setOauthWaiting] = useState(false);
+
+  const updateField = (key, val) => { setForm(prev => ({ ...prev, [key]:val })); setResult(null); };
+  const sensitiveKeys = ['token','apiKey','secret'];
+  const requiredKeys = cfg?.fields?.filter(f => f.key !== 'secret' && f.key !== 'tableName').map(f => f.key) || [];
+  const hasRequired = requiredKeys.every(k => form[k]?.trim());
+
+  async function handleConnect() {
+    setConnecting(true); setResult(null);
+    try {
+      const token = intGetToken();
+      const res = await testIntegration(integration.id, form, token);
+      if (!res) { setResult({ ok:false, msg:'Test desteklenmiyor.' }); return; }
+      const data = await res.json().catch(() => ({}));
+      if (res.ok) {
+        if (token) {
+          fetch(`${API}/api/integrations/${integration.id}/save-config`, {
+            method:'POST', headers:{ 'Content-Type':'application/json', Authorization:`Bearer ${token}` },
+            body:JSON.stringify({ webhookUrl:form.url||null, token:form.token||null, apiKey:form.apiKey||null, metadata:form }),
+          }).catch(() => {});
+        }
+        if (storageKey) localStorage.setItem(storageKey, JSON.stringify(form));
+        setResult({ ok:true, msg:'Bağlantı başarılı! Kaydedildi.' });
+        setTimeout(() => { onSave(integration.id, form); }, 800);
+      } else {
+        setResult({ ok:false, msg:data.error||'Bağlantı başarısız. Bilgileri kontrol edin.' });
+      }
+    } catch(e) {
+      setResult({ ok:false, msg:e.message||'Bağlantı kurulamadı.' });
+    } finally { setConnecting(false); }
+  }
+
+  function handleOAuth() {
+    const token = intGetToken();
+    const url = `${API}${cfg.authPath}${token ? '?token='+encodeURIComponent(token) : ''}`;
+    const popup = window.open(url, 'oauth', 'width=520,height=640');
+    setOauthWaiting(true);
+    function onMsg(e) {
+      try { if (new URL(API).origin !== e.origin) return; } catch { return; }
+      if (!e.data || typeof e.data !== 'object') return;
+      const { access_token, refresh_token, expiry, token, tokens, connected:isConnected } = e.data;
+      if (isConnected) { window.removeEventListener('message', onMsg); setOauthWaiting(false); onSave(integration.id, {}); return; }
+      const at = access_token || token || tokens?.access_token;
+      if (!at) return;
+      const saved = { access_token:at, refresh_token:refresh_token||tokens?.refresh_token||null, expiry:expiry||null };
+      if (storageKey) localStorage.setItem(storageKey, JSON.stringify(saved));
+      window.removeEventListener('message', onMsg);
+      setOauthWaiting(false);
+      onSave(integration.id, saved);
+    }
+    window.addEventListener('message', onMsg);
+    const poll = setInterval(() => {
+      try { if (popup.closed) { clearInterval(poll); window.removeEventListener('message', onMsg); setOauthWaiting(false); } } catch {}
+    }, 500);
+  }
+
+  const isOauth = cfg?.type === 'oauth';
+  const logoEl = integration.id === 'webhook'
+    ? <WebhookIcon />
+    : <img src={integration.logo} width="32" height="32" style={{ objectFit:'contain' }} alt={integration.name} />;
+
+  return (
+    <div className="int-modal-overlay" onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
+      <div className="int-modal-box">
+        <div className="int-modal-header">
+          <div className="int-card-logo" style={{ width:44, height:44, borderRadius:10, padding:8 }}>{logoEl}</div>
+          <div>
+            <div className="int-modal-title">{integration.name}</div>
+            <span className={`int-badge int-badge-${integration.tier}`} style={{ fontSize:10 }}>
+              {integration.tier === 'free' ? 'Ücretsiz' : 'Pro'}
+            </span>
+          </div>
+          <button className="int-modal-close" onClick={onClose}>×</button>
+        </div>
+        <hr className="int-modal-divider" />
+        {isOauth ? (
+          <>
+            <div className="int-oauth-info">
+              {integration.name} hesabınızı güvenli OAuth 2.0 ile bağlayın. Açılan pencerede <strong>{cfg.label}</strong> hesabınızla giriş yapın.
+            </div>
+            <div className="int-modal-actions">
+              <button className="int-modal-btn int-modal-btn-secondary" onClick={onClose}>Vazgeç</button>
+              <button className="int-modal-btn int-modal-btn-primary" onClick={handleOAuth} disabled={oauthWaiting}>
+                {oauthWaiting ? 'Bekleniyor...' : `${cfg.label} ile Bağlan →`}
+              </button>
+            </div>
+          </>
+        ) : (
+          <>
+            {cfg?.fields?.map(field => (
+              <div key={field.key} className="int-modal-form-group">
+                <div className="int-modal-label-row">
+                  <label className="int-modal-label">{field.label}</label>
+                  {cfg.docsUrl && field === cfg.fields[0] && (
+                    <a className="int-modal-label-link" href={cfg.docsUrl} target="_blank" rel="noopener noreferrer">Nasıl alınır? →</a>
+                  )}
+                </div>
+                <input
+                  className="int-modal-input"
+                  type={sensitiveKeys.includes(field.key) ? 'password' : 'text'}
+                  placeholder={field.placeholder || ''}
+                  value={form[field.key] || ''}
+                  onChange={e => updateField(field.key, e.target.value)}
+                  autoComplete="off"
+                />
+                {field.hint && <div className="int-modal-hint">{field.hint}</div>}
+              </div>
+            ))}
+            {result && (
+              <div className={`int-connect-result ${result.ok ? 'success' : 'error'}`}>
+                {result.ok ? '✓ ' : '✗ '}{result.msg}
+              </div>
+            )}
+            <div className="int-modal-actions">
+              <button className="int-modal-btn int-modal-btn-secondary" onClick={onClose}>Vazgeç</button>
+              <button className="int-modal-btn int-modal-btn-primary" onClick={handleConnect} disabled={connecting || !hasRequired}>
+                {connecting ? 'Bağlanıyor...' : 'Bağlan →'}
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+const CATEGORIES = ['Tümü', 'Bildirim', 'Veritabanı', 'Otomasyon', 'Bulut', 'İletişim'];
+
+const INTEGRATIONS = [
+  { id:'slack', name:'Slack', category:'Bildirim', tier:'pro', popular:true, logo:'images/integrations/slack.svg', actions:['Uyarı gönder','Rapor paylaş','Ekip bildir'], triggers:['Rapor tamamlandı','Limit aşıldı'], useCase:'Ops ekibi anında bilgilendirilir' },
+  { id:'ms-teams', name:'Microsoft Teams', category:'Bildirim', tier:'pro', logo:'images/integrations/microsoftteams.svg', actions:['Kanal mesajı gönder','Rapor paylaş','Uyarı ilet'], triggers:['Rapor hazır','Hata oluştu'], useCase:'Teams kanalına ops güncellemesi gönder' },
+  { id:'notion', name:'Notion', category:'Veritabanı', tier:'pro', popular:true, logo:'images/integrations/notion.svg', actions:['Veritabanına kaydet','Sayfa güncelle','Veri aktar'], triggers:['Dışa aktarma bitti','Komut çalıştı'], useCase:"Haftalık raporlar Notion wiki'ye eklenir" },
+  { id:'airtable', name:'Airtable', category:'Veritabanı', tier:'pro', logo:'images/integrations/airtable.svg', actions:['Tablo senkronize et','Kayıt güncelle','Veri ekle'], triggers:['Veri değişti','Tablo oluşturuldu'], useCase:"Airtable base'i Mocksheets ile canlı senkronize" },
+  { id:'trello', name:'Trello', category:'Veritabanı', tier:'pro', logo:'images/integrations/trello.svg', actions:['Kart ekle','Listeyi güncelle','Arşivle'], triggers:['Görev atandı','Komut çalıştı'], useCase:"Trello görevlerini Excel'e aktarıp analiz et" },
+  { id:'make', name:'Make', category:'Otomasyon', tier:'pro', logo:'images/integrations/make.svg', actions:['Senaryo başlat','Webhook tetikle','Veri ilet'], triggers:['İş akışı tamamlandı','Tablo hazır'], useCase:'Mocksheets çıktısıyla Make senaryosu tetiklenir' },
+  { id:'zapier', name:'Zapier', category:'Otomasyon', tier:'pro', popular:true, logo:'images/integrations/zapier.svg', actions:['5000+ uygulamaya aktar','CRM güncelle','Zap başlat'], triggers:['Tablo hazır','Dışa aktarım tamam'], useCase:"Zapier Zap'ini Mocksheets'ten otomatik tetikle" },
+  { id:'webhook', name:'Özel Webhook', category:'Otomasyon', tier:'pro', logo:null, actions:["Herhangi URL'ye gönder",'HMAC imzalı veri aktar','Olay tetikle'], triggers:['Tablo güncellendi','Dışa aktarıldı'], useCase:'Kendi sistemine güvenli gerçek zamanlı veri akışı' },
+  { id:'google-sheets', name:'Google Sheets', category:'Bulut', tier:'pro', popular:true, logo:'images/integrations/googlesheets.svg', actions:['Tablo aktar','Satır senkronize et','Rapor güncelle'], triggers:['Tablo oluşturuldu','Veri güncellendi'], useCase:"AI raporları otomatik Sheets'e gönderilir" },
+  { id:'google-drive', name:'Google Drive', category:'Bulut', tier:'pro', logo:'images/integrations/googledrive.svg', actions:['Dosya oku','Excel aktar','CSV yükle'], triggers:['Dosya yüklendi','İçe aktarım başladı'], useCase:"Drive'daki Excel dosyalarına doğrudan eriş" },
+  { id:'gmail', name:'Gmail', category:'İletişim', tier:'pro', logo:'images/integrations/gmail.svg', actions:['E-posta gönder','Taslak oluştur','Toplu gönderim'], triggers:['Rapor hazır','Dışa aktarım tamamlandı'], useCase:'AI raporlarını otomatik e-posta ile paylaş' },
+];
+
+function IntegrationCard({ integration, connected, onConnect, onDisconnect, listView }) {
+  const isConnected = connected.has(integration.id);
+  const ref = useRef(null);
+
+  function handleMouseMove(e) {
+    if (!ref.current) return;
+    const rect = ref.current.getBoundingClientRect();
+    ref.current.style.setProperty('--mx', ((e.clientX - rect.left) / rect.width * 100).toFixed(1) + '%');
+    ref.current.style.setProperty('--my', ((e.clientY - rect.top)  / rect.height * 100).toFixed(1) + '%');
+  }
+
+  const logoEl = integration.id === 'webhook'
+    ? <WebhookIcon />
+    : <img src={integration.logo} width="32" height="32" style={{ objectFit:'contain' }} alt={integration.name} />;
+
+  const logoContainer = (
+    <div className="int-card-logo" style={listView ? { width:44, height:44, borderRadius:10, padding:8 } : {}}>
+      {logoEl}
+    </div>
+  );
+
+  const connectBtn = isConnected ? (
+    <button className="int-connect-btn btn-disconnect" onClick={e => { e.stopPropagation(); onDisconnect(integration.id); }}>Bağlantıyı Kes</button>
+  ) : (
+    <button className="int-connect-btn btn-connect" onClick={e => { e.stopPropagation(); onConnect(integration.id); }}>Bağlan →</button>
+  );
+
+  if (listView) {
+    return (
+      <div ref={ref} className={`int-card${isConnected ? ' connected' : ''}`} onMouseMove={handleMouseMove}
+        style={{ flexDirection:'row', alignItems:'center', gap:16, padding:'14px 20px' }}>
+        {logoContainer}
+        <div style={{ flex:1, minWidth:0 }}>
+          <div className="int-card-name" style={{ marginBottom:2 }}>{integration.name}</div>
+          <div className="int-card-cat">{integration.category}</div>
+          {integration.useCase && <div style={{ fontSize:11.5, color:'var(--muted)', fontStyle:'italic' }}>{integration.useCase}</div>}
+        </div>
+        <div style={{ display:'flex', alignItems:'center', gap:8, flexShrink:0 }}>
+          {isConnected && <div className="int-pulse-dot" />}
+          {!isConnected && integration.popular && <span className="int-badge int-badge-popular">⭐</span>}
+          <span className={`int-badge int-badge-${integration.tier}`}>{integration.tier === 'free' ? 'Ücretsiz' : 'Pro'}</span>
+          {connectBtn}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div ref={ref} className={`int-card${isConnected ? ' connected' : ''}`} onMouseMove={handleMouseMove}>
+      <div className="int-card-top">
+        {logoContainer}
+        <div className="int-card-badges">
+          {isConnected && <span className="int-badge int-badge-connected"><div className="int-pulse-dot" style={{ width:6, height:6 }} />Bağlı</span>}
+          {!isConnected && integration.popular && <span className="int-badge int-badge-popular">⭐ Popüler</span>}
+          <span className={`int-badge int-badge-${integration.tier}`}>{integration.tier === 'free' ? 'Ücretsiz' : 'Pro'}</span>
+        </div>
+      </div>
+      <div className="int-card-body">
+        <div className="int-card-name">{integration.name}</div>
+        <div className="int-card-cat">{integration.category}</div>
+        {integration.actions && (
+          <div className="int-card-section">
+            <div className="int-card-section-label">Aksiyonlar</div>
+            <ul className="int-card-list">
+              {integration.actions.map((a, i) => <li key={i}><span className="int-check-icon">✓</span>{a}</li>)}
+            </ul>
+          </div>
+        )}
+        {integration.triggers && (
+          <div className="int-card-section">
+            <div className="int-card-section-label">Tetikleyiciler</div>
+            <ul className="int-card-list">
+              {integration.triggers.map((t, i) => <li key={i}><span className="int-trigger-icon">⚡</span>{t}</li>)}
+            </ul>
+          </div>
+        )}
+        {integration.useCase && <div className="int-card-usecase">"{integration.useCase}"</div>}
+      </div>
+      <div className="int-card-footer">{connectBtn}</div>
+    </div>
+  );
+}
+
+function IntegrationBrowser() {
+  const [activeCat, setActiveCat] = useState('Tümü');
+  const [view, setView] = useState('grid');
+  const [connected, setConnected] = useState(() => {
+    const s = new Set();
+    try { INTEGRATIONS.forEach(i => { if (STORAGE_KEY[i.id] && localStorage.getItem(STORAGE_KEY[i.id])) s.add(i.id); }); } catch {}
+    return s;
+  });
+  const [modal, setModal] = useState(null);
+  const [userPlan, setUserPlan] = useState(null);
+  const [showUpgrade, setShowUpgrade] = useState(false);
+
+  useEffect(() => {
+    const token = intGetToken();
+    if (!token) return;
+    fetch(`${API}/api/usage`, { headers:{ Authorization:`Bearer ${token}` } })
+      .then(r => r.json()).then(d => { if (d.plan) setUserPlan(d.plan); }).catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    const token = intGetToken();
+    if (!token) return;
+    fetch(`${API}/api/integrations/status`, { headers:{ Authorization:`Bearer ${token}` } })
+      .then(r => r.json())
+      .then(statuses => {
+        setConnected(prev => {
+          const s = new Set(prev);
+          Object.entries(statuses).forEach(([provider, info]) => { info.connected ? s.add(provider) : s.delete(provider); });
+          return s;
+        });
+      }).catch(() => {});
+  }, []);
+
+  const filtered = INTEGRATIONS.filter(it => activeCat === 'Tümü' || it.category === activeCat);
+
+  function handleConnect(id) {
+    if (userPlan !== 'pro' && userPlan !== 'business') { setShowUpgrade(true); return; }
+    setModal(INTEGRATIONS.find(i => i.id === id) || null);
+  }
+
+  function handleDisconnect(id) {
+    const name = INTEGRATIONS.find(i => i.id === id)?.name || 'Bu entegrasyon';
+    if (!window.confirm(`${name} bağlantısını kesmek istediğinizden emin misiniz?`)) return;
+    const token = intGetToken();
+    if (token) fetch(`${API}/api/integrations/${id}/disconnect`, { method:'DELETE', headers:{ Authorization:`Bearer ${token}` } }).catch(() => {});
+    try { const k = STORAGE_KEY[id]; if (k) localStorage.removeItem(k); } catch {}
+    setConnected(prev => { const s = new Set(prev); s.delete(id); return s; });
+  }
+
+  function handleSave(id) { setConnected(prev => new Set([...prev, id])); setModal(null); }
+
+  return (
+    <>
+      <div className="int-main">
+        <div className="int-stats-bar">
+          <span className="int-stat"><strong>{filtered.length}</strong>{filtered.length < INTEGRATIONS.length ? ` / ${INTEGRATIONS.length}` : ''} entegrasyon</span>
+          <span className="int-stat"><strong>{connected.size}</strong> bağlı</span>
+        </div>
+        <div className="int-toolbar">
+          <div className="cat-pills">
+            {CATEGORIES.map(cat => (
+              <button key={cat} className={'cat-pill' + (activeCat === cat ? ' active' : '')} onClick={() => setActiveCat(cat)}>{cat}</button>
+            ))}
+          </div>
+          <div className="view-toggle">
+            <button className={'view-btn' + (view === 'grid' ? ' active' : '')} onClick={() => setView('grid')} title="Izgara">⊞</button>
+            <button className={'view-btn' + (view === 'list' ? ' active' : '')} onClick={() => setView('list')} title="Liste">☰</button>
+          </div>
+        </div>
+        {filtered.length === 0 ? (
+          <div className="int-empty-state"><p>Bu kategoride entegrasyon bulunamadı.</p></div>
+        ) : (
+          <div className={view === 'grid' ? 'cards-grid' : 'cards-list'}>
+            {filtered.map(it => (
+              <IntegrationCard key={it.id} integration={it} connected={connected}
+                onConnect={handleConnect} onDisconnect={handleDisconnect} listView={view === 'list'} />
+            ))}
+          </div>
+        )}
+      </div>
+
+      {showUpgrade && (
+        <div className="int-modal-overlay" onClick={() => setShowUpgrade(false)}>
+          <div className="int-modal-box" onClick={e => e.stopPropagation()}>
+            <div className="int-modal-header">
+              <div style={{ fontSize:32 }}>⭐</div>
+              <div>
+                <div className="int-modal-title">Pro Plan Gerekli</div>
+                <span className="int-badge int-badge-pro" style={{ fontSize:10 }}>Pro</span>
+              </div>
+              <button className="int-modal-close" onClick={() => setShowUpgrade(false)}>×</button>
+            </div>
+            <hr className="int-modal-divider" />
+            <p style={{ fontSize:14, color:'var(--muted)', lineHeight:1.6, marginBottom:20 }}>
+              Tüm entegrasyonlar <strong>Pro</strong> veya <strong>İş</strong> planı gerektirir.
+              Slack, Notion, Google Drive ve diğer entegrasyonlara erişmek için planınızı yükseltin.
+            </p>
+            <div className="int-modal-actions">
+              <button className="int-modal-btn int-modal-btn-secondary" onClick={() => setShowUpgrade(false)}>Vazgeç</button>
+              <a className="int-modal-btn int-modal-btn-primary" href="/#pricing" style={{ textDecoration:'none', textAlign:'center' }}>Planı Yükselt →</a>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {modal && (
+        <ConnectModal integration={modal} onClose={() => setModal(null)} onSave={handleSave} />
+      )}
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('int-root')).render(<IntegrationBrowser />);
 </script>
 </body>
 </html>
