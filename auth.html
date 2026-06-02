@@ -965,6 +965,17 @@ function translateError(msg) {
 document.getElementById('emailInput').addEventListener('keydown', function(e) {
   if (e.key === 'Enter' && emailValid) handleSubmit();
 });
+
+// Pre-fill email from URL param (e.g. from landing page sticky form)
+(function() {
+  var emailParam = new URLSearchParams(window.location.search).get('email');
+  if (emailParam) {
+    var input = document.getElementById('emailInput');
+    if (input) { input.value = emailParam; }
+    switchMode('signup');
+    onEmailInput(emailParam);
+  }
+})();
 </script>
 
 <script src="i18n.js"></script>
