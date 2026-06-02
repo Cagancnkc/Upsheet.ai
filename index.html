@@ -1812,15 +1812,28 @@ function setPricingPeriod(p) {
 <!-- STICKY CTA -->
 <div id="sticky-cta" style="
   position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
-  background:var(--ink);color:var(--paper);border-radius:999px;
-  padding:14px 28px;display:flex;align-items:center;gap:16px;
+  background:var(--ink);color:var(--paper);border-radius:20px;
+  padding:20px 28px;display:flex;flex-direction:column;gap:12px;
   box-shadow:0 8px 32px rgba(14,14,16,.3);z-index:999;
   font-size:14px;font-weight:500;opacity:0;transition:opacity .3s ease;pointer-events:none;
-  white-space:nowrap;
+  min-width:320px;max-width:420px;
 ">
-  <span>Operasyon ekipleri haftada 18+ saat tasarruf eder</span>
-  <a href="/auth" class="btn btn-outline" style="padding:8px 18px;font-size:13px;border-color:#ffffff40;color:var(--paper)">Ücretsiz Başla →</a>
+  <div>
+    <div style="font-size:18px;font-weight:700;margin-bottom:4px;">Ücretsiz başlayın</div>
+    <div style="font-size:12px;opacity:0.6;font-weight:400;">Pazarlama e-postaları almayı kabul ediyorsunuz.</div>
+  </div>
+  <form onsubmit="handleStickyEmail(event)" style="display:flex;align-items:center;background:rgba(255,255,255,0.08);border-radius:12px;padding:4px 4px 4px 16px;gap:8px;">
+    <input type="email" placeholder="E-postanızı girin" required style="flex:1;background:none;border:none;outline:none;color:var(--paper);font-size:14px;min-width:0;" />
+    <button type="submit" style="background:var(--paper);color:var(--ink);border:none;border-radius:8px;padding:10px 14px;cursor:pointer;font-size:16px;line-height:1;">→</button>
+  </form>
 </div>
+<script>
+function handleStickyEmail(e) {
+  e.preventDefault();
+  var email = e.target.querySelector('input[type=email]').value;
+  window.location.href = '/auth?email=' + encodeURIComponent(email);
+}
+</script>
 <script>
   window.addEventListener('scroll',function(){
     var el=document.getElementById('sticky-cta');
