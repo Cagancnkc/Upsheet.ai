@@ -147,7 +147,7 @@
       <svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       Otomasyonlar
     </div>
-    <div class="nav-item" data-href="automations.html">
+    <div class="nav-item" id="nav-integrations">
       <svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.59 13.51 6.83 3.98"/><path d="m15.41 6.51-6.82 3.98"/></svg>
       Entegrasyonlar
       <span class="count">5</span>
@@ -1700,7 +1700,7 @@
 
   // ── Q: Integrations ───────────────────────────────────────────────────────
   var ddInt = document.getElementById('dd-integrations');
-  if (ddInt) ddInt.addEventListener('click', function () { closeDownload(); window.location.href = '/automations'; });
+  if (ddInt) ddInt.addEventListener('click', function () { closeDownload(); if (typeof openIntegrationsModal === 'function') openIntegrationsModal(); });
 
   // ── PDF Ekle ──────────────────────────────────────────────────────────────
   var pdfAddBtn = document.getElementById('pdf-add-btn');
@@ -2182,5 +2182,331 @@
 <script src="js/automations.js"></script>
 <script src="js/auto-panel.js"></script>
 <script>if (typeof renderAutomationList === 'function') renderAutomationList();</script>
+
+<!-- ── Integrations Modal ── -->
+<div id="integrations-overlay" class="ms-overlay" style="display:none;">
+  <div class="ms-modal" style="width:640px;max-height:82vh;overflow-y:auto;padding:0;">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 24px 16px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--surface);z-index:1;">
+      <div>
+        <div style="font-size:16px;font-weight:700;color:var(--ink);">Entegrasyonlar</div>
+        <div style="font-size:12px;color:var(--ink-4);margin-top:2px;">Tablonu dış araçlarla bağla ve senkronize et</div>
+      </div>
+      <button onclick="closeIntegrationsModal()" style="background:var(--surface-3);border:1px solid var(--line);border-radius:6px;padding:5px 10px;cursor:pointer;font-size:13px;color:var(--ink-2);">Kapat</button>
+    </div>
+    <div style="padding:20px 24px;display:flex;flex-direction:column;gap:24px;">
+
+      <!-- Google OAuth section -->
+      <div>
+        <div style="font-size:11px;font-weight:700;color:var(--ink-4);text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px;">Google — Tek Tıkla Bağlan</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div class="int-row" id="int-row-google-sheets">
+            <div style="display:flex;align-items:center;gap:10px;flex:1;">
+              <img src="https://cdn.simpleicons.org/googlesheets/34A853" style="width:20px;height:20px;">
+              <span style="font-size:13.5px;font-weight:600;color:var(--ink);">Google Sheets</span>
+              <span class="int-status-badge" id="badge-google-sheets" style="display:none;"></span>
+            </div>
+            <div class="int-row-actions" id="actions-google-sheets">
+              <button class="int-connect-btn" onclick="connectGoogle('sheets')">Bağlan</button>
+            </div>
+          </div>
+          <div class="int-row" id="int-row-google-drive">
+            <div style="display:flex;align-items:center;gap:10px;flex:1;">
+              <img src="https://cdn.simpleicons.org/googledrive/4285F4" style="width:20px;height:20px;">
+              <span style="font-size:13.5px;font-weight:600;color:var(--ink);">Google Drive</span>
+              <span class="int-status-badge" id="badge-google-drive" style="display:none;"></span>
+            </div>
+            <div class="int-row-actions" id="actions-google-drive">
+              <button class="int-connect-btn" onclick="connectGoogle('drive')">Bağlan</button>
+            </div>
+          </div>
+          <div class="int-row" id="int-row-gmail">
+            <div style="display:flex;align-items:center;gap:10px;flex:1;">
+              <img src="https://cdn.simpleicons.org/gmail/EA4335" style="width:20px;height:20px;">
+              <span style="font-size:13.5px;font-weight:600;color:var(--ink);">Gmail</span>
+              <span class="int-status-badge" id="badge-gmail" style="display:none;"></span>
+            </div>
+            <div class="int-row-actions" id="actions-gmail">
+              <button class="int-connect-btn" onclick="connectGoogle('gmail')">Bağlan</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Webhook section -->
+      <div>
+        <div style="font-size:11px;font-weight:700;color:var(--ink-4);text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px;">Webhook — URL ile Bağlan</div>
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <!-- Slack -->
+          <div class="int-row-expand" id="int-row-slack">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+              <svg viewBox="0 0 24 24" style="width:20px;height:20px;" fill="#4A154B"><path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zM6.313 15.165a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313zM8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zM8.834 6.313a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312zM18.956 8.834a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834zM17.688 8.834a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312zM15.165 18.956a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52zM15.165 17.688a2.527 2.527 0 0 1-2.52-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z"/></svg>
+              <span style="font-size:13.5px;font-weight:600;color:var(--ink);">Slack</span>
+              <span class="int-status-badge" id="badge-slack" style="display:none;"></span>
+            </div>
+            <div style="display:flex;gap:8px;">
+              <input id="input-slack" type="text" placeholder="https://hooks.slack.com/services/..." class="int-url-input">
+              <button class="int-save-btn" onclick="saveWebhookConfig('slack','input-slack')">Kaydet</button>
+              <button class="int-disc-btn" id="disc-slack" onclick="disconnectIntegration('slack')" style="display:none;">Bağlantıyı Kes</button>
+            </div>
+          </div>
+          <!-- Teams -->
+          <div class="int-row-expand" id="int-row-teams">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+              <svg viewBox="0 0 24 24" style="width:20px;height:20px;" fill="#6264A7"><path d="M20.625 8.127q-.55 0-1.025-.205-.475-.205-.832-.563-.358-.357-.563-.832Q18 6.053 18 5.502q0-.54.205-1.02t.563-.837q.357-.358.832-.563.474-.205 1.025-.205.54 0 1.02.205t.837.563q.358.357.563.837.205.48.205 1.02 0 .55-.205 1.025-.205.475-.563.832-.357.358-.837.563-.48.205-1.02.205zm0-3.75q-.469 0-.797.328-.328.328-.328.797 0 .469.328.797.328.328.797.328.469 0 .797-.328.328-.328.328-.797 0-.469-.328-.797-.328-.328-.797-.328zM24 10.002v5.578q0 .774-.293 1.46-.293.685-.803 1.194-.51.51-1.195.803-.686.293-1.459.293-.445 0-.908-.105-.463-.106-.85-.329-.293.95-.855 1.729-.563.78-1.319 1.336-.756.557-1.67.861-.914.305-1.898.305-1.148 0-2.162-.398-1.014-.399-1.805-1.102-.79-.703-1.312-1.664t-.674-2.086h-5.8q-.411 0-.704-.293T0 16.881V6.873q0-.41.293-.703t.703-.293h8.59q-.34-.715-.34-1.5 0-.727.275-1.365.276-.639.75-1.114.475-.474 1.114-.75.638-.275 1.365-.275t1.365.275q.639.276 1.114.75.474.475.75 1.114.275.638.275 1.365t-.275 1.365q-.276.639-.75 1.113-.475.475-1.114.75-.638.276-1.365.276-.188 0-.375-.024-.188-.023-.375-.058v1.078h10.875q.469 0 .797.328.328.328.328.797zM12.75 2.373q-.41 0-.78.158-.368.158-.638.434-.27.275-.428.639-.158.363-.158.773 0 .41.158.78.159.368.428.638.27.27.639.428.369.158.779.158.41 0 .773-.158.364-.159.64-.428.274-.27.433-.639.158-.369.158-.779 0-.41-.158-.773-.159-.364-.434-.64-.275-.275-.639-.433-.363-.158-.773-.158zM6.937 9.814h2.25V7.94H2.814v1.875h2.25v6h1.875zm10.313 7.313v-6.75H12v6.504q0 .41-.293.703t-.703.293H8.309q.152.809.556 1.5.405.691.985 1.19.58.497 1.318.779.738.281 1.582.281.926 0 1.746-.352.82-.351 1.436-.966.615-.616.966-1.43.352-.815.352-1.752zm5.25-1.547v-5.203h-3.75v6.855q.305.305.691.452.387.146.809.146.469 0 .879-.176.41-.175.715-.48.304-.305.48-.715t.176-.879Z"/></svg>
+              <span style="font-size:13.5px;font-weight:600;color:var(--ink);">Microsoft Teams</span>
+              <span class="int-status-badge" id="badge-teams" style="display:none;"></span>
+            </div>
+            <div style="display:flex;gap:8px;">
+              <input id="input-teams" type="text" placeholder="https://outlook.office.com/webhook/..." class="int-url-input">
+              <button class="int-save-btn" onclick="saveWebhookConfig('teams','input-teams')">Kaydet</button>
+              <button class="int-disc-btn" id="disc-teams" onclick="disconnectIntegration('teams')" style="display:none;">Bağlantıyı Kes</button>
+            </div>
+          </div>
+          <!-- Make.com -->
+          <div class="int-row-expand" id="int-row-make">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+              <img src="https://cdn.simpleicons.org/make/6D00CC" style="width:20px;height:20px;">
+              <span style="font-size:13.5px;font-weight:600;color:var(--ink);">Make.com / Webhook</span>
+              <span class="int-status-badge" id="badge-make" style="display:none;"></span>
+            </div>
+            <div style="display:flex;gap:8px;">
+              <input id="input-make" type="text" placeholder="https://hook.make.com/..." class="int-url-input">
+              <button class="int-save-btn" onclick="saveWebhookConfig('make','input-make')">Kaydet</button>
+              <button class="int-disc-btn" id="disc-make" onclick="disconnectIntegration('make')" style="display:none;">Bağlantıyı Kes</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- API Token section -->
+      <div>
+        <div style="font-size:11px;font-weight:700;color:var(--ink-4);text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px;">API Token — Token ile Bağlan</div>
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <!-- Airtable -->
+          <div class="int-row-expand" id="int-row-airtable">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+              <img src="https://cdn.simpleicons.org/airtable/18BFFF" style="width:20px;height:20px;">
+              <span style="font-size:13.5px;font-weight:600;color:var(--ink);">Airtable</span>
+              <span class="int-status-badge" id="badge-airtable" style="display:none;"></span>
+            </div>
+            <div style="display:flex;gap:8px;">
+              <input id="input-airtable" type="text" placeholder="Personal Access Token (pat...)" class="int-url-input">
+              <button class="int-save-btn" onclick="saveTokenConfig('airtable','input-airtable')">Kaydet</button>
+              <button class="int-disc-btn" id="disc-airtable" onclick="disconnectIntegration('airtable')" style="display:none;">Bağlantıyı Kes</button>
+            </div>
+          </div>
+          <!-- Trello -->
+          <div class="int-row-expand" id="int-row-trello">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+              <img src="https://cdn.simpleicons.org/trello/0052CC" style="width:20px;height:20px;">
+              <span style="font-size:13.5px;font-weight:600;color:var(--ink);">Trello</span>
+              <span class="int-status-badge" id="badge-trello" style="display:none;"></span>
+            </div>
+            <div style="display:flex;gap:8px;">
+              <input id="input-trello-key" type="text" placeholder="API Key" class="int-url-input" style="flex:1;">
+              <input id="input-trello-token" type="text" placeholder="Token" class="int-url-input" style="flex:1;">
+              <button class="int-save-btn" onclick="saveTrelloConfig()">Kaydet</button>
+              <button class="int-disc-btn" id="disc-trello" onclick="disconnectIntegration('trello')" style="display:none;">Bağlantıyı Kes</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<style>
+.int-row{display:flex;align-items:center;gap:8px;background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:12px 14px;}
+.int-row-expand{background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:12px 14px;}
+.int-connect-btn{background:var(--brand);color:#fff;border:none;border-radius:6px;padding:6px 14px;font-size:12.5px;font-weight:600;cursor:pointer;}
+.int-connect-btn:hover{opacity:.88;}
+.int-connect-btn.connected{background:#eafac9;color:#3a5a18;border:1px solid #b6e87a;}
+.int-save-btn{background:var(--surface);border:1px solid var(--line-strong);border-radius:6px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;color:var(--ink-2);}
+.int-save-btn:hover{background:var(--surface-3);}
+.int-disc-btn{background:transparent;border:1px solid var(--line-strong);border-radius:6px;padding:6px 10px;font-size:11.5px;cursor:pointer;white-space:nowrap;color:var(--rose);}
+.int-url-input{flex:1;border:1px solid var(--line-strong);border-radius:6px;padding:7px 10px;font-size:12px;background:var(--surface);color:var(--ink);outline:none;}
+.int-url-input:focus{border-color:var(--brand);}
+.int-status-badge{font-size:11px;padding:2px 8px;border-radius:99px;font-weight:600;}
+.int-status-badge.connected{background:#eafac9;color:#3a5a18;}
+.int-status-badge.error{background:#fee2e2;color:#b91c1c;}
+</style>
+
+<script>
+(function() {
+  var apiBase = window.location.hostname === 'localhost' ? 'http://localhost:3001' : 'https://upsheet-ai.onrender.com';
+
+  function getToken() {
+    try {
+      var keys = Object.keys(localStorage);
+      for (var i = 0; i < keys.length; i++) {
+        if (keys[i].indexOf('supabase') !== -1 || keys[i].indexOf('sb-') === 0) {
+          var raw = localStorage.getItem(keys[i]);
+          if (!raw) continue;
+          var parsed = JSON.parse(raw);
+          var t = (parsed && parsed.access_token) || (parsed && parsed.session && parsed.session.access_token);
+          if (t) return t;
+        }
+      }
+    } catch(e) {}
+    return null;
+  }
+
+  function authHeaders() {
+    var h = { 'Content-Type': 'application/json' };
+    var t = getToken();
+    if (t) h['Authorization'] = 'Bearer ' + t;
+    return h;
+  }
+
+  window.openIntegrationsModal = function() {
+    document.getElementById('integrations-overlay').style.display = 'flex';
+    loadIntegrationStatuses();
+  };
+
+  window.closeIntegrationsModal = function() {
+    document.getElementById('integrations-overlay').style.display = 'none';
+  };
+
+  function setBadge(provider, status) {
+    var badge = document.getElementById('badge-' + provider);
+    var discBtn = document.getElementById('disc-' + provider);
+    if (!badge) return;
+    if (status === 'active') {
+      badge.textContent = '● Bağlı';
+      badge.className = 'int-status-badge connected';
+      badge.style.display = 'inline-block';
+      if (discBtn) discBtn.style.display = 'inline-block';
+      var connectBtn = document.querySelector('#actions-' + provider + ' .int-connect-btn');
+      if (connectBtn) { connectBtn.textContent = 'Yeniden Bağlan'; connectBtn.className = 'int-connect-btn connected'; }
+    } else if (status === 'error') {
+      badge.textContent = '● Hata';
+      badge.className = 'int-status-badge error';
+      badge.style.display = 'inline-block';
+    } else {
+      badge.style.display = 'none';
+      if (discBtn) discBtn.style.display = 'none';
+    }
+  }
+
+  function loadIntegrationStatuses() {
+    var token = getToken();
+    if (!token) return;
+    fetch(apiBase + '/api/integrations/status', { headers: authHeaders() })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        var map = {
+          'google-sheets': 'google-sheets',
+          'google-drive': 'google-drive',
+          'gmail': 'gmail',
+          'slack': 'slack',
+          'teams': 'teams',
+          'make': 'make',
+          'airtable': 'airtable',
+          'trello': 'trello'
+        };
+        Object.keys(map).forEach(function(key) {
+          var status = data[key] && data[key].status;
+          setBadge(map[key], status);
+        });
+      })
+      .catch(function() {});
+  }
+
+  window.connectGoogle = function(provider) {
+    var token = getToken();
+    if (!token) { if (typeof showToast === 'function') showToast('Önce giriş yapmanız gerekiyor'); return; }
+    var url = apiBase + '/api/integrations/' + provider + '/auth?token=' + encodeURIComponent(token);
+    var popup = window.open(url, 'oauth-popup', 'width=580,height=660,left=200,top=100');
+    if (!popup) { if (typeof showToast === 'function') showToast('Popup engellendi — tarayıcı ayarlarından izin verin'); return; }
+    var listener = function(e) {
+      var providerKey = provider === 'drive' ? 'drive' : provider;
+      if (e.data && e.data.type === providerKey + '_auth') {
+        window.removeEventListener('message', listener);
+        if (e.data.connected) {
+          var displayName = provider === 'sheets' ? 'google-sheets' : (provider === 'drive' ? 'google-drive' : 'gmail');
+          setBadge(displayName, 'active');
+          if (typeof showToast === 'function') showToast('✓ ' + (provider === 'sheets' ? 'Google Sheets' : (provider === 'drive' ? 'Google Drive' : 'Gmail')) + ' bağlandı');
+        } else if (e.data.error) {
+          if (typeof showToast === 'function') showToast('Bağlantı hatası: ' + e.data.error);
+        }
+      }
+    };
+    window.addEventListener('message', listener);
+  };
+
+  window.saveWebhookConfig = function(provider, inputId) {
+    var url = document.getElementById(inputId).value.trim();
+    if (!url) { if (typeof showToast === 'function') showToast('Webhook URL gerekli'); return; }
+    fetch(apiBase + '/api/integrations/' + provider + '/save-config', {
+      method: 'POST', headers: authHeaders(),
+      body: JSON.stringify({ webhookUrl: url })
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (d.ok) { setBadge(provider, 'active'); if (typeof showToast === 'function') showToast('✓ ' + provider + ' bağlandı'); }
+      else { if (typeof showToast === 'function') showToast('Hata: ' + (d.error || 'Kaydedilemedi')); }
+    })
+    .catch(function() { if (typeof showToast === 'function') showToast('Bağlantı hatası'); });
+  };
+
+  window.saveTokenConfig = function(provider, inputId) {
+    var token = document.getElementById(inputId).value.trim();
+    if (!token) { if (typeof showToast === 'function') showToast('Token gerekli'); return; }
+    fetch(apiBase + '/api/integrations/' + provider + '/save-config', {
+      method: 'POST', headers: authHeaders(),
+      body: JSON.stringify({ token: token })
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (d.ok) { setBadge(provider, 'active'); if (typeof showToast === 'function') showToast('✓ ' + provider + ' bağlandı'); }
+      else { if (typeof showToast === 'function') showToast('Hata: ' + (d.error || 'Kaydedilemedi')); }
+    })
+    .catch(function() { if (typeof showToast === 'function') showToast('Bağlantı hatası'); });
+  };
+
+  window.saveTrelloConfig = function() {
+    var key = document.getElementById('input-trello-key').value.trim();
+    var tok = document.getElementById('input-trello-token').value.trim();
+    if (!key || !tok) { if (typeof showToast === 'function') showToast('API Key ve Token gerekli'); return; }
+    fetch(apiBase + '/api/integrations/trello/save-config', {
+      method: 'POST', headers: authHeaders(),
+      body: JSON.stringify({ apiKey: key, token: tok })
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (d.ok) { setBadge('trello', 'active'); if (typeof showToast === 'function') showToast('✓ Trello bağlandı'); }
+      else { if (typeof showToast === 'function') showToast('Hata: ' + (d.error || 'Kaydedilemedi')); }
+    })
+    .catch(function() { if (typeof showToast === 'function') showToast('Bağlantı hatası'); });
+  };
+
+  window.disconnectIntegration = function(provider) {
+    fetch(apiBase + '/api/integrations/' + provider + '/disconnect', {
+      method: 'DELETE', headers: authHeaders()
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (d.ok) { setBadge(provider, null); if (typeof showToast === 'function') showToast(provider + ' bağlantısı kesildi'); }
+    })
+    .catch(function() {});
+  };
+
+  // Sidebar nav item
+  var navInt = document.getElementById('nav-integrations');
+  if (navInt) navInt.addEventListener('click', function() { window.openIntegrationsModal(); });
+
+  // Close on overlay click
+  var overlay = document.getElementById('integrations-overlay');
+  if (overlay) overlay.addEventListener('click', function(e) {
+    if (e.target === overlay) window.closeIntegrationsModal();
+  });
+
+  // Auto-open if ?open=integrations in URL
+  if (new URLSearchParams(window.location.search).get('open') === 'integrations') {
+    window.openIntegrationsModal();
+  }
+})();
+</script>
 </body>
 </html>
