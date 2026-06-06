@@ -1137,7 +1137,7 @@
             }
           }
         }
-        break;
+        renderGrid(); break;
 
       case 'sort':
         var sortCol = colToIdx(result.column || 'A');
@@ -1178,7 +1178,9 @@
         var fVal = (result.value || '').toLowerCase();
         var fCol = result.column ? colToIdx(result.column) : -1;
         for (var fr = 1; fr < GRID_ROWS; fr++) {
-          var fMatch = fCol >= 0 ? gridData[fr][fCol].v.toLowerCase().includes(fVal) : gridData[fr].some(function (c) { return c.v.toLowerCase().includes(fVal); });
+          var fMatch = fCol >= 0
+            ? (gridData[fr][fCol].v || '').toString().toLowerCase().includes(fVal)
+            : gridData[fr].some(function (c) { return (c.v || '').toString().toLowerCase().includes(fVal); });
           for (var fc = 0; fc < GRID_COLS; fc++) {
             var fel = document.querySelector('.grid-cell[data-r="' + fr + '"][data-c="' + fc + '"]');
             if (fel) fel.style.display = fMatch ? '' : 'none';
