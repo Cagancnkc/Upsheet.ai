@@ -1039,9 +1039,17 @@
 
   function colToIdx(letter) {
     if (!letter) return 0;
-    var s = letter.toUpperCase().trim();
-    if (s.length === 1) return s.charCodeAt(0) - 65;
-    for (var i = 0; i < COL_LETTERS.length; i++) { if (COL_LETTERS[i] === s) return i; }
+    var s = letter.trim();
+    var su = s.toUpperCase();
+    if (su.length === 1 && su >= 'A' && su <= 'Z') return su.charCodeAt(0) - 65;
+    for (var i = 0; i < COL_LETTERS.length; i++) { if (COL_LETTERS[i] === su) return i; }
+    var sl = s.toLowerCase();
+    if (gridData && gridData[0]) {
+      for (var j = 0; j < gridData[0].length; j++) {
+        var hv = (gridData[0][j] && gridData[0][j].v ? gridData[0][j].v : '').toString().toLowerCase();
+        if (hv && (hv === sl || hv.includes(sl) || sl.includes(hv))) return j;
+      }
+    }
     return 0;
   }
 
