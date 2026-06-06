@@ -1593,12 +1593,28 @@
       method: 'POST', headers: headers,
       body: JSON.stringify({ message: cmd, sheetData: getGridForAPI() })
     })
-      .then(function (res) { return res.json(); })
-      .then(function (data) {
-        var msg = data.reply || (data.action ? 'İşlem uygulandı: ' + data.action : 'Tamamlandı');
-        addMsg('ai', msg);
-        applyGridAction(data);
-        incrementCount();
+      .then(function (res) {
+        return res.json().then(function (data) {
+          if (!res.ok) {
+            var code = data.code || '';
+            var errMsg;
+            if (code === 'AUTH_REQUIRED' || res.status === 401) {
+              errMsg = '⚠️ Lütfen giriş yapın. Komutlar için hesabınıza giriş yapmanız gerekiyor.';
+            } else if (code === 'DAILY_LIMIT_REACHED') {
+              errMsg = '⚠️ Günlük AI komut limitinize ulaştınız (' + data.used + '/' + data.limit + '). Yarın sıfırlanır.';
+            } else if (code === 'MONTHLY_LIMIT_REACHED') {
+              errMsg = '⚠️ Aylık AI komut limitinize ulaştınız. Ayın 1\'inde sıfırlanır.';
+            } else {
+              errMsg = '⚠️ Sunucu hatası (' + res.status + '): ' + (data.error || 'Bilinmeyen hata');
+            }
+            addMsg('ai', errMsg);
+            return;
+          }
+          var msg = data.reply || (data.action ? 'İşlem uygulandı: ' + data.action : 'Tamamlandı');
+          addMsg('ai', msg);
+          applyGridAction(data);
+          incrementCount();
+        });
       })
       .catch(function (err) {
         addMsg('ai', 'Bağlantı hatası. Backend çalışıyor mu?');
