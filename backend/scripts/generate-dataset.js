@@ -20,7 +20,7 @@ async function getSupabaseCount() {
 
 async function generateExamples(existingCommands) {
   const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-  const sample = existingCommands.slice(0, 150).join('\n');
+  const sample = existingCommands.join('\n');
 
   const message = await client.messages.create({
     model: 'claude-sonnet-4-6',
@@ -174,7 +174,7 @@ async function main() {
   console.log(`Mevcut Supabase kayıt sayısı: ${beforeCount}`);
 
   const rawContent = fs.readFileSync(DATASET_PATH, 'utf8');
-  const existingCommands = [...rawContent.matchAll(/user_command:\s*"([^"]+)"/g)].map(m => m[1]);
+  const existingCommands = [...rawContent.matchAll(/"?user_command"?:\s*"([^"]+)"/g)].map(m => m[1]);
   console.log(`Mevcut dataset örnek sayısı: ${existingCommands.length}`);
 
   console.log('Claude API ile 100 yeni örnek üretiliyor...');
@@ -190,7 +190,7 @@ async function main() {
   await appendToDataset(lines);
   console.log('✓ dataset.js güncellendi');
 
-  const ingested = await ingestNewExamples(beforeCount);
+  const ingested = await ingestNewExamples(existingCommands.length);
   console.log(`✓ Supabase ingest tamamlandı`);
 
   const total = existingCommands.length + lines.length;
