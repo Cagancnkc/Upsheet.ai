@@ -159,7 +159,11 @@ body{background:#F7F7F5}
 </div>
 
 <script>
-function submitContactForm() {
+var _contactApiBase = window.location.hostname === 'localhost'
+  ? 'http://localhost:3001'
+  : 'https://upsheet-ai.onrender.com';
+
+async function submitContactForm() {
   var name = document.getElementById('contact-name').value.trim();
   var email = document.getElementById('contact-email').value.trim();
   var subject = document.getElementById('contact-subject').value;
@@ -176,14 +180,36 @@ function submitContactForm() {
     return;
   }
 
-  var subjectText = subject ? '[' + subject.toUpperCase() + '] ' : '';
-  var mailSubject = encodeURIComponent(subjectText + 'Mocksheets İletişim: ' + name);
-  var mailBody = encodeURIComponent(
-    message + '\n\n---\nGönderen: ' + name + '\nE-posta: ' + email
-  );
-  window.open('mailto:info@mocksheets.com?subject=' + mailSubject + '&body=' + mailBody);
+  var btn = document.querySelector('.submit-btn');
+  var origText = btn.textContent;
+  btn.textContent = 'Gönderiliyor...';
+  btn.disabled = true;
 
-  document.getElementById('contact-success').style.display = 'block';
+  try {
+    var res = await fetch(_contactApiBase + '/api/contact', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: name, email: email, subject: subject, message: message })
+    });
+    var data = await res.json();
+
+    if (data.success) {
+      document.querySelector('.form-card').innerHTML =
+        '<div style="text-align:center;padding:40px 20px">' +
+        '<div style="font-size:48px;margin-bottom:16px">✅</div>' +
+        '<h3 style="color:#16a34a;margin-bottom:8px">Mesajınız iletildi!</h3>' +
+        '<p style="color:#6B7280">En kısa sürede size dönüş yapacağız.</p>' +
+        '</div>';
+    } else {
+      alert('Hata: ' + (data.error || 'Bir sorun oluştu.'));
+      btn.textContent = origText;
+      btn.disabled = false;
+    }
+  } catch (err) {
+    alert('Sunucuya bağlanılamadı. Lütfen tekrar deneyin.');
+    btn.textContent = origText;
+    btn.disabled = false;
+  }
 }
 </script>
 <footer style="text-align:center;padding:32px 24px;border-top:1px solid #E5E7EB;margin-top:40px;font-size:13px;color:#9CA3AF">

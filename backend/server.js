@@ -363,6 +363,10 @@ app.get('/api/integrations/notion/callback', async (req, res) => {
 app.use('/api/integrations', checkLimit, integrationsRouter);
 app.use('/api/automations', automationsRouter);
 app.use('/api/stripe', stripeRouter);
+const contactRouter = require('./routes/contact');
+app.use('/api/contact', contactRouter);
+const { router: authWebhooksRouter } = require('./routes/auth-webhooks');
+app.use('/api/webhooks', authWebhooksRouter);
 app.use('/api/promos', promosRouter);
 const pdfRouter = require('./routes/pdf');
 app.use('/api/pdf', pdfRouter);
@@ -552,6 +556,16 @@ app.listen(PORT, '0.0.0.0', () => {
     const scheduler = require('./services/scheduler');
     scheduler.loadAndScheduleAll().catch(e => console.error('[scheduler] Init error:', e.message));
   } catch (e) { console.error('[scheduler] Load error:', e.message); }
+
+  // Onboarding email queue — saatte bir çalışır
+  try {
+    const cron = require('node-cron');
+    const { runSendScheduledEmails } = require('./jobs/sendScheduledEmails');
+    cron.schedule('0 * * * *', () => {
+      runSendScheduledEmails().catch(e => console.error('[email-job]', e.message));
+    }, { timezone: 'Europe/Istanbul' });
+    console.log('[email-job] Saatlik email job başlatıldı');
+  } catch (e) { console.error('[email-job] Init error:', e.message); }
 
   // Render free tier'ı uyanık tut: her 14 dakikada self-ping
   const SELF_URL = process.env.RENDER_EXTERNAL_URL || `http://localhost:${PORT}`;

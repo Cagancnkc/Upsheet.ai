@@ -246,6 +246,22 @@ router.post('/webhook',
   }
 );
 
+// ── Ödeme linklerini döndür (frontend'e production URL'leri sağlar) ─────────
+router.get('/links', (req, res) => {
+  res.json({
+    pro: {
+      weekly:  process.env.STRIPE_PRO_LINK_WEEKLY  || '',
+      monthly: process.env.STRIPE_PRO_LINK_MONTHLY || '',
+      yearly:  process.env.STRIPE_PRO_LINK_YEARLY  || ''
+    },
+    business: {
+      weekly:  process.env.STRIPE_BIZ_LINK_WEEKLY  || '',
+      monthly: process.env.STRIPE_BIZ_LINK_MONTHLY || '',
+      yearly:  process.env.STRIPE_BIZ_LINK_YEARLY  || ''
+    }
+  });
+});
+
 // ── Plan bilgilerini getir ───────────────────────
 router.get('/plans', (req, res) => {
   res.json({

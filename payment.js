@@ -1,18 +1,27 @@
 'use strict';
 
-// ── Stripe Payment Links ─────────────────────────
+// ── Stripe Payment Links (backend'den yüklenir) ──
+const _PAY_API = window.location.hostname === 'localhost'
+  ? 'http://localhost:3001'
+  : 'https://upsheet-ai.onrender.com';
+
 const STRIPE_LINKS = {
-  pro: {
-    weekly:  'https://buy.stripe.com/test_00w8wOce7aCX5GQgOybMQ03',
-    monthly: 'https://buy.stripe.com/test_eVq3cufqj9yT5GQ0PAbMQ08',
-    yearly:  'https://buy.stripe.com/test_28EeVcgun7qL9X6buebMQ0a'
-  },
-  business: {
-    weekly:  'https://buy.stripe.com/test_fZu4gy0vpcL5fhq2XIbMQ02',
-    monthly: 'https://buy.stripe.com/test_28EdR8ce7cL5d9igOybMQ09',
-    yearly:  'https://buy.stripe.com/test_8x2aEWemf8uPd9i0PAbMQ0b'
-  }
+  pro:      { weekly: null, monthly: null, yearly: null },
+  business: { weekly: null, monthly: null, yearly: null }
 };
+let _linksLoaded = false;
+
+async function loadStripeLinks() {
+  if (_linksLoaded) return;
+  try {
+    const res = await fetch(_PAY_API + '/api/stripe/links');
+    if (!res.ok) return;
+    const data = await res.json();
+    if (data.pro)      Object.assign(STRIPE_LINKS.pro,      data.pro);
+    if (data.business) Object.assign(STRIPE_LINKS.business, data.business);
+    _linksLoaded = true;
+  } catch { /* non-critical */ }
+}
 
 // ── Plan bilgileri ───────────────────────────────
 const PLAN_INFO = {
@@ -43,13 +52,14 @@ function getCurrentUser() {
 }
 
 // ── Ana checkout fonksiyonu ──────────────────────
-function startCheckout(plan, period) {
+async function startCheckout(plan, period) {
   const safePeriod = period || 'monthly';
+  await loadStripeLinks();
   const link = STRIPE_LINKS[plan]?.[safePeriod];
   const info = PLAN_INFO[plan]?.[safePeriod];
 
   if (!link) {
-    showCheckoutError('Bu plan şu an mevcut değil.');
+    showCheckoutError('Ödeme linki henüz yapılandırılmadı. Lütfen daha sonra tekrar deneyin.');
     return;
   }
 
@@ -236,6 +246,7 @@ function updatePlanBadge() {
 
 // ── Sayfa yüklenince ─────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
+  loadStripeLinks();
   updatePlanBadge();
 
   const params = new URLSearchParams(window.location.search);
