@@ -407,7 +407,7 @@ app.post('/api/chat', checkLimit, async (req, res) => {
     let sheetArr = sheetContext || sheetData || [];
     if (sheetArr.length > 200) sheetArr = sheetArr.slice(0, 200);
 
-    const result = await processExcelCommand(message.trim(), sheetArr, history || []);
+    const result = await processExcelCommand(message.trim(), sheetArr, history || [], req.user?.id);
 
     await incrementUsage(req.user.id);
 

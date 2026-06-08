@@ -1,5 +1,10 @@
 const Anthropic = require('@anthropic-ai/sdk');
+const { createClient } = require('@supabase/supabase-js');
 const { retrieveRelevantExamples } = require('./retrieval');
+
+function getSupabase() {
+  return createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
+}
 
 const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY
@@ -244,9 +249,10 @@ function parseAIResponse(rawText) {
   }
 }
 
-async function processExcelCommand(userCommand, sheetContext, history = []) {
+async function processExcelCommand(userCommand, sheetContext, history = [], userId = null) {
   console.log('[Pipeline] Komut:', userCommand?.slice(0, 80));
   let lastError = null;
+  const t0 = Date.now();
 
   for (let attempt = 1; attempt <= 3; attempt++) {
     try {
@@ -313,7 +319,15 @@ async function processExcelCommand(userCommand, sheetContext, history = []) {
       });
 
       const rawText = response.content[0]?.text || '';
-      return parseAIResponse(rawText);
+      const result = parseAIResponse(rawText);
+      const ms = Date.now() - t0;
+      getSupabase().from('performance_logs').insert({
+        user_id: userId || null,
+        command_text: userCommand?.slice(0, 500),
+        response_ms: ms,
+        success: true
+      }).then(() => {}, () => {});
+      return result;
 
     } catch (err) {
       lastError = err;
@@ -321,6 +335,15 @@ async function processExcelCommand(userCommand, sheetContext, history = []) {
       if (attempt < 3) await new Promise(r => setTimeout(r, 500 * attempt));
     }
   }
+
+  const ms = Date.now() - t0;
+  getSupabase().from('performance_logs').insert({
+    user_id: userId || null,
+    command_text: userCommand?.slice(0, 500),
+    response_ms: ms,
+    success: false,
+    error_msg: lastError?.message?.slice(0, 500)
+  }).then(() => {}, () => {});
 
   console.error('All pipeline attempts failed:', lastError?.message);
   return {
