@@ -890,6 +890,9 @@ async function initAuth() {
     }
   }
 
+  // Expose token to React script block (let is not window-scoped across script tags)
+  window.authToken = authToken;
+
   // Update avatar
   try {
     const userRaw = localStorage.getItem('mocksheets-user') || localStorage.getItem('ms-user');
