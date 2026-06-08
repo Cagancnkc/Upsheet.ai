@@ -2491,15 +2491,6 @@ function IntegrationBrowser() {
     return s;
   });
   const [modal, setModal] = useState(null);
-  const [userPlan, setUserPlan] = useState(null);
-  const [showUpgrade, setShowUpgrade] = useState(false);
-
-  useEffect(() => {
-    const token = intGetToken();
-    if (!token) return;
-    fetch(`${API}/api/usage`, { headers:{ Authorization:`Bearer ${token}` } })
-      .then(r => r.json()).then(d => { if (d.plan) setUserPlan(d.plan); }).catch(() => {});
-  }, []);
 
   useEffect(() => {
     const token = intGetToken();
@@ -2518,7 +2509,6 @@ function IntegrationBrowser() {
   const filtered = INTEGRATIONS.filter(it => activeCat === 'Tümü' || it.category === activeCat);
 
   function handleConnect(id) {
-    if (userPlan !== 'pro' && userPlan !== 'business') { setShowUpgrade(true); return; }
     setModal(INTEGRATIONS.find(i => i.id === id) || null);
   }
 
@@ -2562,30 +2552,6 @@ function IntegrationBrowser() {
           </div>
         )}
       </div>
-
-      {showUpgrade && (
-        <div className="int-modal-overlay" onClick={() => setShowUpgrade(false)}>
-          <div className="int-modal-box" onClick={e => e.stopPropagation()}>
-            <div className="int-modal-header">
-              <div style={{ fontSize:32 }}>⭐</div>
-              <div>
-                <div className="int-modal-title">Pro Plan Gerekli</div>
-                <span className="int-badge int-badge-pro" style={{ fontSize:10 }}>Pro</span>
-              </div>
-              <button className="int-modal-close" onClick={() => setShowUpgrade(false)}>×</button>
-            </div>
-            <hr className="int-modal-divider" />
-            <p style={{ fontSize:14, color:'var(--muted)', lineHeight:1.6, marginBottom:20 }}>
-              Tüm entegrasyonlar <strong>Pro</strong> veya <strong>İş</strong> planı gerektirir.
-              Slack, Notion, Google Drive ve diğer entegrasyonlara erişmek için planınızı yükseltin.
-            </p>
-            <div className="int-modal-actions">
-              <button className="int-modal-btn int-modal-btn-secondary" onClick={() => setShowUpgrade(false)}>Vazgeç</button>
-              <a className="int-modal-btn int-modal-btn-primary" href="/#pricing" style={{ textDecoration:'none', textAlign:'center' }}>Planı Yükselt →</a>
-            </div>
-          </div>
-        </div>
-      )}
 
       {modal && (
         <ConnectModal integration={modal} onClose={() => setModal(null)} onSave={handleSave} />
