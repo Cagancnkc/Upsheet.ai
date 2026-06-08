@@ -2534,5 +2534,14 @@
   }
 })();
 </script>
+
+<link rel="stylesheet" href="/css/popup-system.css" media="print" onload="this.media='all'">
+<script src="/js/popup-system.js" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  window.popupSystem = new PopupSystem({ page: 'app' });
+  window.popupSystem.init();
+});
+</script>
 </body>
 </html>
