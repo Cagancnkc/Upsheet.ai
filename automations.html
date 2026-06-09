@@ -905,9 +905,23 @@ async function initAuth() {
   } catch {}
 }
 
+function getFreshToken() {
+  for (const [k, v] of Object.entries(localStorage)) {
+    if (k.includes('supabase') || k.includes('sb-')) {
+      try {
+        const p = JSON.parse(v);
+        const t = p?.access_token || p?.session?.access_token || p?.currentSession?.access_token;
+        if (t) return t;
+      } catch {}
+    }
+  }
+  return authToken;
+}
+
 function authHeaders() {
   const h = { 'Content-Type': 'application/json' };
-  if (authToken) h['Authorization'] = 'Bearer ' + authToken;
+  const t = getFreshToken();
+  if (t) h['Authorization'] = 'Bearer ' + t;
   return h;
 }
 
@@ -2207,7 +2221,18 @@ document.addEventListener('keydown', e => {
 <script type="text/babel">
 const { useState, useEffect, useRef } = React;
 
-function intGetToken() { return window.authToken || null; }
+function intGetToken() {
+  for (const [k, v] of Object.entries(localStorage)) {
+    if (k.includes('supabase') || k.includes('sb-')) {
+      try {
+        const p = JSON.parse(v);
+        const t = p?.access_token || p?.session?.access_token || p?.currentSession?.access_token;
+        if (t) return t;
+      } catch {}
+    }
+  }
+  return window.authToken || null;
+}
 
 const STORAGE_KEY = {
   'slack':'int_slack','ms-teams':'int_teams','make':'int_make',
