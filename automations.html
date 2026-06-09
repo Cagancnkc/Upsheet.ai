@@ -12,13 +12,14 @@
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Mocksheets ile zamanlama, tetikleyici ve koşul tabanlı iş akışları oluşturun. Gmail, Slack, Notion ve 8+ entegrasyon ile tekrar eden operasyonları otomatize edin.">
+<meta name="description" content="Mocksheets ile stok uyarıları, fatura takibi ve raporları otomatikleştirin. Gmail, Slack, Notion, Airtable ve 8 entegrasyonla tek komutta iş akışı kurun. Formül yok, kod yok.">
 <link rel="canonical" href="https://mocksheets.com/automations">
-<meta property="og:title" content="Otomasyonlar – Mocksheets">
-<meta property="og:description" content="Mocksheets ile zamanlama, tetikleyici ve koşul tabanlı iş akışları oluşturun. Gmail, Slack, Notion ve 8+ entegrasyon ile tekrar eden operasyonları otomatize edin.">
+<meta property="og:title" content="Workflow Otomasyonu — Mocksheets | Gmail, Slack, Notion Entegrasyonu">
+<meta property="og:description" content="Mocksheets ile stok uyarıları, fatura takibi ve raporları otomatikleştirin. Gmail, Slack, Notion, Airtable ve 8 entegrasyonla tek komutta iş akışı kurun. Formül yok, kod yok.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://mocksheets.com/automations">
-<title>Otomasyonlar – Mocksheets</title>
+<meta property="og:image" content="https://mocksheets.com/images/og-preview.png">
+<title>Workflow Otomasyonu — Mocksheets | Gmail, Slack, Notion Entegrasyonu</title>
 <link rel="icon" type="image/png" href="/images/brand/logo-128x128.png">
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&family=Geist+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
@@ -1126,9 +1127,12 @@ function renderRules(filtered) {
     el.innerHTML = `
       <div class="empty-state">
         <div class="es-icon">⚡</div>
-        <h3>Henüz otomasyon yok</h3>
-        <p>İlk otomasyonunuzu oluşturun veya yukarıdaki hazır şablonlardan birini kullanın.</p>
-        <button class="btn btn-primary" onclick="openBuilder()">+ Yeni Workflow</button>
+        <h3>Henüz workflow'un yok</h3>
+        <p>Tekrar eden işlerini bir kez kur, Mocksheets otomatik halleder.</p>
+        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:4px">
+          <button class="btn btn-primary" onclick="openAIModal()">✨ AI ile Oluştur</button>
+          <button class="btn" onclick="document.getElementById('section-templates').scrollIntoView({behavior:'smooth'})">📋 Şablon Seç</button>
+        </div>
       </div>`;
     return;
   }
@@ -1234,7 +1238,7 @@ function renderRuns() {
   document.getElementById('run-count-badge').textContent = allRuns.length;
 
   if (!allRuns.length) {
-    el.innerHTML = `<div class="empty-state" style="padding:24px"><p style="font-size:13px;color:var(--muted)">Henüz çalışma kaydı yok.</p></div>`;
+    el.innerHTML = `<div class="empty-state" style="padding:24px"><p style="font-size:13px;color:var(--muted)">İlk workflow'unu çalıştırdığında burada görünecek.</p></div>`;
     return;
   }
 
