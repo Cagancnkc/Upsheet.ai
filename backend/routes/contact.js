@@ -2,6 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const rateLimit = require('express-rate-limit');
+const nodemailer = require('nodemailer');
 const { createClient } = require('@supabase/supabase-js');
 
 const limiter = rateLimit({
@@ -14,6 +15,16 @@ const limiter = rateLimit({
 
 function getSupabase() {
   return createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
+}
+
+function getTransporter() {
+  return nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: process.env.MAIL_USER,
+      pass: process.env.MAIL_PASS
+    }
+  });
 }
 
 router.post('/', limiter, async (req, res) => {
@@ -30,6 +41,7 @@ router.post('/', limiter, async (req, res) => {
   if (!message || message.trim().length < 10)
     return res.status(400).json({ error: 'Mesaj en az 10 karakter olmalıdır.' });
 
+  // Supabase'e kaydet
   try {
     const supabase = getSupabase();
     await supabase.from('contact_submissions').insert({
@@ -41,6 +53,45 @@ router.post('/', limiter, async (req, res) => {
     });
   } catch (dbErr) {
     console.error('[contact] DB insert failed:', dbErr.message);
+  }
+
+  // Email bildirimleri gönder (MAIL_USER/MAIL_PASS yoksa sessizce geç)
+  if (process.env.MAIL_USER && process.env.MAIL_PASS) {
+    try {
+      const transporter = getTransporter();
+
+      await transporter.sendMail({
+        from: process.env.MAIL_USER,
+        to: 'helpmocksheets@gmail.com',
+        replyTo: email,
+        subject: `[Mocksheets İletişim] ${subject || 'Mesaj'} — ${name.trim()}`,
+        html: `
+          <h3>Yeni iletişim mesajı</h3>
+          <p><strong>İsim:</strong> ${name.trim()}</p>
+          <p><strong>E-posta:</strong> ${email}</p>
+          <p><strong>Konu:</strong> ${subject || '-'}</p>
+          <p><strong>Mesaj:</strong></p>
+          <p style="white-space:pre-wrap;background:#f9fafb;padding:12px;border-radius:6px">${message.trim()}</p>
+          <hr>
+          <small>${new Date().toLocaleString('tr-TR')}</small>
+        `
+      });
+
+      await transporter.sendMail({
+        from: `"Mocksheets" <${process.env.MAIL_USER}>`,
+        to: email,
+        subject: 'Mesajınızı aldık — Mocksheets',
+        html: `
+          <p>Merhaba ${name.trim()},</p>
+          <p>Mesajınız bize ulaştı. En kısa sürede dönüş yapacağız.</p>
+          <br>
+          <p>— Mocksheets Ekibi</p>
+          <p><a href="https://mocksheets.com">mocksheets.com</a></p>
+        `
+      });
+    } catch (mailErr) {
+      console.error('[contact] Mail gönderme hatası:', mailErr.message);
+    }
   }
 
   res.json({ success: true, message: 'Mesajınız iletildi.' });

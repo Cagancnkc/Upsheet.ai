@@ -152,7 +152,7 @@ body{background:#F7F7F5}
       </button>
 
       <div class="success-msg" id="contact-success">
-        📧 Mail istemciniz açılıyor. Açılmazsa doğrudan <a href="mailto:helpmocksheets@gmail.com" style="color:#065F46;font-weight:700;">helpmocksheets@gmail.com</a> adresine yazabilirsiniz.
+        Mesajınız iletildi. En kısa sürede dönüş yapacağız.
       </div>
     </div>
   </div>
@@ -161,7 +161,7 @@ body{background:#F7F7F5}
 <script>
 var _contactApiBase = window.location.hostname === 'localhost'
   ? 'http://localhost:3001'
-  : 'https://upsheet-ai.onrender.com';
+  : (window._apiBase || 'https://upsheet-ai.onrender.com');
 
 async function submitContactForm() {
   var name = document.getElementById('contact-name').value.trim();

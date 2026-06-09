@@ -1352,7 +1352,7 @@
       <div class="ms-eyebrow">
         <span class="ms-eyebrow-dot"></span>
         <span>Bu hafta katılan ekipler için —</span>
-        <span class="ms-eyebrow-mono">MAYIS'26 KAMPANYASI</span>
+        <span class="ms-eyebrow-mono">HAZİRAN'26 KAMPANYASI</span>
       </div>
       <h2 class="ms-title">
         Bir öğle yemeği fiyatına,<br/>
@@ -1423,7 +1423,7 @@
           </div>
         </div>
         <div class="ms-row-cta">
-          <a id="proCheckoutBtn" href="#" target="_blank" class="ms-cta ms-filled">
+          <a id="proCheckoutBtn" href="/auth?plan=pro" target="_blank" class="ms-cta ms-filled">
             Pro'ya Geç →
             <span class="ms-cta-arrow">→</span>
           </a>
@@ -1449,7 +1449,7 @@
           </div>
         </div>
         <div class="ms-row-cta">
-          <a id="bizCheckoutBtn" href="#" target="_blank" class="ms-cta ms-outline">
+          <a id="bizCheckoutBtn" href="/auth?plan=biz" target="_blank" class="ms-cta ms-outline">
             Takım Kur →
             <span class="ms-cta-arrow">→</span>
           </a>
@@ -1869,8 +1869,30 @@ function setPricingPeriod(p) {
 <script>
 function handleStickyEmail(e) {
   e.preventDefault();
-  var email = e.target.querySelector('input[type=email]').value;
-  window.location.href = '/auth?email=' + encodeURIComponent(email);
+  var form = e.target;
+  var emailInput = form.querySelector('input[type=email]');
+  var btn = form.querySelector('button[type=submit]');
+  var email = emailInput.value.trim();
+
+  var apiBase = window.location.hostname === 'localhost'
+    ? 'http://localhost:3001'
+    : 'https://upsheet-ai.onrender.com';
+
+  btn.disabled = true;
+  btn.textContent = '...';
+
+  fetch(apiBase + '/api/loops/contact', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: email, userGroup: 'footer-cta' })
+  })
+    .then(function(r) { return r.ok ? r.json() : Promise.reject(); })
+    .then(function() {
+      form.innerHTML = '<span style="font-size:14px;opacity:.9">✓ Kaydınız alındı!</span>';
+    })
+    .catch(function() {
+      window.location.href = '/auth?email=' + encodeURIComponent(email);
+    });
 }
 </script>
 <script>
