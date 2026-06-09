@@ -12,6 +12,7 @@
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <meta name="description" content="Mocksheets ile stok uyarıları, fatura takibi ve raporları otomatikleştirin. Gmail, Slack, Notion, Airtable ve 8 entegrasyonla tek komutta iş akışı kurun. Formül yok, kod yok.">
 <link rel="canonical" href="https://mocksheets.com/automations">
 <meta property="og:title" content="Workflow Otomasyonu — Mocksheets | Gmail, Slack, Notion Entegrasyonu">
@@ -867,18 +868,19 @@ let builderSelectedNode = null;
 let builderEditId = null;
 
 // ── AUTH ───────────────────────────────────────────────────────────────────
+const _sb = supabase.createClient(
+  'https://ogizbfzoywylljvnidak.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9naXpiZnpveXd5bGxqdm5pZGFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwNzUxMjcsImV4cCI6MjA4ODY1MTEyN30.Vxu4ffDrG1nHR02vEbMeFKFHqUNYfVA9vBMyQmZj41k'
+);
+
 async function initAuth() {
+  // Use Supabase SDK to get (and auto-refresh) the current session
   try {
-    const raw = localStorage.getItem('sb-session') ||
-                localStorage.getItem('supabase.auth.token') ||
-                Object.entries(localStorage).find(([k]) => k.includes('auth-token'))?.[1];
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      authToken = parsed?.access_token || parsed?.currentSession?.access_token;
-    }
+    const { data: { session } } = await _sb.auth.getSession();
+    if (session?.access_token) authToken = session.access_token;
   } catch {}
 
-  // Check all localStorage keys for Supabase token
+  // Fallback: scan localStorage manually
   if (!authToken) {
     for (const [k, v] of Object.entries(localStorage)) {
       if (k.includes('supabase') || k.includes('sb-')) {
