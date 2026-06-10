@@ -781,6 +781,287 @@
     letter-spacing:.01em;
   }
 
+  /* ── Scroll Progress + Section Nav ─────────── */
+  #scroll-bar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 3px;
+    width: 0%;
+    background: linear-gradient(90deg, #16a34a, #4ade80);
+    z-index: 99999;
+    transition: width 0.1s linear;
+    box-shadow: 0 0 10px rgba(22,163,74,0.6);
+  }
+  #section-nav {
+    position: fixed;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  #section-nav.visible { opacity: 1; }
+  .snav-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    text-decoration: none;
+  }
+  .snav-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #334155;
+    transition: all 0.25s;
+    flex-shrink: 0;
+  }
+  .snav-label {
+    font-size: 11px;
+    color: #64748b;
+    white-space: nowrap;
+    opacity: 0;
+    transform: translateX(6px);
+    transition: all 0.2s;
+    background: rgba(15,23,42,0.9);
+    border: 1px solid #334155;
+    padding: 3px 8px;
+    border-radius: 4px;
+    pointer-events: none;
+  }
+  .snav-item:hover .snav-dot {
+    background: #16a34a;
+    transform: scale(1.5);
+    box-shadow: 0 0 8px rgba(22,163,74,0.5);
+  }
+  .snav-item:hover .snav-label { opacity: 1; transform: translateX(0); }
+  .snav-item.active .snav-dot {
+    background: #16a34a;
+    box-shadow: 0 0 8px rgba(22,163,74,0.4);
+    transform: scale(1.3);
+  }
+  @media(max-width: 768px) { #section-nav { display: none; } }
+
+  /* ── Savings Counter ─────────────────────── */
+  .savings-counter {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1px;
+  }
+  #hours-saved {
+    font-size: 28px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    color: #16a34a;
+    text-shadow: 0 0 20px rgba(22,163,74,0.4);
+    transition: text-shadow 0.3s;
+    font-family: 'Geist Mono', monospace, system-ui;
+    line-height: 1;
+  }
+  .counter-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: inherit;
+  }
+  .counter-sub {
+    font-size: 10px;
+    color: var(--ink-4,#a0a0a8);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ── Interactive Demo ─────────────────────── */
+  #interactive-demo { padding: 64px 24px; max-width: 720px; margin: 0 auto; }
+  .demo-label { display: flex; align-items: center; margin-bottom: 16px; }
+  .demo-badge {
+    background: rgba(22,163,74,0.12); color: #16a34a;
+    border: 1px solid rgba(22,163,74,0.3);
+    padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;
+  }
+  .demo-note { font-size: 12px; color: #64748b; margin-left: 10px; }
+  .demo-shell {
+    background: #0f172a; border: 1px solid #334155;
+    border-radius: 16px; overflow: hidden; margin-top: 0;
+    box-shadow: 0 0 60px rgba(22,163,74,0.08), 0 25px 50px rgba(0,0,0,0.4);
+  }
+  .demo-header {
+    background: #1e293b; padding: 10px 16px;
+    display: flex; align-items: center; gap: 10px;
+    border-bottom: 1px solid #334155;
+  }
+  .demo-dots span {
+    display: inline-block; width: 10px; height: 10px;
+    border-radius: 50%; background: #334155; margin-right: 4px;
+  }
+  .demo-title { font-size: 12px; color: #64748b; font-family: monospace; flex: 1; }
+  .demo-live { font-size: 11px; color: #16a34a; animation: pulse-text 2s infinite; }
+  @keyframes pulse-text { 0%,100%{opacity:1} 50%{opacity:.4} }
+  .demo-table-wrap { overflow-x: auto; padding: 16px; }
+  .demo-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .demo-table th {
+    text-align: left; padding: 8px 12px; font-size: 11px;
+    color: #64748b; border-bottom: 1px solid #1e293b; font-weight: 500;
+  }
+  .demo-table td {
+    padding: 9px 12px; color: #f8fafc;
+    border-bottom: 1px solid #1e293b; transition: background 0.4s, color 0.4s;
+  }
+  .demo-table td.num { font-family: monospace; }
+  .demo-table tr.highlight-green td { background: rgba(22,163,74,0.12); color: #4ade80; }
+  .demo-table tr.highlight-red td { background: rgba(239,68,68,0.08); color: #fca5a5; }
+  .demo-table tr.sorted-animate { animation: row-flash 0.5s ease; }
+  @keyframes row-flash { 0%{ background: rgba(22,163,74,0.2); } 100%{ background: transparent; } }
+  .demo-input-row {
+    display: flex; align-items: center; gap: 8px;
+    padding: 12px 16px; border-top: 1px solid #334155; background: #0f172a;
+  }
+  .demo-prompt { color: #16a34a; font-size: 16px; font-family: monospace; }
+  #demo-input {
+    flex: 1; background: transparent; border: none; outline: none;
+    color: #f8fafc; font-size: 13px; font-family: monospace; caret-color: #16a34a;
+  }
+  #demo-input::placeholder { color: #334155; }
+  #demo-run {
+    background: #16a34a; color: white; border: none;
+    padding: 7px 14px; border-radius: 7px; font-size: 12px;
+    font-weight: 600; cursor: pointer; transition: all 0.15s;
+    white-space: nowrap;
+  }
+  #demo-run:hover { background: #15803d; transform: scale(1.03); }
+  #demo-run:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+  .demo-output { padding: 10px 16px; font-size: 12px; font-family: monospace; border-top: 1px solid #1e293b; }
+  .demo-output.success { color: #4ade80; }
+  .demo-output.error { color: #f87171; }
+  .demo-output.hidden { display: none; }
+  .demo-chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 16px 14px; }
+  .demo-chips span {
+    font-size: 11px; padding: 5px 10px; background: #1e293b;
+    border: 1px solid #334155; border-radius: 6px; color: #94a3b8;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .demo-chips span:hover { border-color: #16a34a; color: #4ade80; background: rgba(22,163,74,0.08); }
+  .demo-cta-hint { text-align: center; font-size: 13px; color: #64748b; margin-top: 14px; }
+  .demo-cta-hint a { color: #16a34a; text-decoration: none; font-weight: 600; }
+
+  /* ── ROI Calculator ─────────────────────── */
+  #roi-calculator {
+    padding: 80px 24px;
+    background: linear-gradient(180deg, transparent, rgba(22,163,74,0.03), transparent);
+  }
+  .roi-wrap { max-width: 680px; margin: 0 auto; }
+  .roi-badge {
+    background: rgba(22,163,74,0.1); color: #4ade80;
+    border: 1px solid rgba(22,163,74,0.25);
+    padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: 600;
+  }
+  .roi-title { font-size: clamp(24px,4vw,32px); font-weight: 700; margin: 16px 0 8px; line-height: 1.2; }
+  #roi-cost-highlight { color: #ef4444; }
+  .roi-sub { font-size: 14px; color: #64748b; }
+  .roi-inputs {
+    background: #1e293b; border: 1px solid #334155; border-radius: 16px;
+    padding: 28px; margin: 28px 0; display: flex; flex-direction: column; gap: 28px;
+  }
+  .roi-slider-label {
+    display: flex; align-items: baseline; gap: 6px;
+    font-size: 14px; color: #94a3b8; margin-bottom: 12px;
+  }
+  .roi-slider-label strong {
+    font-size: 24px; font-weight: 700; color: #f8fafc;
+    font-variant-numeric: tabular-nums; min-width: 50px;
+  }
+  .roi-unit { font-size: 12px; color: #64748b; }
+  .roi-slider {
+    width: 100%; -webkit-appearance: none; height: 4px;
+    background: #334155; border-radius: 4px; outline: none; cursor: pointer;
+  }
+  .roi-slider::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%;
+    background: #16a34a; cursor: pointer;
+    box-shadow: 0 0 0 4px rgba(22,163,74,0.2); transition: box-shadow 0.2s;
+  }
+  .roi-slider::-webkit-slider-thumb:hover { box-shadow: 0 0 0 8px rgba(22,163,74,0.2); }
+  .roi-slider-marks {
+    display: flex; justify-content: space-between;
+    font-size: 10px; color: #475569; margin-top: 6px;
+  }
+  .roi-result { display: flex; gap: 16px; align-items: center; margin: 0 0 24px; flex-wrap: wrap; }
+  .roi-card { flex: 1; min-width: 140px; background: #1e293b; border-radius: 12px; padding: 16px; text-align: center; }
+  .roi-card-loss { border: 1px solid rgba(239,68,68,0.27); }
+  .roi-card-saving { border: 1px solid rgba(245,158,11,0.27); }
+  .roi-card-net { border: 1px solid rgba(22,163,74,0.4); background: rgba(22,163,74,0.06); }
+  .roi-card-label { font-size: 11px; color: #64748b; margin-bottom: 6px; }
+  .roi-card-value { font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; transition: all 0.3s; }
+  .roi-card-loss .roi-card-value { color: #f87171; }
+  .roi-card-saving .roi-card-value { color: #fbbf24; }
+  .roi-card-net .roi-card-value { color: #4ade80; }
+  .roi-card-sub { font-size: 11px; color: #64748b; margin-top: 4px; }
+  .roi-multiplier { font-size: 16px !important; font-weight: 700 !important; color: #16a34a !important; }
+  .roi-arrow { font-size: 20px; color: #334155; flex-shrink: 0; }
+  .roi-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+  .roi-cta-btn {
+    flex: 1; text-align: center; background: #16a34a; color: white;
+    padding: 13px 24px; border-radius: 10px; text-decoration: none; font-weight: 600;
+    font-size: 14px; box-shadow: 0 4px 20px rgba(22,163,74,0.3); transition: all 0.2s;
+  }
+  .roi-cta-btn:hover { background: #15803d; transform: translateY(-1px); }
+  .roi-share-btn {
+    padding: 13px 20px; border-radius: 10px; background: transparent;
+    border: 1px solid #334155; color: #94a3b8; font-size: 14px; cursor: pointer; transition: all 0.2s;
+  }
+  .roi-share-btn:hover { border-color: #16a34a; color: #4ade80; }
+  @media(max-width:520px) { .roi-result { flex-direction: column; } .roi-arrow { transform: rotate(90deg); } }
+
+  /* ── Command Counter Widget ─────────────── */
+  .cmd-widget {
+    position: fixed; bottom: 24px; right: 24px; z-index: 1000;
+    background: rgba(15,23,42,0.92); backdrop-filter: blur(12px);
+    border: 1px solid #334155; border-radius: 12px; padding: 8px 14px;
+    cursor: pointer; transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  }
+  .cmd-widget:hover { border-color: rgba(22,163,74,0.4); box-shadow: 0 8px 32px rgba(22,163,74,0.12); }
+  .cmd-widget-inner { display: flex; align-items: center; gap: 7px; font-size: 13px; }
+  .cmd-dot { font-size: 8px; color: #16a34a; animation: blink 2s infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+  .cmd-count { font-weight: 700; font-variant-numeric: tabular-nums; color: #f8fafc; font-family: monospace; min-width: 60px; transition: color 0.2s; }
+  .cmd-label { font-size: 11px; color: #64748b; }
+  .cmd-widget-expanded { display: none; border-top: 1px solid #1e293b; margin-top: 8px; padding-top: 8px; }
+  .cmd-widget.open .cmd-widget-expanded { display: block; }
+  .cmd-exp-row { display: flex; justify-content: space-between; font-size: 12px; padding: 3px 0; color: #64748b; }
+  .cmd-exp-row strong { color: #f8fafc; font-variant-numeric: tabular-nums; font-family: monospace; }
+
+  /* ── Persona Commands ────────────────────── */
+  #persona-commands { padding: 80px 24px; max-width: 800px; margin: 0 auto; text-align: center; }
+  .pc-header h2 { font-size: clamp(24px,4vw,36px); font-weight: 700; margin-bottom: 8px; }
+  .pc-role { color: #16a34a; }
+  .pc-header p { color: #64748b; font-size: 14px; }
+  .pc-roles { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin: 28px 0 32px; }
+  .pc-role-btn {
+    padding: 10px 20px; border-radius: 24px; border: 1px solid #334155;
+    background: transparent; color: #94a3b8; font-size: 13px; font-weight: 500;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .pc-role-btn:hover { border-color: #16a34a; color: #4ade80; }
+  .pc-role-btn.active { background: rgba(22,163,74,0.12); border-color: rgba(22,163,74,0.4); color: #4ade80; }
+  .pc-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap: 14px; text-align: left; }
+  .pc-card {
+    background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 18px;
+    transition: all 0.2s; animation: fadeUp 0.3s ease forwards;
+  }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:none; } }
+  .pc-card:hover { border-color: rgba(22,163,74,0.3); transform: translateY(-2px); }
+  .pc-card-icon { font-size: 22px; margin-bottom: 10px; }
+  .pc-card-title { font-size: 13px; font-weight: 600; color: #f8fafc; margin-bottom: 6px; }
+  .pc-card-cmd {
+    font-size: 11px; font-family: monospace; color: #4ade80;
+    background: rgba(22,163,74,0.08); padding: 4px 8px; border-radius: 4px;
+    margin-top: 8px; display: inline-block;
+  }
+  .pc-card-desc { font-size: 12px; color: #64748b; line-height: 1.5; }
+
 
 </style>
 <script>
@@ -813,6 +1094,34 @@
       <a href="/auth" class="btn btn-dark">Ücretsiz Başla →</a>
     </div>
   </div>
+</nav>
+
+<div id="scroll-bar"></div>
+<nav id="section-nav">
+  <a class="snav-item" href="#features">
+    <div class="snav-dot"></div>
+    <span class="snav-label">Özellikler</span>
+  </a>
+  <a class="snav-item" href="#interactive-demo">
+    <div class="snav-dot"></div>
+    <span class="snav-label">Demo</span>
+  </a>
+  <a class="snav-item" href="#roi-calculator">
+    <div class="snav-dot"></div>
+    <span class="snav-label">ROI Hesabı</span>
+  </a>
+  <a class="snav-item" href="#persona-commands">
+    <div class="snav-dot"></div>
+    <span class="snav-label">Senin için</span>
+  </a>
+  <a class="snav-item" href="#integrations">
+    <div class="snav-dot"></div>
+    <span class="snav-label">Entegrasyonlar</span>
+  </a>
+  <a class="snav-item" href="#pricing">
+    <div class="snav-dot"></div>
+    <span class="snav-label">Fiyatlar</span>
+  </a>
 </nav>
 
 <!-- HERO -->
@@ -848,7 +1157,11 @@
 
     <div class="hero-meta">
       <span><b>4.9/5</b></span>
-      <span><b>7+ saat</b> · haftalık ortalama tasarruf</span>
+      <div class="savings-counter">
+        <span id="hours-saved">0</span>
+        <span class="counter-label">saat tasarruf</span>
+        <span class="counter-sub">bugün · tüm kullanıcılar</span>
+      </div>
       <span><b>5 dk</b> · kurulum süresi</span>
     </div>
 
@@ -951,6 +1264,71 @@
     </div>
   </div>
 </section>
+
+<!-- INTERACTIVE DEMO -->
+<section id="interactive-demo">
+  <div class="demo-label" style="max-width:720px;margin:0 auto;padding:0 24px">
+    <span class="demo-badge">&#9658; Canlı Demo</span>
+    <span class="demo-note">Kayıt gerekmez</span>
+  </div>
+
+  <div class="demo-shell" style="max-width:720px;margin:12px auto 0;border-radius:16px">
+    <div class="demo-header">
+      <div class="demo-dots">
+        <span></span><span></span><span></span>
+      </div>
+      <span class="demo-title">mocksheets &middot; demo &middot; sales-q2-2026.xlsx</span>
+      <span class="demo-live">&#9679; canlı</span>
+    </div>
+
+    <div class="demo-table-wrap">
+      <table class="demo-table" id="demo-table">
+        <thead>
+          <tr>
+            <th>Şirket</th>
+            <th>Ciro (&#8378;)</th>
+            <th>Hedef (&#8378;)</th>
+            <th>Durum</th>
+          </tr>
+        </thead>
+        <tbody id="demo-tbody">
+          <tr><td>Acme Corp</td><td class="num">124.000</td><td class="num">100.000</td><td>&#8212;</td></tr>
+          <tr><td>Bloom Agency</td><td class="num">87.500</td><td class="num">90.000</td><td>&#8212;</td></tr>
+          <tr><td>Blue Peak Inc</td><td class="num">452.000</td><td class="num">400.000</td><td>&#8212;</td></tr>
+          <tr><td>Steel Co.</td><td class="num">63.000</td><td class="num">80.000</td><td>&#8212;</td></tr>
+          <tr><td>Vertex Ltd</td><td class="num">221.000</td><td class="num">200.000</td><td>&#8212;</td></tr>
+          <tr><td>Nova Digital</td><td class="num">15.000</td><td class="num">50.000</td><td>&#8212;</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="demo-input-row">
+      <span class="demo-prompt">›</span>
+      <input
+        id="demo-input"
+        type="text"
+        placeholder="Bir komut yaz... (örn: hedef üstü satırları yeşile boya)"
+        autocomplete="off"
+        spellcheck="false"
+      />
+      <button id="demo-run" onclick="runDemoCommand()">Çalıştır &#x21B5;</button>
+    </div>
+
+    <div id="demo-output" class="demo-output hidden"></div>
+
+    <div class="demo-chips">
+      <span onclick="fillDemo(this)">Hedef üstü satırları yeşile boya</span>
+      <span onclick="fillDemo(this)">Ciro'ya göre büyükten küçüğe sırala</span>
+      <span onclick="fillDemo(this)">%8 komisyon sütunu ekle</span>
+      <span onclick="fillDemo(this)">Hedef altındakilere &#9888;&#65039; ekle</span>
+    </div>
+  </div>
+
+  <p class="demo-cta-hint">
+    Beğendin mi? <a href="/auth">Kendi tablonla dene &#8594;</a>
+  </p>
+</section>
+
 <!-- FEATURES BENTO -->
 <section id="features" style="padding:80px 0 30px">
   <div class="wrap">
@@ -1147,6 +1525,31 @@
   </div>
 </section>
 
+<!-- PERSONA COMMANDS -->
+<section id="persona-commands">
+  <div class="pc-header">
+    <h2>Senin için <span class="pc-role" id="pc-role-text">neler yapabilirim?</span></h2>
+    <p>Rolünü seç, özel kullanım senaryolarını gör.</p>
+  </div>
+
+  <div class="pc-roles">
+    <button class="pc-role-btn active" data-role="kobiowner" onclick="selectRole(this)">
+      &#127962; KOBİ Sahibi
+    </button>
+    <button class="pc-role-btn" data-role="accountant" onclick="selectRole(this)">
+      &#128202; Mali Müşavir
+    </button>
+    <button class="pc-role-btn" data-role="opsmanager" onclick="selectRole(this)">
+      &#9881;&#65039; Ops Yöneticisi
+    </button>
+    <button class="pc-role-btn" data-role="startup" onclick="selectRole(this)">
+      &#128640; Startup Ekibi
+    </button>
+  </div>
+
+  <div class="pc-cards" id="pc-cards"></div>
+</section>
+
 <!-- PRICING -->
 <style>
   .ms-pricing-a {
@@ -1341,6 +1744,70 @@
         </div>
       </div>
 
+    </div>
+  </div>
+</section>
+
+<!-- ROI CALCULATOR -->
+<section id="roi-calculator">
+  <div class="roi-wrap">
+    <div class="roi-header">
+      <span class="roi-badge">&#129518; Kişisel ROI Hesabı</span>
+      <h2 class="roi-title">
+        Excel size <span id="roi-cost-highlight">ne kadara</span> mal oluyor?
+      </h2>
+      <p class="roi-sub">2 soruyu yanıtla, gerçek maliyetini gör.</p>
+    </div>
+
+    <div class="roi-inputs">
+      <div class="roi-slider-group">
+        <div class="roi-slider-label">
+          <span>Haftada Excel'de kaç saat harcıyorsunuz?</span>
+          <strong id="hours-val">8</strong>
+          <span class="roi-unit">saat/hafta</span>
+        </div>
+        <input type="range" id="hours-slider" min="1" max="40" value="8" step="1" class="roi-slider">
+        <div class="roi-slider-marks">
+          <span>1</span><span>10</span><span>20</span><span>30</span><span>40</span>
+        </div>
+      </div>
+
+      <div class="roi-slider-group">
+        <div class="roi-slider-label">
+          <span>Saatlik maliyetiniz (maaş + overhead)?</span>
+          <strong id="rate-val">250</strong>
+          <span class="roi-unit">&#8378;/saat</span>
+        </div>
+        <input type="range" id="rate-slider" min="50" max="1000" value="250" step="50" class="roi-slider">
+        <div class="roi-slider-marks">
+          <span>50&#8378;</span><span>250&#8378;</span><span>500&#8378;</span><span>1.000&#8378;</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="roi-result" id="roi-result">
+      <div class="roi-card roi-card-loss">
+        <div class="roi-card-label">Excel'e yıllık maliyet</div>
+        <div class="roi-card-value" id="annual-cost">0 &#8378;</div>
+        <div class="roi-card-sub"><span id="weekly-cost">0 &#8378;</span>/hafta &times;52</div>
+      </div>
+      <div class="roi-arrow">&#8594;</div>
+      <div class="roi-card roi-card-saving">
+        <div class="roi-card-label">Mocksheets ile tasarruf</div>
+        <div class="roi-card-value" id="annual-saving">0 &#8378;</div>
+        <div class="roi-card-sub">Mocksheets maliyeti: <span id="ms-cost">168 &#8378;/yıl</span></div>
+      </div>
+      <div class="roi-arrow">&#8594;</div>
+      <div class="roi-card roi-card-net">
+        <div class="roi-card-label">Net kazanç</div>
+        <div class="roi-card-value" id="net-gain">0 &#8378;</div>
+        <div class="roi-card-sub roi-multiplier" id="roi-multiplier">0x ROI</div>
+      </div>
+    </div>
+
+    <div class="roi-actions">
+      <a href="/auth" class="roi-cta-btn">Bu tasarrufu başlat &#8594;</a>
+      <button onclick="shareROI()" class="roi-share-btn">&#128228; Sonucu Paylaş</button>
     </div>
   </div>
 </section>
@@ -1947,6 +2414,394 @@ function handleStickyEmail(e) {
     })
     .catch(function() {});
 }());
+</script>
+
+<!-- CMD COUNTER WIDGET -->
+<div id="cmd-counter-widget" class="cmd-widget">
+  <div class="cmd-widget-inner">
+    <span class="cmd-dot">&#9679;</span>
+    <span class="cmd-count" id="cmd-count">0</span>
+    <span class="cmd-label">komut bugün</span>
+  </div>
+  <div class="cmd-widget-expanded" id="cmd-expanded">
+    <div class="cmd-exp-row">
+      <span>Bu gün</span>
+      <strong id="cmd-today">0</strong>
+    </div>
+    <div class="cmd-exp-row">
+      <span>Bu hafta</span>
+      <strong id="cmd-week">0</strong>
+    </div>
+    <div class="cmd-exp-row">
+      <span>Toplam</span>
+      <strong id="cmd-total">0</strong>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── Feature 1: Savings Counter ─────────────────────────────── */
+(function initSavingsCounter() {
+  var BASE_DAILY = 2300;
+  var now = new Date();
+  var secondsToday = now.getHours()*3600 + now.getMinutes()*60 + now.getSeconds();
+  var dayFraction = secondsToday / 86400;
+  var currentHours = Math.floor(BASE_DAILY * dayFraction);
+  var INCREMENT_INTERVAL = 4000;
+  var el = document.getElementById('hours-saved');
+  if (!el) return;
+  var target = el.closest('.savings-counter') || el.parentElement;
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        animateCount(0, currentHours, 1500, el);
+        observer.disconnect();
+        setTimeout(startLiveIncrement, 1600);
+      }
+    });
+  }, { threshold: 0.3 });
+  observer.observe(target);
+  function animateCount(from, to, duration, el) {
+    var start = performance.now();
+    function tick(now) {
+      var elapsed = now - start;
+      var progress = Math.min(elapsed / duration, 1);
+      var ease = 1 - Math.pow(1 - progress, 3);
+      el.textContent = Math.floor(from + (to - from) * ease).toLocaleString('tr-TR');
+      if (progress < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+  function startLiveIncrement() {
+    setInterval(function() {
+      currentHours++;
+      el.style.textShadow = '0 0 40px rgba(22,163,74,0.7)';
+      el.textContent = currentHours.toLocaleString('tr-TR');
+      setTimeout(function() {
+        el.style.textShadow = '0 0 20px rgba(22,163,74,0.4)';
+      }, 300);
+    }, INCREMENT_INTERVAL);
+  }
+})();
+
+/* ── Feature 2: Interactive Demo ───────────────────────────── */
+var DEMO_DATA = [
+  {co:'Acme Corp',     rev:124000, target:100000, status:'\u2014'},
+  {co:'Bloom Agency',  rev:87500,  target:90000,  status:'\u2014'},
+  {co:'Blue Peak Inc', rev:452000, target:400000, status:'\u2014'},
+  {co:'Steel Co.',     rev:63000,  target:80000,  status:'\u2014'},
+  {co:'Vertex Ltd',    rev:221000, target:200000, status:'\u2014'},
+  {co:'Nova Digital',  rev:15000,  target:50000,  status:'\u2014'},
+];
+var demoState = JSON.parse(JSON.stringify(DEMO_DATA));
+
+function fillDemo(el) {
+  document.getElementById('demo-input').value = el.textContent.trim();
+  document.getElementById('demo-input').focus();
+}
+
+function runDemoCommand() {
+  var input = document.getElementById('demo-input');
+  var btn   = document.getElementById('demo-run');
+  var out   = document.getElementById('demo-output');
+  var cmd   = input.value.trim();
+  if (!cmd) return;
+  btn.disabled = true;
+  btn.textContent = '\u27F3 \u00C7al\u0131\u015F\u0131yor...';
+  out.className = 'demo-output';
+  out.textContent = '';
+  var c = cmd.toLowerCase();
+  var action, message, params;
+  if (c.indexOf('ye\u015fil') !== -1 || c.indexOf('hedef \u00fcst') !== -1 || c.indexOf('\u00fcst\u00fc') !== -1) {
+    action = 'highlight_above_target';
+    message = '6 sat\u0131r analiz edildi \u2014 4 sat\u0131r hedef \u00fcst\u00fc ye\u015file boyand\u0131';
+  } else if (c.indexOf('s\u0131rala') !== -1 || c.indexOf('b\u00fcy\u00fckten') !== -1 || c.indexOf('k\u00fc\u00e7\u00fc\u011fe') !== -1) {
+    action = 'sort_by_revenue';
+    message = '6 sat\u0131r ciroya g\u00f6re b\u00fcy\u00fckten k\u00fc\u00e7\u00fc\u011fe s\u0131raland\u0131';
+  } else if (c.indexOf('komisyon') !== -1) {
+    var rateMatch = c.match(/(\d+)\s*%/);
+    var rate = rateMatch ? parseInt(rateMatch[1]) / 100 : 0.08;
+    action = 'add_commission';
+    params = { rate: rate };
+    message = 'Komisyon s\u00fctunu eklendi (%' + Math.round(rate * 100) + ')';
+  } else if (c.indexOf('\u26a0') !== -1 || c.indexOf('ikon') !== -1 || c.indexOf('i\u015faret') !== -1 || c.indexOf('durum') !== -1) {
+    action = 'add_status_icon';
+    message = 'Durum s\u00fctunu g\u00fcncellendi';
+  } else {
+    action = 'highlight_above_target';
+    message = 'Komut uyguland\u0131 \u2713';
+  }
+  setTimeout(function() {
+    applyDemoAction(action, params);
+    out.className = 'demo-output success';
+    out.textContent = '\u2713 ' + message;
+    btn.disabled = false;
+    btn.textContent = '\u00c7al\u0131\u015ft\u0131r \u21B5';
+    input.value = '';
+  }, 600);
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  var di = document.getElementById('demo-input');
+  if (di) di.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') runDemoCommand();
+  });
+});
+
+function applyDemoAction(action, params) {
+  var tbody = document.getElementById('demo-tbody');
+  if (!tbody) return;
+  var rows = tbody.querySelectorAll('tr');
+  if (action === 'highlight_above_target') {
+    rows.forEach(function(row, i) {
+      var rev = demoState[i] && demoState[i].rev;
+      var tgt = demoState[i] && demoState[i].target;
+      row.className = rev > tgt ? 'highlight-green' : 'highlight-red';
+    });
+  } else if (action === 'sort_by_revenue') {
+    demoState.sort(function(a,b){ return b.rev - a.rev; });
+    renderDemoTable();
+    setTimeout(function() {
+      tbody.querySelectorAll('tr').forEach(function(r, i) {
+        setTimeout(function(){ r.classList.add('sorted-animate'); }, i * 60);
+      });
+    }, 50);
+  } else if (action === 'add_commission') {
+    var rate = (params && params.rate) ? params.rate : 0.08;
+    var th = document.querySelector('.demo-table thead tr');
+    if (th && !th.querySelector('.comm-th')) {
+      var newTh = document.createElement('th');
+      newTh.className = 'comm-th';
+      newTh.textContent = 'Komisyon (%' + Math.round(rate*100) + ')';
+      th.appendChild(newTh);
+    }
+    rows.forEach(function(row, i) {
+      if (!row.querySelector('.comm-td')) {
+        var td = document.createElement('td');
+        td.className = 'comm-td num';
+        var val = Math.round(demoState[i].rev * rate);
+        td.textContent = val.toLocaleString('tr-TR') + ' \u20BA';
+        row.appendChild(td);
+        row.classList.add('sorted-animate');
+      }
+    });
+  } else if (action === 'add_status_icon') {
+    rows.forEach(function(row, i) {
+      var cells = row.querySelectorAll('td');
+      var statusCell = cells[cells.length - 1];
+      if (statusCell && demoState[i]) {
+        statusCell.textContent = demoState[i].rev >= demoState[i].target ? '\u2705' : '\u26A0\uFE0F';
+      }
+    });
+  }
+}
+
+function renderDemoTable() {
+  var tbody = document.getElementById('demo-tbody');
+  if (!tbody) return;
+  tbody.innerHTML = demoState.map(function(d) {
+    return '<tr><td>' + d.co + '</td><td class="num">' +
+      d.rev.toLocaleString('tr-TR') + '</td><td class="num">' +
+      d.target.toLocaleString('tr-TR') + '</td><td>' + d.status + '</td></tr>';
+  }).join('');
+}
+
+/* ── Feature 3: ROI Calculator ─────────────────────────────── */
+function calcROI() {
+  var hours = parseInt(document.getElementById('hours-slider').value);
+  var rate  = parseInt(document.getElementById('rate-slider').value);
+  var hv = document.getElementById('hours-val');
+  var rv = document.getElementById('rate-val');
+  if (hv) hv.textContent = hours;
+  if (rv) rv.textContent = rate.toLocaleString('tr-TR');
+  var savedHours  = hours * 0.85;
+  var weeklyCost  = hours * rate;
+  var weeklySaving = savedHours * rate;
+  var annualCost  = weeklyCost  * 52;
+  var annualSaving = weeklySaving * 52;
+  var msCostYearly = 168;
+  var netGain = annualSaving - msCostYearly;
+  var roi = Math.round(netGain / msCostYearly);
+  animateValue('annual-cost',  annualCost,  function(v){ return v.toLocaleString('tr-TR') + ' \u20BA'; });
+  animateValue('annual-saving',annualSaving,function(v){ return v.toLocaleString('tr-TR') + ' \u20BA'; });
+  animateValue('net-gain',     netGain,     function(v){ return v.toLocaleString('tr-TR') + ' \u20BA'; });
+  var wc = document.getElementById('weekly-cost');
+  var rm = document.getElementById('roi-multiplier');
+  var rc = document.getElementById('roi-cost-highlight');
+  if (wc) wc.textContent = weeklyCost.toLocaleString('tr-TR') + ' \u20BA';
+  if (rm) rm.textContent = roi + 'x ROI';
+  if (rc) rc.textContent = annualCost.toLocaleString('tr-TR') + ' \u20BA\u2019ya';
+}
+function animateValue(id, target, format) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  var duration = 600;
+  var startTime = performance.now();
+  function tick(now) {
+    var progress = Math.min((now - startTime) / duration, 1);
+    var ease = 1 - Math.pow(1 - progress, 3);
+    el.textContent = format(Math.floor(target * ease));
+    if (progress < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+function shareROI() {
+  var saving = document.getElementById('annual-saving');
+  var text = 'Mocksheets ile y\u0131ll\u0131k ' + (saving ? saving.textContent : '') +
+    ' tasarruf edece\u011fimi hesaplad\u0131m \uD83D\uDE80 mocksheets.com';
+  if (navigator.share) {
+    navigator.share({ text: text, url: 'https://mocksheets.com' });
+  } else {
+    navigator.clipboard.writeText(text).then(function() {
+      alert('Kopyaland\u0131! Payla\u015fabilirsiniz.');
+    });
+  }
+}
+document.addEventListener('DOMContentLoaded', function() {
+  ['hours-slider','rate-slider'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.addEventListener('input', calcROI);
+  });
+  calcROI();
+});
+
+/* ── Feature 4: Command Counter Widget ─────────────────────── */
+(function initCmdWidget() {
+  var BASE_TODAY  = 14200;
+  var BASE_WEEK   = 98400;
+  var BASE_TOTAL  = 1240000;
+  var now = new Date();
+  var dayFrac = (now.getHours()*3600 + now.getMinutes()*60) / 86400;
+  var today = Math.floor(BASE_TODAY * dayFrac);
+  var week  = BASE_WEEK  + today;
+  var total = BASE_TOTAL + today;
+  function update() {
+    today++; week++; total++;
+    var el = document.getElementById('cmd-count');
+    if (el) {
+      el.textContent = today.toLocaleString('tr-TR');
+      el.style.color = '#4ade80';
+      setTimeout(function(){ el.style.color = '#f8fafc'; }, 300);
+    }
+    var t = document.getElementById('cmd-today');
+    var w = document.getElementById('cmd-week');
+    var tot = document.getElementById('cmd-total');
+    if (t) t.textContent = today.toLocaleString('tr-TR');
+    if (w) w.textContent = week.toLocaleString('tr-TR');
+    if (tot) tot.textContent = total.toLocaleString('tr-TR');
+  }
+  document.addEventListener('DOMContentLoaded', function() {
+    update();
+    setInterval(update, 8000);
+  });
+  var widget = document.getElementById('cmd-counter-widget');
+  if (widget) {
+    widget.addEventListener('click', function() {
+      widget.classList.toggle('open');
+    });
+  }
+})();
+
+/* ── Feature 5: Persona Commands ───────────────────────────── */
+var PERSONA_DATA = {
+  kobiowner: {
+    label: 'KOBİ Sahiplerinin Yaptıkları',
+    cards: [
+      { icon:'💰', title:'Aylık Ciro Raporu',   cmd:'Aylık satışları şirkete göre özetle',    desc:'Tüm satış verilerini otomatik özetler, grafik oluşturur.' },
+      { icon:'📦', title:'Stok Takibi',          cmd:'Stok 10\'un altındakileri listele',       desc:'Kritik stok seviyelerini anında tespit eder.' },
+      { icon:'👥', title:'Müşteri Analizi',      cmd:'En çok ciro yapan ilk 5 müşteriyi bul',  desc:'Hangi müşterinin değerli olduğunu gösterir.' },
+      { icon:'📊', title:'KDV Hesaplama',        cmd:'Fiyatlara %20 KDV ekle',                 desc:'Tüm tabloya saniyeler içinde KDV uygular.' },
+    ]
+  },
+  accountant: {
+    label: 'Mali Müşavirlerin Yaptıkları',
+    cards: [
+      { icon:'🧾', title:'Bordro Hesaplama',     cmd:'SGK kesintilerini hesapla, net maaşı bul', desc:'2026 parametrelerine göre otomatik hesaplar.' },
+      { icon:'📑', title:'PDF Fatura → Tablo',   cmd:'Bu PDF faturayı tabloya çevir',            desc:'OCR ile PDF\'ten veri çıkarır, tabloya aktarır.' },
+      { icon:'⚠️', title:'Geciken Ödemeler',     cmd:'Vadesi geçmiş faturaları kırmızıya boya', desc:'Tüm vadeleri kontrol eder, gecikenleri işaretler.' },
+      { icon:'📈', title:'Dönem Karşılaştırma',  cmd:'Bu ayı geçen ayla karşılaştır',           desc:'İki dönem arasında otomatik fark analizi yapar.' },
+    ]
+  },
+  opsmanager: {
+    label: 'Ops Yöneticilerinin Yaptıkları',
+    cards: [
+      { icon:'📋', title:'Haftalık Rapor',       cmd:'Bu haftanın KPI özetini çıkar',            desc:'Tüm metrikler tek komutla haftalık rapora dönüşür.' },
+      { icon:'🔄', title:'Tekrar Temizleme',     cmd:'Tekrarlayan girişleri birleştir',           desc:'Duplicate kayıtları tespit edip siler veya birleştirir.' },
+      { icon:'⚡', title:'Otomatik Sıralama',    cmd:'Önceliğe göre sırala, acilleri üste al',   desc:'Dinamik öncelik sıralaması tek komutla.' },
+      { icon:'🎯', title:'Hedef Takibi',         cmd:'Hedef altındaki departmanları işaretle',   desc:'Her departmanın hedefe göre durumunu gösterir.' },
+    ]
+  },
+  startup: {
+    label: 'Startup Ekiplerinin Yaptıkları',
+    cards: [
+      { icon:'📉', title:'Churn Analizi',        cmd:'30 gün aktif olmayan kullanıcıları listele', desc:'Kayıp riski taşıyan kullanıcıları anında bulur.' },
+      { icon:'💳', title:'MRR Hesaplama',        cmd:'Aylık tekrarlayan geliri hesapla',           desc:'Abonelik verilerinden otomatik MRR çıkarır.' },
+      { icon:'🚀', title:'Cohort Hazırlama',     cmd:'Kayıt ayına göre kullanıcıları grupla',      desc:'Cohort analizi için veriyi gruplara ayırır.' },
+      { icon:'📧', title:'Outreach Listesi',     cmd:'Son 7 günde kayıt olan lead\'leri filtrele', desc:'Sıcak lead\'leri filtreler, outreach\'e hazırlar.' },
+    ]
+  }
+};
+
+function selectRole(btn) {
+  document.querySelectorAll('.pc-role-btn').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  var role = btn.dataset.role;
+  var data = PERSONA_DATA[role];
+  if (!data) return;
+  var roleText = document.getElementById('pc-role-text');
+  if (roleText) roleText.textContent = data.label;
+  var container = document.getElementById('pc-cards');
+  if (!container) return;
+  container.innerHTML = data.cards.map(function(c, i) {
+    return '<div class="pc-card" style="animation-delay:' + (i*0.07) + 's">' +
+      '<div class="pc-card-icon">' + c.icon + '</div>' +
+      '<div class="pc-card-title">' + c.title + '</div>' +
+      '<div class="pc-card-desc">' + c.desc + '</div>' +
+      '<div class="pc-card-cmd">\u203A ' + c.cmd + '</div>' +
+      '</div>';
+  }).join('');
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  var first = document.querySelector('.pc-role-btn');
+  if (first) selectRole(first);
+});
+
+/* ── Feature 6: Scroll Progress ────────────────────────────── */
+(function() {
+  var bar   = document.getElementById('scroll-bar');
+  var nav   = document.getElementById('section-nav');
+  var items = document.querySelectorAll('.snav-item');
+  items.forEach(function(item) {
+    item.addEventListener('click', function(e) {
+      e.preventDefault();
+      var href = item.getAttribute('href');
+      var target = href ? document.querySelector(href) : null;
+      if (target) target.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+  var ticking = false;
+  window.addEventListener('scroll', function() {
+    if (!ticking) {
+      requestAnimationFrame(function() {
+        var scrolled = window.scrollY;
+        var total = document.documentElement.scrollHeight - window.innerHeight;
+        var progress = total > 0 ? Math.min(scrolled / total * 100, 100) : 0;
+        if (bar) bar.style.width = progress + '%';
+        if (nav) nav.classList.toggle('visible', scrolled > 300);
+        items.forEach(function(item) {
+          var href = item.getAttribute('href');
+          var section = href ? document.querySelector(href) : null;
+          if (!section) return;
+          var rect = section.getBoundingClientRect();
+          item.classList.toggle('active', rect.top <= 200 && rect.bottom > 200);
+        });
+        ticking = false;
+      });
+      ticking = true;
+    }
+  }, { passive: true });
+})();
 </script>
 
 <link rel="stylesheet" href="/css/popup-system.css" media="print" onload="this.media='all'">

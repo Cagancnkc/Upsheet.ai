@@ -394,6 +394,25 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
+// Demo command — no auth, rule-based only
+app.post('/api/demo-command', (req, res) => {
+  const { command } = req.body || {};
+  if (!command) return res.status(400).json({ error: 'command required' });
+  const cmd = command.toLowerCase();
+  if (cmd.includes('yeşil') || cmd.includes('hedef üst') || cmd.includes('üstü'))
+    return res.json({ action: 'highlight_above_target', message: '6 satır analiz edildi — 4 satır hedef üstü yeşile boyandı' });
+  if (cmd.includes('sırala') || cmd.includes('büyükten') || cmd.includes('küçüğe'))
+    return res.json({ action: 'sort_by_revenue', message: '6 satır ciroya göre büyükten küçüğe sıralandı' });
+  if (cmd.includes('komisyon')) {
+    const m = cmd.match(/(\d+)\s*%/);
+    const rate = m ? parseInt(m[1]) / 100 : 0.08;
+    return res.json({ action: 'add_commission', params: { rate }, message: `Komisyon sütunu eklendi (%${Math.round(rate * 100)})` });
+  }
+  if (cmd.includes('durum') || cmd.includes('ikon') || cmd.includes('işaret'))
+    return res.json({ action: 'add_status_icon', message: 'Durum sütunu güncellendi' });
+  return res.json({ action: 'highlight_above_target', message: 'Komut uygulandı ✓' });
+});
+
 app.post('/api/chat', checkLimit, async (req, res) => {
   try {
     const { message, sheetContext, sheetData, sheetName, history } = req.body;
