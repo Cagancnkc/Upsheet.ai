@@ -65,14 +65,17 @@
     transition: grid-template-columns 0.25s ease;
   }
   .app.sb-collapsed{
-    grid-template-columns: 0px 1fr 320px;
+    grid-template-columns: 32px 1fr 320px;
   }
   .app.sb-collapsed > .topbar{
-    grid-template-columns: 0px 1fr auto;
+    grid-template-columns: 32px 1fr auto;
   }
-  .app.sb-collapsed #appSidebar{
+  .app.sb-collapsed .sidebar-inner{
     opacity: 0;
     pointer-events: none;
+  }
+  .app.sb-collapsed .sb-arrow-btn svg{
+    transform: rotate(180deg);
   }
   .main{ min-height: 0; }
 
@@ -248,28 +251,41 @@
     background: var(--surface);
     border-right: 1px solid var(--line);
     display:flex; flex-direction:column;
-    padding: 12px 10px 10px;
     min-width: 0;
     overflow: hidden;
-    transition: opacity 0.2s ease;
+    position: relative;
   }
-  .sb-toggle-btn{
+  .sidebar-inner{
+    display: flex; flex-direction: column;
+    flex: 1;
+    padding: 12px 10px 10px;
+    overflow: hidden;
+    transition: opacity 0.15s ease;
+  }
+  .sb-arrow-btn{
+    position: absolute;
+    top: 14px;
+    right: 5px;
+    width: 22px;
+    height: 22px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 5;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 28px;
-    height: 28px;
-    background: none;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
     color: var(--muted);
     flex-shrink: 0;
-    margin-right: 4px;
+    padding: 0;
   }
-  .sb-toggle-btn:hover{
+  .sb-arrow-btn:hover{
     background: var(--hover);
     color: var(--text);
+  }
+  .sb-arrow-btn svg{
+    transition: transform 0.25s ease;
   }
   .ws-switcher{
     display:flex; align-items:center; gap:9px;
