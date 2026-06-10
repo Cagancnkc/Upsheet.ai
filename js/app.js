@@ -2480,10 +2480,8 @@ function deleteSheetDirect(name) {
 
 function toggleSidebar() {
   const sb = document.getElementById('appSidebar');
-  const app = document.querySelector('.app');
-  if (!sb || !app) return;
+  if (!sb) return;
   const collapsed = sb.classList.toggle('collapsed');
-  app.classList.toggle('sb-collapsed', collapsed);
   localStorage.setItem('sb_collapsed', collapsed ? '1' : '0');
 }
 
@@ -2501,12 +2499,7 @@ function init() {
   renderVersionHistory();
   loadHistory();
   updateSidebarUser();
-  if (localStorage.getItem('sb_collapsed') === '1') {
-    const _sb = document.getElementById('appSidebar');
-    const _app = document.querySelector('.app');
-    if (_sb) _sb.classList.add('collapsed');
-    if (_app) _app.classList.add('sb-collapsed');
-  }
+  if (localStorage.getItem('sb_collapsed') === '1') toggleSidebar();
   // Focus first cell
   setTimeout(() => focusCell(0, 0), 100);
 }

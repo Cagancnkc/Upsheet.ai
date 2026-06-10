@@ -62,20 +62,6 @@
     grid-template-rows: 52px minmax(0, 1fr) 28px;
     height: 100vh;
     min-height: 760px;
-    transition: grid-template-columns 0.25s ease;
-  }
-  .app.sb-collapsed{
-    grid-template-columns: 40px 1fr 320px;
-  }
-  .app.sb-collapsed > .topbar{
-    grid-template-columns: 40px 1fr auto;
-  }
-  .app.sb-collapsed .sidebar-inner{
-    opacity: 0;
-    pointer-events: none;
-  }
-  .app.sb-collapsed .sb-arrow-btn svg{
-    transform: rotate(180deg);
   }
   .main{ min-height: 0; }
 
@@ -88,14 +74,12 @@
     background: var(--surface);
     border-bottom: 1px solid var(--line);
     height: 52px;
-    transition: grid-template-columns 0.25s ease;
   }
   .brand{
     display:flex; align-items:center; gap:9px;
     padding: 0 16px;
     border-right: 1px solid var(--line);
     height: 100%;
-    overflow: hidden;
   }
   .brand-mark{
     width:24px; height:24px; border-radius:6px;
@@ -252,44 +236,8 @@
     background: var(--surface);
     border-right: 1px solid var(--line);
     display:flex; flex-direction:column;
+    padding: 12px 10px 10px;
     min-width: 0;
-    overflow: hidden;
-  }
-  .sb-collapse-row{
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    padding: 10px 8px 4px;
-    flex-shrink: 0;
-  }
-  .sb-arrow-btn{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 24px;
-    height: 24px;
-    background: none;
-    border: 1px solid var(--line);
-    border-radius: var(--radius-sm);
-    cursor: pointer;
-    color: var(--ink-4);
-    padding: 0;
-    flex-shrink: 0;
-  }
-  .sb-arrow-btn:hover{
-    background: var(--surface-3);
-    color: var(--ink-2);
-    border-color: var(--line-strong);
-  }
-  .sb-arrow-btn svg{
-    transition: transform 0.25s ease;
-  }
-  .sidebar-inner{
-    display: flex; flex-direction: column;
-    flex: 1;
-    padding: 0 10px 10px;
-    overflow: hidden;
-    transition: opacity 0.15s ease;
   }
   .ws-switcher{
     display:flex; align-items:center; gap:9px;
