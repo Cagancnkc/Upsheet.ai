@@ -781,6 +781,10 @@
 (function () {
   'use strict';
 
+  function escapeHtml(s) {
+    return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
   // ── W: Toast ─────────────────────────────────────────────────────────────
   function showToast(msg) {
     var t = document.createElement('div');
@@ -805,6 +809,7 @@
   }
 
   var gridData = emptyGridData();
+  var activeFilter = null;
 
   // ── H: Multiple sheets ────────────────────────────────────────────────────
   var sheetsData = [
@@ -992,6 +997,21 @@
       }
     }
     updateEmptyState();
+    if (activeFilter) applyDomFilter(activeFilter);
+  }
+
+  function applyDomFilter(f) {
+    var fVal = (f.value || '').toLowerCase();
+    var fCol = f.column ? colToIdx(f.column) : -1;
+    for (var fr = 1; fr < GRID_ROWS; fr++) {
+      var fMatch = fCol >= 0
+        ? (gridData[fr][fCol].v || '').toString().toLowerCase().includes(fVal)
+        : gridData[fr].some(function (c) { return (c.v || '').toString().toLowerCase().includes(fVal); });
+      for (var fc = 0; fc < GRID_COLS; fc++) {
+        var fel = document.querySelector('.grid-cell[data-r="' + fr + '"][data-c="' + fc + '"]');
+        if (fel) fel.style.display = fMatch ? '' : 'none';
+      }
+    }
   }
 
   function makeFocusHandler(r, c) { return function () { selectGridCell(r, c); }; }
@@ -1168,27 +1188,31 @@
 
       case 'delete_rows':
         var drHeader = gridData[0];
-        var drFiltered = gridData.slice(1).filter(function (row) { return row.some(function (c) { return c.v && c.v.trim(); }); });
+        var drFiltered;
+        if (result.rows && result.rows.length) {
+          var drIdxSet = {};
+          result.rows.forEach(function (rn) { drIdxSet[rn - 1] = true; });
+          drFiltered = gridData.slice(1).filter(function (row, i) { return !drIdxSet[i]; });
+        } else if (result.condition && result.column) {
+          var drCol = colToIdx(result.column);
+          drFiltered = gridData.slice(1).filter(function (row) {
+            return !evalCondition(row[drCol].v, result.condition);
+          });
+        } else {
+          drFiltered = gridData.slice(1).filter(function (row) { return row.some(function (c) { return c.v && c.v.trim(); }); });
+        }
         gridData = [drHeader].concat(drFiltered);
         while (gridData.length < GRID_ROWS) gridData.push(emptyGridData()[0]);
         if (sheetsData[activeSheetIdx]) sheetsData[activeSheetIdx].data = gridData;
         renderGrid(); break;
 
       case 'filter':
-        var fVal = (result.value || '').toLowerCase();
-        var fCol = result.column ? colToIdx(result.column) : -1;
-        for (var fr = 1; fr < GRID_ROWS; fr++) {
-          var fMatch = fCol >= 0
-            ? (gridData[fr][fCol].v || '').toString().toLowerCase().includes(fVal)
-            : gridData[fr].some(function (c) { return (c.v || '').toString().toLowerCase().includes(fVal); });
-          for (var fc = 0; fc < GRID_COLS; fc++) {
-            var fel = document.querySelector('.grid-cell[data-r="' + fr + '"][data-c="' + fc + '"]');
-            if (fel) fel.style.display = fMatch ? '' : 'none';
-          }
-        }
+        activeFilter = { column: result.column, value: result.value || '' };
+        applyDomFilter(activeFilter);
         break;
 
       case 'remove_filter':
+        activeFilter = null;
         document.querySelectorAll('.grid-cell').forEach(function (el) { el.style.display = ''; }); break;
 
       case 'sum': case 'average': case 'max': case 'min':
@@ -1496,17 +1520,18 @@
       }
       list.innerHTML = rules.map(function(r) {
         var tc = r.trigger_config || {};
-        var triggerStr = tc.type ? tc.type + (tc.column ? '(' + tc.column + ')' : '') : '—';
+        var triggerStr = escapeHtml(tc.type ? tc.type + (tc.column ? '(' + tc.column + ')' : '') : '—');
         var lastFired = r.last_fired ? new Date(r.last_fired).toLocaleString('tr-TR') : 'hiç çalışmadı';
-        return '<div class="autom-row" data-id="' + r.id + '" style="align-items:center;gap:.75rem;">' +
+        var safeId = escapeHtml(r.id);
+        return '<div class="autom-row" data-id="' + safeId + '" style="align-items:center;gap:.75rem;">' +
           '<div class="autom-name" style="flex:1;min-width:0;">' +
             '<div class="autom-title-row">' +
-              '<span class="autom-title" style="font-weight:550;font-size:.82rem;">' + (r.name || 'Otomasyon') + '</span>' +
+              '<span class="autom-title" style="font-weight:550;font-size:.82rem;">' + escapeHtml(r.name || 'Otomasyon') + '</span>' +
               '<span class="badge-status ' + (r.enabled ? 'active' : 'paused') + '" style="font-size:.72rem;">' +
                 '<span class="pip"></span>' + (r.enabled ? 'Aktif' : 'Pasif') +
               '</span>' +
             '</div>' +
-            '<div class="autom-desc" style="font-size:.75rem;color:var(--ink-3);margin-top:2px;">' + (r.description || '') + '</div>' +
+            '<div class="autom-desc" style="font-size:.75rem;color:var(--ink-3);margin-top:2px;">' + escapeHtml(r.description || '') + '</div>' +
           '</div>' +
           '<div class="autom-trigger" style="flex-shrink:0;font-size:.75rem;">' +
             '<span class="label" style="color:var(--ink-4);">Tetikleyici</span>' +
@@ -1516,8 +1541,8 @@
             '<span class="label" style="color:var(--ink-4);">Çalışma</span>' +
             '<span class="val"><b>' + (r.run_count || 0) + '</b> · ' + lastFired + '</span>' +
           '</div>' +
-          '<div class="switch ' + (r.enabled ? 'on' : '') + '" onclick="toggleAutomationRule(\'' + r.id + '\',this)" style="cursor:pointer;flex-shrink:0;"></div>' +
-          '<button onclick="deleteAutomationRule(\'' + r.id + '\')" style="flex-shrink:0;background:none;border:1px solid var(--border);border-radius:5px;padding:3px 8px;font-size:.72rem;cursor:pointer;color:var(--ink-3);">Sil</button>' +
+          '<div class="switch ' + (r.enabled ? 'on' : '') + '" onclick="toggleAutomationRule(\'' + safeId + '\',this)" style="cursor:pointer;flex-shrink:0;"></div>' +
+          '<button onclick="deleteAutomationRule(\'' + safeId + '\')" style="flex-shrink:0;background:none;border:1px solid var(--border);border-radius:5px;padding:3px 8px;font-size:.72rem;cursor:pointer;color:var(--ink-3);">Sil</button>' +
         '</div>';
       }).join('');
     }).catch(function() {
@@ -1525,19 +1550,19 @@
     });
   }
 
-  function toggleAutomationRule(id, el) {
+  window.toggleAutomationRule = function(id, el) {
     var isOn = el.classList.toggle('on');
     if (window.Automations && window.Automations.update) {
       window.Automations.update(id, { enabled: isOn });
     }
-  }
+  };
 
-  function deleteAutomationRule(id) {
+  window.deleteAutomationRule = function(id) {
     if (!confirm('Bu otomasyonu silmek istediğine emin misin?')) return;
     if (window.Automations && window.Automations.remove) {
       window.Automations.remove(id).then(function() { renderAutomationList(); });
     }
-  }
+  };
 
   // ── Scroll sync: grid-scroll → col/row headers ───────────────────────────
   var gridScrollEl  = document.getElementById('grid-scroll');
