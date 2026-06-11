@@ -1,4 +1,8 @@
-﻿// ═══════════════════════════════════════════════════════════════
+﻿const API_URL = window.location.hostname === 'localhost'
+  ? 'http://localhost:3001'
+  : 'https://upsheet-ai.onrender.com';
+
+// ═══════════════════════════════════════════════════════════════
 //  PLAN LIMITS
 // ═══════════════════════════════════════════════════════════════
 function checkCommandLimit() {
