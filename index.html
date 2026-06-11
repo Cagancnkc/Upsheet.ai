@@ -2465,46 +2465,84 @@ function handleStickyEmail(e) {
 
 <script>
 /* ── Feature 1: Savings Counter ─────────────────────────────── */
-(function initSavingsCounter() {
-  var BASE_DAILY = 2300;
-  var now = new Date();
-  var secondsToday = now.getHours()*3600 + now.getMinutes()*60 + now.getSeconds();
-  var dayFraction = secondsToday / 86400;
-  var currentHours = Math.floor(BASE_DAILY * dayFraction);
-  var INCREMENT_INTERVAL = 4000;
-  var el = document.getElementById('hours-saved');
-  if (!el) return;
-  var target = el.closest('.savings-counter') || el.parentElement;
-  var observer = new IntersectionObserver(function(entries) {
-    entries.forEach(function(entry) {
-      if (entry.isIntersecting) {
-        animateCount(0, currentHours, 1500, el);
-        observer.disconnect();
-        setTimeout(startLiveIncrement, 1600);
+(function () {
+  function initCounter() {
+    var el = document.getElementById('hours-saved');
+    if (!el) return;
+
+    var now = new Date();
+    var secsToday = now.getHours()   * 3600
+                  + now.getMinutes() * 60
+                  + now.getSeconds();
+    var BASE_DAILY = 2300;
+    var current = Math.floor(BASE_DAILY * (secsToday / 86400));
+
+    function fmt(n) { return n.toLocaleString('tr-TR'); }
+
+    function animateTo(from, to, durationMs, onDone) {
+      var startTime = null;
+      function step(ts) {
+        if (!startTime) startTime = ts;
+        var elapsed  = ts - startTime;
+        var progress = Math.min(elapsed / durationMs, 1);
+        var ease = 1 - Math.pow(1 - progress, 3);
+        el.textContent = fmt(Math.floor(from + (to - from) * ease));
+        if (progress < 1) {
+          requestAnimationFrame(step);
+        } else if (onDone) {
+          onDone();
+        }
       }
-    });
-  }, { threshold: 0.3 });
-  observer.observe(target);
-  function animateCount(from, to, duration, el) {
-    var start = performance.now();
-    function tick(now) {
-      var elapsed = now - start;
-      var progress = Math.min(elapsed / duration, 1);
-      var ease = 1 - Math.pow(1 - progress, 3);
-      el.textContent = Math.floor(from + (to - from) * ease).toLocaleString('tr-TR');
-      if (progress < 1) requestAnimationFrame(tick);
+      requestAnimationFrame(step);
     }
-    requestAnimationFrame(tick);
+
+    function startLiveCount() {
+      setInterval(function () {
+        current++;
+        el.textContent = fmt(current);
+      }, 4000);
+    }
+
+    var started = false;
+
+    function startAnimation() {
+      if (started) return;
+      started = true;
+      animateTo(0, current, 1500, startLiveCount);
+    }
+
+    if ('IntersectionObserver' in window) {
+      var obsTarget = null;
+      var parent = el.parentElement;
+      while (parent && parent !== document.body) {
+        if (parent.offsetHeight > 0) { obsTarget = parent; break; }
+        parent = parent.parentElement;
+      }
+      if (!obsTarget) obsTarget = el;
+
+      var obs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) { startAnimation(); obs.disconnect(); }
+        });
+      }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+      obs.observe(obsTarget);
+    } else {
+      startAnimation();
+    }
+
+    setTimeout(function () { startAnimation(); }, 3000);
+
+    setTimeout(function () {
+      var val = parseInt((el.textContent || '').replace(/\D/g, ''));
+      if (!val || val === 0) { started = false; startAnimation(); }
+    }, 5000);
   }
-  function startLiveIncrement() {
-    setInterval(function() {
-      currentHours++;
-      el.style.textShadow = '0 0 40px rgba(22,163,74,0.7)';
-      el.textContent = currentHours.toLocaleString('tr-TR');
-      setTimeout(function() {
-        el.style.textShadow = '0 0 20px rgba(22,163,74,0.4)';
-      }, 300);
-    }, INCREMENT_INTERVAL);
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCounter);
+  } else {
+    initCounter();
   }
 })();
 
@@ -2632,29 +2670,44 @@ function renderDemoTable() {
 
 /* ── Feature 3: ROI Calculator ─────────────────────────────── */
 function calcROI() {
-  var hours = parseInt(document.getElementById('hours-slider').value);
-  var rate  = parseInt(document.getElementById('rate-slider').value);
+  var hoursEl = document.getElementById('hours-slider');
+  var rateEl  = document.getElementById('rate-slider');
+  if (!hoursEl || !rateEl) return;
+
+  var hours = parseInt(hoursEl.value) || 8;
+  var rate  = parseInt(rateEl.value)  || 250;
+
   var hv = document.getElementById('hours-val');
   var rv = document.getElementById('rate-val');
   if (hv) hv.textContent = hours;
   if (rv) rv.textContent = rate.toLocaleString('tr-TR');
-  var savedHours  = hours * 0.85;
-  var weeklyCost  = hours * rate;
+
+  var savedHours   = hours * 0.85;
+  var weeklyCost   = hours * rate;
   var weeklySaving = savedHours * rate;
-  var annualCost  = weeklyCost  * 52;
+  var annualCost   = weeklyCost * 52;
   var annualSaving = weeklySaving * 52;
   var msCostYearly = 168;
-  var netGain = annualSaving - msCostYearly;
-  var roi = Math.round(netGain / msCostYearly);
-  animateValue('annual-cost',  annualCost,  function(v){ return v.toLocaleString('tr-TR') + ' \u20BA'; });
-  animateValue('annual-saving',annualSaving,function(v){ return v.toLocaleString('tr-TR') + ' \u20BA'; });
-  animateValue('net-gain',     netGain,     function(v){ return v.toLocaleString('tr-TR') + ' \u20BA'; });
-  var wc = document.getElementById('weekly-cost');
-  var rm = document.getElementById('roi-multiplier');
-  var rc = document.getElementById('roi-cost-highlight');
-  if (wc) wc.textContent = weeklyCost.toLocaleString('tr-TR') + ' \u20BA';
-  if (rm) rm.textContent = roi + 'x ROI';
-  if (rc) rc.textContent = annualCost.toLocaleString('tr-TR') + ' \u20BA\u2019ya';
+  var netGain      = annualSaving - msCostYearly;
+  var roi          = Math.round(netGain / msCostYearly);
+
+  function set(id, val) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = val;
+  }
+  function money(n) {
+    return Math.max(0, Math.round(n)).toLocaleString('tr-TR') + ' \u20BA';
+  }
+
+  set('annual-cost',    money(annualCost));
+  set('annual-saving',  money(annualSaving));
+  set('net-gain',       money(netGain));
+  set('weekly-cost',    money(weeklyCost));
+  set('roi-multiplier', roi + 'x ROI');
+  set('ms-cost',        '168 \u20BA/y\u0131l');
+
+  var hl = document.getElementById('roi-cost-highlight');
+  if (hl) hl.textContent = Math.round(annualCost).toLocaleString('tr-TR') + ' \u20BA\u2019ya';
 }
 function animateValue(id, target, format) {
   var el = document.getElementById(id);
@@ -2681,13 +2734,26 @@ function shareROI() {
     });
   }
 }
-document.addEventListener('DOMContentLoaded', function() {
-  ['hours-slider','rate-slider'].forEach(function(id) {
+function bindSliders() {
+  ['hours-slider', 'rate-slider'].forEach(function (id) {
     var el = document.getElementById(id);
-    if (el) el.addEventListener('input', calcROI);
+    if (el) {
+      el.addEventListener('input',  calcROI);
+      el.addEventListener('change', calcROI);
+    }
   });
+}
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', function () { calcROI(); bindSliders(); });
+} else {
   calcROI();
-});
+  bindSliders();
+}
+setTimeout(function () {
+  var el = document.getElementById('annual-cost');
+  if (el && (el.textContent === '0 \u20BA' || el.textContent === '0')) { calcROI(); }
+}, 500);
+window.calcROI = calcROI;
 
 /* ── Feature 4: Command Counter Widget ─────────────────────── */
 (function initCmdWidget() {
