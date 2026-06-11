@@ -2549,6 +2549,16 @@
 })();
 </script>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(function() {
+  var _sbClient = supabase.createClient(
+    'https://ogizbfzoywylljvnidak.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9naXpiZnpveXd5bGxqdm5pZGFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwNzUxMjcsImV4cCI6MjA4ODY1MTEyN30.Vxu4ffDrG1nHR02vEbMeFKFHqUNYfVA9vBMyQmZj41k'
+  );
+  _sbClient.auth.getSession();
+})();
+</script>
 <link rel="stylesheet" href="/css/popup-system.css" media="print" onload="this.media='all'">
 <script src="/js/popup-system.js" defer></script>
 <script>
