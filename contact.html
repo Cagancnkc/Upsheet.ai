@@ -161,7 +161,7 @@ body{background:#F7F7F5}
 <script>
 var _contactApiBase = window.location.hostname === 'localhost'
   ? 'http://localhost:3001'
-  : (window._apiBase || 'https://upsheet-ai.onrender.com');
+  : '';
 
 async function submitContactForm() {
   var name = document.getElementById('contact-name').value.trim();
