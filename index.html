@@ -116,42 +116,66 @@
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "Mocksheets nedir?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Mocksheets, ops ekiplerinin Türkçe komutlarla tablo iş akışlarını otomatikleştirmesini sağlayan bir AI operasyon asistanıdır. Sıralama, filtreleme, hesaplama, renklendirme ve rapor oluşturma — hepsi formülsüz."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Mocksheets ne kadar tutar?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Mocksheets'in günde 5 AI komutu sunan ücretsiz planı var. Pro aylık 14$, Team ise aylık 24$'dır. Başlamak için kredi kartı gerekmez."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Mocksheets hangi dosya formatlarını destekler?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Mocksheets .xlsx, .xls, .csv ve PDF içe aktarımını destekler. Excel, CSV veya JSON olarak dışa aktarın."
-      }
-    },
-    {
-      "@type": "Question",
       "name": "Verilerim güvende mi?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Evet. Tüm veriler şifreli bağlantılar üzerinden iletilir ve işlendikten sonra sunucularda saklanmaz. GDPR uyumludur."
+        "text": "Tüm veriler Supabase (PostgreSQL) üzerinde şifreli saklanır. GDPR ve KVKK uyumlu altyapı. Verileriniz üçüncü taraflarla paylaşılmaz. Dilediğiniz zaman hesabınızı ve tüm verilerinizi silebilirsiniz."
       }
     },
     {
       "@type": "Question",
-      "name": "Mocksheets'i kullanmak için Excel bilgisi gerekiyor mu?",
+      "name": "Excel dosyam silinir mi?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Hayır. Mocksheets, Excel uzmanları için değil ops ekipleri için tasarlanmıştır. Ne istediğinizi Türkçe yazın — AI gerisini halleder."
+        "text": "Hayır. Mocksheets işlem yapar ama orijinal dosyanızı korur. Her işlem geri alınabilir. Pro planda 90 günlük versiyon geçmişi saklanır."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "İnternet olmadan çalışır mı?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Mocksheets tarayıcı tabanlıdır, internet bağlantısı gerekir. Tüm AI komutları bulutta işlenir, bu sayede bilgisayarınıza hiç yük olmaz."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Hangi dosya formatları destekleniyor?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": ".xlsx, .xls, .csv ve PDF (OCR ile tablo çıkarma) formatları desteklenir. Dışa aktarma için Excel, CSV ve JSON formatları mevcuttur."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Türkçe dışında dil var mı?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Evet. Komutlar Türkçe ve İngilizce çalışır. Arayüz dil seçeneği mevcuttur."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Kredi kartı olmadan başlayabilir miyim?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Evet. Ücretsiz plan için kart gerekmez. Google hesabınızla 30 saniyede başlayın, günde 5 AI komutu ücretsiz kullanın."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "İptal etmek zorlaştı mı?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Hayır. Tek tıkla iptal. Sözleşme yok, gizli ücret yok. İptal anında geçerlidir, bir sonraki fatura kesilmez."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Kaç kişi aynı anda kullanabilir?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Takım planında 5 koltuk dahildir. Canlı işbirliği özelliğiyle aynı anda birden fazla kullanıcı aynı tabloda çalışabilir."
       }
     }
   ]
