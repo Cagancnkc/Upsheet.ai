@@ -119,6 +119,16 @@ async function initAutoPanel() {
   window.addEventListener('automations:evaluated', async () => {
     try { renderAutoPanel(await window.Automations.load()); } catch { /* silent */ }
   });
+
+  let _panelLoadedAt = Date.now().toString();
+  document.addEventListener('visibilitychange', async () => {
+    if (document.hidden) return;
+    const lastUpdate = localStorage.getItem('automations_updated');
+    if (lastUpdate && lastUpdate > _panelLoadedAt) {
+      _panelLoadedAt = Date.now().toString();
+      try { renderAutoPanel(await window.Automations.load()); } catch { /* silent */ }
+    }
+  });
 }
 
 document.addEventListener('DOMContentLoaded', initAutoPanel);

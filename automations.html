@@ -1753,6 +1753,7 @@ async function saveWorkflow() {
     const res = await fetch(url, { method, headers: authHeaders(), body: JSON.stringify(body) });
     const data = await res.json();
     if (res.ok) {
+      localStorage.setItem('automations_updated', Date.now().toString());
       closeBuilder();
       toast(builderEditId ? 'Workflow güncellendi' : 'Workflow oluşturuldu', 'success');
       await loadRules();
