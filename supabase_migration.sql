@@ -20,6 +20,10 @@ CREATE TABLE IF NOT EXISTS automation_rules (
   updated_at       timestamptz DEFAULT now()
 );
 
+-- Mevcut tablolara eksik kolon ekle (yeniden çalıştırma güvenli)
+ALTER TABLE automation_rules ADD COLUMN IF NOT EXISTS description text;
+ALTER TABLE automation_rules ADD COLUMN IF NOT EXISTS template_id text;
+
 ALTER TABLE automation_rules ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Users manage own rules" ON automation_rules
