@@ -869,33 +869,6 @@
   }
   @media(max-width: 768px) { #section-nav { display: none; } }
 
-  /* ── Savings Counter ─────────────────────── */
-  .savings-counter {
-    display: inline-flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1px;
-  }
-  #hours-saved {
-    font-size: 28px;
-    font-weight: 800;
-    font-variant-numeric: tabular-nums;
-    color: #16a34a;
-    text-shadow: 0 0 20px rgba(22,163,74,0.4);
-    transition: text-shadow 0.3s;
-    font-family: 'Geist Mono', monospace, system-ui;
-    line-height: 1;
-  }
-  .counter-label {
-    font-size: 12px;
-    font-weight: 600;
-    color: inherit;
-  }
-  .counter-sub {
-    font-size: 10px;
-    color: var(--ink-4,#a0a0a8);
-    font-variant-numeric: tabular-nums;
-  }
 
   /* ── Interactive Demo ─────────────────────── */
   #interactive-demo { padding: 64px 24px; max-width: 720px; margin: 0 auto; }
@@ -1087,11 +1060,6 @@
 
     <div class="hero-meta">
       <span><b>4.9/5</b></span>
-      <div class="savings-counter">
-        <span id="hours-saved">0</span>
-        <span class="counter-label">saat tasarruf</span>
-        <span class="counter-sub">bugün · tüm kullanıcılar</span>
-      </div>
       <span><b>5 dk</b> · kurulum süresi</span>
     </div>
 
@@ -2178,87 +2146,6 @@ function handleStickyEmail(e) {
 </div>
 
 <script>
-/* ── Feature 1: Savings Counter ─────────────────────────────── */
-(function () {
-  function initCounter() {
-    var el = document.getElementById('hours-saved');
-    if (!el) return;
-
-    var now = new Date();
-    var secsToday = now.getHours()   * 3600
-                  + now.getMinutes() * 60
-                  + now.getSeconds();
-    var BASE_DAILY = 2300;
-    var current = Math.floor(BASE_DAILY * (secsToday / 86400));
-
-    function fmt(n) { return n.toLocaleString('tr-TR'); }
-
-    function animateTo(from, to, durationMs, onDone) {
-      var startTime = null;
-      function step(ts) {
-        if (!startTime) startTime = ts;
-        var elapsed  = ts - startTime;
-        var progress = Math.min(elapsed / durationMs, 1);
-        var ease = 1 - Math.pow(1 - progress, 3);
-        el.textContent = fmt(Math.floor(from + (to - from) * ease));
-        if (progress < 1) {
-          requestAnimationFrame(step);
-        } else if (onDone) {
-          onDone();
-        }
-      }
-      requestAnimationFrame(step);
-    }
-
-    function startLiveCount() {
-      setInterval(function () {
-        current++;
-        el.textContent = fmt(current);
-      }, 4000);
-    }
-
-    var started = false;
-
-    function startAnimation() {
-      if (started) return;
-      started = true;
-      animateTo(0, current, 1500, startLiveCount);
-    }
-
-    if ('IntersectionObserver' in window) {
-      var obsTarget = null;
-      var parent = el.parentElement;
-      while (parent && parent !== document.body) {
-        if (parent.offsetHeight > 0) { obsTarget = parent; break; }
-        parent = parent.parentElement;
-      }
-      if (!obsTarget) obsTarget = el;
-
-      var obs = new IntersectionObserver(function (entries) {
-        entries.forEach(function (entry) {
-          if (entry.isIntersecting) { startAnimation(); obs.disconnect(); }
-        });
-      }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
-
-      obs.observe(obsTarget);
-    } else {
-      startAnimation();
-    }
-
-    setTimeout(function () { startAnimation(); }, 3000);
-
-    setTimeout(function () {
-      var val = parseInt((el.textContent || '').replace(/\D/g, ''));
-      if (!val || val === 0) { started = false; startAnimation(); }
-    }, 5000);
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initCounter);
-  } else {
-    initCounter();
-  }
-})();
 
 /* ── Feature 2: Interactive Demo ───────────────────────────── */
 var DEMO_DATA = [
