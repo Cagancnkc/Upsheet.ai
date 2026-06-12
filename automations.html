@@ -13,10 +13,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<meta name="description" content="Mocksheets ile stok uyarıları, fatura takibi ve raporları otomatikleştirin. Gmail, Slack, Notion, Airtable ve 8 entegrasyonla tek komutta iş akışı kurun. Formül yok, kod yok.">
+<meta name="description" content="Mocksheets ile stok uyarıları, fatura takibi ve raporları otomatikleştirin. Gmail, Slack, Notion, Airtable, Google Sheets, Zapier ve 11 entegrasyonla tek komutta iş akışı kurun. Formül yok, kod yok.">
 <link rel="canonical" href="https://mocksheets.com/automations">
 <meta property="og:title" content="Workflow Otomasyonu — Mocksheets | Gmail, Slack, Notion Entegrasyonu">
-<meta property="og:description" content="Mocksheets ile stok uyarıları, fatura takibi ve raporları otomatikleştirin. Gmail, Slack, Notion, Airtable ve 8+ entegrasyonla Türkçe komutla iş akışı kurun. Formül yok, kod yok.">
+<meta property="og:description" content="Mocksheets ile stok uyarıları, fatura takibi ve raporları otomatikleştirin. Gmail, Slack, Notion, Airtable, Google Sheets, Zapier ve 11 entegrasyonla Türkçe komutla iş akışı kurun. Formül yok, kod yok.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://mocksheets.com/automations">
 <meta property="og:image" content="https://mocksheets.com/images/og-preview.png">
@@ -531,7 +531,7 @@ textarea.inp{height:auto;padding:10px 12px;resize:vertical;min-height:72px}
     <div class="hero-stats" style="margin-bottom:20px">
       <span class="stat-chip"><span class="stat-dot" id="stat-dot-active"></span><span id="stat-active">0 aktif</span></span>
       <span class="stat-chip"><span class="stat-dot" style="background:#2563EB"></span><span id="stat-runs">0 çalışma</span></span>
-      <span class="stat-chip"><span class="stat-dot" style="background:#16a34a"></span><span id="stat-success">— başarı</span></span>
+      <span class="stat-chip" id="chip-success" style="display:none"><span class="stat-dot" style="background:#16a34a"></span><span id="stat-success">— başarı</span></span>
     </div>
     <div style="display:flex;gap:10px;flex-wrap:wrap">
       <button class="btn btn-primary" onclick="openBuilder()">
@@ -575,16 +575,16 @@ textarea.inp{height:auto;padding:10px 12px;resize:vertical;min-height:72px}
     </div>
     <div class="apps-grid">
       <div class="app-tile" onclick="openBuilder('gmail')"><div class="app-tile-icon"><img src="https://cdn.simpleicons.org/gmail/EA4335" alt="Gmail"></div><div class="app-tile-name">Gmail</div><div class="app-tile-cat">E-posta</div></div>
-      <div class="app-tile" onclick="openBuilder('slack')"><div class="app-tile-icon"><svg viewBox="0 0 24 24" fill="#4A154B" xmlns="http://www.w3.org/2000/svg"><path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zM6.313 15.165a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313zM8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zM8.834 6.313a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312zM18.956 8.834a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834zM17.688 8.834a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312zM15.165 18.956a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52zM15.165 17.688a2.527 2.527 0 0 1-2.52-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z"/></svg></div><div class="app-tile-name">Slack</div><div class="app-tile-cat">Mesajlaşma</div></div>
-      <div class="app-tile" onclick="openBuilder('teams')"><div class="app-tile-icon"><svg viewBox="0 0 24 24" fill="#6264A7" xmlns="http://www.w3.org/2000/svg"><path d="M20.625 8.127q-.55 0-1.025-.205-.475-.205-.832-.563-.358-.357-.563-.832Q18 6.053 18 5.502q0-.54.205-1.02t.563-.837q.357-.358.832-.563.474-.205 1.025-.205.54 0 1.02.205t.837.563q.358.357.563.837.205.48.205 1.02 0 .55-.205 1.025-.205.475-.563.832-.357.358-.837.563-.48.205-1.02.205zm0-3.75q-.469 0-.797.328-.328.328-.328.797 0 .469.328.797.328.328.797.328.469 0 .797-.328.328-.328.328-.797 0-.469-.328-.797-.328-.328-.797-.328zM24 10.002v5.578q0 .774-.293 1.46-.293.685-.803 1.194-.51.51-1.195.803-.686.293-1.459.293-.445 0-.908-.105-.463-.106-.85-.329-.293.95-.855 1.729-.563.78-1.319 1.336-.756.557-1.67.861-.914.305-1.898.305-1.148 0-2.162-.398-1.014-.399-1.805-1.102-.79-.703-1.312-1.664t-.674-2.086h-5.8q-.411 0-.704-.293T0 16.881V6.873q0-.41.293-.703t.703-.293h8.59q-.34-.715-.34-1.5 0-.727.275-1.365.276-.639.75-1.114.475-.474 1.114-.75.638-.275 1.365-.275t1.365.275q.639.276 1.114.75.474.475.75 1.114.275.638.275 1.365t-.275 1.365q-.276.639-.75 1.113-.475.475-1.114.75-.638.276-1.365.276-.188 0-.375-.024-.188-.023-.375-.058v1.078h10.875q.469 0 .797.328.328.328.328.797zM12.75 2.373q-.41 0-.78.158-.368.158-.638.434-.27.275-.428.639-.158.363-.158.773 0 .41.158.78.159.368.428.638.27.27.639.428.369.158.779.158.41 0 .773-.158.364-.159.64-.428.274-.27.433-.639.158-.369.158-.779 0-.41-.158-.773-.159-.364-.434-.64-.275-.275-.639-.433-.363-.158-.773-.158zM6.937 9.814h2.25V7.94H2.814v1.875h2.25v6h1.875zm10.313 7.313v-6.75H12v6.504q0 .41-.293.703t-.703.293H8.309q.152.809.556 1.5.405.691.985 1.19.58.497 1.318.779.738.281 1.582.281.926 0 1.746-.352.82-.351 1.436-.966.615-.616.966-1.43.352-.815.352-1.752zm5.25-1.547v-5.203h-3.75v6.855q.305.305.691.452.387.146.809.146.469 0 .879-.176.41-.175.715-.48.304-.305.48-.715t.176-.879Z"/></svg></div><div class="app-tile-name">Teams</div><div class="app-tile-cat">Mesajlaşma</div></div>
+      <div class="app-tile" onclick="openBuilder('slack')"><div class="app-tile-icon"><svg viewBox="0 0 24 24" fill="#4A154B" xmlns="http://www.w3.org/2000/svg"><path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zM6.313 15.165a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313zM8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zM8.834 6.313a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312zM18.956 8.834a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834zM17.688 8.834a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312zM15.165 18.956a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52zM15.165 17.688a2.527 2.527 0 0 1-2.52-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z"/></svg></div><div class="app-tile-name">Slack</div><div class="app-tile-cat">Bildirim</div></div>
+      <div class="app-tile" onclick="openBuilder('teams')"><div class="app-tile-icon"><svg viewBox="0 0 24 24" fill="#6264A7" xmlns="http://www.w3.org/2000/svg"><path d="M20.625 8.127q-.55 0-1.025-.205-.475-.205-.832-.563-.358-.357-.563-.832Q18 6.053 18 5.502q0-.54.205-1.02t.563-.837q.357-.358.832-.563.474-.205 1.025-.205.54 0 1.02.205t.837.563q.358.357.563.837.205.48.205 1.02 0 .55-.205 1.025-.205.475-.563.832-.357.358-.837.563-.48.205-1.02.205zm0-3.75q-.469 0-.797.328-.328.328-.328.797 0 .469.328.797.328.328.797.328.469 0 .797-.328.328-.328.328-.797 0-.469-.328-.797-.328-.328-.797-.328zM24 10.002v5.578q0 .774-.293 1.46-.293.685-.803 1.194-.51.51-1.195.803-.686.293-1.459.293-.445 0-.908-.105-.463-.106-.85-.329-.293.95-.855 1.729-.563.78-1.319 1.336-.756.557-1.67.861-.914.305-1.898.305-1.148 0-2.162-.398-1.014-.399-1.805-1.102-.79-.703-1.312-1.664t-.674-2.086h-5.8q-.411 0-.704-.293T0 16.881V6.873q0-.41.293-.703t.703-.293h8.59q-.34-.715-.34-1.5 0-.727.275-1.365.276-.639.75-1.114.475-.474 1.114-.75.638-.275 1.365-.275t1.365.275q.639.276 1.114.75.474.475.75 1.114.275.638.275 1.365t-.275 1.365q-.276.639-.75 1.113-.475.475-1.114.75-.638.276-1.365.276-.188 0-.375-.024-.188-.023-.375-.058v1.078h10.875q.469 0 .797.328.328.328.328.797zM12.75 2.373q-.41 0-.78.158-.368.158-.638.434-.27.275-.428.639-.158.363-.158.773 0 .41.158.78.159.368.428.638.27.27.639.428.369.158.779.158.41 0 .773-.158.364-.159.64-.428.274-.27.433-.639.158-.369.158-.779 0-.41-.158-.773-.159-.364-.434-.64-.275-.275-.639-.433-.363-.158-.773-.158zM6.937 9.814h2.25V7.94H2.814v1.875h2.25v6h1.875zm10.313 7.313v-6.75H12v6.504q0 .41-.293.703t-.703.293H8.309q.152.809.556 1.5.405.691.985 1.19.58.497 1.318.779.738.281 1.582.281.926 0 1.746-.352.82-.351 1.436-.966.615-.616.966-1.43.352-.815.352-1.752zm5.25-1.547v-5.203h-3.75v6.855q.305.305.691.452.387.146.809.146.469 0 .879-.176.41-.175.715-.48.304-.305.48-.715t.176-.879Z"/></svg></div><div class="app-tile-name">Teams</div><div class="app-tile-cat">Bildirim</div></div>
       <div class="app-tile" onclick="openBuilder('notion')"><div class="app-tile-icon"><img src="https://cdn.simpleicons.org/notion/000000" alt="Notion"></div><div class="app-tile-name">Notion</div><div class="app-tile-cat">Veritabanı</div></div>
       <div class="app-tile" onclick="openBuilder('airtable')"><div class="app-tile-icon"><img src="https://cdn.simpleicons.org/airtable/18BFFF" alt="Airtable"></div><div class="app-tile-name">Airtable</div><div class="app-tile-cat">Veritabanı</div></div>
       <div class="app-tile" onclick="openBuilder('make')"><div class="app-tile-icon"><img src="https://cdn.simpleicons.org/make/6D00CC" alt="Make"></div><div class="app-tile-name">Make</div><div class="app-tile-cat">Otomasyon</div></div>
-      <div class="app-tile" onclick="openBuilder('webhook')"><div class="app-tile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></div><div class="app-tile-name">Webhook</div><div class="app-tile-cat">API</div></div>
-      <div class="app-tile" onclick="openBuilder('trello')"><div class="app-tile-icon"><img src="https://cdn.simpleicons.org/trello/0052CC" alt="Trello"></div><div class="app-tile-name">Trello</div><div class="app-tile-cat">Veritabanı</div></div>
+      <div class="app-tile" onclick="openBuilder('webhook')"><div class="app-tile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></div><div class="app-tile-name">Webhook</div><div class="app-tile-cat">Özel Entegrasyon</div></div>
+      <div class="app-tile" onclick="openBuilder('trello')"><div class="app-tile-icon"><img src="https://cdn.simpleicons.org/trello/0052CC" alt="Trello"></div><div class="app-tile-name">Trello</div><div class="app-tile-cat">Görev Yönetimi</div></div>
       <div class="app-tile" onclick="openBuilder('zapier')"><div class="app-tile-icon"><img src="https://cdn.simpleicons.org/zapier/FF4A00" alt="Zapier"></div><div class="app-tile-name">Zapier</div><div class="app-tile-cat">Otomasyon</div></div>
-      <div class="app-tile" onclick="openBuilder('google-sheets')"><div class="app-tile-icon"><img src="https://cdn.simpleicons.org/googlesheets/34A853" alt="Google Sheets"></div><div class="app-tile-name">Google Sheets</div><div class="app-tile-cat">Bulut</div></div>
-      <div class="app-tile" onclick="openBuilder('google-drive')"><div class="app-tile-icon"><img src="https://cdn.simpleicons.org/googledrive/4285F4" alt="Google Drive"></div><div class="app-tile-name">Google Drive</div><div class="app-tile-cat">Bulut</div></div>
+      <div class="app-tile" onclick="openBuilder('google-sheets')"><div class="app-tile-icon"><img src="https://cdn.simpleicons.org/googlesheets/34A853" alt="Google Sheets"></div><div class="app-tile-name">Google Sheets</div><div class="app-tile-cat">2 yönlü senkron</div></div>
+      <div class="app-tile" onclick="openBuilder('google-drive')"><div class="app-tile-icon"><img src="https://cdn.simpleicons.org/googledrive/4285F4" alt="Google Drive"></div><div class="app-tile-name">Google Drive</div><div class="app-tile-cat">Dosya senkron</div></div>
     </div>
   </section>
 
@@ -594,7 +594,7 @@ textarea.inp{height:auto;padding:10px 12px;resize:vertical;min-height:72px}
       <div class="section-title">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.59 13.51 6.83 3.98"/><path d="m15.41 6.51-6.82 3.98"/></svg>
         Entegrasyon Bağlantıları
-        <span class="section-badge" id="int-count-badge">11</span>
+        <span class="section-badge" id="int-count-badge">0/11 bağlı</span>
       </div>
     </div>
     <div id="int-root"></div>
@@ -1100,6 +1100,11 @@ const TEMPLATES = [
 ];
 
 // ── RENDER TEMPLATES ───────────────────────────────────────────────────────
+function openTemplateById(id) {
+  const t = TEMPLATES.find(t => t.id === id);
+  if (t) openBuilder(t.data);
+}
+
 let activeTplCat = 'all';
 
 function filterTemplates(cat) {
@@ -1113,7 +1118,7 @@ function renderTemplates() {
   const list = activeTplCat === 'all' ? TEMPLATES : TEMPLATES.filter(t => t.category === activeTplCat);
   document.getElementById('tpl-count-badge').textContent = list.length + ' şablon';
   el.innerHTML = list.map(t => `
-    <div class="tpl-card" onclick='openBuilder(${JSON.stringify(t.data)})'>
+    <div class="tpl-card" data-tpl-id="${t.id}" onclick="openTemplateById(this.dataset.tplId)">
       <div class="tpl-icon" style="background:${t.iconBg}">${t.icon}</div>
       <div class="tpl-name">${t.name}</div>
       <div class="tpl-desc">${t.desc}</div>
@@ -1236,6 +1241,7 @@ function updateStats() {
   const successRuns = allRuns.filter(r => r.status === 'success').length;
   const rate = totalRuns > 0 ? Math.round((successRuns / totalRuns) * 100) : null;
   document.getElementById('stat-success').textContent = rate !== null ? '%' + rate + ' başarı' : '— başarı';
+  document.getElementById('chip-success').style.display = rate !== null ? '' : 'none';
 }
 
 // ── LOAD RUNS ──────────────────────────────────────────────────────────────
@@ -2528,6 +2534,11 @@ function IntegrationBrowser() {
     return s;
   });
   const [modal, setModal] = useState(null);
+
+  useEffect(() => {
+    const badge = document.getElementById('int-count-badge');
+    if (badge) badge.textContent = `${connected.size}/11 bağlı`;
+  }, [connected]);
 
   useEffect(() => {
     const token = intGetToken();
