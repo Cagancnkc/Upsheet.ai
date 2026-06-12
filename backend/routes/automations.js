@@ -344,39 +344,49 @@ router.post('/generate', requireAuth, async (req, res) => {
 
   const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
-  const prompt = `Sen bir otomasyon sistemi tasarımcısısın. Kullanıcının Türkçe isteğini yapılandırılmış bir iş akışına dönüştür.
+  const systemPrompt = `Sen Mocksheets için bir otomasyon kuralı üretecisisin. Türkçe doğal dil komutunu aşağıdaki JSON şemasına dönüştür.
 
-Kullanıcı isteği: "${query.trim()}"
+SADECE GEÇERLİ JSON döndür. Markdown, açıklama, kod bloğu işareti YAZMA. { ile başla } ile bitir.
 
-Geçerli trigger tipleri: cell_condition, schedule, threshold, date_arrived, row_added, value_changed
-Geçerli action tipleri: gmail, slack, webhook, make, notification, notion_page, sheets_update
-
-Yalnızca şu JSON formatında yanıt ver (başka hiçbir şey yazma):
+ŞEMA:
 {
-  "name": "Otomasyon adı (Türkçe, kısa)",
-  "description": "Ne yapar (1 cümle)",
+  "name": "Kısa Türkçe isim (max 50 karakter)",
+  "description": "Bu otomasyon şunu yapar: ... (1 cümle Türkçe)",
   "trigger_config": {
-    "type": "cell_condition",
-    "column": "Sütun Adı",
-    "operator": "less_than",
-    "value": "20"
+    "type": "cell_condition" | "schedule" | "value_changed" | "row_added" | "date_arrived",
+
+    // cell_condition için: column, operator (less_than|greater_than|equals|not_equals|contains), value
+    // schedule için: frequency (every_day|every_week|every_month), time ("HH:MM"), day_of_week (0-6, weekly için)
+    // value_changed için: column
+    // row_added için: (boş obje yeterli)
+    // date_arrived için: column, days_before (int)
   },
-  "condition_config": [],
+  "condition_config": [
+    { "column": "Sütun", "operator": "equals|contains|less_than|greater_than|not_equals|is_empty|is_not_empty", "value": "değer", "logic": "AND" }
+  ],
   "action_config": [
-    {
-      "type": "gmail",
-      "to": "ornek@email.com",
-      "subject": "Uyarı: {Sütun Adı} düştü",
-      "body": "Merhaba,\\n{Sütun Adı} değeri {Değer} seviyesine düştü."
-    }
+    // slack: { "type": "slack", "webhookUrl": "", "title": "Başlık", "message": "Mesaj {Sütun Adı}" }
+    // gmail: { "type": "gmail", "to": "{E-posta Sütunu}", "subject": "Konu {Sütun}", "body": "Gövde {Sütun}" }
+    // notification: { "type": "notification", "message": "Mesaj metni {Sütun Adı}" }
+    // webhook: { "type": "webhook", "url": "", "event": "automation.triggered" }
+    // notion_page: { "type": "notion_page", "token": "", "dbId": "", "title": "Başlık {Sütun}" }
   ]
-}`;
+}
+
+KURALLAR:
+- Sütun adı belirtilmemişse mantıklı bir Türkçe isim kullan (stok→"Stok Miktarı", fiyat→"Fiyat", durum→"Durum", tarih→"Tarih")
+- Sayısal eşik sayı string olarak yaz ("10" değil 10 yazma, string olsun)
+- Zaman belirtilmemişse schedule için time="09:00"
+- Platform ipucu: Slack→slack, Gmail/mail/e-posta→gmail, Notion→notion_page, bildirim/uyarı→notification, Teams→webhook
+- condition_config boşsa [] döndür
+- action_config en az 1 aksiyon içersin`;
 
   try {
     const response = await client.messages.create({
-      model: 'claude-haiku-4-5-20251001',
-      max_tokens: 800,
-      messages: [{ role: 'user', content: prompt }]
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 1024,
+      system: systemPrompt,
+      messages: [{ role: 'user', content: query.trim() }]
     });
 
     const raw = response.content[0].text.trim();
@@ -386,9 +396,15 @@ Yalnızca şu JSON formatında yanıt ver (başka hiçbir şey yazma):
     let workflow;
     try { workflow = JSON.parse(match[0]); }
     catch { return res.status(500).json({ error: 'AI yanıtı geçersiz JSON döndürdü' }); }
+
+    if (!workflow.name || !workflow.trigger_config || !workflow.action_config) {
+      return res.status(500).json({ error: 'AI eksik otomasyon üretdi. Komutu daha detaylı yazar mısın?' });
+    }
+
     res.json({ workflow });
   } catch (e) {
     console.error('/api/automations/generate hatası:', e.message);
+    if (e.status === 429) return res.status(429).json({ error: 'Çok fazla istek. Lütfen biraz bekleyin.' });
     res.status(500).json({ error: e.message });
   }
 });
