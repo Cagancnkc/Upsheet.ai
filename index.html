@@ -1515,6 +1515,96 @@
   }
 </style>
 
+<style>
+/* Pro kartı Normal/Max toggle */
+.pro-variant-toggle {
+  display: flex;
+  gap: 6px;
+  margin: 12px 0 16px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid #334155;
+  border-radius: 10px;
+  padding: 4px;
+}
+.variant-btn {
+  flex: 1;
+  padding: 8px 12px;
+  border: none;
+  background: transparent;
+  color: #94a3b8;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.variant-btn.active {
+  background: #16a34a;
+  color: white;
+}
+.variant-diff {
+  font-size: 11px;
+  font-weight: 700;
+  opacity: 0.85;
+}
+.variant-btn.active .variant-diff {
+  color: #dcfce7;
+}
+.ms-row-feats li { transition: background-color 0.6s, color 0.6s; }
+.feature-highlight {
+  background-color: rgba(22,163,74,0.15) !important;
+  color: #4ade80 !important;
+  border-radius: 6px;
+  padding: 2px 4px;
+}
+.pricing-yearly-note {
+  font-size: 13px;
+  color: #94a3b8;
+  margin-top: 8px;
+  line-height: 1.6;
+}
+.pricing-yearly-note strong {
+  font-size: 18px;
+  color: #f8fafc;
+}
+.yearly-monthly-equiv {
+  color: #64748b;
+  font-size: 12px;
+}
+.pricing-yearly-note small {
+  color: #64748b;
+  font-size: 11px;
+}
+.pricing-team-bridge {
+  margin-top: 14px;
+  padding: 10px 12px;
+  background: rgba(22,163,74,0.08);
+  border: 1px solid rgba(22,163,74,0.25);
+  border-radius: 8px;
+  font-size: 12px;
+  color: #94a3b8;
+  line-height: 1.6;
+}
+.pricing-team-bridge a {
+  color: #4ade80;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-block;
+  margin-top: 4px;
+}
+.pricing-team-bridge a:hover { text-decoration: underline; }
+.hidden { display: none !important; }
+@keyframes pricing-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(22,163,74,0); }
+  50% { box-shadow: 0 0 0 8px rgba(22,163,74,0.15); }
+}
+.pricing-card-pulse { animation: pricing-pulse 1.2s ease; }
+</style>
+
 
 
 
@@ -1575,50 +1665,64 @@
         </div>
       </article>
 
-      <article class="ms-row ms-featured">
+      <article class="ms-row ms-featured" id="pro-card">
         <div class="ms-row-idx">02</div>
         <div class="ms-row-meta">
-          <div class="ms-row-name">
-            Profesyonel
-          </div>
+          <div class="ms-row-name">Pro</div>
           <div class="ms-row-tag">İlk 3 ay $1/ay · Kampanya bitmeden yakala.</div>
-          <ul class="ms-row-feats">
-            <li class="ms-row-feat"><span class="ms-feat-dash">—</span> Neredeyse sınırsız — günde 30, ayda 200</li>
-            <li class="ms-row-feat"><span class="ms-feat-dash">—</span> PDF → tablo dönüştürme</li>
-            <li class="ms-row-feat"><span class="ms-feat-dash">—</span> 90 günlük sürüm geçmişi</li>
-            <li class="ms-row-feat"><span class="ms-feat-dash">—</span> Öncelikli e-posta desteği</li>
+          <div class="pro-variant-toggle">
+            <button class="variant-btn active" data-variant="normal" onclick="setProVariant('normal')">Normal</button>
+            <button class="variant-btn" data-variant="max" onclick="setProVariant('max')">Max <span class="variant-diff">+$6</span></button>
+          </div>
+          <ul class="ms-row-feats" id="pro-features">
+            <!-- JS ile doldurulacak -->
           </ul>
         </div>
         <div class="ms-row-price">
-          <div class="ms-price-big"><span class="ms-price-cur">$</span>1</div>
+          <div class="ms-price-big" id="pro-price-big"><span class="ms-price-cur">$</span><span id="pro-price-amount">1</span></div>
           <div class="ms-price-sub">
-            <span class="ms-price-after" id="proAfter">İlk 3 ay · sonra 14$/ay</span>
+            <span class="ms-price-after" id="proAfter">İlk 3 ay · sonra $15/ay</span>
+            <span class="pricing-yearly-note hidden" id="pro-yearly-note">
+              <strong id="pro-yearly-price">$144</strong>/yıl
+              <span class="yearly-monthly-equiv" id="pro-yearly-equiv">(aylık $12'ye denk)</span><br>
+              <small>Kampanya yıllık planlarda geçerli değildir.</small>
+            </span>
           </div>
         </div>
-        <div class="ms-row-cta">
-          <a id="proCheckoutBtn" href="/auth?plan=pro" target="_blank" class="ms-cta ms-filled">
+        <div class="ms-row-cta" style="flex-direction:column;align-items:flex-end;gap:10px;">
+          <a id="proCheckoutBtn" href="/auth?plan=pro&tier=normal" target="_blank" class="ms-cta ms-filled">
             Pro'ya Geç →
             <span class="ms-cta-arrow">→</span>
           </a>
+          <div class="pricing-team-bridge hidden" id="pro-team-bridge">
+            $21'e tek kişi 60 komut. $59'a 5 kişi + sınırsız komut — kişi başı $11,8.
+            <a href="#pricing" onclick="scrollToTeamCard()">Takım'ı incele →</a>
+          </div>
         </div>
       </article>
 
-      <article class="ms-row">
+      <article class="ms-row" id="team-card">
         <div class="ms-row-idx">03</div>
         <div class="ms-row-meta">
           <div class="ms-row-name">Takım</div>
           <div class="ms-row-tag">5 koltuk. Tek fatura.</div>
           <ul class="ms-row-feats">
             <li class="ms-row-feat"><span class="ms-feat-dash">—</span> Sınırsız AI komutu</li>
+            <li class="ms-row-feat"><span class="ms-feat-dash">—</span> Sınırsız otomasyon</li>
             <li class="ms-row-feat"><span class="ms-feat-dash">—</span> Canlı işbirliği + yorumlar</li>
             <li class="ms-row-feat"><span class="ms-feat-dash">—</span> SSO + denetim günlüğü</li>
             <li class="ms-row-feat"><span class="ms-feat-dash">—</span> Özel hesap yöneticisi</li>
           </ul>
         </div>
         <div class="ms-row-price">
-          <div class="ms-price-big"><span class="ms-price-cur">$</span>1</div>
+          <div class="ms-price-big"><span class="ms-price-cur">$</span><span id="team-price-amount">1</span></div>
           <div class="ms-price-sub">
-            <span class="ms-price-after" id="bizAfter">İlk 3 ay · sonra 24$/ay</span>
+            <span class="ms-price-after" id="bizAfter">İlk 3 ay · sonra $59/ay</span>
+            <span class="pricing-yearly-note hidden" id="team-yearly-note">
+              <strong id="team-yearly-price">$566</strong>/yıl
+              <span class="yearly-monthly-equiv" id="team-yearly-equiv">(aylık ~$47'ye denk)</span><br>
+              <small>Kampanya yıllık planlarda geçerli değildir.</small>
+            </span>
           </div>
         </div>
         <div class="ms-row-cta">
@@ -2006,7 +2110,110 @@ function toggleFaq(btn) {
 </script>
 
 <script>
+var _billingPeriod = 'monthly';
+var _proVariant = 'normal';
+
+var _PRO = {
+  normal: { monthly: 15, yearly: 144, features: [
+    'Günde 20, ayda 300 AI komutu',
+    'PDF → tablo dönüştürme',
+    '30 günlük sürüm geçmişi',
+    'Öncelikli e-posta desteği'
+  ]},
+  max: { monthly: 21, yearly: 202, features: [
+    'Günde 60, ayda 500 AI komutu',
+    'PDF → tablo dönüştürme',
+    '90 günlük sürüm geçmişi',
+    '3 aktif otomasyon',
+    'Öncelikli e-posta desteği'
+  ]}
+};
+var _TEAM = { monthly: 59, yearly: 566 };
+
+function setProVariant(variant) {
+  _proVariant = variant;
+  document.querySelectorAll('.variant-btn').forEach(function(b) {
+    b.classList.toggle('active', b.dataset.variant === variant);
+  });
+  renderProCard();
+}
+
+function renderProCard() {
+  var v = _PRO[_proVariant];
+  var yearly = _billingPeriod === 'yearly';
+
+  // Özellikler
+  var featEl = document.getElementById('pro-features');
+  if (featEl) {
+    featEl.innerHTML = v.features.map(function(f) {
+      return '<li class="ms-row-feat"><span class="ms-feat-dash">—</span> ' + f + '</li>';
+    }).join('');
+    if (_proVariant === 'max') {
+      var items = featEl.querySelectorAll('li');
+      [0, 3].forEach(function(i) {
+        if (items[i]) {
+          items[i].classList.add('feature-highlight');
+          setTimeout(function() { if (items[i]) items[i].classList.remove('feature-highlight'); }, 600);
+        }
+      });
+    }
+  }
+
+  var amountEl = document.getElementById('pro-price-amount');
+  var afterEl = document.getElementById('proAfter');
+  var yearlyNoteEl = document.getElementById('pro-yearly-note');
+  var yearlyPriceEl = document.getElementById('pro-yearly-price');
+  var yearlyEquivEl = document.getElementById('pro-yearly-equiv');
+  var teamBridgeEl = document.getElementById('pro-team-bridge');
+  var ctaEl = document.getElementById('proCheckoutBtn');
+
+  if (yearly) {
+    if (amountEl) amountEl.textContent = v.yearly;
+    if (afterEl) afterEl.classList.add('hidden');
+    if (yearlyNoteEl) yearlyNoteEl.classList.remove('hidden');
+    if (yearlyPriceEl) yearlyPriceEl.textContent = '$' + v.yearly;
+    if (yearlyEquivEl) yearlyEquivEl.textContent = '(aylık $' + Math.round(v.yearly / 12) + '\'ye denk)';
+  } else {
+    if (amountEl) amountEl.textContent = 1;
+    if (afterEl) { afterEl.classList.remove('hidden'); afterEl.textContent = 'İlk 3 ay · sonra $' + v.monthly + '/ay'; }
+    if (yearlyNoteEl) yearlyNoteEl.classList.add('hidden');
+  }
+
+  if (teamBridgeEl) teamBridgeEl.classList.toggle('hidden', _proVariant !== 'max');
+  if (ctaEl) ctaEl.href = '/auth?plan=pro&tier=' + _proVariant;
+}
+
+function renderTeamCard() {
+  var yearly = _billingPeriod === 'yearly';
+  var amountEl = document.getElementById('team-price-amount');
+  var afterEl = document.getElementById('bizAfter');
+  var yearlyNoteEl = document.getElementById('team-yearly-note');
+  var yearlyPriceEl = document.getElementById('team-yearly-price');
+  var yearlyEquivEl = document.getElementById('team-yearly-equiv');
+
+  if (yearly) {
+    if (amountEl) amountEl.textContent = _TEAM.yearly;
+    if (afterEl) afterEl.classList.add('hidden');
+    if (yearlyNoteEl) yearlyNoteEl.classList.remove('hidden');
+    if (yearlyPriceEl) yearlyPriceEl.textContent = '$' + _TEAM.yearly;
+    if (yearlyEquivEl) yearlyEquivEl.textContent = '(aylık ~$' + Math.round(_TEAM.yearly / 12) + '\'ye denk)';
+  } else {
+    if (amountEl) amountEl.textContent = 1;
+    if (afterEl) { afterEl.classList.remove('hidden'); afterEl.textContent = 'İlk 3 ay · sonra $' + _TEAM.monthly + '/ay'; }
+    if (yearlyNoteEl) yearlyNoteEl.classList.add('hidden');
+  }
+}
+
+function scrollToTeamCard() {
+  var el = document.getElementById('team-card');
+  if (!el) return;
+  el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  el.classList.add('pricing-card-pulse');
+  setTimeout(function() { el.classList.remove('pricing-card-pulse'); }, 1200);
+}
+
 function setPricingPeriod(p) {
+  _billingPeriod = p;
   var yearly = p === 'yearly';
   document.getElementById('ms-btn-monthly').classList.toggle('ms-active', !yearly);
   document.getElementById('ms-btn-yearly').classList.toggle('ms-active', yearly);
@@ -2014,11 +2221,18 @@ function setPricingPeriod(p) {
   document.getElementById('ms-btn-yearly').setAttribute('aria-selected', String(yearly));
   var sl = window._stripeLinks || {};
   var per = yearly ? 'yearly' : 'monthly';
-  document.getElementById('proCheckoutBtn').href = (sl.pro && sl.pro[per]) || '#';
-  document.getElementById('bizCheckoutBtn').href = (sl.business && sl.business[per]) || '#';
-  document.getElementById('proAfter').textContent = yearly ? 'İlk 3 ay · sonra 11$/ay' : 'İlk 3 ay · sonra 14$/ay';
-  document.getElementById('bizAfter').textContent = yearly ? 'İlk 3 ay · sonra 19$/ay' : 'İlk 3 ay · sonra 24$/ay';
+  var proBtn = document.getElementById('proCheckoutBtn');
+  var bizBtn = document.getElementById('bizCheckoutBtn');
+  if (proBtn && sl.pro && sl.pro[per]) proBtn.href = sl.pro[per];
+  if (bizBtn && sl.business && sl.business[per]) bizBtn.href = sl.business[per];
+  renderProCard();
+  renderTeamCard();
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+  renderProCard();
+  renderTeamCard();
+});
 </script>
 
 <!-- STICKY CTA -->
