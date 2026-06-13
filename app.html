@@ -255,6 +255,7 @@
         <span>Pro'ya yükselt</span>
         <span class="price">$1/ay →</span>
       </div>
+      <button class="manage-sub-btn" onclick="openSubscriptionModal()">Aboneliğimi Yönet</button>
     </div>
   </aside>
 
@@ -790,6 +791,44 @@
 .template-item-icon { font-size:14px; flex-shrink:0; margin-top:1px; }
 .template-item-name { font-size:12.5px; color:var(--ink-2); line-height:1.3; }
 .template-item-desc { font-size:10.5px; color:var(--ink-4); display:block; margin-top:1px; }
+
+/* ── Abonelik Yönet butonu ── */
+.manage-sub-btn { display:block; width:100%; margin-top:8px; padding:7px 0; font-size:11.5px; color:var(--ink-3); background:transparent; border:1px solid var(--line-2); border-radius:var(--radius-sm); cursor:pointer; text-align:center; }
+.manage-sub-btn:hover { border-color:var(--violet); color:var(--violet); background:var(--violet-soft); }
+
+/* ── Subscription Modal ── */
+#subscription-modal .ms-modal { width:660px; max-width:94vw; max-height:88vh; overflow-y:auto; padding:28px; }
+.sub-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; }
+.sub-header h2 { font-size:16px; font-weight:700; color:var(--ink); margin:0; }
+.sub-close-btn { background:none; border:none; cursor:pointer; color:var(--ink-4); padding:4px; border-radius:4px; font-size:18px; line-height:1; }
+.sub-close-btn:hover { color:var(--ink); background:var(--surface-3); }
+.sub-current-card { background:var(--surface-3); border:1px solid var(--line-2); border-radius:10px; padding:14px 16px; margin-bottom:20px; }
+.sub-current-label { font-size:10.5px; color:var(--ink-4); text-transform:uppercase; letter-spacing:.04em; margin-bottom:4px; }
+.sub-current-name { font-size:17px; font-weight:700; color:var(--ink); }
+.sub-current-meta { font-size:11.5px; color:var(--ink-3); margin-top:3px; }
+.sub-current-cancel-note { font-size:11px; color:var(--warn); margin-top:4px; }
+.sub-period-toggle { display:flex; gap:6px; margin-bottom:16px; }
+.sub-period-btn { flex:1; padding:7px 0; font-size:12.5px; border:1px solid var(--line-2); background:transparent; color:var(--ink-3); border-radius:var(--radius-sm); cursor:pointer; }
+.sub-period-btn.active { background:var(--violet); color:#fff; border-color:var(--violet); font-weight:600; }
+.sub-plan-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:20px; }
+@media(max-width:560px) { .sub-plan-grid { grid-template-columns:1fr; } }
+.sub-plan-card { border:1.5px solid var(--line-2); border-radius:10px; padding:14px 12px; background:var(--panel); display:flex; flex-direction:column; gap:6px; }
+.sub-plan-card.is-current { border-color:var(--violet); background:var(--violet-soft); }
+.sub-plan-card h4 { font-size:13px; font-weight:700; color:var(--ink); margin:0; }
+.sub-plan-price { font-size:19px; font-weight:800; color:var(--violet); }
+.sub-plan-price span { font-size:11.5px; font-weight:400; color:var(--ink-3); }
+.sub-plan-features { list-style:none; padding:0; margin:4px 0 8px; }
+.sub-plan-features li { font-size:11.5px; color:var(--ink-3); padding:2px 0; }
+.sub-plan-features li::before { content:'✓  '; color:var(--violet); }
+.sub-current-badge { font-size:11px; color:var(--violet); font-weight:600; text-align:center; padding:6px 0; }
+.sub-switch-btn { width:100%; padding:8px; background:var(--violet); color:#fff; border:none; border-radius:6px; font-size:12.5px; font-weight:600; cursor:pointer; margin-top:auto; }
+.sub-switch-btn:hover { background:var(--violet-deep); }
+.sub-cancel-section { border-top:1px solid var(--line); padding-top:16px; margin-top:4px; }
+.sub-cancel-btn { background:transparent; border:1.5px solid var(--red); color:var(--red); padding:8px 16px; border-radius:6px; cursor:pointer; font-size:12.5px; font-weight:600; }
+.sub-cancel-btn:hover { background:rgba(229,92,92,.08); }
+.sub-reactivate-btn { background:transparent; border:1.5px solid var(--violet); color:var(--violet); padding:8px 16px; border-radius:6px; cursor:pointer; font-size:12.5px; font-weight:600; }
+.sub-reactivate-btn:hover { background:var(--violet-soft); }
+.sub-cancel-note { font-size:11px; color:var(--ink-4); margin-top:6px; }
 </style>
 
 <script src="js/templates.js"></script>
@@ -2816,6 +2855,268 @@ document.addEventListener('DOMContentLoaded', function() {
   window.popupSystem = new PopupSystem({ page: 'app' });
   window.popupSystem.init();
 });
+</script>
+
+<!-- ══════════════════════════════════════════════
+     ABONELİĞİMİ YÖNET MODAL
+     ══════════════════════════════════════════════ -->
+<div id="subscription-modal" class="ms-overlay" style="display:none;" onclick="if(event.target===this)closeSubscriptionModal()">
+  <div class="ms-modal">
+    <div class="sub-header">
+      <h2>Aboneliğimi Yönet</h2>
+      <button class="sub-close-btn" onclick="closeSubscriptionModal()" title="Kapat">×</button>
+    </div>
+
+    <div class="sub-current-card">
+      <div class="sub-current-label">Şu anki planın</div>
+      <div class="sub-current-name" id="sub-current-name">Yükleniyor…</div>
+      <div class="sub-current-meta" id="sub-current-meta"></div>
+      <div class="sub-current-cancel-note" id="sub-current-cancel-note" style="display:none;"></div>
+    </div>
+
+    <div class="sub-period-toggle">
+      <button class="sub-period-btn active" data-period="monthly" onclick="setSubPeriod('monthly')">Aylık</button>
+      <button class="sub-period-btn" data-period="yearly" onclick="setSubPeriod('yearly')">Yıllık  –20%</button>
+    </div>
+
+    <div class="sub-plan-grid" id="sub-plan-grid">
+      <!-- JS ile doldurulur -->
+    </div>
+
+    <div class="sub-cancel-section" id="sub-cancel-section" style="display:none;">
+      <button class="sub-cancel-btn" id="sub-cancel-btn" onclick="confirmCancelSubscription()">Aboneliği İptal Et</button>
+      <button class="sub-reactivate-btn" id="sub-reactivate-btn" onclick="reactivateSubscription()" style="display:none;margin-left:8px;">Yeniden Aktif Et</button>
+      <p class="sub-cancel-note">İptal edilen abonelik dönem sonuna kadar aktif kalır.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  var SUB_API = (window.BACKEND_URL || 'http://localhost:3001') + '/api/subscription';
+  var _subPeriod = 'monthly';
+  var _subData   = null;
+
+  var PLAN_CATALOG = [
+    {
+      id: 'pro_normal',
+      label: 'Pro',
+      monthly: 15, yearly: 144,
+      features: ['30 AI komutu/gün', '200 AI komutu/ay', 'PDF → Tablo dönüştürme', '30 gün geçmiş']
+    },
+    {
+      id: 'pro_max',
+      label: 'Pro Max',
+      monthly: 21, yearly: 202,
+      features: ['60 AI komutu/gün', '500 AI komutu/ay', 'PDF → Tablo dönüştürme', '90 gün geçmiş', '3 otomasyon']
+    },
+    {
+      id: 'team',
+      label: 'Takım',
+      monthly: 59, yearly: 566,
+      features: ['Sınırsız AI komutu', 'Sınırsız otomasyon', '5 koltuk', 'SSO', 'Audit log']
+    }
+  ];
+
+  var DISPLAY_NAME = {
+    free:       'Başlangıç (Ücretsiz)',
+    pro_normal: 'Pro',
+    pro_max:    'Pro Max',
+    team:       'Takım'
+  };
+
+  function getAuthToken() {
+    try {
+      var keys = Object.keys(localStorage);
+      for (var i = 0; i < keys.length; i++) {
+        if (keys[i].indexOf('supabase') !== -1 || keys[i].indexOf('sb-') === 0) {
+          var raw = localStorage.getItem(keys[i]);
+          if (!raw) continue;
+          var parsed = JSON.parse(raw);
+          var token = (parsed && parsed.access_token) || (parsed && parsed.session && parsed.session.access_token);
+          if (token) return token;
+        }
+      }
+    } catch (e) {}
+    return null;
+  }
+
+  function authHeaders() {
+    var t = getAuthToken();
+    return t ? { 'Authorization': 'Bearer ' + t, 'Content-Type': 'application/json' } : { 'Content-Type': 'application/json' };
+  }
+
+  window.openSubscriptionModal = function() {
+    var modal = document.getElementById('subscription-modal');
+    modal.style.display = 'flex';
+    document.getElementById('sub-current-name').textContent = 'Yükleniyor…';
+    document.getElementById('sub-plan-grid').innerHTML = '';
+    document.getElementById('sub-cancel-section').style.display = 'none';
+    _subData = null;
+
+    fetch(SUB_API + '/status', { headers: authHeaders() })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        _subData = data;
+        renderSubModal(data);
+      })
+      .catch(function() {
+        document.getElementById('sub-current-name').textContent = 'Yüklenemedi';
+      });
+  };
+
+  window.closeSubscriptionModal = function() {
+    document.getElementById('subscription-modal').style.display = 'none';
+  };
+
+  window.setSubPeriod = function(period) {
+    _subPeriod = period;
+    document.querySelectorAll('.sub-period-btn').forEach(function(b) {
+      b.classList.toggle('active', b.dataset.period === period);
+    });
+    if (_subData) renderPlanGrid(_subData);
+  };
+
+  function renderSubModal(data) {
+    var nameEl   = document.getElementById('sub-current-name');
+    var metaEl   = document.getElementById('sub-current-meta');
+    var cancelNote = document.getElementById('sub-current-cancel-note');
+
+    nameEl.textContent = DISPLAY_NAME[data.displayPlan] || data.displayPlan || 'Başlangıç';
+
+    if (data.plan !== 'free' && data.stripe) {
+      var endDate = data.stripe.currentPeriodEnd
+        ? new Date(data.stripe.currentPeriodEnd * 1000).toLocaleDateString('tr-TR')
+        : '';
+      var interval = data.stripe.interval === 'year' ? 'Yıllık' : 'Aylık';
+      metaEl.textContent = interval + (endDate ? ' · Yenileme: ' + endDate : '');
+      _subPeriod = data.stripe.interval === 'year' ? 'yearly' : 'monthly';
+      document.querySelectorAll('.sub-period-btn').forEach(function(b) {
+        b.classList.toggle('active', b.dataset.period === _subPeriod);
+      });
+
+      if (data.stripe.cancelAtPeriodEnd) {
+        cancelNote.textContent = '⚠ ' + endDate + ' tarihinde iptal edilecek.';
+        cancelNote.style.display = '';
+      } else {
+        cancelNote.style.display = 'none';
+      }
+
+      // Cancel/reactivate section
+      var section = document.getElementById('sub-cancel-section');
+      section.style.display = '';
+      document.getElementById('sub-cancel-btn').style.display = data.stripe.cancelAtPeriodEnd ? 'none' : '';
+      document.getElementById('sub-reactivate-btn').style.display = data.stripe.cancelAtPeriodEnd ? '' : 'none';
+    } else {
+      metaEl.textContent = 'Ücretsiz plan';
+      cancelNote.style.display = 'none';
+    }
+
+    renderPlanGrid(data);
+  }
+
+  function renderPlanGrid(data) {
+    var grid = document.getElementById('sub-plan-grid');
+    grid.innerHTML = '';
+
+    PLAN_CATALOG.forEach(function(plan) {
+      var price = _subPeriod === 'yearly' ? plan.yearly : plan.monthly;
+      var periodLabel = _subPeriod === 'yearly' ? '/yıl' : '/ay';
+      var isCurrent = data.displayPlan === plan.id;
+
+      var card = document.createElement('div');
+      card.className = 'sub-plan-card' + (isCurrent ? ' is-current' : '');
+
+      var featuresHtml = plan.features.map(function(f) { return '<li>' + f + '</li>'; }).join('');
+
+      card.innerHTML =
+        '<h4>' + plan.label + '</h4>' +
+        '<div class="sub-plan-price">$' + price + '<span>' + periodLabel + '</span></div>' +
+        '<ul class="sub-plan-features">' + featuresHtml + '</ul>' +
+        (isCurrent
+          ? '<div class="sub-current-badge">✓ Şu anki planın</div>'
+          : '<button class="sub-switch-btn" data-plan="' + plan.id + '">' +
+              (data.plan === 'free' ? 'Yükselt' : 'Bu plana geç') +
+            '</button>');
+
+      if (!isCurrent) {
+        card.querySelector('.sub-switch-btn').addEventListener('click', function() {
+          changePlan(plan.id + '_' + _subPeriod);
+        });
+      }
+
+      grid.appendChild(card);
+    });
+  }
+
+  window.changePlan = function(targetPlan) {
+    var planLabel = targetPlan.replace('_monthly','').replace('_yearly','').replace('_', ' ');
+    var periodLabel = targetPlan.endsWith('yearly') ? 'yıllık' : 'aylık';
+    if (!confirm(planLabel + ' (' + periodLabel + ') planına geçmek istediğine emin misin?')) return;
+
+    fetch(SUB_API + '/change', {
+      method: 'POST',
+      headers: authHeaders(),
+      body: JSON.stringify({ targetPlan: targetPlan })
+    })
+      .then(function(r) { return r.json().then(function(d) { return { ok: r.ok, data: d }; }); })
+      .then(function(res) {
+        if (!res.ok) {
+          showToast(res.data.error || 'Hata oluştu', 'err');
+          return;
+        }
+        if (res.data.checkoutUrl) {
+          window.location.href = res.data.checkoutUrl;
+        } else {
+          showToast('✓ ' + (res.data.message || 'Plan güncellendi'), 'ok');
+          closeSubscriptionModal();
+          setTimeout(function() { location.reload(); }, 1200);
+        }
+      })
+      .catch(function() { showToast('Bağlantı hatası', 'err'); });
+  };
+
+  window.confirmCancelSubscription = function() {
+    if (!confirm('Aboneliğini iptal etmek istediğine emin misin? Dönem sonuna kadar erişimin devam eder.')) return;
+
+    fetch(SUB_API + '/cancel', { method: 'POST', headers: authHeaders() })
+      .then(function(r) { return r.json().then(function(d) { return { ok: r.ok, data: d }; }); })
+      .then(function(res) {
+        if (res.data.success) {
+          showToast('İptal edildi — ' + (res.data.endDate || '') + ' tarihine kadar aktif.', 'ok');
+          openSubscriptionModal();
+        } else {
+          showToast(res.data.error || 'İptal edilemedi', 'err');
+        }
+      })
+      .catch(function() { showToast('Bağlantı hatası', 'err'); });
+  };
+
+  window.reactivateSubscription = function() {
+    fetch(SUB_API + '/reactivate', { method: 'POST', headers: authHeaders() })
+      .then(function(r) { return r.json().then(function(d) { return { ok: r.ok, data: d }; }); })
+      .then(function(res) {
+        if (res.data.success) {
+          showToast('✓ ' + res.data.message, 'ok');
+          openSubscriptionModal();
+        } else {
+          showToast(res.data.error || 'Hata', 'err');
+        }
+      })
+      .catch(function() { showToast('Bağlantı hatası', 'err'); });
+  };
+
+  // ?subscription=success mesajını göster
+  (function() {
+    if (window.location.search.indexOf('subscription=success') !== -1) {
+      setTimeout(function() {
+        showToast('✓ Aboneliğin başarıyla aktif edildi!', 'ok');
+        var url = window.location.href.replace(/[?&]subscription=success/, '');
+        window.history.replaceState(null, '', url);
+      }, 800);
+    }
+  })();
+})();
 </script>
 </body>
 </html>

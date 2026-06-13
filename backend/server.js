@@ -163,6 +163,7 @@ app.use('/api/batch-ai', aiLimiter);
 
 const integrationsRouter = require('./routes/integrations');
 const stripeRouter = require('./routes/stripe');
+const subscriptionRouter = require('./routes/subscription');
 const promosRouter = require('./routes/promos');
 const automationsRouter = require('./routes/automations');
 const { checkLimit, incrementUsage, requireFeature, getOrCreateUsage } = require('./middleware/limits');
@@ -362,6 +363,7 @@ app.get('/api/integrations/notion/callback', async (req, res) => {
 app.use('/api/integrations', checkLimit, integrationsRouter);
 app.use('/api/automations', automationsRouter);
 app.use('/api/stripe', stripeRouter);
+app.use('/api/subscription', subscriptionRouter);
 const contactRouter = require('./routes/contact');
 app.use('/api/contact', contactRouter);
 const { router: authWebhooksRouter } = require('./routes/auth-webhooks');

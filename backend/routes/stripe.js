@@ -199,10 +199,35 @@ router.post('/webhook',
         break;
       }
 
-      case 'customer.subscription.created':
+      case 'customer.subscription.created': {
+        const subCreated = event.data.object;
+        console.log('📦 Abonelik oluşturuldu:', subCreated.id, subCreated.status);
+        break;
+      }
+
       case 'customer.subscription.updated': {
         const sub = event.data.object;
         console.log('📦 Abonelik güncellendi:', sub.id, sub.status);
+        const { createClient: createClientUpd } = require('@supabase/supabase-js');
+        const sbUpd = createClientUpd(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
+        const priceId = sub.items.data[0]?.price?.id;
+        let newPlan = 'pro';
+        if (priceId && (priceId === process.env.STRIPE_PRICE_PRO_MAX_MONTHLY || priceId === process.env.STRIPE_PRICE_PRO_MAX_YEARLY)) {
+          newPlan = 'pro_max';
+        } else if (priceId && (
+          priceId === process.env.STRIPE_PRICE_TEAM_MONTHLY || priceId === process.env.STRIPE_PRICE_TEAM_YEARLY ||
+          priceId === process.env.STRIPE_PRICE_BIZ_MONTHLY  || priceId === process.env.STRIPE_PRICE_BIZ_YEARLY
+        )) {
+          newPlan = 'business';
+        }
+        const subStatus = sub.status === 'active' ? 'active' : sub.status;
+        await sbUpd.from('user_usage')
+          .update({
+            plan: newPlan,
+            subscription_status: subStatus,
+            plan_ends_at: new Date(sub.current_period_end * 1000).toISOString(),
+          })
+          .eq('stripe_subscription_id', sub.id);
         break;
       }
 
