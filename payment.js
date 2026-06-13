@@ -28,12 +28,12 @@ const PLAN_INFO = {
   pro: {
     weekly:  { price: '$7.25', period: 'haftalık', name: 'Pro Haftalık' },
     monthly: { price: '$1',    period: 'aylık',    name: 'Pro Aylık (İlk 1 ay)' },
-    yearly:  { price: '$278',  period: 'yıllık',   name: 'Pro Yıllık' }
+    yearly:  { price: '$144',  period: 'yıllık',   name: 'Pro Yıllık' }
   },
   business: {
     weekly:  { price: '$12.25', period: 'haftalık', name: 'İş Haftalık' },
     monthly: { price: '$1',     period: 'aylık',    name: 'İş Aylık (İlk 1 ay)' },
-    yearly:  { price: '$470',   period: 'yıllık',   name: 'İş Yıllık' }
+    yearly:  { price: '$566',   period: 'yıllık',   name: 'İş Yıllık' }
   }
 };
 
