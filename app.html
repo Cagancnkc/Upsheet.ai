@@ -1890,13 +1890,94 @@
   var pdfAddBtn = document.getElementById('pdf-add-btn');
   var pdfInput  = document.createElement('input');
   pdfInput.type = 'file'; pdfInput.accept = '.pdf';
+  pdfInput.style.display = 'none';
+  document.body.appendChild(pdfInput);
+
   pdfInput.addEventListener('change', function () {
-    if (this.files && this.files[0] && aiTextarea) {
-      aiTextarea.value = '"' + this.files[0].name + '" dosyasını tabloya aktar ve analiz et';
-      aiTextarea.focus();
-    }
+    var file = this.files && this.files[0];
+    if (!file) return;
+    this.value = '';
+
+    var apiBase = window.location.hostname === 'localhost'
+      ? 'http://localhost:3001' : 'https://upsheet-ai.onrender.com';
+    var origHTML = pdfAddBtn ? pdfAddBtn.innerHTML : '';
+    if (pdfAddBtn) { pdfAddBtn.disabled = true; pdfAddBtn.textContent = '⟳ İşleniyor…'; }
+
+    var fd = new FormData();
+    fd.append('pdf', file);
+
+    var hdrs = {};
+    var tok = getAuthToken();
+    if (tok) hdrs['Authorization'] = 'Bearer ' + tok;
+
+    fetch(apiBase + '/api/pdf/extract', { method: 'POST', headers: hdrs, body: fd })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.error) { showToast('❌ ' + data.error); return; }
+        var tables = data.tables || [];
+        if (!tables.length) { showToast('❌ PDF\'te işlenebilir tablo bulunamadı'); return; }
+        if (tables.length === 1) {
+          _loadPdfTable(tables[0], data.document_summary);
+        } else {
+          _showPdfTablePicker(tables, data.document_summary);
+        }
+      })
+      .catch(function() { showToast('❌ Bağlantı hatası. Tekrar dene.'); })
+      .finally(function() {
+        if (pdfAddBtn) { pdfAddBtn.disabled = false; pdfAddBtn.innerHTML = origHTML; }
+      });
   });
   if (pdfAddBtn) pdfAddBtn.addEventListener('click', function () { pdfInput.click(); });
+
+  function _loadPdfTable(table, docSummary) {
+    var sheetName = (table.title && table.title !== 'Tablo 1' ? table.title
+      : (docSummary && docSummary.description ? docSummary.description.slice(0, 28) : null))
+      || 'PDF Tablosu';
+    var newData = emptyGridData();
+    table.headers.forEach(function(h, c) { if (c < GRID_COLS) newData[0][c].v = h; });
+    table.rows.forEach(function(row, i) {
+      var r = i + 1;
+      if (r < GRID_ROWS) row.forEach(function(val, c) { if (c < GRID_COLS) newData[r][c].v = String(val != null ? val : ''); });
+    });
+    sheetsData[activeSheetIdx].data = JSON.parse(JSON.stringify(gridData));
+    sheetsData.push({ name: sheetName, color: 'var(--accent)', data: newData });
+    activeSheetIdx = sheetsData.length - 1;
+    gridData = newData;
+    renderGrid();
+    renderSheetTabs();
+    showToast('✅ "' + sheetName + '" yüklendi — ' + table.row_count + ' satır');
+  }
+
+  function _showPdfTablePicker(tables, docSummary) {
+    var overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;display:flex;align-items:center;justify-content:center';
+    var box = document.createElement('div');
+    box.style.cssText = 'background:#fff;border-radius:12px;padding:20px 24px;min-width:300px;max-width:480px;box-shadow:0 20px 60px rgba(0,0,0,.3)';
+    box.innerHTML = '<div style="font-size:14px;font-weight:600;margin-bottom:12px;color:#111">PDF\'te '
+      + tables.length + ' tablo bulundu. Hangisini yüklemek istersiniz?</div>'
+      + tables.map(function(t, i) {
+        return '<div class="pdf-pick-row" data-idx="' + i + '" style="padding:9px 12px;cursor:pointer;border-radius:8px;'
+          + 'font-size:13px;border:1px solid #e5e7eb;margin-bottom:6px;color:#111">'
+          + '<strong>' + escapeHtml(t.title) + '</strong>'
+          + ' <span style="color:#6b7280;font-size:11px">— ' + t.row_count + ' satır, ' + t.col_count + ' sütun</span></div>';
+      }).join('')
+      + '<div style="text-align:right;margin-top:10px">'
+      + '<button id="pdfPickCancel" style="font-size:12px;color:#6b7280;background:none;border:none;cursor:pointer;padding:4px 8px">İptal</button>'
+      + '</div>';
+    overlay.appendChild(box);
+    document.body.appendChild(overlay);
+    box.querySelectorAll('.pdf-pick-row').forEach(function(el) {
+      el.addEventListener('mouseover', function() { el.style.background = '#f3f4f6'; });
+      el.addEventListener('mouseout',  function() { el.style.background = ''; });
+      el.addEventListener('click', function() {
+        document.body.removeChild(overlay);
+        _loadPdfTable(tables[parseInt(el.dataset.idx)], docSummary);
+      });
+    });
+    box.querySelector('#pdfPickCancel').addEventListener('click', function() {
+      document.body.removeChild(overlay);
+    });
+  }
 
   // ── V: Tab scroll ─────────────────────────────────────────────────────────
   var tabScrollBtn = document.querySelector('.sheet-tabs > span.tt-btn');
