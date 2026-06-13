@@ -4,8 +4,8 @@ const PLANS = {
   free: {
     name: 'Başlangıç',
     displayName: 'Ücretsiz',
-    ai_commands_per_month: 100,
-    ai_commands_per_day: 20,
+    ai_commands_per_month: 20,
+    ai_commands_per_day: 5,
     max_rows: 10000,
     max_file_size_mb: 2,
     max_sheets: 1,
