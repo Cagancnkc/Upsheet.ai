@@ -292,30 +292,6 @@
           </button>
         </div>
       </div>
-
-      <div class="view-tabs">
-        <div class="view-tab active">
-          <svg class="ico" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 3v18"/></svg>
-          Sayfa 1
-        </div>
-        <div class="view-tab">
-          <svg class="ico" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/></svg>
-          Özet
-        </div>
-        <div class="view-tab">
-          <svg class="ico" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 16V9"/><path d="M12 16V5"/><path d="M17 16v-5"/></svg>
-          Grafikler
-          <span class="count">2</span>
-        </div>
-        <div class="view-tab">
-          <svg class="ico" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11H5a2 2 0 0 0-2 2v7h4z"/><path d="M14 4h-4v16h4z"/><path d="M19 8h-4v12h4a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2"/></svg>
-          Pano
-        </div>
-        <div class="view-tab" style="margin-left:8px;">
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          Yeni görünüm
-        </div>
-      </div>
     </div>
 
     <!-- Toolbar -->
@@ -2322,21 +2298,6 @@
     });
   });
 
-  // ── AI: View tabs — "Yeni görünüm" intercept + placeholder toasts ─────────
-  document.querySelectorAll('.view-tab').forEach(function (tab) {
-    tab.addEventListener('click', function () {
-      var txt = tab.textContent.trim();
-      if (txt.indexOf('Yeni görünüm') !== -1) {
-        // Re-activate first tab instead of the "+" tab
-        var first = tab.parentElement.querySelector('.view-tab');
-        tab.parentElement.querySelectorAll('.view-tab').forEach(function (t) { t.classList.remove('active'); });
-        if (first) first.classList.add('active');
-        showToast('Yeni görünüm — yakında');
-      } else if (txt === 'Özet' || txt === 'Grafikler' || txt === 'Pano') {
-        showToast(txt + ' görünümü — yakında');
-      }
-    });
-  });
 
   // ── Templates Panel ─────────────────────────────────────────────────────
   window.toggleTemplatesPanel = function(forceClose) {
