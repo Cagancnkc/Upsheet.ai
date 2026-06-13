@@ -812,6 +812,213 @@ router.post('/excel/files', async (req, res) => {
   }
 });
 
+// ── Push endpoints (dropdown quick-share) ────────────────────────────────────
+
+function rowsToCsv(headers, rows) {
+  const escape = v => { const s = String(v ?? ''); return s.includes(',') || s.includes('"') || s.includes('\n') ? `"${s.replace(/"/g, '""')}"` : s; };
+  return [headers, ...rows].map(r => (r || []).map(escape).join(',')).join('\n');
+}
+
+function rowsToHtmlTable(headers, rows) {
+  const th = (headers || []).map(h => `<th style="border:1px solid #ccc;padding:6px 10px;background:#f5f5f5">${String(h ?? '')}</th>`).join('');
+  const trs = (rows || []).map(r => '<tr>' + (r || []).map(c => `<td style="border:1px solid #ccc;padding:6px 10px">${String(c ?? '')}</td>`).join('') + '</tr>').join('');
+  return `<table style="border-collapse:collapse;font-family:sans-serif;font-size:13px"><thead><tr>${th}</tr></thead><tbody>${trs}</tbody></table>`;
+}
+
+router.post('/slack/push', async (req, res) => {
+  const { headers, rows } = req.body;
+  const tokenData = await tokenManager.getToken(req.user.id, 'slack').catch(() => null);
+  if (!tokenData?.accessToken) return res.status(401).json({ error: 'Slack bağlı değil. Önce Slack webhook URL kaydedin.' });
+  const webhookUrl = tokenData.metadata?.webhookUrl || tokenData.accessToken;
+  const preview = rowsToCsv(headers, (rows || []).slice(0, 5));
+  const payload = {
+    text: '📊 Mocksheets verisi',
+    blocks: [
+      { type: 'header', text: { type: 'plain_text', text: '📊 Mocksheets Veri Paylaşımı', emoji: true } },
+      { type: 'section', text: { type: 'mrkdwn', text: `*${(rows || []).length} satır, ${(headers || []).length} sütun*\n\`\`\`${preview}\`\`\`` } },
+      { type: 'context', elements: [{ type: 'mrkdwn', text: '📅 ' + new Date().toLocaleString('tr-TR') + ' • Mocksheets' }] }
+    ]
+  };
+  try {
+    const r = await fetch(webhookUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+    const text = await r.text();
+    if (text === 'ok' || r.ok) res.json({ success: true, message: `✅ Slack'e ${(rows || []).length} satır gönderildi` });
+    else res.status(400).json({ error: 'Slack hatası: ' + text });
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+router.post('/teams/push', async (req, res) => {
+  const { headers, rows } = req.body;
+  const tokenData = await tokenManager.getToken(req.user.id, 'teams').catch(() => null);
+  if (!tokenData?.accessToken) return res.status(401).json({ error: 'Teams bağlı değil. Önce webhook URL kaydedin.' });
+  const webhookUrl = tokenData.metadata?.webhookUrl || tokenData.accessToken;
+  const preview = rowsToCsv(headers, (rows || []).slice(0, 5));
+  const payload = {
+    '@type': 'MessageCard', '@context': 'http://schema.org/extensions',
+    summary: 'Mocksheets Veri Paylaşımı', themeColor: '6264A7',
+    sections: [{ activityTitle: '📊 Mocksheets Veri Paylaşımı', activitySubtitle: `${(rows || []).length} satır, ${(headers || []).length} sütun`, text: `<pre>${preview}</pre>`, facts: [{ name: 'Tarih', value: new Date().toLocaleString('tr-TR') }] }]
+  };
+  try {
+    const r = await fetch(webhookUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+    const text = await r.text();
+    if (r.ok || text === '1') res.json({ success: true, message: `✅ Teams'e ${(rows || []).length} satır gönderildi` });
+    else res.status(400).json({ error: 'Teams hatası: ' + text });
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+router.post('/make/push', async (req, res) => {
+  const { headers, rows } = req.body;
+  const tokenData = await tokenManager.getToken(req.user.id, 'make').catch(() => null);
+  if (!tokenData?.accessToken) return res.status(401).json({ error: 'Make.com bağlı değil. Önce webhook URL kaydedin.' });
+  const webhookUrl = tokenData.metadata?.webhookUrl || tokenData.accessToken;
+  try {
+    const parsed = new URL(webhookUrl);
+    if (!['http:', 'https:'].includes(parsed.protocol)) return res.status(400).json({ error: 'Geçersiz URL' });
+    if (isPrivateHost(parsed.hostname)) return res.status(403).json({ error: 'Private host hedefleri yasaklıdır', code: 'SSRF_BLOCKED' });
+  } catch { return res.status(400).json({ error: 'Geçersiz webhook URL' }); }
+  const payload = { source: 'Mocksheets', event: 'push', timestamp: new Date().toISOString(), data: { headers, rows } };
+  try {
+    const controller = new AbortController();
+    const tid = setTimeout(() => controller.abort(), 10000);
+    const r = await fetch(webhookUrl, { method: 'POST', headers: { 'Content-Type': 'application/json', 'User-Agent': 'Mocksheets-Make/1.0' }, body: JSON.stringify(payload), signal: controller.signal });
+    clearTimeout(tid);
+    res.json({ success: true, message: `✅ Make senaryosu tetiklendi (${(rows || []).length} satır)` });
+  } catch (err) {
+    if (err.name === 'AbortError') return res.status(408).json({ error: 'Zaman aşımı' });
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.post('/google-drive/push', async (req, res) => {
+  const { headers, rows } = req.body;
+  const accessToken = await tokenManager.getValidAccessToken(req.user.id, 'google-drive').catch(() => null);
+  if (!accessToken) return res.status(401).json({ error: 'Google Drive bağlı değil. Önce Google hesabınızı bağlayın.' });
+  const csv = '\uFEFF' + rowsToCsv(headers, rows);
+  const name = `Mocksheets_${new Date().toISOString().slice(0,10)}.csv`;
+  const metadata = JSON.stringify({ name, mimeType: 'text/csv' });
+  const boundary = '-------mocksheets_boundary';
+  const body = `--${boundary}\r\nContent-Type: application/json\r\n\r\n${metadata}\r\n--${boundary}\r\nContent-Type: text/csv\r\n\r\n${csv}\r\n--${boundary}--`;
+  try {
+    const r = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + accessToken, 'Content-Type': `multipart/related; boundary="${boundary}"` },
+      body
+    });
+    if (!r.ok) { const e = await r.json().catch(() => ({})); return res.status(400).json({ error: e.error?.message || `HTTP ${r.status}` }); }
+    const file = await r.json();
+    res.json({ success: true, message: `✅ "${name}" Google Drive'a yüklendi` });
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+router.post('/google-sheets/push', async (req, res) => {
+  const { headers, rows, spreadsheetUrl } = req.body;
+  if (!spreadsheetUrl) return res.status(400).json({ error: 'Spreadsheet URL gerekli' });
+  const match = spreadsheetUrl.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
+  if (!match) return res.status(400).json({ error: 'Geçersiz Google Sheets URL' });
+  const spreadsheetId = match[1];
+  const accessToken = await tokenManager.getValidAccessToken(req.user.id, 'google-sheets').catch(() => null);
+  if (!accessToken) return res.status(401).json({ error: 'Google Sheets bağlı değil. Önce Google hesabınızı bağlayın.' });
+  const { google } = require('googleapis');
+  const oauth2Client = new google.auth.OAuth2(process.env.GOOGLE_CLIENT_ID, process.env.GOOGLE_CLIENT_SECRET);
+  oauth2Client.setCredentials({ access_token: accessToken });
+  const sheets = google.sheets({ version: 'v4', auth: oauth2Client });
+  const data = [headers, ...rows].map(r => (r || []).map(c => c ?? ''));
+  try {
+    await sheets.spreadsheets.values.clear({ spreadsheetId, range: 'Sheet1' });
+    await sheets.spreadsheets.values.update({ spreadsheetId, range: 'Sheet1!A1', valueInputOption: 'USER_ENTERED', requestBody: { values: data } });
+    res.json({ success: true, message: `✅ ${rows.length} satır Google Sheets'e yazıldı` });
+  } catch (err) {
+    const code = err.code || err.status;
+    if (code === 401) return res.status(401).json({ error: 'Google token süresi doldu. Lütfen yeniden bağlanın.' });
+    if (code === 403) return res.status(403).json({ error: "Spreadsheet'e yazma erişiminiz yok." });
+    if (code === 404) return res.status(404).json({ error: 'Spreadsheet bulunamadı.' });
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.post('/gmail/push', async (req, res) => {
+  const { headers, rows, to } = req.body;
+  if (!to) return res.status(400).json({ error: 'Alıcı e-posta adresi gerekli' });
+  const accessToken = await tokenManager.getValidAccessToken(req.user.id, 'gmail').catch(() => null);
+  if (!accessToken) return res.status(401).json({ error: 'Gmail bağlı değil. Önce Gmail hesabınızı bağlayın.' });
+  const { google } = require('googleapis');
+  const oauth2Client = new google.auth.OAuth2(process.env.GOOGLE_CLIENT_ID, process.env.GOOGLE_CLIENT_SECRET);
+  oauth2Client.setCredentials({ access_token: accessToken });
+  const gmail = google.gmail({ version: 'v1', auth: oauth2Client });
+  const htmlTable = rowsToHtmlTable(headers, rows);
+  const subject = `Mocksheets Verisi — ${new Date().toLocaleDateString('tr-TR')}`;
+  const boundary = 'mocksheets_' + Date.now();
+  const rawBody = [
+    `To: ${to}`, `Subject: ${subject}`, 'MIME-Version: 1.0',
+    `Content-Type: multipart/alternative; boundary="${boundary}"`, '',
+    `--${boundary}`, 'Content-Type: text/plain; charset=UTF-8', '',
+    `${(rows || []).length} satır, ${(headers || []).length} sütun — Mocksheets`, '',
+    `--${boundary}`, 'Content-Type: text/html; charset=UTF-8', '',
+    `<p>${(rows || []).length} satır, ${(headers || []).length} sütun</p>${htmlTable}`, '',
+    `--${boundary}--`
+  ].join('\r\n');
+  try {
+    const raw = Buffer.from(rawBody).toString('base64url');
+    await gmail.users.messages.send({ userId: 'me', requestBody: { raw } });
+    res.json({ success: true, message: `✅ ${(rows || []).length} satır ${to} adresine gönderildi` });
+  } catch (err) {
+    const code = err.code || err.status;
+    if (code === 401) return res.status(401).json({ error: 'Gmail token süresi doldu. Lütfen yeniden bağlanın.' });
+    res.status(500).json({ error: 'Gmail gönderim hatası: ' + err.message });
+  }
+});
+
+router.post('/airtable/push', async (req, res) => {
+  const { headers, rows, baseId, tableName } = req.body;
+  if (!baseId) return res.status(400).json({ error: 'Base ID gerekli' });
+  if (!headers?.length || !rows?.length) return res.status(400).json({ error: 'Veri yok' });
+  const tokenData = await tokenManager.getToken(req.user.id, 'airtable').catch(() => null);
+  if (!tokenData?.accessToken) return res.status(401).json({ error: 'Airtable bağlı değil. Önce API token kaydedin.' });
+  const token = tokenData.accessToken;
+  const tbl = encodeURIComponent((tableName || 'Table 1').trim());
+  const url = `https://api.airtable.com/v0/${baseId.trim()}/${tbl}`;
+  const toExport = rows.slice(0, 300);
+  let count = 0; const errors = [];
+  for (const row of toExport) {
+    try {
+      const fields = {};
+      headers.forEach((h, i) => { if (h?.trim()) fields[h.trim()] = String(row?.[i] ?? ''); });
+      const r = await fetchWithRetry(url, { method: 'POST', headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' }, body: JSON.stringify({ fields }) });
+      if (r.ok) count++; else { const e = await r.json().catch(() => ({})); errors.push(e.error?.message || 'Satır hatası'); }
+      await new Promise(resolve => setTimeout(resolve, 200));
+    } catch (e) { errors.push(e.message); }
+  }
+  res.json({ success: count > 0, count, total: toExport.length, message: count > 0 ? `✅ ${count} kayıt Airtable'a aktarıldı` : '❌ Aktarım başarısız', errors: errors.slice(0, 5) });
+});
+
+router.post('/trello/push', async (req, res) => {
+  const { headers, rows, apiKey, boardId } = req.body;
+  if (!apiKey || !boardId) return res.status(400).json({ error: 'API Key ve Board ID gerekli' });
+  if (!rows?.length) return res.status(400).json({ error: 'Veri yok' });
+  const tokenData = await tokenManager.getToken(req.user.id, 'trello').catch(() => null);
+  if (!tokenData?.accessToken) return res.status(401).json({ error: 'Trello bağlı değil. Önce Trello token kaydedin.' });
+  const token = tokenData.accessToken;
+  try {
+    const listsRes = await fetch(`https://api.trello.com/1/boards/${boardId.trim()}/lists?key=${apiKey}&token=${token}`);
+    if (!listsRes.ok) return res.status(400).json({ error: 'Listeler alınamadı. Board ID veya API Key hatalı olabilir.' });
+    const lists = await listsRes.json();
+    const targetList = lists[0];
+    if (!targetList) return res.status(400).json({ error: 'Board\'da liste bulunamadı' });
+    const toExport = rows.slice(0, 100);
+    let count = 0; const errors = [];
+    for (const row of toExport) {
+      try {
+        const cardName = String(row?.[0] ?? '').trim() || 'Kart';
+        const desc = headers && headers.length > 1 ? headers.slice(1).map((h, i) => `${h}: ${row?.[i + 1] ?? ''}`).join('\n') : '';
+        const r = await fetchWithRetry(`https://api.trello.com/1/cards?key=${apiKey}&token=${token}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: cardName, desc, idList: targetList.id }) });
+        if (r.ok) count++; else { const e = await r.json().catch(() => ({})); errors.push(e.message || 'Kart hatası'); }
+        await new Promise(resolve => setTimeout(resolve, 150));
+      } catch (e) { errors.push(e.message); }
+    }
+    res.json({ success: count > 0, count, total: toExport.length, message: count > 0 ? `✅ ${count} kart Trello'ya oluşturuldu` : '❌ Aktarım başarısız', errors: errors.slice(0, 5) });
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
 // ── Integration Status (tüm providerlar) ─────────────────────────────────────
 router.get('/status', async (req, res) => {
   try {

@@ -95,9 +95,72 @@
             JSON olarak indir
           </div>
           <div style="height:1px;background:var(--line);margin:4px 8px;"></div>
-          <div class="dd-item" id="dd-integrations">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.59 13.51 6.83 3.98"/><path d="m15.41 6.51-6.82 3.98"/></svg>
-            Otomasyonlar →
+          <div class="dd-section-label">Paylaş</div>
+
+          <div class="dd-int-row">
+            <span class="dd-int-dot" id="dd-dot-google-sheets"></span>
+            <span class="dd-int-name">Google Sheets</span>
+            <button class="dd-int-btn" id="dd-btn-google-sheets" data-provider="google-sheets">Bağla</button>
+          </div>
+          <div class="dd-int-subform" id="dd-sub-google-sheets">
+            <input type="url" id="dd-sheets-url" placeholder="Spreadsheet URL (docs.google.com/...)">
+            <button class="dd-int-send" data-provider="google-sheets">Gönder</button>
+          </div>
+
+          <div class="dd-int-row">
+            <span class="dd-int-dot" id="dd-dot-google-drive"></span>
+            <span class="dd-int-name">Google Drive</span>
+            <button class="dd-int-btn" id="dd-btn-google-drive" data-provider="google-drive">Bağla</button>
+          </div>
+
+          <div class="dd-int-row">
+            <span class="dd-int-dot" id="dd-dot-gmail"></span>
+            <span class="dd-int-name">Gmail</span>
+            <button class="dd-int-btn" id="dd-btn-gmail" data-provider="gmail">Bağla</button>
+          </div>
+          <div class="dd-int-subform" id="dd-sub-gmail">
+            <input type="email" id="dd-gmail-to" placeholder="Alıcı e-posta adresi">
+            <button class="dd-int-send" data-provider="gmail">Gönder</button>
+          </div>
+
+          <div class="dd-int-row">
+            <span class="dd-int-dot" id="dd-dot-slack"></span>
+            <span class="dd-int-name">Slack</span>
+            <button class="dd-int-btn" id="dd-btn-slack" data-provider="slack">Bağla</button>
+          </div>
+
+          <div class="dd-int-row">
+            <span class="dd-int-dot" id="dd-dot-teams"></span>
+            <span class="dd-int-name">Teams</span>
+            <button class="dd-int-btn" id="dd-btn-teams" data-provider="teams">Bağla</button>
+          </div>
+
+          <div class="dd-int-row">
+            <span class="dd-int-dot" id="dd-dot-make"></span>
+            <span class="dd-int-name">Make.com</span>
+            <button class="dd-int-btn" id="dd-btn-make" data-provider="make">Bağla</button>
+          </div>
+
+          <div class="dd-int-row">
+            <span class="dd-int-dot" id="dd-dot-airtable"></span>
+            <span class="dd-int-name">Airtable</span>
+            <button class="dd-int-btn" id="dd-btn-airtable" data-provider="airtable">Bağla</button>
+          </div>
+          <div class="dd-int-subform" id="dd-sub-airtable">
+            <input type="text" id="dd-airtable-base" placeholder="Base ID (appXXX...)">
+            <input type="text" id="dd-airtable-table" placeholder="Tablo adı (ör: Table 1)">
+            <button class="dd-int-send" data-provider="airtable">Gönder</button>
+          </div>
+
+          <div class="dd-int-row">
+            <span class="dd-int-dot" id="dd-dot-trello"></span>
+            <span class="dd-int-name">Trello</span>
+            <button class="dd-int-btn" id="dd-btn-trello" data-provider="trello">Bağla</button>
+          </div>
+          <div class="dd-int-subform" id="dd-sub-trello">
+            <input type="text" id="dd-trello-key" placeholder="API Key">
+            <input type="text" id="dd-trello-board" placeholder="Board ID">
+            <button class="dd-int-send" data-provider="trello">Gönder</button>
           </div>
         </div>
       </span>
@@ -131,11 +194,13 @@
       Yıldızlı
       <span class="count">3</span>
     </div>
-    <div class="nav-item">
+    <div class="nav-item" id="nav-templates" onclick="toggleTemplatesPanel()">
       <svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="14" rx="2"/><path d="M3 10h18"/><path d="M8 2v4"/><path d="M16 2v4"/></svg>
       Şablonlar
-      <span class="count">42</span>
+      <span class="count" id="templates-count">10</span>
+      <svg class="tpl-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
     </div>
+    <div id="templates-panel" class="templates-panel"></div>
     <div class="nav-item" id="nav-integrations" data-href="automations.html">
       <svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
       Otomasyonlar
@@ -573,9 +638,21 @@
 
 /* ── Download dropdown ── */
 .dl-wrap { position:relative; display:inline-flex; }
-#download-dropdown { position:absolute; top:calc(100% + 6px); right:0; background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow-pop); min-width:210px; z-index:5000; padding:4px; display:none; }
+#download-dropdown { position:absolute; top:calc(100% + 6px); right:0; background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow-pop); min-width:260px; z-index:5000; padding:4px; display:none; }
 .dd-item { padding:8px 12px; border-radius:var(--radius-sm); cursor:pointer; font-size:12.5px; display:flex; align-items:center; gap:9px; color:var(--ink-2); }
 .dd-item:hover { background:var(--surface-3); }
+.dd-section-label { font-size:10.5px; font-weight:600; color:var(--ink-3); text-transform:uppercase; letter-spacing:.05em; padding:4px 12px 2px; }
+.dd-int-row { padding:5px 12px; display:flex; align-items:center; gap:8px; border-radius:var(--radius-sm); }
+.dd-int-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; background:var(--ink-4); }
+.dd-int-dot.connected { background:#22c55e; }
+.dd-int-name { flex:1; font-size:12.5px; color:var(--ink-2); }
+.dd-int-btn { font-size:11px; padding:2px 9px; border-radius:var(--radius-sm); cursor:pointer; border:1px solid var(--line); background:var(--surface-3); color:var(--ink-2); white-space:nowrap; }
+.dd-int-btn:hover { background:var(--surface-4); }
+.dd-int-btn.primary { background:var(--accent); color:#fff; border-color:var(--accent); }
+.dd-int-btn:disabled { opacity:.5; cursor:default; }
+.dd-int-subform { padding:3px 12px 5px 27px; display:none; }
+.dd-int-subform input { width:100%; box-sizing:border-box; font-size:12px; padding:4px 7px; border:1px solid var(--line); border-radius:var(--radius-sm); background:var(--surface-3); color:var(--ink-1); margin-bottom:4px; outline:none; }
+.dd-int-subform .dd-int-send { font-size:11.5px; padding:3px 12px; border-radius:var(--radius-sm); background:var(--accent); color:#fff; border:none; cursor:pointer; }
 
 /* ── cmd bar pointer ── */
 .cmd { cursor:pointer; user-select:none; }
@@ -725,8 +802,21 @@
 }
 .auto-bar-empty a { color: var(--brand); text-decoration: none; font-weight: 500; }
 .auto-bar-empty a:hover { text-decoration: underline; }
+
+/* ── Templates accordion ── */
+.tpl-chevron { flex-shrink:0; transition:transform .2s; opacity:.5; margin-left:auto; }
+#nav-templates.open .tpl-chevron { transform:rotate(180deg); }
+.templates-panel { max-height:0; overflow:hidden; transition:max-height 0.28s ease; }
+.templates-panel.open { max-height:440px; overflow-y:auto; }
+.template-category { padding:7px 12px 3px; font-size:10.5px; font-weight:600; color:var(--ink-3); text-transform:uppercase; letter-spacing:.05em; display:flex; align-items:center; gap:5px; }
+.template-item { display:flex; align-items:flex-start; gap:8px; padding:6px 12px 6px 16px; cursor:pointer; border-radius:var(--radius-sm); transition:background .12s; margin:0 4px; }
+.template-item:hover { background:var(--surface-3); }
+.template-item-icon { font-size:14px; flex-shrink:0; margin-top:1px; }
+.template-item-name { font-size:12.5px; color:var(--ink-2); line-height:1.3; }
+.template-item-desc { font-size:10.5px; color:var(--ink-4); display:block; margin-top:1px; }
 </style>
 
+<script src="js/templates.js"></script>
 <script>
 (function () {
   'use strict';
@@ -1682,7 +1772,9 @@
   if (dlSplit) dlSplit.addEventListener('click', function (e) {
     e.stopPropagation();
     if (!dlDropdown) return;
-    dlDropdown.style.display = dlDropdown.style.display === 'block' ? 'none' : 'block';
+    var opening = dlDropdown.style.display !== 'block';
+    dlDropdown.style.display = opening ? 'block' : 'none';
+    if (opening) loadDdIntStatuses();
   });
   if (dlDropdown) dlDropdown.addEventListener('click', function (e) { e.stopPropagation(); });
 
@@ -1699,9 +1791,100 @@
     XLSX.writeFile(wb, 'mocksheets.xlsx');
   });
 
-  // ── Q: Integrations ───────────────────────────────────────────────────────
-  var ddInt = document.getElementById('dd-integrations');
-  if (ddInt) ddInt.addEventListener('click', function () { closeDownload(); if (typeof openIntegrationsModal === 'function') openIntegrationsModal(); });
+  // ── Q: Inline integration share panel ─────────────────────────────────────
+  var _ddIntStatuses = {};
+
+  function loadDdIntStatuses() {
+    var token = getToken ? getToken() : null;
+    if (!token) return;
+    fetch(apiBase + '/api/integrations/status', { headers: authHeaders() })
+      .then(function(r) { return r.json(); })
+      .then(function(data) { _ddIntStatuses = data; updateDdIntDots(); })
+      .catch(function() {});
+  }
+
+  function updateDdIntDots() {
+    ['google-sheets','google-drive','gmail','slack','teams','make','airtable','trello'].forEach(function(p) {
+      var dot = document.getElementById('dd-dot-' + p);
+      var btn = document.getElementById('dd-btn-' + p);
+      if (!dot || !btn) return;
+      var active = _ddIntStatuses[p] && _ddIntStatuses[p].status === 'active';
+      dot.className = 'dd-int-dot' + (active ? ' connected' : '');
+      btn.textContent = active ? 'Gönder' : 'Bağla';
+      btn.className = 'dd-int-btn' + (active ? ' primary' : '');
+      btn.disabled = false;
+    });
+  }
+
+  document.querySelectorAll('.dd-int-btn').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      var provider = this.dataset.provider;
+      var active = _ddIntStatuses[provider] && _ddIntStatuses[provider].status === 'active';
+      if (!active) { closeDownload(); if (typeof openIntegrationsModal === 'function') openIntegrationsModal(); return; }
+      var subformProviders = ['gmail', 'google-sheets', 'airtable', 'trello'];
+      if (subformProviders.indexOf(provider) !== -1) {
+        var sub = document.getElementById('dd-sub-' + provider);
+        if (sub) sub.style.display = sub.style.display === 'block' ? 'none' : 'block';
+        return;
+      }
+      pushToIntegration(provider, {});
+    });
+  });
+
+  document.querySelectorAll('.dd-int-send').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      var provider = this.dataset.provider;
+      var extra = {};
+      if (provider === 'gmail') {
+        var toVal = document.getElementById('dd-gmail-to').value.trim();
+        if (!toVal) { showToast('⚠️ Alıcı e-posta adresi girin'); return; }
+        extra.to = toVal;
+      }
+      if (provider === 'google-sheets') {
+        var urlVal = document.getElementById('dd-sheets-url').value.trim();
+        if (!urlVal) { showToast('⚠️ Spreadsheet URL girin'); return; }
+        extra.spreadsheetUrl = urlVal;
+      }
+      if (provider === 'airtable') {
+        var baseVal = document.getElementById('dd-airtable-base').value.trim();
+        if (!baseVal) { showToast('⚠️ Base ID girin'); return; }
+        extra.baseId = baseVal;
+        extra.tableName = document.getElementById('dd-airtable-table').value.trim() || 'Table 1';
+      }
+      if (provider === 'trello') {
+        var keyVal = document.getElementById('dd-trello-key').value.trim();
+        var boardVal = document.getElementById('dd-trello-board').value.trim();
+        if (!keyVal || !boardVal) { showToast('⚠️ API Key ve Board ID girin'); return; }
+        extra.apiKey = keyVal;
+        extra.boardId = boardVal;
+      }
+      pushToIntegration(provider, extra);
+    });
+  });
+
+  function pushToIntegration(provider, extra) {
+    var rows = gridToRows();
+    if (!rows.length) { showToast('⚠️ Tabloda veri yok'); return; }
+    var headers = rows[0];
+    var dataRows = rows.slice(1);
+    var body = Object.assign({ headers: headers, rows: dataRows }, extra);
+    var btn = document.getElementById('dd-btn-' + provider);
+    if (btn) { btn.disabled = true; btn.textContent = '...'; }
+    fetch(apiBase + '/api/integrations/' + provider + '/push', {
+      method: 'POST',
+      headers: Object.assign({ 'Content-Type': 'application/json' }, authHeaders()),
+      body: JSON.stringify(body)
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      closeDownload();
+      showToast(d.message || (d.success ? '✅ Gönderildi' : '❌ ' + (d.error || 'Hata')));
+    })
+    .catch(function() { closeDownload(); showToast('❌ Bağlantı hatası'); })
+    .finally(function() { if (btn) { btn.disabled = false; updateDdIntDots(); } });
+  }
 
   // ── PDF Ekle ──────────────────────────────────────────────────────────────
   var pdfAddBtn = document.getElementById('pdf-add-btn');
@@ -2073,6 +2256,70 @@
       }
     });
   });
+
+  // ── Templates Panel ─────────────────────────────────────────────────────
+  window.toggleTemplatesPanel = function(forceClose) {
+    var panel = document.getElementById('templates-panel');
+    var navItem = document.getElementById('nav-templates');
+    if (!panel || !navItem) return;
+    var isOpen = panel.classList.contains('open');
+    if (forceClose || isOpen) {
+      panel.classList.remove('open');
+      navItem.classList.remove('open');
+      return;
+    }
+    if (!panel.dataset.rendered) {
+      window.renderTemplatesPanel();
+      panel.dataset.rendered = 'true';
+    }
+    panel.classList.add('open');
+    navItem.classList.add('open');
+  };
+
+  window.renderTemplatesPanel = function() {
+    var panel = document.getElementById('templates-panel');
+    if (!panel || typeof SHEET_TEMPLATES === 'undefined') return;
+    panel.innerHTML = SHEET_TEMPLATES.map(function(cat) {
+      return '<div class="template-category"><span>' + cat.icon + '</span>' + escapeHtml(cat.category) + '</div>'
+        + cat.templates.map(function(t) {
+          return '<div class="template-item" onclick="openTemplate(\'' + t.id + '\')">'
+            + '<span class="template-item-icon">' + t.icon + '</span>'
+            + '<div><div class="template-item-name">' + escapeHtml(t.name) + '</div>'
+            + '<span class="template-item-desc">' + escapeHtml(t.description) + '</span></div>'
+            + '</div>';
+        }).join('');
+    }).join('');
+  };
+
+  window.openTemplate = function(templateId) {
+    var template = null;
+    for (var i = 0; i < SHEET_TEMPLATES.length; i++) {
+      for (var j = 0; j < SHEET_TEMPLATES[i].templates.length; j++) {
+        if (SHEET_TEMPLATES[i].templates[j].id === templateId) { template = SHEET_TEMPLATES[i].templates[j]; break; }
+      }
+      if (template) break;
+    }
+    if (!template) return;
+    var newData = emptyGridData();
+    template.columns.forEach(function(col, c) { if (c < GRID_COLS) newData[0][c].v = col; });
+    template.rows.forEach(function(dataRow, i) {
+      var r = i + 1;
+      if (r < GRID_ROWS) dataRow.forEach(function(val, c) { if (c < GRID_COLS) newData[r][c].v = val; });
+    });
+    sheetsData[activeSheetIdx].data = JSON.parse(JSON.stringify(gridData));
+    sheetsData.push({ name: template.name, color: 'var(--accent)', data: newData });
+    activeSheetIdx = sheetsData.length - 1;
+    gridData = newData;
+    renderGrid();
+    renderSheetTabs();
+    window.toggleTemplatesPanel(true);
+    showToast('"' + template.name + '" y\u00fcklendi');
+  };
+
+  if (typeof SHEET_TEMPLATES !== 'undefined') {
+    var _tplBadge = document.getElementById('templates-count');
+    if (_tplBadge) _tplBadge.textContent = SHEET_TEMPLATES.reduce(function(s, c) { return s + c.templates.length; }, 0);
+  }
 
 })();
 </script>
