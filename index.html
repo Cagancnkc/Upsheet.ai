@@ -1046,7 +1046,7 @@
     <div class="hero-price-highlight">
       <span class="hero-price-big">$1<span class="hero-price-unit">/ay</span></span>
       <div class="hero-price-sub">
-        <span>İlk 3 ay boyunca</span>
+        <span>İlk 1 ay boyunca</span>
         <span class="hero-price-after">· Sonrasında normal fiyatlandırma</span>
       </div>
     </div>
@@ -1669,7 +1669,7 @@
         <div class="ms-row-idx">02</div>
         <div class="ms-row-meta">
           <div class="ms-row-name">Pro</div>
-          <div class="ms-row-tag">İlk 3 ay $1/ay · Kampanya bitmeden yakala.</div>
+          <div class="ms-row-tag">İlk 1 ay $1/ay · Kampanya bitmeden yakala.</div>
           <div class="pro-variant-toggle">
             <button class="variant-btn active" data-variant="normal" onclick="setProVariant('normal')">Normal</button>
             <button class="variant-btn" data-variant="max" onclick="setProVariant('max')">Max <span class="variant-diff">+$6</span></button>
@@ -1681,7 +1681,7 @@
         <div class="ms-row-price">
           <div class="ms-price-big" id="pro-price-big"><span class="ms-price-cur">$</span><span id="pro-price-amount">1</span></div>
           <div class="ms-price-sub">
-            <span class="ms-price-after" id="proAfter">İlk 3 ay · sonra $15/ay</span>
+            <span class="ms-price-after" id="proAfter">İlk 1 ay · sonra $15/ay</span>
             <span class="pricing-yearly-note hidden" id="pro-yearly-note">
               <strong id="pro-yearly-price">$144</strong>/yıl
               <span class="yearly-monthly-equiv" id="pro-yearly-equiv">(aylık $12'ye denk)</span><br>
@@ -1717,7 +1717,7 @@
         <div class="ms-row-price">
           <div class="ms-price-big"><span class="ms-price-cur">$</span><span id="team-price-amount">1</span></div>
           <div class="ms-price-sub">
-            <span class="ms-price-after" id="bizAfter">İlk 3 ay · sonra $59/ay</span>
+            <span class="ms-price-after" id="bizAfter">İlk 1 ay · sonra $59/ay</span>
             <span class="pricing-yearly-note hidden" id="team-yearly-note">
               <strong id="team-yearly-price">$566</strong>/yıl
               <span class="yearly-monthly-equiv" id="team-yearly-equiv">(aylık ~$47'ye denk)</span><br>
@@ -2175,7 +2175,7 @@ function renderProCard() {
     if (yearlyEquivEl) yearlyEquivEl.textContent = '(aylık $' + Math.round(v.yearly / 12) + '\'ye denk)';
   } else {
     if (amountEl) amountEl.textContent = 1;
-    if (afterEl) { afterEl.classList.remove('hidden'); afterEl.textContent = 'İlk 3 ay · sonra $' + v.monthly + '/ay'; }
+    if (afterEl) { afterEl.classList.remove('hidden'); afterEl.textContent = 'İlk 1 ay · sonra $' + v.monthly + '/ay'; }
     if (yearlyNoteEl) yearlyNoteEl.classList.add('hidden');
   }
 
@@ -2199,7 +2199,7 @@ function renderTeamCard() {
     if (yearlyEquivEl) yearlyEquivEl.textContent = '(aylık ~$' + Math.round(_TEAM.yearly / 12) + '\'ye denk)';
   } else {
     if (amountEl) amountEl.textContent = 1;
-    if (afterEl) { afterEl.classList.remove('hidden'); afterEl.textContent = 'İlk 3 ay · sonra $' + _TEAM.monthly + '/ay'; }
+    if (afterEl) { afterEl.classList.remove('hidden'); afterEl.textContent = 'İlk 1 ay · sonra $' + _TEAM.monthly + '/ay'; }
     if (yearlyNoteEl) yearlyNoteEl.classList.add('hidden');
   }
 }

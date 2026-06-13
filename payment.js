@@ -27,12 +27,12 @@ async function loadStripeLinks() {
 const PLAN_INFO = {
   pro: {
     weekly:  { price: '$7.25', period: 'haftalık', name: 'Pro Haftalık' },
-    monthly: { price: '$1',    period: 'aylık',    name: 'Pro Aylık (İlk 3 ay)' },
+    monthly: { price: '$1',    period: 'aylık',    name: 'Pro Aylık (İlk 1 ay)' },
     yearly:  { price: '$278',  period: 'yıllık',   name: 'Pro Yıllık' }
   },
   business: {
     weekly:  { price: '$12.25', period: 'haftalık', name: 'İş Haftalık' },
-    monthly: { price: '$1',     period: 'aylık',    name: 'İş Aylık (İlk 3 ay)' },
+    monthly: { price: '$1',     period: 'aylık',    name: 'İş Aylık (İlk 1 ay)' },
     yearly:  { price: '$470',   period: 'yıllık',   name: 'İş Yıllık' }
   }
 };

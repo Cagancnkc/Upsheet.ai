@@ -95,7 +95,7 @@ class PopupSystem {
         <button class="ms-close-btn" id="ms-exit-close" aria-label="Popup kapat">×</button>
         <div class="ms-exit-badge">⚡ Kampanya bitmeden</div>
         <h2 class="ms-exit-title" id="ms-exit-title">${copy.headline}</h2>
-        <p class="ms-exit-sub" id="ms-exit-desc">İlk 3 ay $1/ay ile başla.<br>Formülsüz. Anında. Türkçe.</p>
+        <p class="ms-exit-sub" id="ms-exit-desc">İlk 1 ay $1/ay ile başla.<br>Formülsüz. Anında. Türkçe.</p>
         <div class="ms-exit-features">
           <span class="ms-exit-feat">⏱ 2.2s yanıt</span>
           <span class="ms-exit-feat">🔒 KVKK uyumlu</span>
@@ -213,7 +213,7 @@ class PopupSystem {
         <button class="ms-snackbar-close" id="ms-snackbar-close" aria-label="Kapat">×</button>
       </div>
       <div class="ms-snackbar-body">
-        <span class="ms-snackbar-price">$1/ay — İlk 3 ay</span>
+        <span class="ms-snackbar-price">$1/ay — İlk 1 ay</span>
         <a href="${this.authUrl}" class="ms-snackbar-link">Hemen başla →</a>
       </div>
       <div class="ms-snackbar-progress" id="ms-snackbar-progress"></div>`;
@@ -286,7 +286,7 @@ class PopupSystem {
     el.className = 'ms-campaign-strip';
     el.setAttribute('role', 'banner');
     el.innerHTML = `
-      <span class="ms-strip-text">⚡ MAYIS kampanyası: İlk 3 ay <strong>$1/ay</strong></span>
+      <span class="ms-strip-text">⚡ MAYIS kampanyası: İlk 1 ay <strong>$1/ay</strong></span>
       <a href="${this.authUrl}" class="ms-strip-btn">Pro'ya Geç →</a>
       <button class="ms-strip-close" id="ms-strip-close" aria-label="Duyuruyu kapat">×</button>`;
     document.body.insertBefore(el, document.body.firstChild);
