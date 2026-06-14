@@ -266,7 +266,7 @@
     get_quote: 'Teklif Al',
     free: 'Ücretsiz',
     starter: 'Başlangıç',
-    pro: 'Profesyonel',
+    pro: 'Pro',
     business: 'Kurumsal',
   }
 };
