@@ -256,6 +256,7 @@
         <span class="price">$1/ay →</span>
       </div>
       <button class="manage-sub-btn" onclick="openSubscriptionModal()">Aboneliğimi Yönet</button>
+      <button class="manage-sub-btn" id="team-manage-btn" onclick="openTeamModal()" style="display:none;margin-top:6px;">Takımımı Yönet 👥</button>
     </div>
   </aside>
 
@@ -2858,6 +2859,19 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 <!-- ══════════════════════════════════════════════
+     TAKIM YÖNETİM MODAL
+     ══════════════════════════════════════════════ -->
+<div id="team-modal" class="ms-overlay" style="display:none;" onclick="if(event.target===this)closeTeamModal()">
+  <div class="ms-modal" style="width:560px;max-width:94vw;max-height:85vh;overflow-y:auto;padding:28px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+      <h3 style="font-size:17px;font-weight:700;margin:0">Takımımı Yönet</h3>
+      <button onclick="closeTeamModal()" style="background:none;border:none;font-size:20px;cursor:pointer;color:#94a3b8;line-height:1;">×</button>
+    </div>
+    <div id="team-modal-body">Yükleniyor...</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
      ABONELİĞİMİ YÖNET MODAL
      ══════════════════════════════════════════════ -->
 <div id="subscription-modal" class="ms-overlay" style="display:none;" onclick="if(event.target===this)closeSubscriptionModal()">
@@ -3104,6 +3118,124 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       })
       .catch(function() { showToast('Bağlantı hatası', 'err'); });
+  };
+
+  // ── Takım Modalı ─────────────────────────────────────────────────────────────
+  window.openTeamModal = function() {
+    document.getElementById('team-modal').style.display = 'flex';
+    loadTeamModal();
+  };
+  window.closeTeamModal = function() {
+    document.getElementById('team-modal').style.display = 'none';
+  };
+
+  async function loadTeamModal() {
+    var body = document.getElementById('team-modal-body');
+    body.innerHTML = '<div style="text-align:center;padding:32px;color:#6B7280;">Yükleniyor...</div>';
+    var t = getAuthToken();
+    if (!t) return;
+    try {
+      var res = await fetch('/api/team/members', { headers: { 'Authorization': 'Bearer ' + t } });
+      var data = await res.json();
+      if (!res.ok) { body.innerHTML = '<p style="color:#dc2626;padding:20px;">' + (data.error || 'Hata oluştu') + '</p>'; return; }
+      renderTeamModal(data);
+    } catch (e) {
+      body.innerHTML = '<p style="color:#dc2626;padding:20px;">Bağlantı hatası. Lütfen tekrar deneyin.</p>';
+    }
+  }
+
+  function renderTeamModal(data) {
+    var team = data.team;
+    var members = data.members || [];
+    var invitations = data.invitations || [];
+    var usedSeats = data.usedSeats || 0;
+    var isOwner = data.myRole === 'owner';
+
+    var html = '<div style="margin-bottom:20px;">';
+    html += '<div style="font-size:13px;color:#6B7280;margin-bottom:4px;">Takım Adı</div>';
+    html += '<div style="font-size:16px;font-weight:700;color:#111827;">' + esc(team.name) + '</div>';
+    html += '</div>';
+    html += '<div style="background:#f0fdf4;border-radius:12px;padding:14px 16px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;">';
+    html += '<span style="font-size:14px;color:#166534;font-weight:600;">Koltuk Kullanımı</span>';
+    html += '<span style="font-size:18px;font-weight:800;color:#166534;">' + usedSeats + ' / ' + team.max_seats + '</span>';
+    html += '</div>';
+
+    html += '<div style="font-size:13px;font-weight:600;color:#374151;margin-bottom:10px;">Üyeler</div>';
+    members.forEach(function(m) {
+      html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border:1px solid #e5e7eb;border-radius:10px;margin-bottom:8px;">';
+      html += '<div><div style="font-size:14px;font-weight:600;">' + esc(m.name || m.email) + '</div>';
+      html += '<div style="font-size:12px;color:#6B7280;">' + esc(m.email) + ' · ' + (m.role === 'owner' ? '👑 Sahip' : '👤 Üye') + '</div></div>';
+      if (isOwner && m.role !== 'owner') {
+        html += '<button onclick="removeTeamMember(\'' + m.id + '\')" style="background:#fef2f2;color:#dc2626;border:none;padding:6px 12px;border-radius:8px;font-size:12px;cursor:pointer;font-weight:600;">Çıkar</button>';
+      }
+      html += '</div>';
+    });
+
+    if (invitations.length > 0) {
+      html += '<div style="font-size:13px;font-weight:600;color:#374151;margin:16px 0 10px;">Bekleyen Davetler</div>';
+      invitations.forEach(function(inv) {
+        html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border:1px solid #fef3c7;background:#fffbeb;border-radius:10px;margin-bottom:8px;">';
+        html += '<div style="font-size:14px;color:#92400e;">' + esc(inv.email) + ' <span style="font-size:11px;">⏳ Bekliyor</span></div>';
+        if (isOwner) {
+          html += '<button onclick="cancelTeamInvite(\'' + inv.id + '\')" style="background:white;color:#6B7280;border:1px solid #e5e7eb;padding:6px 12px;border-radius:8px;font-size:12px;cursor:pointer;">İptal</button>';
+        }
+        html += '</div>';
+      });
+    }
+
+    if (isOwner && usedSeats < team.max_seats) {
+      html += '<div style="margin-top:20px;padding-top:20px;border-top:1px solid #e5e7eb;">';
+      html += '<div style="font-size:13px;font-weight:600;color:#374151;margin-bottom:10px;">Davet Gönder</div>';
+      html += '<div style="display:flex;gap:8px;">';
+      html += '<input id="team-invite-email" type="email" placeholder="ornek@sirket.com" style="flex:1;padding:10px 14px;border:1px solid #d1d5db;border-radius:10px;font-size:14px;outline:none;">';
+      html += '<button onclick="inviteTeamMember()" style="background:#166534;color:white;border:none;padding:10px 18px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap;">Davet Et</button>';
+      html += '</div>';
+      html += '<div id="team-invite-status" style="margin-top:8px;font-size:13px;min-height:20px;"></div>';
+      html += '</div>';
+    } else if (isOwner && usedSeats >= team.max_seats) {
+      html += '<div style="margin-top:20px;padding:12px 16px;background:#fef2f2;border-radius:10px;font-size:13px;color:#dc2626;text-align:center;">Tüm koltuklar dolu. Yeni üye eklemek için mevcut bir üyeyi çıkarın.</div>';
+    }
+
+    document.getElementById('team-modal-body').innerHTML = html;
+  }
+
+  function esc(str) {
+    return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  window.inviteTeamMember = async function() {
+    var email = (document.getElementById('team-invite-email') || {}).value || '';
+    var statusEl = document.getElementById('team-invite-status');
+    if (!email) { statusEl.style.color = '#dc2626'; statusEl.textContent = 'E-posta adresi girin.'; return; }
+    statusEl.style.color = '#6B7280'; statusEl.textContent = 'Gönderiliyor...';
+    var t = getAuthToken();
+    try {
+      var res = await fetch('/api/team/invite', { method: 'POST', headers: { 'Authorization': 'Bearer ' + t, 'Content-Type': 'application/json' }, body: JSON.stringify({ email: email }) });
+      var data = await res.json();
+      if (res.ok) { statusEl.style.color = '#166534'; statusEl.textContent = '✓ Davet gönderildi!'; loadTeamModal(); }
+      else { statusEl.style.color = '#dc2626'; statusEl.textContent = data.error || 'Hata oluştu.'; }
+    } catch (e) { statusEl.style.color = '#dc2626'; statusEl.textContent = 'Bağlantı hatası.'; }
+  };
+
+  window.removeTeamMember = async function(memberId) {
+    if (!confirm('Bu üyeyi takımdan çıkarmak istediğine emin misin?')) return;
+    var t = getAuthToken();
+    try {
+      var res = await fetch('/api/team/remove-member', { method: 'POST', headers: { 'Authorization': 'Bearer ' + t, 'Content-Type': 'application/json' }, body: JSON.stringify({ memberId: memberId }) });
+      var data = await res.json();
+      if (res.ok) { showToast('✓ Üye takımdan çıkarıldı', 'ok'); loadTeamModal(); }
+      else showToast(data.error || 'Hata', 'err');
+    } catch (e) { showToast('Bağlantı hatası', 'err'); }
+  };
+
+  window.cancelTeamInvite = async function(invitationId) {
+    var t = getAuthToken();
+    try {
+      var res = await fetch('/api/team/cancel-invite', { method: 'POST', headers: { 'Authorization': 'Bearer ' + t, 'Content-Type': 'application/json' }, body: JSON.stringify({ invitationId: invitationId }) });
+      var data = await res.json();
+      if (res.ok) { showToast('✓ Davet iptal edildi', 'ok'); loadTeamModal(); }
+      else showToast(data.error || 'Hata', 'err');
+    } catch (e) { showToast('Bağlantı hatası', 'err'); }
   };
 
   // ?subscription=success mesajını göster

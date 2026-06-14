@@ -4382,6 +4382,11 @@ function updateUsageUI() {
       usageText.textContent = 'Bu ay ' + used + ' / ' + monthLimit + ' AI komutu kullanıldı.';
     }
   }
+
+  const teamBtn = document.getElementById('team-manage-btn');
+  if (teamBtn) {
+    teamBtn.style.display = (userUsage.plan === 'business' && userUsage.team_id) ? 'block' : 'none';
+  }
 }
 
 function handleLockedFeature(feature) {

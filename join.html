@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Takım Davetiyesi — Mocksheets</title>
+  <meta name="theme-color" content="#166534">
+  <link rel="icon" type="image/png" href="/images/brand/logo-128x128.png">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 50%, #bbf7d0 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .card {
+      background: white;
+      border-radius: 20px;
+      padding: 48px 40px;
+      max-width: 440px;
+      width: 100%;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+      text-align: center;
+    }
+    .logo { font-size: 36px; margin-bottom: 8px; }
+    .brand { font-size: 20px; font-weight: 800; color: #166534; margin-bottom: 32px; }
+    .invite-icon { font-size: 56px; margin-bottom: 16px; }
+    h1 { font-size: 22px; font-weight: 700; color: #111827; margin-bottom: 8px; }
+    .subtitle { font-size: 15px; color: #6B7280; margin-bottom: 28px; line-height: 1.6; }
+    .team-name { font-weight: 700; color: #166534; }
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 14px 24px;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+    }
+    .btn-primary {
+      background: #166534;
+      color: white;
+    }
+    .btn-primary:hover:not(:disabled) { background: #14532d; transform: translateY(-1px); }
+    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+    .status {
+      margin-top: 20px;
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      display: none;
+    }
+    .status.error { background: #fef2f2; color: #dc2626; display: block; }
+    .status.success { background: #f0fdf4; color: #166534; display: block; }
+    .meta { margin-top: 24px; font-size: 12px; color: #9CA3AF; }
+    .loader { display: inline-block; width: 20px; height: 20px; border: 2px solid #ffffff40; border-top-color: white; border-radius: 50%; animation: spin 0.6s linear infinite; vertical-align: middle; margin-right: 6px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+<div class="card" id="main-card">
+  <div class="logo">📊</div>
+  <div class="brand">Mocksheets</div>
+  <div id="loading-state">
+    <p style="color:#6B7280;font-size:15px;">Davet bilgileri yükleniyor...</p>
+  </div>
+  <div id="invite-state" style="display:none;">
+    <div class="invite-icon">👥</div>
+    <h1>Takım Daveti</h1>
+    <p class="subtitle">
+      <strong id="inviter-name"></strong>, seni
+      <span class="team-name" id="team-name"></span>
+      takımına davet etti.
+    </p>
+    <button class="btn btn-primary" id="join-btn" onclick="acceptInvite()">Takıma Katıl</button>
+    <div class="status" id="status-msg"></div>
+    <p class="meta">Daveti kabul ederek Mocksheets kullanım koşullarını kabul etmiş olursun.</p>
+  </div>
+  <div id="error-state" style="display:none;">
+    <div style="font-size:48px;margin-bottom:16px;">❌</div>
+    <h1 id="error-title">Davet Geçersiz</h1>
+    <p class="subtitle" id="error-msg">Bu davet linki artık geçerli değil.</p>
+    <a href="/index.html" style="color:#166534;font-size:14px;text-decoration:none;font-weight:600;">← Ana sayfaya dön</a>
+  </div>
+</div>
+
+<script>
+(function() {
+  var API = '/api/team';
+  var token = null;
+  var inviteToken = new URLSearchParams(location.search).get('token');
+
+  function getAuthToken() {
+    try {
+      var keys = Object.keys(localStorage);
+      for (var i = 0; i < keys.length; i++) {
+        if (keys[i].indexOf('supabase') !== -1 || keys[i].indexOf('sb-') === 0) {
+          var raw = localStorage.getItem(keys[i]);
+          if (!raw) continue;
+          var parsed = JSON.parse(raw);
+          var t = (parsed && parsed.access_token) || (parsed && parsed.session && parsed.session.access_token);
+          if (t) return t;
+        }
+      }
+    } catch (e) {}
+    return null;
+  }
+
+  function showError(title, msg) {
+    document.getElementById('loading-state').style.display = 'none';
+    document.getElementById('invite-state').style.display = 'none';
+    var errState = document.getElementById('error-state');
+    errState.style.display = 'block';
+    document.getElementById('error-title').textContent = title;
+    document.getElementById('error-msg').textContent = msg;
+  }
+
+  function showStatus(msg, type) {
+    var el = document.getElementById('status-msg');
+    el.textContent = msg;
+    el.className = 'status ' + type;
+  }
+
+  if (!inviteToken) {
+    showError('Geçersiz Link', 'Davet linki hatalı. Lütfen e-postanızdaki bağlantıyı kontrol edin.');
+    return;
+  }
+
+  fetch(API + '/invite-info?token=' + encodeURIComponent(inviteToken))
+    .then(function(r) { return r.json().then(function(d) { return { ok: r.ok, data: d }; }); })
+    .then(function(result) {
+      if (!result.ok) {
+        showError('Davet Geçersiz', result.data.error || 'Bu davet artık geçerli değil.');
+        return;
+      }
+      document.getElementById('inviter-name').textContent = result.data.inviterName;
+      document.getElementById('team-name').textContent = result.data.teamName;
+      document.getElementById('loading-state').style.display = 'none';
+      document.getElementById('invite-state').style.display = 'block';
+
+      token = getAuthToken();
+      if (!token) {
+        window.location.href = '/auth.html?redirect=' + encodeURIComponent(location.href);
+      }
+    })
+    .catch(function() {
+      showError('Bağlantı Hatası', 'Sunucuya ulaşılamadı. Lütfen tekrar deneyin.');
+    });
+
+  window.acceptInvite = function() {
+    if (!token) {
+      window.location.href = '/auth.html?redirect=' + encodeURIComponent(location.href);
+      return;
+    }
+    var btn = document.getElementById('join-btn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="loader"></span>Katılıyor...';
+
+    fetch(API + '/accept-invite?token=' + encodeURIComponent(inviteToken), {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' }
+    })
+      .then(function(r) { return r.json().then(function(d) { return { ok: r.ok, data: d }; }); })
+      .then(function(result) {
+        if (result.ok) {
+          showStatus('✓ Takıma başarıyla katıldın! Yönlendiriliyorsun...', 'success');
+          setTimeout(function() { window.location.href = '/app.html'; }, 1500);
+        } else {
+          showStatus(result.data.error || 'Bir hata oluştu. Lütfen tekrar deneyin.', 'error');
+          btn.disabled = false;
+          btn.textContent = 'Takıma Katıl';
+        }
+      })
+      .catch(function() {
+        showStatus('Bağlantı hatası. Lütfen tekrar deneyin.', 'error');
+        btn.disabled = false;
+        btn.textContent = 'Takıma Katıl';
+      });
+  };
+})();
+</script>
+</body>
+</html>

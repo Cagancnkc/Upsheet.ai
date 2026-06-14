@@ -186,6 +186,25 @@ router.post('/webhook',
 
           console.log(`✅ Plan güncellendi: ${userId} → ${plan} (${period})`);
 
+          if (plan === 'business') {
+            const { data: existingUsage } = await sb.from('user_usage').select('team_id').eq('user_id', userId).single();
+            if (!existingUsage?.team_id) {
+              const { data: authUser } = await sb.auth.admin.getUserById(userId);
+              const teamName = (authUser?.user?.user_metadata?.first_name ||
+                authUser?.user?.email?.split('@')[0] || 'Takım') + ' Takımı';
+              const { data: team } = await sb.from('teams')
+                .insert({ name: teamName, owner_id: userId, max_seats: 5 })
+                .select().single();
+              if (team) {
+                await Promise.all([
+                  sb.from('team_members').insert({ team_id: team.id, user_id: userId, role: 'owner' }),
+                  sb.from('user_usage').update({ team_id: team.id, team_role: 'owner' }).eq('user_id', userId)
+                ]);
+                console.log(`👥 Takım oluşturuldu: ${userId} → ${team.id}`);
+              }
+            }
+          }
+
           if (session.customer_email && process.env.LOOPS_API_KEY) {
             fetch('https://app.loops.so/api/v1/contacts/update', {
               method: 'PUT',

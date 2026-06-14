@@ -371,6 +371,8 @@ app.use('/api/webhooks', authWebhooksRouter);
 app.use('/api/promos', promosRouter);
 const pdfRouter = require('./routes/pdf');
 app.use('/api/pdf', pdfRouter);
+const teamRouter = require('./routes/team');
+app.use('/api/team', teamRouter);
 
 app.post('/api/loops/contact', async (req, res) => {
   const { email, userGroup } = req.body;
