@@ -488,6 +488,52 @@ app.post('/api/chat', checkLimit, async (req, res) => {
   }
 });
 
+app.post('/api/improve-prompt', async (req, res) => {
+  try {
+    const auth = req.headers.authorization;
+    if (!auth || !auth.startsWith('Bearer '))
+      return res.status(401).json({ error: 'Unauthorized' });
+    const token = auth.split(' ')[1];
+    const sb = getSbForAuth();
+    const { data: { user }, error: authErr } = await sb.auth.getUser(token);
+    if (authErr || !user) return res.status(401).json({ error: 'Geçersiz oturum.' });
+
+    const { command, sheetHeaders } = req.body;
+    if (!command || !command.trim())
+      return res.status(400).json({ error: 'Komut boş olamaz' });
+
+    const headerStr = Array.isArray(sheetHeaders) && sheetHeaders.length
+      ? '\nSayfanın sütun başlıkları: ' + sheetHeaders.join(', ')
+      : '';
+
+    const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+    const msg = await anthropic.messages.create({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 300,
+      messages: [{
+        role: 'user',
+        content: `Sen bir Excel/spreadsheet AI asistanı için prompt iyileştiricisin.
+
+Kullanıcının verdiği komutu alıp, yapay zekanın daha iyi anlayacağı şekilde yeniden yaz:
+- Türkçe kal
+- Orijinal amacı koru
+- Belirsizlikleri gider, daha spesifik yap
+- Mümkünse sütun adlarını veya sayısal koşulları belirt
+- SADECE iyileştirilmiş komutu döndür, açıklama veya ek metin ekleme${headerStr}
+
+Komut: "${command.trim()}"`
+      }]
+    });
+
+    const improved = msg.content[0]?.text?.trim();
+    if (!improved) return res.status(500).json({ error: 'İyileştirilemedi' });
+    res.json({ improved });
+  } catch (err) {
+    console.error('/api/improve-prompt error:', err.message);
+    res.status(500).json({ error: 'Sunucu hatası' });
+  }
+});
+
 app.get('/api/usage', async (req, res) => {
   const token = req.headers.authorization?.replace('Bearer ', '');
   if (!token) return res.status(401).json({ error: 'Giriş gerekli' });
