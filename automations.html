@@ -1161,7 +1161,7 @@ function renderRules(filtered) {
     return;
   }
 
-  const ACTION_ICONS = { slack:'💬', teams:'🟣', gmail:'📧', webhook:'🔗', make:'⚙️', notion:'◻', airtable:'📊', update_cells:'✏️', notification:'🔔' };
+  const ACTION_ICONS = { slack:'💬', teams:'🟣', gmail:'📧', webhook:'🔗', make:'⚙️', notion:'<img src="https://cdn.simpleicons.org/notion/000000" alt="Notion" style="width:18px;height:18px;vertical-align:middle">', notion_page:'<img src="https://cdn.simpleicons.org/notion/000000" alt="Notion" style="width:18px;height:18px;vertical-align:middle">', airtable:'📊', update_cells:'✏️', notification:'🔔' };
   el.innerHTML = rules.map(r => {
     const tc = r.trigger_config || {};
     const actions = Array.isArray(r.action_config) ? r.action_config : [r.action_config].filter(Boolean);
