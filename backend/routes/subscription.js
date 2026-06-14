@@ -3,6 +3,7 @@ const express = require('express');
 const router = express.Router();
 const Stripe = require('stripe');
 const { createClient } = require('@supabase/supabase-js');
+const { sendEvent: loopsEvent } = require('../lib/loops');
 
 let _stripe = null;
 function getStripe() {
@@ -167,7 +168,7 @@ router.post('/cancel', async (req, res) => {
   const sb = getSb();
   const { data: usage } = await sb
     .from('user_usage')
-    .select('stripe_subscription_id')
+    .select('stripe_subscription_id, plan')
     .eq('user_id', user.id)
     .single();
 
@@ -180,6 +181,18 @@ router.post('/cancel', async (req, res) => {
       cancel_at_period_end: true,
     });
     const endDate = new Date(sub.current_period_end * 1000).toLocaleDateString('tr-TR');
+
+    // Loops: subscription_cancelled event
+    try {
+      const { data: { user: cUser } } = await sb.auth.admin.getUserById(user.id);
+      if (cUser?.email) {
+        const firstName = cUser.user_metadata?.full_name || cUser.email.split('@')[0];
+        loopsEvent(cUser.email, 'subscription_cancelled', {
+          firstName, previousPlan: usage?.plan || 'pro', endDate
+        });
+      }
+    } catch (e) { console.error('[loops] cancel event:', e.message); }
+
     return res.json({ success: true, endDate, message: `Aboneliğin ${endDate} tarihinde sona erecek.` });
   } catch (err) {
     console.error('[subscription/cancel] Error:', err.message);

@@ -6,6 +6,7 @@ const fetch   = require('node-fetch');
 const { processExcelCommand } = require('./rag/pipeline');
 const tokenManager = require('./services/tokenManager');
 const { createClient: _createSbClient } = require('@supabase/supabase-js');
+const { updateContact: loopsUpdate, sendEvent: loopsEvent } = require('./lib/loops');
 
 let _sbForAuth = null;
 function getSbForAuth() {
@@ -433,6 +434,36 @@ app.post('/api/chat', checkLimit, async (req, res) => {
 
     await incrementUsage(req.user.id);
 
+    // Loops email events — hata chat akışını durdurmasın
+    try {
+      const newCount = (req.usage.ai_commands_used_month || 0) + 1;
+      const userEmail = req.user.email;
+      const firstName = req.user.user_metadata?.full_name || userEmail.split('@')[0];
+
+      if (newCount <= 5 || newCount % 5 === 0) {
+        loopsUpdate(userEmail, {
+          commandCount: newCount,
+          subscriptionStatus: req.usage.subscription_status || 'inactive',
+          subscriptionTier: req.usage.plan || 'free',
+        });
+      }
+      if (newCount === 3) {
+        loopsEvent(userEmail, 'engaged_user', { firstName, commandCount: newCount });
+      }
+      const dailyLimit = req.plan.ai_commands_per_day;
+      if (req.usage.plan === 'free' && dailyLimit !== Infinity
+          && req.usage.ai_commands_used_today + 1 >= dailyLimit) {
+        loopsEvent(userEmail, 'limit_reached', { firstName, plan: 'free', limit: dailyLimit });
+      }
+      if (newCount === 100) {
+        const timeSaved = (100 * 0.85 * 5 / 60).toFixed(1);
+        loopsEvent(userEmail, 'milestone_100_commands',
+          { firstName, commandCount: 100, timeSaved: timeSaved + ' saat' });
+      }
+    } catch (e) {
+      console.error('[loops] chat events:', e.message);
+    }
+
     const plan = req.plan;
     const usage = req.usage;
     const monthLimit = plan.ai_commands_per_month;
@@ -588,6 +619,71 @@ app.listen(PORT, '0.0.0.0', () => {
     }, { timezone: 'Europe/Istanbul' });
     console.log('[email-job] Saatlik email job başlatıldı');
   } catch (e) { console.error('[email-job] Init error:', e.message); }
+
+  // Loops — günlük re-engagement kontrolleri (08:30 İstanbul)
+  try {
+    const cron2 = require('node-cron');
+    cron2.schedule('30 8 * * *', async () => {
+      const { sendEvent: lse } = require('./lib/loops');
+      const sb2 = _createSbClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
+      const now = new Date();
+
+      // Gün 1, 3, 10: kayıt olmuş ama hiç komut çalıştırmamış
+      for (const daysAgo of [1, 3, 10]) {
+        const t = new Date(now - daysAgo * 86400000);
+        const { data: rows } = await sb2.from('user_usage')
+          .select('user_id').eq('ai_commands_used_month', 0)
+          .gte('created_at', new Date(t - 12 * 3600000).toISOString())
+          .lte('created_at', new Date(t + 12 * 3600000).toISOString());
+        for (const row of rows || []) {
+          const { data: { user } } = await sb2.auth.admin.getUserById(row.user_id);
+          if (user?.email) {
+            const fn = user.user_metadata?.full_name || user.email.split('@')[0];
+            lse(user.email, `day${daysAgo}_no_command`, { firstName: fn }).catch(console.error);
+          }
+        }
+      }
+
+      // Abonelik bitimine 3 gün kalan aktif kullanıcılar
+      const in3 = new Date(now.getTime() + 3 * 86400000);
+      const { data: ending } = await sb2.from('user_usage')
+        .select('user_id, plan, plan_ends_at').neq('plan', 'free')
+        .not('plan_ends_at', 'is', null)
+        .gte('plan_ends_at', now.toISOString()).lte('plan_ends_at', in3.toISOString());
+      for (const row of ending || []) {
+        const { data: { user } } = await sb2.auth.admin.getUserById(row.user_id);
+        if (user?.email) {
+          const fn = user.user_metadata?.full_name || user.email.split('@')[0];
+          const endDate = new Date(row.plan_ends_at).toLocaleDateString('tr-TR');
+          lse(user.email, 'campaign_ending', { firstName: fn, plan: row.plan, endDate }).catch(console.error);
+        }
+      }
+      console.log('[loops-cron] günlük kontrol tamam');
+    }, { timezone: 'Europe/Istanbul' });
+
+    // Loops — haftalık özet (Pazartesi 09:00)
+    cron2.schedule('0 9 * * 1', async () => {
+      const { sendEvent: lse } = require('./lib/loops');
+      const sb3 = _createSbClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
+      const weekAgo = new Date(Date.now() - 7 * 86400000).toISOString();
+      const { data: rows } = await sb3.from('user_usage')
+        .select('user_id, ai_commands_used_month')
+        .gt('ai_commands_used_month', 0).gte('updated_at', weekAgo);
+      for (const row of rows || []) {
+        const { data: { user } } = await sb3.auth.admin.getUserById(row.user_id);
+        if (user?.email) {
+          const fn = user.user_metadata?.full_name || user.email.split('@')[0];
+          const timeSaved = (row.ai_commands_used_month * 0.85 * 5 / 60).toFixed(1);
+          lse(user.email, 'weekly_summary',
+            { firstName: fn, commandCount: row.ai_commands_used_month, timeSaved: timeSaved + ' saat' })
+            .catch(console.error);
+        }
+      }
+      console.log('[loops-cron] haftalık özet tamam');
+    }, { timezone: 'Europe/Istanbul' });
+
+    console.log('[loops-cron] Loops cron jobları başlatıldı');
+  } catch (e) { console.error('[loops-cron] Init error:', e.message); }
 
   // Render free tier'ı uyanık tut: her 14 dakikada self-ping
   const SELF_URL = process.env.RENDER_EXTERNAL_URL || `http://localhost:${PORT}`;

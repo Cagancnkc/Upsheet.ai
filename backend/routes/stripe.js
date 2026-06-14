@@ -2,6 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const Stripe = require('stripe');
+const { updateContact: loopsUpdate } = require('../lib/loops');
 
 // stripe instance — lazily initialized so module loads even without env vars
 let _stripe = null;
@@ -247,6 +248,17 @@ router.post('/webhook',
             plan_ends_at: new Date(sub.current_period_end * 1000).toISOString(),
           })
           .eq('stripe_subscription_id', sub.id);
+
+        // Loops contact sync
+        const { data: uRec } = await sbUpd.from('user_usage')
+          .select('user_id').eq('stripe_subscription_id', sub.id).single();
+        if (uRec?.user_id) {
+          const { data: { user: aUser } } = await sbUpd.auth.admin.getUserById(uRec.user_id);
+          if (aUser?.email) {
+            loopsUpdate(aUser.email, { subscriptionStatus: subStatus, subscriptionTier: newPlan })
+              .catch(e => console.error('[loops] sub updated:', e.message));
+          }
+        }
         break;
       }
 
@@ -260,6 +272,17 @@ router.post('/webhook',
           .eq('stripe_subscription_id', sub.id);
 
         console.log(`❌ Abonelik iptal: ${sub.id} → free plan`);
+
+        // Loops contact sync
+        const { data: dRec } = await sbDel.from('user_usage')
+          .select('user_id').eq('stripe_subscription_id', sub.id).single();
+        if (dRec?.user_id) {
+          const { data: { user: dUser } } = await sbDel.auth.admin.getUserById(dRec.user_id);
+          if (dUser?.email) {
+            loopsUpdate(dUser.email, { subscriptionStatus: 'free', subscriptionTier: '' })
+              .catch(e => console.error('[loops] sub deleted:', e.message));
+          }
+        }
         break;
       }
 
