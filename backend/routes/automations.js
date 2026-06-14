@@ -481,6 +481,73 @@ router.post('/:id/run', requireAuth, async (req, res) => {
   res.json({ status: overallStatus, matched_rows: matchedRows.length, action_results: actionResults, duration_ms: durationMs });
 });
 
+// ── POST /api/automations/:id/test — simülasyon modu ────────────────────────
+router.post('/:id/test', requireAuth, async (req, res) => {
+  const { id } = req.params;
+  const startedAt = Date.now();
+
+  const { data: rule, error: ruleErr } = await req.supabase
+    .from('automation_rules').select('*')
+    .eq('id', id).eq('user_id', req.user.id).single();
+  if (ruleErr || !rule) return res.status(404).json({ error: 'Kural bulunamadı' });
+
+  const actions = Array.isArray(rule.action_config) ? rule.action_config : [rule.action_config].filter(Boolean);
+  const ACTION_LABELS = {
+    gmail: 'Gmail', slack: 'Slack', teams: 'Teams', webhook: 'Webhook',
+    make: 'Make', notion: 'Notion', notion_page: 'Notion Page',
+    airtable: 'Airtable', update_cells: 'Hücre Güncelle', notification: 'Bildirim'
+  };
+
+  const actionResults = [];
+  let overallSuccess = true;
+
+  for (const action of actions) {
+    const label = ACTION_LABELS[action?.type] || action?.type || '—';
+    if (action.type === 'webhook' && action.url) {
+      try {
+        const r = await fetch(action.url, {
+          method: action.method || 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ test: true, rule: rule.name, timestamp: new Date().toISOString() }),
+          signal: AbortSignal.timeout(5000)
+        });
+        actionResults.push({ type: action.type, label, success: r.ok, detail: `HTTP ${r.status}`, simulated: false });
+        if (!r.ok) overallSuccess = false;
+      } catch (e) {
+        actionResults.push({ type: action.type, label, success: false, detail: 'Bağlantı hatası: ' + e.message, simulated: false });
+        overallSuccess = false;
+      }
+    } else {
+      await new Promise(r => setTimeout(r, 80));
+      actionResults.push({ type: action.type, label, success: true, detail: `Test modu — gerçek ${label} gönderilmedi`, simulated: true });
+    }
+  }
+
+  const durationMs = Date.now() - startedAt;
+
+  await req.supabase.from('automation_rules')
+    .update({ last_fired: new Date().toISOString(), run_count: (rule.run_count || 0) + 1 })
+    .eq('id', id).eq('user_id', req.user.id);
+
+  await logRun(req.supabase, {
+    ruleId: id, userId: req.user.id,
+    status: overallSuccess ? 'success' : 'error',
+    triggeredBy: 'test',
+    triggerData: { matched_rows: 0 },
+    actionResults: actionResults.map(a => ({ type: a.type, status: a.success ? 'success' : 'error', result: { detail: a.detail } })),
+    durationMs,
+  });
+
+  res.json({
+    success: overallSuccess,
+    duration: durationMs + 'ms',
+    actions: actionResults,
+    message: overallSuccess
+      ? `✓ Test başarılı — ${actionResults.length} aksiyon simüle edildi`
+      : '⚠ Test tamamlandı ama bazı aksiyonlar başarısız'
+  });
+});
+
 // ── POST /api/automations/:id/log — legacy compat ────────────────────────────
 router.post('/:id/log', requireAuth, async (req, res) => {
   const { id } = req.params;
