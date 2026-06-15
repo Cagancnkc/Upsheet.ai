@@ -1604,6 +1604,140 @@
   50% { box-shadow: 0 0 0 8px rgba(22,163,74,0.15); }
 }
 .pricing-card-pulse { animation: pricing-pulse 1.2s ease; }
+
+/* Takım kartı öne çıkarma */
+.ms-row.team-featured {
+  border: 2px solid #16a34a !important;
+  background: rgba(22,163,74,0.04) !important;
+  position: relative;
+}
+.ms-row:not(.ms-featured):not(.team-featured) {
+  opacity: 0.88;
+}
+.ms-row:not(.ms-featured):not(.team-featured):hover {
+  opacity: 1;
+  transition: opacity 0.2s ease;
+}
+.team-featured-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #16a34a, #15803d);
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 99px;
+  letter-spacing: 0.05em;
+  margin-bottom: 10px;
+}
+
+/* Kişi başı vurgu */
+.per-seat-highlight {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin: 10px 0 0;
+  padding: 8px 12px;
+  background: rgba(22,163,74,0.08);
+  border: 1px solid rgba(22,163,74,0.25);
+  border-radius: 8px;
+  flex-wrap: wrap;
+}
+.per-seat-number { font-size: 20px; font-weight: 800; color: #4ade80; line-height: 1; }
+.per-seat-label { font-size: 12px; color: #94a3b8; }
+.per-seat-seats { font-size: 11px; color: #64748b; }
+
+/* Karşılaştırma tablosu */
+.pricing-comparison {
+  max-width: 860px;
+  margin: 48px auto 0;
+  padding: 0 20px;
+}
+.comparison-title {
+  font-size: 20px;
+  font-weight: 700;
+  text-align: center;
+  color: #f8fafc;
+  margin-bottom: 20px;
+}
+.comparison-table-wrap {
+  overflow-x: auto;
+  border-radius: 12px;
+  border: 1px solid #334155;
+}
+.comparison-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.comparison-table thead tr { background: #0f172a; }
+.comparison-table thead th {
+  padding: 14px 16px;
+  text-align: center;
+  color: #94a3b8;
+  font-weight: 600;
+  font-size: 13px;
+  border-bottom: 1px solid #334155;
+}
+.comparison-table .feature-col { text-align: left; color: #64748b; font-size: 12px; }
+.comparison-table tbody tr {
+  border-bottom: 1px solid #1e293b;
+  transition: background 0.15s;
+}
+.comparison-table tbody tr:hover { background: rgba(30,41,59,0.27); }
+.comparison-table td { padding: 12px 16px; text-align: center; color: #94a3b8; }
+.comparison-table td.feature-col { text-align: left; color: #64748b; font-size: 12px; }
+.team-col {
+  background: rgba(22,163,74,0.06) !important;
+  color: #f8fafc !important;
+  border-left: 1px solid rgba(22,163,74,0.2);
+  border-right: 1px solid rgba(22,163,74,0.2);
+}
+.team-col strong { color: #4ade80; }
+.team-col-badge {
+  display: block;
+  font-size: 10px;
+  color: #4ade80;
+  font-weight: 700;
+  margin-top: 3px;
+  letter-spacing: 0.04em;
+}
+.price-row td {
+  background: #0f172a;
+  font-weight: 700;
+  color: #f8fafc;
+  padding: 16px;
+}
+.price-row .team-col { color: #4ade80 !important; font-size: 16px; }
+
+/* Ekip slider banner */
+.team-rec-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: rgba(22,163,74,0.08);
+  border: 1px solid rgba(22,163,74,0.3);
+  border-radius: 10px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+.team-rec-banner.hidden { display: none !important; }
+.team-rec-icon { font-size: 24px; }
+.team-rec-text { flex: 1; min-width: 180px; }
+.team-rec-text strong { display: block; color: #4ade80; font-size: 13px; margin-bottom: 3px; }
+.team-rec-text span { font-size: 12px; color: #94a3b8; line-height: 1.5; }
+.team-rec-cta {
+  background: #16a34a;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 7px;
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.team-rec-cta:hover { background: #15803d; }
 </style>
 
 
@@ -1702,9 +1836,10 @@
         </div>
       </article>
 
-      <article class="ms-row" id="team-card">
+      <article class="ms-row team-featured" id="team-card">
         <div class="ms-row-idx">03</div>
         <div class="ms-row-meta">
+          <div class="team-featured-badge">⭐ En İyi Değer</div>
           <div class="ms-row-name">Takım</div>
           <div class="ms-row-tag">5 koltuk. Tek fatura.</div>
           <ul class="ms-row-feats">
@@ -1718,6 +1853,11 @@
         </div>
         <div class="ms-row-price">
           <div class="ms-price-big"><span class="ms-price-cur">$</span><span id="team-price-amount">1</span></div>
+          <div class="per-seat-highlight">
+            <span class="per-seat-number">$11,8</span>
+            <span class="per-seat-label">kişi başı/ay</span>
+            <span class="per-seat-seats">· 5 koltuk dahil</span>
+          </div>
           <div class="ms-price-sub">
             <span class="ms-price-after" id="bizAfter">İlk 1 ay · sonra $59/ay</span>
             <span class="pricing-yearly-note hidden" id="team-yearly-note">
@@ -1740,6 +1880,103 @@
     <div class="ms-footnote">
       <span class="ms-foot-mono">KAMPANYA</span>
       <span>Tüm planlar 14 günlük koşulsuz iade içerir · GDPR uyumlu · İstediğin zaman iptal</span>
+    </div>
+
+    <!-- Karşılaştırma tablosu -->
+    <div class="pricing-comparison">
+      <h3 class="comparison-title">Plan Karşılaştırması</h3>
+      <div class="comparison-table-wrap">
+        <table class="comparison-table">
+          <thead>
+            <tr>
+              <th class="feature-col">Özellik</th>
+              <th>Başlangıç</th>
+              <th>Pro</th>
+              <th class="team-col">
+                <span>Takım</span>
+                <span class="team-col-badge">⭐ Önerilen</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="feature-col">AI Komut/gün</td>
+              <td>5</td>
+              <td>20-60</td>
+              <td class="team-col"><strong>Sınırsız</strong></td>
+            </tr>
+            <tr>
+              <td class="feature-col">Koltuk sayısı</td>
+              <td>1</td>
+              <td>1</td>
+              <td class="team-col"><strong>5 koltuk</strong></td>
+            </tr>
+            <tr>
+              <td class="feature-col">PDF → Tablo</td>
+              <td>❌</td>
+              <td>✅</td>
+              <td class="team-col">✅</td>
+            </tr>
+            <tr>
+              <td class="feature-col">Otomasyonlar</td>
+              <td>❌</td>
+              <td>3 aktif</td>
+              <td class="team-col"><strong>Sınırsız</strong></td>
+            </tr>
+            <tr>
+              <td class="feature-col">Canlı işbirliği</td>
+              <td>❌</td>
+              <td>❌</td>
+              <td class="team-col"><strong>✅</strong></td>
+            </tr>
+            <tr>
+              <td class="feature-col">SSO + Denetim</td>
+              <td>❌</td>
+              <td>❌</td>
+              <td class="team-col"><strong>✅</strong></td>
+            </tr>
+            <tr>
+              <td class="feature-col">Sürüm geçmişi</td>
+              <td>—</td>
+              <td>30-90 gün</td>
+              <td class="team-col"><strong>90 gün</strong></td>
+            </tr>
+            <tr>
+              <td class="feature-col">Destek</td>
+              <td>—</td>
+              <td>E-posta</td>
+              <td class="team-col"><strong>Özel yönetici</strong></td>
+            </tr>
+            <tr class="price-row">
+              <td class="feature-col">Fiyat</td>
+              <td>$0</td>
+              <td>$15-21/ay</td>
+              <td class="team-col">
+                <strong>$59/ay</strong>
+                <span style="display:block;font-size:11px;color:#4ade80">kişi başı $11,8</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Ekip büyüklüğü slider -->
+      <div style="margin-top:32px;background:#1e293b;border:1px solid #334155;border-radius:14px;padding:24px">
+        <div style="font-size:12px;color:#64748b;margin-bottom:14px;text-transform:uppercase;letter-spacing:0.06em">Ekip büyüklüğüne göre hesapla</div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+          <span style="font-size:13px;color:#94a3b8;white-space:nowrap">Ekip:</span>
+          <input type="range" id="team-slider" min="1" max="10" value="1" step="1" style="flex:1" oninput="calcTeamSize(this.value)">
+          <span id="team-size-val" style="font-size:14px;font-weight:700;color:#f8fafc;min-width:50px">1 kişi</span>
+        </div>
+        <div id="team-recommendation" class="team-rec-banner hidden">
+          <div class="team-rec-icon">👥</div>
+          <div class="team-rec-text">
+            <strong>Takım planı önerilir!</strong>
+            <span id="team-rec-detail">3 kişi için Pro planı 3×$15 = $45/ay. Takım planı sadece $59/ay — 5 koltuk dahil, sınırsız komut.</span>
+          </div>
+          <a href="#pricing" onclick="scrollToTeamCard()" class="team-rec-cta">Takım'a Bak →</a>
+        </div>
+      </div>
     </div>
 
   </div>
@@ -2212,6 +2449,21 @@ function scrollToTeamCard() {
   el.scrollIntoView({ behavior: 'smooth', block: 'center' });
   el.classList.add('pricing-card-pulse');
   setTimeout(function() { el.classList.remove('pricing-card-pulse'); }, 1200);
+}
+
+function calcTeamSize(size) {
+  size = parseInt(size);
+  var tv = document.getElementById('team-size-val');
+  if (tv) tv.textContent = size + ' kişi';
+  var rec = document.getElementById('team-recommendation');
+  var det = document.getElementById('team-rec-detail');
+  if (size >= 3) {
+    if (rec) rec.classList.remove('hidden');
+    var proTotal = size * 15;
+    if (det) det.textContent = size + ' kişi için Pro planı ' + size + '×$15 = $' + proTotal + '/ay. Takım planı sadece $59/ay — 5 koltuk dahil, sınırsız komut.';
+  } else {
+    if (rec) rec.classList.add('hidden');
+  }
 }
 
 function setPricingPeriod(p) {
