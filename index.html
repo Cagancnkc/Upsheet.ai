@@ -1720,6 +1720,11 @@
   flex-shrink: 0;
 }
 .team-rec-cta:hover { background: #15803d; }
+.seat-stepper { display:flex; align-items:center; gap:12px; margin-bottom:8px; }
+.seat-btn { width:32px; height:32px; border-radius:8px; border:1px solid #334155; background:#0f172a; color:#e2e8f0; font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background .15s; }
+.seat-btn:hover:not(:disabled) { background:#1e293b; border-color:#4ade80; color:#4ade80; }
+.seat-btn:disabled { opacity:0.3; cursor:default; }
+#team-seat-label { font-size:15px; font-weight:700; color:#f8fafc; min-width:72px; text-align:center; }
 </style>
 
 
@@ -1823,10 +1828,10 @@
         <div class="ms-row-meta">
           <div class="team-featured-badge">⭐ En İyi Değer</div>
           <div class="ms-row-name">Takım</div>
-          <div class="ms-row-tag">5 koltuk. Tek fatura.</div>
+          <div class="ms-row-tag" id="team-seat-tag">5 koltuk. Tek fatura.</div>
           <ul class="ms-row-feats">
             <li class="ms-row-feat"><span class="ms-feat-dash">—</span> Sınırsız AI komutu</li>
-            <li class="ms-row-feat"><span class="ms-feat-dash">—</span> 5 koltuk dahil (ek koltuk +$8/ay)</li>
+            <li class="ms-row-feat"><span class="ms-feat-dash">—</span> <span id="team-seat-feat">5 koltuk dahil</span></li>
             <li class="ms-row-feat"><span class="ms-feat-dash">—</span> Sınırsız otomasyon</li>
             <li class="ms-row-feat"><span class="ms-feat-dash">—</span> Canlı işbirliği + yorumlar</li>
             <li class="ms-row-feat"><span class="ms-feat-dash">—</span> SSO + denetim günlüğü</li>
@@ -1834,19 +1839,14 @@
           </ul>
         </div>
         <div class="ms-row-price">
-          <div class="ms-price-big"><span class="ms-price-cur">$</span><span id="team-price-amount">1</span></div>
-          <div class="per-seat-highlight">
-            <span class="per-seat-number">$11,8</span>
-            <span class="per-seat-label">kişi başı/ay</span>
-            <span class="per-seat-seats">· 5 koltuk dahil</span>
+          <div class="seat-stepper">
+            <button class="seat-btn" id="team-seat-minus" onclick="changeTeamSeats(-3)" aria-label="Koltuk azalt">−</button>
+            <span id="team-seat-label">5 koltuk</span>
+            <button class="seat-btn" id="team-seat-plus" onclick="changeTeamSeats(3)" aria-label="Koltuk artır">+</button>
           </div>
-          <div class="ms-price-sub">
-            <span class="ms-price-after" id="bizAfter">İlk 1 ay · sonra $59/ay</span>
-            <span class="pricing-yearly-note hidden" id="team-yearly-note">
-              <strong id="team-yearly-price">$566</strong>/yıl
-              <span class="yearly-monthly-equiv" id="team-yearly-equiv">(aylık ~$47'ye denk)</span><br>
-              <small>Kampanya yıllık planlarda geçerli değildir.</small>
-            </span>
+          <div class="ms-price-big" style="margin-top:10px"><span class="ms-price-cur">$</span><span id="team-price-amount">59</span><span style="font-size:16px;color:#94a3b8">/ay</span></div>
+          <div class="ms-price-sub" style="margin-top:4px">
+            <span style="font-size:12px;color:#4ade80">$11,8 kişi başı/ay</span>
           </div>
         </div>
         <div class="ms-row-cta">
@@ -1891,7 +1891,7 @@
               <td class="feature-col">Koltuk sayısı</td>
               <td>1</td>
               <td>1</td>
-              <td class="team-col"><strong>5 koltuk</strong></td>
+              <td class="team-col"><strong id="team-col-seats">5 koltuk</strong></td>
             </tr>
             <tr>
               <td class="feature-col">PDF → Tablo</td>
@@ -1942,23 +1942,6 @@
         </table>
       </div>
 
-      <!-- Ekip büyüklüğü slider -->
-      <div style="margin-top:32px;background:#1e293b;border:1px solid #334155;border-radius:14px;padding:24px">
-        <div style="font-size:12px;color:#64748b;margin-bottom:14px;text-transform:uppercase;letter-spacing:0.06em">Ekip büyüklüğüne göre hesapla</div>
-        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
-          <span style="font-size:13px;color:#94a3b8;white-space:nowrap">Ekip:</span>
-          <input type="range" id="team-slider" min="1" max="10" value="1" step="1" style="flex:1" oninput="calcTeamSize(this.value)">
-          <span id="team-size-val" style="font-size:14px;font-weight:700;color:#f8fafc;min-width:50px">1 kişi</span>
-        </div>
-        <div id="team-recommendation" class="team-rec-banner hidden">
-          <div class="team-rec-icon">👥</div>
-          <div class="team-rec-text">
-            <strong>Takım planı önerilir!</strong>
-            <span id="team-rec-detail">3 kişi için Pro planı 3×$15 = $45/ay. Takım planı sadece $59/ay — 5 koltuk dahil, sınırsız komut.</span>
-          </div>
-          <a href="#pricing" onclick="scrollToTeamCard()" class="team-rec-cta">Takım'a Bak →</a>
-        </div>
-      </div>
     </div>
 
   </div>
@@ -2333,6 +2316,11 @@ function toggleFaq(btn) {
 <script>
 var _billingPeriod = 'monthly';
 var _proVariant = 'normal';
+var _teamSeats = 5;
+var _SEAT_PRICE = 11.8;
+var _SEAT_STEP = 3;
+var _SEAT_MIN = 5;
+var _SEAT_MAX = 50;
 
 var _PRO = {
   normal: { monthly: 15, yearly: 144, features: [
@@ -2405,24 +2393,28 @@ function renderProCard() {
 }
 
 function renderTeamCard() {
-  var yearly = _billingPeriod === 'yearly';
+  var total = Math.round(_teamSeats * _SEAT_PRICE * 10) / 10;
   var amountEl = document.getElementById('team-price-amount');
-  var afterEl = document.getElementById('bizAfter');
-  var yearlyNoteEl = document.getElementById('team-yearly-note');
-  var yearlyPriceEl = document.getElementById('team-yearly-price');
-  var yearlyEquivEl = document.getElementById('team-yearly-equiv');
+  if (amountEl) amountEl.textContent = total;
+  var seatLabelEl = document.getElementById('team-seat-label');
+  if (seatLabelEl) seatLabelEl.textContent = _teamSeats + ' koltuk';
+  var featEl = document.getElementById('team-seat-feat');
+  if (featEl) featEl.textContent = _teamSeats + ' koltuk dahil';
+  var tagEl = document.getElementById('team-seat-tag');
+  if (tagEl) tagEl.textContent = _teamSeats + ' koltuk. Tek fatura.';
+  var colEl = document.getElementById('team-col-seats');
+  if (colEl) colEl.textContent = _teamSeats + ' koltuk';
+  var minusBtn = document.getElementById('team-seat-minus');
+  if (minusBtn) minusBtn.disabled = _teamSeats <= _SEAT_MIN;
+  var ctaEl = document.getElementById('bizCheckoutBtn');
+  if (ctaEl) ctaEl.href = '/auth?plan=biz' + (_teamSeats !== 5 ? '&seats=' + _teamSeats : '');
+}
 
-  if (yearly) {
-    if (amountEl) amountEl.textContent = _TEAM.yearly;
-    if (afterEl) afterEl.classList.add('hidden');
-    if (yearlyNoteEl) yearlyNoteEl.classList.remove('hidden');
-    if (yearlyPriceEl) yearlyPriceEl.textContent = '$' + _TEAM.yearly;
-    if (yearlyEquivEl) yearlyEquivEl.textContent = '(aylık ~$' + Math.round(_TEAM.yearly / 12) + '\'ye denk)';
-  } else {
-    if (amountEl) amountEl.textContent = 1;
-    if (afterEl) { afterEl.classList.remove('hidden'); afterEl.textContent = 'İlk 1 ay · sonra $' + _TEAM.monthly + '/ay'; }
-    if (yearlyNoteEl) yearlyNoteEl.classList.add('hidden');
-  }
+function changeTeamSeats(delta) {
+  var next = _teamSeats + delta;
+  if (next < _SEAT_MIN || next > _SEAT_MAX) return;
+  _teamSeats = next;
+  renderTeamCard();
 }
 
 function scrollToTeamCard() {
@@ -2433,20 +2425,6 @@ function scrollToTeamCard() {
   setTimeout(function() { el.classList.remove('pricing-card-pulse'); }, 1200);
 }
 
-function calcTeamSize(size) {
-  size = parseInt(size);
-  var tv = document.getElementById('team-size-val');
-  if (tv) tv.textContent = size + ' kişi';
-  var rec = document.getElementById('team-recommendation');
-  var det = document.getElementById('team-rec-detail');
-  if (size >= 3) {
-    if (rec) rec.classList.remove('hidden');
-    var proTotal = size * 15;
-    if (det) det.textContent = size + ' kişi için Pro planı ' + size + '×$15 = $' + proTotal + '/ay. Takım planı sadece $59/ay — 5 koltuk dahil, sınırsız komut.';
-  } else {
-    if (rec) rec.classList.add('hidden');
-  }
-}
 
 function setPricingPeriod(p) {
   _billingPeriod = p;
