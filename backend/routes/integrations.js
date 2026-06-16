@@ -1419,6 +1419,348 @@ router.post('/hubspot/create-contact', requireAuth, async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+// ── HubSpot: Deal oluştur ─────────────────────────────────────────────────────
+router.post('/hubspot/create-deal', requireAuth, async (req, res) => {
+  const { token, dealName, amount, pipelineId, stageId } = req.body;
+  if (!token || !dealName) return res.status(400).json({ error: 'token ve dealName gerekli' });
+  try {
+    const r = await fetch('https://api.hubapi.com/crm/v3/objects/deals', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }, body: JSON.stringify({ properties: { dealname: dealName, amount: amount || '', pipeline: pipelineId || 'default', dealstage: stageId || 'appointmentscheduled' } }), signal: AbortSignal.timeout(10000) });
+    const j = await r.json();
+    if (!r.ok) return res.status(r.status).json({ error: j.message || `HubSpot hatası: HTTP ${r.status}` });
+    res.json({ success: true, message: `✅ HubSpot deal oluşturuldu: ${dealName}`, dealId: j.id });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── HubSpot: Contact güncelle ─────────────────────────────────────────────────
+router.post('/hubspot/update-contact', requireAuth, async (req, res) => {
+  const { token, email, firstName, lastName, phone } = req.body;
+  if (!token || !email) return res.status(400).json({ error: 'token ve email gerekli' });
+  try {
+    // Search for contact by email first
+    const searchR = await fetch('https://api.hubapi.com/crm/v3/objects/contacts/search', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }, body: JSON.stringify({ filterGroups: [{ filters: [{ propertyName: 'email', operator: 'EQ', value: email }] }] }), signal: AbortSignal.timeout(10000) });
+    const searchJ = await searchR.json();
+    if (!searchR.ok) return res.status(searchR.status).json({ error: searchJ.message || 'HubSpot arama hatası' });
+    const contactId = searchJ.results?.[0]?.id;
+    if (!contactId) return res.status(404).json({ error: `${email} e-postasına ait contact bulunamadı` });
+    const properties = {};
+    if (firstName) properties.firstname = firstName;
+    if (lastName) properties.lastname = lastName;
+    if (phone) properties.phone = phone;
+    const r = await fetch(`https://api.hubapi.com/crm/v3/objects/contacts/${contactId}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }, body: JSON.stringify({ properties }), signal: AbortSignal.timeout(10000) });
+    const j = await r.json();
+    if (!r.ok) return res.status(r.status).json({ error: j.message || `HubSpot hatası: HTTP ${r.status}` });
+    res.json({ success: true, message: `✅ HubSpot contact güncellendi: ${email}` });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── HubSpot: Not ekle ─────────────────────────────────────────────────────────
+router.post('/hubspot/add-note', requireAuth, async (req, res) => {
+  const { token, contactEmail, noteBody } = req.body;
+  if (!token || !contactEmail || !noteBody) return res.status(400).json({ error: 'token, contactEmail ve noteBody gerekli' });
+  try {
+    // Search for contact
+    const searchR = await fetch('https://api.hubapi.com/crm/v3/objects/contacts/search', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }, body: JSON.stringify({ filterGroups: [{ filters: [{ propertyName: 'email', operator: 'EQ', value: contactEmail }] }] }), signal: AbortSignal.timeout(10000) });
+    const searchJ = await searchR.json();
+    if (!searchR.ok) return res.status(searchR.status).json({ error: searchJ.message || 'HubSpot arama hatası' });
+    const contactId = searchJ.results?.[0]?.id;
+    if (!contactId) return res.status(404).json({ error: `${contactEmail} e-postasına ait contact bulunamadı` });
+    // Create note engagement
+    const r = await fetch('https://api.hubapi.com/crm/v3/objects/notes', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }, body: JSON.stringify({ properties: { hs_note_body: noteBody, hs_timestamp: Date.now() }, associations: [{ to: { id: contactId }, types: [{ associationCategory: 'HUBSPOT_DEFINED', associationTypeId: 202 }] }] }), signal: AbortSignal.timeout(10000) });
+    const j = await r.json();
+    if (!r.ok) return res.status(r.status).json({ error: j.message || `HubSpot hatası: HTTP ${r.status}` });
+    res.json({ success: true, message: `✅ HubSpot nota eklendi`, noteId: j.id });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── Jira: Yorum ekle ──────────────────────────────────────────────────────────
+router.post('/jira/add-comment', requireAuth, async (req, res) => {
+  const { email, apiToken, domain, issueKey, comment } = req.body;
+  if (!email || !apiToken || !domain || !issueKey || !comment) return res.status(400).json({ error: 'Tüm alanlar gerekli' });
+  try {
+    const auth = Buffer.from(`${email}:${apiToken}`).toString('base64');
+    const r = await fetch(`https://${domain}.atlassian.net/rest/api/3/issue/${issueKey}/comment`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Basic ${auth}` }, body: JSON.stringify({ body: { type: 'doc', version: 1, content: [{ type: 'paragraph', content: [{ type: 'text', text: comment }] }] } }), signal: AbortSignal.timeout(10000) });
+    const j = await r.json();
+    if (!r.ok) return res.status(r.status).json({ error: j.errorMessages?.[0] || `Jira hatası: HTTP ${r.status}` });
+    res.json({ success: true, message: `✅ Jira issue ${issueKey} için yorum eklendi`, commentId: j.id });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── Jira: Transition uygula ───────────────────────────────────────────────────
+router.post('/jira/transition', requireAuth, async (req, res) => {
+  const { email, apiToken, domain, issueKey, transitionName } = req.body;
+  if (!email || !apiToken || !domain || !issueKey || !transitionName) return res.status(400).json({ error: 'Tüm alanlar gerekli' });
+  const auth = Buffer.from(`${email}:${apiToken}`).toString('base64');
+  const base = `https://${domain}.atlassian.net/rest/api/3`;
+  try {
+    const tr = await fetch(`${base}/issue/${issueKey}/transitions`, { headers: { Authorization: `Basic ${auth}`, Accept: 'application/json' }, signal: AbortSignal.timeout(10000) });
+    const td = await tr.json();
+    const transition = (td.transitions || []).find(t => t.name.toLowerCase() === transitionName.toLowerCase());
+    if (!transition) return res.status(404).json({ error: `Transition '${transitionName}' bulunamadı` });
+    const r = await fetch(`${base}/issue/${issueKey}/transitions`, { method: 'POST', headers: { Authorization: `Basic ${auth}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ transition: { id: transition.id } }), signal: AbortSignal.timeout(10000) });
+    if (r.status === 204) return res.json({ success: true, message: `✅ Jira issue ${issueKey} → ${transitionName}` });
+    const j = await r.json();
+    if (!r.ok) return res.status(r.status).json({ error: j.errorMessages?.[0] || `Jira hatası: HTTP ${r.status}` });
+    res.json({ success: true, message: `✅ Jira issue ${issueKey} → ${transitionName}` });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── Jira: Issue ata ───────────────────────────────────────────────────────────
+router.post('/jira/assign', requireAuth, async (req, res) => {
+  const { email, apiToken, domain, issueKey, assigneeEmail } = req.body;
+  if (!email || !apiToken || !domain || !issueKey || !assigneeEmail) return res.status(400).json({ error: 'Tüm alanlar gerekli' });
+  try {
+    const auth = Buffer.from(`${email}:${apiToken}`).toString('base64');
+    const base = `https://${domain}.atlassian.net/rest/api/3`;
+    // Find accountId by email
+    const userR = await fetch(`${base}/user/search?query=${encodeURIComponent(assigneeEmail)}`, { headers: { Authorization: `Basic ${auth}`, Accept: 'application/json' }, signal: AbortSignal.timeout(10000) });
+    const users = await userR.json();
+    const accountId = Array.isArray(users) ? users[0]?.accountId : null;
+    if (!accountId) return res.status(404).json({ error: `${assigneeEmail} kullanıcısı bulunamadı` });
+    const r = await fetch(`${base}/issue/${issueKey}/assignee`, { method: 'PUT', headers: { Authorization: `Basic ${auth}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ accountId }), signal: AbortSignal.timeout(10000) });
+    if (r.status === 204) return res.json({ success: true, message: `✅ Jira issue ${issueKey} → ${assigneeEmail} atandı` });
+    const j = await r.json();
+    if (!r.ok) return res.status(r.status).json({ error: j.errorMessages?.[0] || `Jira hatası: HTTP ${r.status}` });
+    res.json({ success: true, message: `✅ Jira issue ${issueKey} → ${assigneeEmail} atandı` });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── GitHub: Yorum ekle ────────────────────────────────────────────────────────
+router.post('/github/add-comment', requireAuth, async (req, res) => {
+  const { token, owner, repo, issueNumber, body } = req.body;
+  if (!token || !owner || !repo || !issueNumber || !body) return res.status(400).json({ error: 'token, owner, repo, issueNumber ve body gerekli' });
+  try {
+    const url = `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/issues/${encodeURIComponent(issueNumber)}/comments`;
+    const r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, 'User-Agent': 'Mocksheets/1.0', Accept: 'application/vnd.github+json' }, body: JSON.stringify({ body }), signal: AbortSignal.timeout(10000) });
+    const j = await r.json();
+    if (!r.ok) return res.status(r.status).json({ error: j.message || `GitHub hatası: HTTP ${r.status}` });
+    res.json({ success: true, message: `✅ GitHub issue #${issueNumber} için yorum eklendi`, url: j.html_url });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── GitHub: Issue kapat ───────────────────────────────────────────────────────
+router.post('/github/close-issue', requireAuth, async (req, res) => {
+  const { token, owner, repo, issueNumber } = req.body;
+  if (!token || !owner || !repo || !issueNumber) return res.status(400).json({ error: 'token, owner, repo ve issueNumber gerekli' });
+  try {
+    const url = `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/issues/${encodeURIComponent(issueNumber)}`;
+    const r = await fetch(url, { method: 'PATCH', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, 'User-Agent': 'Mocksheets/1.0', Accept: 'application/vnd.github+json' }, body: JSON.stringify({ state: 'closed' }), signal: AbortSignal.timeout(10000) });
+    const j = await r.json();
+    if (!r.ok) return res.status(r.status).json({ error: j.message || `GitHub hatası: HTTP ${r.status}` });
+    res.json({ success: true, message: `✅ GitHub issue #${issueNumber} kapatıldı`, url: j.html_url });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── GitHub: PR oluştur ────────────────────────────────────────────────────────
+router.post('/github/create-pr', requireAuth, async (req, res) => {
+  const { token, owner, repo, title, head, base, body } = req.body;
+  if (!token || !owner || !repo || !title || !head) return res.status(400).json({ error: 'token, owner, repo, title ve head gerekli' });
+  try {
+    const url = `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/pulls`;
+    const r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, 'User-Agent': 'Mocksheets/1.0', Accept: 'application/vnd.github+json' }, body: JSON.stringify({ title, head, base: base || 'main', body: body || '' }), signal: AbortSignal.timeout(10000) });
+    const j = await r.json();
+    if (!r.ok) return res.status(r.status).json({ error: j.message || `GitHub hatası: HTTP ${r.status}` });
+    res.json({ success: true, message: `✅ GitHub PR oluşturuldu: #${j.number}`, url: j.html_url });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── Trello: Kart oluştur ──────────────────────────────────────────────────────
+router.post('/trello/create-card', requireAuth, async (req, res) => {
+  const { apiKey, token, listId, name, desc } = req.body;
+  if (!apiKey || !token || !listId || !name) return res.status(400).json({ error: 'apiKey, token, listId ve name gerekli' });
+  try {
+    const url = `https://api.trello.com/1/cards?key=${encodeURIComponent(apiKey)}&token=${encodeURIComponent(token)}`;
+    const r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ idList: listId, name, desc: desc || '' }), signal: AbortSignal.timeout(10000) });
+    const j = await r.json();
+    if (!r.ok) return res.status(r.status).json({ error: j.message || `Trello hatası: HTTP ${r.status}` });
+    res.json({ success: true, message: `✅ Trello kartı oluşturuldu: ${name}`, url: j.url, cardId: j.id });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── Trello: Yorum ekle ────────────────────────────────────────────────────────
+router.post('/trello/add-comment', requireAuth, async (req, res) => {
+  const { apiKey, token, cardId, text } = req.body;
+  if (!apiKey || !token || !cardId || !text) return res.status(400).json({ error: 'apiKey, token, cardId ve text gerekli' });
+  try {
+    const url = `https://api.trello.com/1/cards/${encodeURIComponent(cardId)}/actions/comments?key=${encodeURIComponent(apiKey)}&token=${encodeURIComponent(token)}`;
+    const r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text }), signal: AbortSignal.timeout(10000) });
+    const j = await r.json();
+    if (!r.ok) return res.status(r.status).json({ error: j.message || `Trello hatası: HTTP ${r.status}` });
+    res.json({ success: true, message: `✅ Trello kartına yorum eklendi` });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── Trello: Kart taşı ────────────────────────────────────────────────────────
+router.post('/trello/move-card', requireAuth, async (req, res) => {
+  const { apiKey, token, cardId, listId } = req.body;
+  if (!apiKey || !token || !cardId || !listId) return res.status(400).json({ error: 'apiKey, token, cardId ve listId gerekli' });
+  try {
+    const url = `https://api.trello.com/1/cards/${encodeURIComponent(cardId)}?key=${encodeURIComponent(apiKey)}&token=${encodeURIComponent(token)}`;
+    const r = await fetch(url, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ idList: listId }), signal: AbortSignal.timeout(10000) });
+    const j = await r.json();
+    if (!r.ok) return res.status(r.status).json({ error: j.message || `Trello hatası: HTTP ${r.status}` });
+    res.json({ success: true, message: `✅ Trello kartı taşındı`, url: j.url });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── ClickUp: Görev güncelle ───────────────────────────────────────────────────
+router.post('/clickup/update-task', requireAuth, async (req, res) => {
+  const { apiKey, taskId, status, name } = req.body;
+  if (!apiKey || !taskId) return res.status(400).json({ error: 'apiKey ve taskId gerekli' });
+  try {
+    const payload = {};
+    if (status) payload.status = status;
+    if (name) payload.name = name;
+    if (!Object.keys(payload).length) return res.status(400).json({ error: 'Güncellenecek alan (status veya name) gerekli' });
+    const url = `https://api.clickup.com/api/v2/task/${encodeURIComponent(taskId)}`;
+    const r = await fetch(url, { method: 'PUT', headers: { 'Content-Type': 'application/json', Authorization: apiKey }, body: JSON.stringify(payload), signal: AbortSignal.timeout(10000) });
+    const j = await r.json();
+    if (!r.ok) return res.status(r.status).json({ error: j.err || `ClickUp hatası: HTTP ${r.status}` });
+    res.json({ success: true, message: `✅ ClickUp görevi güncellendi: ${j.name}`, url: j.url });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── ClickUp: Yorum ekle ───────────────────────────────────────────────────────
+router.post('/clickup/add-comment', requireAuth, async (req, res) => {
+  const { apiKey, taskId, comment } = req.body;
+  if (!apiKey || !taskId || !comment) return res.status(400).json({ error: 'apiKey, taskId ve comment gerekli' });
+  try {
+    const url = `https://api.clickup.com/api/v2/task/${encodeURIComponent(taskId)}/comment`;
+    const r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: apiKey }, body: JSON.stringify({ comment_text: comment }), signal: AbortSignal.timeout(10000) });
+    const j = await r.json();
+    if (!r.ok) return res.status(r.status).json({ error: j.err || `ClickUp hatası: HTTP ${r.status}` });
+    res.json({ success: true, message: `✅ ClickUp görevine yorum eklendi` });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── Asana: Görevi tamamla ─────────────────────────────────────────────────────
+router.post('/asana/complete-task', requireAuth, async (req, res) => {
+  const { token, taskId } = req.body;
+  if (!token || !taskId) return res.status(400).json({ error: 'token ve taskId gerekli' });
+  try {
+    const r = await fetch(`https://app.asana.com/api/1.0/tasks/${encodeURIComponent(taskId)}`, { method: 'PUT', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }, body: JSON.stringify({ data: { completed: true } }), signal: AbortSignal.timeout(10000) });
+    const j = await r.json();
+    if (!r.ok) return res.status(r.status).json({ error: j.errors?.[0]?.message || `Asana hatası: HTTP ${r.status}` });
+    res.json({ success: true, message: `✅ Asana görevi tamamlandı: ${j.data?.name}` });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── Asana: Yorum ekle ─────────────────────────────────────────────────────────
+router.post('/asana/add-comment', requireAuth, async (req, res) => {
+  const { token, taskId, text } = req.body;
+  if (!token || !taskId || !text) return res.status(400).json({ error: 'token, taskId ve text gerekli' });
+  try {
+    const r = await fetch(`https://app.asana.com/api/1.0/tasks/${encodeURIComponent(taskId)}/stories`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }, body: JSON.stringify({ data: { text } }), signal: AbortSignal.timeout(10000) });
+    const j = await r.json();
+    if (!r.ok) return res.status(r.status).json({ error: j.errors?.[0]?.message || `Asana hatası: HTTP ${r.status}` });
+    res.json({ success: true, message: `✅ Asana görevine yorum eklendi` });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── Notion: Sayfa güncelle ────────────────────────────────────────────────────
+router.post('/notion/update-page', requireAuth, async (req, res) => {
+  const { token, pageId, properties } = req.body;
+  if (!token || !pageId) return res.status(400).json({ error: 'token ve pageId gerekli' });
+  let props = {};
+  try { props = typeof properties === 'string' ? JSON.parse(properties) : (properties || {}); }
+  catch (e) { return res.status(400).json({ error: 'Geçersiz JSON properties' }); }
+  try {
+    const r = await fetch(`https://api.notion.com/v1/pages/${pageId}`, { method: 'PATCH', headers: { Authorization: `Bearer ${token}`, 'Notion-Version': '2022-06-28', 'Content-Type': 'application/json' }, body: JSON.stringify({ properties: props }), signal: AbortSignal.timeout(10000) });
+    const j = await r.json();
+    if (!r.ok) return res.status(r.status).json({ error: j.message || `Notion hatası: HTTP ${r.status}` });
+    res.json({ success: true, message: `✅ Notion sayfası güncellendi` });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── Airtable: Kayıt güncelle ──────────────────────────────────────────────────
+router.post('/airtable/update-record', requireAuth, async (req, res) => {
+  const { token, baseId, tableName, recordId, fields } = req.body;
+  if (!token || !baseId || !tableName || !recordId) return res.status(400).json({ error: 'token, baseId, tableName ve recordId gerekli' });
+  let fieldObj = {};
+  try { fieldObj = typeof fields === 'string' ? JSON.parse(fields) : (fields || {}); }
+  catch (e) { return res.status(400).json({ error: 'Geçersiz JSON fields' }); }
+  try {
+    const r = await fetch(`https://api.airtable.com/v0/${encodeURIComponent(baseId)}/${encodeURIComponent(tableName)}/${encodeURIComponent(recordId)}`, { method: 'PATCH', headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ fields: fieldObj }), signal: AbortSignal.timeout(10000) });
+    const j = await r.json();
+    if (!r.ok) return res.status(r.status).json({ error: j.error?.message || `Airtable hatası: HTTP ${r.status}` });
+    res.json({ success: true, message: `✅ Airtable kaydı güncellendi`, recordId: j.id });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── Monday.com: Öğe güncelle ──────────────────────────────────────────────────
+router.post('/monday/update-item', requireAuth, async (req, res) => {
+  const { apiKey, boardId, itemId, columnId, value } = req.body;
+  if (!apiKey || !boardId || !itemId || !columnId || value === undefined) return res.status(400).json({ error: 'apiKey, boardId, itemId, columnId ve value gerekli' });
+  try {
+    const columnValue = JSON.stringify(typeof value === 'string' ? { label: value } : value);
+    const query = `mutation { change_column_value (board_id: ${parseInt(boardId)}, item_id: ${parseInt(itemId)}, column_id: "${columnId.replace(/"/g, '\\"')}", value: ${JSON.stringify(columnValue)}) { id } }`;
+    const r = await fetch('https://api.monday.com/v2', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: apiKey }, body: JSON.stringify({ query }), signal: AbortSignal.timeout(10000) });
+    const j = await r.json();
+    if (j.errors?.length) return res.status(400).json({ error: j.errors[0].message });
+    res.json({ success: true, message: `✅ Monday.com öğesi güncellendi` });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── Linear: Issue güncelle ────────────────────────────────────────────────────
+router.post('/linear/update-issue', requireAuth, async (req, res) => {
+  const { apiKey, issueId, stateId, priority } = req.body;
+  if (!apiKey || !issueId) return res.status(400).json({ error: 'apiKey ve issueId gerekli' });
+  try {
+    const input = {};
+    if (stateId) input.stateId = stateId;
+    if (priority) input.priority = parseInt(priority);
+    const query = `mutation UpdateIssue($issueId:String!,$input:IssueUpdateInput!){issueUpdate(id:$issueId,input:$input){success issue{identifier title url}}}`;
+    const r = await fetch('https://api.linear.app/graphql', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: apiKey }, body: JSON.stringify({ query, variables: { issueId, input } }), signal: AbortSignal.timeout(10000) });
+    const j = await r.json();
+    if (j.errors?.length) return res.status(400).json({ error: j.errors[0].message });
+    if (!j.data?.issueUpdate?.success) return res.status(400).json({ error: 'Linear issue güncellenemedi' });
+    const issue = j.data.issueUpdate.issue;
+    res.json({ success: true, message: `✅ Linear issue güncellendi: ${issue.identifier}`, url: issue.url });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── Linear: Yorum ekle ────────────────────────────────────────────────────────
+router.post('/linear/add-comment', requireAuth, async (req, res) => {
+  const { apiKey, issueId, body } = req.body;
+  if (!apiKey || !issueId || !body) return res.status(400).json({ error: 'apiKey, issueId ve body gerekli' });
+  try {
+    const query = `mutation AddComment($issueId:String!,$body:String!){commentCreate(input:{issueId:$issueId,body:$body}){success comment{id}}}`;
+    const r = await fetch('https://api.linear.app/graphql', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: apiKey }, body: JSON.stringify({ query, variables: { issueId, body } }), signal: AbortSignal.timeout(10000) });
+    const j = await r.json();
+    if (j.errors?.length) return res.status(400).json({ error: j.errors[0].message });
+    if (!j.data?.commentCreate?.success) return res.status(400).json({ error: 'Linear yorumu eklenemedi' });
+    res.json({ success: true, message: `✅ Linear issue için yorum eklendi` });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── Gmail: Taslak oluştur (otomasyon) ────────────────────────────────────────
+router.post('/gmail/create-draft', async (req, res) => {
+  const { to, subject, body } = req.body;
+  if (!subject) return res.status(400).json({ error: 'subject zorunlu' });
+  const accessToken = await tokenManager.getValidAccessToken(req.user.id, 'gmail').catch(() => null);
+  if (!accessToken) return res.status(401).json({ error: 'Gmail bağlı değil. Önce Gmail hesabınızı bağlayın.' });
+  try {
+    const { google } = require('googleapis');
+    const oauth2Client = new google.auth.OAuth2(process.env.GOOGLE_CLIENT_ID, process.env.GOOGLE_CLIENT_SECRET);
+    oauth2Client.setCredentials({ access_token: accessToken });
+    const gmail = google.gmail({ version: 'v1', auth: oauth2Client });
+    const rawBody = [
+      to ? `To: ${to}` : '',
+      `Subject: ${subject}`,
+      'MIME-Version: 1.0',
+      'Content-Type: text/plain; charset=UTF-8',
+      '',
+      body || '',
+    ].filter(Boolean).join('\r\n');
+    const raw = Buffer.from(rawBody).toString('base64url');
+    const draft = await gmail.users.drafts.create({ userId: 'me', requestBody: { message: { raw } } });
+    res.json({ ok: true, draftId: draft.data.id, message: '✅ Gmail taslağı oluşturuldu' });
+  } catch (err) {
+    const code = err.code || err.status;
+    if (code === 401) return res.status(401).json({ error: 'Gmail token süresi doldu. Lütfen yeniden bağlanın.', code: 'TOKEN_EXPIRED' });
+    res.status(500).json({ error: 'Taslak oluşturma hatası: ' + err.message });
+  }
+});
+
 // ── PagerDuty ─────────────────────────────────────────────────────────────────
 router.post('/pagerduty/trigger', requireAuth, async (req, res) => {
   const { routingKey, summary, severity } = req.body;
