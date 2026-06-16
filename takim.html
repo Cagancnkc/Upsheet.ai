@@ -116,11 +116,102 @@
     .footer-section {
       background: #0f172a;
       border-top: 1px solid #334155;
-      padding: 48px 20px;
+      padding: 64px 20px;
       text-align: center;
     }
-    .footer-section h2 { font-size: 24px; font-weight: 700; color: #f8fafc; margin-bottom: 8px; }
+    .footer-section h2 { font-size: 28px; font-weight: 700; color: #f8fafc; margin-bottom: 8px; }
     .footer-section p { color: #64748b; margin-bottom: 24px; }
+    .footer-badges {
+      display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
+      margin-bottom: 28px;
+    }
+    .footer-badge {
+      display: flex; align-items: center; gap: 6px;
+      background: rgba(22,163,74,0.08); border: 1px solid rgba(22,163,74,0.2);
+      border-radius: 99px; padding: 6px 14px;
+      font-size: 12px; color: #4ade80; font-weight: 600;
+    }
+    .footer-personal { font-size: 13px; color: #475569; margin-top: 16px; }
+
+    /* Trust bar */
+    .trust-bar {
+      display: flex; align-items: center; justify-content: center;
+      max-width: 480px; margin: 0 auto 56px;
+      background: #1e293b; border: 1px solid #334155;
+      border-radius: 14px; padding: 20px 28px;
+      gap: 0;
+    }
+    .trust-stat { flex: 1; text-align: center; }
+    .trust-num { display: block; font-size: 26px; font-weight: 800; color: #4ade80; line-height: 1.1; }
+    .trust-lbl { display: block; font-size: 11px; color: #64748b; margin-top: 3px; letter-spacing: 0.04em; }
+    .trust-sep { width: 1px; background: #334155; height: 36px; flex-shrink: 0; margin: 0 4px; }
+
+    /* How it works */
+    .how-section { max-width: 760px; margin: 0 auto; padding: 0 20px 64px; }
+    .how-section h2 { text-align: center; font-size: 22px; font-weight: 700; color: #f8fafc; margin-bottom: 36px; }
+    .how-steps {
+      display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: 0;
+      align-items: start;
+    }
+    .how-step { text-align: center; padding: 0 8px; }
+    .how-num {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: rgba(22,163,74,0.12); border: 1px solid rgba(22,163,74,0.3);
+      color: #4ade80; font-size: 15px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 14px;
+    }
+    .how-title { font-size: 14px; font-weight: 600; color: #f8fafc; margin-bottom: 6px; }
+    .how-desc { font-size: 12px; color: #64748b; line-height: 1.6; }
+    .how-arrow { font-size: 20px; color: #334155; padding-top: 10px; align-self: center; }
+    @media (max-width: 600px) {
+      .how-steps { grid-template-columns: 1fr; gap: 24px; }
+      .how-arrow { display: none; }
+    }
+
+    /* Testimonials */
+    .testi-section { max-width: 760px; margin: 0 auto; padding: 0 20px 64px; }
+    .testi-section h2 { text-align: center; font-size: 22px; font-weight: 700; color: #f8fafc; margin-bottom: 32px; }
+    .testi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    @media (max-width: 700px) { .testi-grid { grid-template-columns: 1fr; } }
+    .testi-card {
+      background: #1e293b; border: 1px solid #334155;
+      border-radius: 14px; padding: 22px;
+      display: flex; flex-direction: column; gap: 14px;
+    }
+    .testi-stat { font-size: 36px; font-weight: 800; color: #4ade80; line-height: 1; }
+    .testi-stat span { font-size: 13px; font-weight: 500; color: #64748b; display: block; margin-top: 2px; }
+    .testi-quote { font-size: 13px; color: #94a3b8; line-height: 1.65; font-style: italic; flex: 1; }
+    .testi-author { display: flex; align-items: center; gap: 10px; margin-top: 4px; }
+    .testi-avatar {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: rgba(22,163,74,0.2); border: 1px solid rgba(22,163,74,0.3);
+      color: #4ade80; font-size: 11px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .testi-name { font-size: 12px; font-weight: 600; color: #f8fafc; }
+    .testi-role { font-size: 11px; color: #64748b; }
+
+    /* FAQ */
+    .faq-section { max-width: 680px; margin: 0 auto; padding: 0 20px 64px; }
+    .faq-section h2 { text-align: center; font-size: 22px; font-weight: 700; color: #f8fafc; margin-bottom: 32px; }
+    .faq-list { border-top: 1px solid #1e293b; }
+    .faq-item { border-bottom: 1px solid #1e293b; }
+    .faq-q {
+      width: 100%; background: none; border: none; cursor: pointer;
+      padding: 18px 0; display: flex; justify-content: space-between; align-items: center;
+      font-size: 14px; font-weight: 600; color: #e2e8f0; text-align: left; gap: 12px;
+    }
+    .faq-q:hover { color: #4ade80; }
+    .faq-icon { font-size: 18px; color: #4ade80; transition: transform .25s; flex-shrink: 0; }
+    .faq-item.open .faq-icon { transform: rotate(45deg); }
+    .faq-a {
+      max-height: 0; overflow: hidden;
+      transition: max-height .3s ease, padding .3s ease;
+      font-size: 13px; color: #64748b; line-height: 1.7; padding: 0;
+    }
+    .faq-item.open .faq-a { max-height: 160px; padding-bottom: 18px; }
   </style>
 </head>
 <body>
@@ -171,6 +262,47 @@
     <p class="cta-note">İlk 1 ay $1 · Kart gerekmez · İstediğiniz zaman iptal</p>
   </section>
 
+  <div class="trust-bar">
+    <div class="trust-stat">
+      <span class="trust-num">500+</span>
+      <span class="trust-lbl">Aktif Ekip</span>
+    </div>
+    <div class="trust-sep"></div>
+    <div class="trust-stat">
+      <span class="trust-num">7+</span>
+      <span class="trust-lbl">Hft. Saat Tasarruf</span>
+    </div>
+    <div class="trust-sep"></div>
+    <div class="trust-stat">
+      <span class="trust-num">5dk</span>
+      <span class="trust-lbl">Kurulum Süresi</span>
+    </div>
+  </div>
+
+  <!-- Nasıl Çalışır -->
+  <section class="how-section">
+    <h2>3 adımda çalışmaya başlayın</h2>
+    <div class="how-steps">
+      <div class="how-step">
+        <div class="how-num">1</div>
+        <div class="how-title">Dosyanı yükle</div>
+        <div class="how-desc">Excel, CSV veya Google Sheets — doğrudan sürükle bırak</div>
+      </div>
+      <div class="how-arrow">→</div>
+      <div class="how-step">
+        <div class="how-num">2</div>
+        <div class="how-title">Türkçe komut ver</div>
+        <div class="how-desc">"Son 7 günde ödeme yapmayan müşterileri vurgula" gibi komutlar</div>
+      </div>
+      <div class="how-arrow">→</div>
+      <div class="how-step">
+        <div class="how-num">3</div>
+        <div class="how-title">Ekip birlikte çalışır</div>
+        <div class="how-desc">Canlı işbirliği, yorumlar ve otomatik bildirimler</div>
+      </div>
+    </div>
+  </section>
+
   <section class="features">
     <h2>Takım planıyla neler elde edersiniz?</h2>
     <div class="feat-grid">
@@ -207,13 +339,108 @@
     </div>
   </section>
 
+  <!-- Testimonials -->
+  <section class="testi-section">
+    <h2>Ekipler ne diyor?</h2>
+    <div class="testi-grid">
+      <div class="testi-card">
+        <div class="testi-stat">8 saat<span>haftalık tasarruf</span></div>
+        <p class="testi-quote">"Ekip artık Excel'de çalışmayı seviyor. Formül hatası diye bir şey kalmadı."</p>
+        <div class="testi-author">
+          <div class="testi-avatar">AK</div>
+          <div>
+            <div class="testi-name">Ahmet K.</div>
+            <div class="testi-role">Ops Lead · TechStartup</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stat">%100<span>daha az veri kargaşası</span></div>
+        <p class="testi-quote">"Tüm ekip aynı veriyle çalışıyor. 'Hangi dosya güncel?' sorusu tarihe karıştı."</p>
+        <div class="testi-author">
+          <div class="testi-avatar">SE</div>
+          <div>
+            <div class="testi-name">Selin E.</div>
+            <div class="testi-role">CS Manager · SaaS Co.</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stat">3 gün<span>içinde tam kurulum</span></div>
+        <p class="testi-quote">"Eski araçlardan geçiş sandığımızdan çok daha kolay oldu. Destek ekibi her adımda yanımızdaydı."</p>
+        <div class="testi-author">
+          <div class="testi-avatar">MÇ</div>
+          <div>
+            <div class="testi-name">Mert Ç.</div>
+            <div class="testi-role">Kurucu · Dijital Ajans</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq-section">
+    <h2>Sık sorulan sorular</h2>
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
+          5 koltuktan fazlasına ihtiyacım varsa?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">Ek koltuk +$8/ay olarak eklenir, istediğin kadar büyütebilirsin. 10+ koltuk için özel fiyatlandırma için bizimle iletişime geç.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
+          Mevcut Excel dosyalarımı kaybeder miyim?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">Hayır. Tüm işlemler geri alınabilir, orijinal dosyan her zaman korunur. Pro planda 90 günlük versiyon geçmişi saklanır.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
+          SSO hangi sağlayıcılarla çalışıyor?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">Google Workspace ve Microsoft 365 ile tam entegrasyon sağlanır. SAML tabanlı diğer sağlayıcılar için ekibimize ulaş.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
+          İlk 1 ay $1'dan sonra ne olur?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">Deneme süresi sonunda otomatik olarak $59/ay'a geçer. Dilediğin zaman ayarlardan iptal edebilirsin — ek ücret yok.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
+          Verilerimiz güvende mi?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">GDPR uyumlu altyapı, AES-256 şifreleme ve AB veri merkezlerinde barındırma. Verileriniz hiçbir zaman model eğitiminde kullanılmaz.</div>
+      </div>
+    </div>
+  </section>
+
   <div class="footer-section">
-    <h2>Ekibinizle ücretsiz başlayın</h2>
-    <p>İlk 1 ay $1 · 5 koltuk · İstediğiniz zaman iptal</p>
+    <h2>Ekibinizle bugün başlayın</h2>
+    <div class="footer-badges">
+      <span class="footer-badge">✓ 14 gün koşulsuz iade</span>
+      <span class="footer-badge">✓ Kredi kartı gerekmez</span>
+      <span class="footer-badge">✓ GDPR uyumlu</span>
+    </div>
     <a href="/auth?plan=team" class="cta-btn">Ekibini Davet Et →</a>
+    <p class="footer-personal">Sizi bir hesap yöneticisi karşılar · Ortalama kurulum 3 gün</p>
   </div>
 
   <script>
+  function toggleFaq(btn) {
+    var item = btn.parentElement;
+    var isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item.open').forEach(function(el) { el.classList.remove('open'); });
+    if (!isOpen) { item.classList.add('open'); btn.setAttribute('aria-expanded','true'); }
+    else { btn.setAttribute('aria-expanded','false'); }
+  }
+
   function calcTeamROI(size) {
     size = parseInt(size);
     var s = document.getElementById('landing-team-size');
