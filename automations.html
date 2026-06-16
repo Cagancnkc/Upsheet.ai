@@ -1180,7 +1180,7 @@ function renderRules(filtered) {
     return;
   }
 
-  const ACTION_ICONS = { slack:'💬', teams:'🟣', gmail:'<img src="https://cdn.simpleicons.org/gmail/EA4335" alt="Gmail" style="width:18px;height:18px;vertical-align:middle">', webhook:'🔗', make:'⚙️', notion:'<img src="https://cdn.simpleicons.org/notion/000000" alt="Notion" style="width:18px;height:18px;vertical-align:middle">', notion_page:'<img src="https://cdn.simpleicons.org/notion/000000" alt="Notion" style="width:18px;height:18px;vertical-align:middle">', airtable:'📊', update_cells:'✏️', notification:'🔔', discord:'<img src="https://cdn.simpleicons.org/discord/5865F2" alt="Discord" style="width:18px;height:18px;vertical-align:middle">', 'google-chat':'💬', n8n:'⚙️', pipedream:'⚡', zapier:'<img src="https://cdn.simpleicons.org/zapier/FF4A00" alt="Zapier" style="width:18px;height:18px;vertical-align:middle">', ifttt:'🔀', sendgrid:'📧', mailchimp:'🐵', brevo:'📬', twilio:'📱', telegram:'✈️', jira:'<img src="https://cdn.simpleicons.org/jira/0052CC" alt="Jira" style="width:18px;height:18px;vertical-align:middle">', linear:'🔷', github:'🐙', clickup:'✅', asana:'🌸', monday:'📅', hubspot:'🟠', pagerduty:'🔴', smartsheet:'📋' };
+  const ACTION_ICONS = { slack:'💬', teams:'🟣', gmail:'<img src="https://cdn.simpleicons.org/gmail/EA4335" alt="Gmail" style="width:18px;height:18px;vertical-align:middle">', webhook:'🔗', make:'⚙️', notion:'<img src="https://cdn.simpleicons.org/notion/000000" alt="Notion" style="width:18px;height:18px;vertical-align:middle">', notion_page:'<img src="https://cdn.simpleicons.org/notion/000000" alt="Notion" style="width:18px;height:18px;vertical-align:middle">', airtable:'📊', update_cells:'✏️', notification:'🔔', discord:'<img src="https://cdn.simpleicons.org/discord/5865F2" alt="Discord" style="width:18px;height:18px;vertical-align:middle">', 'google-chat':'💬', n8n:'⚙️', pipedream:'⚡', zapier:'<img src="https://cdn.simpleicons.org/zapier/FF4A00" alt="Zapier" style="width:18px;height:18px;vertical-align:middle">', ifttt:'🔀', sendgrid:'📧', mailchimp:'🐵', brevo:'📬', twilio:'📱', telegram:'✈️', jira:'<img src="https://cdn.simpleicons.org/jira/0052CC" alt="Jira" style="width:18px;height:18px;vertical-align:middle">', linear:'🔷', github:'🐙', clickup:'✅', asana:'🌸', monday:'📅', hubspot:'🟠', pagerduty:'🔴', smartsheet:'📋', hubspot_create_deal:'🟠', hubspot_update_contact:'🟠', hubspot_add_note:'🟠', jira_add_comment:'📌', jira_transition:'📌', jira_assign:'📌', github_add_comment:'🐙', github_close_issue:'🐙', github_create_pr:'🐙', trello:'🃏', trello_add_comment:'🃏', trello_move_card:'🃏', clickup_update_task:'✅', clickup_add_comment:'✅', asana_complete_task:'🌸', asana_add_comment:'🌸', notion_update_page:'📝', airtable_update:'🗃️', monday_update_item:'📅', linear_update_issue:'🔷', linear_add_comment:'🔷', gmail_create_draft:'📧' };
   el.innerHTML = rules.map(r => {
     const tc = r.trigger_config || {};
     const actions = Array.isArray(r.action_config) ? r.action_config : [r.action_config].filter(Boolean);
@@ -2069,6 +2069,374 @@ function renderActionConfigFields(idx) {
           <input class="inp" placeholder="1234567890123456" value="${esc(act.sheetId||'')}" oninput="builderActions[${idx}].sheetId=this.value">
         </div>`;
       break;
+    case 'hubspot_create_deal':
+      html += `
+        <div class="field"><label class="lbl">Private App Token</label>
+          <input class="inp" type="password" placeholder="pat-eu1-xxx..." value="${esc(act.token||'')}" oninput="builderActions[${idx}].token=this.value">
+        </div>
+        <div class="field"><label class="lbl">Deal Adı (veya {Sütun})</label>
+          <input class="inp" placeholder="{Müşteri Adı}" value="${esc(act.dealName||'')}" oninput="builderActions[${idx}].dealName=this.value">
+        </div>
+        <div class="field"><label class="lbl">Tutar (opsiyonel)</label>
+          <input class="inp" placeholder="{Tutar}" value="${esc(act.amount||'')}" oninput="builderActions[${idx}].amount=this.value">
+        </div>
+        <div class="field"><label class="lbl">Pipeline ID (opsiyonel)</label>
+          <input class="inp" placeholder="default" value="${esc(act.pipelineId||'')}" oninput="builderActions[${idx}].pipelineId=this.value">
+        </div>
+        <div class="field"><label class="lbl">Stage ID (opsiyonel)</label>
+          <input class="inp" placeholder="appointmentscheduled" value="${esc(act.stageId||'')}" oninput="builderActions[${idx}].stageId=this.value">
+        </div>`;
+      break;
+    case 'hubspot_update_contact':
+      html += `
+        <div class="field"><label class="lbl">Private App Token</label>
+          <input class="inp" type="password" placeholder="pat-eu1-xxx..." value="${esc(act.token||'')}" oninput="builderActions[${idx}].token=this.value">
+        </div>
+        <div class="field"><label class="lbl">E-posta (veya {Sütun})</label>
+          <input class="inp" placeholder="{E-posta}" value="${esc(act.email||'')}" oninput="builderActions[${idx}].email=this.value">
+        </div>
+        <div class="field"><label class="lbl">Ad (opsiyonel)</label>
+          <input class="inp" placeholder="{Ad}" value="${esc(act.firstName||'')}" oninput="builderActions[${idx}].firstName=this.value">
+        </div>
+        <div class="field"><label class="lbl">Soyad (opsiyonel)</label>
+          <input class="inp" placeholder="{Soyad}" value="${esc(act.lastName||'')}" oninput="builderActions[${idx}].lastName=this.value">
+        </div>
+        <div class="field"><label class="lbl">Telefon (opsiyonel)</label>
+          <input class="inp" placeholder="{Telefon}" value="${esc(act.phone||'')}" oninput="builderActions[${idx}].phone=this.value">
+        </div>`;
+      break;
+    case 'hubspot_add_note':
+      html += `
+        <div class="field"><label class="lbl">Private App Token</label>
+          <input class="inp" type="password" placeholder="pat-eu1-xxx..." value="${esc(act.token||'')}" oninput="builderActions[${idx}].token=this.value">
+        </div>
+        <div class="field"><label class="lbl">Contact E-posta (veya {Sütun})</label>
+          <input class="inp" placeholder="{E-posta}" value="${esc(act.contactEmail||'')}" oninput="builderActions[${idx}].contactEmail=this.value">
+        </div>
+        <div class="field" style="grid-column:1/-1"><label class="lbl">Not İçeriği</label>
+          <input class="inp" id="act-msg-${idx}" placeholder="Not metni {Sütun}" value="${esc(act.noteBody||'')}" oninput="builderActions[${idx}].noteBody=this.value;updateMsgPreview('act-msg-${idx}','msg-prev-${idx}')">
+          ${renderVarChipsHtml(idx, 'act-msg-' + idx)}
+          <div class="msg-preview-box" id="msg-prev-${idx}"><div class="msg-preview-label">Önizleme</div><div class="msg-preview-text">${previewMsg(act.noteBody||'')}</div></div>
+        </div>`;
+      break;
+    case 'jira_add_comment':
+      html += `
+        <div class="field"><label class="lbl">E-posta</label>
+          <input class="inp" type="email" placeholder="you@company.com" value="${esc(act.email||'')}" oninput="builderActions[${idx}].email=this.value">
+        </div>
+        <div class="field"><label class="lbl">API Token</label>
+          <input class="inp" type="password" placeholder="ATATT3..." value="${esc(act.apiToken||'')}" oninput="builderActions[${idx}].apiToken=this.value">
+        </div>
+        <div class="field"><label class="lbl">Domain (şirket.atlassian.net)</label>
+          <input class="inp" placeholder="sirketiniz" value="${esc(act.domain||'')}" oninput="builderActions[${idx}].domain=this.value">
+        </div>
+        <div class="field"><label class="lbl">Issue Key (veya {Sütun})</label>
+          <input class="inp" placeholder="{Issue Key}" value="${esc(act.issueKey||'')}" oninput="builderActions[${idx}].issueKey=this.value">
+        </div>
+        <div class="field" style="grid-column:1/-1"><label class="lbl">Yorum</label>
+          <input class="inp" id="act-msg-${idx}" placeholder="Yorum metni {Sütun}" value="${esc(act.comment||'')}" oninput="builderActions[${idx}].comment=this.value;updateMsgPreview('act-msg-${idx}','msg-prev-${idx}')">
+          ${renderVarChipsHtml(idx, 'act-msg-' + idx)}
+          <div class="msg-preview-box" id="msg-prev-${idx}"><div class="msg-preview-label">Önizleme</div><div class="msg-preview-text">${previewMsg(act.comment||'')}</div></div>
+        </div>`;
+      break;
+    case 'jira_transition':
+      html += `
+        <div class="field"><label class="lbl">E-posta</label>
+          <input class="inp" type="email" placeholder="you@company.com" value="${esc(act.email||'')}" oninput="builderActions[${idx}].email=this.value">
+        </div>
+        <div class="field"><label class="lbl">API Token</label>
+          <input class="inp" type="password" placeholder="ATATT3..." value="${esc(act.apiToken||'')}" oninput="builderActions[${idx}].apiToken=this.value">
+        </div>
+        <div class="field"><label class="lbl">Domain (şirket.atlassian.net)</label>
+          <input class="inp" placeholder="sirketiniz" value="${esc(act.domain||'')}" oninput="builderActions[${idx}].domain=this.value">
+        </div>
+        <div class="field"><label class="lbl">Issue Key (veya {Sütun})</label>
+          <input class="inp" placeholder="{Issue Key}" value="${esc(act.issueKey||'')}" oninput="builderActions[${idx}].issueKey=this.value">
+        </div>
+        <div class="field"><label class="lbl">Transition Adı</label>
+          <input class="inp" placeholder="In Progress" value="${esc(act.transitionName||'')}" oninput="builderActions[${idx}].transitionName=this.value">
+        </div>`;
+      break;
+    case 'jira_assign':
+      html += `
+        <div class="field"><label class="lbl">E-posta</label>
+          <input class="inp" type="email" placeholder="you@company.com" value="${esc(act.email||'')}" oninput="builderActions[${idx}].email=this.value">
+        </div>
+        <div class="field"><label class="lbl">API Token</label>
+          <input class="inp" type="password" placeholder="ATATT3..." value="${esc(act.apiToken||'')}" oninput="builderActions[${idx}].apiToken=this.value">
+        </div>
+        <div class="field"><label class="lbl">Domain (şirket.atlassian.net)</label>
+          <input class="inp" placeholder="sirketiniz" value="${esc(act.domain||'')}" oninput="builderActions[${idx}].domain=this.value">
+        </div>
+        <div class="field"><label class="lbl">Issue Key (veya {Sütun})</label>
+          <input class="inp" placeholder="{Issue Key}" value="${esc(act.issueKey||'')}" oninput="builderActions[${idx}].issueKey=this.value">
+        </div>
+        <div class="field"><label class="lbl">Atanacak Kişi E-postası</label>
+          <input class="inp" placeholder="{Atanan E-posta}" value="${esc(act.assigneeEmail||'')}" oninput="builderActions[${idx}].assigneeEmail=this.value">
+        </div>`;
+      break;
+    case 'github_add_comment':
+      html += `
+        <div class="field"><label class="lbl">Personal Access Token</label>
+          <input class="inp" type="password" placeholder="ghp_xxx..." value="${esc(act.token||'')}" oninput="builderActions[${idx}].token=this.value">
+        </div>
+        <div class="field"><label class="lbl">Owner (kullanıcı/org)</label>
+          <input class="inp" placeholder="octocat" value="${esc(act.owner||'')}" oninput="builderActions[${idx}].owner=this.value">
+        </div>
+        <div class="field"><label class="lbl">Repo Adı</label>
+          <input class="inp" placeholder="my-repo" value="${esc(act.repo||'')}" oninput="builderActions[${idx}].repo=this.value">
+        </div>
+        <div class="field"><label class="lbl">Issue Numarası (veya {Sütun})</label>
+          <input class="inp" placeholder="{Issue No}" value="${esc(act.issueNumber||'')}" oninput="builderActions[${idx}].issueNumber=this.value">
+        </div>
+        <div class="field" style="grid-column:1/-1"><label class="lbl">Yorum</label>
+          <input class="inp" id="act-msg-${idx}" placeholder="Yorum metni {Sütun}" value="${esc(act.body||'')}" oninput="builderActions[${idx}].body=this.value;updateMsgPreview('act-msg-${idx}','msg-prev-${idx}')">
+          ${renderVarChipsHtml(idx, 'act-msg-' + idx)}
+          <div class="msg-preview-box" id="msg-prev-${idx}"><div class="msg-preview-label">Önizleme</div><div class="msg-preview-text">${previewMsg(act.body||'')}</div></div>
+        </div>`;
+      break;
+    case 'github_close_issue':
+      html += `
+        <div class="field"><label class="lbl">Personal Access Token</label>
+          <input class="inp" type="password" placeholder="ghp_xxx..." value="${esc(act.token||'')}" oninput="builderActions[${idx}].token=this.value">
+        </div>
+        <div class="field"><label class="lbl">Owner (kullanıcı/org)</label>
+          <input class="inp" placeholder="octocat" value="${esc(act.owner||'')}" oninput="builderActions[${idx}].owner=this.value">
+        </div>
+        <div class="field"><label class="lbl">Repo Adı</label>
+          <input class="inp" placeholder="my-repo" value="${esc(act.repo||'')}" oninput="builderActions[${idx}].repo=this.value">
+        </div>
+        <div class="field"><label class="lbl">Issue Numarası (veya {Sütun})</label>
+          <input class="inp" placeholder="{Issue No}" value="${esc(act.issueNumber||'')}" oninput="builderActions[${idx}].issueNumber=this.value">
+        </div>`;
+      break;
+    case 'github_create_pr':
+      html += `
+        <div class="field"><label class="lbl">Personal Access Token</label>
+          <input class="inp" type="password" placeholder="ghp_xxx..." value="${esc(act.token||'')}" oninput="builderActions[${idx}].token=this.value">
+        </div>
+        <div class="field"><label class="lbl">Owner (kullanıcı/org)</label>
+          <input class="inp" placeholder="octocat" value="${esc(act.owner||'')}" oninput="builderActions[${idx}].owner=this.value">
+        </div>
+        <div class="field"><label class="lbl">Repo Adı</label>
+          <input class="inp" placeholder="my-repo" value="${esc(act.repo||'')}" oninput="builderActions[${idx}].repo=this.value">
+        </div>
+        <div class="field"><label class="lbl">PR Başlığı (veya {Sütun})</label>
+          <input class="inp" id="act-msg-${idx}" placeholder="{PR Başlığı}" value="${esc(act.title||'')}" oninput="builderActions[${idx}].title=this.value;updateMsgPreview('act-msg-${idx}','msg-prev-${idx}')">
+          ${renderVarChipsHtml(idx, 'act-msg-' + idx)}
+          <div class="msg-preview-box" id="msg-prev-${idx}"><div class="msg-preview-label">Önizleme</div><div class="msg-preview-text">${previewMsg(act.title||'')}</div></div>
+        </div>
+        <div class="field"><label class="lbl">Head Branch</label>
+          <input class="inp" placeholder="feature/branch" value="${esc(act.head||'')}" oninput="builderActions[${idx}].head=this.value">
+        </div>
+        <div class="field"><label class="lbl">Base Branch</label>
+          <input class="inp" placeholder="main" value="${esc(act.base||'')}" oninput="builderActions[${idx}].base=this.value">
+        </div>
+        <div class="field" style="grid-column:1/-1"><label class="lbl">Açıklama (opsiyonel)</label>
+          <input class="inp" placeholder="PR açıklaması" value="${esc(act.body||'')}" oninput="builderActions[${idx}].body=this.value">
+        </div>`;
+      break;
+    case 'trello':
+      html += `
+        <div class="field"><label class="lbl">API Key</label>
+          <input class="inp" placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" value="${esc(act.apiKey||'')}" oninput="builderActions[${idx}].apiKey=this.value">
+        </div>
+        <div class="field"><label class="lbl">Token</label>
+          <input class="inp" type="password" placeholder="xxxxxxxx..." value="${esc(act.token||'')}" oninput="builderActions[${idx}].token=this.value">
+        </div>
+        <div class="field"><label class="lbl">List ID</label>
+          <input class="inp" placeholder="xxxxxxxxxxxxxxxxxxxxxxxx" value="${esc(act.listId||'')}" oninput="builderActions[${idx}].listId=this.value">
+        </div>
+        <div class="field" style="grid-column:1/-1"><label class="lbl">Kart Adı (veya {Sütun})</label>
+          <input class="inp" id="act-msg-${idx}" placeholder="{Kart Adı}" value="${esc(act.name||'')}" oninput="builderActions[${idx}].name=this.value;updateMsgPreview('act-msg-${idx}','msg-prev-${idx}')">
+          ${renderVarChipsHtml(idx, 'act-msg-' + idx)}
+          <div class="msg-preview-box" id="msg-prev-${idx}"><div class="msg-preview-label">Önizleme</div><div class="msg-preview-text">${previewMsg(act.name||'')}</div></div>
+        </div>
+        <div class="field" style="grid-column:1/-1"><label class="lbl">Açıklama (opsiyonel)</label>
+          <input class="inp" placeholder="Kart açıklaması {Sütun}" value="${esc(act.desc||'')}" oninput="builderActions[${idx}].desc=this.value">
+        </div>`;
+      break;
+    case 'trello_add_comment':
+      html += `
+        <div class="field"><label class="lbl">API Key</label>
+          <input class="inp" placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" value="${esc(act.apiKey||'')}" oninput="builderActions[${idx}].apiKey=this.value">
+        </div>
+        <div class="field"><label class="lbl">Token</label>
+          <input class="inp" type="password" placeholder="xxxxxxxx..." value="${esc(act.token||'')}" oninput="builderActions[${idx}].token=this.value">
+        </div>
+        <div class="field"><label class="lbl">Kart ID (veya {Sütun})</label>
+          <input class="inp" placeholder="{Kart ID}" value="${esc(act.cardId||'')}" oninput="builderActions[${idx}].cardId=this.value">
+        </div>
+        <div class="field" style="grid-column:1/-1"><label class="lbl">Yorum</label>
+          <input class="inp" id="act-msg-${idx}" placeholder="Yorum metni {Sütun}" value="${esc(act.text||'')}" oninput="builderActions[${idx}].text=this.value;updateMsgPreview('act-msg-${idx}','msg-prev-${idx}')">
+          ${renderVarChipsHtml(idx, 'act-msg-' + idx)}
+          <div class="msg-preview-box" id="msg-prev-${idx}"><div class="msg-preview-label">Önizleme</div><div class="msg-preview-text">${previewMsg(act.text||'')}</div></div>
+        </div>`;
+      break;
+    case 'trello_move_card':
+      html += `
+        <div class="field"><label class="lbl">API Key</label>
+          <input class="inp" placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" value="${esc(act.apiKey||'')}" oninput="builderActions[${idx}].apiKey=this.value">
+        </div>
+        <div class="field"><label class="lbl">Token</label>
+          <input class="inp" type="password" placeholder="xxxxxxxx..." value="${esc(act.token||'')}" oninput="builderActions[${idx}].token=this.value">
+        </div>
+        <div class="field"><label class="lbl">Kart ID (veya {Sütun})</label>
+          <input class="inp" placeholder="{Kart ID}" value="${esc(act.cardId||'')}" oninput="builderActions[${idx}].cardId=this.value">
+        </div>
+        <div class="field"><label class="lbl">Hedef List ID</label>
+          <input class="inp" placeholder="xxxxxxxxxxxxxxxxxxxxxxxx" value="${esc(act.listId||'')}" oninput="builderActions[${idx}].listId=this.value">
+        </div>`;
+      break;
+    case 'clickup_update_task':
+      html += `
+        <div class="field"><label class="lbl">API Key</label>
+          <input class="inp" placeholder="pk_xxx..." value="${esc(act.apiKey||'')}" oninput="builderActions[${idx}].apiKey=this.value">
+        </div>
+        <div class="field"><label class="lbl">Task ID (veya {Sütun})</label>
+          <input class="inp" placeholder="{Task ID}" value="${esc(act.taskId||'')}" oninput="builderActions[${idx}].taskId=this.value">
+        </div>
+        <div class="field"><label class="lbl">Yeni Durum (opsiyonel)</label>
+          <input class="inp" placeholder="in progress" value="${esc(act.status||'')}" oninput="builderActions[${idx}].status=this.value">
+        </div>
+        <div class="field"><label class="lbl">Yeni İsim (opsiyonel)</label>
+          <input class="inp" placeholder="{Görev Adı}" value="${esc(act.name||'')}" oninput="builderActions[${idx}].name=this.value">
+        </div>`;
+      break;
+    case 'clickup_add_comment':
+      html += `
+        <div class="field"><label class="lbl">API Key</label>
+          <input class="inp" placeholder="pk_xxx..." value="${esc(act.apiKey||'')}" oninput="builderActions[${idx}].apiKey=this.value">
+        </div>
+        <div class="field"><label class="lbl">Task ID (veya {Sütun})</label>
+          <input class="inp" placeholder="{Task ID}" value="${esc(act.taskId||'')}" oninput="builderActions[${idx}].taskId=this.value">
+        </div>
+        <div class="field" style="grid-column:1/-1"><label class="lbl">Yorum</label>
+          <input class="inp" id="act-msg-${idx}" placeholder="Yorum metni {Sütun}" value="${esc(act.comment||'')}" oninput="builderActions[${idx}].comment=this.value;updateMsgPreview('act-msg-${idx}','msg-prev-${idx}')">
+          ${renderVarChipsHtml(idx, 'act-msg-' + idx)}
+          <div class="msg-preview-box" id="msg-prev-${idx}"><div class="msg-preview-label">Önizleme</div><div class="msg-preview-text">${previewMsg(act.comment||'')}</div></div>
+        </div>`;
+      break;
+    case 'asana_complete_task':
+      html += `
+        <div class="field"><label class="lbl">Personal Access Token</label>
+          <input class="inp" type="password" placeholder="1/12345:abcdef..." value="${esc(act.token||'')}" oninput="builderActions[${idx}].token=this.value">
+        </div>
+        <div class="field"><label class="lbl">Task GID (veya {Sütun})</label>
+          <input class="inp" placeholder="{Task ID}" value="${esc(act.taskId||'')}" oninput="builderActions[${idx}].taskId=this.value">
+        </div>`;
+      break;
+    case 'asana_add_comment':
+      html += `
+        <div class="field"><label class="lbl">Personal Access Token</label>
+          <input class="inp" type="password" placeholder="1/12345:abcdef..." value="${esc(act.token||'')}" oninput="builderActions[${idx}].token=this.value">
+        </div>
+        <div class="field"><label class="lbl">Task GID (veya {Sütun})</label>
+          <input class="inp" placeholder="{Task ID}" value="${esc(act.taskId||'')}" oninput="builderActions[${idx}].taskId=this.value">
+        </div>
+        <div class="field" style="grid-column:1/-1"><label class="lbl">Yorum</label>
+          <input class="inp" id="act-msg-${idx}" placeholder="Yorum metni {Sütun}" value="${esc(act.text||'')}" oninput="builderActions[${idx}].text=this.value;updateMsgPreview('act-msg-${idx}','msg-prev-${idx}')">
+          ${renderVarChipsHtml(idx, 'act-msg-' + idx)}
+          <div class="msg-preview-box" id="msg-prev-${idx}"><div class="msg-preview-label">Önizleme</div><div class="msg-preview-text">${previewMsg(act.text||'')}</div></div>
+        </div>`;
+      break;
+    case 'notion_update_page':
+      html += `
+        <div class="field"><label class="lbl">Integration Token</label>
+          <input class="inp" type="password" placeholder="secret_xxx..." value="${esc(act.token||'')}" oninput="builderActions[${idx}].token=this.value">
+        </div>
+        <div class="field"><label class="lbl">Page ID (veya {Sütun})</label>
+          <input class="inp" placeholder="{Page ID}" value="${esc(act.pageId||'')}" oninput="builderActions[${idx}].pageId=this.value">
+        </div>
+        <div class="field" style="grid-column:1/-1"><label class="lbl">Properties (JSON)</label>
+          <textarea class="inp" rows="4" placeholder='{"Durum":{"select":{"name":"Tamamlandı"}}}' oninput="builderActions[${idx}].properties=this.value">${esc(act.properties||'')}</textarea>
+        </div>`;
+      break;
+    case 'airtable_update':
+      html += `
+        <div class="field"><label class="lbl">Personal Access Token</label>
+          <input class="inp" type="password" placeholder="patXXX..." value="${esc(act.token||'')}" oninput="builderActions[${idx}].token=this.value">
+        </div>
+        <div class="field"><label class="lbl">Base ID</label>
+          <input class="inp" placeholder="appXXXXXXXXXXXXXX" value="${esc(act.baseId||'')}" oninput="builderActions[${idx}].baseId=this.value">
+        </div>
+        <div class="field"><label class="lbl">Tablo Adı</label>
+          <input class="inp" placeholder="Tablo 1" value="${esc(act.tableName||'')}" oninput="builderActions[${idx}].tableName=this.value">
+        </div>
+        <div class="field"><label class="lbl">Record ID (veya {Sütun})</label>
+          <input class="inp" placeholder="{Record ID}" value="${esc(act.recordId||'')}" oninput="builderActions[${idx}].recordId=this.value">
+        </div>
+        <div class="field" style="grid-column:1/-1"><label class="lbl">Fields (JSON)</label>
+          <textarea class="inp" rows="4" placeholder='{"Durum":"Tamamlandı","Tutar":1000}' oninput="builderActions[${idx}].fields=this.value">${esc(act.fields||'')}</textarea>
+        </div>`;
+      break;
+    case 'monday_update_item':
+      html += `
+        <div class="field"><label class="lbl">API Key</label>
+          <input class="inp" placeholder="eyJhbGci..." value="${esc(act.apiKey||'')}" oninput="builderActions[${idx}].apiKey=this.value">
+        </div>
+        <div class="field"><label class="lbl">Board ID</label>
+          <input class="inp" placeholder="1234567890" value="${esc(act.boardId||'')}" oninput="builderActions[${idx}].boardId=this.value">
+        </div>
+        <div class="field"><label class="lbl">Item ID (veya {Sütun})</label>
+          <input class="inp" placeholder="{Item ID}" value="${esc(act.itemId||'')}" oninput="builderActions[${idx}].itemId=this.value">
+        </div>
+        <div class="field"><label class="lbl">Sütun ID</label>
+          <input class="inp" placeholder="status" value="${esc(act.columnId||'')}" oninput="builderActions[${idx}].columnId=this.value">
+        </div>
+        <div class="field"><label class="lbl">Değer (veya {Sütun})</label>
+          <input class="inp" placeholder="{Değer}" value="${esc(act.value||'')}" oninput="builderActions[${idx}].value=this.value">
+        </div>`;
+      break;
+    case 'linear_update_issue':
+      html += `
+        <div class="field"><label class="lbl">API Key</label>
+          <input class="inp" placeholder="lin_api_..." value="${esc(act.apiKey||'')}" oninput="builderActions[${idx}].apiKey=this.value">
+        </div>
+        <div class="field"><label class="lbl">Issue ID (veya {Sütun})</label>
+          <input class="inp" placeholder="{Issue ID}" value="${esc(act.issueId||'')}" oninput="builderActions[${idx}].issueId=this.value">
+        </div>
+        <div class="field"><label class="lbl">State ID (opsiyonel)</label>
+          <input class="inp" placeholder="xxxxxxxx-xxxx-xxxx-xxxx" value="${esc(act.stateId||'')}" oninput="builderActions[${idx}].stateId=this.value">
+        </div>
+        <div class="field"><label class="lbl">Öncelik</label>
+          <select class="inp" onchange="builderActions[${idx}].priority=this.value">
+            <option value=""${!act.priority?' selected':''}>— Seçin —</option>
+            <option value="1"${act.priority==='1'?' selected':''}>1 — Urgent</option>
+            <option value="2"${act.priority==='2'?' selected':''}>2 — High</option>
+            <option value="3"${act.priority==='3'?' selected':''}>3 — Medium</option>
+            <option value="4"${act.priority==='4'?' selected':''}>4 — Low</option>
+          </select>
+        </div>`;
+      break;
+    case 'linear_add_comment':
+      html += `
+        <div class="field"><label class="lbl">API Key</label>
+          <input class="inp" placeholder="lin_api_..." value="${esc(act.apiKey||'')}" oninput="builderActions[${idx}].apiKey=this.value">
+        </div>
+        <div class="field"><label class="lbl">Issue ID (veya {Sütun})</label>
+          <input class="inp" placeholder="{Issue ID}" value="${esc(act.issueId||'')}" oninput="builderActions[${idx}].issueId=this.value">
+        </div>
+        <div class="field" style="grid-column:1/-1"><label class="lbl">Yorum</label>
+          <input class="inp" id="act-msg-${idx}" placeholder="Yorum metni {Sütun}" value="${esc(act.body||'')}" oninput="builderActions[${idx}].body=this.value;updateMsgPreview('act-msg-${idx}','msg-prev-${idx}')">
+          ${renderVarChipsHtml(idx, 'act-msg-' + idx)}
+          <div class="msg-preview-box" id="msg-prev-${idx}"><div class="msg-preview-label">Önizleme</div><div class="msg-preview-text">${previewMsg(act.body||'')}</div></div>
+        </div>`;
+      break;
+    case 'gmail_create_draft':
+      html += `
+        <div class="field"><label class="lbl">Alıcı (veya {Sütun})</label>
+          <input class="inp" placeholder="{E-posta}" value="${esc(act.to||'')}" oninput="builderActions[${idx}].to=this.value">
+        </div>
+        <div class="field"><label class="lbl">Konu</label>
+          <input class="inp" id="act-msg-${idx}" placeholder="Konu {Sütun}" value="${esc(act.subject||'')}" oninput="builderActions[${idx}].subject=this.value;updateMsgPreview('act-msg-${idx}','msg-prev-${idx}')">
+          ${renderVarChipsHtml(idx, 'act-msg-' + idx)}
+          <div class="msg-preview-box" id="msg-prev-${idx}"><div class="msg-preview-label">Önizleme</div><div class="msg-preview-text">${previewMsg(act.subject||'')}</div></div>
+        </div>
+        <div class="field" style="grid-column:1/-1"><label class="lbl">Mesaj İçeriği</label>
+          <input class="inp" placeholder="Mesaj içeriği {Sütun}" value="${esc(act.body||'')}" oninput="builderActions[${idx}].body=this.value">
+        </div>`;
+      break;
     default:
       break;
   }
@@ -2624,7 +2992,16 @@ const ACTION_LABELS = {
   zapier: 'Zapier', ifttt: 'IFTTT', sendgrid: 'SendGrid', mailchimp: 'Mailchimp',
   brevo: 'Brevo', twilio: 'Twilio SMS', telegram: 'Telegram', jira: 'Jira',
   linear: 'Linear', github: 'GitHub Issues', clickup: 'ClickUp', asana: 'Asana',
-  monday: 'Monday.com', hubspot: 'HubSpot', pagerduty: 'PagerDuty', smartsheet: 'Smartsheet'
+  monday: 'Monday.com', hubspot: 'HubSpot', pagerduty: 'PagerDuty', smartsheet: 'Smartsheet',
+  hubspot_create_deal: 'HubSpot Deal', hubspot_update_contact: 'HubSpot Contact', hubspot_add_note: 'HubSpot Not',
+  jira_add_comment: 'Jira Yorum', jira_transition: 'Jira Transition', jira_assign: 'Jira Atama',
+  github_add_comment: 'GitHub Yorum', github_close_issue: 'GitHub Kapat', github_create_pr: 'GitHub PR',
+  trello: 'Trello', trello_add_comment: 'Trello Yorum', trello_move_card: 'Trello Taşı',
+  clickup_update_task: 'ClickUp Güncelle', clickup_add_comment: 'ClickUp Yorum',
+  asana_complete_task: 'Asana Tamamla', asana_add_comment: 'Asana Yorum',
+  notion_update_page: 'Notion Güncelle', airtable_update: 'Airtable Güncelle',
+  monday_update_item: 'Monday.com Güncelle', linear_update_issue: 'Linear Güncelle',
+  linear_add_comment: 'Linear Yorum', gmail_create_draft: 'Gmail Taslak'
 };
 const STATUS_LABELS = { success: 'Başarılı', error: 'Hata', skipped: 'Atlandı', pending: 'Bekliyor' };
 const OPERATORS = [
@@ -2662,7 +3039,29 @@ const ACTION_TYPES = [
   { v: 'monday',       l: 'Monday.com',         icon: '📅' },
   { v: 'hubspot',      l: 'HubSpot Contact',    icon: '🟠' },
   { v: 'pagerduty',    l: 'PagerDuty Incident', icon: '🔴' },
-  { v: 'smartsheet',   l: 'Smartsheet Satırı',  icon: '📋' }
+  { v: 'smartsheet',   l: 'Smartsheet Satırı',  icon: '📋' },
+  { v: 'hubspot_create_deal',   l: 'HubSpot Deal Oluştur',      icon: '🟠' },
+  { v: 'hubspot_update_contact',l: 'HubSpot Contact Güncelle',  icon: '🟠' },
+  { v: 'hubspot_add_note',      l: 'HubSpot Not Ekle',          icon: '🟠' },
+  { v: 'jira_add_comment',      l: 'Jira Yorum Ekle',           icon: '📌' },
+  { v: 'jira_transition',       l: 'Jira Transition Uygula',    icon: '📌' },
+  { v: 'jira_assign',           l: 'Jira Issue Ata',            icon: '📌' },
+  { v: 'github_add_comment',    l: 'GitHub Yorum Ekle',         icon: '🐙' },
+  { v: 'github_close_issue',    l: 'GitHub Issue Kapat',        icon: '🐙' },
+  { v: 'github_create_pr',      l: 'GitHub PR Oluştur',         icon: '🐙' },
+  { v: 'trello',                l: 'Trello Kart Oluştur',       icon: '🃏' },
+  { v: 'trello_add_comment',    l: 'Trello Yorum Ekle',         icon: '🃏' },
+  { v: 'trello_move_card',      l: 'Trello Kart Taşı',          icon: '🃏' },
+  { v: 'clickup_update_task',   l: 'ClickUp Görev Güncelle',    icon: '✅' },
+  { v: 'clickup_add_comment',   l: 'ClickUp Yorum Ekle',        icon: '✅' },
+  { v: 'asana_complete_task',   l: 'Asana Görevi Tamamla',      icon: '🌸' },
+  { v: 'asana_add_comment',     l: 'Asana Yorum Ekle',          icon: '🌸' },
+  { v: 'notion_update_page',    l: 'Notion Sayfa Güncelle',     icon: '📝' },
+  { v: 'airtable_update',       l: 'Airtable Kayıt Güncelle',   icon: '🗃️' },
+  { v: 'monday_update_item',    l: 'Monday.com Öğe Güncelle',   icon: '📅' },
+  { v: 'linear_update_issue',   l: 'Linear Issue Güncelle',     icon: '🔷' },
+  { v: 'linear_add_comment',    l: 'Linear Yorum Ekle',         icon: '🔷' },
+  { v: 'gmail_create_draft',    l: 'Gmail Taslak Oluştur',      icon: '📧' }
 ];
 
 // ── INIT ───────────────────────────────────────────────────────────────────
