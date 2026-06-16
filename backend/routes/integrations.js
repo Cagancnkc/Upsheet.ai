@@ -5,6 +5,21 @@ const express = require('express');
 const router = express.Router();
 const fetch = require('node-fetch');
 const tokenManager = require('../services/tokenManager');
+const { createClient: _createSbClient } = require('@supabase/supabase-js');
+
+function _getSb() {
+  return _createSbClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
+}
+
+async function requireAuth(req, res, next) {
+  const token = req.headers.authorization?.replace('Bearer ', '');
+  if (!token) return res.status(401).json({ error: 'Giriş gerekli' });
+  const sb = _getSb();
+  const { data: { user }, error } = await sb.auth.getUser(token);
+  if (error || !user) return res.status(401).json({ error: 'Geçersiz token' });
+  req.user = user;
+  next();
+}
 
 // Exponential backoff — harici API rate limit (429/503) durumunda retry
 async function fetchWithRetry(url, options, maxRetries = 3) {
