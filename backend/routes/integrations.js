@@ -1174,4 +1174,279 @@ router.get('/drive/files', async (req, res) => {
   }
 });
 
+// ─────────────────────────────────────────────────────────────────────────────
+// SSRF helper for webhook URL routes
+function ssrfCheck(url) {
+  const parsed = new URL(url);
+  if (!['http:', 'https:'].includes(parsed.protocol)) throw new Error('Geçersiz protokol');
+  if (isPrivateHost(parsed.hostname)) throw new Error('İç ağ adreslerine istek yapılamaz');
+}
+
+// ── Discord ────────────────────────────────────────────────────────────────────
+router.post('/discord/notify', requireAuth, async (req, res) => {
+  const { webhookUrl, title, message, color } = req.body;
+  if (!webhookUrl) return res.status(400).json({ error: 'Discord Webhook URL gerekli' });
+  try {
+    ssrfCheck(webhookUrl);
+    const payload = { embeds: [{ title: title || 'Mocksheets Bildirimi', description: message || '', color: color || 5763719 }] };
+    const r = await fetch(webhookUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload), signal: AbortSignal.timeout(8000) });
+    if (!r.ok) { const t = await r.text(); return res.status(400).json({ error: `Discord hatası: ${t}` }); }
+    res.json({ success: true, message: '✅ Discord mesajı gönderildi' });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── Google Chat ────────────────────────────────────────────────────────────────
+router.post('/google-chat/notify', requireAuth, async (req, res) => {
+  const { webhookUrl, message } = req.body;
+  if (!webhookUrl) return res.status(400).json({ error: 'Google Chat Webhook URL gerekli' });
+  try {
+    ssrfCheck(webhookUrl);
+    const r = await fetch(webhookUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: message || 'Mocksheets bildirimi' }), signal: AbortSignal.timeout(8000) });
+    if (!r.ok) { const t = await r.text(); return res.status(400).json({ error: `Google Chat hatası: ${t}` }); }
+    res.json({ success: true, message: '✅ Google Chat mesajı gönderildi' });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── n8n ───────────────────────────────────────────────────────────────────────
+router.post('/n8n/trigger', requireAuth, async (req, res) => {
+  const { webhookUrl, event, data } = req.body;
+  if (!webhookUrl) return res.status(400).json({ error: 'n8n Webhook URL gerekli' });
+  try {
+    ssrfCheck(webhookUrl);
+    const r = await fetch(webhookUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ source: 'Mocksheets', event: event || 'automation', timestamp: new Date().toISOString(), data: data || {} }), signal: AbortSignal.timeout(10000) });
+    res.json({ success: true, status: r.status, message: `✅ n8n workflow tetiklendi (HTTP ${r.status})` });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── Pipedream ─────────────────────────────────────────────────────────────────
+router.post('/pipedream/trigger', requireAuth, async (req, res) => {
+  const { webhookUrl, event, data } = req.body;
+  if (!webhookUrl) return res.status(400).json({ error: 'Pipedream Webhook URL gerekli' });
+  try {
+    ssrfCheck(webhookUrl);
+    const r = await fetch(webhookUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ source: 'Mocksheets', event: event || 'automation', timestamp: new Date().toISOString(), data: data || {} }), signal: AbortSignal.timeout(10000) });
+    res.json({ success: true, status: r.status, message: `✅ Pipedream tetiklendi (HTTP ${r.status})` });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── Zapier ────────────────────────────────────────────────────────────────────
+router.post('/zapier/trigger', requireAuth, async (req, res) => {
+  const { webhookUrl, data } = req.body;
+  if (!webhookUrl) return res.status(400).json({ error: 'Zapier Webhook URL gerekli' });
+  try {
+    ssrfCheck(webhookUrl);
+    const r = await fetch(webhookUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ source: 'Mocksheets', timestamp: new Date().toISOString(), ...(data || {}) }), signal: AbortSignal.timeout(10000) });
+    res.json({ success: true, status: r.status, message: `✅ Zapier Zap tetiklendi (HTTP ${r.status})` });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── IFTTT ─────────────────────────────────────────────────────────────────────
+router.post('/ifttt/trigger', requireAuth, async (req, res) => {
+  const { key, event, value1, value2, value3 } = req.body;
+  if (!key || !event) return res.status(400).json({ error: 'IFTTT Key ve Event adı gerekli' });
+  try {
+    const url = `https://maker.ifttt.com/trigger/${encodeURIComponent(event)}/with/key/${encodeURIComponent(key)}`;
+    const r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ value1: value1 || '', value2: value2 || '', value3: value3 || '' }), signal: AbortSignal.timeout(8000) });
+    if (!r.ok) { const t = await r.text(); return res.status(400).json({ error: `IFTTT hatası: ${t}` }); }
+    res.json({ success: true, message: '✅ IFTTT Applet tetiklendi' });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── SendGrid ──────────────────────────────────────────────────────────────────
+router.post('/sendgrid/send', requireAuth, async (req, res) => {
+  const { apiKey, to, from, subject, body } = req.body;
+  if (!apiKey || !to || !subject) return res.status(400).json({ error: 'apiKey, to ve subject gerekli' });
+  try {
+    const payload = {
+      personalizations: [{ to: [{ email: to }] }],
+      from: { email: from || 'noreply@mocksheets.com' },
+      subject,
+      content: [{ type: 'text/plain', value: body || subject }]
+    };
+    const r = await fetch('https://api.sendgrid.com/v3/mail/send', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` }, body: JSON.stringify(payload), signal: AbortSignal.timeout(10000) });
+    if (!r.ok) { const j = await r.json().catch(() => ({})); return res.status(400).json({ error: j.errors?.[0]?.message || `SendGrid hatası: HTTP ${r.status}` }); }
+    res.json({ success: true, message: `✅ SendGrid e-postası gönderildi → ${to}` });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── Mailchimp ─────────────────────────────────────────────────────────────────
+router.post('/mailchimp/subscribe', requireAuth, async (req, res) => {
+  const { apiKey, listId, email } = req.body;
+  if (!apiKey || !listId || !email) return res.status(400).json({ error: 'apiKey, listId ve email gerekli' });
+  const dc = apiKey.split('-').pop();
+  if (!dc) return res.status(400).json({ error: 'Geçersiz Mailchimp API Key formatı' });
+  try {
+    const url = `https://${dc}.api.mailchimp.com/3.0/lists/${listId}/members`;
+    const r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Basic ${Buffer.from(`anystring:${apiKey}`).toString('base64')}` }, body: JSON.stringify({ email_address: email, status: 'subscribed' }), signal: AbortSignal.timeout(10000) });
+    const j = await r.json();
+    if (!r.ok && j.title !== 'Member Exists') return res.status(400).json({ error: j.detail || j.title || 'Mailchimp hatası' });
+    res.json({ success: true, message: `✅ Mailchimp'e eklendi → ${email}` });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── Brevo ─────────────────────────────────────────────────────────────────────
+router.post('/brevo/send', requireAuth, async (req, res) => {
+  const { apiKey, to, subject, body } = req.body;
+  if (!apiKey || !to || !subject) return res.status(400).json({ error: 'apiKey, to ve subject gerekli' });
+  try {
+    const payload = { sender: { email: 'noreply@mocksheets.com', name: 'Mocksheets' }, to: [{ email: to }], subject, textContent: body || subject };
+    const r = await fetch('https://api.brevo.com/v3/smtp/email', { method: 'POST', headers: { 'Content-Type': 'application/json', 'api-key': apiKey }, body: JSON.stringify(payload), signal: AbortSignal.timeout(10000) });
+    if (!r.ok) { const j = await r.json().catch(() => ({})); return res.status(400).json({ error: j.message || `Brevo hatası: HTTP ${r.status}` }); }
+    res.json({ success: true, message: `✅ Brevo e-postası gönderildi → ${to}` });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── Twilio SMS ────────────────────────────────────────────────────────────────
+router.post('/twilio/send', requireAuth, async (req, res) => {
+  const { accountSid, authToken, from, to, message } = req.body;
+  if (!accountSid || !authToken || !from || !to || !message) return res.status(400).json({ error: 'accountSid, authToken, from, to ve message gerekli' });
+  try {
+    const url = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`;
+    const body = new URLSearchParams({ From: from, To: to, Body: message });
+    const r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded', Authorization: `Basic ${Buffer.from(`${accountSid}:${authToken}`).toString('base64')}` }, body: body.toString(), signal: AbortSignal.timeout(10000) });
+    const j = await r.json();
+    if (!r.ok) return res.status(400).json({ error: j.message || `Twilio hatası: HTTP ${r.status}` });
+    res.json({ success: true, message: `✅ SMS gönderildi → ${to} (SID: ${j.sid})` });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── Telegram ──────────────────────────────────────────────────────────────────
+router.post('/telegram/send', requireAuth, async (req, res) => {
+  const { botToken, chatId, message } = req.body;
+  if (!botToken || !chatId || !message) return res.status(400).json({ error: 'botToken, chatId ve message gerekli' });
+  try {
+    const url = `https://api.telegram.org/bot${encodeURIComponent(botToken)}/sendMessage`;
+    const r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: chatId, text: message, parse_mode: 'Markdown' }), signal: AbortSignal.timeout(8000) });
+    const j = await r.json();
+    if (!j.ok) return res.status(400).json({ error: j.description || 'Telegram hatası' });
+    res.json({ success: true, message: `✅ Telegram mesajı gönderildi → chat ${chatId}` });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── Jira ──────────────────────────────────────────────────────────────────────
+router.post('/jira/create-issue', requireAuth, async (req, res) => {
+  const { email, apiToken, domain, projectKey, summary, description, issueType } = req.body;
+  if (!email || !apiToken || !domain || !projectKey || !summary) return res.status(400).json({ error: 'email, apiToken, domain, projectKey ve summary gerekli' });
+  try {
+    const url = `https://${domain}.atlassian.net/rest/api/3/issue`;
+    const auth = Buffer.from(`${email}:${apiToken}`).toString('base64');
+    const payload = { fields: { project: { key: projectKey }, summary, description: { type: 'doc', version: 1, content: [{ type: 'paragraph', content: [{ type: 'text', text: description || summary }] }] }, issuetype: { name: issueType || 'Task' } } };
+    const r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Basic ${auth}` }, body: JSON.stringify(payload), signal: AbortSignal.timeout(10000) });
+    const j = await r.json();
+    if (!r.ok) return res.status(400).json({ error: j.errorMessages?.[0] || Object.values(j.errors || {})[0] || `Jira hatası: HTTP ${r.status}` });
+    res.json({ success: true, message: `✅ Jira issue oluşturuldu: ${j.key}`, issueKey: j.key });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── Linear ────────────────────────────────────────────────────────────────────
+router.post('/linear/create-issue', requireAuth, async (req, res) => {
+  const { apiKey, teamId, title, description } = req.body;
+  if (!apiKey || !teamId || !title) return res.status(400).json({ error: 'apiKey, teamId ve title gerekli' });
+  try {
+    const query = `mutation CreateIssue($teamId:String!,$title:String!,$description:String){issueCreate(input:{teamId:$teamId,title:$title,description:$description}){success issue{identifier title url}}}`;
+    const r = await fetch('https://api.linear.app/graphql', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: apiKey }, body: JSON.stringify({ query, variables: { teamId, title, description: description || '' } }), signal: AbortSignal.timeout(10000) });
+    const j = await r.json();
+    if (j.errors?.length) return res.status(400).json({ error: j.errors[0].message });
+    if (!j.data?.issueCreate?.success) return res.status(400).json({ error: 'Linear issue oluşturulamadı' });
+    const issue = j.data.issueCreate.issue;
+    res.json({ success: true, message: `✅ Linear issue oluşturuldu: ${issue.identifier}`, url: issue.url });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── GitHub Issues ─────────────────────────────────────────────────────────────
+router.post('/github/create-issue', requireAuth, async (req, res) => {
+  const { token, owner, repo, title, body } = req.body;
+  if (!token || !owner || !repo || !title) return res.status(400).json({ error: 'token, owner, repo ve title gerekli' });
+  try {
+    const url = `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/issues`;
+    const r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, 'User-Agent': 'Mocksheets/1.0', Accept: 'application/vnd.github+json' }, body: JSON.stringify({ title, body: body || '' }), signal: AbortSignal.timeout(10000) });
+    const j = await r.json();
+    if (!r.ok) return res.status(400).json({ error: j.message || `GitHub hatası: HTTP ${r.status}` });
+    res.json({ success: true, message: `✅ GitHub issue oluşturuldu: #${j.number}`, url: j.html_url });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── ClickUp ───────────────────────────────────────────────────────────────────
+router.post('/clickup/create-task', requireAuth, async (req, res) => {
+  const { apiKey, listId, name, description } = req.body;
+  if (!apiKey || !listId || !name) return res.status(400).json({ error: 'apiKey, listId ve name gerekli' });
+  try {
+    const url = `https://api.clickup.com/api/v2/list/${encodeURIComponent(listId)}/task`;
+    const r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: apiKey }, body: JSON.stringify({ name, description: description || '' }), signal: AbortSignal.timeout(10000) });
+    const j = await r.json();
+    if (!r.ok) return res.status(400).json({ error: j.err || `ClickUp hatası: HTTP ${r.status}` });
+    res.json({ success: true, message: `✅ ClickUp görevi oluşturuldu: ${j.name}`, url: j.url });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── Asana ─────────────────────────────────────────────────────────────────────
+router.post('/asana/create-task', requireAuth, async (req, res) => {
+  const { token, projectId, name, notes } = req.body;
+  if (!token || !projectId || !name) return res.status(400).json({ error: 'token, projectId ve name gerekli' });
+  try {
+    const r = await fetch('https://app.asana.com/api/1.0/tasks', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }, body: JSON.stringify({ data: { name, notes: notes || '', projects: [projectId] } }), signal: AbortSignal.timeout(10000) });
+    const j = await r.json();
+    if (!r.ok) return res.status(400).json({ error: j.errors?.[0]?.message || `Asana hatası: HTTP ${r.status}` });
+    res.json({ success: true, message: `✅ Asana görevi oluşturuldu: ${j.data?.name}`, url: `https://app.asana.com/0/${projectId}/${j.data?.gid}` });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── Monday.com ────────────────────────────────────────────────────────────────
+router.post('/monday/create-item', requireAuth, async (req, res) => {
+  const { apiKey, boardId, itemName } = req.body;
+  if (!apiKey || !boardId || !itemName) return res.status(400).json({ error: 'apiKey, boardId ve itemName gerekli' });
+  try {
+    const query = `mutation { create_item (board_id: ${parseInt(boardId)}, item_name: "${itemName.replace(/"/g, '\\"')}") { id name } }`;
+    const r = await fetch('https://api.monday.com/v2', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: apiKey }, body: JSON.stringify({ query }), signal: AbortSignal.timeout(10000) });
+    const j = await r.json();
+    if (j.errors?.length) return res.status(400).json({ error: j.errors[0].message });
+    res.json({ success: true, message: `✅ Monday.com öğesi oluşturuldu: ${j.data?.create_item?.name}` });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── HubSpot ───────────────────────────────────────────────────────────────────
+router.post('/hubspot/create-contact', requireAuth, async (req, res) => {
+  const { token, email, firstName, lastName } = req.body;
+  if (!token || !email) return res.status(400).json({ error: 'token ve email gerekli' });
+  try {
+    const properties = { email };
+    if (firstName) properties.firstname = firstName;
+    if (lastName) properties.lastname = lastName;
+    const r = await fetch('https://api.hubapi.com/crm/v3/objects/contacts', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }, body: JSON.stringify({ properties }), signal: AbortSignal.timeout(10000) });
+    const j = await r.json();
+    if (!r.ok) return res.status(400).json({ error: j.message || `HubSpot hatası: HTTP ${r.status}` });
+    res.json({ success: true, message: `✅ HubSpot contact oluşturuldu: ${email}` });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── PagerDuty ─────────────────────────────────────────────────────────────────
+router.post('/pagerduty/trigger', requireAuth, async (req, res) => {
+  const { routingKey, summary, severity } = req.body;
+  if (!routingKey || !summary) return res.status(400).json({ error: 'routingKey ve summary gerekli' });
+  try {
+    const payload = { routing_key: routingKey, event_action: 'trigger', payload: { summary, severity: severity || 'warning', source: 'Mocksheets', timestamp: new Date().toISOString() } };
+    const r = await fetch('https://events.pagerduty.com/v2/enqueue', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload), signal: AbortSignal.timeout(10000) });
+    const j = await r.json();
+    if (!r.ok) return res.status(400).json({ error: j.message || `PagerDuty hatası: HTTP ${r.status}` });
+    res.json({ success: true, message: '✅ PagerDuty incident tetiklendi', dedupKey: j.dedup_key });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── Smartsheet ────────────────────────────────────────────────────────────────
+router.post('/smartsheet/add-row', requireAuth, async (req, res) => {
+  const { apiKey, sheetId, values } = req.body;
+  if (!apiKey || !sheetId) return res.status(400).json({ error: 'apiKey ve sheetId gerekli' });
+  try {
+    const colRes = await fetch(`https://api.smartsheet.com/2.0/sheets/${encodeURIComponent(sheetId)}/columns`, { headers: { Authorization: `Bearer ${apiKey}` }, signal: AbortSignal.timeout(8000) });
+    if (!colRes.ok) { const j = await colRes.json(); return res.status(400).json({ error: j.message || 'Smartsheet sheet bulunamadı' }); }
+    const cols = (await colRes.json()).data || [];
+    const vals = Object.values(values || {});
+    const cells = cols.slice(0, vals.length).map((col, i) => ({ columnId: col.id, value: vals[i] || '' }));
+    const rowRes = await fetch(`https://api.smartsheet.com/2.0/sheets/${encodeURIComponent(sheetId)}/rows`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` }, body: JSON.stringify([{ toBottom: true, cells }]), signal: AbortSignal.timeout(10000) });
+    const j = await rowRes.json();
+    if (!rowRes.ok) return res.status(400).json({ error: j.message || `Smartsheet hatası: HTTP ${rowRes.status}` });
+    res.json({ success: true, message: "✅ Smartsheet'e satır eklendi" });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
 module.exports = router;

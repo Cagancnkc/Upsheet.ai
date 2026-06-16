@@ -102,6 +102,138 @@ async function executeAction(action, matchedRows, authToken, backendUrl, userId)
       return { type, status: 'success', result: { message: action.message || 'Otomasyon tetiklendi', rows: matchedRows.length } };
     }
 
+    if (type === 'discord') {
+      const row = matchedRows[0] || {};
+      const interpolate = (s = '') => s.replace(/\{([^}]+)\}/g, (_, k) => row[k] ?? k);
+      const resp = await fetch(`${base}/api/integrations/discord/notify`, { method: 'POST', headers, body: JSON.stringify({ webhookUrl: action.webhookUrl, title: interpolate(action.title || 'Mocksheets Bildirimi'), message: interpolate(action.message || '') }) });
+      return { type, status: resp.ok ? 'success' : 'error', result: await resp.json() };
+    }
+
+    if (type === 'google-chat') {
+      const row = matchedRows[0] || {};
+      const interpolate = (s = '') => s.replace(/\{([^}]+)\}/g, (_, k) => row[k] ?? k);
+      const resp = await fetch(`${base}/api/integrations/google-chat/notify`, { method: 'POST', headers, body: JSON.stringify({ webhookUrl: action.webhookUrl, message: interpolate(action.message || '') }) });
+      return { type, status: resp.ok ? 'success' : 'error', result: await resp.json() };
+    }
+
+    if (type === 'n8n') {
+      const resp = await fetch(`${base}/api/integrations/n8n/trigger`, { method: 'POST', headers, body: JSON.stringify({ webhookUrl: action.webhookUrl, event: action.event || 'automation', data: { rows: matchedRows } }) });
+      return { type, status: resp.ok ? 'success' : 'error', result: await resp.json() };
+    }
+
+    if (type === 'pipedream') {
+      const resp = await fetch(`${base}/api/integrations/pipedream/trigger`, { method: 'POST', headers, body: JSON.stringify({ webhookUrl: action.webhookUrl, event: action.event || 'automation', data: { rows: matchedRows } }) });
+      return { type, status: resp.ok ? 'success' : 'error', result: await resp.json() };
+    }
+
+    if (type === 'zapier') {
+      const resp = await fetch(`${base}/api/integrations/zapier/trigger`, { method: 'POST', headers, body: JSON.stringify({ webhookUrl: action.webhookUrl, data: matchedRows[0] || {} }) });
+      return { type, status: resp.ok ? 'success' : 'error', result: await resp.json() };
+    }
+
+    if (type === 'ifttt') {
+      const row = matchedRows[0] || {};
+      const interpolate = (s = '') => s.replace(/\{([^}]+)\}/g, (_, k) => row[k] ?? k);
+      const resp = await fetch(`${base}/api/integrations/ifttt/trigger`, { method: 'POST', headers, body: JSON.stringify({ key: action.key, event: action.event, value1: interpolate(action.value1 || ''), value2: action.value2 || '', value3: action.value3 || '' }) });
+      return { type, status: resp.ok ? 'success' : 'error', result: await resp.json() };
+    }
+
+    if (type === 'sendgrid') {
+      const row = matchedRows[0] || {};
+      const interpolate = (s = '') => s.replace(/\{([^}]+)\}/g, (_, k) => row[k] ?? k);
+      const resp = await fetch(`${base}/api/integrations/sendgrid/send`, { method: 'POST', headers, body: JSON.stringify({ apiKey: action.apiKey, to: interpolate(action.to), subject: interpolate(action.subject || ''), body: interpolate(action.body || '') }) });
+      return { type, status: resp.ok ? 'success' : 'error', result: await resp.json() };
+    }
+
+    if (type === 'mailchimp') {
+      const row = matchedRows[0] || {};
+      const interpolate = (s = '') => s.replace(/\{([^}]+)\}/g, (_, k) => row[k] ?? k);
+      const resp = await fetch(`${base}/api/integrations/mailchimp/subscribe`, { method: 'POST', headers, body: JSON.stringify({ apiKey: action.apiKey, listId: action.listId, email: interpolate(action.email || '') }) });
+      return { type, status: resp.ok ? 'success' : 'error', result: await resp.json() };
+    }
+
+    if (type === 'brevo') {
+      const row = matchedRows[0] || {};
+      const interpolate = (s = '') => s.replace(/\{([^}]+)\}/g, (_, k) => row[k] ?? k);
+      const resp = await fetch(`${base}/api/integrations/brevo/send`, { method: 'POST', headers, body: JSON.stringify({ apiKey: action.apiKey, to: interpolate(action.to), subject: interpolate(action.subject || ''), body: interpolate(action.body || '') }) });
+      return { type, status: resp.ok ? 'success' : 'error', result: await resp.json() };
+    }
+
+    if (type === 'twilio') {
+      const row = matchedRows[0] || {};
+      const interpolate = (s = '') => s.replace(/\{([^}]+)\}/g, (_, k) => row[k] ?? k);
+      const resp = await fetch(`${base}/api/integrations/twilio/send`, { method: 'POST', headers, body: JSON.stringify({ accountSid: action.accountSid, authToken: action.authToken, from: action.from, to: interpolate(action.to), message: interpolate(action.message || '') }) });
+      return { type, status: resp.ok ? 'success' : 'error', result: await resp.json() };
+    }
+
+    if (type === 'telegram') {
+      const row = matchedRows[0] || {};
+      const interpolate = (s = '') => s.replace(/\{([^}]+)\}/g, (_, k) => row[k] ?? k);
+      const resp = await fetch(`${base}/api/integrations/telegram/send`, { method: 'POST', headers, body: JSON.stringify({ botToken: action.botToken, chatId: action.chatId, message: interpolate(action.message || '') }) });
+      return { type, status: resp.ok ? 'success' : 'error', result: await resp.json() };
+    }
+
+    if (type === 'jira') {
+      const row = matchedRows[0] || {};
+      const interpolate = (s = '') => s.replace(/\{([^}]+)\}/g, (_, k) => row[k] ?? k);
+      const resp = await fetch(`${base}/api/integrations/jira/create-issue`, { method: 'POST', headers, body: JSON.stringify({ email: action.email, apiToken: action.apiToken, domain: action.domain, projectKey: action.projectKey, summary: interpolate(action.summary || ''), description: interpolate(action.description || '') }) });
+      return { type, status: resp.ok ? 'success' : 'error', result: await resp.json() };
+    }
+
+    if (type === 'linear') {
+      const row = matchedRows[0] || {};
+      const interpolate = (s = '') => s.replace(/\{([^}]+)\}/g, (_, k) => row[k] ?? k);
+      const resp = await fetch(`${base}/api/integrations/linear/create-issue`, { method: 'POST', headers, body: JSON.stringify({ apiKey: action.apiKey, teamId: action.teamId, title: interpolate(action.title || ''), description: interpolate(action.description || '') }) });
+      return { type, status: resp.ok ? 'success' : 'error', result: await resp.json() };
+    }
+
+    if (type === 'github') {
+      const row = matchedRows[0] || {};
+      const interpolate = (s = '') => s.replace(/\{([^}]+)\}/g, (_, k) => row[k] ?? k);
+      const resp = await fetch(`${base}/api/integrations/github/create-issue`, { method: 'POST', headers, body: JSON.stringify({ token: action.token, owner: action.owner, repo: action.repo, title: interpolate(action.title || ''), body: interpolate(action.body || '') }) });
+      return { type, status: resp.ok ? 'success' : 'error', result: await resp.json() };
+    }
+
+    if (type === 'clickup') {
+      const row = matchedRows[0] || {};
+      const interpolate = (s = '') => s.replace(/\{([^}]+)\}/g, (_, k) => row[k] ?? k);
+      const resp = await fetch(`${base}/api/integrations/clickup/create-task`, { method: 'POST', headers, body: JSON.stringify({ apiKey: action.apiKey, listId: action.listId, name: interpolate(action.name || ''), description: interpolate(action.description || '') }) });
+      return { type, status: resp.ok ? 'success' : 'error', result: await resp.json() };
+    }
+
+    if (type === 'asana') {
+      const row = matchedRows[0] || {};
+      const interpolate = (s = '') => s.replace(/\{([^}]+)\}/g, (_, k) => row[k] ?? k);
+      const resp = await fetch(`${base}/api/integrations/asana/create-task`, { method: 'POST', headers, body: JSON.stringify({ token: action.token, projectId: action.projectId, name: interpolate(action.name || ''), notes: interpolate(action.notes || '') }) });
+      return { type, status: resp.ok ? 'success' : 'error', result: await resp.json() };
+    }
+
+    if (type === 'monday') {
+      const row = matchedRows[0] || {};
+      const interpolate = (s = '') => s.replace(/\{([^}]+)\}/g, (_, k) => row[k] ?? k);
+      const resp = await fetch(`${base}/api/integrations/monday/create-item`, { method: 'POST', headers, body: JSON.stringify({ apiKey: action.apiKey, boardId: action.boardId, itemName: interpolate(action.itemName || '') }) });
+      return { type, status: resp.ok ? 'success' : 'error', result: await resp.json() };
+    }
+
+    if (type === 'hubspot') {
+      const row = matchedRows[0] || {};
+      const interpolate = (s = '') => s.replace(/\{([^}]+)\}/g, (_, k) => row[k] ?? k);
+      const resp = await fetch(`${base}/api/integrations/hubspot/create-contact`, { method: 'POST', headers, body: JSON.stringify({ token: action.token, email: interpolate(action.email || ''), firstName: interpolate(action.firstName || ''), lastName: interpolate(action.lastName || '') }) });
+      return { type, status: resp.ok ? 'success' : 'error', result: await resp.json() };
+    }
+
+    if (type === 'pagerduty') {
+      const row = matchedRows[0] || {};
+      const interpolate = (s = '') => s.replace(/\{([^}]+)\}/g, (_, k) => row[k] ?? k);
+      const resp = await fetch(`${base}/api/integrations/pagerduty/trigger`, { method: 'POST', headers, body: JSON.stringify({ routingKey: action.routingKey, summary: interpolate(action.summary || ''), severity: action.severity || 'warning' }) });
+      return { type, status: resp.ok ? 'success' : 'error', result: await resp.json() };
+    }
+
+    if (type === 'smartsheet') {
+      const resp = await fetch(`${base}/api/integrations/smartsheet/add-row`, { method: 'POST', headers, body: JSON.stringify({ apiKey: action.apiKey, sheetId: action.sheetId, values: matchedRows[0] || {} }) });
+      return { type, status: resp.ok ? 'success' : 'error', result: await resp.json() };
+    }
+
     return { type, status: 'skipped', result: { reason: `Unknown action type: ${type}` } };
   } catch (err) {
     return { type, status: 'error', error: err.message };
@@ -495,7 +627,12 @@ router.post('/:id/test', requireAuth, async (req, res) => {
   const ACTION_LABELS = {
     gmail: 'Gmail', slack: 'Slack', teams: 'Teams', webhook: 'Webhook',
     make: 'Make', notion: 'Notion', notion_page: 'Notion Page',
-    airtable: 'Airtable', update_cells: 'Hücre Güncelle', notification: 'Bildirim'
+    airtable: 'Airtable', update_cells: 'Hücre Güncelle', notification: 'Bildirim',
+    discord: 'Discord', 'google-chat': 'Google Chat', n8n: 'n8n', pipedream: 'Pipedream',
+    zapier: 'Zapier', ifttt: 'IFTTT', sendgrid: 'SendGrid', mailchimp: 'Mailchimp',
+    brevo: 'Brevo', twilio: 'Twilio SMS', telegram: 'Telegram', jira: 'Jira',
+    linear: 'Linear', github: 'GitHub Issues', clickup: 'ClickUp', asana: 'Asana',
+    monday: 'Monday.com', hubspot: 'HubSpot', pagerduty: 'PagerDuty', smartsheet: 'Smartsheet'
   };
 
   const actionResults = [];
