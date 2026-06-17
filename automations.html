@@ -739,6 +739,11 @@ textarea.inp{height:auto;padding:10px 12px;resize:vertical;min-height:72px}
           <option value="row_added">Yeni Satır Eklendi</option>
           <option value="value_changed">Değer Değişimi</option>
           <option value="ai_anomaly">AI Anomali Tespiti</option>
+          <option value="row_deleted">Satır Silindi</option>
+          <option value="multi_condition">Çoklu Koşul</option>
+          <option value="email_received">Email Alındı</option>
+          <option value="incoming_webhook">Gelen Webhook</option>
+          <option value="periodic_ai">Periyodik AI</option>
         </select>
       </div>
       <div id="trigger-fields"></div>
@@ -1827,7 +1832,12 @@ const BUILDER_TRIGGER_TYPES = [
   { v: 'date_arrived',   l: 'Tarih Koşulu', icon: '📅' },
   { v: 'row_added',      l: 'Yeni Satır',   icon: '➕' },
   { v: 'value_changed',  l: 'Değer Değişimi', icon: '🔄' },
-  { v: 'ai_anomaly',     l: 'AI Anomali',   icon: '🤖' }
+  { v: 'ai_anomaly',      l: 'AI Anomali',    icon: '🤖' },
+  { v: 'row_deleted',    l: 'Satır Silindi', icon: '🗑️' },
+  { v: 'multi_condition',l: 'Çoklu Koşul',   icon: '🔀' },
+  { v: 'email_received', l: 'Email Alındı',  icon: '📧' },
+  { v: 'incoming_webhook',l:'Gelen Webhook',  icon: '🔗' },
+  { v: 'periodic_ai',    l: 'Periyodik AI',   icon: '⚡' }
 ];
 
 const BUILDER_APP_TYPES = [
@@ -2026,6 +2036,93 @@ function renderTriggerConfigFieldsInner() {
       <div class="field"><label class="lbl">Sütun Adı</label>
         <input class="inp" type="text" placeholder="örn. Durum" value="${esc(p.column||'')}" oninput="builderTrigger.column=this.value;renderBuilderCanvas()">
       </div>`;
+  } else if (t.type === 'row_deleted') {
+    html += `
+      <div class="field"><label class="lbl">Sütun Adı</label>
+        <input class="inp" type="text" placeholder="örn. Durum" value="${esc(p.column||'')}" oninput="builderTrigger.column=this.value;renderBuilderCanvas()">
+      </div>
+      <div class="field"><label class="lbl">Koşul</label>
+        <select class="inp" onchange="builderTrigger.operator=this.value">
+          ${OPERATORS.map(o => `<option value="${o.v}" ${p.operator===o.v?'selected':''}>${o.l}</option>`).join('')}
+        </select>
+      </div>
+      <div class="field"><label class="lbl">Değer</label>
+        <input class="inp" type="text" placeholder="örn. İptal" value="${esc(p.value||'')}" oninput="builderTrigger.value=this.value">
+      </div>`;
+  } else if (t.type === 'multi_condition') {
+    html += `
+      <div class="field"><label class="lbl">Mantık</label>
+        <select class="inp" onchange="builderTrigger.logic=this.value">
+          <option value="AND" ${(p.logic||'AND')==='AND'?'selected':''}>VE (AND) — tümü sağlanmalı</option>
+          <option value="OR" ${p.logic==='OR'?'selected':''}>VEYA (OR) — en az biri sağlanmalı</option>
+        </select>
+      </div>
+    </div>
+    <div class="field-row" style="margin-top:8px">
+      <div class="field"><label class="lbl">1. Koşul — Sütun</label>
+        <input class="inp" type="text" placeholder="örn. Stok" value="${esc(p.col1||'')}" oninput="builderTrigger.col1=this.value">
+      </div>
+      <div class="field"><label class="lbl">Koşul</label>
+        <select class="inp" onchange="builderTrigger.op1=this.value">
+          ${OPERATORS.map(o => `<option value="${o.v}" ${p.op1===o.v?'selected':''}>${o.l}</option>`).join('')}
+        </select>
+      </div>
+      <div class="field"><label class="lbl">Değer</label>
+        <input class="inp" type="text" placeholder="örn. 20" value="${esc(p.val1||'')}" oninput="builderTrigger.val1=this.value">
+      </div>
+    </div>
+    <div class="field-row" style="margin-top:8px">
+      <div class="field"><label class="lbl">2. Koşul — Sütun</label>
+        <input class="inp" type="text" placeholder="örn. Durum" value="${esc(p.col2||'')}" oninput="builderTrigger.col2=this.value">
+      </div>
+      <div class="field"><label class="lbl">Koşul</label>
+        <select class="inp" onchange="builderTrigger.op2=this.value">
+          ${OPERATORS.map(o => `<option value="${o.v}" ${p.op2===o.v?'selected':''}>${o.l}</option>`).join('')}
+        </select>
+      </div>
+      <div class="field"><label class="lbl">Değer</label>
+        <input class="inp" type="text" placeholder="örn. Bekliyor" value="${esc(p.val2||'')}" oninput="builderTrigger.val2=this.value">
+      </div>`;
+  } else if (t.type === 'email_received') {
+    html += `
+      <div class="field"><label class="lbl">Gönderici Filtresi <span style="font-weight:400;color:var(--muted)">(isteğe bağlı)</span></label>
+        <input class="inp" type="text" placeholder="örn. @musteri.com" value="${esc(p.from_filter||'')}" oninput="builderTrigger.from_filter=this.value">
+      </div>
+      <div class="field"><label class="lbl">Konu İçeriği <span style="font-weight:400;color:var(--muted)">(isteğe bağlı)</span></label>
+        <input class="inp" type="text" placeholder="örn. Sipariş" value="${esc(p.subject_filter||'')}" oninput="builderTrigger.subject_filter=this.value">
+      </div>
+    </div>
+    <div class="inp-hint" style="margin-top:8px">📧 Gmail entegrasyonu bağlı olmalıdır`;
+  } else if (t.type === 'incoming_webhook') {
+    if (!p.webhookUrl) p.webhookUrl = 'https://hook.upsheet.ai/t/' + Math.random().toString(36).substr(2,8);
+    html += `</div>
+    <div class="inp-hint" style="margin-top:8px">Aşağıdaki URL'e POST isteği gönderildiğinde bu workflow tetiklenir.</div>
+    <div class="field" style="margin-top:8px"><label class="lbl">Tetikleyici URL</label>
+      <div style="display:flex;gap:6px">
+        <input class="inp" type="text" readonly id="wh-url-builder" value="${esc(p.webhookUrl)}" style="flex:1;font-size:11px;color:var(--muted)">
+        <button class="btn-sm" onclick="navigator.clipboard.writeText(document.getElementById('wh-url-builder').value).then(()=>this.textContent='✓').catch(()=>{})">Kopyala</button>
+      </div>
+    </div>
+    <div class="field" style="margin-top:8px"><label class="lbl">Event Filtresi <span style="font-weight:400;color:var(--muted)">(isteğe bağlı)</span></label>
+      <input class="inp" type="text" placeholder="örn. order.created" value="${esc(p.event_filter||'')}" oninput="builderTrigger.event_filter=this.value">
+    `;
+  } else if (t.type === 'periodic_ai') {
+    html += `
+      <div class="field"><label class="lbl">Sıklık</label>
+        <select class="inp" onchange="builderTrigger.frequency=this.value">
+          <option value="every_hour" ${p.frequency==='every_hour'?'selected':''}>Her saat</option>
+          <option value="every_day" ${(!p.frequency||p.frequency==='every_day')?'selected':''}>Her gün</option>
+          <option value="every_week" ${p.frequency==='every_week'?'selected':''}>Her hafta</option>
+        </select>
+      </div>
+      <div class="field"><label class="lbl">Saat</label>
+        <input class="inp" type="time" value="${esc(p.time||'09:00')}" oninput="builderTrigger.time=this.value">
+      </div>
+    </div>
+    <div class="field" style="margin-top:8px"><label class="lbl">AI Analiz Komutu</label>
+      <textarea class="inp" rows="2" placeholder="örn. Faturalarda anormal artış var mı?" oninput="builderTrigger.ai_prompt=this.value">${esc(p.ai_prompt||'')}</textarea>
+      <div class="inp-hint">AI bu komutu belirtilen sıklıkta çalıştırır</div>
+    `;
   }
   html += '</div>';
   return html;
@@ -3013,6 +3110,99 @@ function renderTriggerFields(prefill) {
       </div>`;
   } else if (type === 'row_added' || type === 'ai_anomaly') {
     el.innerHTML = `<div class="inp-hint" style="margin-top:0">${type === 'ai_anomaly' ? 'AI, verideki anormal değişimleri ve kalıpları otomatik olarak tespit eder.' : 'Tabloya yeni satır eklendiğinde tetiklenir.'}</div>`;
+  } else if (type === 'row_deleted') {
+    el.innerHTML = `
+      <div class="field-row">
+        <div class="field"><label class="lbl">Sütun Adı</label>
+          <input class="inp" type="text" id="tc-column" placeholder="örn. Durum" value="${escHtml(p.column||'')}">
+        </div>
+        <div class="field"><label class="lbl">Koşul</label>
+          <select class="inp" id="tc-operator">
+            ${OPERATORS.map(o=>`<option value="${o.v}" ${p.operator===o.v?'selected':''}>${o.l}</option>`).join('')}
+          </select>
+        </div>
+        <div class="field"><label class="lbl">Değer</label>
+          <input class="inp" type="text" id="tc-value" placeholder="örn. İptal" value="${escHtml(p.value||'')}">
+        </div>
+      </div>`;
+  } else if (type === 'multi_condition') {
+    el.innerHTML = `
+      <div class="field-row">
+        <div class="field"><label class="lbl">Mantık</label>
+          <select class="inp" id="tc-logic">
+            <option value="AND" ${(p.logic||'AND')==='AND'?'selected':''}>VE (AND) — tümü sağlanmalı</option>
+            <option value="OR" ${p.logic==='OR'?'selected':''}>VEYA (OR) — en az biri sağlanmalı</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-row" style="margin-top:8px">
+        <div class="field"><label class="lbl">1. Koşul — Sütun</label>
+          <input class="inp" type="text" id="tc-col1" placeholder="örn. Stok" value="${escHtml(p.col1||'')}">
+        </div>
+        <div class="field"><label class="lbl">Koşul</label>
+          <select class="inp" id="tc-op1">
+            ${OPERATORS.map(o=>`<option value="${o.v}" ${p.op1===o.v?'selected':''}>${o.l}</option>`).join('')}
+          </select>
+        </div>
+        <div class="field"><label class="lbl">Değer</label>
+          <input class="inp" type="text" id="tc-val1" placeholder="örn. 20" value="${escHtml(p.val1||'')}">
+        </div>
+      </div>
+      <div class="field-row" style="margin-top:8px">
+        <div class="field"><label class="lbl">2. Koşul — Sütun</label>
+          <input class="inp" type="text" id="tc-col2" placeholder="örn. Durum" value="${escHtml(p.col2||'')}">
+        </div>
+        <div class="field"><label class="lbl">Koşul</label>
+          <select class="inp" id="tc-op2">
+            ${OPERATORS.map(o=>`<option value="${o.v}" ${p.op2===o.v?'selected':''}>${o.l}</option>`).join('')}
+          </select>
+        </div>
+        <div class="field"><label class="lbl">Değer</label>
+          <input class="inp" type="text" id="tc-val2" placeholder="örn. Bekliyor" value="${escHtml(p.val2||'')}">
+        </div>
+      </div>`;
+  } else if (type === 'email_received') {
+    el.innerHTML = `
+      <div class="field-row">
+        <div class="field"><label class="lbl">Gönderici Filtresi <span style="font-weight:400;color:var(--muted)">(isteğe bağlı)</span></label>
+          <input class="inp" type="text" id="tc-from" placeholder="örn. @musteri.com" value="${escHtml(p.from_filter||'')}">
+        </div>
+        <div class="field"><label class="lbl">Konu İçeriği <span style="font-weight:400;color:var(--muted)">(isteğe bağlı)</span></label>
+          <input class="inp" type="text" id="tc-subject" placeholder="örn. Sipariş" value="${escHtml(p.subject_filter||'')}">
+        </div>
+      </div>
+      <div class="inp-hint">📧 Gmail entegrasyonu bağlı olmalıdır</div>`;
+  } else if (type === 'incoming_webhook') {
+    const whUrl = p.webhookUrl || ('https://hook.upsheet.ai/t/' + Math.random().toString(36).substr(2,8));
+    el.innerHTML = `
+      <div class="inp-hint" style="margin-top:0">Aşağıdaki URL'e POST isteği gönderildiğinde workflow tetiklenir.</div>
+      <div class="field" style="margin-top:8px"><label class="lbl">Tetikleyici URL</label>
+        <div style="display:flex;gap:6px">
+          <input class="inp" type="text" readonly id="tc-webhookUrl" value="${escHtml(whUrl)}" style="flex:1;font-size:11px;color:var(--muted)">
+          <button class="btn-sm" onclick="navigator.clipboard.writeText(document.getElementById('tc-webhookUrl').value).then(()=>this.textContent='✓').catch(()=>{})">Kopyala</button>
+        </div>
+      </div>
+      <div class="field" style="margin-top:8px"><label class="lbl">Event Filtresi <span style="font-weight:400;color:var(--muted)">(isteğe bağlı)</span></label>
+        <input class="inp" type="text" id="tc-event-filter" placeholder="örn. order.created" value="${escHtml(p.event_filter||'')}">
+      </div>`;
+  } else if (type === 'periodic_ai') {
+    el.innerHTML = `
+      <div class="field-row">
+        <div class="field"><label class="lbl">Sıklık</label>
+          <select class="inp" id="tc-freq">
+            <option value="every_hour" ${p.frequency==='every_hour'?'selected':''}>Her saat</option>
+            <option value="every_day" ${(!p.frequency||p.frequency==='every_day')?'selected':''}>Her gün</option>
+            <option value="every_week" ${p.frequency==='every_week'?'selected':''}>Her hafta</option>
+          </select>
+        </div>
+        <div class="field"><label class="lbl">Saat</label>
+          <input class="inp" type="time" id="tc-time" value="${p.time||'09:00'}">
+        </div>
+      </div>
+      <div class="field" style="margin-top:8px"><label class="lbl">AI Analiz Komutu</label>
+        <textarea class="inp" rows="2" id="tc-ai-prompt" placeholder="örn. Faturalarda anormal artış var mı?">${escHtml(p.ai_prompt||'')}</textarea>
+        <div class="inp-hint">AI bu komutu belirtilen sıklıkta çalıştırır</div>
+      </div>`;
   }
 }
 
@@ -3054,6 +3244,28 @@ function getTriggerConfig() {
   if (type === 'date_arrived') {
     const days = document.getElementById('tc-days');
     if (days) config.days_before = days.value;
+  }
+  if (type === 'multi_condition') {
+    config.logic = document.getElementById('tc-logic')?.value || 'AND';
+    config.col1 = document.getElementById('tc-col1')?.value.trim() || '';
+    config.op1 = document.getElementById('tc-op1')?.value || '';
+    config.val1 = document.getElementById('tc-val1')?.value.trim() || '';
+    config.col2 = document.getElementById('tc-col2')?.value.trim() || '';
+    config.op2 = document.getElementById('tc-op2')?.value || '';
+    config.val2 = document.getElementById('tc-val2')?.value.trim() || '';
+  }
+  if (type === 'email_received') {
+    config.from_filter = document.getElementById('tc-from')?.value.trim() || '';
+    config.subject_filter = document.getElementById('tc-subject')?.value.trim() || '';
+  }
+  if (type === 'incoming_webhook') {
+    config.webhookUrl = document.getElementById('tc-webhookUrl')?.value || '';
+    config.event_filter = document.getElementById('tc-event-filter')?.value.trim() || '';
+  }
+  if (type === 'periodic_ai') {
+    config.frequency = document.getElementById('tc-freq')?.value || 'every_day';
+    config.time = document.getElementById('tc-time')?.value || '09:00';
+    config.ai_prompt = document.getElementById('tc-ai-prompt')?.value.trim() || '';
   }
   return config;
 }
@@ -3581,7 +3793,9 @@ function overlayClose(e, id) {
 // ── CONSTANTS ──────────────────────────────────────────────────────────────
 const TRIGGER_LABELS = {
   cell_condition: 'Hücre Koşulu', threshold: 'Eşik Değeri', schedule: 'Zamanlama',
-  date_arrived: 'Tarih Koşulu', row_added: 'Yeni Satır', value_changed: 'Değer Değişimi', ai_anomaly: 'AI Anomali'
+  date_arrived: 'Tarih Koşulu', row_added: 'Yeni Satır', value_changed: 'Değer Değişimi', ai_anomaly: 'AI Anomali',
+  row_deleted: 'Satır Silindi', multi_condition: 'Çoklu Koşul', email_received: 'Email Alındı',
+  incoming_webhook: 'Gelen Webhook', periodic_ai: 'Periyodik AI'
 };
 const ACTION_LABELS = {
   gmail: 'Gmail', notion_page: 'Notion', slack: 'Slack', webhook: 'Webhook',
