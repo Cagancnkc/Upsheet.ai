@@ -1636,7 +1636,7 @@
 
   // ── Upsell CTA ───────────────────────────────────────────────────────────
   var upsellCta = document.querySelector('.upsell-cta');
-  if (upsellCta) { upsellCta.style.cursor = 'pointer'; upsellCta.addEventListener('click', function () { window.location.href = '/#pricing'; }); }
+  if (upsellCta) { upsellCta.style.cursor = 'pointer'; upsellCta.addEventListener('click', function () { openSubscriptionModal(); }); }
 
   // ── AI send ───────────────────────────────────────────────────────────────
   var aiSend = document.querySelector('.ai-send');
