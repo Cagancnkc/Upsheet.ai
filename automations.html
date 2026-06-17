@@ -556,10 +556,12 @@ textarea.inp{height:auto;padding:10px 12px;resize:vertical;min-height:72px}
     </div>
     <div class="tpl-cats">
       <button class="tpl-cat active" data-cat="all" onclick="filterTemplates('all')">Tümü</button>
-      <button class="tpl-cat" data-cat="muhasebe" onclick="filterTemplates('muhasebe')">Muhasebe</button>
       <button class="tpl-cat" data-cat="stok" onclick="filterTemplates('stok')">Stok</button>
+      <button class="tpl-cat" data-cat="muhasebe" onclick="filterTemplates('muhasebe')">Muhasebe</button>
       <button class="tpl-cat" data-cat="satis" onclick="filterTemplates('satis')">Satış</button>
       <button class="tpl-cat" data-cat="ik" onclick="filterTemplates('ik')">İK</button>
+      <button class="tpl-cat" data-cat="crm" onclick="filterTemplates('crm')">CRM</button>
+      <button class="tpl-cat" data-cat="gorev" onclick="filterTemplates('gorev')">Görev</button>
     </div>
     <div class="template-scroll" id="template-scroll"></div>
   </section>
@@ -1113,6 +1115,350 @@ const TEMPLATES = [
       action_config: [
         { type: 'slack', message: '🎉 Harika! {Temsilci} bu ay {Aylık Satış} ₺ ile satış hedefini aştı!' },
         { type: 'notification', message: 'Satış hedefi aşıldı: {Temsilci} — {Aylık Satış} ₺' }
+      ]
+    }
+  },
+
+  // ── STOK ──────────────────────────────────────────────────────────────────
+  {
+    id: 'stock-zero', icon: '🚨', iconBg: '#fee2e2', name: 'Stok Tükendi',
+    desc: 'Stok sıfıra düşünce Telegram ve bildirim gönder',
+    tags: ['Telegram', 'Bildirim'], category: 'stok',
+    data: {
+      name: 'Stok Tükendi Uyarısı', description: 'Stok 0\'a düştüğünde Telegram bot ile anlık bildirim',
+      trigger_config: { type: 'threshold', column: 'Stok Miktarı', operator: 'equals', value: '0' },
+      condition_config: [],
+      action_config: [
+        { type: 'telegram', botToken: '', chatId: '', message: '🚨 STOK TÜKENDİ: {Ürün Adı} — Acil sipariş gerekiyor!' },
+        { type: 'notification', message: 'Stok tükendi: {Ürün Adı}' }
+      ]
+    }
+  },
+  {
+    id: 'new-product-sync', icon: '🔗', iconBg: '#ede9fe', name: 'Yeni Ürün Airtable Sync',
+    desc: 'Yeni ürün eklenince Airtable\'a otomatik senkronize et',
+    tags: ['Airtable', 'Bildirim'], category: 'stok',
+    data: {
+      name: 'Yeni Ürün Airtable Senkronizasyonu', description: 'Tabloya yeni satır eklenince Airtable base\'ini güncelle',
+      trigger_config: { type: 'row_added' },
+      condition_config: [],
+      action_config: [
+        { type: 'airtable', apiKey: '', baseId: '', tableId: '', recordId: '', fields: '{"Ürün Adı": "{Ürün Adı}", "Stok": "{Stok Miktarı}"}' },
+        { type: 'notification', message: 'Yeni ürün Airtable\'a eklendi: {Ürün Adı}' }
+      ]
+    }
+  },
+  {
+    id: 'stock-erp-webhook', icon: '⚙️', iconBg: '#f0fdf4', name: 'ERP Stok Entegrasyonu',
+    desc: 'Stok değişince ERP sistemine webhook gönder',
+    tags: ['Webhook'], category: 'stok',
+    data: {
+      name: 'ERP Stok Senkronizasyonu', description: 'Stok değeri değiştiğinde ERP sistemine gerçek zamanlı veri aktar',
+      trigger_config: { type: 'value_changed', column: 'Stok Miktarı' },
+      condition_config: [],
+      action_config: [
+        { type: 'webhook', url: 'https://erp.sirketiniz.com/api/stock-update', method: 'POST', body: '{"product": "{Ürün Adı}", "quantity": "{Stok Miktarı}", "sku": "{SKU}"}' }
+      ]
+    }
+  },
+
+  // ── MUHASEBE ───────────────────────────────────────────────────────────────
+  {
+    id: 'kdv-reminder', icon: '📑', iconBg: '#fef3c7', name: 'KDV Beyanname Hatırlatması',
+    desc: 'Her ayın 24\'ünde KDV beyanname son gün uyarısı',
+    tags: ['Gmail', 'Bildirim'], category: 'muhasebe',
+    data: {
+      name: 'KDV Beyanname Hatırlatması', description: 'Her ayın 24\'ünde KDV beyanname son gün bildirimi gönder',
+      trigger_config: { type: 'schedule', cronExpr: '0 8 24 * *' },
+      condition_config: [],
+      action_config: [
+        { type: 'gmail', to: 'muhasebe@firma.com', subject: 'KDV Beyanname Son Gün', body: 'Bu ayın KDV beyanname son günü yarın. Lütfen KDV tablonuzu kontrol edin ve beyannameyi gönderin.' },
+        { type: 'notification', message: 'KDV beyanname son tarihi yarın (her ayın 25\'i)' }
+      ]
+    }
+  },
+  {
+    id: 'overdue-jira', icon: '⚖️', iconBg: '#fee2e2', name: 'Vadeli Alacak → Jira',
+    desc: 'Vadesi geçen alacaklar için otomatik Jira issue aç',
+    tags: ['Jira', 'Zamanlama'], category: 'muhasebe',
+    data: {
+      name: 'Vadeli Alacak Jira Issue', description: 'Günlük kontrol: vadesi geçmiş alacaklar için Jira\'da takip issue\'su oluştur',
+      trigger_config: { type: 'schedule', frequency: 'every_day', time: '09:00' },
+      condition_config: [{ column: 'Son Ödeme Tarihi', operator: 'date_passed', value: '', logic: 'AND' }],
+      action_config: [
+        { type: 'jira', email: '', apiToken: '', domain: '', projectKey: 'FIN', summary: 'Vadesi Geçen Alacak: {Müşteri} — {Tutar} ₺ ({Son Ödeme Tarihi})' },
+        { type: 'notification', message: 'Vadesi geçen alacak Jira\'ya eklendi: {Müşteri}' }
+      ]
+    }
+  },
+  {
+    id: 'daily-balance-slack', icon: '💳', iconBg: '#ede9fe', name: 'Günlük Bakiye Özeti',
+    desc: 'Her sabah nakit durumunu Slack\'e gönder',
+    tags: ['Slack', 'Zamanlama'], category: 'muhasebe',
+    data: {
+      name: 'Günlük Bakiye Özeti', description: 'Her iş günü sabahı nakit akış özetini finans kanalına ilet',
+      trigger_config: { type: 'schedule', frequency: 'every_day', time: '08:30' },
+      condition_config: [],
+      action_config: [
+        { type: 'slack', webhookUrl: '', message: '💳 Günlük Bakiye Özeti\nMevcut Bakiye: {Bakiye} ₺\nBekleyen Tahsilat: {Tahsilat} ₺\nBekleyen Ödeme: {Ödeme} ₺' }
+      ]
+    }
+  },
+
+  // ── SATIŞ ──────────────────────────────────────────────────────────────────
+  {
+    id: 'weekly-sales', icon: '📈', iconBg: '#d1fae5', name: 'Haftalık Satış Raporu',
+    desc: 'Her Pazartesi ekibe haftalık satış özetini gönder',
+    tags: ['Slack', 'Zamanlama'], category: 'satis',
+    data: {
+      name: 'Haftalık Satış Raporu', description: 'Pazartesi sabahı geçen haftanın satış özetini satış kanalına gönder',
+      trigger_config: { type: 'schedule', frequency: 'every_week', time: '08:00' },
+      condition_config: [],
+      action_config: [
+        { type: 'slack', webhookUrl: '', message: '📈 Haftalık Satış Özeti\nToplam Satış: {Toplam Satış} ₺\nSipariş Sayısı: {Sipariş Sayısı}\nEn İyi Temsilci: {En İyi Temsilci}' },
+        { type: 'notification', message: 'Haftalık satış raporu Slack\'e gönderildi' }
+      ]
+    }
+  },
+  {
+    id: 'deal-lost-alert', icon: '📉', iconBg: '#fee2e2', name: 'Fırsat Kaybedildi',
+    desc: 'Satış fırsatı kaybedilince Teams\'e bildirim gönder',
+    tags: ['Teams', 'Bildirim'], category: 'satis',
+    data: {
+      name: 'Kaybedilen Fırsat Bildirimi', description: 'Durum "Kaybedildi" olarak işaretlenince yöneticiye Teams bildirimi',
+      trigger_config: { type: 'cell_condition', column: 'Durum', operator: 'equals', value: 'Kaybedildi' },
+      condition_config: [],
+      action_config: [
+        { type: 'teams', webhookUrl: '', message: '📉 Satış Fırsatı Kaybedildi\nMüşteri: {Müşteri}\nTutar: {Tutar} ₺\nTemsilci: {Temsilci}\nNeden: {Kayıp Nedeni}' },
+        { type: 'notification', message: 'Fırsat kaybedildi: {Müşteri} — {Tutar} ₺' }
+      ]
+    }
+  },
+  {
+    id: 'customer-birthday', icon: '🎂', iconBg: '#fce7f3', name: 'Müşteri Doğum Günü',
+    desc: 'Doğum gününde müşteriye otomatik tebrik maili',
+    tags: ['Gmail'], category: 'satis',
+    data: {
+      name: 'Müşteri Doğum Günü Tebriği', description: 'Doğum günü 3 gün içinde olan müşterilere kişiselleştirilmiş tebrik maili gönder',
+      trigger_config: { type: 'date_arrived', column: 'Doğum Tarihi', days_before: '3' },
+      condition_config: [],
+      action_config: [
+        { type: 'gmail', to: '{E-posta}', subject: 'Doğum Günün Kutlu Olsun, {Ad}! 🎂', body: 'Sayın {Ad},\n\nDoğum gününüzü içtenlikle kutlarız! Sizinle çalışmaktan büyük mutluluk duyuyoruz.\n\nSağlıklı ve mutlu bir yıl diliyoruz.\n\nSaygılarımızla,\n{Firma}' }
+      ]
+    }
+  },
+  {
+    id: 'mailchimp-subscriber', icon: '📧', iconBg: '#fef9c3', name: 'Mailchimp Abone Ekle',
+    desc: 'Yeni müşteri eklenince Mailchimp listesine otomatik ekle',
+    tags: ['Mailchimp'], category: 'satis',
+    data: {
+      name: 'Mailchimp Abone Senkronizasyonu', description: 'Yeni müşteri satırı eklenince Mailchimp audience listesini güncelle',
+      trigger_config: { type: 'row_added' },
+      condition_config: [],
+      action_config: [
+        { type: 'mailchimp', apiKey: '', listId: '', email: '{E-posta}', firstName: '{Ad}', lastName: '{Soyad}' },
+        { type: 'notification', message: 'Yeni abone Mailchimp\'e eklendi: {Ad} {Soyad}' }
+      ]
+    }
+  },
+
+  // ── İK ─────────────────────────────────────────────────────────────────────
+  {
+    id: 'izin-talep', icon: '🏖️', iconBg: '#eff6ff', name: 'İzin Talebi Bildirimi',
+    desc: 'Yeni izin talebi gelince yöneticiye Teams bildirimi',
+    tags: ['Teams', 'Bildirim'], category: 'ik',
+    data: {
+      name: 'İzin Talebi Onay Bildirimi', description: 'İzin Durumu "Onay Bekliyor" olunca İK yöneticisine Teams mesajı gönder',
+      trigger_config: { type: 'cell_condition', column: 'İzin Durumu', operator: 'equals', value: 'Onay Bekliyor' },
+      condition_config: [],
+      action_config: [
+        { type: 'teams', webhookUrl: '', message: '🏖️ Yeni İzin Talebi\nÇalışan: {Ad Soyad}\nTarih: {İzin Başlangıç} – {İzin Bitiş}\nGün Sayısı: {Gün Sayısı}\nNeden: {İzin Türü}' },
+        { type: 'notification', message: 'İzin talebi onay bekliyor: {Ad Soyad}' }
+      ]
+    }
+  },
+  {
+    id: 'new-hire', icon: '👋', iconBg: '#f0fdf4', name: 'Yeni Personel İşe Alım',
+    desc: 'Yeni çalışan eklenince Slack ve karşılama maili gönder',
+    tags: ['Slack', 'Gmail'], category: 'ik',
+    data: {
+      name: 'Yeni Personel Karşılama', description: 'Personel tablosuna yeni satır eklenince ekibe Slack bildirimi ve çalışana karşılama maili gönder',
+      trigger_config: { type: 'row_added' },
+      condition_config: [],
+      action_config: [
+        { type: 'slack', webhookUrl: '', message: '👋 Takımımıza yeni biri katılıyor!\n*{Ad Soyad}* — {Pozisyon} pozisyonunda {Başlangıç Tarihi} tarihinden itibaren.' },
+        { type: 'gmail', to: '{Kurumsal E-posta}', subject: 'Mocksheets Ailesine Hoş Geldiniz!', body: 'Merhaba {Ad},\n\nTakımımıza katıldığınız için çok mutluyuz! İlk gün için her şey hazır.\n\nHerhangi bir sorunuz olursa İK ekibiyle iletişime geçmekten çekinmeyin.\n\nİyi çalışmalar!' }
+      ]
+    }
+  },
+  {
+    id: 'perf-review', icon: '📋', iconBg: '#fce7f3', name: 'Performans Değerlendirme',
+    desc: 'Her çeyrek sonu çalışanlara değerlendirme formu gönder',
+    tags: ['Gmail', 'Bildirim'], category: 'ik',
+    data: {
+      name: 'Çeyreklik Performans Değerlendirmesi', description: 'Her 3 ayda bir performans değerlendirme sürecini başlat',
+      trigger_config: { type: 'schedule', cronExpr: '0 9 1 1,4,7,10 *' },
+      condition_config: [],
+      action_config: [
+        { type: 'gmail', to: 'ik@firma.com', subject: 'Çeyreklik Performans Değerlendirmesi Başlıyor', body: 'Merhaba,\n\nBu çeyreğin performans değerlendirme süreci başladı. Lütfen ekibinizin değerlendirmelerini tamamlayın.\n\nSon tarih: 2 hafta içinde.' },
+        { type: 'notification', message: 'Çeyreklik performans değerlendirmesi başladı. Lütfen Mocksheets\'teki verileri güncelleyin.' }
+      ]
+    }
+  },
+  {
+    id: 'employee-birthday', icon: '🎉', iconBg: '#fef3c7', name: 'Çalışan Doğum Günü',
+    desc: 'Çalışan doğum gününde Slack\'e tebrik mesajı at',
+    tags: ['Slack'], category: 'ik',
+    data: {
+      name: 'Çalışan Doğum Günü Kutlaması', description: 'Doğum günü olan çalışan için ekip kanalına otomatik tebrik mesajı gönder',
+      trigger_config: { type: 'date_arrived', column: 'Doğum Tarihi', days_before: '0' },
+      condition_config: [],
+      action_config: [
+        { type: 'slack', webhookUrl: '', message: '🎉 Bugün {Ad Soyad}\'ın doğum günü! Tebrikler! 🎂🎈' }
+      ]
+    }
+  },
+
+  // ── CRM ────────────────────────────────────────────────────────────────────
+  {
+    id: 'hubspot-lead', icon: '🎯', iconBg: '#fff7ed', name: 'Yeni Lead → HubSpot',
+    desc: 'Yeni müşteri adayını otomatik HubSpot CRM\'e ekle',
+    tags: ['HubSpot', 'Bildirim'], category: 'crm',
+    data: {
+      name: 'Yeni Lead HubSpot\'a Aktarım', description: 'Tabloya yeni potansiyel müşteri eklenince HubSpot\'ta kişi oluştur',
+      trigger_config: { type: 'row_added' },
+      condition_config: [],
+      action_config: [
+        { type: 'hubspot', token: '', email: '{E-posta}', firstName: '{Ad}', lastName: '{Soyad}' },
+        { type: 'notification', message: 'Yeni lead HubSpot\'a eklendi: {Ad} {Soyad}' }
+      ]
+    }
+  },
+  {
+    id: 'hubspot-deal', icon: '💼', iconBg: '#fff7ed', name: 'Satış Fırsatı → HubSpot Deal',
+    desc: 'Yüksek değerli fırsatlar için HubSpot\'ta deal oluştur',
+    tags: ['HubSpot'], category: 'crm',
+    data: {
+      name: 'HubSpot Satış Fırsatı', description: 'Teklif tutarı 10.000 ₺ üzerinde olunca HubSpot\'ta deal aç',
+      trigger_config: { type: 'threshold', column: 'Teklif Tutarı', operator: 'greater_than', value: '10000' },
+      condition_config: [],
+      action_config: [
+        { type: 'hubspot_create_deal', token: '', dealName: '{Müşteri} — {Ürün} Teklifi', amount: '{Teklif Tutarı}', stage: 'presentationscheduled' },
+        { type: 'slack', webhookUrl: '', message: '💼 Yeni HubSpot deal oluşturuldu: {Müşteri} — {Teklif Tutarı} ₺' }
+      ]
+    }
+  },
+  {
+    id: 'crm-followup', icon: '📞', iconBg: '#eff6ff', name: 'Müşteri Takip Hatırlatması',
+    desc: 'Son temas 30 gün geçmişse takip maili gönder',
+    tags: ['Gmail', 'Bildirim'], category: 'crm',
+    data: {
+      name: 'Müşteri Takip Maili', description: 'Son temas tarihi 30 günü aşan müşteriler için satış temsilcisine hatırlatma gönder',
+      trigger_config: { type: 'schedule', frequency: 'every_day', time: '10:00' },
+      condition_config: [{ column: 'Son Temas Tarihi', operator: 'days_ago', value: '30', logic: 'AND' }],
+      action_config: [
+        { type: 'gmail', to: '{Temsilci E-posta}', subject: 'Takip Gerekiyor: {Müşteri}', body: 'Merhaba,\n\n{Müşteri} ile son temastan 30 gün geçti. Lütfen iletişime geçin.\n\nSon Not: {Son Not}' },
+        { type: 'notification', message: 'Müşteri takip hatırlatması: {Müşteri} (30 gündür iletişim yok)' }
+      ]
+    }
+  },
+  {
+    id: 'crm-segment', icon: '🏷️', iconBg: '#d1fae5', name: 'VIP Müşteri Segmenti',
+    desc: 'Yüksek değerli müşteriler için VIP segmentine taşı',
+    tags: ['Bildirim', 'Slack'], category: 'crm',
+    data: {
+      name: 'VIP Müşteri Segmentasyon Uyarısı', description: 'Toplam alım 50.000 ₺ geçen müşterileri VIP segmentine al',
+      trigger_config: { type: 'threshold', column: 'Toplam Alım', operator: 'greater_than', value: '50000' },
+      condition_config: [],
+      action_config: [
+        { type: 'slack', webhookUrl: '', message: '🏷️ VIP Müşteri: {Müşteri} toplam {Toplam Alım} ₺ alımla VIP segmentine geçti!' },
+        { type: 'notification', message: 'VIP segmenti: {Müşteri} — {Toplam Alım} ₺' }
+      ]
+    }
+  },
+
+  // ── GÖREV ──────────────────────────────────────────────────────────────────
+  {
+    id: 'jira-bug', icon: '🐛', iconBg: '#fee2e2', name: 'Hata Tespiti → Jira',
+    desc: 'AI anomali tespit edince Jira\'da otomatik bug issue aç',
+    tags: ['Jira', 'Bildirim'], category: 'gorev',
+    data: {
+      name: 'Otomatik Jira Bug Issue', description: 'AI anomali algıladığında Jira projesinde bug issue oluştur',
+      trigger_config: { type: 'ai_anomaly' },
+      condition_config: [],
+      action_config: [
+        { type: 'jira', email: '', apiToken: '', domain: '', projectKey: 'BUG', summary: 'Anomali Tespit Edildi: {Sütun} — {Değer} ({Tarih})' },
+        { type: 'notification', message: 'AI anomali tespit etti. Jira issue açıldı.' }
+      ]
+    }
+  },
+  {
+    id: 'clickup-task', icon: '✅', iconBg: '#ede9fe', name: 'Görev → ClickUp',
+    desc: 'Yeni görev satırı eklenince ClickUp\'ta otomatik oluştur',
+    tags: ['ClickUp'], category: 'gorev',
+    data: {
+      name: 'ClickUp Görev Oluşturma', description: 'Tabloya yeni görev satırı eklenince ClickUp listesine otomatik kaydet',
+      trigger_config: { type: 'row_added' },
+      condition_config: [],
+      action_config: [
+        { type: 'clickup', apiKey: '', listId: '', name: '{Görev Adı} — {Sorumlu} ({Bitiş Tarihi})' },
+        { type: 'notification', message: 'ClickUp görevi oluşturuldu: {Görev Adı}' }
+      ]
+    }
+  },
+  {
+    id: 'asana-task', icon: '🌿', iconBg: '#f0fdf4', name: 'Proje Görevi → Asana',
+    desc: 'Durum değişince Asana projesine otomatik görev ekle',
+    tags: ['Asana', 'Bildirim'], category: 'gorev',
+    data: {
+      name: 'Asana Proje Görevi', description: 'Durum "Başlandı" olunca Asana\'da proje görevi oluştur',
+      trigger_config: { type: 'cell_condition', column: 'Durum', operator: 'equals', value: 'Başlandı' },
+      condition_config: [],
+      action_config: [
+        { type: 'asana', token: '', projectId: '', name: '{Proje Adı}: {Görev Adı} — {Sorumlu}' },
+        { type: 'notification', message: 'Asana görevi oluşturuldu: {Görev Adı}' }
+      ]
+    }
+  },
+  {
+    id: 'linear-sprint', icon: '⚡', iconBg: '#ede9fe', name: 'Sprint Issue → Linear',
+    desc: 'Eşik aşılınca Linear\'da otomatik sprint issue oluştur',
+    tags: ['Linear'], category: 'gorev',
+    data: {
+      name: 'Linear Sprint Issue', description: 'Hata sayısı eşiği aşınca Linear ekibine sprint issue ekle',
+      trigger_config: { type: 'threshold', column: 'Hata Sayısı', operator: 'greater_than', value: '5' },
+      condition_config: [],
+      action_config: [
+        { type: 'linear', apiKey: '', teamId: '', title: 'Sprint Sorunu: {Hata Sayısı} açık hata — {Modül}' },
+        { type: 'slack', webhookUrl: '', message: '⚡ Linear issue açıldı: {Modül} modülünde {Hata Sayısı} açık hata var.' }
+      ]
+    }
+  },
+  {
+    id: 'github-issue', icon: '🐙', iconBg: '#f3f4f6', name: 'Bug Raporu → GitHub',
+    desc: 'Anomali tespit edince GitHub\'da otomatik issue aç',
+    tags: ['GitHub', 'Bildirim'], category: 'gorev',
+    data: {
+      name: 'GitHub Otomatik Bug Issue', description: 'AI anomali veya değer değişimi tespit edince GitHub Issues\'a bug raporu ekle',
+      trigger_config: { type: 'ai_anomaly' },
+      condition_config: [],
+      action_config: [
+        { type: 'github', token: '', owner: '', repo: '', title: '[BUG] Anomali: {Sütun} = {Değer} ({Tarih})' },
+        { type: 'notification', message: 'GitHub issue açıldı: {Sütun} anomalisi' }
+      ]
+    }
+  },
+  {
+    id: 'monday-board', icon: '📅', iconBg: '#fff7ed', name: 'Görev → Monday.com',
+    desc: 'Yeni satır eklenince Monday.com panosuna öğe ekle',
+    tags: ['Monday'], category: 'gorev',
+    data: {
+      name: 'Monday.com Board Senkronizasyonu', description: 'Tabloya yeni satır eklenince Monday.com panosuna öğe ekle',
+      trigger_config: { type: 'row_added' },
+      condition_config: [],
+      action_config: [
+        { type: 'monday', apiKey: '', boardId: '', itemName: '{Görev Adı} — {Sorumlu}' },
+        { type: 'notification', message: 'Monday.com\'a eklendi: {Görev Adı}' }
       ]
     }
   }
