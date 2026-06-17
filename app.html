@@ -3012,7 +3012,8 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
           document.getElementById('sub-current-name').textContent = 'Başlangıç (Ücretsiz)';
           document.getElementById('sub-current-meta').textContent = 'Ücretsiz plan';
-          renderPlanGrid({ plan: 'free', displayPlan: 'free' });
+          _subData = { plan: 'free', displayPlan: 'free' };
+          renderPlanGrid(_subData);
         }
       })
       .catch(function() {
