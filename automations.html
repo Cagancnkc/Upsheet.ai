@@ -613,7 +613,7 @@ textarea.inp{height:auto;padding:10px 12px;resize:vertical;min-height:72px}
       <div class="section-title">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.59 13.51 6.83 3.98"/><path d="m15.41 6.51-6.82 3.98"/></svg>
         Entegrasyon Bağlantıları
-        <span class="section-badge" id="int-count-badge">0/11 bağlı</span>
+        <span class="section-badge" id="int-count-badge">0/30 bağlı</span>
       </div>
     </div>
     <div id="int-root"></div>
@@ -1492,7 +1492,28 @@ const BUILDER_APP_TYPES = [
   { v: 'notion',       l: 'Notion',    icon: '<img src="https://cdn.simpleicons.org/notion/000000" alt="Notion">' },
   { v: 'airtable',     l: 'Airtable',  icon: '<img src="https://cdn.simpleicons.org/airtable/18BFFF" alt="Airtable">' },
   { v: 'make',         l: 'Make',      icon: '<img src="https://cdn.simpleicons.org/make/6D00CC" alt="Make">' },
-  { v: 'webhook',      l: 'Webhook',   icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>' }
+  { v: 'webhook',      l: 'Webhook',    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>' },
+  { v: 'hubspot',      l: 'HubSpot',   icon: '<img src="https://cdn.simpleicons.org/hubspot/FF7A59" alt="HubSpot">' },
+  { v: 'jira',         l: 'Jira',      icon: '<img src="https://cdn.simpleicons.org/jira/0052CC" alt="Jira">' },
+  { v: 'linear',       l: 'Linear',    icon: '<img src="https://cdn.simpleicons.org/linear/5E6AD2" alt="Linear">' },
+  { v: 'github',       l: 'GitHub',    icon: '<img src="https://cdn.simpleicons.org/github/181717" alt="GitHub" style="filter:invert(0.5)">' },
+  { v: 'clickup',      l: 'ClickUp',   icon: '<img src="https://cdn.simpleicons.org/clickup/7B68EE" alt="ClickUp">' },
+  { v: 'asana',        l: 'Asana',     icon: '<img src="https://cdn.simpleicons.org/asana/F06A6A" alt="Asana">' },
+  { v: 'monday',       l: 'Monday',    icon: '<img src="https://cdn.simpleicons.org/monday/F62B54" alt="Monday.com">' },
+  { v: 'trello',       l: 'Trello',    icon: '<img src="https://cdn.simpleicons.org/trello/0052CC" alt="Trello">' },
+  { v: 'zapier',       l: 'Zapier',    icon: '<img src="https://cdn.simpleicons.org/zapier/FF4A00" alt="Zapier">' },
+  { v: 'discord',      l: 'Discord',   icon: '<img src="https://cdn.simpleicons.org/discord/5865F2" alt="Discord">' },
+  { v: 'google-chat',  l: 'G Chat',    icon: '<img src="https://cdn.simpleicons.org/googlechat/00897B" alt="Google Chat">' },
+  { v: 'n8n',          l: 'n8n',       icon: '<img src="https://cdn.simpleicons.org/n8n/EA4B71" alt="n8n">' },
+  { v: 'pipedream',    l: 'Pipedream', icon: '<img src="https://cdn.simpleicons.org/pipedream/00AEF0" alt="Pipedream">' },
+  { v: 'ifttt',        l: 'IFTTT',     icon: '<img src="https://cdn.simpleicons.org/ifttt/000000" alt="IFTTT">' },
+  { v: 'sendgrid',     l: 'SendGrid',  icon: '<img src="https://cdn.simpleicons.org/sendgrid/1A82E2" alt="SendGrid">' },
+  { v: 'mailchimp',    l: 'Mailchimp', icon: '<img src="https://cdn.simpleicons.org/mailchimp/FFE01B" alt="Mailchimp">' },
+  { v: 'brevo',        l: 'Brevo',     icon: '<img src="https://cdn.simpleicons.org/brevo/0B996E" alt="Brevo">' },
+  { v: 'twilio',       l: 'Twilio',    icon: '<img src="https://cdn.simpleicons.org/twilio/F22F46" alt="Twilio">' },
+  { v: 'telegram',     l: 'Telegram',  icon: '<img src="https://cdn.simpleicons.org/telegram/2CA5E0" alt="Telegram">' },
+  { v: 'pagerduty',    l: 'PagerDuty', icon: '<img src="https://cdn.simpleicons.org/pagerduty/06AC38" alt="PagerDuty">' },
+  { v: 'smartsheet',   l: 'Smartsheet',icon: '<img src="https://cdn.simpleicons.org/smartsheet/0070C0" alt="Smartsheet">' }
 ];
 
 function openBuilder(prefillOrApp, id) {
