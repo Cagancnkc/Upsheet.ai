@@ -542,6 +542,41 @@
   .int-badge.soon{background:#fff;border:1px dashed var(--line-strong);color:var(--mute)}
   a.int{color:inherit;text-decoration:none}
 
+  /* Workflow canvas – integrations section */
+  .wf-scene{position:relative;display:flex;align-items:center;justify-content:center;gap:24px;padding:48px 0 16px;min-height:400px}
+  .wf-float-card{width:248px;flex-shrink:0;background:#fff;border-radius:16px;box-shadow:0 24px 64px rgba(0,0,0,.22);padding:18px}
+  @media(max-width:1040px){.wf-float-card{display:none}}
+  .wf-fc-head{display:flex;align-items:center;gap:8px;margin-bottom:14px;font-weight:600;font-size:13px}
+  .wf-fc-avatar{width:26px;height:26px;background:linear-gradient(135deg,#1c4ddc,#7c3aed);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+  .wf-fc-close{margin-left:auto;opacity:.3;font-size:11px;cursor:pointer}
+  .wf-fc-bubble{font-size:12px;line-height:1.5;padding:8px 10px;border-radius:10px;margin-bottom:8px}
+  .wf-bubble-user{background:#f0f4ff;color:#1e1e2e;margin-left:16px}
+  .wf-bubble-ai{background:#f8f8f8;color:#1e1e2e}
+  .wf-ai-list{list-style:none;padding:0;margin:6px 0 0;display:flex;flex-direction:column;gap:3px}
+  .wf-ai-list li{font-size:11px;color:#666}
+  .wf-fc-input{display:flex;align-items:center;gap:6px;border:1px solid #eaeaea;border-radius:8px;padding:7px 8px;margin-top:10px}
+  .wf-fc-input span{flex:1;font-size:12px;color:#bbb}
+  .wf-fc-send{width:26px;height:26px;background:#1c4ddc;color:#fff;border:none;border-radius:7px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .wf-cfg-tabs{display:flex;border-bottom:1px solid #f0f0f0;margin:0 -18px 14px;padding:0 18px}
+  .wf-cfg-tab{font-size:12px;padding:8px 10px;border:none;background:none;cursor:pointer;color:#aaa;border-bottom:2px solid transparent;margin-bottom:-1px;font-weight:500}
+  .wf-cfg-tab.active{color:#1c4ddc;border-bottom-color:#1c4ddc;font-weight:700}
+  .wf-cfg-field{margin-bottom:12px}
+  .wf-cfg-lbl{font-size:10px;color:#aaa;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px}
+  .wf-cfg-app-row{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid #eee;border-radius:9px}
+  .wf-cfg-change{margin-left:auto;font-size:11px;color:#1c4ddc;cursor:pointer;font-weight:600}
+  .wf-cfg-sel{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;border:1px solid #eee;border-radius:9px;font-size:12px;color:#333;cursor:pointer}
+  .wf-cfg-btn-go{width:100%;padding:10px;background:#1c4ddc;color:#fff;border:none;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;margin-top:6px}
+  .wf-nodes-wrap{position:relative;width:380px;height:310px;flex-shrink:0}
+  @media(max-width:600px){.wf-nodes-wrap{width:280px;height:240px}}
+  .wf-conn-svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+  .wf-node{position:absolute;display:flex;flex-direction:column;align-items:center;gap:8px}
+  .wf-node-box{width:56px;height:56px;background:rgba(8,28,48,.8);border:1px solid rgba(255,255,255,.18);border-radius:16px;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 32px rgba(0,0,0,.35)}
+  .wf-node-lbl{font-size:12px;color:rgba(255,255,255,.8);font-weight:500;white-space:nowrap}
+  .wf-logos-row{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:10px;margin-top:40px;padding-top:28px;border-top:1px solid rgba(255,255,255,.12)}
+  .wf-logo-pill{width:44px;height:44px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.14);border-radius:12px;display:flex;align-items:center;justify-content:center;transition:background .2s;text-decoration:none;font-size:19px}
+  .wf-logo-pill:hover{background:rgba(255,255,255,.2)}
+  .wf-logo-pill img,.wf-logo-pill svg{width:22px;height:22px}
+
   /* pricing */
   .pricing{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
   @media (max-width:960px){.pricing{grid-template-columns:1fr}}
@@ -1282,123 +1317,167 @@
 </section>
 
 <!-- INTEGRATIONS -->
-<section id="integrations" style="padding:80px 0 30px">
+<section id="integrations" style="background:linear-gradient(120deg,#0a3535 0%,#0c5068 45%,#a8dce8 80%,#d4f0f8 100%);padding:80px 0 56px">
   <div class="wrap">
-    <div class="section-head">
+    <div class="section-head" style="color:#fff">
       <div>
-        <div class="section-eyebrow">— entegrasyonlar</div>
-        <h2 class="section-title">Operasyon altyapınızın <em class="accent">içinde yaşar.</em></h2>
+        <div class="section-eyebrow" style="color:rgba(255,255,255,.6)">— entegrasyonlar</div>
+        <h2 class="section-title" style="color:#fff">Operasyon altyapınızın <em class="accent">içinde yaşar.</em></h2>
       </div>
-      <p class="section-sub">
+      <p class="section-sub" style="color:rgba(255,255,255,.7)">
         Mocksheets, ekibinizin zaten kullandığı araçlarla bağlantı kurar. Veri içe aktar,
         otomasyonları tetikle, tablolarını senkronize et.
       </p>
     </div>
 
-    <div class="integrations">
-      <a class="int" href="app.html?open=integrations">
-        <div class="int-logo" style="background:#fff;border:1px solid var(--line-strong);display:flex;align-items:center;justify-content:center"><img src="https://cdn.simpleicons.org/googlesheets/34A853" alt="Google Sheets" style="width:22px;height:22px" loading="lazy"></div>
-        <div class="int-name">Google Sheets</div>
-        <div class="int-meta">2 yönlü senkron</div>
-        <span class="int-badge live">● Hazır</span>
+    <!-- Workflow Canvas -->
+    <div class="wf-scene">
+
+      <!-- Left: AI Chat Card -->
+      <div class="wf-float-card">
+        <div class="wf-fc-head">
+          <div class="wf-fc-avatar">✦</div>
+          Upsheet AI
+          <span class="wf-fc-close">✕</span>
+        </div>
+        <div class="wf-fc-bubble wf-bubble-user">HubSpot'taki tüm leads'leri Slack'e bildir</div>
+        <div class="wf-fc-bubble wf-bubble-ai">
+          Otomasyon hazırlandı:
+          <ul class="wf-ai-list">
+            <li>✓ HubSpot trigger ayarlandı</li>
+            <li>✓ Slack kanal bağlandı</li>
+            <li>✓ Anlık bildirim aktif</li>
+          </ul>
+        </div>
+        <div class="wf-fc-input">
+          <span>Başka bir komut gir…</span>
+          <button class="wf-fc-send">↑</button>
+        </div>
+      </div>
+
+      <!-- Center: Workflow Nodes -->
+      <div class="wf-nodes-wrap">
+        <svg class="wf-conn-svg" viewBox="0 0 380 310">
+          <path d="M 190 56 C 190 148 68 148 68 210" stroke="rgba(255,255,255,0.35)" stroke-width="1.5" fill="none" stroke-dasharray="5 4"/>
+          <path d="M 190 56 C 190 148 312 148 312 210" stroke="rgba(255,255,255,0.35)" stroke-width="1.5" fill="none" stroke-dasharray="5 4"/>
+          <circle cx="190" cy="132" r="3" fill="rgba(255,255,255,0.5)"/>
+          <circle cx="68" cy="180" r="3" fill="rgba(255,255,255,0.5)"/>
+          <circle cx="312" cy="180" r="3" fill="rgba(255,255,255,0.5)"/>
+        </svg>
+
+        <!-- Trigger Node: Spreadsheet -->
+        <div class="wf-node" style="left:162px;top:0">
+          <div class="wf-node-box">
+            <img src="https://cdn.simpleicons.org/googlesheets/4CAF50" alt="Google Sheets" style="width:28px;height:28px" loading="lazy">
+          </div>
+          <div class="wf-node-lbl">Spreadsheet Trigger</div>
+        </div>
+
+        <!-- Action Node: HubSpot -->
+        <div class="wf-node" style="left:40px;top:210px">
+          <div class="wf-node-box">
+            <img src="https://cdn.simpleicons.org/hubspot/FF7A59" alt="HubSpot" style="width:28px;height:28px" loading="lazy">
+          </div>
+          <div class="wf-node-lbl">HubSpot</div>
+        </div>
+
+        <!-- Action Node: Slack -->
+        <div class="wf-node" style="left:284px;top:210px">
+          <div class="wf-node-box">
+            <svg viewBox="0 0 24 24" style="width:28px;height:28px" fill="#fff"><path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zM6.313 15.165a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313zM8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zM8.834 6.313a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312zM18.956 8.834a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834zM17.688 8.834a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312zM15.165 18.956a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52zM15.165 17.688a2.527 2.527 0 0 1-2.52-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z"/></svg>
+          </div>
+          <div class="wf-node-lbl">Slack</div>
+        </div>
+      </div>
+
+      <!-- Right: Config Card -->
+      <div class="wf-float-card">
+        <div class="wf-cfg-tabs">
+          <button class="wf-cfg-tab active">Kur</button>
+          <button class="wf-cfg-tab">Yapılandır</button>
+          <button class="wf-cfg-tab">Test</button>
+        </div>
+        <div class="wf-cfg-field">
+          <div class="wf-cfg-lbl">Uygulama</div>
+          <div class="wf-cfg-app-row">
+            <img src="https://cdn.simpleicons.org/hubspot/FF7A59" alt="HubSpot" style="width:20px;height:20px">
+            <span style="font-size:13px;font-weight:600">HubSpot</span>
+            <span class="wf-cfg-change">Değiştir</span>
+          </div>
+        </div>
+        <div class="wf-cfg-field">
+          <div class="wf-cfg-lbl">Aksiyon</div>
+          <div class="wf-cfg-sel">
+            <span>Contact Oluştur</span>
+            <span style="color:#aaa">▾</span>
+          </div>
+        </div>
+        <div class="wf-cfg-field">
+          <div class="wf-cfg-lbl">Kaynak Kolon</div>
+          <div class="wf-cfg-sel">
+            <span>Email (B sütunu)</span>
+            <span style="color:#aaa">▾</span>
+          </div>
+        </div>
+        <button class="wf-cfg-btn-go">Devam Et →</button>
+      </div>
+    </div>
+
+    <!-- App Logos Row -->
+    <div class="wf-logos-row">
+      <a class="wf-logo-pill" href="app.html?open=integrations" title="Google Sheets">
+        <img src="https://cdn.simpleicons.org/googlesheets/4CAF50" alt="Google Sheets" style="width:22px;height:22px" loading="lazy">
       </a>
-      <a class="int" href="app.html?open=integrations">
-        <div class="int-logo" style="background:#fff;border:1px solid var(--line-strong);display:flex;align-items:center;justify-content:center"><img src="https://cdn.simpleicons.org/googledrive/4285F4" alt="Google Drive" style="width:22px;height:22px" loading="lazy"></div>
-        <div class="int-name">Google Drive</div>
-        <div class="int-meta">Dosya senkron</div>
-        <span class="int-badge live">● Hazır</span>
+      <a class="wf-logo-pill" href="app.html?open=integrations" title="Google Drive">
+        <img src="https://cdn.simpleicons.org/googledrive/4285F4" alt="Google Drive" style="width:22px;height:22px" loading="lazy">
       </a>
-      <a class="int" href="app.html?open=integrations">
-        <div class="int-logo" style="background:#fff;border:1px solid var(--line-strong);display:flex;align-items:center;justify-content:center"><img src="https://cdn.simpleicons.org/gmail/EA4335" alt="Gmail" style="width:22px;height:22px" loading="lazy"></div>
-        <div class="int-name">Gmail</div>
-        <div class="int-meta">E-posta</div>
-        <span class="int-badge live">● Hazır</span>
+      <a class="wf-logo-pill" href="app.html?open=integrations" title="Gmail">
+        <img src="https://cdn.simpleicons.org/gmail/EA4335" alt="Gmail" style="width:22px;height:22px" loading="lazy">
       </a>
-      <a class="int" href="app.html?open=integrations">
-        <div class="int-logo" style="background:#fff;border:1px solid var(--line-strong);display:flex;align-items:center;justify-content:center"><img src="https://cdn.simpleicons.org/notion/000000" alt="Notion" style="width:22px;height:22px" loading="lazy"></div>
-        <div class="int-name">Notion</div>
-        <div class="int-meta">Veritabanı</div>
-        <span class="int-badge live">● Hazır</span>
+      <a class="wf-logo-pill" href="app.html?open=integrations" title="Notion">
+        <img src="https://cdn.simpleicons.org/notion/ffffff" alt="Notion" style="width:22px;height:22px" loading="lazy">
       </a>
-      <a class="int" href="app.html?open=integrations">
-        <div class="int-logo" style="background:#fff;border:1px solid var(--line-strong);display:flex;align-items:center;justify-content:center"><img src="https://cdn.simpleicons.org/airtable/18BFFF" alt="Airtable" style="width:22px;height:22px" loading="lazy"></div>
-        <div class="int-name">Airtable</div>
-        <div class="int-meta">Veritabanı</div>
-        <span class="int-badge live">● Hazır</span>
+      <a class="wf-logo-pill" href="app.html?open=integrations" title="Airtable">
+        <img src="https://cdn.simpleicons.org/airtable/18BFFF" alt="Airtable" style="width:22px;height:22px" loading="lazy">
       </a>
-      <a class="int" href="app.html?open=integrations">
-        <div class="int-logo" style="background:#fff;border:1px solid var(--line-strong);display:flex;align-items:center;justify-content:center"><img src="https://cdn.simpleicons.org/trello/0052CC" alt="Trello" style="width:22px;height:22px" loading="lazy"></div>
-        <div class="int-name">Trello</div>
-        <div class="int-meta">Görev Yönetimi</div>
-        <span class="int-badge live">● Hazır</span>
+      <a class="wf-logo-pill" href="app.html?open=integrations" title="Trello">
+        <img src="https://cdn.simpleicons.org/trello/0052CC" alt="Trello" style="width:22px;height:22px" loading="lazy">
       </a>
-      <a class="int" href="app.html?open=integrations">
-        <div class="int-logo" style="background:#fff;border:1px solid var(--line-strong);display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width:22px;height:22px" fill="#4A154B"><path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zM6.313 15.165a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313zM8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zM8.834 6.313a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312zM18.956 8.834a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834zM17.688 8.834a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312zM15.165 18.956a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52zM15.165 17.688a2.527 2.527 0 0 1-2.52-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z"/></svg></div>
-        <div class="int-name">Slack</div>
-        <div class="int-meta">Bildirim</div>
-        <span class="int-badge live">● Hazır</span>
+      <a class="wf-logo-pill" href="app.html?open=integrations" title="Slack">
+        <svg viewBox="0 0 24 24" style="width:22px;height:22px" fill="#fff"><path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zM6.313 15.165a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313zM8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zM8.834 6.313a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312zM18.956 8.834a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834zM17.688 8.834a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312zM15.165 18.956a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52zM15.165 17.688a2.527 2.527 0 0 1-2.52-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z"/></svg>
       </a>
-      <a class="int" href="app.html?open=integrations">
-        <div class="int-logo" style="background:#fff;border:1px solid var(--line-strong);display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width:22px;height:22px" fill="#6264A7"><path d="M20.625 8.127q-.55 0-1.025-.205-.475-.205-.832-.563-.358-.357-.563-.832Q18 6.053 18 5.502q0-.54.205-1.02t.563-.837q.357-.358.832-.563.474-.205 1.025-.205.54 0 1.02.205t.837.563q.358.357.563.837.205.48.205 1.02 0 .55-.205 1.025-.205.475-.563.832-.357.358-.837.563-.48.205-1.02.205zm0-3.75q-.469 0-.797.328-.328.328-.328.797 0 .469.328.797.328.328.797.328.469 0 .797-.328.328-.328.328-.797 0-.469-.328-.797-.328-.328-.797-.328zM24 10.002v5.578q0 .774-.293 1.46-.293.685-.803 1.194-.51.51-1.195.803-.686.293-1.459.293-.445 0-.908-.105-.463-.106-.85-.329-.293.95-.855 1.729-.563.78-1.319 1.336-.756.557-1.67.861-.914.305-1.898.305-1.148 0-2.162-.398-1.014-.399-1.805-1.102-.79-.703-1.312-1.664t-.674-2.086h-5.8q-.411 0-.704-.293T0 16.881V6.873q0-.41.293-.703t.703-.293h8.59q-.34-.715-.34-1.5 0-.727.275-1.365.276-.639.75-1.114.475-.474 1.114-.75.638-.275 1.365-.275t1.365.275q.639.276 1.114.75.474.475.75 1.114.275.638.275 1.365t-.275 1.365q-.276.639-.75 1.113-.475.475-1.114.75-.638.276-1.365.276-.188 0-.375-.024-.188-.023-.375-.058v1.078h10.875q.469 0 .797.328.328.328.328.797zM12.75 2.373q-.41 0-.78.158-.368.158-.638.434-.27.275-.428.639-.158.363-.158.773 0 .41.158.78.159.368.428.638.27.27.639.428.369.158.779.158.41 0 .773-.158.364-.159.64-.428.274-.27.433-.639.158-.369.158-.779 0-.41-.158-.773-.159-.364-.434-.64-.275-.275-.639-.433-.363-.158-.773-.158zM6.937 9.814h2.25V7.94H2.814v1.875h2.25v6h1.875zm10.313 7.313v-6.75H12v6.504q0 .41-.293.703t-.703.293H8.309q.152.809.556 1.5.405.691.985 1.19.58.497 1.318.779.738.281 1.582.281.926 0 1.746-.352.82-.351 1.436-.966.615-.616.966-1.43.352-.815.352-1.752zm5.25-1.547v-5.203h-3.75v6.855q.305.305.691.452.387.146.809.146.469 0 .879-.176.41-.175.715-.48.304-.305.48-.715t.176-.879Z"/></svg></div>
-        <div class="int-name">Microsoft Teams</div>
-        <div class="int-meta">Bildirim</div>
-        <span class="int-badge live">● Hazır</span>
+      <a class="wf-logo-pill" href="app.html?open=integrations" title="Microsoft Teams">
+        <svg viewBox="0 0 24 24" style="width:22px;height:22px" fill="#fff"><path d="M20.625 8.127q-.55 0-1.025-.205-.475-.205-.832-.563-.358-.357-.563-.832Q18 6.053 18 5.502q0-.54.205-1.02t.563-.837q.357-.358.832-.563.474-.205 1.025-.205.54 0 1.02.205t.837.563q.358.357.563.837.205.48.205 1.02 0 .55-.205 1.025-.205.475-.563.832-.357.358-.837.563-.48.205-1.02.205zm0-3.75q-.469 0-.797.328-.328.328-.328.797 0 .469.328.797.328.328.797.328.469 0 .797-.328.328-.328.328-.797 0-.469-.328-.797-.328-.328-.797-.328zM24 10.002v5.578q0 .774-.293 1.46-.293.685-.803 1.194-.51.51-1.195.803-.686.293-1.459.293-.445 0-.908-.105-.463-.106-.85-.329-.293.95-.855 1.729-.563.78-1.319 1.336-.756.557-1.67.861-.914.305-1.898.305-1.148 0-2.162-.398-1.014-.399-1.805-1.102-.79-.703-1.312-1.664t-.674-2.086h-5.8q-.411 0-.704-.293T0 16.881V6.873q0-.41.293-.703t.703-.293h8.59q-.34-.715-.34-1.5 0-.727.275-1.365.276-.639.75-1.114.475-.474 1.114-.75.638-.275 1.365-.275t1.365.275q.639.276 1.114.75.474.475.75 1.114.275.638.275 1.365t-.275 1.365q-.276.639-.75 1.113-.475.475-1.114.75-.638.276-1.365.276-.188 0-.375-.024-.188-.023-.375-.058v1.078h10.875q.469 0 .797.328.328.328.328.797zM12.75 2.373q-.41 0-.78.158-.368.158-.638.434-.27.275-.428.639-.158.363-.158.773 0 .41.158.78.159.368.428.638.27.27.639.428.369.158.779.158.41 0 .773-.158.364-.159.64-.428.274-.27.433-.639.158-.369.158-.779 0-.41-.158-.773-.159-.364-.434-.64-.275-.275-.639-.433-.363-.158-.773-.158zM6.937 9.814h2.25V7.94H2.814v1.875h2.25v6h1.875zm10.313 7.313v-6.75H12v6.504q0 .41-.293.703t-.703.293H8.309q.152.809.556 1.5.405.691.985 1.19.58.497 1.318.779.738.281 1.582.281.926 0 1.746-.352.82-.351 1.436-.966.615-.616.966-1.43.352-.815.352-1.752zm5.25-1.547v-5.203h-3.75v6.855q.305.305.691.452.387.146.809.146.469 0 .879-.176.41-.175.715-.48.304-.305.48-.715t.176-.879Z"/></svg>
       </a>
-      <a class="int" href="app.html?open=integrations">
-        <div class="int-logo" style="background:#fff;border:1px solid var(--line-strong);display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width:22px;height:22px" fill="#6D00CC"><path d="M5.5 3A2.5 2.5 0 0 0 3 5.5v13A2.5 2.5 0 0 0 5.5 21h13a2.5 2.5 0 0 0 2.5-2.5v-13A2.5 2.5 0 0 0 18.5 3h-13zm1.25 4.5h1.5l1.75 4.5 1.75-4.5h1.5v7h-1.5v-4.5l-1.75 4.5-1.75-4.5V14.5h-1.5v-7z"/></svg></div>
-        <div class="int-name">Make.com</div>
-        <div class="int-meta">Otomasyon</div>
-        <span class="int-badge live">● Hazır</span>
+      <a class="wf-logo-pill" href="app.html?open=integrations" title="Make.com">
+        <svg viewBox="0 0 24 24" style="width:22px;height:22px" fill="#fff"><path d="M5.5 3A2.5 2.5 0 0 0 3 5.5v13A2.5 2.5 0 0 0 5.5 21h13a2.5 2.5 0 0 0 2.5-2.5v-13A2.5 2.5 0 0 0 18.5 3h-13zm1.25 4.5h1.5l1.75 4.5 1.75-4.5h1.5v7h-1.5v-4.5l-1.75 4.5-1.75-4.5V14.5h-1.5v-7z"/></svg>
       </a>
-      <a class="int" href="app.html?open=integrations">
-        <div class="int-logo" style="background:#fff;border:1px solid var(--line-strong);display:flex;align-items:center;justify-content:center"><img src="https://cdn.simpleicons.org/hubspot/FF7A59" alt="HubSpot" style="width:22px;height:22px" loading="lazy"></div>
-        <div class="int-name">HubSpot</div>
-        <div class="int-meta">CRM / Satış</div>
-        <span class="int-badge live">● Hazır</span>
+      <a class="wf-logo-pill" href="app.html?open=integrations" title="HubSpot">
+        <img src="https://cdn.simpleicons.org/hubspot/FF7A59" alt="HubSpot" style="width:22px;height:22px" loading="lazy">
       </a>
-      <a class="int" href="app.html?open=integrations">
-        <div class="int-logo" style="background:#fff;border:1px solid var(--line-strong);display:flex;align-items:center;justify-content:center"><img src="https://cdn.simpleicons.org/jira/0052CC" alt="Jira" style="width:22px;height:22px" loading="lazy"></div>
-        <div class="int-name">Jira</div>
-        <div class="int-meta">Proje Yönetimi</div>
-        <span class="int-badge live">● Hazır</span>
+      <a class="wf-logo-pill" href="app.html?open=integrations" title="Jira">
+        <img src="https://cdn.simpleicons.org/jira/0052CC" alt="Jira" style="width:22px;height:22px" loading="lazy">
       </a>
-      <a class="int" href="app.html?open=integrations">
-        <div class="int-logo" style="background:#fff;border:1px solid var(--line-strong);display:flex;align-items:center;justify-content:center"><img src="https://cdn.simpleicons.org/github/181717" alt="GitHub" style="width:22px;height:22px" loading="lazy"></div>
-        <div class="int-name">GitHub</div>
-        <div class="int-meta">Geliştirici</div>
-        <span class="int-badge live">● Hazır</span>
+      <a class="wf-logo-pill" href="app.html?open=integrations" title="GitHub">
+        <img src="https://cdn.simpleicons.org/github/ffffff" alt="GitHub" style="width:22px;height:22px" loading="lazy">
       </a>
-      <a class="int" href="app.html?open=integrations">
-        <div class="int-logo" style="background:#fff;border:1px solid var(--line-strong);display:flex;align-items:center;justify-content:center"><img src="https://cdn.simpleicons.org/clickup/7B68EE" alt="ClickUp" style="width:22px;height:22px" loading="lazy"></div>
-        <div class="int-name">ClickUp</div>
-        <div class="int-meta">Görev Yönetimi</div>
-        <span class="int-badge live">● Hazır</span>
+      <a class="wf-logo-pill" href="app.html?open=integrations" title="ClickUp">
+        <img src="https://cdn.simpleicons.org/clickup/7B68EE" alt="ClickUp" style="width:22px;height:22px" loading="lazy">
       </a>
-      <a class="int" href="app.html?open=integrations">
-        <div class="int-logo" style="background:#fff;border:1px solid var(--line-strong);display:flex;align-items:center;justify-content:center"><img src="https://cdn.simpleicons.org/asana/F06A6A" alt="Asana" style="width:22px;height:22px" loading="lazy"></div>
-        <div class="int-name">Asana</div>
-        <div class="int-meta">Proje Yönetimi</div>
-        <span class="int-badge live">● Hazır</span>
+      <a class="wf-logo-pill" href="app.html?open=integrations" title="Asana">
+        <img src="https://cdn.simpleicons.org/asana/F06A6A" alt="Asana" style="width:22px;height:22px" loading="lazy">
       </a>
-      <a class="int" href="app.html?open=integrations">
-        <div class="int-logo" style="background:#fff;border:1px solid var(--line-strong);display:flex;align-items:center;justify-content:center"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" style="width:22px;height:22px"><g transform="matrix(3.208255 0 0 3.208255 -35.559129 -63.587202)"><path d="M13.513 35.76a2.433 2.433 0 0 1-2.059-3.723l4.377-6.99a2.432 2.432 0 1 1 4.123 2.582l-4.378 6.99a2.43 2.43 0 0 1-2.063 1.141z" fill="#ff3d57"/><path d="M21.056 35.76a2.433 2.433 0 0 1-2.063-3.723l4.38-6.99a2.432 2.432 0 1 1 4.117 2.582l-4.372 6.99a2.43 2.43 0 0 1-2.063 1.141z" fill="#ffcb00"/><ellipse ry="2.375" rx="2.436" cy="33.384" cx="28.597" fill="#00d647"/></g></svg></div>
-        <div class="int-name">Monday.com</div>
-        <div class="int-meta">İş Takibi</div>
-        <span class="int-badge live">● Hazır</span>
+      <a class="wf-logo-pill" href="app.html?open=integrations" title="Monday.com">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" style="width:22px;height:22px"><g transform="matrix(3.208255 0 0 3.208255 -35.559129 -63.587202)"><path d="M13.513 35.76a2.433 2.433 0 0 1-2.059-3.723l4.377-6.99a2.432 2.432 0 1 1 4.123 2.582l-4.378 6.99a2.43 2.43 0 0 1-2.063 1.141z" fill="#ff3d57"/><path d="M21.056 35.76a2.433 2.433 0 0 1-2.063-3.723l4.38-6.99a2.432 2.432 0 1 1 4.117 2.582l-4.372 6.99a2.43 2.43 0 0 1-2.063 1.141z" fill="#ffcb00"/><ellipse ry="2.375" rx="2.436" cy="33.384" cx="28.597" fill="#00d647"/></g></svg>
       </a>
-      <a class="int" href="app.html?open=integrations">
-        <div class="int-logo" style="background:#fff;border:1px solid var(--line-strong);display:flex;align-items:center;justify-content:center"><img src="https://cdn.simpleicons.org/linear/5E6AD2" alt="Linear" style="width:22px;height:22px" loading="lazy"></div>
-        <div class="int-name">Linear</div>
-        <div class="int-meta">Issue Takibi</div>
-        <span class="int-badge live">● Hazır</span>
+      <a class="wf-logo-pill" href="app.html?open=integrations" title="Linear">
+        <img src="https://cdn.simpleicons.org/linear/5E6AD2" alt="Linear" style="width:22px;height:22px" loading="lazy">
       </a>
-      <a class="int" href="app.html?open=integrations">
-        <div class="int-logo" style="background:#FFD43B;color:#0e0e10;display:flex;align-items:center;justify-content:center;font-size:18px">⚡</div>
-        <div class="int-name">Webhook / API</div>
-        <div class="int-meta">Özel Entegrasyon</div>
-        <span class="int-badge live">● Hazır</span>
+      <a class="wf-logo-pill" href="app.html?open=integrations" title="Webhook / API" style="background:rgba(255,212,59,.2);border-color:rgba(255,212,59,.3)">
+        <span style="font-size:19px">⚡</span>
       </a>
     </div>
+
   </div>
 </section>
 
