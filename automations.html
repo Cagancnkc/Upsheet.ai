@@ -2760,6 +2760,237 @@ function renderActionFields(a, i) {
       ${inp('spreadsheet_id', 'Google Sheets ID', 'Spreadsheet ID')}
       ${inp('range', 'örn. A1:B10', 'Aralık')}`;
     case 'pdf_export': return `<div class="action-field" style="color:var(--muted);font-size:12px">Mevcut sayfanın PDF dışa aktarımı tetiklenecek.</div>`;
+
+    // İletişim
+    case 'discord': return `
+      ${inp('webhookUrl', 'https://discord.com/api/webhooks/...', 'Webhook URL *')}
+      ${ta('message', 'Mesaj metni... {Sütun Adı} ile değişken kullanabilirsiniz', 'Mesaj *')}`;
+    case 'google-chat': return `
+      ${inp('webhookUrl', 'https://chat.googleapis.com/v1/spaces/...', 'Webhook URL *')}
+      ${ta('message', 'Mesaj metni... {Sütun Adı} ile değişken kullanabilirsiniz', 'Mesaj *')}`;
+    case 'telegram': return `
+      ${inp('botToken', 'Bot token (BotFather\'dan alın)', 'Bot Token *')}
+      ${inp('chatId', 'Chat ID veya @kanal_adı', 'Chat ID *')}
+      ${ta('message', 'Mesaj metni... {Sütun Adı} ile değişken kullanabilirsiniz', 'Mesaj *')}`;
+    case 'twilio': return `
+      ${inp('accountSid', 'ACxxxxxxxxxxxxxxxx', 'Account SID *')}
+      ${inp('authToken', 'Auth Token', 'Auth Token *')}
+      ${inp('from', '+1234567890', 'Gönderen Numara *')}
+      ${inp('to', '+905XXXXXXXXX', 'Alıcı Numara *')}
+      ${ta('message', 'SMS metni... {Sütun Adı} ile değişken kullanabilirsiniz', 'Mesaj *')}`;
+
+    // Otomasyon Platformları
+    case 'n8n': return `
+      ${inp('webhookUrl', 'https://your-n8n.com/webhook/...', 'Webhook URL *')}
+      ${inp('event', 'örn. row_matched', 'Event Adı')}`;
+    case 'zapier': return inp('webhookUrl', 'https://hooks.zapier.com/hooks/catch/...', 'Zapier Webhook URL *');
+    case 'pipedream': return `
+      ${inp('webhookUrl', 'https://eo...m.pipedream.net', 'Webhook URL *')}
+      ${inp('event', 'örn. data_alert', 'Event Adı')}`;
+    case 'ifttt': return `
+      ${inp('key', 'IFTTT Webhook key', 'Webhook Key *')}
+      ${inp('event', 'IFTTT event adı', 'Event *')}
+      ${inp('value1', 'Değer 1 veya {Sütun Adı}', 'Value 1')}
+      ${inp('value2', 'Değer 2 (opsiyonel)', 'Value 2')}
+      ${inp('value3', 'Değer 3 (opsiyonel)', 'Value 3')}`;
+
+    // E-posta Servisleri
+    case 'sendgrid': return `
+      ${inp('apiKey', 'SG.xxxxxxxxxxxx', 'SendGrid API Key *')}
+      ${inp('to', 'alici@sirket.com', 'Alıcı E-posta *')}
+      ${inp('subject', 'örn. Yeni Kayıt: {İsim}', 'Konu *')}
+      ${ta('body', 'E-posta içeriği... {Sütun Adı} ile değişken kullanabilirsiniz', 'İçerik')}`;
+    case 'mailchimp': return `
+      ${inp('apiKey', 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx-us1', 'API Key *')}
+      ${inp('listId', 'Liste/Audience ID', 'List ID *')}
+      ${inp('email', 'örn. {E-posta}', 'E-posta Sütunu *')}`;
+    case 'brevo': return `
+      ${inp('apiKey', 'xkeysib-...', 'Brevo API Key *')}
+      ${inp('to', 'alici@sirket.com', 'Alıcı E-posta *')}
+      ${inp('subject', 'örn. Bildirim: {Ürün}', 'Konu *')}
+      ${ta('body', 'E-posta içeriği... {Sütun Adı} ile değişken kullanabilirsiniz', 'İçerik')}`;
+    case 'gmail_create_draft': return `
+      ${inp('to', 'alici@sirket.com', 'Alıcı E-posta *')}
+      ${inp('subject', 'örn. Taslak: {Başlık}', 'Konu *')}
+      ${ta('body', 'E-posta içeriği... {Sütun Adı} ile değişken kullanabilirsiniz', 'İçerik')}`;
+
+    // Jira
+    case 'jira': return `
+      ${inp('email', 'jira@sirket.com', 'Jira E-posta *')}
+      ${inp('apiToken', 'Jira API Token', 'API Token *')}
+      ${inp('domain', 'sirket.atlassian.net', 'Domain *')}
+      ${inp('projectKey', 'örn. PROJ', 'Project Key *')}
+      ${inp('summary', 'Issue başlığı... {Sütun Adı} ile değişken', 'Başlık *')}
+      ${ta('description', 'Issue açıklaması... {Sütun Adı} ile değişken kullanabilirsiniz', 'Açıklama')}`;
+    case 'jira_add_comment': return `
+      ${inp('email', 'jira@sirket.com', 'Jira E-posta *')}
+      ${inp('apiToken', 'Jira API Token', 'API Token *')}
+      ${inp('domain', 'sirket.atlassian.net', 'Domain *')}
+      ${inp('issueKey', 'örn. PROJ-123 veya {Issue Key}', 'Issue Key *')}
+      ${ta('comment', 'Yorum metni... {Sütun Adı} ile değişken kullanabilirsiniz', 'Yorum *')}`;
+    case 'jira_transition': return `
+      ${inp('email', 'jira@sirket.com', 'Jira E-posta *')}
+      ${inp('apiToken', 'Jira API Token', 'API Token *')}
+      ${inp('domain', 'sirket.atlassian.net', 'Domain *')}
+      ${inp('issueKey', 'örn. PROJ-123 veya {Issue Key}', 'Issue Key *')}
+      ${inp('transitionName', 'örn. Done, In Progress', 'Transition Adı *')}`;
+    case 'jira_assign': return `
+      ${inp('email', 'jira@sirket.com', 'Jira E-posta *')}
+      ${inp('apiToken', 'Jira API Token', 'API Token *')}
+      ${inp('domain', 'sirket.atlassian.net', 'Domain *')}
+      ${inp('issueKey', 'örn. PROJ-123 veya {Issue Key}', 'Issue Key *')}
+      ${inp('assigneeEmail', 'atanacak@sirket.com', 'Atanacak Kişi E-postası *')}`;
+
+    // GitHub
+    case 'github': return `
+      ${inp('token', 'ghp_xxxxxxxxxxxx', 'GitHub Token *')}
+      ${inp('owner', 'github-kullanici-adi', 'Repo Sahibi *')}
+      ${inp('repo', 'repo-adi', 'Repo Adı *')}
+      ${inp('title', 'Issue başlığı... {Sütun Adı} ile değişken', 'Başlık *')}
+      ${ta('body', 'Issue açıklaması... {Sütun Adı} ile değişken kullanabilirsiniz', 'Açıklama')}`;
+    case 'github_add_comment': return `
+      ${inp('token', 'ghp_xxxxxxxxxxxx', 'GitHub Token *')}
+      ${inp('owner', 'github-kullanici-adi', 'Repo Sahibi *')}
+      ${inp('repo', 'repo-adi', 'Repo Adı *')}
+      ${inp('issueNumber', 'örn. 42 veya {Issue No}', 'Issue Numarası *')}
+      ${ta('body', 'Yorum metni... {Sütun Adı} ile değişken kullanabilirsiniz', 'Yorum *')}`;
+    case 'github_close_issue': return `
+      ${inp('token', 'ghp_xxxxxxxxxxxx', 'GitHub Token *')}
+      ${inp('owner', 'github-kullanici-adi', 'Repo Sahibi *')}
+      ${inp('repo', 'repo-adi', 'Repo Adı *')}
+      ${inp('issueNumber', 'örn. 42 veya {Issue No}', 'Issue Numarası *')}`;
+    case 'github_create_pr': return `
+      ${inp('token', 'ghp_xxxxxxxxxxxx', 'GitHub Token *')}
+      ${inp('owner', 'github-kullanici-adi', 'Repo Sahibi *')}
+      ${inp('repo', 'repo-adi', 'Repo Adı *')}
+      ${inp('title', 'PR başlığı... {Sütun Adı} ile değişken', 'Başlık *')}
+      ${inp('head', 'özellik-branch-adı', 'Head Branch *')}
+      ${inp('base', 'main', 'Base Branch *')}
+      ${ta('body', 'PR açıklaması... {Sütun Adı} ile değişken kullanabilirsiniz', 'Açıklama')}`;
+
+    // Trello
+    case 'trello': return `
+      ${inp('apiKey', 'Trello API Key', 'API Key *')}
+      ${inp('token', 'Trello Token', 'Token *')}
+      ${inp('listId', 'Trello List ID', 'List ID *')}
+      ${inp('name', 'Kart adı... {Sütun Adı} ile değişken', 'Kart Adı *')}
+      ${ta('desc', 'Kart açıklaması... {Sütun Adı} ile değişken kullanabilirsiniz', 'Açıklama')}`;
+    case 'trello_add_comment': return `
+      ${inp('apiKey', 'Trello API Key', 'API Key *')}
+      ${inp('token', 'Trello Token', 'Token *')}
+      ${inp('cardId', 'Kart ID veya {Card ID}', 'Card ID *')}
+      ${ta('text', 'Yorum metni... {Sütun Adı} ile değişken kullanabilirsiniz', 'Yorum *')}`;
+    case 'trello_move_card': return `
+      ${inp('apiKey', 'Trello API Key', 'API Key *')}
+      ${inp('token', 'Trello Token', 'Token *')}
+      ${inp('cardId', 'Kart ID veya {Card ID}', 'Card ID *')}
+      ${inp('listId', 'Hedef List ID', 'Hedef List ID *')}`;
+
+    // ClickUp
+    case 'clickup': return `
+      ${inp('apiKey', 'ClickUp API Key', 'API Key *')}
+      ${inp('listId', 'ClickUp List ID', 'List ID *')}
+      ${inp('name', 'Görev adı... {Sütun Adı} ile değişken', 'Görev Adı *')}
+      ${ta('description', 'Görev açıklaması... {Sütun Adı} ile değişken kullanabilirsiniz', 'Açıklama')}`;
+    case 'clickup_update_task': return `
+      ${inp('apiKey', 'ClickUp API Key', 'API Key *')}
+      ${inp('taskId', 'Görev ID veya {Task ID}', 'Task ID *')}
+      ${inp('status', 'örn. complete, in progress', 'Yeni Durum')}
+      ${inp('name', 'Yeni görev adı (opsiyonel)', 'Yeni Ad')}`;
+    case 'clickup_add_comment': return `
+      ${inp('apiKey', 'ClickUp API Key', 'API Key *')}
+      ${inp('taskId', 'Görev ID veya {Task ID}', 'Task ID *')}
+      ${ta('comment', 'Yorum metni... {Sütun Adı} ile değişken kullanabilirsiniz', 'Yorum *')}`;
+
+    // Asana
+    case 'asana': return `
+      ${inp('token', 'Asana Personal Access Token', 'Token *')}
+      ${inp('projectId', 'Asana Project ID', 'Project ID *')}
+      ${inp('name', 'Görev adı... {Sütun Adı} ile değişken', 'Görev Adı *')}
+      ${ta('notes', 'Görev notları... {Sütun Adı} ile değişken kullanabilirsiniz', 'Notlar')}`;
+    case 'asana_complete_task': return `
+      ${inp('token', 'Asana Personal Access Token', 'Token *')}
+      ${inp('taskId', 'Görev ID veya {Task ID}', 'Task ID *')}`;
+    case 'asana_add_comment': return `
+      ${inp('token', 'Asana Personal Access Token', 'Token *')}
+      ${inp('taskId', 'Görev ID veya {Task ID}', 'Task ID *')}
+      ${ta('text', 'Yorum metni... {Sütun Adı} ile değişken kullanabilirsiniz', 'Yorum *')}`;
+
+    // Monday.com
+    case 'monday': return `
+      ${inp('apiKey', 'Monday.com API Key', 'API Key *')}
+      ${inp('boardId', 'Board ID', 'Board ID *')}
+      ${inp('itemName', 'Öğe adı... {Sütun Adı} ile değişken', 'Öğe Adı *')}`;
+    case 'monday_update_item': return `
+      ${inp('apiKey', 'Monday.com API Key', 'API Key *')}
+      ${inp('boardId', 'Board ID', 'Board ID *')}
+      ${inp('itemId', 'Öğe ID veya {Item ID}', 'Item ID *')}
+      ${inp('columnId', 'Sütun ID (örn. status)', 'Column ID *')}
+      ${inp('value', 'Yeni değer... {Sütun Adı} ile değişken', 'Değer *')}`;
+
+    // Linear
+    case 'linear': return `
+      ${inp('apiKey', 'Linear API Key', 'API Key *')}
+      ${inp('teamId', 'Team ID', 'Team ID *')}
+      ${inp('title', 'Issue başlığı... {Sütun Adı} ile değişken', 'Başlık *')}
+      ${ta('description', 'Issue açıklaması... {Sütun Adı} ile değişken kullanabilirsiniz', 'Açıklama')}`;
+    case 'linear_update_issue': return `
+      ${inp('apiKey', 'Linear API Key', 'API Key *')}
+      ${inp('issueId', 'Issue ID veya {Issue ID}', 'Issue ID *')}
+      ${inp('stateId', 'Durum ID (Linear state UUID)', 'State ID')}
+      ${inp('priority', '0=Acil, 1=Yüksek, 2=Orta, 3=Düşük', 'Öncelik')}`;
+    case 'linear_add_comment': return `
+      ${inp('apiKey', 'Linear API Key', 'API Key *')}
+      ${inp('issueId', 'Issue ID veya {Issue ID}', 'Issue ID *')}
+      ${ta('body', 'Yorum metni... {Sütun Adı} ile değişken kullanabilirsiniz', 'Yorum *')}`;
+
+    // HubSpot
+    case 'hubspot': return `
+      ${inp('token', 'HubSpot Private App Token', 'Token *')}
+      ${inp('email', 'örn. {E-posta}', 'E-posta *')}
+      ${inp('firstName', 'örn. {Ad}', 'Ad')}
+      ${inp('lastName', 'örn. {Soyad}', 'Soyad')}`;
+    case 'hubspot_create_deal': return `
+      ${inp('token', 'HubSpot Private App Token', 'Token *')}
+      ${inp('dealName', 'Deal adı... {Sütun Adı} ile değişken', 'Deal Adı *')}
+      ${inp('amount', 'örn. {Tutar}', 'Tutar')}
+      ${inp('pipelineId', 'Pipeline ID', 'Pipeline ID')}
+      ${inp('stageId', 'Stage ID', 'Stage ID')}`;
+    case 'hubspot_update_contact': return `
+      ${inp('token', 'HubSpot Private App Token', 'Token *')}
+      ${inp('email', 'örn. {E-posta}', 'E-posta *')}
+      ${inp('firstName', 'örn. {Ad}', 'Ad')}
+      ${inp('lastName', 'örn. {Soyad}', 'Soyad')}
+      ${inp('phone', 'örn. {Telefon}', 'Telefon')}`;
+    case 'hubspot_add_note': return `
+      ${inp('token', 'HubSpot Private App Token', 'Token *')}
+      ${inp('contactEmail', 'örn. {E-posta}', 'Contact E-postası *')}
+      ${ta('noteBody', 'Not metni... {Sütun Adı} ile değişken kullanabilirsiniz', 'Not *')}`;
+
+    // PagerDuty
+    case 'pagerduty': return `
+      ${inp('routingKey', 'PagerDuty Integration Key', 'Routing Key *')}
+      ${inp('summary', 'Incident özeti... {Sütun Adı} ile değişken', 'Özet *')}
+      ${inp('severity', 'critical / error / warning / info', 'Şiddet')}`;
+
+    // Veri / Spreadsheet
+    case 'airtable': return `
+      ${inp('token', 'Airtable Personal Access Token', 'Token *')}
+      ${inp('baseId', 'Airtable Base ID (appXXXX)', 'Base ID *')}
+      ${inp('tableName', 'Tablo adı', 'Tablo Adı *')}`;
+    case 'airtable_update': return `
+      ${inp('token', 'Airtable Personal Access Token', 'Token *')}
+      ${inp('baseId', 'Airtable Base ID (appXXXX)', 'Base ID *')}
+      ${inp('tableName', 'Tablo adı', 'Tablo Adı *')}
+      ${inp('recordId', 'Record ID veya {Record ID}', 'Record ID *')}
+      ${ta('fields', '{"Alan Adı": "{Sütun Adı}"}', 'Alanlar (JSON)')}`;
+    case 'smartsheet': return `
+      ${inp('apiKey', 'Smartsheet API Key', 'API Key *')}
+      ${inp('sheetId', 'Sheet ID', 'Sheet ID *')}`;
+    case 'notion_update_page': return `
+      ${inp('token', 'Notion Integration Token', 'Token *')}
+      ${inp('pageId', 'Notion Page ID veya {Page ID}', 'Page ID *')}`;
+
     default: return '';
   }
 }

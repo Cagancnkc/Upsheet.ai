@@ -47,6 +47,20 @@ const TURKISH_SYNONYMS = {
   'küçük harf': ['lowercase', 'küçült'],
   'format': ['biçim', 'düzen', 'stil'],
   'koşul': ['şart', 'kriter', 'filtre'],
+  'e-posta': ['email', 'mail', 'elektronik posta'],
+  'email': ['e-posta', 'mail', 'elektronik posta'],
+  'ayıkla': ['çıkar', 'extract', 'al', 'ayır'],
+  'ayrıştır': ['çıkar', 'extract', 'parse', 'ayır'],
+  'duygu': ['sentiment', 'his', 'analiz', 'ton'],
+  'yorum': ['görüş', 'geri bildirim', 'değerlendirme'],
+  'sınıflandır': ['kategorize', 'etiketle', 'ayır'],
+  'kaç tane': ['sayısı', 'adet', 'count', 'say'],
+  'count_if': ['eğersay', 'koşullu say', 'kaç tane'],
+  'formül': ['formula', 'hesap', 'excel formülü'],
+  'düşeyara': ['vlookup', 'eşleştir', 'tablodan çek'],
+  'eğer': ['if', 'koşul', 'şart'],
+  'normalize': ['standart', 'düzenle', 'temizle'],
+  'kodlama': ['encoding', 'karakter', 'format'],
 };
 
 // Kategori boost — nadir/kritik kategorilere öncelik
@@ -57,8 +71,11 @@ const CATEGORY_BOOST = {
   forecast: 1.25,
   anomaly_detection: 1.25,
   sentiment_analysis: 1.20,
+  sentiment: 1.20,
+  extraction: 1.20,
   heatmap: 1.20,
   compare: 1.10,
+  formula: 1.10,
 };
 
 function expandQuery(userCommand) {
