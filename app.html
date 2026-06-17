@@ -2940,7 +2940,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <script>
 (function() {
-  var SUB_API = (window.BACKEND_URL || 'http://localhost:3001') + '/api/subscription';
+  var _BACKEND = window.location.hostname === 'localhost'
+    ? 'http://localhost:3001'
+    : 'https://upsheet-ai.onrender.com';
+  var SUB_API = _BACKEND + '/api/subscription';
   var _subPeriod = 'monthly';
   var _subData   = null;
 
@@ -3001,14 +3004,19 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('sub-cancel-section').style.display = 'none';
     _subData = null;
 
-    fetch(SUB_API + '/status', { headers: authHeaders() })
-      .then(function(r) { return r.json(); })
-      .then(function(data) {
-        _subData = data;
-        renderSubModal(data);
+    fetch(SUB_API + '/portal', { method: 'POST', headers: authHeaders() })
+      .then(function(r) { return r.json().then(function(d) { return { ok: r.ok, data: d }; }); })
+      .then(function(res) {
+        if (res.ok && res.data.url) {
+          window.location.href = res.data.url;
+        } else {
+          document.getElementById('sub-current-name').textContent = 'Başlangıç (Ücretsiz)';
+          document.getElementById('sub-current-meta').textContent = 'Ücretsiz plan';
+          renderPlanGrid({ plan: 'free', displayPlan: 'free' });
+        }
       })
       .catch(function() {
-        document.getElementById('sub-current-name').textContent = 'Yüklenemedi';
+        document.getElementById('sub-current-name').textContent = 'Bağlantı hatası';
       });
   };
 

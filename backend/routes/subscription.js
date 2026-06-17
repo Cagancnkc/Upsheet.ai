@@ -227,4 +227,32 @@ router.post('/reactivate', async (req, res) => {
   }
 });
 
+// POST /api/subscription/portal
+router.post('/portal', async (req, res) => {
+  const user = await authenticate(req, res);
+  if (!user) return;
+
+  const sb = getSb();
+  const { data: usage } = await sb
+    .from('user_usage')
+    .select('stripe_customer_id')
+    .eq('user_id', user.id)
+    .single();
+
+  if (!usage?.stripe_customer_id) {
+    return res.status(400).json({ error: 'no_customer' });
+  }
+
+  try {
+    const session = await getStripe().billingPortal.sessions.create({
+      customer: usage.stripe_customer_id,
+      return_url: (process.env.CLIENT_URL || 'https://mocksheets.com') + '/app.html'
+    });
+    return res.json({ url: session.url });
+  } catch (err) {
+    console.error('[subscription/portal] Error:', err.message);
+    return res.status(500).json({ error: err.message });
+  }
+});
+
 module.exports = router;
