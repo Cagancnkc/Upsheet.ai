@@ -8,7 +8,10 @@
 // Tetikleme noktaları: applyAction(), hücre düzenleme, import tamamlama
 // ─────────────────────────────────────────────────────────────────────────────
 
-const AUTOMATIONS_API = '/api/automations';
+const _BACKEND_BASE = (typeof API_URL !== 'undefined' && API_URL)
+  || window.BACKEND_URL
+  || (window.location.hostname === 'localhost' ? 'http://localhost:3001' : 'https://upsheet-ai.onrender.com');
+const AUTOMATIONS_API = `${_BACKEND_BASE}/api/automations`;
 
 function getAuthToken() {
   try {
