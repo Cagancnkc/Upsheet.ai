@@ -543,6 +543,41 @@
         <div class="ai-thread" id="ai-thread"></div>
       </div>
 
+      <!-- Integration Connect Card -->
+      <div class="int-connect-card" id="intConnectCard">
+        <div class="int-connect-head">
+          <div class="int-connect-title">
+            <svg class="ico" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+            Araçlarınızı bağlayın
+          </div>
+          <button class="int-connect-close" id="intConnectClose" title="Kapat">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <p class="int-connect-sub">Favori uygulamalarınızla entegre edin</p>
+        <div class="int-connect-logos">
+          <div class="int-logo-pill" title="Google Sheets">
+            <img src="https://cdn.simpleicons.org/googlesheets/34A853" width="16" height="16" alt="Google Sheets">
+          </div>
+          <div class="int-logo-pill" title="Slack">
+            <img src="https://cdn.simpleicons.org/slack/E01E5A" width="16" height="16" alt="Slack">
+          </div>
+          <div class="int-logo-pill" title="Microsoft Teams">
+            <img src="https://cdn.simpleicons.org/microsoftteams/6264A7" width="16" height="16" alt="Teams">
+          </div>
+          <div class="int-logo-pill" title="Airtable">
+            <img src="https://cdn.simpleicons.org/airtable/18BFFF" width="16" height="16" alt="Airtable">
+          </div>
+          <div class="int-logo-pill" title="Make">
+            <img src="https://cdn.simpleicons.org/make/6D00CC" width="16" height="16" alt="Make">
+          </div>
+          <div class="int-logo-pill int-logo-more" title="Daha fazla">+5</div>
+        </div>
+        <button class="int-connect-cta" id="intConnectCta">
+          Entegrasyonları Keşfet
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </button>
+      </div>
 
     </div>
   </aside>
@@ -3290,6 +3325,23 @@ document.addEventListener('DOMContentLoaded', function() {
       }, 800);
     }
   })();
+})();
+</script>
+<script>
+(function () {
+  var card = document.getElementById('intConnectCard');
+  if (!card) return;
+  if (localStorage.getItem('int-card-dismissed')) { card.style.display = 'none'; return; }
+  document.getElementById('intConnectClose').addEventListener('click', function () {
+    card.style.display = 'none';
+    localStorage.setItem('int-card-dismissed', '1');
+  });
+  function openInt() {
+    var o = document.getElementById('integrations-overlay');
+    if (o) o.style.display = 'flex';
+  }
+  document.getElementById('intConnectCta').addEventListener('click', openInt);
+  card.querySelectorAll('.int-logo-pill').forEach(function (p) { p.addEventListener('click', openInt); });
 })();
 </script>
 </body>
