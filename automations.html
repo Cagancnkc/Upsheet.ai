@@ -3570,6 +3570,67 @@ function renderActionFields(a, i) {
       ${inp('token', 'Notion Integration Token', 'Token *')}
       ${inp('pageId', 'Notion Page ID veya {Page ID}', 'Page ID *')}`;
 
+    // Microsoft Teams
+    case 'teams': return `
+      ${inp('webhookUrl', 'https://outlook.office.com/webhook/...', 'Webhook URL *')}
+      ${ta('message', 'Mesaj metni... {Sütun Adı} ile değişken kullanabilirsiniz', 'Mesaj *')}`;
+
+    // Uygulama İçi
+    case 'highlight_row': return `
+      <div class="action-field"><label>Renk *</label><input type="color" value="${escHtml(a.color || '#FFF3CD')}" oninput="actions[${i}].color=this.value" style="width:60px;height:32px;padding:2px;cursor:pointer"></div>`;
+    case 'clear_highlight': return `<div class="action-field" style="color:var(--muted);font-size:12px">Tüm satır renklendirmeleri temizlenecek.</div>`;
+
+    // Slack DM
+    case 'slack_dm': return `
+      ${inp('channel', '@kullanici-id veya U0XXXXXXX', 'Kullanıcı ID / Kanal *')}
+      ${ta('message', 'Mesaj metni... {Sütun Adı} ile değişken kullanabilirsiniz', 'Mesaj *')}`;
+
+    // WhatsApp
+    case 'whatsapp_message': return `
+      ${inp('phoneNumberId', 'WhatsApp Business Phone Number ID', 'Phone Number ID *')}
+      ${inp('accessToken', 'WhatsApp Access Token', 'Access Token *')}
+      ${inp('recipientPhone', 'örn. +905XXXXXXXXX veya {Telefon}', 'Alıcı Numara *')}
+      ${ta('message', 'Mesaj metni... {Sütun Adı} ile değişken kullanabilirsiniz', 'Mesaj *')}`;
+
+    // Google Calendar
+    case 'google_calendar_event': return `
+      ${inp('calendarId', 'primary veya takvim ID', 'Takvim ID')}
+      ${inp('title', 'Etkinlik başlığı... {Sütun Adı} ile değişken', 'Başlık *')}
+      ${inp('description', 'Açıklama... {Sütun Adı} ile değişken', 'Açıklama')}
+      ${inp('startDateTime', 'örn. {Tarih} veya 2024-01-15T09:00:00', 'Başlangıç *')}
+      ${inp('endDateTime', 'örn. {Tarih} veya 2024-01-15T10:00:00', 'Bitiş *')}`;
+
+    // Salesforce
+    case 'salesforce_create_lead': return `
+      ${inp('instanceUrl', 'https://yourorg.salesforce.com', 'Instance URL *')}
+      ${inp('accessToken', 'Salesforce Access Token', 'Access Token *')}
+      ${inp('firstName', 'örn. {Ad}', 'Ad')}
+      ${inp('lastName', 'örn. {Soyad}', 'Soyad *')}
+      ${inp('company', 'örn. {Şirket}', 'Şirket *')}
+      ${inp('email', 'örn. {E-posta}', 'E-posta')}`;
+
+    // Pipedrive
+    case 'pipedrive_create_deal': return `
+      ${inp('apiToken', 'Pipedrive API Token', 'API Token *')}
+      ${inp('title', 'Deal başlığı... {Sütun Adı} ile değişken', 'Deal Başlığı *')}
+      ${inp('value', 'örn. {Tutar} veya 5000', 'Tutar')}
+      ${inp('currency', 'örn. TRY, USD, EUR', 'Para Birimi')}`;
+
+    // HubSpot Ticket
+    case 'hubspot_create_ticket': return `
+      ${inp('apiKey', 'HubSpot Private App Token', 'Token *')}
+      ${inp('subject', 'Bilet konusu... {Sütun Adı} ile değişken', 'Konu *')}
+      ${ta('content', 'Bilet içeriği... {Sütun Adı} ile değişken kullanabilirsiniz', 'İçerik')}
+      <div class="action-field"><label>Öncelik</label><select onchange="actions[${i}].priority=this.value"><option value="LOW" ${a.priority === 'LOW' ? 'selected' : ''}>Düşük</option><option value="MEDIUM" ${(!a.priority || a.priority === 'MEDIUM') ? 'selected' : ''}>Orta</option><option value="HIGH" ${a.priority === 'HIGH' ? 'selected' : ''}>Yüksek</option></select></div>`;
+
+    // Jira Set Priority
+    case 'jira_set_priority': return `
+      ${inp('email', 'jira@sirket.com', 'Jira E-posta *')}
+      ${inp('apiToken', 'Jira API Token', 'API Token *')}
+      ${inp('domain', 'sirket.atlassian.net', 'Domain *')}
+      ${inp('issueKey', 'örn. PROJ-123 veya {Issue Key}', 'Issue Key *')}
+      <div class="action-field"><label>Öncelik *</label><select onchange="actions[${i}].priority=this.value"><option value="Highest" ${a.priority === 'Highest' ? 'selected' : ''}>Highest</option><option value="High" ${a.priority === 'High' ? 'selected' : ''}>High</option><option value="Medium" ${(!a.priority || a.priority === 'Medium') ? 'selected' : ''}>Medium</option><option value="Low" ${a.priority === 'Low' ? 'selected' : ''}>Low</option><option value="Lowest" ${a.priority === 'Lowest' ? 'selected' : ''}>Lowest</option></select></div>`;
+
     default: return '';
   }
 }
@@ -3813,7 +3874,12 @@ const ACTION_LABELS = {
   asana_complete_task: 'Asana Tamamla', asana_add_comment: 'Asana Yorum',
   notion_update_page: 'Notion Güncelle', airtable_update: 'Airtable Güncelle',
   monday_update_item: 'Monday.com Güncelle', linear_update_issue: 'Linear Güncelle',
-  linear_add_comment: 'Linear Yorum', gmail_create_draft: 'Gmail Taslak'
+  linear_add_comment: 'Linear Yorum', gmail_create_draft: 'Gmail Taslak',
+  teams: 'Microsoft Teams', highlight_row: 'Satırı Renklendir',
+  clear_highlight: 'Rengi Temizle', slack_dm: 'Slack DM',
+  whatsapp_message: 'WhatsApp', google_calendar_event: 'Google Takvim Etkinliği',
+  salesforce_create_lead: 'Salesforce Lead', pipedrive_create_deal: 'Pipedrive Deal',
+  hubspot_create_ticket: 'HubSpot Bilet', jira_set_priority: 'Jira Öncelik'
 };
 const STATUS_LABELS = { success: 'Başarılı', error: 'Hata', skipped: 'Atlandı', pending: 'Bekliyor' };
 const OPERATORS = [
@@ -3873,7 +3939,17 @@ const ACTION_TYPES = [
   { v: 'monday_update_item',    l: 'Monday.com Öğe Güncelle',   icon: '📅' },
   { v: 'linear_update_issue',   l: 'Linear Issue Güncelle',     icon: '🔷' },
   { v: 'linear_add_comment',    l: 'Linear Yorum Ekle',         icon: '🔷' },
-  { v: 'gmail_create_draft',    l: 'Gmail Taslak Oluştur',      icon: '📧' }
+  { v: 'gmail_create_draft',    l: 'Gmail Taslak Oluştur',      icon: '📧' },
+  { v: 'teams',                 l: 'Microsoft Teams',           icon: '🔵' },
+  { v: 'highlight_row',         l: 'Satırı Renklendir',         icon: '🎨' },
+  { v: 'clear_highlight',       l: 'Rengi Temizle',             icon: '🧹' },
+  { v: 'slack_dm',              l: 'Slack DM',                  icon: '💬' },
+  { v: 'whatsapp_message',      l: 'WhatsApp Mesajı',           icon: '📱' },
+  { v: 'google_calendar_event', l: 'Google Takvim Etkinliği',   icon: '📅' },
+  { v: 'salesforce_create_lead',l: 'Salesforce Lead Oluştur',   icon: '☁️' },
+  { v: 'pipedrive_create_deal', l: 'Pipedrive Deal Oluştur',    icon: '🔧' },
+  { v: 'hubspot_create_ticket', l: 'HubSpot Bilet Oluştur',     icon: '🎫' },
+  { v: 'jira_set_priority',     l: 'Jira Öncelik Güncelle',     icon: '📋' }
 ];
 
 // ── INIT ───────────────────────────────────────────────────────────────────

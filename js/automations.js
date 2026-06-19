@@ -281,6 +281,108 @@ async function fireAction(action, rule, matchingRows, headers) {
         if (typeof showToast === 'function') showToast(interp(action.message || rule.name), 'info');
         break;
       }
+      case 'highlight_row': {
+        if (!window.automationHighlights) window.automationHighlights = new Map();
+        const color = action.color || '#FFF3CD';
+        if (typeof sheets !== 'undefined' && typeof activeSheet !== 'undefined') {
+          const data = sheets[activeSheet];
+          matchingRows.forEach(mRow => {
+            const idx = data.indexOf(mRow);
+            if (idx >= 0) window.automationHighlights.set(`${activeSheet}:${idx}`, color);
+          });
+          if (typeof buildGrid === 'function') buildGrid();
+        }
+        break;
+      }
+      case 'clear_highlight': {
+        if (window.automationHighlights) window.automationHighlights.clear();
+        if (typeof buildGrid === 'function') buildGrid();
+        break;
+      }
+      case 'teams': {
+        const webhookUrl = action.webhookUrl || action.url || lsGet('int_teams')?.url;
+        if (!webhookUrl) { console.warn('[Otomasyon] Teams webhook URL eksik'); return; }
+        await fetch(`${BACKEND}/api/integrations/teams/notify`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ webhookUrl, title: rule.name, message: interp(action.message), fields: buildFields(firstRow, headers, action.include_columns) })
+        });
+        break;
+      }
+      case 'slack_dm': {
+        await fetch(`${BACKEND}/api/integrations/slack/dm`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ channel: interp(action.channel), message: interp(action.message) })
+        });
+        break;
+      }
+      case 'discord': {
+        const webhookUrl = action.webhookUrl || action.url;
+        if (!webhookUrl) { console.warn('[Otomasyon] Discord webhook URL eksik'); return; }
+        await fetch(`${BACKEND}/api/integrations/discord/notify`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ webhookUrl, content: interp(action.message), username: action.username || 'Mocksheets' })
+        });
+        break;
+      }
+      case 'telegram': {
+        await fetch(`${BACKEND}/api/integrations/telegram/send`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ botToken: action.botToken, chatId: action.chatId, text: interp(action.message) })
+        });
+        break;
+      }
+      case 'whatsapp_message': {
+        await fetch(`${BACKEND}/api/integrations/whatsapp/send`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ phoneNumberId: action.phoneNumberId, to: interp(action.recipientPhone), message: interp(action.message), accessToken: action.accessToken })
+        });
+        break;
+      }
+      case 'google_calendar_event': {
+        await fetch(`${BACKEND}/api/integrations/google-calendar/create`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ calendarId: action.calendarId || 'primary', summary: interp(action.title), description: interp(action.description), start: interp(action.startDateTime), end: interp(action.endDateTime) })
+        });
+        break;
+      }
+      case 'salesforce_create_lead': {
+        await fetch(`${BACKEND}/api/integrations/salesforce/create-lead`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ instanceUrl: action.instanceUrl, accessToken: action.accessToken, firstName: interp(action.firstName), lastName: interp(action.lastName), company: interp(action.company), email: interp(action.email) })
+        });
+        break;
+      }
+      case 'pipedrive_create_deal': {
+        await fetch(`${BACKEND}/api/integrations/pipedrive/create-deal`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ apiToken: action.apiToken, title: interp(action.title), value: interp(action.value), currency: action.currency || 'TRY' })
+        });
+        break;
+      }
+      case 'hubspot_create_ticket': {
+        await fetch(`${BACKEND}/api/integrations/hubspot/create-ticket`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ apiKey: action.apiKey, subject: interp(action.subject), content: interp(action.content), priority: action.priority || 'MEDIUM' })
+        });
+        break;
+      }
+      case 'jira_set_priority': {
+        await fetch(`${BACKEND}/api/integrations/jira/set-priority`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ email: action.email, apiToken: action.apiToken, domain: action.domain, issueKey: interp(action.issueKey), priority: action.priority || 'Medium' })
+        });
+        break;
+      }
       default:
         console.warn(`[Otomasyon] Desteklenmeyen aksiyon tipi: ${action.type}`);
     }

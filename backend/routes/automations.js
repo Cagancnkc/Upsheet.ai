@@ -388,6 +388,67 @@ async function executeAction(action, matchedRows, authToken, backendUrl, userId)
       return { type, status: resp.ok ? 'success' : 'error', result: await resp.json() };
     }
 
+    if (type === 'teams') {
+      const row = matchedRows[0] || {};
+      const interpolate = (s = '') => s.replace(/\{([^}]+)\}/g, (_, k) => row[k] ?? k);
+      if (!action.webhookUrl) return { type, status: 'skipped', result: { reason: 'No webhook URL' } };
+      const resp = await fetch(`${base}/api/integrations/teams/notify`, { method: 'POST', headers, body: JSON.stringify({ webhookUrl: action.webhookUrl, title: action.title || 'Mocksheets Bildirimi', message: interpolate(action.message || '') }) });
+      return { type, status: resp.ok ? 'success' : 'error', result: await resp.json() };
+    }
+
+    if (type === 'slack_dm') {
+      const row = matchedRows[0] || {};
+      const interpolate = (s = '') => s.replace(/\{([^}]+)\}/g, (_, k) => row[k] ?? k);
+      const resp = await fetch(`${base}/api/integrations/slack/dm`, { method: 'POST', headers, body: JSON.stringify({ channel: interpolate(action.channel || ''), message: interpolate(action.message || '') }) });
+      return { type, status: resp.ok ? 'success' : 'error', result: await resp.json() };
+    }
+
+    if (type === 'whatsapp_message') {
+      const row = matchedRows[0] || {};
+      const interpolate = (s = '') => s.replace(/\{([^}]+)\}/g, (_, k) => row[k] ?? k);
+      const resp = await fetch(`${base}/api/integrations/whatsapp/send`, { method: 'POST', headers, body: JSON.stringify({ phoneNumberId: action.phoneNumberId, to: interpolate(action.recipientPhone || ''), message: interpolate(action.message || ''), accessToken: action.accessToken }) });
+      return { type, status: resp.ok ? 'success' : 'error', result: await resp.json() };
+    }
+
+    if (type === 'google_calendar_event') {
+      const row = matchedRows[0] || {};
+      const interpolate = (s = '') => s.replace(/\{([^}]+)\}/g, (_, k) => row[k] ?? k);
+      const resp = await fetch(`${base}/api/integrations/google-calendar/create`, { method: 'POST', headers, body: JSON.stringify({ calendarId: action.calendarId || 'primary', summary: interpolate(action.title || ''), description: interpolate(action.description || ''), start: interpolate(action.startDateTime || ''), end: interpolate(action.endDateTime || '') }) });
+      return { type, status: resp.ok ? 'success' : 'error', result: await resp.json() };
+    }
+
+    if (type === 'salesforce_create_lead') {
+      const row = matchedRows[0] || {};
+      const interpolate = (s = '') => s.replace(/\{([^}]+)\}/g, (_, k) => row[k] ?? k);
+      const resp = await fetch(`${base}/api/integrations/salesforce/create-lead`, { method: 'POST', headers, body: JSON.stringify({ instanceUrl: action.instanceUrl, accessToken: action.accessToken, firstName: interpolate(action.firstName || ''), lastName: interpolate(action.lastName || ''), company: interpolate(action.company || ''), email: interpolate(action.email || '') }) });
+      return { type, status: resp.ok ? 'success' : 'error', result: await resp.json() };
+    }
+
+    if (type === 'pipedrive_create_deal') {
+      const row = matchedRows[0] || {};
+      const interpolate = (s = '') => s.replace(/\{([^}]+)\}/g, (_, k) => row[k] ?? k);
+      const resp = await fetch(`${base}/api/integrations/pipedrive/create-deal`, { method: 'POST', headers, body: JSON.stringify({ apiToken: action.apiToken, title: interpolate(action.title || ''), value: interpolate(action.value || ''), currency: action.currency || 'TRY' }) });
+      return { type, status: resp.ok ? 'success' : 'error', result: await resp.json() };
+    }
+
+    if (type === 'hubspot_create_ticket') {
+      const row = matchedRows[0] || {};
+      const interpolate = (s = '') => s.replace(/\{([^}]+)\}/g, (_, k) => row[k] ?? k);
+      const resp = await fetch(`${base}/api/integrations/hubspot/create-ticket`, { method: 'POST', headers, body: JSON.stringify({ apiKey: action.apiKey, subject: interpolate(action.subject || ''), content: interpolate(action.content || ''), priority: action.priority || 'MEDIUM' }) });
+      return { type, status: resp.ok ? 'success' : 'error', result: await resp.json() };
+    }
+
+    if (type === 'jira_set_priority') {
+      const row = matchedRows[0] || {};
+      const interpolate = (s = '') => s.replace(/\{([^}]+)\}/g, (_, k) => row[k] ?? k);
+      const resp = await fetch(`${base}/api/integrations/jira/set-priority`, { method: 'POST', headers, body: JSON.stringify({ email: action.email, apiToken: action.apiToken, domain: action.domain, issueKey: interpolate(action.issueKey || ''), priority: action.priority || 'Medium' }) });
+      return { type, status: resp.ok ? 'success' : 'error', result: await resp.json() };
+    }
+
+    if (type === 'highlight_row' || type === 'clear_highlight') {
+      return { type, status: 'skipped', result: { reason: 'Client-side only action' } };
+    }
+
     return { type, status: 'skipped', result: { reason: `Unknown action type: ${type}` } };
   } catch (err) {
     return { type, status: 'error', error: err.message };
