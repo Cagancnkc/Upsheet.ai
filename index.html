@@ -1965,9 +1965,13 @@
             <span id="team-seat-label">5 koltuk</span>
             <button class="seat-btn" id="team-seat-plus" onclick="changeTeamSeats(3)" aria-label="Koltuk artır">+</button>
           </div>
-          <div class="ms-price-big" style="margin-top:10px"><span class="ms-price-cur">$</span><span id="team-price-amount">59</span><span style="font-size:16px;color:#94a3b8">/ay</span></div>
+          <div class="ms-price-big" style="margin-top:10px"><span class="ms-price-cur">$</span><span id="team-price-amount">1</span></div>
           <div class="ms-price-sub" style="margin-top:4px">
-            <span style="font-size:12px;color:#4ade80">$11,8 kişi başı/ay</span>
+            <span class="ms-price-after" id="team-price-after">İlk 1 ay · sonra $59/ay</span>
+            <span class="pricing-yearly-note hidden" id="team-yearly-note">
+              <strong id="team-yearly-price">$566</strong>/yıl
+              <span id="team-yearly-equiv">(aylık $47'ye denk)</span>
+            </span>
           </div>
         </div>
         <div class="ms-row-cta">
@@ -2514,15 +2518,36 @@ function renderProCard() {
 }
 
 function renderTeamCard() {
-  var total = Math.round(_teamSeats * _SEAT_PRICE * 10) / 10;
+  var yearly = _billingPeriod === 'yearly';
+  var totalMonthly = Math.round(_teamSeats * _SEAT_PRICE * 10) / 10;
+  var totalYearly = Math.round(_teamSeats * _SEAT_PRICE * 12 * 0.8 * 10) / 10;
+
   var amountEl = document.getElementById('team-price-amount');
-  if (amountEl) amountEl.textContent = total;
+  var afterEl = document.getElementById('team-price-after');
+  var yearlyNoteEl = document.getElementById('team-yearly-note');
+  var yearlyPriceEl = document.getElementById('team-yearly-price');
+  var yearlyEquivEl = document.getElementById('team-yearly-equiv');
+
+  if (yearly) {
+    if (amountEl) amountEl.textContent = totalYearly;
+    if (afterEl) afterEl.classList.add('hidden');
+    if (yearlyNoteEl) yearlyNoteEl.classList.remove('hidden');
+    if (yearlyPriceEl) yearlyPriceEl.textContent = '$' + totalYearly;
+    if (yearlyEquivEl) yearlyEquivEl.textContent = '(aylık $' + Math.round(totalYearly / 12) + '\'ye denk)';
+  } else {
+    if (amountEl) amountEl.textContent = 1;
+    if (afterEl) { afterEl.classList.remove('hidden'); afterEl.textContent = 'İlk 1 ay · sonra $' + totalMonthly + '/ay'; }
+    if (yearlyNoteEl) yearlyNoteEl.classList.add('hidden');
+  }
+
   var seatLabelEl = document.getElementById('team-seat-label');
   if (seatLabelEl) seatLabelEl.textContent = _teamSeats + ' koltuk';
   var featEl = document.getElementById('team-seat-feat');
   if (featEl) featEl.textContent = _teamSeats + ' koltuk dahil';
   var tagEl = document.getElementById('team-seat-tag');
-  if (tagEl) tagEl.textContent = _teamSeats + ' koltuk. Tek fatura.';
+  if (tagEl) tagEl.textContent = yearly
+    ? _teamSeats + ' koltuk. Tek fatura.'
+    : 'İlk 1 ay $1 · ' + _teamSeats + ' koltuk dahil.';
   var colEl = document.getElementById('team-col-seats');
   if (colEl) colEl.textContent = _teamSeats + ' koltuk';
   var minusBtn = document.getElementById('team-seat-minus');
