@@ -2595,61 +2595,6 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-<!-- STICKY CTA -->
-<div id="sticky-cta" style="
-  position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
-  background:var(--ink);color:var(--paper);border-radius:20px;
-  padding:20px 28px;display:flex;flex-direction:column;gap:12px;
-  box-shadow:0 8px 32px rgba(14,14,16,.3);z-index:999;
-  font-size:14px;font-weight:500;opacity:0;transition:opacity .3s ease;pointer-events:none;
-  min-width:320px;max-width:420px;
-">
-  <div>
-    <div style="font-size:18px;font-weight:700;margin-bottom:4px;">Ücretsiz başlayın</div>
-    <div style="font-size:12px;opacity:0.6;font-weight:400;">Pazarlama e-postaları almayı kabul ediyorsunuz.</div>
-  </div>
-  <form onsubmit="handleStickyEmail(event)" style="display:flex;align-items:center;background:rgba(255,255,255,0.08);border-radius:12px;padding:4px 4px 4px 16px;gap:8px;">
-    <input type="email" placeholder="E-postanızı girin" required style="flex:1;background:none;border:none;outline:none;color:var(--paper);font-size:14px;min-width:0;" />
-    <button type="submit" style="background:var(--paper);color:var(--ink);border:none;border-radius:8px;padding:10px 14px;cursor:pointer;font-size:16px;line-height:1;">→</button>
-  </form>
-</div>
-<script>
-function handleStickyEmail(e) {
-  e.preventDefault();
-  var form = e.target;
-  var emailInput = form.querySelector('input[type=email]');
-  var btn = form.querySelector('button[type=submit]');
-  var email = emailInput.value.trim();
-
-  var apiBase = window.location.hostname === 'localhost'
-    ? 'http://localhost:3001'
-    : 'https://upsheet-ai.onrender.com';
-
-  btn.disabled = true;
-  btn.textContent = '...';
-
-  fetch(apiBase + '/api/loops/contact', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email: email, userGroup: 'footer-cta' })
-  })
-    .then(function(r) { return r.ok ? r.json() : Promise.reject(); })
-    .then(function() {
-      form.innerHTML = '<span style="font-size:14px;opacity:.9">✓ Kaydınız alındı!</span>';
-    })
-    .catch(function() {
-      window.location.href = '/auth?email=' + encodeURIComponent(email);
-    });
-}
-</script>
-<script>
-  window.addEventListener('scroll',function(){
-    var el=document.getElementById('sticky-cta');
-    var show=window.scrollY>600;
-    el.style.opacity=show?'1':'0';
-    el.style.pointerEvents=show?'auto':'none';
-  });
-</script>
 <script>
   function toggleIndexTheme(){
     var isDark=document.documentElement.getAttribute('data-theme')==='dark';
@@ -2982,14 +2927,5 @@ document.addEventListener('DOMContentLoaded', function() {
 })();
 </script>
 
-<link rel="stylesheet" href="/css/popup-system.css" media="print" onload="this.media='all'">
-<noscript><link rel="stylesheet" href="/css/popup-system.css"></noscript>
-<script src="/js/popup-system.js" defer></script>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  window.popupSystem = new PopupSystem({ page: 'landing', authUrl: '/auth' });
-  window.popupSystem.init();
-});
-</script>
 </body>
 </html>
