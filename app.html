@@ -129,6 +129,10 @@
             <span class="dd-int-name">Slack</span>
             <button class="dd-int-btn" id="dd-btn-slack" data-provider="slack">Bağla</button>
           </div>
+          <div class="dd-int-subform" id="dd-sub-slack">
+            <div id="dd-slack-workspace" style="font-size:11.5px;font-weight:600;color:var(--ink);margin-bottom:5px;padding:0 2px;"></div>
+            <div id="dd-slack-channels" style="display:flex;flex-direction:column;gap:2px;max-height:140px;overflow-y:auto;"></div>
+          </div>
 
           <div class="dd-int-row">
             <span class="dd-int-dot" id="dd-dot-teams"></span>
@@ -1864,10 +1868,56 @@
       if (!dot || !btn) return;
       var active = _ddIntStatuses[p] && _ddIntStatuses[p].status === 'active';
       dot.className = 'dd-int-dot' + (active ? ' connected' : '');
-      btn.textContent = active ? 'Gönder' : 'Bağla';
+      btn.textContent = p === 'slack' ? (active ? 'Kanallar' : 'Bağla') : (active ? 'Gönder' : 'Bağla');
       btn.className = 'dd-int-btn' + (active ? ' primary' : '');
       btn.disabled = false;
     });
+    // Slack subform: workspace adı + kanal listesi
+    var slackStatus = _ddIntStatuses['slack'];
+    var slackWs = document.getElementById('dd-slack-workspace');
+    var slackChs = document.getElementById('dd-slack-channels');
+    if (slackWs && slackChs) {
+      if (slackStatus && slackStatus.status === 'active') {
+        slackWs.textContent = slackStatus.metadata.workspace_name || 'Slack';
+        var chs = slackStatus.metadata.channels || [];
+        slackChs.innerHTML = chs.map(function(c) {
+          return '<div class="dd-slack-ch" data-ch-id="' + c.id + '" data-ch-name="' + c.name +
+            '" style="padding:5px 8px;border-radius:5px;cursor:pointer;font-size:12px;color:var(--ink-2);"># ' + c.name + '</div>';
+        }).join('');
+        slackChs.querySelectorAll('.dd-slack-ch').forEach(function(el) {
+          el.addEventListener('mouseenter', function() { this.style.background = 'var(--surface-3)'; });
+          el.addEventListener('mouseleave', function() { this.style.background = ''; });
+          el.addEventListener('click', function(ev) {
+            ev.stopPropagation();
+            console.log('Bu kanala gönderilecek:', this.dataset.chName);
+            showToast('📢 Kanal seçildi: #' + this.dataset.chName + ' (yakında gönderilecek)');
+          });
+        });
+      } else {
+        slackWs.textContent = '';
+        slackChs.innerHTML = '';
+      }
+    }
+  }
+
+  function startSlackOAuth() {
+    var token = (typeof getAuthToken === 'function') ? getAuthToken() : null;
+    if (!token) { showToast('⚠️ Önce giriş yapın'); return; }
+    var popup = window.open(
+      apiBase + '/api/integrations/slack/auth?token=' + encodeURIComponent(token),
+      'slack_oauth', 'width=620,height=700,noopener=0'
+    );
+    function onMsg(e) {
+      if (!e.data || e.data.type !== 'slack_auth') return;
+      window.removeEventListener('message', onMsg);
+      if (e.data.connected) {
+        showToast('✅ Slack bağlandı: ' + (e.data.workspace || ''));
+        loadDdIntStatuses();
+      } else {
+        showToast('❌ Slack bağlanamadı: ' + (e.data.error || 'Bilinmeyen hata'));
+      }
+    }
+    window.addEventListener('message', onMsg);
   }
 
   document.querySelectorAll('.dd-int-btn').forEach(function(btn) {
@@ -1875,8 +1925,11 @@
       e.stopPropagation();
       var provider = this.dataset.provider;
       var active = _ddIntStatuses[provider] && _ddIntStatuses[provider].status === 'active';
-      if (!active) { closeDownload(); if (typeof openIntegrationsModal === 'function') openIntegrationsModal(); return; }
-      var subformProviders = ['gmail', 'google-sheets', 'airtable', 'trello'];
+      if (!active) {
+        if (provider === 'slack') { startSlackOAuth(); return; }
+        closeDownload(); if (typeof openIntegrationsModal === 'function') openIntegrationsModal(); return;
+      }
+      var subformProviders = ['gmail', 'google-sheets', 'airtable', 'trello', 'slack'];
       if (subformProviders.indexOf(provider) !== -1) {
         var sub = document.getElementById('dd-sub-' + provider);
         if (sub) sub.style.display = sub.style.display === 'block' ? 'none' : 'block';

@@ -361,6 +361,80 @@ app.get('/api/integrations/notion/callback', async (req, res) => {
   } catch (err) { res.send(`<script>window.opener?.postMessage({type:'notion_auth',error:'Kimlik doğrulama başarısız'},${JSON.stringify(origin)});window.close();</script>`); }
 });
 
+// Slack OAuth
+app.get('/api/integrations/slack/auth', (req, res) => {
+  const clientId = process.env.SLACK_CLIENT_ID;
+  if (!clientId) return res.status(500).send('<p>Slack OAuth yapılandırılmamış. SLACK_CLIENT_ID eksik.</p>');
+  const base = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 3001}`;
+  const redirectUri = base + '/api/integrations/slack/callback';
+  const scopes = 'channels:read,chat:write,files:write';
+  const state = req.query.token || '';
+  res.redirect(
+    `https://slack.com/oauth/v2/authorize?client_id=${clientId}` +
+    `&scope=${encodeURIComponent(scopes)}` +
+    `&redirect_uri=${encodeURIComponent(redirectUri)}` +
+    `&state=${encodeURIComponent(state)}`
+  );
+});
+
+app.get('/api/integrations/slack/callback', async (req, res) => {
+  const origin = process.env.FRONTEND_URL || 'https://mocksheets.com';
+  const { code, error, state } = req.query;
+  if (error || !code) return res.send(
+    `<script>window.opener?.postMessage({type:'slack_auth',error:${JSON.stringify(error || 'cancelled')}},${JSON.stringify(origin)});window.close();</script>`
+  );
+  const base = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 3001}`;
+  try {
+    const r = await fetch('https://slack.com/api/oauth.v2.access', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        code,
+        client_id: process.env.SLACK_CLIENT_ID,
+        client_secret: process.env.SLACK_CLIENT_SECRET,
+        redirect_uri: base + '/api/integrations/slack/callback',
+      }),
+    });
+    const data = await r.json();
+    if (!data.ok) return res.send(
+      `<script>window.opener?.postMessage({type:'slack_auth',error:${JSON.stringify(data.error || 'Token alınamadı')}},${JSON.stringify(origin)});window.close();</script>`
+    );
+
+    const accessToken   = data.access_token;
+    const workspaceName = data.team?.name || '';
+    const workspaceId   = data.team?.id   || '';
+
+    let channels = [];
+    try {
+      const chRes = await fetch(
+        'https://slack.com/api/conversations.list?types=public_channel,private_channel&limit=200&exclude_archived=true',
+        { headers: { Authorization: `Bearer ${accessToken}` } }
+      );
+      const chData = await chRes.json();
+      if (chData.ok) channels = (chData.channels || []).map(c => ({ id: c.id, name: c.name }));
+    } catch {}
+
+    const userId = await getUserIdFromState(state);
+    if (userId) {
+      await tokenManager.saveToken(userId, 'slack', {
+        accessToken,
+        refreshToken: null,
+        expiresAt:    null,
+        scopes:       ['channels:read', 'chat:write', 'files:write'],
+        metadata:     { workspace_name: workspaceName, workspace_id: workspaceId, channels },
+      }).catch(e => console.error('[slack/callback] saveToken failed:', e.message));
+    }
+
+    res.send(
+      `<script>window.opener?.postMessage({type:'slack_auth',connected:true,workspace:${JSON.stringify(workspaceName)},channels:${JSON.stringify(channels)}},${JSON.stringify(origin)});window.close();</script>`
+    );
+  } catch (err) {
+    res.send(
+      `<script>window.opener?.postMessage({type:'slack_auth',error:'Kimlik doğrulama başarısız'},${JSON.stringify(origin)});window.close();</script>`
+    );
+  }
+});
+
 app.use('/api/integrations', checkLimit, integrationsRouter);
 app.use('/api/automations', automationsRouter);
 app.use('/api/stripe', stripeRouter);
@@ -470,6 +544,16 @@ app.post('/api/chat', checkLimit, async (req, res) => {
     const remaining = monthLimit === Infinity
       ? null
       : Math.max(0, monthLimit - (usage.ai_commands_used_month + 1));
+
+    if (result.action && result.action !== 'message') {
+      getSbForAuth().from('rag_feedback').insert({
+        user_command: message.trim(),
+        action: result.action,
+        output: result,
+        category: result.category || null,
+        user_id: req.user?.id || null
+      }).then(() => {}).catch(() => {});
+    }
 
     res.json({
       ...result,
