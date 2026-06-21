@@ -219,31 +219,7 @@
       </span>
     </div>
 
-    <div class="file-row active">
-      <span class="dot"></span>
-      <span class="name">Stok Takip Tablosu</span>
-      <span class="meta">şimdi</span>
-    </div>
-    <div class="file-row">
-      <span class="dot"></span>
-      <span class="name">Mayıs Bütçe Planı</span>
-      <span class="meta">2s</span>
-    </div>
-    <div class="file-row">
-      <span class="dot"></span>
-      <span class="name">Müşteri CRM</span>
-      <span class="meta">dün</span>
-    </div>
-    <div class="file-row">
-      <span class="dot"></span>
-      <span class="name">Tedarikçi Listesi 2026</span>
-      <span class="meta">3g</span>
-    </div>
-    <div class="file-row">
-      <span class="dot"></span>
-      <span class="name">Q2 Satış Raporu</span>
-      <span class="meta">1h</span>
-    </div>
+    <div id="recentFilesList"></div>
 
     <div class="sidebar-spacer"></div>
 
@@ -856,6 +832,52 @@
     t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--surface);padding:8px 16px;border-radius:var(--radius);font-size:12px;z-index:9999;pointer-events:none;transition:opacity .3s;';
     document.body.appendChild(t);
     setTimeout(function () { t.style.opacity = '0'; setTimeout(function () { if (t.parentNode) t.parentNode.removeChild(t); }, 300); }, 2200);
+  }
+
+  // ── Recent files ─────────────────────────────────────────────────────────
+  var recentFiles = [];
+  var currentFileName = '';
+  try { recentFiles = JSON.parse(localStorage.getItem('rf') || '[]'); } catch(e) {}
+
+  function fmtRecentTime(ts) {
+    var d = Date.now() - ts;
+    if (d < 60000) return 'şimdi';
+    if (d < 3600000) return Math.floor(d / 60000) + 'd';
+    if (d < 86400000) return Math.floor(d / 3600000) + 's';
+    return Math.floor(d / 86400000) + 'g';
+  }
+
+  function renderRecentFiles() {
+    var el = document.getElementById('recentFilesList');
+    if (!el) return;
+    if (!recentFiles.length) { el.innerHTML = ''; return; }
+    el.innerHTML = recentFiles.map(function(f, i) {
+      var isActive = f.name === currentFileName;
+      return '<div class="file-row' + (isActive ? ' active' : '') + '" onclick="loadRecentFile(' + i + ')" style="cursor:pointer">' +
+        '<span class="dot"></span>' +
+        '<span class="name">' + escapeHtml(f.name) + '</span>' +
+        '<span class="meta">' + fmtRecentTime(f.time) + '</span>' +
+        '</div>';
+    }).join('');
+  }
+
+  window.loadRecentFile = function(idx) {
+    var f = recentFiles[idx];
+    if (!f || !f.rows) return;
+    loadDataIntoGrid(f.rows);
+    currentFileName = f.name;
+    var cur = document.querySelector('.crumbs .current');
+    if (cur) { cur.innerHTML = escapeHtml(f.name) + ' <span class="badge">XLSX</span>'; }
+    renderRecentFiles();
+  };
+
+  function addRecentFile(name, rows) {
+    currentFileName = name;
+    recentFiles = [{ name: name, time: Date.now(), rows: rows }]
+      .concat(recentFiles.filter(function(r) { return r.name !== name; }))
+      .slice(0, 5);
+    try { localStorage.setItem('rf', JSON.stringify(recentFiles)); } catch(e) {}
+    renderRecentFiles();
   }
 
   // ── A: Grid data model ────────────────────────────────────────────────────
@@ -1642,6 +1664,7 @@
   // ── Init grid + sheet tabs ────────────────────────────────────────────────
   renderGrid();
   renderSheetTabs();
+  renderRecentFiles();
 
   // ── Upsell CTA ───────────────────────────────────────────────────────────
   var upsellCta = document.querySelector('.upsell-cta');
@@ -2156,6 +2179,9 @@
         var ws = wb.Sheets[wb.SheetNames[0]];
         var rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
         loadDataIntoGrid(rows);
+        addRecentFile(file.name, rows);
+        var cur = document.querySelector('.crumbs .current');
+        if (cur) { cur.innerHTML = escapeHtml(file.name) + ' <span class="badge">XLSX</span>'; }
         addMsg('ai', '✓ "' + file.name + '" dosyası yüklendi — ' + (rows.length - 1) + ' satır, ' + (rows[0] ? rows[0].length : 0) + ' sütun');
       } catch (err) {
         addMsg('ai', '⚠️ Dosya okunamadı: ' + err.message);
