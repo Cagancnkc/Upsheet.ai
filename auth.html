@@ -739,14 +739,23 @@ const sb = supabase.createClient(
 sb.auth.getSession().then(function({ data }) {
   if (data && data.session) {
     var params = new URLSearchParams(window.location.search);
-    var plan   = params.get('plan');
-    var period = params.get('period') || 'monthly';
+    var plan        = params.get('plan');
+    var period      = params.get('period') || 'monthly';
+    var redirect    = params.get('redirect');
+    var integration = params.get('integration');
     if (plan) {
       localStorage.setItem('pending_checkout', JSON.stringify({
         plan: plan, period: period, timestamp: Date.now()
       }));
     }
-    window.location.href = 'app.html';
+    if (redirect) {
+      localStorage.setItem('pending_redirect', JSON.stringify({
+        redirect: redirect, integration: integration, timestamp: Date.now()
+      }));
+    }
+    var dest = 'app.html';
+    if (redirect === 'automations') dest = 'app.html?open=integrations';
+    window.location.href = dest;
   }
 });
 
@@ -806,9 +815,17 @@ async function handleSubmit() {
   btn.disabled = true;
   btn.innerHTML = '<div class="spinner"></div><span>Bağlanıyor...</span>';
 
-  var redirectTo = (window.location.hostname === 'localhost')
-    ? 'http://localhost:3000/app.html'
-    : 'https://mocksheets.com/app.html';
+  var _authParams   = new URLSearchParams(window.location.search);
+  var _authRedirect = _authParams.get('redirect');
+  var _authIntegration = _authParams.get('integration');
+  var _appDest = 'app.html' + (_authRedirect === 'automations' ? '?open=integrations' : '');
+  if (_authRedirect) {
+    localStorage.setItem('pending_redirect', JSON.stringify({
+      redirect: _authRedirect, integration: _authIntegration, timestamp: Date.now()
+    }));
+  }
+  var _baseUrl   = (window.location.hostname === 'localhost') ? 'http://localhost:3000/' : 'https://mocksheets.com/';
+  var redirectTo = _baseUrl + _appDest;
 
   try {
     var result;
