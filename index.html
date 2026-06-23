@@ -169,7 +169,7 @@
       "name": "Kaç kişi aynı anda kullanabilir?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Takım planında 5 koltuk dahildir. Canlı işbirliği özelliğiyle aynı anda birden fazla kullanıcı aynı tabloda çalışabilir."
+        "text": "Mocksheets bireysel kullanım için tasarlanmıştır. Pro Max planında sınırsız komut ve otomasyon ile tüm özelliklere erişebilirsiniz."
       }
     }
   ]
@@ -1874,7 +1874,7 @@
         <div class="ms-row-idx">01</div>
         <div class="ms-row-meta">
           <div class="ms-row-name">Başlangıç</div>
-          <div class="ms-row-tag">Dene. Kart gerekmez.</div>
+          <div class="ms-row-tag">Mocksheets'i keşfetmek isteyenler için. Kart gerekmez.</div>
           <ul class="ms-row-feats">
             <li class="ms-row-feat"><span class="ms-feat-dash">—</span> Günde 5 AI komutu</li>
             <li class="ms-row-feat"><span class="ms-feat-dash">—</span> Google Sheets senkronizasyonu</li>
@@ -1905,10 +1905,7 @@
         <div class="ms-row-meta">
           <div class="ms-row-name">Pro</div>
           <div class="ms-row-tag">İlk 1 ay $1/ay · Kampanya bitmeden yakala.</div>
-          <div class="pro-variant-toggle">
-            <button class="variant-btn active" data-variant="normal" onclick="setProVariant('normal')">Normal</button>
-            <button class="variant-btn" data-variant="max" onclick="setProVariant('max')">Max <span class="variant-diff">+$6</span></button>
-          </div>
+          <div class="ms-row-hook">Düzenli Excel kullanan operasyon yöneticileri için.</div>
           <ul class="ms-row-feats" id="pro-features">
             <!-- JS ile doldurulacak -->
           </ul>
@@ -1925,50 +1922,42 @@
           </div>
         </div>
         <div class="ms-row-cta" style="flex-direction:column;align-items:flex-end;gap:10px;">
-          <a id="proCheckoutBtn" href="/auth?plan=pro&tier=normal" target="_blank" class="ms-cta ms-filled">
+          <a id="proCheckoutBtn" href="/auth?plan=pro" target="_blank" class="ms-cta ms-filled">
             Pro'ya Geç →
             <span class="ms-cta-arrow">→</span>
           </a>
-          <div class="pricing-team-bridge hidden" id="pro-team-bridge">
-            $21'e tek kişi 60 komut. $59'a 5 kişi + sınırsız komut — kişi başı $11,8.
-            <a href="#pricing" onclick="scrollToTeamCard()">Takım'ı incele →</a>
-          </div>
         </div>
       </article>
 
-      <article class="ms-row team-featured" id="team-card">
+      <article class="ms-row team-featured" id="promax-card">
         <div class="ms-row-idx">03</div>
         <div class="ms-row-meta">
           <div class="team-featured-badge">⭐ En İyi Değer</div>
-          <div class="ms-row-name">Takım</div>
-          <div class="ms-row-tag" id="team-seat-tag">5 koltuk. Tek fatura.</div>
+          <div class="ms-row-name">Pro Max</div>
+          <div class="ms-row-tag">Operasyonunu tam otomatize etmek isteyen yöneticiler için.</div>
           <ul class="ms-row-feats">
             <li class="ms-row-feat"><span class="ms-feat-dash">—</span> Sınırsız AI komutu</li>
-            <li class="ms-row-feat"><span class="ms-feat-dash">—</span> <span id="team-seat-feat">5 koltuk dahil</span></li>
             <li class="ms-row-feat"><span class="ms-feat-dash">—</span> Sınırsız otomasyon</li>
-            <li class="ms-row-feat"><span class="ms-feat-dash">—</span> Canlı işbirliği + yorumlar</li>
-            <li class="ms-row-feat"><span class="ms-feat-dash">—</span> SSO + denetim günlüğü</li>
-            <li class="ms-row-feat"><span class="ms-feat-dash">—</span> Özel hesap yöneticisi</li>
+            <li class="ms-row-feat"><span class="ms-feat-dash">—</span> PDF → tablo dönüştürme</li>
+            <li class="ms-row-feat"><span class="ms-feat-dash">—</span> 90 günlük sürüm geçmişi</li>
+            <li class="ms-row-feat"><span class="ms-feat-dash">—</span> Tüm entegrasyonlar</li>
+            <li class="ms-row-feat"><span class="ms-feat-dash">—</span> API erişimi</li>
+            <li class="ms-row-feat"><span class="ms-feat-dash">—</span> Öncelikli e-posta desteği</li>
           </ul>
         </div>
         <div class="ms-row-price">
-          <div class="seat-stepper">
-            <button class="seat-btn" id="team-seat-minus" onclick="changeTeamSeats(-3)" aria-label="Koltuk azalt">−</button>
-            <span id="team-seat-label">5 koltuk</span>
-            <button class="seat-btn" id="team-seat-plus" onclick="changeTeamSeats(3)" aria-label="Koltuk artır">+</button>
-          </div>
-          <div class="ms-price-big" style="margin-top:10px"><span class="ms-price-cur">$</span><span id="team-price-amount">1</span></div>
+          <div class="ms-price-big" style="margin-top:10px"><span class="ms-price-cur">$</span><span id="promax-price-amount">1</span></div>
           <div class="ms-price-sub" style="margin-top:4px">
-            <span class="ms-price-after" id="team-price-after">İlk 1 ay · sonra $59/ay</span>
-            <span class="pricing-yearly-note hidden" id="team-yearly-note">
-              <strong id="team-yearly-price">$566</strong>/yıl
-              <span id="team-yearly-equiv">(aylık $47'ye denk)</span>
+            <span class="ms-price-after" id="promax-price-after">İlk 1 ay · sonra $29/ay</span>
+            <span class="pricing-yearly-note hidden" id="promax-yearly-note">
+              <strong id="promax-yearly-price">$278</strong>/yıl
+              <span id="promax-yearly-equiv">(aylık $23'e denk)</span>
             </span>
           </div>
         </div>
         <div class="ms-row-cta">
-          <a id="bizCheckoutBtn" href="/auth?plan=biz" target="_blank" class="ms-cta ms-outline">
-            Takım Kur →
+          <a id="promaxCheckoutBtn" href="/auth?plan=promax" target="_blank" class="ms-cta ms-outline">
+            Pro Max'a Geç →
             <span class="ms-cta-arrow">→</span>
           </a>
         </div>
@@ -1992,7 +1981,7 @@
               <th>Başlangıç</th>
               <th>Pro</th>
               <th class="team-col">
-                <span>Takım</span>
+                <span>Pro Max</span>
                 <span class="team-col-badge">⭐ Önerilen</span>
               </th>
             </tr>
@@ -2001,14 +1990,8 @@
             <tr>
               <td class="feature-col">AI Komut/gün</td>
               <td>5</td>
-              <td>20-60</td>
+              <td>60</td>
               <td class="team-col"><strong>Sınırsız</strong></td>
-            </tr>
-            <tr>
-              <td class="feature-col">Koltuk sayısı</td>
-              <td>1</td>
-              <td>1</td>
-              <td class="team-col"><strong id="team-col-seats">5 koltuk</strong></td>
             </tr>
             <tr>
               <td class="feature-col">PDF → Tablo</td>
@@ -2019,17 +2002,17 @@
             <tr>
               <td class="feature-col">Otomasyonlar</td>
               <td>❌</td>
-              <td>3 aktif</td>
+              <td>10 aktif</td>
               <td class="team-col"><strong>Sınırsız</strong></td>
             </tr>
             <tr>
-              <td class="feature-col">Canlı işbirliği</td>
+              <td class="feature-col">Tüm Entegrasyonlar</td>
               <td>❌</td>
               <td>❌</td>
               <td class="team-col"><strong>✅</strong></td>
             </tr>
             <tr>
-              <td class="feature-col">SSO + Denetim</td>
+              <td class="feature-col">API Erişimi</td>
               <td>❌</td>
               <td>❌</td>
               <td class="team-col"><strong>✅</strong></td>
@@ -2037,23 +2020,20 @@
             <tr>
               <td class="feature-col">Sürüm geçmişi</td>
               <td>—</td>
-              <td>30-90 gün</td>
+              <td>60 gün</td>
               <td class="team-col"><strong>90 gün</strong></td>
             </tr>
             <tr>
               <td class="feature-col">Destek</td>
               <td>—</td>
               <td>E-posta</td>
-              <td class="team-col"><strong>Özel yönetici</strong></td>
+              <td class="team-col"><strong>Öncelikli e-posta</strong></td>
             </tr>
             <tr class="price-row">
               <td class="feature-col">Fiyat</td>
               <td>$0</td>
-              <td>$15-21/ay</td>
-              <td class="team-col">
-                <strong>$59/ay</strong>
-                <span style="display:block;font-size:11px;color:#4ade80">kişi başı $11,8</span>
-              </td>
+              <td>$15/ay</td>
+              <td class="team-col"><strong>$29/ay</strong></td>
             </tr>
           </tbody>
         </table>
@@ -2118,7 +2098,7 @@
           Kaç kişi aynı anda kullanabilir?
           <span class="faq-icon">+</span>
         </button>
-        <div class="faq-a">Takım planında 5 koltuk dahildir. Canlı işbirliği özelliğiyle aynı anda birden fazla kullanıcı aynı tabloda çalışabilir.</div>
+        <div class="faq-a">Mocksheets bireysel kullanım için tasarlanmıştır. Pro Max planında sınırsız komut ve otomasyon ile tüm özelliklere erişebilirsiniz.</div>
       </div>
 
       <div class="faq-item">
@@ -2432,135 +2412,69 @@ function toggleFaq(btn) {
 
 <script>
 var _billingPeriod = 'monthly';
-var _proVariant = 'normal';
-var _teamSeats = 5;
-var _SEAT_PRICE = 11.8;
-var _SEAT_STEP = 3;
-var _SEAT_MIN = 5;
-var _SEAT_MAX = 50;
 
 var _PRO = {
-  normal: { monthly: 15, yearly: 144, features: [
-    'Ayda 300 AI komutu',
+  monthly: 15,
+  yearly: 144,
+  features: [
+    'Günde 60 AI komutu',
     'PDF → tablo dönüştürme',
-    '30 günlük sürüm geçmişi',
-    'Öncelikli e-posta desteği'
-  ]},
-  max: { monthly: 21, yearly: 202, features: [
-    'Ayda 500 AI komutu',
-    'PDF → tablo dönüştürme',
-    '90 günlük sürüm geçmişi',
-    '3 aktif otomasyon',
-    'Öncelikli e-posta desteği'
-  ]}
+    '10 aktif otomasyon',
+    '60 günlük sürüm geçmişi',
+    'E-posta desteği'
+  ]
 };
-var _TEAM = { monthly: 59, yearly: 566 };
 
-function setProVariant(variant) {
-  _proVariant = variant;
-  document.querySelectorAll('.variant-btn').forEach(function(b) {
-    b.classList.toggle('active', b.dataset.variant === variant);
-  });
-  renderProCard();
-}
+var _PROMAX = { monthly: 29, yearly: 278 };
 
 function renderProCard() {
-  var v = _PRO[_proVariant];
   var yearly = _billingPeriod === 'yearly';
-
-  // Özellikler
   var featEl = document.getElementById('pro-features');
   if (featEl) {
-    featEl.innerHTML = v.features.map(function(f) {
+    featEl.innerHTML = _PRO.features.map(function(f) {
       return '<li class="ms-row-feat"><span class="ms-feat-dash">—</span> ' + f + '</li>';
     }).join('');
-    if (_proVariant === 'max') {
-      var items = featEl.querySelectorAll('li');
-      [0, 3].forEach(function(i) {
-        if (items[i]) {
-          items[i].classList.add('feature-highlight');
-          setTimeout(function() { if (items[i]) items[i].classList.remove('feature-highlight'); }, 600);
-        }
-      });
-    }
   }
-
   var amountEl = document.getElementById('pro-price-amount');
   var afterEl = document.getElementById('proAfter');
   var yearlyNoteEl = document.getElementById('pro-yearly-note');
   var yearlyPriceEl = document.getElementById('pro-yearly-price');
   var yearlyEquivEl = document.getElementById('pro-yearly-equiv');
-  var teamBridgeEl = document.getElementById('pro-team-bridge');
   var ctaEl = document.getElementById('proCheckoutBtn');
-
   if (yearly) {
-    if (amountEl) amountEl.textContent = v.yearly;
+    if (amountEl) amountEl.textContent = _PRO.yearly;
     if (afterEl) afterEl.classList.add('hidden');
     if (yearlyNoteEl) yearlyNoteEl.classList.remove('hidden');
-    if (yearlyPriceEl) yearlyPriceEl.textContent = '$' + v.yearly;
-    if (yearlyEquivEl) yearlyEquivEl.textContent = '(aylık $' + Math.round(v.yearly / 12) + '\'ye denk)';
+    if (yearlyPriceEl) yearlyPriceEl.textContent = '$' + _PRO.yearly;
+    if (yearlyEquivEl) yearlyEquivEl.textContent = '(aylık $' + Math.round(_PRO.yearly / 12) + '\'ye denk)';
   } else {
     if (amountEl) amountEl.textContent = 1;
-    if (afterEl) { afterEl.classList.remove('hidden'); afterEl.textContent = 'İlk 1 ay · sonra $' + v.monthly + '/ay'; }
+    if (afterEl) { afterEl.classList.remove('hidden'); afterEl.textContent = 'İlk 1 ay · sonra $' + _PRO.monthly + '/ay'; }
     if (yearlyNoteEl) yearlyNoteEl.classList.add('hidden');
   }
-
-  if (teamBridgeEl) teamBridgeEl.classList.toggle('hidden', _proVariant !== 'max');
-  if (ctaEl) ctaEl.href = '/auth?plan=pro&tier=' + _proVariant;
+  if (ctaEl) ctaEl.href = '/auth?plan=pro';
 }
 
-function renderTeamCard() {
+function renderProMaxCard() {
   var yearly = _billingPeriod === 'yearly';
-  var totalMonthly = Math.round(_teamSeats * _SEAT_PRICE * 10) / 10;
-  var totalYearly = Math.round(_teamSeats * _SEAT_PRICE * 12 * 0.8 * 10) / 10;
-
-  var amountEl = document.getElementById('team-price-amount');
-  var afterEl = document.getElementById('team-price-after');
-  var yearlyNoteEl = document.getElementById('team-yearly-note');
-  var yearlyPriceEl = document.getElementById('team-yearly-price');
-  var yearlyEquivEl = document.getElementById('team-yearly-equiv');
-
+  var amountEl = document.getElementById('promax-price-amount');
+  var afterEl = document.getElementById('promax-price-after');
+  var yearlyNoteEl = document.getElementById('promax-yearly-note');
+  var yearlyPriceEl = document.getElementById('promax-yearly-price');
+  var yearlyEquivEl = document.getElementById('promax-yearly-equiv');
+  var ctaEl = document.getElementById('promaxCheckoutBtn');
   if (yearly) {
-    if (amountEl) amountEl.textContent = totalYearly;
+    if (amountEl) amountEl.textContent = _PROMAX.yearly;
     if (afterEl) afterEl.classList.add('hidden');
     if (yearlyNoteEl) yearlyNoteEl.classList.remove('hidden');
-    if (yearlyPriceEl) yearlyPriceEl.textContent = '$' + totalYearly;
-    if (yearlyEquivEl) yearlyEquivEl.textContent = '(aylık $' + Math.round(totalYearly / 12) + '\'ye denk)';
+    if (yearlyPriceEl) yearlyPriceEl.textContent = '$' + _PROMAX.yearly;
+    if (yearlyEquivEl) yearlyEquivEl.textContent = '(aylık $23\'e denk)';
   } else {
     if (amountEl) amountEl.textContent = 1;
-    if (afterEl) { afterEl.classList.remove('hidden'); afterEl.textContent = 'İlk 1 ay · sonra $' + totalMonthly + '/ay'; }
+    if (afterEl) { afterEl.classList.remove('hidden'); afterEl.textContent = 'İlk 1 ay · sonra $' + _PROMAX.monthly + '/ay'; }
     if (yearlyNoteEl) yearlyNoteEl.classList.add('hidden');
   }
-
-  var seatLabelEl = document.getElementById('team-seat-label');
-  if (seatLabelEl) seatLabelEl.textContent = _teamSeats + ' koltuk';
-  var featEl = document.getElementById('team-seat-feat');
-  if (featEl) featEl.textContent = _teamSeats + ' koltuk dahil';
-  var tagEl = document.getElementById('team-seat-tag');
-  if (tagEl) tagEl.textContent = yearly
-    ? _teamSeats + ' koltuk. Tek fatura.'
-    : 'İlk 1 ay $1 · ' + _teamSeats + ' koltuk dahil.';
-  var colEl = document.getElementById('team-col-seats');
-  if (colEl) colEl.textContent = _teamSeats + ' koltuk';
-  var minusBtn = document.getElementById('team-seat-minus');
-  if (minusBtn) minusBtn.disabled = _teamSeats <= _SEAT_MIN;
-  var ctaEl = document.getElementById('bizCheckoutBtn');
-  if (ctaEl) ctaEl.href = '/auth?plan=biz' + (_teamSeats !== 5 ? '&seats=' + _teamSeats : '');
-}
-
-function changeTeamSeats(delta) {
-  var next = _teamSeats + delta;
-  if (next < _SEAT_MIN || next > _SEAT_MAX) return;
-  _teamSeats = next;
-  renderTeamCard();
-}
-
-function scrollToTeamCard() {
-  var el = document.getElementById('team-card');
-  if (!el) return;
-  el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  el.classList.add('pricing-card-pulse');
-  setTimeout(function() { el.classList.remove('pricing-card-pulse'); }, 1200);
+  if (ctaEl) ctaEl.href = '/auth?plan=promax';
 }
 
 
@@ -2574,16 +2488,16 @@ function setPricingPeriod(p) {
   var sl = window._stripeLinks || {};
   var per = yearly ? 'yearly' : 'monthly';
   var proBtn = document.getElementById('proCheckoutBtn');
-  var bizBtn = document.getElementById('bizCheckoutBtn');
+  var promaxBtn = document.getElementById('promaxCheckoutBtn');
   if (proBtn && sl.pro && sl.pro[per]) proBtn.href = sl.pro[per];
-  if (bizBtn && sl.business && sl.business[per]) bizBtn.href = sl.business[per];
+  if (promaxBtn && sl.promax && sl.promax[per]) promaxBtn.href = sl.promax[per];
   renderProCard();
-  renderTeamCard();
+  renderProMaxCard();
 }
 
 document.addEventListener('DOMContentLoaded', function() {
   renderProCard();
-  renderTeamCard();
+  renderProMaxCard();
 });
 </script>
 
@@ -2625,9 +2539,9 @@ document.addEventListener('DOMContentLoaded', function() {
         && document.getElementById('ms-btn-yearly').getAttribute('aria-selected') === 'true';
       var per = isYearly ? 'yearly' : 'monthly';
       var proBtn = document.getElementById('proCheckoutBtn');
-      var bizBtn = document.getElementById('bizCheckoutBtn');
+      var promaxBtn = document.getElementById('promaxCheckoutBtn');
       if (proBtn && data.pro && data.pro[per]) proBtn.href = data.pro[per];
-      if (bizBtn && data.business && data.business[per]) bizBtn.href = data.business[per];
+      if (promaxBtn && data.promax && data.promax[per]) promaxBtn.href = data.promax[per];
     })
     .catch(function() {});
 }());
