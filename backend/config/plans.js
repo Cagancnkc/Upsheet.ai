@@ -35,6 +35,23 @@ const PLANS = {
     color: '#4F46E5',
     badge: '⭐'
   },
+  promax: {
+    name: 'Pro Max',
+    displayName: 'Pro Max',
+    ai_commands_per_month: 1500,
+    ai_commands_per_day: 100,
+    max_rows: 100000,
+    max_file_size_mb: 50,
+    max_sheets: 50,
+    integrations: true,
+    auto_report: true,
+    competitor_analysis: true,
+    accounting_formulas: true,
+    export_formats: ['csv', 'xlsx', 'json', 'pdf'],
+    support: 'priority',
+    color: '#059669',
+    badge: '⭐'
+  },
   business: {
     name: 'İş',
     displayName: 'İş Planı',
