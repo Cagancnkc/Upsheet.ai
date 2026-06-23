@@ -484,6 +484,27 @@ textarea.inp{height:auto;padding:10px 12px;resize:vertical;min-height:72px}
 .int-modal-btn-primary:disabled{opacity:.5;cursor:default}
 .int-modal-btn-secondary{background:var(--surface-2);color:var(--ink);border:1px solid var(--line-2)}
 .int-modal-btn-secondary:hover{border-color:var(--accent);color:var(--accent)}
+
+/* ── AGENTS SECTION ── */
+#agents-section{margin-bottom:36px}
+.agent-input-wrap{background:var(--surface);border:1.5px solid var(--line-2);border-radius:var(--radius);padding:20px;margin-bottom:0}
+.agent-input-wrap textarea{width:100%;background:var(--surface-2);border:1px solid var(--line-2);border-radius:10px;padding:12px 14px;font-size:14px;color:var(--ink);resize:vertical;outline:none;transition:border-color .15s;font-family:inherit;line-height:1.55}
+.agent-input-wrap textarea:focus{border-color:var(--accent-line)}
+.agent-run-btn{margin-top:12px;height:40px;padding:0 22px;background:var(--accent);color:#fff;border:none;border-radius:999px;font-size:14px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:all .15s;font-family:inherit}
+.agent-run-btn:hover:not(:disabled){background:var(--accent-2);transform:translateY(-1px);box-shadow:0 8px 24px -8px rgba(22,163,74,.45)}
+.agent-run-btn:disabled{opacity:.55;cursor:default;transform:none}
+.agent-log-wrap{background:var(--surface);border:1px solid var(--line-2);border-radius:var(--radius);padding:20px;margin-top:16px}
+.agent-step-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:0.5px solid var(--line)}
+.agent-step-row:last-child{border-bottom:none}
+.agent-step-icon{font-size:16px;width:22px;text-align:center;flex-shrink:0}
+.agent-step-label{font-size:14px;flex:1;color:var(--ink-2)}
+.agent-step-status{font-size:12px;font-weight:500}
+.agent-result{margin-top:16px;padding:16px;background:var(--accent-soft);border:1px solid var(--accent-line);border-radius:10px;font-size:14px;color:var(--ink-2);white-space:pre-wrap;line-height:1.55}
+.agent-history-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:0.5px solid var(--line);cursor:pointer;transition:background .12s;border-radius:6px;padding-left:4px}
+.agent-history-row:last-child{border-bottom:none}
+.agent-history-row:hover{background:var(--surface-2)}
+.agent-upgrade-overlay{position:absolute;inset:0;background:rgba(250,250,250,.9);display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:var(--radius);z-index:10;backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+[data-theme="dark"] .agent-upgrade-overlay{background:rgba(0,0,0,.85)}
 </style>
 
 <script type="text/javascript">
@@ -549,6 +570,12 @@ textarea.inp{height:auto;padding:10px 12px;resize:vertical;min-height:72px}
       </button>
     </div>
   </section>
+
+  <!-- PAGE TABS -->
+  <div class="tpl-cats" id="page-tabs" style="margin-bottom:24px">
+    <button class="tpl-cat active" id="tab-otomasyon" onclick="switchPageTab('otomasyon')">Otomasyon</button>
+    <button class="tpl-cat" id="tab-agents" onclick="switchPageTab('agents')">✦ AI Agents <span style="font-size:10px;background:#16a34a;color:#fff;border-radius:4px;padding:2px 6px;margin-left:6px;font-weight:700;">Pro Max</span></button>
+  </div>
 
   <!-- TEMPLATE GALLERY -->
   <section id="templates">
@@ -693,6 +720,58 @@ textarea.inp{height:auto;padding:10px 12px;resize:vertical;min-height:72px}
         <p style="font-size:13px;color:var(--muted)">Henüz çalışma kaydı yok.</p>
       </div>
     </div>
+  </section>
+
+  <!-- AI AGENTS -->
+  <section id="agents-section" style="display:none;position:relative">
+
+    <!-- Upgrade overlay (hidden by default, shown when not ProMax) -->
+    <div class="agent-upgrade-overlay" id="agents-upgrade-overlay" style="display:none">
+      <span style="font-size:32px;margin-bottom:8px">✦</span>
+      <p style="font-weight:600;font-size:15px;margin:0 0 6px">AI Agents Pro Max'e özel</p>
+      <p style="font-size:13px;color:var(--muted);margin:0 0 20px;text-align:center;max-width:300px">Sınırsız otomasyon ve AI Agent erişimi için Pro Max'e geç.</p>
+      <a href="/pricing" style="background:var(--accent);color:#fff;border-radius:999px;padding:10px 24px;text-decoration:none;font-size:14px;font-weight:600">Pro Max'e Geç →</a>
+    </div>
+
+    <!-- Section header -->
+    <div class="section-header">
+      <div class="section-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        AI Agents
+      </div>
+    </div>
+    <p style="font-size:14px;color:var(--muted);margin-bottom:4px;line-height:1.6">Doğal dille komut ver, agent adım adım tamamlar.</p>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.55">
+      <strong style="color:var(--ink-2)">Otomasyondan farkı:</strong> Agent komutu kendisi adımlara böler, karar verir ve hata olursa alternatif yol dener.
+    </p>
+
+    <!-- Prompt input -->
+    <div class="agent-input-wrap">
+      <textarea id="agent-prompt" rows="3" placeholder="Örnek: Satış tablosunu analiz et, en yüksek 10 müşteriyi filtrele ve Slack #ops kanalına gönder"></textarea>
+      <button class="agent-run-btn" id="run-agent-btn" onclick="runAgent()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Agent'ı Çalıştır
+      </button>
+    </div>
+
+    <!-- Live log (hidden until run starts) -->
+    <div class="agent-log-wrap" id="agent-log-wrap" style="display:none">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+        <span id="agent-run-title" style="font-weight:500;font-size:15px;flex:1;color:var(--ink)"></span>
+        <span id="agent-status-badge"></span>
+      </div>
+      <div id="agent-steps-list"></div>
+      <div class="agent-result" id="agent-result" style="display:none"></div>
+    </div>
+
+    <!-- History -->
+    <div style="margin-top:32px">
+      <h3 style="font-size:14px;font-weight:600;color:var(--ink);margin-bottom:12px">Son Çalıştırmalar</h3>
+      <div id="agent-history-list">
+        <p style="font-size:13px;color:var(--muted)">Henüz çalıştırma yok.</p>
+      </div>
+    </div>
+
   </section>
 
 </main>
@@ -3957,11 +4036,189 @@ const ACTION_TYPES = [
   { v: 'jira_set_priority',     l: 'Jira Öncelik Güncelle',     icon: '📋' }
 ];
 
+// ── PAGE TABS ──────────────────────────────────────────────────────────────
+const AUTOMATION_SECTIONS = ['templates','apps-gallery','integrations-section','automations-section','run-history'];
+
+function switchPageTab(tab) {
+  document.querySelectorAll('#page-tabs .tpl-cat').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+
+  if (tab === 'agents') {
+    AUTOMATION_SECTIONS.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.display = 'none';
+    });
+    document.getElementById('agents-section').style.display = 'block';
+    checkProMax();
+    loadAgentHistory();
+  } else {
+    AUTOMATION_SECTIONS.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.display = '';
+    });
+    document.getElementById('agents-section').style.display = 'none';
+  }
+}
+
+// ── AI AGENTS ──────────────────────────────────────────────────────────────
+let _agentPollInterval = null;
+
+async function checkProMax() {
+  try {
+    const res = await fetch(`${API}/api/agents/history`, { headers: authHeaders() });
+    const overlay = document.getElementById('agents-upgrade-overlay');
+    if (res.status === 403) {
+      overlay.style.display = 'flex';
+    } else {
+      overlay.style.display = 'none';
+    }
+  } catch {}
+}
+
+async function runAgent() {
+  const prompt = document.getElementById('agent-prompt').value.trim();
+  if (!prompt) return;
+
+  const btn = document.getElementById('run-agent-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg> Çalışıyor...';
+
+  const logWrap = document.getElementById('agent-log-wrap');
+  logWrap.style.display = 'block';
+  document.getElementById('agent-run-title').textContent = prompt.slice(0, 80) + (prompt.length > 80 ? '…' : '');
+  document.getElementById('agent-steps-list').innerHTML = '';
+  document.getElementById('agent-result').style.display = 'none';
+  setAgentStatus('running');
+
+  try {
+    const res = await fetch(`${API}/api/agents/run`, {
+      method: 'POST',
+      headers: authHeaders(),
+      body: JSON.stringify({ prompt, context: {} })
+    });
+    if (!res.ok) throw new Error('API hatası: ' + res.status);
+    const { run_id } = await res.json();
+    if (_agentPollInterval) clearInterval(_agentPollInterval);
+    pollAgentRun(run_id);
+  } catch (e) {
+    setAgentStatus('failed');
+    btn.disabled = false;
+    btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg> Agent\'ı Çalıştır';
+  }
+}
+
+function pollAgentRun(runId) {
+  _agentPollInterval = setInterval(async () => {
+    try {
+      const res = await fetch(`${API}/api/agents/run/${runId}`, { headers: authHeaders() });
+      const { run, steps } = await res.json();
+
+      renderAgentSteps(steps);
+      setAgentStatus(run.status);
+
+      if (run.status === 'completed' || run.status === 'failed') {
+        clearInterval(_agentPollInterval);
+        _agentPollInterval = null;
+        const btn = document.getElementById('run-agent-btn');
+        btn.disabled = false;
+        btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg> Agent\'ı Çalıştır';
+        if (run.result) {
+          const parsed = typeof run.result === 'string' ? JSON.parse(run.result) : run.result;
+          const resultEl = document.getElementById('agent-result');
+          resultEl.style.display = 'block';
+          const summary = parsed?.summary || JSON.stringify(parsed, null, 2);
+          resultEl.innerHTML = '<strong>Sonuç:</strong><br>' + summary;
+        }
+        loadAgentHistory();
+      }
+    } catch {
+      clearInterval(_agentPollInterval);
+      _agentPollInterval = null;
+    }
+  }, 2000);
+}
+
+function renderAgentSteps(steps) {
+  const list = document.getElementById('agent-steps-list');
+  if (!steps || !steps.length) { list.innerHTML = ''; return; }
+
+  const icons = { pending: '○', running: '◉', completed: '✓', failed: '✕' };
+  const colors = { pending: 'var(--muted)', running: '#f59e0b', completed: 'var(--accent)', failed: 'var(--rose)' };
+
+  list.innerHTML = steps.map(s => {
+    const icon = icons[s.status] || '○';
+    const color = colors[s.status] || 'var(--muted)';
+    return `<div class="agent-step-row">
+      <span class="agent-step-icon" style="color:${color}">${icon}</span>
+      <span class="agent-step-label">${s.step_label || s.step_type}</span>
+      <span class="agent-step-status" style="color:${color}">${s.status}</span>
+    </div>`;
+  }).join('');
+}
+
+function setAgentStatus(status) {
+  const badge = document.getElementById('agent-status-badge');
+  const map = {
+    pending:   { label: 'Bekliyor',   bg: 'var(--surface-2)', color: 'var(--muted)' },
+    running:   { label: 'Çalışıyor',  bg: 'var(--amber-soft)', color: 'var(--amber)' },
+    completed: { label: 'Tamamlandı', bg: 'var(--accent-soft)', color: 'var(--accent)' },
+    failed:    { label: 'Hata',       bg: 'var(--rose-soft)', color: 'var(--rose)' }
+  };
+  const s = map[status] || map.pending;
+  badge.innerHTML = `<span style="background:${s.bg};color:${s.color};font-size:12px;font-weight:600;padding:3px 12px;border-radius:20px">${s.label}</span>`;
+}
+
+async function loadAgentHistory() {
+  try {
+    const res = await fetch(`${API}/api/agents/history`, { headers: authHeaders() });
+    if (!res.ok) return;
+    const { runs } = await res.json();
+    const list = document.getElementById('agent-history-list');
+
+    if (!runs || !runs.length) {
+      list.innerHTML = '<p style="font-size:13px;color:var(--muted)">Henüz çalıştırma yok.</p>';
+      return;
+    }
+
+    const colors = { completed: 'var(--accent)', failed: 'var(--rose)', running: '#f59e0b', pending: 'var(--muted)' };
+    list.innerHTML = runs.map(r => {
+      const color = colors[r.status] || 'var(--muted)';
+      const date = new Date(r.created_at).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+      return `<div class="agent-history-row" onclick="loadAgentRun('${r.id}')">
+        <span style="width:8px;height:8px;border-radius:50%;background:${color};display:inline-block;flex-shrink:0"></span>
+        <span style="font-size:14px;flex:1;color:var(--ink-2)">${r.title || 'İsimsiz'}</span>
+        <span style="font-size:12px;color:var(--muted)">${date}</span>
+      </div>`;
+    }).join('');
+  } catch {}
+}
+
+async function loadAgentRun(runId) {
+  try {
+    const res = await fetch(`${API}/api/agents/run/${runId}`, { headers: authHeaders() });
+    const { run, steps } = await res.json();
+    document.getElementById('agent-log-wrap').style.display = 'block';
+    document.getElementById('agent-run-title').textContent = run.title || (run.prompt || '').slice(0, 80);
+    document.getElementById('agent-result').style.display = 'none';
+    setAgentStatus(run.status);
+    renderAgentSteps(steps);
+    if (run.result) {
+      const parsed = typeof run.result === 'string' ? JSON.parse(run.result) : run.result;
+      const resultEl = document.getElementById('agent-result');
+      resultEl.style.display = 'block';
+      resultEl.innerHTML = '<strong>Sonuç:</strong><br>' + (parsed?.summary || JSON.stringify(parsed, null, 2));
+    }
+    document.getElementById('agent-log-wrap').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  } catch {}
+}
+
 // ── INIT ───────────────────────────────────────────────────────────────────
 async function init() {
   await initAuth();
   renderTemplates();
   await Promise.all([loadRules(), loadRuns()]);
+  const urlTab = new URLSearchParams(window.location.search).get('tab');
+  if (urlTab === 'agents') switchPageTab('agents');
 }
 
 document.addEventListener('DOMContentLoaded', init);
