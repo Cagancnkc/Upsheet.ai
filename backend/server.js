@@ -448,6 +448,8 @@ const pdfRouter = require('./routes/pdf');
 app.use('/api/pdf', pdfRouter);
 const teamRouter = require('./routes/team');
 app.use('/api/team', teamRouter);
+const agentsRouter = require('./routes/agents');
+app.use('/api/agents', agentsRouter);
 
 app.post('/api/loops/contact', async (req, res) => {
   const { email, userGroup } = req.body;
