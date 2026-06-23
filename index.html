@@ -1741,6 +1741,18 @@
   margin-bottom: 10px;
 }
 
+.ms-row-badge-pro {
+  display: inline-block;
+  background: linear-gradient(135deg, #ea580c, #dc2626);
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 99px;
+  letter-spacing: 0.05em;
+  margin-bottom: 10px;
+}
+
 /* Karşılaştırma tablosu */
 .pricing-comparison {
   max-width: 860px;
@@ -1903,6 +1915,7 @@
       <article class="ms-row ms-featured" id="pro-card">
         <div class="ms-row-idx">02</div>
         <div class="ms-row-meta">
+          <div class="ms-row-badge-pro">🔥 En Popüler</div>
           <div class="ms-row-name">Pro</div>
           <div class="ms-row-tag">İlk 1 ay $1/ay · Kampanya bitmeden yakala.</div>
           <div class="ms-row-hook">Düzenli Excel kullanan operasyon yöneticileri için.</div>
@@ -1948,16 +1961,48 @@
         <div class="ms-row-price">
           <div class="ms-price-big" style="margin-top:10px"><span class="ms-price-cur">$</span><span id="promax-price-amount">1</span></div>
           <div class="ms-price-sub" style="margin-top:4px">
-            <span class="ms-price-after" id="promax-price-after">İlk 1 ay · sonra $29/ay</span>
+            <span class="ms-price-after" id="promax-price-after">İlk 1 ay · sonra $21/ay</span>
             <span class="pricing-yearly-note hidden" id="promax-yearly-note">
-              <strong id="promax-yearly-price">$278</strong>/yıl
-              <span id="promax-yearly-equiv">(aylık $23'e denk)</span>
+              <strong id="promax-yearly-price">$202</strong>/yıl
+              <span id="promax-yearly-equiv">(aylık $17'ye denk)</span>
             </span>
           </div>
         </div>
         <div class="ms-row-cta">
-          <a id="promaxCheckoutBtn" href="/auth?plan=promax" target="_blank" class="ms-cta ms-outline">
+          <a id="promaxCheckoutBtn" href="/auth?plan=promax" target="_blank" class="ms-cta ms-filled">
             Pro Max'a Geç →
+            <span class="ms-cta-arrow">→</span>
+          </a>
+        </div>
+      </article>
+
+      <article class="ms-row" id="team-card" style="opacity:0.82">
+        <div class="ms-row-idx">04</div>
+        <div class="ms-row-meta">
+          <div class="ms-row-name">Takım</div>
+          <div class="ms-row-tag">5+ kişilik operasyon ekipleri için. Tek fatura.</div>
+          <ul class="ms-row-feats">
+            <li class="ms-row-feat"><span class="ms-feat-dash">—</span> Sınırsız AI komutu</li>
+            <li class="ms-row-feat"><span class="ms-feat-dash">—</span> 5 koltuk dahil</li>
+            <li class="ms-row-feat"><span class="ms-feat-dash">—</span> Sınırsız otomasyon</li>
+            <li class="ms-row-feat"><span class="ms-feat-dash">—</span> Canlı işbirliği + yorumlar</li>
+            <li class="ms-row-feat"><span class="ms-feat-dash">—</span> SSO + denetim günlüğü</li>
+            <li class="ms-row-feat"><span class="ms-feat-dash">—</span> Özel hesap yöneticisi</li>
+          </ul>
+        </div>
+        <div class="ms-row-price">
+          <div class="ms-price-big" style="margin-top:10px"><span class="ms-price-cur">$</span><span id="team-price-amount">59</span></div>
+          <div class="ms-price-sub" style="margin-top:4px">
+            <span class="ms-price-after" id="team-price-after">/ay · 5 koltuk</span>
+            <span class="pricing-yearly-note hidden" id="team-yearly-note">
+              <strong id="team-yearly-price">$566</strong>/yıl
+              <span id="team-yearly-equiv">(aylık $47'ye denk)</span>
+            </span>
+          </div>
+        </div>
+        <div class="ms-row-cta">
+          <a id="teamCheckoutBtn" href="/auth?plan=biz" target="_blank" class="ms-cta ms-outline" style="opacity:0.75">
+            Takım Kur →
             <span class="ms-cta-arrow">→</span>
           </a>
         </div>
@@ -1984,6 +2029,7 @@
                 <span>Pro Max</span>
                 <span class="team-col-badge">⭐ Önerilen</span>
               </th>
+              <th style="opacity:0.75">Takım</th>
             </tr>
           </thead>
           <tbody>
@@ -1992,48 +2038,77 @@
               <td>5</td>
               <td>60</td>
               <td class="team-col"><strong>Sınırsız</strong></td>
+              <td style="opacity:0.75"><strong>Sınırsız</strong></td>
             </tr>
             <tr>
               <td class="feature-col">PDF → Tablo</td>
               <td>❌</td>
               <td>✅</td>
               <td class="team-col">✅</td>
+              <td style="opacity:0.75">✅</td>
             </tr>
             <tr>
               <td class="feature-col">Otomasyonlar</td>
               <td>❌</td>
               <td>10 aktif</td>
               <td class="team-col"><strong>Sınırsız</strong></td>
+              <td style="opacity:0.75"><strong>Sınırsız</strong></td>
             </tr>
             <tr>
               <td class="feature-col">Tüm Entegrasyonlar</td>
               <td>❌</td>
               <td>❌</td>
               <td class="team-col"><strong>✅</strong></td>
+              <td style="opacity:0.75">✅</td>
             </tr>
             <tr>
               <td class="feature-col">API Erişimi</td>
               <td>❌</td>
               <td>❌</td>
               <td class="team-col"><strong>✅</strong></td>
+              <td style="opacity:0.75">✅</td>
+            </tr>
+            <tr>
+              <td class="feature-col">Koltuk sayısı</td>
+              <td>1</td>
+              <td>1</td>
+              <td class="team-col">1</td>
+              <td style="opacity:0.75"><strong>5</strong></td>
+            </tr>
+            <tr>
+              <td class="feature-col">Canlı işbirliği</td>
+              <td>❌</td>
+              <td>❌</td>
+              <td class="team-col">❌</td>
+              <td style="opacity:0.75"><strong>✅</strong></td>
+            </tr>
+            <tr>
+              <td class="feature-col">SSO + Denetim</td>
+              <td>❌</td>
+              <td>❌</td>
+              <td class="team-col">❌</td>
+              <td style="opacity:0.75"><strong>✅</strong></td>
             </tr>
             <tr>
               <td class="feature-col">Sürüm geçmişi</td>
               <td>—</td>
               <td>60 gün</td>
               <td class="team-col"><strong>90 gün</strong></td>
+              <td style="opacity:0.75">90 gün</td>
             </tr>
             <tr>
               <td class="feature-col">Destek</td>
               <td>—</td>
               <td>E-posta</td>
               <td class="team-col"><strong>Öncelikli e-posta</strong></td>
+              <td style="opacity:0.75"><strong>Özel yönetici</strong></td>
             </tr>
             <tr class="price-row">
               <td class="feature-col">Fiyat</td>
               <td>$0</td>
               <td>$15/ay</td>
-              <td class="team-col"><strong>$29/ay</strong></td>
+              <td class="team-col"><strong>$21/ay</strong></td>
+              <td style="opacity:0.75">$59/ay</td>
             </tr>
           </tbody>
         </table>
@@ -2425,7 +2500,8 @@ var _PRO = {
   ]
 };
 
-var _PROMAX = { monthly: 29, yearly: 278 };
+var _PROMAX = { monthly: 21, yearly: 202 };
+var _TEAM   = { monthly: 59, yearly: 566 };
 
 function renderProCard() {
   var yearly = _billingPeriod === 'yearly';
@@ -2478,6 +2554,26 @@ function renderProMaxCard() {
 }
 
 
+function renderTeamCard() {
+  var yearly = _billingPeriod === 'yearly';
+  var amountEl = document.getElementById('team-price-amount');
+  var afterEl  = document.getElementById('team-price-after');
+  var noteEl   = document.getElementById('team-yearly-note');
+  var priceEl  = document.getElementById('team-yearly-price');
+  var equivEl  = document.getElementById('team-yearly-equiv');
+  if (yearly) {
+    if (amountEl) amountEl.textContent = _TEAM.yearly;
+    if (afterEl)  afterEl.classList.add('hidden');
+    if (noteEl)   noteEl.classList.remove('hidden');
+    if (priceEl)  priceEl.textContent = '$' + _TEAM.yearly;
+    if (equivEl)  equivEl.textContent = "(aylık $47'ye denk)";
+  } else {
+    if (amountEl) amountEl.textContent = _TEAM.monthly;
+    if (afterEl)  { afterEl.classList.remove('hidden'); afterEl.textContent = '/ay · 5 koltuk'; }
+    if (noteEl)   noteEl.classList.add('hidden');
+  }
+}
+
 function setPricingPeriod(p) {
   _billingPeriod = p;
   var yearly = p === 'yearly';
@@ -2493,11 +2589,13 @@ function setPricingPeriod(p) {
   if (promaxBtn && sl.promax && sl.promax[per]) promaxBtn.href = sl.promax[per];
   renderProCard();
   renderProMaxCard();
+  renderTeamCard();
 }
 
 document.addEventListener('DOMContentLoaded', function() {
   renderProCard();
   renderProMaxCard();
+  renderTeamCard();
 });
 </script>
 
