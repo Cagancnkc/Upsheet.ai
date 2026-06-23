@@ -594,6 +594,13 @@
           Google ile Devam Et
         </button>
 
+        <button class="btn-google" id="btn-shopify" onclick="startShopifyAuth()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M20.5 8.5h-1.8l-.4-2.1c0-.2-.2-.4-.4-.4l-1.1-.1c-.1-.6-.6-1-1.2-.9l-.7-3.5c0-.2-.2-.3-.4-.3-.1 0-.3.1-.3.2l-1 1.3c-.8-.1-1.6.1-2.3.5l-1-1.1c-.1-.2-.4-.2-.5 0l-1.9.7c-.3.1-.4.4-.3.6l.7 2.1c-.5.5-.9 1.2-1 1.9H5.5c-.3 0-.5.2-.5.5v11c0 .3.2.5.5.5h15c.3 0 .5-.2.5-.5v-11c0-.3-.2-.5-.5-.5zm-8.5 9c-1.9 0-3.5-1.6-3.5-3.5S9.6 10.5 11.5 10.5 15 12.1 15 14s-1.6 3.5-3.5 3.5zm0-5.5c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" fill="#96BF48"/>
+          </svg>
+          Shopify ile devam et
+        </button>
+
         <!-- OR -->
         <div class="or-divider">VEYA</div>
 
@@ -621,6 +628,38 @@
         <div class="toggle-row" id="toggleRow">
           Hesabın yok mu?
           <button class="toggle-btn" onclick="switchMode('signup')">Kaydol</button>
+        </div>
+      </div>
+
+      <!-- Shopify Domain Modal -->
+      <div id="shopify-domain-modal" style="display:none; position:fixed; inset:0;
+        background:rgba(0,0,0,0.4); z-index:1000;
+        align-items:center; justify-content:center;">
+        <div style="background:#fff; border-radius:16px; padding:28px;
+          width:90%; max-width:400px; box-shadow:0 8px 32px rgba(0,0,0,0.12);">
+          <h3 style="margin:0 0 8px; font-size:16px; font-weight:600; color:#1a1a1a;">
+            Shopify mağaza adresin nedir?
+          </h3>
+          <p style="margin:0 0 16px; font-size:13px; color:#666; line-height:1.5;">
+            Shopify admin panelindeki mağaza adresini gir.
+          </p>
+          <input id="shopify-domain-input" type="text"
+            placeholder="magazaadi.myshopify.com"
+            style="width:100%; padding:10px 12px; border:1px solid var(--line);
+            border-radius:var(--radius); font-size:14px; box-sizing:border-box;
+            margin-bottom:12px; font-family:'Geist',sans-serif; outline:none;">
+          <button onclick="connectShopify()"
+            style="width:100%; padding:11px; background:var(--accent);
+            color:#fff; border:none; border-radius:var(--radius);
+            font-size:14px; font-weight:600; font-family:'Geist',sans-serif;
+            cursor:pointer; margin-bottom:8px;">
+            Bağlan
+          </button>
+          <button onclick="closeShopifyModal()"
+            style="width:100%; padding:8px; background:none; border:none;
+            font-size:13px; color:#666; cursor:pointer; font-family:'Geist',sans-serif;">
+            İptal
+          </button>
         </div>
       </div>
 
@@ -992,6 +1031,43 @@ document.getElementById('emailInput').addEventListener('keydown', function(e) {
     if (input) { input.value = emailParam; }
     switchMode('signup');
     onEmailInput(emailParam);
+  }
+})();
+
+// ── Shopify OAuth ──────────────────────────────────────────────────────────────
+var _shopifyApi = location.hostname === 'localhost'
+  ? 'http://localhost:3001'
+  : 'https://upsheet-ai.onrender.com';
+
+function startShopifyAuth() {
+  document.getElementById('shopify-domain-modal').style.display = 'flex';
+  setTimeout(function() { document.getElementById('shopify-domain-input').focus(); }, 100);
+}
+
+function closeShopifyModal() {
+  document.getElementById('shopify-domain-modal').style.display = 'none';
+}
+
+function connectShopify() {
+  var domain = document.getElementById('shopify-domain-input').value.trim();
+  if (!domain) return;
+  if (!domain.includes('.myshopify.com')) domain = domain + '.myshopify.com';
+  window.location.href = _shopifyApi + '/api/shopify/auth?shop=' + encodeURIComponent(domain);
+}
+
+document.getElementById('shopify-domain-input').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') connectShopify();
+});
+
+// Shopify callback hata kontrolü
+(function() {
+  var _sp = new URLSearchParams(window.location.search);
+  if (_sp.get('shopify_error')) {
+    var errEl = document.getElementById('authError');
+    if (errEl) {
+      errEl.textContent = 'Shopify bağlantısı başarısız. Tekrar deneyin.';
+      errEl.style.display = 'block';
+    }
   }
 })();
 </script>

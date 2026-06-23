@@ -167,6 +167,12 @@
             <input type="text" id="dd-trello-board" placeholder="Board ID">
             <button class="dd-int-send" data-provider="trello">Gönder</button>
           </div>
+
+          <div class="dd-int-row">
+            <span class="dd-int-dot" id="dd-dot-shopify"></span>
+            <span class="dd-int-name">Shopify</span>
+            <button class="dd-int-btn" id="dd-btn-shopify" data-provider="shopify">Bağla</button>
+          </div>
         </div>
       </span>
       <button class="btn btn-pdf" id="pdf-add-btn">
@@ -1884,8 +1890,42 @@
       .catch(function() {});
   }
 
+  function checkShopifyStatus() {
+    try {
+      var local = JSON.parse(localStorage.getItem('int_shopify') || 'null');
+      if (local && local.connected) showShopifyIndicator(local.shop_name || local.shop);
+    } catch(e) {}
+    var tok = typeof getToken === 'function' ? getToken() : null;
+    if (!tok) return;
+    fetch(apiBase + '/api/shopify/status', { headers: authHeaders() })
+      .then(function(r) { return r.json(); })
+      .then(function(d) {
+        if (d.connected) {
+          showShopifyIndicator(d.shop_name || d.shop_domain);
+          localStorage.setItem('int_shopify', JSON.stringify({
+            connected: true, shop: d.shop_domain, shop_name: d.shop_name
+          }));
+        }
+      }).catch(function() {});
+  }
+
+  function showShopifyIndicator(shopName) {
+    if (!document.getElementById('shopify-indicator')) {
+      var el = document.createElement('div');
+      el.id = 'shopify-indicator';
+      el.style.cssText = 'display:flex;align-items:center;gap:8px;padding:7px 12px;margin:4px 8px;background:#f0fdf4;border:0.5px solid #bbf7d0;border-radius:8px;font-size:12px;color:#166534;';
+      el.innerHTML = '<svg width="8" height="8"><circle cx="4" cy="4" r="4" fill="#22c55e"/></svg><span>' + (shopName || 'Shopify bağlı') + '</span>';
+      var ws = document.querySelector('.ws-switcher');
+      if (ws && ws.parentNode) ws.parentNode.insertBefore(el, ws.nextSibling);
+    }
+    var dot = document.getElementById('dd-dot-shopify');
+    if (dot) dot.classList.add('connected');
+    var btn = document.getElementById('dd-btn-shopify');
+    if (btn) { btn.textContent = 'Bağlı'; btn.className = 'dd-int-btn primary'; }
+  }
+
   function updateDdIntDots() {
-    ['google-sheets','google-drive','gmail','slack','teams','make','airtable','trello'].forEach(function(p) {
+    ['google-sheets','google-drive','gmail','slack','teams','make','airtable','trello','shopify'].forEach(function(p) {
       var dot = document.getElementById('dd-dot-' + p);
       var btn = document.getElementById('dd-btn-' + p);
       if (!dot || !btn) return;
@@ -2972,6 +3012,12 @@
 document.addEventListener('DOMContentLoaded', function() {
   window.popupSystem = new PopupSystem({ page: 'app' });
   window.popupSystem.init();
+  // Shopify bağlantı kontrolü
+  var _urlP = new URLSearchParams(location.search);
+  if (_urlP.get('shopify') === 'connected') {
+    history.replaceState({}, '', 'app.html');
+  }
+  if (typeof checkShopifyStatus === 'function') checkShopifyStatus();
 });
 </script>
 
