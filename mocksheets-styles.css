@@ -1448,3 +1448,15 @@
       linear-gradient(var(--brand) 1px, transparent 1px) 50% 0/ 100% 50% no-repeat,
       linear-gradient(90deg, var(--brand) 1px, transparent 1px) 0 50%/ 50% 100% no-repeat;
   }
+
+/* #features — responsive + dark mode */
+@media (max-width: 768px) {
+  #features .features-grid { grid-template-columns: 1fr !important; }
+  #features .sector-grid   { grid-template-columns: 1fr 1fr !important; }
+}
+[data-theme="dark"] #features .step-card-bg {
+  background: var(--surface, #1a1a1a) !important;
+  border-color: var(--line, #333) !important;
+}
+[data-theme="dark"] #features h2,
+[data-theme="dark"] #features h3 { color: var(--fg, #f9fafb) !important; }

@@ -1191,141 +1191,232 @@
   </div>
 </section>
 
-<!-- FEATURES BENTO -->
-<section id="features" style="padding:80px 0 30px">
-  <div class="wrap">
-    <div class="section-head">
-      <div>
-        <div class="section-eyebrow">— neler yapıyor</div>
-        <h2 class="section-title">Operasyonlar İçin Tek Gerçek Kaynak.</h2>
-      </div>
-      <p class="section-sub">
-        Verileri, ekipleri ve süreçleri tek bir yerde bir araya getirin.
-      </p>
+<!-- FEATURES -->
+<section id="features" style="padding: 80px 0;">
+  <div style="max-width:1100px; margin:0 auto; padding:0 24px;">
+
+    <!-- Başlık -->
+    <div style="text-align:center; margin-bottom:48px;">
+      <h2 style="font-size:clamp(28px,4vw,40px); font-weight:500; color:var(--ink,#111); margin:0 0 14px; line-height:1.2;">Veriden karara.<br>Üç adımda.</h2>
+      <p style="font-size:16px; color:var(--muted,#6b7280); margin:0 auto; max-width:460px; line-height:1.7;">Formül yok. Teknik bilgi yok. Sadece ne istediğinizi yazın — Mocksheets gerisini halleder.</p>
     </div>
 
-    <div class="bento">
-      <!-- Feature 1: Turkish natural commands -->
-      <div class="tile span-7">
-        <div class="kicker">01 · TÜRKÇE KOMUTLAR</div>
-        <h3>Komut ver. Mocksheets anlar.</h3>
-        <p>"Hedef üstü satırları yeşile boya", "Tekrar eden hesapları birleştir", "Her satır için komisyon hesapla" — ilk seferde doğru, her seferinde.</p>
-  <p style="font-size:11px;color:var(--mute);margin-top:8px">→ "Bu ayın en çok satan ürünleri listele"</p>
-        <div class="illus" style="padding:14px;background:var(--paper-2)">
-          <div class="cmd-list">
-            <div class="cmd-row"><span class="ar">›</span><span>Hedef üstü satırları yeşile boya</span><span class="out" style="margin-left:auto">+89 hücre</span></div>
-            <div class="cmd-row"><span class="ar">›</span><span>Tekrar eden şirket girişlerini birleştir</span><span class="out" style="margin-left:auto">12 grup</span></div>
-            <div class="cmd-row"><span class="ar">›</span><span>Her satır için komisyon hesapla</span><span class="out" style="margin-left:auto">+34 hücre</span></div>
-            <div class="cmd-row"><span class="ar">›</span><span>Şubat öncesi satırları gizle</span><span class="out" style="margin-left:auto">-118 satır</span></div>
+    <!-- 3 Ana Kart -->
+    <div class="features-grid" style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-bottom:12px;">
+
+      <!-- KART 1: BAĞLA -->
+      <div class="step-card-bg" style="background:#fff; border:0.5px solid #e5e7eb; border-radius:16px; padding:28px; display:flex; flex-direction:column; gap:18px;">
+        <div style="width:40px; height:40px; border-radius:10px; background:#f9fafb; border:0.5px solid #e5e7eb; display:flex; align-items:center; justify-content:center;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M18 8h1a4 4 0 010 8h-1M6 8H5a4 4 0 000 8h1M6 12h12" stroke="#111" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div>
+          <p style="font-size:11px; color:#9ca3af; margin:0 0 8px; letter-spacing:0.08em;">01 · BAĞLA</p>
+          <h3 style="font-size:17px; font-weight:500; color:#111; margin:0 0 8px; line-height:1.4;">Veriniz neredeyse<br>oradan çekin.</h3>
+          <p style="font-size:13px; color:#6b7280; margin:0; line-height:1.7;">200'den fazla kaynakla bağlantı kurun. Veriyi içe aktarın, birleştirin, hazırlayın.</p>
+        </div>
+        <div style="display:flex; flex-wrap:wrap; gap:7px; margin-top:auto;">
+
+          <!-- Excel pill -->
+          <span style="display:inline-flex; align-items:center; gap:6px; padding:5px 11px; background:#f9fafb; border:0.5px solid #e5e7eb; border-radius:20px; font-size:11px; color:#374151;">
+            <svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" fill="none" stroke="#217346" stroke-width="1.5" stroke-linejoin="round"/>
+              <polyline points="14,2 14,8 20,8" fill="none" stroke="#217346" stroke-width="1.5" stroke-linejoin="round"/>
+              <line x1="8" y1="13" x2="16" y2="13" stroke="#217346" stroke-width="1.5" stroke-linecap="round"/>
+              <line x1="8" y1="17" x2="16" y2="17" stroke="#217346" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            Excel
+          </span>
+
+          <!-- CSV pill -->
+          <span style="display:inline-flex; align-items:center; gap:6px; padding:5px 11px; background:#f9fafb; border:0.5px solid #e5e7eb; border-radius:20px; font-size:11px; color:#374151;">
+            <svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" fill="none" stroke="#6b7280" stroke-width="1.5" stroke-linejoin="round"/>
+              <polyline points="14,2 14,8 20,8" fill="none" stroke="#6b7280" stroke-width="1.5" stroke-linejoin="round"/>
+            </svg>
+            CSV
+          </span>
+
+          <!-- PDF pill -->
+          <span style="display:inline-flex; align-items:center; gap:6px; padding:5px 11px; background:#f9fafb; border:0.5px solid #e5e7eb; border-radius:20px; font-size:11px; color:#374151;">
+            <svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" fill="none" stroke="#ef4444" stroke-width="1.5" stroke-linejoin="round"/>
+              <polyline points="14,2 14,8 20,8" fill="none" stroke="#ef4444" stroke-width="1.5" stroke-linejoin="round"/>
+              <text x="7" y="18" font-size="5" fill="#ef4444" font-weight="bold">PDF</text>
+            </svg>
+            PDF
+          </span>
+
+          <!-- Shopify pill -->
+          <span style="display:inline-flex; align-items:center; gap:6px; padding:5px 11px; background:#f9fafb; border:0.5px solid #e5e7eb; border-radius:20px; font-size:11px; color:#374151;">
+            <svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M15.337 2.094C15.215 2.033 15.078 2 14.938 2c-.32 0-.614.148-.805.399l-1.07 1.403C11.985 3.3 10.88 3.5 10 4.2L8.5 3.1C8.3 2.96 8.06 2.9 7.82 2.93L5.1 3.44C4.48 3.56 4.05 4.14 4.1 4.77L4.5 9H3a1 1 0 000 2h.7l.8 8.1c.09.9.84 1.6 1.74 1.6h11.5c.9 0 1.65-.7 1.74-1.6L20.3 11H21a1 1 0 000-2h-1.5l.4-4.23c.05-.63-.38-1.21-1-1.33l-3.563-.35z" fill="#96BF48"/>
+            </svg>
+            Shopify
+          </span>
+
+          <!-- HubSpot pill -->
+          <span style="display:inline-flex; align-items:center; gap:6px; padding:5px 11px; background:#f9fafb; border:0.5px solid #e5e7eb; border-radius:20px; font-size:11px; color:#374151;">
+            <svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="3" fill="#ff7a59"/>
+              <path d="M12 3v3M12 18v3M3 12h3M18 12h3" stroke="#ff7a59" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            HubSpot
+          </span>
+
+          <span style="display:inline-flex; align-items:center; padding:5px 11px; background:#f9fafb; border:0.5px solid #e5e7eb; border-radius:20px; font-size:11px; color:#9ca3af;">+195 daha</span>
+        </div>
+      </div>
+
+      <!-- KART 2: YAZ (vurgulu) -->
+      <div class="step-card-bg" style="background:#fff; border:2px solid #6366f1; border-radius:16px; padding:28px; display:flex; flex-direction:column; gap:18px; position:relative;">
+        <div style="position:absolute; top:-14px; left:50%; transform:translateX(-50%); background:#6366f1; color:#fff; font-size:11px; padding:4px 16px; border-radius:20px; white-space:nowrap; font-weight:500; letter-spacing:0.02em;">En güçlü adım</div>
+
+        <div style="width:40px; height:40px; border-radius:10px; background:#eef2ff; border:0.5px solid #c7d2fe; display:flex; align-items:center; justify-content:center;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" stroke="#6366f1" stroke-width="1.5" stroke-linejoin="round"/>
+          </svg>
+        </div>
+
+        <div>
+          <p style="font-size:11px; color:#9ca3af; margin:0 0 8px; letter-spacing:0.08em;">02 · YAZ</p>
+          <h3 style="font-size:17px; font-weight:500; color:#111; margin:0 0 8px; line-height:1.4;">Türkçe sorun.<br>Mocksheets anlasın.</h3>
+          <p style="font-size:13px; color:#6b7280; margin:0; line-height:1.7;">Formül değil, cümle yazın. Zincirleme komutlar verin — bağlam hafızada kalır.</p>
+        </div>
+
+        <div style="background:#f5f3ff; border:0.5px solid #ddd6fe; border-radius:10px; padding:14px; display:flex; flex-direction:column; gap:8px; margin-top:auto;">
+          <div style="display:flex; align-items:flex-start; gap:8px; background:#ede9fe; padding:9px 12px; border-radius:8px;">
+            <span style="color:#6366f1; font-size:14px; margin-top:1px; flex-shrink:0;">›</span>
+            <span style="font-size:12px; color:#4338ca; font-family:monospace; line-height:1.5;">Bu çeyrekte en yüksek maliyetli 5 kalemi bul</span>
+          </div>
+          <div style="display:flex; align-items:flex-start; gap:8px; padding:9px 12px; border-radius:8px; opacity:0.65;">
+            <span style="color:#6366f1; font-size:14px; margin-top:1px; flex-shrink:0;">›</span>
+            <span style="font-size:12px; color:#374151; font-family:monospace; line-height:1.5;">Bunları geçen çeyrekte karşılaştır</span>
+          </div>
+          <div style="display:flex; align-items:flex-start; gap:8px; padding:9px 12px; border-radius:8px; opacity:0.35;">
+            <span style="color:#6366f1; font-size:14px; margin-top:1px; flex-shrink:0;">›</span>
+            <span style="font-size:12px; color:#374151; font-family:monospace; line-height:1.5;">Slack'e rapor olarak gönder</span>
           </div>
         </div>
       </div>
 
-      <!-- Feature 2: Smart calculation -->
-      <div class="tile span-5 dark">
-        <div class="kicker" style="color:#86efac">02 · OTOMATİK HESAPLAMA</div>
-        <h3>Formül yok.<br><span style="color:#86efac">Hata yok.</span></h3>
-        <p>Toplamlar, ortalamalar, yüzdeler, koşullu işlemler — yaz ve Mocksheets doğru formülü uygular. Hesap hataları geçmişte kalır.</p>
-  <p style="font-size:11px;color:var(--mute);margin-top:8px">→ "Kategori bazlı toplam ciroyu hesapla"</p>
-        <div class="illus" style="background:#ffffff08;border-color:#ffffff14;padding:18px">
-          <div class="tax-card" style="color:#fff">
-            <div class="tax-row" style="border-color:#ffffff18"><span>Toplam Satış</span><span class="amt" style="color:#fff">$248.400,00</span></div>
-            <div class="tax-row" style="border-color:#ffffff18"><span>Komisyon (%8)</span><span class="amt" style="color:#fff">$19.872,00</span></div>
-            <div class="tax-row" style="border-color:#ffffff18"><span>İskonto (%5)</span><span class="amt" style="color:#fff">$12.420,00</span></div>
-            <div class="tax-row" style="border-color:#ffffff18"><span>Ortalama Sipariş</span><span class="amt" style="color:#fff">$1.006,00</span></div>
-            <div class="tax-row" style="color:#bbf7d0"><span>Net Gelir</span><span class="amt" style="color:#bbf7d0">$216.108,00</span></div>
-          </div>
+      <!-- KART 3: ANALİZ ET -->
+      <div class="step-card-bg" style="background:#fff; border:0.5px solid #e5e7eb; border-radius:16px; padding:28px; display:flex; flex-direction:column; gap:18px;">
+        <div style="width:40px; height:40px; border-radius:10px; background:#f0fdf4; border:0.5px solid #bbf7d0; display:flex; align-items:center; justify-content:center;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <polyline points="22,12 18,12 15,21 9,3 6,12 2,12" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
         </div>
-      </div>
 
-      <!-- Feature 3: PDF -->
-      <div class="tile span-5">
-        <div class="kicker">03 · PDF → TABLO</div>
-        <h3>Faturalar, ekstreler, belgeler —<br>tek tıkla veri.</h3>
-        <p>OCR + yapısal çıkarma. Banka ekstrelerinden faturalara, PDF'ler anında veriye dönüşür.</p>
-  <p style="font-size:11px;color:var(--mute);margin-top:8px">→ Fatura veya sipariş PDF'ini tabloya çevir</p>
-        <div class="illus" style="background:var(--paper-2)">
-          <div class="pdf-illus">
-            <div class="pdf-doc">
-              <div class="pdf-tag">FATURA.PDF</div>
-              <div class="ln w90"></div>
-              <div class="ln w70"></div>
-              <div class="ln w90"></div>
-              <div class="ln w50"></div>
-              <div class="ln w70"></div>
-              <div class="ln w90"></div>
+        <div>
+          <p style="font-size:11px; color:#9ca3af; margin:0 0 8px; letter-spacing:0.08em;">03 · ANALİZ ET</p>
+          <h3 style="font-size:17px; font-weight:500; color:#111; margin:0 0 8px; line-height:1.4;">Sonuç saniyeler içinde.<br>Paylaşıma hazır.</h3>
+          <p style="font-size:13px; color:#6b7280; margin:0; line-height:1.7;">Tablo, özet, grafik. Slack, Gmail veya Drive'a tek tıkla gönderin.</p>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:6px; margin-top:auto;">
+          <div style="display:flex; align-items:center; justify-content:space-between; padding:9px 13px; background:#f9fafb; border-radius:8px;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <polyline points="20,6 9,17 4,12" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <span style="font-size:12px; color:#111;">5 satır · sıralandı</span>
             </div>
-            <div class="arrow">→</div>
-            <div class="pdf-out">
-              <div class="r"><div class="c h">Tarih</div><div class="c h">Ürün</div><div class="c h">Tutar</div></div>
-              <div class="r"><div class="c">14.03.26</div><div class="c">A4 Kağıt</div><div class="c">$240</div></div>
-              <div class="r"><div class="c">14.03.26</div><div class="c">Kalemler</div><div class="c">$85</div></div>
-              <div class="r"><div class="c">15.03.26</div><div class="c">Toner</div><div class="c">$1.420</div></div>
+            <span style="font-size:11px; color:#9ca3af;">3 sn</span>
+          </div>
+          <div style="display:flex; align-items:center; justify-content:space-between; padding:9px 13px; background:#f9fafb; border-radius:8px;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <polyline points="20,6 9,17 4,12" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <span style="font-size:12px; color:#111;">Çeyrek karşılaştırması</span>
             </div>
+            <span style="font-size:11px; color:#9ca3af;">2 sn</span>
           </div>
-        </div>
-      </div>
-
-      <!-- Feature 4: Shopify integration -->
-      <div class="tile span-4">
-        <div class="kicker">04 · SHOPİFY</div>
-        <h3>Mağaza verisini<br>direkt analiz et.</h3>
-        <p>Shopify mağazanı bağla, sipariş ve ürün verilerini tek komutla analiz et.</p>
-        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px">
-          <span class="gc-tag">Siparişler</span>
-          <span class="gc-tag">Ürünler</span>
-          <span class="gc-tag">Müşteriler</span>
-        </div>
-        <div class="illus" style="background:var(--paper-2);padding:14px;display:flex;flex-direction:column;gap:6px">
-          <div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:#fff;border:1px solid var(--line);border-radius:8px;font-size:12px">
-            <svg width="14" height="14" viewBox="0 0 109 124" style="flex-shrink:0"><path fill="#95BF47" d="M74.7 14.8c-.1 0-.3 0-.8.1-.5-1.4-1.3-2.6-2.3-3.6-1.2-1.3-2.8-2-4.5-2h-.4c-.5-.7-1.1-1.2-1.8-1.6-2.3-1.3-5.1-.8-7.3.9C53.2 11.8 50 17 48.7 22.8l-10 3.1c-3 .9-3.1.9-3.4 3.8L27.8 87l59.8 10 18.3-4.1L92.2 17.7l-17.5-2.9z"/><path fill="#5E8E3E" d="M74 14.9L57.8 99.3 87.6 97l18.3-4.1L92.2 17.7 74 14.9z"/><path fill="#fff" d="M67.3 38.4l-2.1.6s-1.2-3.3-4.2-3.3c-2.8 0-2.9 1.7-2.9 2.1 0 2.9 9.2 4 9.2 10.8 0 5.3-3.4 8.8-8 8.8-5.5 0-8.3-3.4-8.3-3.4l1.5-4.9s2.9 2.5 5.3 2.5c1.6 0 2.3-.8 2.3-1.9 0-3.3-7.5-3.4-7.5-9.6 0-4.9 3.5-9.7 10.7-9.7 4.8 0 4 8.4 4 8.4h-.2z"/></svg>
-            <span style="color:var(--ink-2);font-family:'Geist Mono',monospace;font-size:11px">SİPARİŞ #4821</span>
-            <span style="margin-left:auto;color:#16a34a;font-weight:600;font-size:12px">$340</span>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:#fff;border:1px solid var(--line);border-radius:8px;font-size:12px">
-            <svg width="14" height="14" viewBox="0 0 109 124" style="flex-shrink:0"><path fill="#95BF47" d="M74.7 14.8c-.1 0-.3 0-.8.1-.5-1.4-1.3-2.6-2.3-3.6-1.2-1.3-2.8-2-4.5-2h-.4c-.5-.7-1.1-1.2-1.8-1.6-2.3-1.3-5.1-.8-7.3.9C53.2 11.8 50 17 48.7 22.8l-10 3.1c-3 .9-3.1.9-3.4 3.8L27.8 87l59.8 10 18.3-4.1L92.2 17.7l-17.5-2.9z"/><path fill="#5E8E3E" d="M74 14.9L57.8 99.3 87.6 97l18.3-4.1L92.2 17.7 74 14.9z"/><path fill="#fff" d="M67.3 38.4l-2.1.6s-1.2-3.3-4.2-3.3c-2.8 0-2.9 1.7-2.9 2.1 0 2.9 9.2 4 9.2 10.8 0 5.3-3.4 8.8-8 8.8-5.5 0-8.3-3.4-8.3-3.4l1.5-4.9s2.9 2.5 5.3 2.5c1.6 0 2.3-.8 2.3-1.9 0-3.3-7.5-3.4-7.5-9.6 0-4.9 3.5-9.7 10.7-9.7 4.8 0 4 8.4 4 8.4h-.2z"/></svg>
-            <span style="color:var(--ink-2);font-family:'Geist Mono',monospace;font-size:11px">SİPARİŞ #4822</span>
-            <span style="margin-left:auto;color:#16a34a;font-weight:600;font-size:12px">$218</span>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:#fff;border:1px solid var(--line);border-radius:8px;font-size:12px">
-            <svg width="14" height="14" viewBox="0 0 109 124" style="flex-shrink:0"><path fill="#95BF47" d="M74.7 14.8c-.1 0-.3 0-.8.1-.5-1.4-1.3-2.6-2.3-3.6-1.2-1.3-2.8-2-4.5-2h-.4c-.5-.7-1.1-1.2-1.8-1.6-2.3-1.3-5.1-.8-7.3.9C53.2 11.8 50 17 48.7 22.8l-10 3.1c-3 .9-3.1.9-3.4 3.8L27.8 87l59.8 10 18.3-4.1L92.2 17.7l-17.5-2.9z"/><path fill="#5E8E3E" d="M74 14.9L57.8 99.3 87.6 97l18.3-4.1L92.2 17.7 74 14.9z"/><path fill="#fff" d="M67.3 38.4l-2.1.6s-1.2-3.3-4.2-3.3c-2.8 0-2.9 1.7-2.9 2.1 0 2.9 9.2 4 9.2 10.8 0 5.3-3.4 8.8-8 8.8-5.5 0-8.3-3.4-8.3-3.4l1.5-4.9s2.9 2.5 5.3 2.5c1.6 0 2.3-.8 2.3-1.9 0-3.3-7.5-3.4-7.5-9.6 0-4.9 3.5-9.7 10.7-9.7 4.8 0 4 8.4 4 8.4h-.2z"/></svg>
-            <span style="color:var(--ink-2);font-family:'Geist Mono',monospace;font-size:11px">SİPARİŞ #4823</span>
-            <span style="margin-left:auto;color:#16a34a;font-weight:600;font-size:12px">$95</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Feature 5: undo / history -->
-      <div class="tile span-4">
-        <div class="kicker">05 · GERİ AL</div>
-        <h3>Her işlem geri alınabilir.</h3>
-        <p>Her komuttan sonra sürüm geçmişi otomatik kaydedilir. ⌘Z ile istediğin kadar geriye dön.</p>
-  <p style="font-size:11px;color:var(--mute);margin-top:8px">→ Yanlış güncellenen stok verisini geri al</p>
-        <div class="illus" style="background:var(--paper-2);display:flex;flex-direction:column;justify-content:center;padding:14px;gap:6px">
-          <div class="cmd-row" style="background:#fff"><span class="ar">●</span><span style="font-size:12.5px">14:23 · Komisyon sütunu eklendi</span></div>
-          <div class="cmd-row" style="background:#fff"><span class="ar">●</span><span style="font-size:12.5px">14:23 · Sarı renklendirme uygulandı</span></div>
-          <div class="cmd-row" style="background:var(--violet);color:#fff;border-color:transparent"><span style="color:#fff">●</span><span style="font-size:12.5px">14:24 · Pivot oluşturuldu ← şimdi</span></div>
-          <div class="cmd-row" style="background:#fff;opacity:.5"><span class="ar">○</span><span style="font-size:12.5px">14:25 · Rapor dışa aktarıldı</span></div>
-        </div>
-      </div>
-
-      <!-- Feature 6: live cursor / collab -->
-      <div class="tile span-4 violet">
-        <div class="kicker" style="color:#ffffffcc">06 · TAKIM</div>
-        <h3>Tüm ekibiniz aynı anda<br>tek tabloda.</h3>
-        <p>Canlı imleçler, yorum dizileri, paylaşılan komut geçmişi. Ops ekipleri için gerçek zamanlı işbirliği.</p>
-  <p style="font-size:11px;color:var(--mute);margin-top:8px">→ Operasyon ve satış ekibini aynı tabloda çalıştır</p>
-        <div class="illus" style="background:#ffffff14;border-color:#ffffff20;display:flex;align-items:center;justify-content:center;gap:-8px;padding:0">
-          <div style="display:flex;gap:-12px">
-            <div class="avatar" style="background:#FFD0B0;color:#0e0e10;border:3px solid #16a34a;margin-right:-12px">JK</div>
-            <div class="avatar" style="background:#BFE5FF;color:#0e0e10;border:3px solid #16a34a;margin-right:-12px">MT</div>
-            <div class="avatar" style="background:#bbf7d0;color:#0e0e10;border:3px solid #16a34a;margin-right:-12px">SA</div>
-            <div class="avatar" style="background:#fff;color:#16a34a;border:3px solid #16a34a">+4</div>
+          <div style="display:flex; align-items:center; justify-content:space-between; padding:9px 13px; background:#f0fdf4; border-radius:8px; border:0.5px solid #bbf7d0;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M14.5 10c-.83 0-1.5-.67-1.5-1.5v-5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5v5c0 .83-.67 1.5-1.5 1.5z" fill="#E01E5A"/>
+                <path d="M20.5 10H19V8.5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z" fill="#E01E5A"/>
+                <path d="M9.5 14c.83 0 1.5.67 1.5 1.5v5c0 .83-.67 1.5-1.5 1.5S8 21.33 8 20.5v-5c0-.83.67-1.5 1.5-1.5z" fill="#36C5F0"/>
+                <path d="M3.5 14H5v1.5c0 .83-.67 1.5-1.5 1.5S2 16.33 2 15.5 2.67 14 3.5 14z" fill="#36C5F0"/>
+                <path d="M14 14.5c0-.83.67-1.5 1.5-1.5h5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5h-5c-.83 0-1.5-.67-1.5-1.5z" fill="#2EB67D"/>
+                <path d="M14 19v-1.5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5S16.33 19 15.5 19H14z" fill="#2EB67D"/>
+                <path d="M10 9.5c0 .83-.67 1.5-1.5 1.5h-5C2.67 11 2 10.33 2 9.5S2.67 8 3.5 8h5c.83 0 1.5.67 1.5 1.5z" fill="#ECB22E"/>
+                <path d="M10 5v1.5c0 .83-.67 1.5-1.5 1.5S7 7.33 7 6.5V5h3z" fill="#ECB22E"/>
+              </svg>
+              <span style="font-size:12px; color:#16a34a; font-weight:500;">Slack'e gönderildi</span>
+            </div>
+            <span style="font-size:11px; color:#16a34a;">1 sn</span>
           </div>
         </div>
       </div>
 
     </div>
+
+    <!-- Alt Sektör Kartları -->
+    <div style="border-top:0.5px solid #e5e7eb; padding-top:28px; margin-top:4px;">
+      <p style="font-size:11px; color:#9ca3af; text-align:center; margin:0 0 16px; letter-spacing:0.06em; text-transform:uppercase;">Her sektörde, her veri türünde çalışır</p>
+      <div class="sector-grid" style="display:grid; grid-template-columns:repeat(4,1fr); gap:8px;">
+
+        <div style="padding:14px 16px; background:#fffbeb; border:0.5px solid #fde68a; border-radius:12px; display:flex; align-items:center; gap:12px;">
+          <div style="width:34px; height:34px; border-radius:8px; background:#fef3c7; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" stroke="#d97706" stroke-width="1.5" stroke-linejoin="round"/>
+              <line x1="3" y1="6" x2="21" y2="6" stroke="#d97706" stroke-width="1.5"/>
+              <path d="M16 10a4 4 0 01-8 0" stroke="#d97706" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div>
+            <p style="font-size:12px; font-weight:500; color:#111; margin:0 0 2px;">E-ticaret</p>
+            <p style="font-size:11px; color:#92400e; margin:0;">Sipariş, stok, müşteri</p>
+          </div>
+        </div>
+
+        <div style="padding:14px 16px; background:#eff6ff; border:0.5px solid #bfdbfe; border-radius:12px; display:flex; align-items:center; gap:12px;">
+          <div style="width:34px; height:34px; border-radius:8px; background:#dbeafe; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <rect x="2" y="7" width="20" height="14" rx="2" stroke="#2563eb" stroke-width="1.5"/>
+              <path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2" stroke="#2563eb" stroke-width="1.5" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div>
+            <p style="font-size:12px; font-weight:500; color:#111; margin:0 0 2px;">Operasyon</p>
+            <p style="font-size:11px; color:#1e40af; margin:0;">Süreç, ekip, görev</p>
+          </div>
+        </div>
+
+        <div style="padding:14px 16px; background:#f0fdf4; border:0.5px solid #bbf7d0; border-radius:12px; display:flex; align-items:center; gap:12px;">
+          <div style="width:34px; height:34px; border-radius:8px; background:#dcfce7; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <line x1="12" y1="1" x2="12" y2="23" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round"/>
+              <path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div>
+            <p style="font-size:12px; font-weight:500; color:#111; margin:0 0 2px;">Finans</p>
+            <p style="font-size:11px; color:#166534; margin:0;">Gelir, gider, bütçe</p>
+          </div>
+        </div>
+
+        <div style="padding:14px 16px; background:#fdf4ff; border:0.5px solid #e9d5ff; border-radius:12px; display:flex; align-items:center; gap:12px;">
+          <div style="width:34px; height:34px; border-radius:8px; background:#f3e8ff; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" stroke="#9333ea" stroke-width="1.5" stroke-linecap="round"/>
+              <circle cx="9" cy="7" r="4" stroke="#9333ea" stroke-width="1.5"/>
+              <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke="#9333ea" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div>
+            <p style="font-size:12px; font-weight:500; color:#111; margin:0 0 2px;">İnsan Kaynakları</p>
+            <p style="font-size:11px; color:#6b21a8; margin:0;">Personel, izin, performans</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
   </div>
 </section>
 
