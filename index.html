@@ -1210,6 +1210,7 @@
         <div class="kicker">01 · TÜRKÇE KOMUTLAR</div>
         <h3>Komut ver. Mocksheets anlar.</h3>
         <p>"Hedef üstü satırları yeşile boya", "Tekrar eden hesapları birleştir", "Her satır için komisyon hesapla" — ilk seferde doğru, her seferinde.</p>
+  <p style="font-size:11px;color:var(--mute);margin-top:8px">→ "Bu ayın en çok satan ürünleri listele"</p>
         <div class="illus" style="padding:14px;background:var(--paper-2)">
           <div class="cmd-list">
             <div class="cmd-row"><span class="ar">›</span><span>Hedef üstü satırları yeşile boya</span><span class="out" style="margin-left:auto">+89 hücre</span></div>
@@ -1225,6 +1226,7 @@
         <div class="kicker" style="color:#86efac">02 · OTOMATİK HESAPLAMA</div>
         <h3>Formül yok.<br><span style="color:#86efac">Hata yok.</span></h3>
         <p>Toplamlar, ortalamalar, yüzdeler, koşullu işlemler — yaz ve Mocksheets doğru formülü uygular. Hesap hataları geçmişte kalır.</p>
+  <p style="font-size:11px;color:var(--mute);margin-top:8px">→ "Kategori bazlı toplam ciroyu hesapla"</p>
         <div class="illus" style="background:#ffffff08;border-color:#ffffff14;padding:18px">
           <div class="tax-card" style="color:#fff">
             <div class="tax-row" style="border-color:#ffffff18"><span>Toplam Satış</span><span class="amt" style="color:#fff">$248.400,00</span></div>
@@ -1241,6 +1243,7 @@
         <div class="kicker">03 · PDF → TABLO</div>
         <h3>Faturalar, ekstreler, belgeler —<br>tek tıkla veri.</h3>
         <p>OCR + yapısal çıkarma. Banka ekstrelerinden faturalara, PDF'ler anında veriye dönüşür.</p>
+  <p style="font-size:11px;color:var(--mute);margin-top:8px">→ Fatura veya sipariş PDF'ini tabloya çevir</p>
         <div class="illus" style="background:var(--paper-2)">
           <div class="pdf-illus">
             <div class="pdf-doc">
@@ -1297,6 +1300,7 @@
         <div class="kicker">05 · GERİ AL</div>
         <h3>Her işlem geri alınabilir.</h3>
         <p>Her komuttan sonra sürüm geçmişi otomatik kaydedilir. ⌘Z ile istediğin kadar geriye dön.</p>
+  <p style="font-size:11px;color:var(--mute);margin-top:8px">→ Yanlış güncellenen stok verisini geri al</p>
         <div class="illus" style="background:var(--paper-2);display:flex;flex-direction:column;justify-content:center;padding:14px;gap:6px">
           <div class="cmd-row" style="background:#fff"><span class="ar">●</span><span style="font-size:12.5px">14:23 · Komisyon sütunu eklendi</span></div>
           <div class="cmd-row" style="background:#fff"><span class="ar">●</span><span style="font-size:12.5px">14:23 · Sarı renklendirme uygulandı</span></div>
@@ -1310,6 +1314,7 @@
         <div class="kicker" style="color:#ffffffcc">06 · TAKIM</div>
         <h3>Tüm ekibiniz aynı anda<br>tek tabloda.</h3>
         <p>Canlı imleçler, yorum dizileri, paylaşılan komut geçmişi. Ops ekipleri için gerçek zamanlı işbirliği.</p>
+  <p style="font-size:11px;color:var(--mute);margin-top:8px">→ Operasyon ve satış ekibini aynı tabloda çalıştır</p>
         <div class="illus" style="background:#ffffff14;border-color:#ffffff20;display:flex;align-items:center;justify-content:center;gap:-8px;padding:0">
           <div style="display:flex;gap:-12px">
             <div class="avatar" style="background:#FFD0B0;color:#0e0e10;border:3px solid #16a34a;margin-right:-12px">JK</div>
@@ -1336,8 +1341,9 @@
         Mocksheets, ekibinizin zaten kullandığı araçlarla bağlantı kurar. Veri içe aktar,
         otomasyonları tetikle, tablolarını senkronize et.
       </p>
-      <div style="margin-top:12px;display:flex;align-items:center;gap:8px">
+      <div style="margin-top:12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
         <span style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);border-radius:20px;padding:4px 14px;font-size:12px;font-weight:600;color:rgba(255,255,255,0.85);letter-spacing:0.02em">200+ entegrasyon ile çalışır</span>
+        <span style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);border-radius:20px;padding:4px 14px;font-size:11px;color:rgba(255,255,255,0.65)">Shopify → Mocksheets → Slack · Haftalık sipariş raporu otomatik Slack'e gelir</span>
       </div>
     </div>
 
@@ -2103,6 +2109,22 @@
         <div class="faq-a">Hayır. Tek tıkla iptal. Sözleşme yok, gizli ücret yok. İptal anında geçerlidir, bir sonraki fatura kesilmez.</div>
       </div>
 
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
+          E-ticaret mağazam için kullanabilir miyim?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">Evet. Shopify, WooCommerce, Trendyol, Hepsiburada ve diğer platformlardan aldığınız CSV dosyalarını yükleyip analiz edebilirsiniz. Sipariş geçmişi, ürün performansı, müşteri segmentasyonu — hepsi Türkçe komutla.</div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
+          Shopify verimi nasıl bağlarım?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">Shopify entegrasyonu ile mağazanızı doğrudan bağlayabilirsiniz. Sipariş, ürün ve müşteri verileriniz otomatik olarak Mocksheets'e aktarılır. Bağlantı kurmak 2 dakika sürer.</div>
+      </div>
+
     </div>
   </div>
 </section>
@@ -2170,7 +2192,7 @@ function toggleFaq(btn) {
           <span class="brand-name">mocksheets<span class="dot">.</span></span>
         </a>
         <p style="margin:14px 0 0;max-width:36ch;color:var(--mute);font-size:14px;line-height:1.55">
-          Operasyon yöneticileri için tarayıcı tabanlı AI tablo asistanı.
+          Operasyon ve e-ticaret ekipleri için tarayıcı tabanlı AI tablo asistanı.
         </p>
         <a href="mailto:destek@mocksheets.com" style="display:inline-block;margin-top:10px;font-size:13px;color:var(--mute);text-decoration:none;">destek@mocksheets.com</a>
       </div>
@@ -2224,7 +2246,11 @@ function toggleFaq(btn) {
       "Tekrar eden şirket kayıtlarını birleştir",
       "Her satır için komisyon hesapla",
       "Şubat öncesi satırları gizle",
-      "Kategoriye göre pivot al ve toplamları hesapla"
+      "Kategoriye göre pivot al ve toplamları hesapla",
+      "Bu ayın en çok satan 10 ürünü listele",
+      "90 gündür almayan müşterileri filtrele",
+      "Stoku kritik seviyeye düşen ürünleri bul",
+      "Terk edilen sepetlerdeki müşteri listesini çıkar"
     ];
     const el = document.getElementById('typed-line');
     if(!el) return;
