@@ -685,8 +685,8 @@
   /* selected cell highlight */
   .sel-cell{
     position: absolute;
-    left: calc(40px + 96px * 4); /* col E */
-    top: calc(28px + 28px * 2); /* row 3 */
+    left: calc(96px * 4); /* col E — inside grid-scroll, no row-header offset */
+    top: calc(28px * 2); /* row 3 — inside grid-scroll, no col-header offset */
     width: 96px; height: 28px;
     border: 1.5px solid var(--brand);
     box-shadow: 0 0 0 3px var(--brand-soft);
