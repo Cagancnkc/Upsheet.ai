@@ -745,13 +745,23 @@ textarea.inp{height:auto;padding:10px 12px;resize:vertical;min-height:72px}
       <strong style="color:var(--ink-2)">Otomasyondan farkı:</strong> Agent komutu kendisi adımlara böler, karar verir ve hata olursa alternatif yol dener.
     </p>
 
+    <!-- Şablon kartları -->
+    <div id="agent-templates" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:16px"></div>
+
     <!-- Prompt input -->
     <div class="agent-input-wrap">
       <textarea id="agent-prompt" rows="3" placeholder="Örnek: Satış tablosunu analiz et, en yüksek 10 müşteriyi filtrele ve Slack #ops kanalına gönder"></textarea>
-      <button class="agent-run-btn" id="run-agent-btn" onclick="runAgent()">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-        Agent'ı Çalıştır
-      </button>
+      <input type="hidden" id="agent-template-id">
+      <div style="display:flex;gap:8px">
+        <button class="agent-run-btn" id="run-agent-btn" onclick="runAgent()" style="flex:1">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          Agent'ı Çalıştır
+        </button>
+        <button onclick="openScheduleModal()"
+          style="padding:10px 14px;border:1px solid var(--border,#e5e7eb);border-radius:8px;background:none;color:var(--ink-2);font-size:13px;cursor:pointer;white-space:nowrap">
+          ⏰ Zamanla
+        </button>
+      </div>
     </div>
 
     <!-- Live log (hidden until run starts) -->
@@ -772,9 +782,42 @@ textarea.inp{height:auto;padding:10px 12px;resize:vertical;min-height:72px}
       </div>
     </div>
 
+    <!-- Zamanlanmış Agent'lar -->
+    <div id="agent-schedules-wrap" style="margin-top:24px">
+      <h3 style="font-size:14px;font-weight:500;margin-bottom:12px">⏰ Zamanlanmış Agent'lar</h3>
+      <div id="agent-schedules-list"></div>
+    </div>
+
+    <!-- Agent Belleği -->
+    <div id="agent-memory-wrap" style="margin-top:24px;padding:14px;background:var(--surface,#f9fafb);border-radius:10px;border:0.5px solid var(--border,#e5e7eb)">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <span style="font-size:13px;font-weight:500">🧠 Agent Belleği</span>
+        <span style="font-size:12px;color:#9ca3af">Geçmiş çalıştırmalardan öğrenildi</span>
+      </div>
+      <div id="agent-memory-list">
+        <p style="font-size:12px;color:#9ca3af;margin:0">Henüz bellek yok — agent çalıştıkça öğrenir.</p>
+      </div>
+    </div>
+
   </section>
 
 </main>
+
+<!-- ═══════════════════ AGENT SCHEDULE MODAL ═══════════════════ -->
+<div id="schedule-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:1000;align-items:center;justify-content:center">
+  <div style="background:var(--surface,#fff);border-radius:12px;padding:24px;width:90%;max-width:420px;box-shadow:0 20px 60px rgba(0,0,0,.18)">
+    <h3 style="margin:0 0 16px;font-size:16px">Agent'ı Zamanla</h3>
+    <label style="font-size:13px;color:#374151">Ne zaman çalışsın?</label>
+    <select id="schedule-preset" style="width:100%;margin:6px 0 16px;padding:10px;border:1px solid var(--border,#e5e7eb);border-radius:8px;font-size:14px">
+      <option value="0 9 * * 1">Her Pazartesi 09:00</option>
+      <option value="0 9 * * *">Her gün 09:00</option>
+      <option value="0 9 * * 5">Her Cuma 09:00</option>
+      <option value="0 8 1 * *">Her ayın 1'i 08:00</option>
+    </select>
+    <button onclick="createSchedule()" style="width:100%;padding:11px;background:var(--accent,#16a34a);color:#fff;border:none;border-radius:8px;font-size:14px;cursor:pointer;font-weight:500">Zamanla</button>
+    <button onclick="document.getElementById('schedule-modal').style.display='none'" style="width:100%;padding:8px;background:none;border:none;font-size:13px;color:#6b7280;cursor:pointer;margin-top:6px">İptal</button>
+  </div>
+</div>
 
 <!-- ═══════════════════ CREATE/EDIT MODAL ═══════════════════ -->
 <div class="modal-overlay" id="create-overlay" onclick="overlayClose(event,'create-overlay')">
@@ -4051,6 +4094,9 @@ function switchPageTab(tab) {
     document.getElementById('agents-section').style.display = 'block';
     checkProMax();
     loadAgentHistory();
+    loadTemplates();
+    loadSchedules();
+    loadMemory();
   } else {
     AUTOMATION_SECTIONS.forEach(id => {
       const el = document.getElementById(id);
@@ -4091,10 +4137,15 @@ async function runAgent() {
   setAgentStatus('running');
 
   try {
-    const res = await fetch(`${API}/api/agents/run`, {
+    const templateId = document.getElementById('agent-template-id')?.value;
+    const endpoint = templateId ? `${API}/api/agents/run-template` : `${API}/api/agents/run`;
+    const body = templateId
+      ? JSON.stringify({ template_id: templateId, context: {} })
+      : JSON.stringify({ prompt, context: {} });
+    const res = await fetch(endpoint, {
       method: 'POST',
-      headers: authHeaders(),
-      body: JSON.stringify({ prompt, context: {} })
+      headers: { ...authHeaders(), 'Content-Type': 'application/json' },
+      body,
     });
     if (!res.ok) throw new Error('API hatası: ' + res.status);
     const { run_id } = await res.json();
@@ -4210,6 +4261,127 @@ async function loadAgentRun(runId) {
     }
     document.getElementById('agent-log-wrap').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   } catch {}
+}
+
+// ── AGENT TEMPLATES ────────────────────────────────────────────────────────
+
+async function loadTemplates() {
+  try {
+    const res = await fetch(`${API}/api/agents/templates`);
+    if (!res.ok) return;
+    const { templates } = await res.json();
+    renderAgentTemplates(templates);
+  } catch {}
+}
+
+function renderAgentTemplates(templates) {
+  const container = document.getElementById('agent-templates');
+  if (!container || !templates?.length) return;
+  container.innerHTML = templates.map(t => `
+    <div onclick="useTemplate('${t.id}', \`${t.prompt.replace(/`/g, '\\`')}\`)"
+      style="background:var(--surface,#fff);border:0.5px solid var(--border,#e5e7eb);border-radius:10px;padding:14px 16px;cursor:pointer;transition:border-color 0.15s;display:flex;align-items:flex-start;gap:12px">
+      <span style="font-size:22px;line-height:1">${t.icon || '⚡'}</span>
+      <div>
+        <p style="font-size:13px;font-weight:500;margin:0 0 3px;color:var(--ink)">${t.title}</p>
+        <p style="font-size:12px;color:#6b7280;margin:0">${t.description || ''}</p>
+      </div>
+    </div>
+  `).join('');
+}
+
+function useTemplate(templateId, prompt) {
+  document.getElementById('agent-prompt').value = prompt;
+  document.getElementById('agent-template-id').value = templateId;
+  document.getElementById('agent-prompt').focus();
+}
+
+// ── AGENT SCHEDULES ────────────────────────────────────────────────────────
+
+function openScheduleModal() {
+  const prompt = document.getElementById('agent-prompt').value.trim();
+  if (!prompt) { alert('Önce bir komut yaz.'); return; }
+  document.getElementById('schedule-modal').style.display = 'flex';
+}
+
+async function createSchedule() {
+  const prompt = document.getElementById('agent-prompt').value.trim();
+  const cronExpr = document.getElementById('schedule-preset').value;
+  const label = document.getElementById('schedule-preset').selectedOptions[0].text;
+  if (!prompt) return;
+
+  try {
+    const res = await fetch(`${API}/api/agents/schedules`, {
+      method: 'POST',
+      headers: { ...authHeaders(), 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt, cron_expr: cronExpr, label }),
+    });
+    if (!res.ok) throw new Error('API hatası');
+    document.getElementById('schedule-modal').style.display = 'none';
+    alert(`✅ Agent zamanlandı: ${label}`);
+    loadSchedules();
+  } catch { alert('Zamanlama oluşturulamadı.'); }
+}
+
+async function loadSchedules() {
+  try {
+    const res = await fetch(`${API}/api/agents/schedules`, { headers: authHeaders() });
+    if (!res.ok) return;
+    const { schedules } = await res.json();
+    const list = document.getElementById('agent-schedules-list');
+    if (!list) return;
+
+    if (!schedules?.length) {
+      list.innerHTML = '<p style="font-size:13px;color:#9ca3af">Zamanlanmış agent yok.</p>';
+      return;
+    }
+    list.innerHTML = schedules.map(s => `
+      <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:0.5px solid var(--border,#e5e7eb)">
+        <span style="font-size:18px">⏰</span>
+        <div style="flex:1">
+          <p style="font-size:14px;margin:0 0 2px;color:var(--ink)">${s.label || s.prompt.slice(0, 50)}</p>
+          <p style="font-size:12px;color:#9ca3af;margin:0">${s.label} · Son: ${s.last_run ? new Date(s.last_run).toLocaleDateString('tr-TR') : 'Henüz çalışmadı'}</p>
+        </div>
+        <button onclick="deleteSchedule('${s.id}')" style="font-size:12px;color:#ef4444;background:none;border:none;cursor:pointer">Durdur</button>
+      </div>
+    `).join('');
+  } catch {}
+}
+
+async function deleteSchedule(scheduleId) {
+  await fetch(`${API}/api/agents/schedules/${scheduleId}`, { method: 'DELETE', headers: authHeaders() });
+  loadSchedules();
+}
+
+// ── AGENT MEMORY ───────────────────────────────────────────────────────────
+
+async function loadMemory() {
+  try {
+    const res = await fetch(`${API}/api/agents/memory`, { headers: authHeaders() });
+    if (!res.ok) return;
+    const { memory } = await res.json();
+    const list = document.getElementById('agent-memory-list');
+    if (!list) return;
+
+    const entries = Object.entries(memory || {});
+    if (!entries.length) {
+      list.innerHTML = '<p style="font-size:12px;color:#9ca3af;margin:0">Henüz bellek yok — agent çalıştıkça öğrenir.</p>';
+      return;
+    }
+    list.innerHTML = entries.map(([key, value]) => `
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:0.5px solid var(--border,#e5e7eb)">
+        <span style="font-size:12px;color:#374151">${key.replace(/_/g, ' ')}</span>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:12px;color:#16a34a;font-weight:500">${typeof value === 'object' ? JSON.stringify(value) : value}</span>
+          <button onclick="deleteMemory('${key}')" style="font-size:11px;color:#9ca3af;background:none;border:none;cursor:pointer">✕</button>
+        </div>
+      </div>
+    `).join('');
+  } catch {}
+}
+
+async function deleteMemory(key) {
+  await fetch(`${API}/api/agents/memory/${encodeURIComponent(key)}`, { method: 'DELETE', headers: authHeaders() });
+  loadMemory();
 }
 
 // ── INIT ───────────────────────────────────────────────────────────────────

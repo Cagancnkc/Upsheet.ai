@@ -744,6 +744,12 @@ app.listen(PORT, '0.0.0.0', () => {
     scheduler.loadAndScheduleAll().catch(e => console.error('[scheduler] Init error:', e.message));
   } catch (e) { console.error('[scheduler] Load error:', e.message); }
 
+  // Initialize agent schedules
+  try {
+    const agentScheduler = require('./services/schedulerService');
+    agentScheduler.loadAndScheduleAll().catch(e => console.error('[agentScheduler] Init error:', e.message));
+  } catch (e) { console.error('[agentScheduler] Load error:', e.message); }
+
   // Onboarding email queue — saatte bir çalışır
   try {
     const cron = require('node-cron');

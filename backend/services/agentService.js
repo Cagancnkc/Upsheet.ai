@@ -16,16 +16,17 @@ const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 // ─── Step Parsing ────────────────────────────────────────────────────────────
 
 async function parseAgentSteps(prompt) {
-  const FALLBACK = [{ step_index: 0, step_type: 'analyze', step_label: 'Komutu işle' }];
+  const FALLBACK = [{ step_index: 0, step_type: 'analyze', step_label: 'Komutu işle', parallel: false }];
   try {
     const msg = await anthropic.messages.create({
       model: 'claude-haiku-4-5-20251001',
       max_tokens: 512,
       system: `Sen bir operasyon asistanısın. Kullanıcının verdiği komutu JSON formatında adımlara böl.
-Her adımda şu alanlar olsun: step_index (0'dan başlar), step_type, step_label.
+Her adımda şu alanlar olsun: step_index (0'dan başlar), step_type, step_label, parallel (boolean).
 step_type değerleri: read | analyze | send_slack | send_gmail | send_drive | send_hubspot
+Bağımsız çalışabilecek adımları parallel:true olarak işaretle. Örnek: aynı anda hem Slack hem Gmail'e gönderilebilir.
 Sadece JSON array döndür, başka hiçbir şey yazma.
-Örnek: [{"step_index":0,"step_type":"read","step_label":"Tabloyu oku"},{"step_index":1,"step_type":"analyze","step_label":"Özet çıkar"},{"step_index":2,"step_type":"send_slack","step_label":"Slack kanalına gönder"}]`,
+Örnek: [{"step_index":0,"step_type":"read","step_label":"Tabloyu oku","parallel":false},{"step_index":1,"step_type":"analyze","step_label":"Özet çıkar","parallel":false},{"step_index":2,"step_type":"send_slack","step_label":"Slack kanalına gönder","parallel":true},{"step_index":3,"step_type":"send_gmail","step_label":"Gmail ile gönder","parallel":true}]`,
       messages: [{ role: 'user', content: prompt }],
     });
 
@@ -246,4 +247,131 @@ async function runAgent(runId, userId, prompt, context = {}) {
   });
 }
 
-module.exports = { parseAgentSteps, executeStep, runAgent };
+// ─── Memory ───────────────────────────────────────────────────────────────────
+
+async function extractAndSaveMemory(userId, runId, prompt, result) {
+  try {
+    const resultStr = typeof result === 'object' ? JSON.stringify(result).slice(0, 2000) : String(result || '').slice(0, 2000);
+    const msg = await anthropic.messages.create({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 512,
+      system: `Kullanıcının agent çalıştırmasından öğrenilecek bilgileri JSON olarak çıkar.
+Örnek: tercih ettiği Slack kanalı, sık kullandığı filtreler, rapor formatı tercihi.
+Format: [{"key": "preferred_slack_channel", "value": "#ops"}]
+Öğrenilecek bir şey yoksa boş array döndür: []`,
+      messages: [{ role: 'user', content: `Komut: ${prompt}\nSonuç: ${resultStr}` }],
+    });
+    const text = msg.content[0]?.text?.trim() || '[]';
+    const entries = JSON.parse(text);
+    if (!Array.isArray(entries) || !entries.length) return;
+
+    const sb = getSupabase();
+    for (const { key, value } of entries) {
+      if (!key) continue;
+      const stored = typeof value === 'object' ? value : { v: value };
+      await sb.from('agent_memory').upsert(
+        { user_id: userId, key, value: stored, source_run_id: runId, updated_at: new Date().toISOString() },
+        { onConflict: 'user_id,key' }
+      );
+    }
+  } catch (e) {
+    console.error('[agent] extractAndSaveMemory error:', e.message);
+  }
+}
+
+async function getUserMemory(userId) {
+  try {
+    const { data } = await getSupabase()
+      .from('agent_memory')
+      .select('key, value')
+      .eq('user_id', userId);
+    const result = {};
+    for (const row of (data || [])) {
+      result[row.key] = row.value?.v !== undefined ? row.value.v : row.value;
+    }
+    return result;
+  } catch {
+    return {};
+  }
+}
+
+async function buildContextWithMemory(userId, context) {
+  const memory = await getUserMemory(userId);
+  return { ...context, memory };
+}
+
+// ─── runAgentWithMemory — memory + parallel steps ────────────────────────────
+
+async function runAgentWithMemory(runId, userId, prompt, context = {}) {
+  const ctx = { ...(await buildContextWithMemory(userId, context)), user_id: userId };
+  const sb = getSupabase();
+
+  await touchRun(runId, { status: 'running' });
+
+  let steps;
+  try {
+    steps = await parseAgentSteps(prompt);
+  } catch (err) {
+    await touchRun(runId, { status: 'failed', error: err.message });
+    return;
+  }
+  await touchRun(runId, { steps: JSON.stringify(steps) });
+
+  // Group consecutive parallel steps into batches
+  const batches = [];
+  let i = 0;
+  while (i < steps.length) {
+    if (steps[i].parallel) {
+      const batch = [];
+      while (i < steps.length && steps[i].parallel) batch.push(steps[i++]);
+      batches.push({ parallel: true, steps: batch });
+    } else {
+      batches.push({ parallel: false, steps: [steps[i++]] });
+    }
+  }
+
+  let anySuccess = false;
+  let previousOutput = null;
+
+  for (const batch of batches) {
+    if (batch.parallel) {
+      const results = await Promise.all(batch.steps.map(async (step) => {
+        await logStep(runId, step, 'running', { input: ctx });
+        try {
+          const output = await executeStep(runId, step, { ...ctx, previous_output: previousOutput });
+          await logStep(runId, step, 'completed', { output });
+          if (!output?.skipped) anySuccess = true;
+          return output;
+        } catch (err) {
+          await logStep(runId, step, 'failed', { error: err.message });
+          return null;
+        }
+      }));
+      previousOutput = results.filter(Boolean).reduce((acc, r) => ({ ...acc, ...r }), {});
+    } else {
+      const step = batch.steps[0];
+      await logStep(runId, step, 'running', { input: ctx });
+      try {
+        const output = await executeStep(runId, step, { ...ctx, previous_output: previousOutput });
+        await logStep(runId, step, 'completed', { output });
+        previousOutput = output;
+        if (!output?.skipped) anySuccess = true;
+      } catch (err) {
+        await logStep(runId, step, 'failed', { error: err.message });
+      }
+    }
+    await touchRun(runId);
+  }
+
+  const finalStatus = anySuccess ? 'completed' : 'failed';
+  await touchRun(runId, {
+    status: finalStatus,
+    result: previousOutput ? JSON.stringify(previousOutput) : null,
+  });
+
+  if (previousOutput) {
+    await extractAndSaveMemory(userId, runId, prompt, previousOutput);
+  }
+}
+
+module.exports = { parseAgentSteps, executeStep, runAgent, runAgentWithMemory, getUserMemory };
