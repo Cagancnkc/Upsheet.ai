@@ -94,6 +94,20 @@
             <button class="dd-int-send" data-provider="google-sheets">Gönder</button>
           </div>
 
+          <!-- Google Sheets Import (OAuth) -->
+          <div id="sheets-import-panel" style="padding:12px 16px; border-top:0.5px solid var(--line,#e5e7eb);">
+            <p style="font-size:12px; font-weight:500; color:var(--ink,#111); margin:0 0 8px;">Google Sheets'ten Veri Çek</p>
+            <input id="sheets-url-input" type="text" placeholder="Google Sheets URL yapıştırın"
+              style="width:100%; padding:8px 10px; font-size:12px; border:0.5px solid var(--line,#e5e7eb); border-radius:8px; background:var(--bg,#f9fafb); color:var(--ink,#111); box-sizing:border-box; margin-bottom:8px; outline:none;" />
+            <input id="sheets-range-input" type="text" placeholder="Sayfa adı veya aralık (opsiyonel)"
+              style="width:100%; padding:8px 10px; font-size:12px; border:0.5px solid var(--line,#e5e7eb); border-radius:8px; background:var(--bg,#f9fafb); color:var(--ink,#111); box-sizing:border-box; margin-bottom:8px; outline:none;" />
+            <button id="sheets-import-btn" onclick="importFromSheets()"
+              style="width:100%; padding:8px; font-size:12px; font-weight:500; background:var(--accent,#166534); color:#fff; border:none; border-radius:8px; cursor:pointer;">
+              Veriyi İçe Aktar
+            </button>
+            <div id="sheets-import-status" style="display:none; margin-top:8px; font-size:11px;"></div>
+          </div>
+
           <div class="dd-int-row">
             <span class="dd-int-dot" id="dd-dot-google-drive"></span>
             <span class="dd-int-name">Google Drive</span>
@@ -2545,6 +2559,61 @@
     var _tplBadge = document.getElementById('templates-count');
     if (_tplBadge) _tplBadge.textContent = SHEET_TEMPLATES.reduce(function(s, c) { return s + c.templates.length; }, 0);
   }
+
+  // ── Google Sheets OAuth Import ────────────────────────────────────────────
+  function showSheetsStatus(message, type) {
+    var el = document.getElementById('sheets-import-status');
+    if (!el) return;
+    el.style.display = 'block';
+    var colors = { loading: '#6b7280', success: '#16a34a', error: '#ef4444' };
+    el.style.color = colors[type] || '#6b7280';
+    el.textContent = message;
+  }
+
+  window.importFromSheets = function() {
+    var url = document.getElementById('sheets-url-input').value.trim();
+    var range = document.getElementById('sheets-range-input').value.trim();
+    var btn = document.getElementById('sheets-import-btn');
+
+    if (!url) { showSheetsStatus('Google Sheets URL gerekli', 'error'); return; }
+
+    var cfg = {};
+    try { cfg = JSON.parse(localStorage.getItem('int_gs') || '{}'); } catch(e) {}
+    if (!cfg.tokens || !cfg.tokens.access_token) {
+      showSheetsStatus('Önce Google hesabınızı bağlayın (Paylaş → Google Sheets → Bağla)', 'error');
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Çekiliyor...';
+    showSheetsStatus('Veri çekiliyor...', 'loading');
+
+    var apiBase = window.location.hostname === 'localhost' ? 'http://localhost:3001' : 'https://upsheet-ai.onrender.com';
+    var token = getAuthToken();
+
+    fetch(apiBase + '/api/integrations/sheets/import-oauth', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body: JSON.stringify({ spreadsheet_url: url, range: range || null })
+    })
+    .then(function(res) { return res.json().then(function(data) { return { ok: res.ok, data: data }; }); })
+    .then(function(r) {
+      if (!r.ok || !r.data.success) {
+        showSheetsStatus(r.data.error || 'Bir hata oluştu', 'error');
+        return;
+      }
+      var d = r.data;
+      var rows2d = [d.headers].concat(d.rows.map(function(row) {
+        return d.headers.map(function(h) { return row[h] != null ? String(row[h]) : ''; });
+      }));
+      loadDataIntoGrid(rows2d);
+      showSheetsStatus('✓ ' + d.total_rows + ' satır içe aktarıldı', 'success');
+      document.getElementById('sheets-url-input').value = '';
+      document.getElementById('sheets-range-input').value = '';
+    })
+    .catch(function() { showSheetsStatus('Bağlantı hatası, tekrar deneyin', 'error'); })
+    .finally(function() { btn.disabled = false; btn.textContent = 'Veriyi İçe Aktar'; });
+  };
 
 })();
 </script>

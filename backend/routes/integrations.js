@@ -151,6 +151,80 @@ router.post('/sheets/import', async (req, res) => {
   }
 });
 
+// ── Google Sheets: OAuth ile veri çek ────────────
+router.post('/sheets/import-oauth', requireAuth, async (req, res) => {
+  const { spreadsheet_url, range } = req.body;
+  if (!spreadsheet_url) return res.status(400).json({ error: 'spreadsheet_url zorunludur' });
+
+  const match = spreadsheet_url.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
+  if (!match) return res.status(400).json({ error: 'Geçersiz Google Sheets URL' });
+  const spreadsheetId = match[1];
+
+  const accessToken = await tokenManager.getValidAccessToken(req.user.id, 'google-sheets');
+  if (!accessToken) return res.status(401).json({ error: 'Google hesabı bağlı değil', connect_required: true });
+
+  const tokenRow = await tokenManager.getToken(req.user.id, 'google-sheets');
+
+  try {
+    const { google } = require('googleapis');
+    const oauth2Client = new google.auth.OAuth2(
+      process.env.GOOGLE_CLIENT_ID,
+      process.env.GOOGLE_CLIENT_SECRET
+    );
+    oauth2Client.setCredentials({
+      access_token: accessToken,
+      refresh_token: tokenRow?.refreshToken,
+      expiry_date: tokenRow?.expires_at ? new Date(tokenRow.expires_at).getTime() : null
+    });
+
+    const sheetsApi = google.sheets({ version: 'v4', auth: oauth2Client });
+    const effectiveRange = range || 'A1:ZZ10000';
+
+    const response = await sheetsApi.spreadsheets.values.get({ spreadsheetId, range: effectiveRange });
+    const values = response.data.values || [];
+
+    if (values.length === 0) {
+      return res.json({ success: true, headers: [], rows: [], total_rows: 0, imported_at: new Date().toISOString() });
+    }
+
+    const headers = values[0].map(h => h || '');
+    const rows = values.slice(1).map(row => {
+      const obj = {};
+      headers.forEach((h, i) => { obj[h] = row[i] ?? ''; });
+      return obj;
+    });
+
+    try {
+      await _getSb().from('sheets_imports').upsert({
+        user_id: req.user.id,
+        spreadsheet_id: spreadsheetId,
+        spreadsheet_url,
+        sheet_name: range || null,
+        last_imported: new Date().toISOString(),
+        row_count: rows.length,
+        headers
+      }, { onConflict: 'user_id,spreadsheet_id' });
+    } catch (_) {}
+
+    res.json({
+      success: true,
+      spreadsheet_id: spreadsheetId,
+      sheet_name: response.data.range || effectiveRange,
+      headers,
+      rows,
+      total_rows: rows.length,
+      imported_at: new Date().toISOString()
+    });
+
+  } catch (err) {
+    const status = err.code || err.response?.status;
+    if (status === 401) return res.status(401).json({ error: 'Google oturumu sona erdi, tekrar bağlanın', connect_required: true });
+    if (status === 403) return res.status(403).json({ error: 'Bu tabloya erişim izniniz yok' });
+    if (status === 404) return res.status(404).json({ error: 'Spreadsheet bulunamadı' });
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // ── Notion: Token test ───────────────────────────
 router.post('/notion/test', async (req, res) => {
   const { token, dbId } = req.body;
