@@ -27,12 +27,11 @@
 <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@xyflow/react@12/dist/umd/index.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reactflow@11.11.4/dist/umd/index.js"></script>
 <script>
-  window.ReactFlowLib = window.ReactFlow || window['@xyflow/react'] || window.ReactFlowRenderer;
-  if (!window.ReactFlowLib) console.error('ReactFlow UMD yüklenemedi, window globals:', Object.keys(window).filter(k => k.toLowerCase().includes('flow') || k.toLowerCase().includes('react')));
+  window.ReactFlowLib = window.ReactFlow;
 </script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xyflow/react@12/dist/style.css"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reactflow@11.11.4/dist/style.css"/>
 <style>
 :root {
   --bg:#fafafa;--surface:#FFFFFF;--surface-2:#f4f4f5;--surface-3:#e4e4e7;
