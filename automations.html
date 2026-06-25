@@ -27,6 +27,8 @@
 <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@xyflow/react@12/dist/umd/index.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xyflow/react@12/dist/style.css"/>
 <style>
 :root {
   --bg:#fafafa;--surface:#FFFFFF;--surface-2:#f4f4f5;--surface-3:#e4e4e7;
@@ -888,6 +890,225 @@ textarea.inp{height:auto;padding:10px 12px;resize:vertical;min-height:72px}
   .wz-body { grid-template-columns: 1fr; }
   .wz-sidebar, .wz-settings { display: none; }
 }
+
+/* ── Workflow Builder ── */
+.wf-shell {
+  display: grid;
+  grid-template-rows: 52px 1fr 36px;
+  height: calc(100vh - 60px);
+}
+.wf-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  border-bottom: 0.5px solid var(--line);
+  background: var(--surface);
+  gap: 12px;
+}
+.wf-name-input {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+  border: none;
+  background: transparent;
+  outline: none;
+  min-width: 140px;
+}
+.wf-name-input:focus {
+  background: var(--surface-2);
+  border-radius: 6px;
+  padding: 2px 6px;
+}
+.wf-badge { font-size: 10px; padding: 2px 8px; border-radius: 20px; font-weight: 500; }
+.wf-badge.draft  { background: var(--surface-3); color: var(--muted); }
+.wf-badge.active { background: var(--accent-soft); color: var(--accent); }
+.wf-badge.run    { background: #fef3c7; color: #d97706; }
+.wf-btn {
+  padding: 6px 12px; font-size: 12px; border-radius: 8px;
+  border: 0.5px solid var(--line); background: transparent; color: var(--ink);
+  cursor: pointer; display: flex; align-items: center; gap: 5px;
+  transition: background 0.12s; white-space: nowrap;
+}
+.wf-btn:hover        { background: var(--surface-2); }
+.wf-btn.primary      { background: var(--accent); color: #fff; border-color: var(--accent); }
+.wf-btn.primary:hover { opacity: .9; }
+.wf-btn.violet       { background: #6366f1; color: #fff; border-color: #6366f1; }
+.wf-btn.violet:hover  { opacity: .9; }
+.wf-btn.danger       { color: var(--rose); }
+.wf-body {
+  display: grid;
+  grid-template-columns: 260px 1fr 0px;
+  overflow: hidden;
+  transition: grid-template-columns .2s;
+}
+.wf-body.panel-open { grid-template-columns: 260px 1fr 256px; }
+.wf-sidebar {
+  border-right: 0.5px solid var(--line);
+  background: var(--surface);
+  display: flex; flex-direction: column; overflow: hidden;
+}
+.wf-sidebar-head { padding: 10px 12px; border-bottom: 0.5px solid var(--line); }
+.wf-search {
+  width: 100%; padding: 6px 9px; font-size: 12px;
+  border: 0.5px solid var(--line); border-radius: 8px;
+  background: var(--surface-2); color: var(--ink);
+  outline: none; box-sizing: border-box;
+}
+.wf-search:focus { border-color: #6366f1; }
+.wf-sidebar-body { flex: 1; overflow-y: auto; padding: 8px 10px; }
+.wf-cat-label {
+  font-size: 10px; color: var(--muted);
+  letter-spacing: .07em; text-transform: uppercase;
+  padding: 8px 4px 4px; display: block;
+}
+.wf-node-row {
+  display: flex; align-items: center; gap: 9px;
+  padding: 7px 9px; border-radius: 8px;
+  cursor: grab; transition: background .12s; user-select: none;
+}
+.wf-node-row:hover  { background: var(--surface-2); }
+.wf-node-row:active { cursor: grabbing; }
+.wf-node-ico {
+  width: 30px; height: 30px; border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; flex-shrink: 0;
+}
+.wf-node-lbl { font-size: 12px; font-weight: 500; color: var(--ink); margin: 0 0 1px; }
+.wf-node-sub { font-size: 10px; color: var(--muted); margin: 0; }
+.wf-canvas { background: var(--bg); position: relative; overflow: hidden; }
+.react-flow__background { background: var(--bg) !important; }
+.react-flow__controls {
+  border: 0.5px solid var(--line) !important; border-radius: 10px !important;
+  background: var(--surface) !important; box-shadow: none !important;
+}
+.react-flow__controls-button {
+  background: var(--surface) !important; border: none !important;
+  border-bottom: 0.5px solid var(--line) !important; color: var(--ink) !important;
+}
+.react-flow__minimap {
+  border: 0.5px solid var(--line) !important; border-radius: 10px !important;
+  background: var(--surface) !important;
+}
+.react-flow__handle {
+  width: 10px !important; height: 10px !important;
+  border-radius: 50% !important; border: 2px solid var(--surface) !important;
+}
+.react-flow__handle-source { background: var(--accent) !important; }
+.react-flow__handle-target { background: #6366f1 !important; }
+.react-flow__edge-path { stroke: var(--muted) !important; stroke-width: 1.5 !important; }
+.wf-flow-card {
+  background: var(--surface); border: 0.5px solid var(--line);
+  border-radius: 12px; padding: 11px 13px;
+  min-width: 190px; max-width: 250px;
+  cursor: pointer; transition: border-color .15s; font-family: inherit;
+}
+.wf-flow-card:hover       { border-color: var(--surface-3); }
+.wf-flow-card.selected    { border-color: #6366f1; box-shadow: 0 0 0 3px #eef2ff; }
+.wf-flow-card.is-trigger  { border-color: #6366f1; border-width: 1.5px; }
+.wf-flow-card.st-error    { border-color: var(--rose); }
+.wf-flow-card.st-success  { border-color: var(--accent); }
+[data-theme="dark"] .wf-flow-card.selected { box-shadow: 0 0 0 3px #1e1b4b; }
+.wf-fc-head { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+.wf-fc-icon { width: 26px; height: 26px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
+.wf-fc-name { font-size: 12px; font-weight: 500; color: var(--ink); margin: 0; }
+.wf-fc-op   { font-size: 10px; color: var(--muted); margin: 0; }
+.wf-fc-body { border-top: 0.5px solid var(--line); padding-top: 5px; margin-top: 5px; }
+.wf-fc-cfg  { font-size: 10px; color: var(--ink-2); margin-bottom: 2px; font-family: monospace; }
+.wf-fc-dot  { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.wf-panel {
+  border-left: 0.5px solid var(--line); background: var(--surface);
+  display: flex; flex-direction: column; overflow: hidden; min-width: 0;
+}
+.wf-panel-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 11px 13px; border-bottom: 0.5px solid var(--line); flex-shrink: 0;
+}
+.wf-panel-title { font-size: 13px; font-weight: 500; color: var(--ink); margin: 0; }
+.wf-panel-body  { flex: 1; overflow-y: auto; padding: 13px; }
+.wf-field       { margin-bottom: 12px; }
+.wf-field label { display: block; font-size: 11px; color: var(--muted); margin-bottom: 3px; }
+.wf-input, .wf-select, .wf-textarea {
+  width: 100%; padding: 6px 8px; font-size: 12px;
+  border: 0.5px solid var(--line); border-radius: 8px;
+  background: var(--surface-2); color: var(--ink);
+  outline: none; font-family: inherit; box-sizing: border-box;
+}
+.wf-input:focus, .wf-select:focus, .wf-textarea:focus { border-color: #6366f1; }
+.wf-textarea { resize: vertical; min-height: 56px; }
+.wf-op-list  { display: flex; flex-direction: column; gap: 3px; margin-bottom: 12px; }
+.wf-op-item {
+  display: flex; align-items: center; gap: 7px;
+  padding: 6px 9px; border: 0.5px solid var(--line);
+  border-radius: 7px; cursor: pointer; font-size: 11px;
+  color: var(--ink); background: var(--surface);
+  transition: background .1s, border-color .1s;
+}
+.wf-op-item:hover { background: var(--surface-2); }
+.wf-op-item.sel   { border-color: #6366f1; background: #eef2ff; color: #4338ca; font-weight: 500; }
+[data-theme="dark"] .wf-op-item.sel { background: #1e1b4b; }
+.wf-sec-title {
+  font-size: 10px; color: var(--muted);
+  letter-spacing: .07em; text-transform: uppercase; margin: 0 0 7px;
+}
+.wf-bottombar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 14px; border-top: 0.5px solid var(--line);
+  background: var(--surface); font-size: 11px; color: var(--muted);
+}
+.wf-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,.25);
+  z-index: 500; display: flex; align-items: center; justify-content: center;
+}
+.wf-modal {
+  background: var(--surface); border-radius: 16px;
+  width: 540px; max-height: 78vh;
+  display: flex; flex-direction: column; border: 0.5px solid var(--line);
+}
+.wf-modal-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 15px 18px; border-bottom: 0.5px solid var(--line);
+}
+.wf-modal-item {
+  display: flex; align-items: center; gap: 11px;
+  padding: 11px 18px; border-bottom: 0.5px solid var(--line);
+  cursor: pointer; transition: background .12s;
+}
+.wf-modal-item:hover { background: var(--surface-2); }
+.wf-modal-item-ico {
+  width: 34px; height: 34px; border-radius: 9px;
+  background: var(--surface-2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; flex-shrink: 0;
+}
+.wf-toggle {
+  width: 30px; height: 17px; background: var(--surface-3);
+  border-radius: 9px; position: relative; cursor: pointer;
+  transition: background .2s; border: none; flex-shrink: 0;
+}
+.wf-toggle.on { background: var(--accent); }
+.wf-toggle::after {
+  content: ''; position: absolute; top: 2px; left: 2px;
+  width: 13px; height: 13px; border-radius: 50%; background: #fff;
+  transition: transform .2s;
+}
+.wf-toggle.on::after { transform: translateX(13px); }
+.wf-empty {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  pointer-events: none; gap: 7px;
+}
+.wf-empty p     { font-size: 13px; color: var(--muted); }
+.wf-empty small { font-size: 11px; color: var(--surface-3); }
+.wf-toast {
+  position: fixed; bottom: 44px; left: 50%; transform: translateX(-50%);
+  background: var(--ink); color: var(--surface);
+  padding: 7px 14px; border-radius: 8px;
+  font-size: 12px; z-index: 999;
+  opacity: 0; transition: opacity .2s; pointer-events: none;
+}
+.wf-toast.show { opacity: 1; }
 </style>
 
 <script type="text/javascript">
@@ -926,122 +1147,95 @@ textarea.inp{height:auto;padding:10px 12px;resize:vertical;min-height:72px}
   </div>
 </nav>
 
-<div class="wz-shell">
+<div class="wf-shell" id="wf-shell">
 
-  <!-- Üst bar -->
-  <div class="wz-topbar">
-    <div style="display:flex; align-items:center; gap:10px;">
-      <p class="wz-title" id="wz-auto-title">Yeni Otomasyon</p>
-      <span class="wz-badge" id="wz-status-badge" style="background:var(--surface-2); color:var(--muted);">Taslak</span>
+  <!-- Topbar -->
+  <div class="wf-topbar">
+    <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0;">
+      <input class="wf-name-input" id="wf-name" value="Yeni Workflow" aria-label="Workflow adı"/>
+      <span class="wf-badge draft" id="wf-badge">Taslak</span>
     </div>
-
-    <div class="wz-steps">
-      <div class="wz-step active" data-step="1" onclick="wzGoStep(1)">
-        <div class="wz-step-num">1</div>
-        <span>Tetikleyici</span>
-      </div>
-      <div class="wz-divider"></div>
-      <div class="wz-step" data-step="2" onclick="wzGoStep(2)">
-        <div class="wz-step-num">2</div>
-        <span>Aksiyon</span>
-      </div>
-      <div class="wz-divider"></div>
-      <div class="wz-step" data-step="3" onclick="wzGoStep(3)">
-        <div class="wz-step-num">3</div>
-        <span>Ayarlar</span>
-      </div>
-      <div class="wz-divider"></div>
-      <div class="wz-step" data-step="4" onclick="wzGoStep(4)">
-        <div class="wz-step-num">4</div>
-        <span>Test &amp; Yayınla</span>
-      </div>
-    </div>
-
-    <div style="display:flex; gap:8px; align-items:center;">
-      <button onclick="wzShowList()" style="padding:6px 12px; font-size:12px; border:0.5px solid var(--line); border-radius:8px; background:transparent; color:var(--ink); cursor:pointer;">
-        Tüm Otomasyonlar
+    <div style="display:flex;align-items:center;gap:6px;">
+      <button class="wf-btn" onclick="wfShowList()">
+        <i class="ti ti-list" aria-hidden="true"></i> Workflow'larım
       </button>
-      <button onclick="wzNewAuto()" style="padding:6px 12px; font-size:12px; border:0.5px solid var(--line); border-radius:8px; background:transparent; color:var(--ink); cursor:pointer;">
-        + Yeni
+      <button class="wf-btn" onclick="wfNew()">
+        <i class="ti ti-plus" aria-hidden="true"></i> Yeni
       </button>
-      <button id="wz-run-btn" onclick="wzRunAuto()" style="padding:6px 14px; font-size:12px; border:none; border-radius:8px; background:var(--accent); color:#fff; cursor:pointer;">
-        ▶ Çalıştır
+      <button class="wf-btn" onclick="wfSave()">
+        <i class="ti ti-device-floppy" aria-hidden="true"></i> Kaydet
+      </button>
+      <button class="wf-btn violet" onclick="wfRun()">
+        <i class="ti ti-player-play" aria-hidden="true"></i> Çalıştır
       </button>
     </div>
   </div>
 
-  <!-- Ana body -->
-  <div class="wz-body" id="wz-body">
+  <!-- Body -->
+  <div class="wf-body" id="wf-body">
 
-    <!-- SOL PANEL -->
-    <div class="wz-sidebar" id="wz-sidebar">
-      <p class="wz-panel-title" id="wz-sidebar-title">Tetikleyici seç</p>
-      <div id="wz-node-list">
-        <!-- JS ile dolacak -->
+    <!-- Sol sidebar -->
+    <div class="wf-sidebar">
+      <div class="wf-sidebar-head">
+        <input class="wf-search" id="wf-search" placeholder="Node ara... (Slack, Shopify...)"
+          oninput="wfFilterNodes(this.value)" aria-label="Node ara"/>
+      </div>
+      <div class="wf-sidebar-body" id="wf-node-list"></div>
+    </div>
+
+    <!-- Kanvas -->
+    <div class="wf-canvas" id="wf-canvas-wrap">
+      <div id="wf-rf-root" style="width:100%;height:100%;"></div>
+      <div class="wf-empty" id="wf-empty">
+        <span style="font-size:28px;">✦</span>
+        <p>Soldan node sürükleyin</p>
+        <small>Node'ları birbirine bağlayarak workflow oluşturun</small>
       </div>
     </div>
 
-    <!-- MERKEZ KANVAS -->
-    <div class="wz-canvas" id="wz-canvas">
-      <div class="wz-canvas-hint">
-        ℹ Soldan bir seçenek seç, akışa ekle
+    <!-- Sağ panel -->
+    <div class="wf-panel" id="wf-panel">
+      <div class="wf-panel-head">
+        <p class="wf-panel-title" id="wf-panel-title">Node ayarları</p>
+        <button class="wf-btn" onclick="wfClosePanel()" style="padding:3px 7px;" aria-label="Kapat">✕</button>
       </div>
-      <div id="wz-flow">
-        <!-- JS ile dolacak -->
-      </div>
-    </div>
-
-    <!-- SAĞ PANEL -->
-    <div class="wz-settings" id="wz-settings">
-      <p class="wz-panel-title">Ayarlar</p>
-      <div id="wz-settings-content">
-        <p style="font-size:12px; color:var(--muted);">Bir node seçin.</p>
+      <div class="wf-panel-body" id="wf-panel-body">
+        <p style="font-size:12px;color:var(--muted);">Bir node seçin.</p>
       </div>
     </div>
 
   </div>
 
-  <!-- Alt bar -->
-  <div class="wz-footer">
-    <div class="wz-footer-status">
-      <div class="wz-status-dot" id="wz-status-dot" style="background:var(--muted);"></div>
-      <span id="wz-footer-text">Son çalışma yok</span>
-    </div>
-    <div style="display:flex; gap:8px;">
-      <button onclick="wzPrevStep()" style="padding:6px 14px; font-size:12px; border:0.5px solid var(--line); border-radius:8px; background:transparent; color:var(--ink); cursor:pointer;">
-        ← Geri
-      </button>
-      <button onclick="wzNextStep()" style="padding:6px 14px; font-size:12px; border:none; border-radius:8px; background:#6366f1; color:#fff; cursor:pointer;">
-        Devam →
-      </button>
-    </div>
+  <!-- Bottom bar -->
+  <div class="wf-bottombar">
+    <span id="wf-stats">0 node · 0 bağlantı</span>
+    <span id="wf-last-run">Henüz çalıştırılmadı</span>
+    <span>Delete → sil · Sürükle → bağla</span>
   </div>
 
 </div>
 
-<!-- Otomasyon listesi overlay -->
-<div id="wz-list-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.3); z-index:100; align-items:center; justify-content:center;">
-  <div style="background:var(--surface); border-radius:16px; width:560px; max-height:80vh; overflow:hidden; display:flex; flex-direction:column;">
-    <div style="display:flex; align-items:center; justify-content:space-between; padding:16px 20px; border-bottom:0.5px solid var(--line);">
-      <p style="font-size:15px; font-weight:500; color:var(--ink); margin:0;">Tüm Otomasyonlar</p>
-      <button onclick="wzHideList()" style="background:none; border:none; font-size:18px; color:var(--muted); cursor:pointer;">✕</button>
+<!-- Workflow listesi overlay -->
+<div class="wf-overlay" id="wf-overlay" style="display:none;" onclick="wfHideList()">
+  <div class="wf-modal" onclick="event.stopPropagation()">
+    <div class="wf-modal-head">
+      <span style="font-size:14px;font-weight:500;color:var(--ink);">Workflow'larım</span>
+      <button class="wf-btn" onclick="wfHideList()">✕</button>
     </div>
-    <div class="wz-auto-list" id="wz-auto-list" style="overflow-y:auto;">
-      <p style="font-size:13px; color:var(--muted); text-align:center; padding:20px;">Yükleniyor...</p>
-    </div>
-    <div style="padding:12px 20px; border-top:0.5px solid var(--line);">
-      <button onclick="wzNewAuto(); wzHideList();" style="width:100%; padding:9px; font-size:13px; border:1px dashed var(--surface-3); border-radius:10px; background:transparent; color:var(--muted); cursor:pointer;">
-        + Yeni Otomasyon Oluştur
+    <div id="wf-list-body" style="flex:1;overflow-y:auto;"></div>
+    <div style="padding:11px 18px;border-top:0.5px solid var(--line);">
+      <button class="wf-btn" onclick="wfNew();wfHideList();" style="width:100%;justify-content:center;border-style:dashed;">
+        + Yeni Workflow Oluştur
       </button>
     </div>
   </div>
 </div>
+
+<div class="wf-toast" id="wf-toast"></div>
 
 <!-- React mount noktası (entegrasyonlar için korunuyor) -->
 <div id="int-root" style="display:none;"></div>
 
-<!-- TOAST -->
-<div id="toast"></div>
 
 <script>
 'use strict';
@@ -5159,5 +5353,414 @@ function IntegrationBrowser() {
 
 ReactDOM.createRoot(document.getElementById('int-root')).render(<IntegrationBrowser />);
 </script>
+
+<script type="text/babel">
+/* global ReactFlowLib */
+const {
+  ReactFlow, ReactFlowProvider, addEdge,
+  useNodesState, useEdgesState,
+  Controls, MiniMap, Background, BackgroundVariant,
+  Handle, Position,
+} = ReactFlowLib;
+
+const { useState, useCallback, useRef, useEffect } = React;
+
+const WF_INTEGRATIONS = [
+  {
+    id:'trigger_schedule', name:'Zamanlama', cat:'Tetikleyiciler',
+    icon:'⏰', color:'#eef2ff', type:'trigger',
+    ops:[
+      {id:'every_day',   label:'Her gün belirli saatte'},
+      {id:'every_week',  label:'Her hafta belirli günde'},
+      {id:'custom_cron', label:'Özel cron ifadesi'},
+    ],
+    fields:{
+      every_day:   [{key:'time', label:'Saat', type:'time', ph:'09:00'}],
+      every_week:  [{key:'day',  label:'Gün',  type:'select', opts:['Pazartesi','Salı','Çarşamba','Perşembe','Cuma']},{key:'time',label:'Saat',type:'time',ph:'09:00'}],
+      custom_cron: [{key:'cron', label:'Cron ifadesi', type:'text', ph:'0 9 * * 1'}],
+    },
+  },
+  {
+    id:'trigger_webhook', name:'Webhook', cat:'Tetikleyiciler',
+    icon:'🔗', color:'#f0fdf4', type:'trigger',
+    ops:[{id:'receive', label:'HTTP isteği al (POST/GET)'}],
+    fields:{ receive:[{key:'method',label:'Metod',type:'select',opts:['POST','GET','PUT']},{key:'path',label:'Path',type:'text',ph:'/my-webhook'}] },
+  },
+  {
+    id:'google_sheets', name:'Google Sheets', cat:'Veri & Tablolar',
+    icon:'📊', color:'#f0fdf4', type:'action',
+    ops:[
+      {id:'append_row',    label:'Yeni satır ekle (Append Row)'},
+      {id:'get_rows',      label:'Satırları çek (Get Rows)'},
+      {id:'watch_new_row', label:'▶ Yeni satır izle (Trigger)', isTrig:true},
+    ],
+    fields:{
+      append_row:[{key:'url',label:'Spreadsheet URL',type:'text',ph:'https://docs.google.com/...'},{key:'sheet',label:'Sayfa adı',type:'text',ph:'Sayfa1'},{key:'values',label:'Değerler (JSON)',type:'area',ph:'{"A":"{{name}}"}'}],
+      get_rows:  [{key:'url',label:'Spreadsheet URL',type:'text',ph:'https://docs.google.com/...'},{key:'range',label:'Aralık',type:'text',ph:'A1:Z100'}],
+      watch_new_row:[{key:'url',label:'Spreadsheet URL',type:'text',ph:'https://docs.google.com/...'},{key:'interval',label:'Kontrol aralığı',type:'select',opts:['1 dakika','5 dakika','15 dakika','1 saat']}],
+    },
+  },
+  {
+    id:'slack', name:'Slack', cat:'Mesajlaşma',
+    icon:'💬', color:'#fff7ed', type:'action',
+    ops:[
+      {id:'send_message', label:'Mesaj gönder (Send Message)'},
+      {id:'send_file',    label:'Dosya gönder (Send File)'},
+      {id:'watch_message',label:'▶ Yeni mesaj izle (Trigger)', isTrig:true},
+    ],
+    fields:{
+      send_message:[{key:'channel',label:'Kanal',type:'text',ph:'#ops'},{key:'message',label:'Mesaj',type:'area',ph:'Rapor hazır: {{summary}}'}],
+      send_file:   [{key:'channel',label:'Kanal',type:'text',ph:'#ops'},{key:'content',label:'İçerik',type:'area',ph:'{{previous_output}}'},{key:'filename',label:'Dosya adı',type:'text',ph:'rapor.csv'}],
+    },
+  },
+  {
+    id:'gmail', name:'Gmail', cat:'Mesajlaşma',
+    icon:'✉️', color:'#fdf4ff', type:'action',
+    ops:[{id:'send_email',label:'Email gönder'},{id:'watch_inbox',label:'▶ Yeni email izle (Trigger)',isTrig:true}],
+    fields:{
+      send_email:[{key:'to',label:'Alıcı',type:'text',ph:'ornek@email.com'},{key:'subject',label:'Konu',type:'text',ph:'Haftalık Rapor'},{key:'body',label:'İçerik',type:'area',ph:'Merhaba,\n\n{{summary}}'}],
+    },
+  },
+  {
+    id:'shopify', name:'Shopify', cat:'E-ticaret',
+    icon:'🛍', color:'#fef9f0', type:'action',
+    ops:[
+      {id:'new_order',    label:'▶ Yeni sipariş (Trigger)', isTrig:true},
+      {id:'get_orders',   label:'Siparişleri çek'},
+      {id:'get_products', label:'Ürünleri çek'},
+    ],
+    fields:{
+      get_orders:  [{key:'status',label:'Durum',type:'select',opts:['Tümü','Açık','Tamamlandı']},{key:'limit',label:'Limit',type:'text',ph:'50'}],
+      get_products:[{key:'status',label:'Durum',type:'select',opts:['Aktif','Taslak','Arşivlendi']},{key:'limit',label:'Limit',type:'text',ph:'100'}],
+    },
+  },
+  {
+    id:'hubspot', name:'HubSpot', cat:'CRM',
+    icon:'🔶', color:'#fff7ed', type:'action',
+    ops:[{id:'create_contact',label:'Kişi oluştur'},{id:'get_contacts',label:'Kişileri çek'},{id:'create_deal',label:'Fırsat oluştur'}],
+    fields:{
+      create_contact:[{key:'email',label:'Email',type:'text',ph:'{{email}}'},{key:'firstname',label:'Ad',type:'text',ph:'{{name}}'}],
+    },
+  },
+  {
+    id:'mocksheets_ai', name:'Mocksheets AI', cat:'Veri & Tablolar',
+    icon:'✦', color:'#eef2ff', type:'action',
+    ops:[{id:'analyze',label:'Veriyi analiz et'},{id:'summarize',label:'Özet çıkar'},{id:'transform',label:'Veri dönüştür'}],
+    fields:{
+      analyze:  [{key:'prompt',label:'Komut',type:'area',ph:'Bu ayın en çok satan 10 ürünü listele'}],
+      summarize:[{key:'prompt',label:'İstek',type:'area',ph:'Haftalık satış özeti çıkar'}],
+    },
+  },
+  {
+    id:'google_drive', name:'Google Drive', cat:'Veri & Tablolar',
+    icon:'💾', color:'#f0fdf4', type:'action',
+    ops:[{id:'upload_file',label:'Dosya yükle'},{id:'get_file',label:'Dosya çek'},{id:'watch_folder',label:'▶ Klasör izle (Trigger)',isTrig:true}],
+    fields:{
+      upload_file:[{key:'folder_id',label:'Klasör ID',type:'text',ph:'Google Drive klasör ID'},{key:'filename',label:'Dosya adı',type:'text',ph:'rapor_{{date}}.csv'},{key:'content',label:'İçerik',type:'area',ph:'{{previous_output}}'}],
+    },
+  },
+  {
+    id:'http_request', name:'HTTP Request', cat:'Gelişmiş',
+    icon:'🌐', color:'#f1f5f9', type:'action',
+    ops:[{id:'get',label:'GET'},{id:'post',label:'POST'},{id:'put',label:'PUT'},{id:'delete',label:'DELETE'}],
+    fields:{
+      get: [{key:'url',label:'URL',type:'text',ph:'https://api.ornek.com/data'}],
+      post:[{key:'url',label:'URL',type:'text',ph:'https://api.ornek.com/endpoint'},{key:'body',label:'Body (JSON)',type:'area',ph:'{"key":"{{value}}"}'}],
+    },
+  },
+  {
+    id:'if_condition', name:'Koşul (IF)', cat:'Mantık',
+    icon:'⚡', color:'#fef3c7', type:'action',
+    ops:[{id:'if_else',label:'Koşula göre dal (IF/ELSE)'},{id:'switch',label:'Çok yollu dal (Switch)'}],
+    fields:{
+      if_else:[{key:'condition',label:'Koşul',type:'text',ph:'{{value}} > 100'},{key:'true_path',label:'Doğruysa',type:'text',ph:'devam et'},{key:'false_path',label:'Yanlışsa',type:'text',ph:'dur'}],
+    },
+  },
+];
+
+function wfToast(msg, ms = 2500) {
+  const el = document.getElementById('wf-toast');
+  if (!el) return;
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.classList.remove('show'), ms);
+}
+
+function WFNode({ data, selected }) {
+  const integ = WF_INTEGRATIONS.find(i => i.id === data.intId) || {};
+  const op    = (integ.ops || []).find(o => o.id === data.opId);
+  const isTrig = data.isTrig || op?.isTrig || integ.type === 'trigger';
+  const cls = ['wf-flow-card', selected?'selected':'', isTrig?'is-trigger':'',
+    data.st==='error'?'st-error':'', data.st==='success'?'st-success':''].filter(Boolean).join(' ');
+
+  return (
+    <div className={cls}>
+      {!isTrig && <Handle type="target" position={Position.Top} />}
+      <div className="wf-fc-head">
+        <div className="wf-fc-icon" style={{background: integ.color || '#f4f4f5'}}>{integ.icon || '⚙️'}</div>
+        <div style={{flex:1,minWidth:0}}>
+          <p className="wf-fc-name">{data.lbl || integ.name}</p>
+          <p className="wf-fc-op">{op?.label || (isTrig ? 'Tetikleyici' : 'Aksiyon')}</p>
+        </div>
+        {isTrig && <span style={{fontSize:9,padding:'2px 6px',borderRadius:20,background:'#eef2ff',color:'#6366f1',fontWeight:500}}>Tetik</span>}
+      </div>
+      {data.cfg && Object.keys(data.cfg).length > 0 && (
+        <div className="wf-fc-body">
+          {Object.entries(data.cfg).slice(0,2).map(([k,v]) => v ? (
+            <div className="wf-fc-cfg" key={k}><span style={{color:'var(--muted)'}}>{k}: </span>{String(v).slice(0,28)}{String(v).length>28?'…':''}</div>
+          ) : null)}
+        </div>
+      )}
+      {data.st && (
+        <div style={{display:'flex',alignItems:'center',gap:4,marginTop:4}}>
+          <div className="wf-fc-dot" style={{background: data.st==='success'?'var(--accent)':data.st==='error'?'var(--rose)':'#f59e0b'}}/>
+          <span style={{fontSize:10,color:'var(--muted)'}}>{data.st==='success'?'Tamamlandı':data.st==='error'?'Hata':'Çalışıyor…'}</span>
+        </div>
+      )}
+      <Handle type="source" position={Position.Bottom} />
+    </div>
+  );
+}
+
+const WF_NODE_TYPES = { wfNode: WFNode };
+
+function WFPanel({ node, onUpdate, onDelete, onClose }) {
+  const integ = WF_INTEGRATIONS.find(i => i.id === node.data.intId) || {};
+  const [opId, setOpId] = useState(node.data.opId || integ.ops?.[0]?.id || '');
+  const [cfg,  setCfg]  = useState(node.data.cfg  || {});
+  const [lbl,  setLbl]  = useState(node.data.lbl  || integ.name || '');
+  const fields = integ.fields?.[opId] || [];
+
+  const save = () => { onUpdate(node.id, {...node.data, opId, cfg, lbl}); wfToast('Node güncellendi'); };
+
+  return (
+    <>
+      <div className="wf-panel-head">
+        <div style={{display:'flex',alignItems:'center',gap:7}}>
+          <div style={{width:22,height:22,borderRadius:5,background:integ.color||'#f4f4f5',display:'flex',alignItems:'center',justifyContent:'center',fontSize:11}}>{integ.icon}</div>
+          <p className="wf-panel-title">{integ.name}</p>
+        </div>
+        <button className="wf-btn" onClick={onClose} style={{padding:'3px 7px'}}>✕</button>
+      </div>
+      <div className="wf-panel-body">
+        <div className="wf-field">
+          <label>Node adı</label>
+          <input className="wf-input" value={lbl} onChange={e=>setLbl(e.target.value)} placeholder={integ.name}/>
+        </div>
+        <p className="wf-sec-title">Operasyon</p>
+        <div className="wf-op-list">
+          {(integ.ops||[]).map(op=>(
+            <div key={op.id} className={`wf-op-item${opId===op.id?' sel':''}`} onClick={()=>setOpId(op.id)}>
+              {op.isTrig && <span style={{fontSize:10,color:'#6366f1'}}>▶ </span>}{op.label}
+            </div>
+          ))}
+        </div>
+        {fields.length > 0 && (
+          <>
+            <p className="wf-sec-title" style={{marginTop:10}}>Parametreler</p>
+            {fields.map(f=>(
+              <div className="wf-field" key={f.key}>
+                <label>{f.label}</label>
+                {f.type==='area' ? (
+                  <textarea className="wf-textarea" value={cfg[f.key]||''} placeholder={f.ph||''} onChange={e=>setCfg(c=>({...c,[f.key]:e.target.value}))}/>
+                ) : f.type==='select' ? (
+                  <select className="wf-select" value={cfg[f.key]||''} onChange={e=>setCfg(c=>({...c,[f.key]:e.target.value}))}>
+                    <option value="">Seçin…</option>
+                    {(f.opts||[]).map(o=><option key={o} value={o}>{o}</option>)}
+                  </select>
+                ) : (
+                  <input className="wf-input" type={f.type||'text'} value={cfg[f.key]||''} placeholder={f.ph||''} onChange={e=>setCfg(c=>({...c,[f.key]:e.target.value}))}/>
+                )}
+              </div>
+            ))}
+          </>
+        )}
+        <div style={{marginTop:14,display:'flex',flexDirection:'column',gap:5}}>
+          <button className="wf-btn violet" onClick={save} style={{width:'100%',justifyContent:'center'}}>Kaydet</button>
+          <button className="wf-btn danger"  onClick={()=>onDelete(node.id)} style={{width:'100%',justifyContent:'center'}}>Sil</button>
+        </div>
+      </div>
+    </>
+  );
+}
+
+function WFApp() {
+  const [nodes, setNodes, onNodesChange] = useNodesState([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const [selNode, setSelNode] = useState(null);
+  const [wfId,    setWfId]   = useState(null);
+  const [rfInst,  setRfInst] = useState(null);
+  const idRef = useRef(0);
+  const nextId = () => `n${Date.now()}${++idRef.current}`;
+
+  useEffect(() => { wfRenderSidebar(''); }, []);
+
+  useEffect(() => {
+    const el = document.getElementById('wf-stats');
+    if (el) el.textContent = `${nodes.length} node · ${edges.length} bağlantı`;
+    const empty = document.getElementById('wf-empty');
+    if (empty) empty.style.display = nodes.length ? 'none' : 'flex';
+  }, [nodes.length, edges.length]);
+
+  useEffect(() => {
+    const body = document.getElementById('wf-body');
+    if (body) body.classList.toggle('panel-open', !!selNode);
+  }, [selNode]);
+
+  const onConnect = useCallback(p =>
+    setEdges(es => addEdge({...p, type:'smoothstep', animated:false, style:{stroke:'var(--muted)',strokeWidth:1.5}}, es)),
+    [setEdges]);
+
+  const onDragOver = useCallback(e => { e.preventDefault(); e.dataTransfer.dropEffect='move'; }, []);
+
+  const onDrop = useCallback(e => {
+    e.preventDefault();
+    const intId = e.dataTransfer.getData('wf-node');
+    if (!intId || !rfInst) return;
+    const wrap = document.getElementById('wf-canvas-wrap');
+    if (!wrap) return;
+    const bounds = wrap.getBoundingClientRect();
+    const pos = rfInst.screenToFlowPosition({x: e.clientX - bounds.left, y: e.clientY - bounds.top});
+    const integ = WF_INTEGRATIONS.find(i => i.id === intId);
+    setNodes(ns => [...ns, {
+      id: nextId(), type: 'wfNode', position: pos,
+      data: { intId, lbl: integ?.name || intId, opId: integ?.ops?.[0]?.id || '', isTrig: integ?.type === 'trigger', cfg: {} },
+    }]);
+    wfToast(`${integ?.name} eklendi`);
+  }, [rfInst, setNodes]);
+
+  const onNodeClick = useCallback((_, node) => setSelNode(node), []);
+  const onPaneClick = useCallback(() => setSelNode(null), []);
+
+  const updateNode = (id, data) => {
+    setNodes(ns => ns.map(n => n.id === id ? {...n, data} : n));
+    setSelNode(s => s?.id === id ? {...s, data} : s);
+  };
+
+  const deleteNode = (id) => {
+    setNodes(ns => ns.filter(n => n.id !== id));
+    setEdges(es => es.filter(e => e.source !== id && e.target !== id));
+    setSelNode(null);
+    wfToast('Node silindi');
+  };
+
+  useEffect(() => {
+    window.wfSave = async () => {
+      const name = document.getElementById('wf-name')?.value || 'Workflow';
+      const payload = { name, nodes: nodes.map(n => ({id:n.id,...n.data,pos:n.position})), edges };
+      try {
+        const h = typeof authHeaders === 'function' ? authHeaders() : {};
+        const url = wfId ? `${API}/api/workflows/${wfId}` : `${API}/api/workflows`;
+        const res = await fetch(url, {method: wfId ? 'PUT' : 'POST', headers:{...h,'Content-Type':'application/json'}, body: JSON.stringify(payload)});
+        if (res.ok) {
+          const d = await res.json();
+          if (d.id) setWfId(d.id);
+          const badge = document.getElementById('wf-badge');
+          if (badge) { badge.textContent = 'Aktif'; badge.className = 'wf-badge active'; }
+          wfToast('✓ Kaydedildi');
+        }
+      } catch { wfToast('Kaydetme başarısız'); }
+    };
+
+    window.wfRun = async () => {
+      if (!wfId) { wfToast('Önce kaydedin'); return; }
+      setNodes(ns => ns.map(n => ({...n, data:{...n.data, st:'running'}})));
+      try {
+        const h = typeof authHeaders === 'function' ? authHeaders() : {};
+        await fetch(`${API}/api/workflows/${wfId}/run`, {method:'POST', headers:h});
+        setNodes(ns => ns.map(n => ({...n, data:{...n.data, st:'success'}})));
+        const el = document.getElementById('wf-last-run');
+        if (el) el.textContent = 'Son çalışma: ' + new Date().toLocaleTimeString('tr-TR');
+        wfToast('✓ Çalıştı');
+      } catch {
+        setNodes(ns => ns.map(n => ({...n, data:{...n.data, st:'error'}})));
+        wfToast('Hata oluştu');
+      }
+    };
+
+    window.wfNew = () => {
+      setNodes([]); setEdges([]); setWfId(null); setSelNode(null);
+      const n = document.getElementById('wf-name'); if (n) n.value = 'Yeni Workflow';
+      const b = document.getElementById('wf-badge'); if (b) { b.textContent = 'Taslak'; b.className = 'wf-badge draft'; }
+    };
+
+    window.wfShowList = async () => {
+      document.getElementById('wf-overlay').style.display = 'flex';
+      const lb = document.getElementById('wf-list-body');
+      lb.innerHTML = '<p style="padding:20px;text-align:center;font-size:13px;color:var(--muted);">Yükleniyor…</p>';
+      try {
+        const h = typeof authHeaders === 'function' ? authHeaders() : {};
+        const res = await fetch(API + '/api/automations', {headers: h});
+        const d = await res.json();
+        const rules = d.rules || [];
+        if (!rules.length) { lb.innerHTML = '<p style="padding:20px;text-align:center;font-size:13px;color:var(--muted);">Henüz workflow yok</p>'; return; }
+        lb.innerHTML = rules.map(r => `
+          <div class="wf-modal-item" onclick="wfLoadItem('${r.id}','${(r.name||'').replace(/'/g,"\\'")}');wfHideList();">
+            <div class="wf-modal-item-ico">⚙️</div>
+            <div style="flex:1;"><p style="font-size:13px;font-weight:500;color:var(--ink);margin:0 0 2px;">${r.name||'İsimsiz'}</p><p style="font-size:11px;color:var(--muted);margin:0;">${r.integration||''} · ${r.run_count||0} çalışma</p></div>
+            <button class="wf-toggle ${r.enabled?'on':''}" onclick="event.stopPropagation();wfToggle('${r.id}',this)"></button>
+          </div>
+        `).join('');
+      } catch { lb.innerHTML = '<p style="padding:20px;text-align:center;color:var(--muted);">Yüklenemedi</p>'; }
+    };
+
+    window.wfHideList   = () => { document.getElementById('wf-overlay').style.display = 'none'; };
+    window.wfLoadItem   = (id, name) => { setWfId(id); setNodes([]); setEdges([]); setSelNode(null); const n=document.getElementById('wf-name');if(n)n.value=name; wfToast(`"${name}" yüklendi`); };
+    window.wfToggle     = async (id, el) => { el.classList.toggle('on'); const h=typeof authHeaders==='function'?authHeaders():{};await fetch(`${API}/api/automations/${id}/toggle`,{method:'POST',headers:h}).catch(()=>{}); };
+    window.wfClosePanel = () => setSelNode(null);
+    window.wfFilterNodes= (q) => wfRenderSidebar(q);
+  }, [nodes, edges, wfId]);
+
+  return (
+    <ReactFlow
+      nodes={nodes} edges={edges}
+      onNodesChange={onNodesChange} onEdgesChange={onEdgesChange}
+      onConnect={onConnect} onInit={setRfInst}
+      onDrop={onDrop} onDragOver={onDragOver}
+      onNodeClick={onNodeClick} onPaneClick={onPaneClick}
+      nodeTypes={WF_NODE_TYPES}
+      fitView deleteKeyCode="Delete"
+    >
+      <Controls/>
+      <MiniMap nodeStrokeWidth={3} zoomable pannable/>
+      <Background variant={BackgroundVariant.Dots} gap={16} size={1} color="var(--surface-3)"/>
+      {selNode && (
+        <div style={{position:'absolute',top:0,right:0,bottom:0,width:256,background:'var(--surface)',borderLeft:'0.5px solid var(--line)',zIndex:10,display:'flex',flexDirection:'column',overflow:'hidden'}}>
+          <WFPanel node={selNode} onUpdate={updateNode} onDelete={deleteNode} onClose={()=>setSelNode(null)}/>
+        </div>
+      )}
+    </ReactFlow>
+  );
+}
+
+function wfRenderSidebar(q) {
+  const el = document.getElementById('wf-node-list');
+  if (!el) return;
+  const lq = q.toLowerCase();
+  const filtered = WF_INTEGRATIONS.filter(i =>
+    !lq || i.name.toLowerCase().includes(lq) || i.cat.toLowerCase().includes(lq) ||
+    i.ops.some(o => o.label.toLowerCase().includes(lq))
+  );
+  const cats = [...new Set(filtered.map(i => i.cat))];
+  el.innerHTML = cats.map(cat => `
+    <span class="wf-cat-label">${cat}</span>
+    ${filtered.filter(i => i.cat === cat).map(i => `
+      <div class="wf-node-row" draggable="true" ondragstart="event.dataTransfer.setData('wf-node','${i.id}')">
+        <div class="wf-node-ico" style="background:${i.color}">${i.icon}</div>
+        <div style="flex:1;min-width:0;">
+          <p class="wf-node-lbl">${i.name}</p>
+          <p class="wf-node-sub">${i.ops.length} operasyon</p>
+        </div>
+      </div>
+    `).join('')}
+  `).join('');
+}
+
+ReactDOM.createRoot(document.getElementById('wf-rf-root')).render(
+  <ReactFlowProvider><WFApp/></ReactFlowProvider>
+);
+</script>
+
 </body>
 </html>
