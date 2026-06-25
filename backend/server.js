@@ -452,6 +452,8 @@ const agentsRouter = require('./routes/agents');
 app.use('/api/agents', agentsRouter);
 const shopifyRouter = require('./routes/shopify');
 app.use('/api/shopify', shopifyRouter);
+const workflowsRouter = require('./routes/workflows');
+app.use('/api/workflows', workflowsRouter);
 
 app.post('/api/loops/contact', async (req, res) => {
   const { email, userGroup } = req.body;
