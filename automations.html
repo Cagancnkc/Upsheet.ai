@@ -23,6 +23,7 @@
 <title>Workflow Otomasyonu — Mocksheets | Gmail, Slack, Notion Entegrasyonu</title>
 <link rel="icon" type="image/png" href="/images/brand/logo-128x128.png">
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&family=Geist+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -505,6 +506,388 @@ textarea.inp{height:auto;padding:10px 12px;resize:vertical;min-height:72px}
 .agent-history-row:hover{background:var(--surface-2)}
 .agent-upgrade-overlay{position:absolute;inset:0;background:rgba(250,250,250,.9);display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:var(--radius);z-index:10;backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
 [data-theme="dark"] .agent-upgrade-overlay{background:rgba(0,0,0,.85)}
+
+/* ─── Wizard Layout ─────────────────────────────── */
+.wz-shell {
+  display: grid;
+  grid-template-rows: 52px 1fr 52px;
+  height: calc(100vh - 60px);
+  background: var(--bg);
+}
+
+.wz-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  border-bottom: 0.5px solid var(--line);
+  background: var(--surface);
+}
+
+.wz-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+  margin: 0;
+}
+
+.wz-steps {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.wz-step {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 12px;
+  font-size: 12px;
+  color: var(--muted);
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.15s;
+  user-select: none;
+}
+
+.wz-step:hover { background: var(--surface-2); }
+.wz-step.active { background: var(--surface-2); color: var(--ink); font-weight: 500; }
+.wz-step.done { color: var(--accent); }
+
+.wz-step-num {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1.5px solid currentColor;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.wz-step.active .wz-step-num {
+  background: var(--ink);
+  color: var(--surface);
+  border-color: var(--ink);
+}
+
+.wz-step.done .wz-step-num {
+  background: var(--accent-soft);
+  border-color: var(--accent-line);
+  color: var(--accent);
+}
+
+.wz-divider {
+  width: 20px;
+  height: 1px;
+  background: var(--line);
+}
+
+.wz-body {
+  display: grid;
+  grid-template-columns: 260px 1fr 220px;
+  overflow: hidden;
+}
+
+.wz-sidebar {
+  border-right: 0.5px solid var(--line);
+  padding: 14px;
+  background: var(--surface);
+  overflow-y: auto;
+}
+
+.wz-panel-title {
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  margin: 0 0 10px;
+}
+
+.wz-node {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 11px;
+  border: 0.5px solid var(--line);
+  border-radius: 10px;
+  margin-bottom: 5px;
+  cursor: pointer;
+  background: var(--surface);
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.wz-node:hover { border-color: var(--surface-3); background: var(--surface-2); }
+.wz-node.selected { border-color: #6366f1; background: #f5f3ff; }
+[data-theme="dark"] .wz-node.selected { background: #1e1b4b; }
+
+.wz-node-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.wz-node-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink);
+  margin: 0 0 2px;
+}
+
+.wz-node-desc {
+  font-size: 10px;
+  color: var(--muted);
+  margin: 0;
+}
+
+.wz-canvas {
+  padding: 20px;
+  background: var(--surface-2);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.wz-canvas-hint {
+  font-size: 11px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.flow-node {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--surface);
+  border: 0.5px solid var(--line);
+  border-radius: 12px;
+  position: relative;
+}
+
+.flow-node.trigger { border-color: #6366f1; }
+.flow-node.action-read { border-color: #d97706; background: #fffbeb; }
+.flow-node.action-ai { border-color: #6366f1; background: #f5f3ff; }
+.flow-node.action-slack { border-color: #16a34a; background: #f0fdf4; }
+.flow-node.action-email { border-color: #9333ea; background: #fdf4ff; }
+[data-theme="dark"] .flow-node.action-read { background: #1c1400; }
+[data-theme="dark"] .flow-node.action-ai { background: #1e1b4b; }
+[data-theme="dark"] .flow-node.action-slack { background: #052e16; }
+[data-theme="dark"] .flow-node.action-email { background: #2e1065; }
+
+.flow-node-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.flow-node-name {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink);
+  margin: 0 0 2px;
+}
+
+.flow-node-sub {
+  font-size: 11px;
+  color: var(--muted);
+  margin: 0;
+}
+
+.flow-connector {
+  width: 2px;
+  height: 24px;
+  background: var(--line);
+  margin: 0 0 0 20px;
+  position: relative;
+}
+
+.flow-connector::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: -3px;
+  width: 7px;
+  height: 7px;
+  border-right: 1.5px solid var(--line);
+  border-bottom: 1.5px solid var(--line);
+  transform: rotate(45deg);
+}
+
+.flow-add-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 14px;
+  background: var(--surface);
+  border: 1px dashed var(--surface-3);
+  border-radius: 12px;
+  font-size: 12px;
+  color: var(--muted);
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.flow-add-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.wz-settings {
+  border-left: 0.5px solid var(--line);
+  padding: 14px;
+  background: var(--surface);
+  overflow-y: auto;
+}
+
+.wz-settings-label {
+  font-size: 11px;
+  color: var(--muted);
+  margin: 0 0 5px;
+}
+
+.wz-settings input,
+.wz-settings select {
+  width: 100%;
+  padding: 7px 9px;
+  font-size: 12px;
+  border: 0.5px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface-2);
+  color: var(--ink);
+  margin-bottom: 12px;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.wz-settings input:focus,
+.wz-settings select:focus {
+  border-color: #6366f1;
+}
+
+.wz-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  border-top: 0.5px solid var(--line);
+  background: var(--surface);
+}
+
+.wz-footer-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.wz-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.wz-badge {
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-weight: 500;
+}
+
+.wz-auto-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+}
+
+.wz-auto-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--surface);
+  border: 0.5px solid var(--line);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.wz-auto-card:hover { border-color: var(--surface-3); }
+
+.wz-auto-card-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--surface-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 16px;
+}
+
+.wz-auto-card-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+  margin: 0 0 3px;
+}
+
+.wz-auto-card-sub {
+  font-size: 11px;
+  color: var(--muted);
+  margin: 0;
+}
+
+.wz-toggle {
+  width: 32px;
+  height: 18px;
+  background: var(--surface-3);
+  border-radius: 9px;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+
+.wz-toggle.on { background: var(--accent); }
+
+.wz-toggle::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform 0.2s;
+}
+
+.wz-toggle.on::after { transform: translateX(14px); }
+
+@media (max-width: 768px) {
+  .wz-body { grid-template-columns: 1fr; }
+  .wz-sidebar, .wz-settings { display: none; }
+}
 </style>
 
 <script type="text/javascript">
@@ -543,455 +926,119 @@ textarea.inp{height:auto;padding:10px 12px;resize:vertical;min-height:72px}
   </div>
 </nav>
 
-<!-- MAIN -->
-<main id="main">
+<div class="wz-shell">
 
-  <!-- HERO -->
-  <section id="hero">
-    <div class="hero-eyebrow">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-      Workflow Otomasyonu
+  <!-- Üst bar -->
+  <div class="wz-topbar">
+    <div style="display:flex; align-items:center; gap:10px;">
+      <p class="wz-title" id="wz-auto-title">Yeni Otomasyon</p>
+      <span class="wz-badge" id="wz-status-badge" style="background:var(--surface-2); color:var(--muted);">Taslak</span>
     </div>
-    <h1 class="hero-h1">İşlemleri <em>otomatikleştir</em>,<br>zamandan kazan</h1>
-    <p style="font-size:15px;color:var(--muted);max-width:520px;line-height:1.65;margin-bottom:20px">Tetikleyici, koşul ve uygulama aksiyonlarını görsel olarak bağlayarak tekrar eden operasyonel görevleri otomatikleştirin.</p>
-    <div class="hero-stats" style="margin-bottom:20px">
-      <span class="stat-chip"><span class="stat-dot" id="stat-dot-active"></span><span id="stat-active">0 aktif</span></span>
-      <span class="stat-chip"><span class="stat-dot" style="background:#2563EB"></span><span id="stat-runs">0 çalışma</span></span>
-      <span class="stat-chip" id="chip-success" style="display:none"><span class="stat-dot" style="background:#16a34a"></span><span id="stat-success">— başarı</span></span>
-    </div>
-    <div style="display:flex;gap:10px;flex-wrap:wrap">
-      <button class="btn btn-primary" onclick="openBuilder()">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
-        Yeni Workflow
-      </button>
-      <button class="btn btn-ai" onclick="openAIModal()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-        AI ile Oluştur
-      </button>
-    </div>
-  </section>
 
-  <!-- PAGE TABS -->
-  <div class="tpl-cats" id="page-tabs" style="margin-bottom:24px">
-    <button class="tpl-cat active" id="tab-otomasyon" onclick="switchPageTab('otomasyon')">Otomasyon</button>
-    <button class="tpl-cat" id="tab-agents" onclick="switchPageTab('agents')">✦ AI Agents <span style="font-size:10px;background:#16a34a;color:#fff;border-radius:4px;padding:2px 6px;margin-left:6px;font-weight:700;">Pro Max</span></button>
+    <div class="wz-steps">
+      <div class="wz-step active" data-step="1" onclick="wzGoStep(1)">
+        <div class="wz-step-num">1</div>
+        <span>Tetikleyici</span>
+      </div>
+      <div class="wz-divider"></div>
+      <div class="wz-step" data-step="2" onclick="wzGoStep(2)">
+        <div class="wz-step-num">2</div>
+        <span>Aksiyon</span>
+      </div>
+      <div class="wz-divider"></div>
+      <div class="wz-step" data-step="3" onclick="wzGoStep(3)">
+        <div class="wz-step-num">3</div>
+        <span>Ayarlar</span>
+      </div>
+      <div class="wz-divider"></div>
+      <div class="wz-step" data-step="4" onclick="wzGoStep(4)">
+        <div class="wz-step-num">4</div>
+        <span>Test &amp; Yayınla</span>
+      </div>
+    </div>
+
+    <div style="display:flex; gap:8px; align-items:center;">
+      <button onclick="wzShowList()" style="padding:6px 12px; font-size:12px; border:0.5px solid var(--line); border-radius:8px; background:transparent; color:var(--ink); cursor:pointer;">
+        Tüm Otomasyonlar
+      </button>
+      <button onclick="wzNewAuto()" style="padding:6px 12px; font-size:12px; border:0.5px solid var(--line); border-radius:8px; background:transparent; color:var(--ink); cursor:pointer;">
+        + Yeni
+      </button>
+      <button id="wz-run-btn" onclick="wzRunAuto()" style="padding:6px 14px; font-size:12px; border:none; border-radius:8px; background:var(--accent); color:#fff; cursor:pointer;">
+        ▶ Çalıştır
+      </button>
+    </div>
   </div>
 
-  <!-- TEMPLATE GALLERY -->
-  <section id="templates">
-    <div class="section-header">
-      <div class="section-title">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-        Hazır Şablonlar
-      </div>
-      <span class="tag" id="tpl-count-badge">11 şablon</span>
-    </div>
-    <div class="tpl-cats">
-      <button class="tpl-cat active" data-cat="all" onclick="filterTemplates('all')">Tümü</button>
-      <button class="tpl-cat" data-cat="stok" onclick="filterTemplates('stok')">Stok</button>
-      <button class="tpl-cat" data-cat="muhasebe" onclick="filterTemplates('muhasebe')">Muhasebe</button>
-      <button class="tpl-cat" data-cat="satis" onclick="filterTemplates('satis')">Satış</button>
-      <button class="tpl-cat" data-cat="ik" onclick="filterTemplates('ik')">İK</button>
-      <button class="tpl-cat" data-cat="crm" onclick="filterTemplates('crm')">CRM</button>
-      <button class="tpl-cat" data-cat="gorev" onclick="filterTemplates('gorev')">Görev</button>
-    </div>
-    <div class="template-scroll" id="template-scroll"></div>
-  </section>
+  <!-- Ana body -->
+  <div class="wz-body" id="wz-body">
 
-  <!-- APPS GALLERY -->
-  <section id="apps-gallery">
-    <div class="section-header">
-      <div class="section-title">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
-        Bağlanabilir Uygulamalar
-      </div>
-      <span class="tag">31 entegrasyon</span>
-    </div>
-    <div class="apps-grid">
-      <div class="app-tile" onclick="openBuilder('gmail')"><div class="app-tile-icon"><img src="https://cdn.simpleicons.org/gmail/EA4335" alt="Gmail"></div><div class="app-tile-name">Gmail</div><div class="app-tile-cat">E-posta</div></div>
-      <div class="app-tile" onclick="openBuilder('slack')"><div class="app-tile-icon"><svg viewBox="0 0 24 24" fill="#4A154B" xmlns="http://www.w3.org/2000/svg"><path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zM6.313 15.165a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313zM8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zM8.834 6.313a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312zM18.956 8.834a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834zM17.688 8.834a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312zM15.165 18.956a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52zM15.165 17.688a2.527 2.527 0 0 1-2.52-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z"/></svg></div><div class="app-tile-name">Slack</div><div class="app-tile-cat">Bildirim</div></div>
-      <div class="app-tile" onclick="openBuilder('teams')"><div class="app-tile-icon"><svg viewBox="0 0 24 24" fill="#6264A7" xmlns="http://www.w3.org/2000/svg"><path d="M20.625 8.127q-.55 0-1.025-.205-.475-.205-.832-.563-.358-.357-.563-.832Q18 6.053 18 5.502q0-.54.205-1.02t.563-.837q.357-.358.832-.563.474-.205 1.025-.205.54 0 1.02.205t.837.563q.358.357.563.837.205.48.205 1.02 0 .55-.205 1.025-.205.475-.563.832-.357.358-.837.563-.48.205-1.02.205zm0-3.75q-.469 0-.797.328-.328.328-.328.797 0 .469.328.797.328.328.797.328.469 0 .797-.328.328-.328.328-.797 0-.469-.328-.797-.328-.328-.797-.328zM24 10.002v5.578q0 .774-.293 1.46-.293.685-.803 1.194-.51.51-1.195.803-.686.293-1.459.293-.445 0-.908-.105-.463-.106-.85-.329-.293.95-.855 1.729-.563.78-1.319 1.336-.756.557-1.67.861-.914.305-1.898.305-1.148 0-2.162-.398-1.014-.399-1.805-1.102-.79-.703-1.312-1.664t-.674-2.086h-5.8q-.411 0-.704-.293T0 16.881V6.873q0-.41.293-.703t.703-.293h8.59q-.34-.715-.34-1.5 0-.727.275-1.365.276-.639.75-1.114.475-.474 1.114-.75.638-.275 1.365-.275t1.365.275q.639.276 1.114.75.474.475.75 1.114.275.638.275 1.365t-.275 1.365q-.276.639-.75 1.113-.475.475-1.114.75-.638.276-1.365.276-.188 0-.375-.024-.188-.023-.375-.058v1.078h10.875q.469 0 .797.328.328.328.328.797zM12.75 2.373q-.41 0-.78.158-.368.158-.638.434-.27.275-.428.639-.158.363-.158.773 0 .41.158.78.159.368.428.638.27.27.639.428.369.158.779.158.41 0 .773-.158.364-.159.64-.428.274-.27.433-.639.158-.369.158-.779 0-.41-.158-.773-.159-.364-.434-.64-.275-.275-.639-.433-.363-.158-.773-.158zM6.937 9.814h2.25V7.94H2.814v1.875h2.25v6h1.875zm10.313 7.313v-6.75H12v6.504q0 .41-.293.703t-.703.293H8.309q.152.809.556 1.5.405.691.985 1.19.58.497 1.318.779.738.281 1.582.281.926 0 1.746-.352.82-.351 1.436-.966.615-.616.966-1.43.352-.815.352-1.752zm5.25-1.547v-5.203h-3.75v6.855q.305.305.691.452.387.146.809.146.469 0 .879-.176.41-.175.715-.48.304-.305.48-.715t.176-.879Z"/></svg></div><div class="app-tile-name">Teams</div><div class="app-tile-cat">Bildirim</div></div>
-      <div class="app-tile" onclick="openBuilder('notion')"><div class="app-tile-icon"><img src="https://cdn.simpleicons.org/notion/000000" alt="Notion"></div><div class="app-tile-name">Notion</div><div class="app-tile-cat">Veritabanı</div></div>
-      <div class="app-tile" onclick="openBuilder('airtable')"><div class="app-tile-icon"><img src="https://cdn.simpleicons.org/airtable/18BFFF" alt="Airtable"></div><div class="app-tile-name">Airtable</div><div class="app-tile-cat">Veritabanı</div></div>
-      <div class="app-tile" onclick="openBuilder('make')"><div class="app-tile-icon"><img src="https://cdn.simpleicons.org/make/6D00CC" alt="Make"></div><div class="app-tile-name">Make</div><div class="app-tile-cat">Otomasyon</div></div>
-      <div class="app-tile" onclick="openBuilder('webhook')"><div class="app-tile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></div><div class="app-tile-name">Webhook</div><div class="app-tile-cat">Özel Entegrasyon</div></div>
-      <div class="app-tile" onclick="openBuilder('trello')"><div class="app-tile-icon"><img src="https://cdn.simpleicons.org/trello/0052CC" alt="Trello"></div><div class="app-tile-name">Trello</div><div class="app-tile-cat">Görev Yönetimi</div></div>
-      <div class="app-tile" onclick="openBuilder('zapier')"><div class="app-tile-icon"><img src="https://cdn.simpleicons.org/zapier/FF4A00" alt="Zapier"></div><div class="app-tile-name">Zapier</div><div class="app-tile-cat">Otomasyon</div></div>
-      <div class="app-tile" onclick="openBuilder('google-sheets')"><div class="app-tile-icon"><img src="https://cdn.simpleicons.org/googlesheets/34A853" alt="Google Sheets"></div><div class="app-tile-name">Google Sheets</div><div class="app-tile-cat">2 yönlü senkron</div></div>
-      <div class="app-tile" onclick="openBuilder('google-drive')"><div class="app-tile-icon"><img src="https://cdn.simpleicons.org/googledrive/4285F4" alt="Google Drive"></div><div class="app-tile-name">Google Drive</div><div class="app-tile-cat">Dosya senkron</div></div>
-      <div class="app-tile" onclick="openBuilder('discord')"><div class="app-tile-icon"><img src="https://cdn.simpleicons.org/discord/5865F2" alt="Discord"></div><div class="app-tile-name">Discord</div><div class="app-tile-cat">Bildirim</div></div>
-      <div class="app-tile" onclick="openBuilder('google-chat')"><div class="app-tile-icon"><img src="https://cdn.simpleicons.org/googlechat/00897B" alt="Google Chat"></div><div class="app-tile-name">Google Chat</div><div class="app-tile-cat">Bildirim</div></div>
-      <div class="app-tile" onclick="openBuilder('n8n')"><div class="app-tile-icon"><img src="https://cdn.simpleicons.org/n8n/EA4B71" alt="n8n"></div><div class="app-tile-name">n8n</div><div class="app-tile-cat">Otomasyon</div></div>
-      <div class="app-tile" onclick="openBuilder('pipedream')"><div class="app-tile-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect width="24" height="24" rx="5" fill="#00AEF0"/><path d="M5 7h9a3 3 0 0 1 0 6H5" stroke="white" stroke-width="2" fill="none" stroke-linecap="round"/><circle cx="17" cy="17" r="3" fill="white"/><path d="M5 17h8" stroke="white" stroke-width="2" stroke-linecap="round"/></svg></div><div class="app-tile-name">Pipedream</div><div class="app-tile-cat">Otomasyon</div></div>
-      <div class="app-tile" onclick="openBuilder('ifttt')"><div class="app-tile-icon"><img src="https://cdn.simpleicons.org/ifttt/000000" alt="IFTTT"></div><div class="app-tile-name">IFTTT</div><div class="app-tile-cat">Otomasyon</div></div>
-      <div class="app-tile" onclick="openBuilder('sendgrid')"><div class="app-tile-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#1A82E2"><path d="M.8 24h13.6c.88 0 1.6-.72 1.6-1.6v-4.8c0-.88-.72-1.6-1.6-1.6H9.6c-.88 0-1.6-.72-1.6-1.6V9.6C8 8.72 7.28 8 6.4 8H1.6C.72 8 0 8.72 0 9.6v13.6c0 .44.36.8.8.8zM23.2 0H9.6C8.72 0 8 .72 8 1.6v4.8C8 7.28 8.72 8 9.6 8h4.8c.88 0 1.6.72 1.6 1.6v4.8c0 .88.72 1.6 1.6 1.6h4.8c.88 0 1.6-.72 1.6-1.6V.8c0-.44-.36-.8-.8-.8Z"/></svg></div><div class="app-tile-name">SendGrid</div><div class="app-tile-cat">E-posta</div></div>
-      <div class="app-tile" onclick="openBuilder('mailchimp')"><div class="app-tile-icon"><img src="https://cdn.simpleicons.org/mailchimp/FFE01B" alt="Mailchimp" style="background:#000;border-radius:4px"></div><div class="app-tile-name">Mailchimp</div><div class="app-tile-cat">E-posta</div></div>
-      <div class="app-tile" onclick="openBuilder('brevo')"><div class="app-tile-icon"><img src="https://cdn.simpleicons.org/brevo/0B996E" alt="Brevo"></div><div class="app-tile-name">Brevo</div><div class="app-tile-cat">E-posta</div></div>
-      <div class="app-tile" onclick="openBuilder('twilio')"><div class="app-tile-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#F22F46"><path d="M12 0C5.381-.008.008 5.352 0 11.971V12c0 6.64 5.359 12 12 12 6.64 0 12-5.36 12-12 0-6.641-5.36-12-12-12zm0 20.801c-4.846.015-8.786-3.904-8.801-8.75V12c-.014-4.846 3.904-8.786 8.75-8.801H12c4.847-.014 8.786 3.904 8.801 8.75V12c.015 4.847-3.904 8.786-8.75 8.801H12zm5.44-11.76c0 1.359-1.12 2.479-2.481 2.479-1.366-.007-2.472-1.113-2.479-2.479 0-1.361 1.12-2.481 2.479-2.481 1.361 0 2.481 1.12 2.481 2.481zm0 5.919c0 1.36-1.12 2.48-2.481 2.48-1.367-.008-2.473-1.114-2.479-2.48 0-1.359 1.12-2.479 2.479-2.479 1.361-.001 2.481 1.12 2.481 2.479zm-5.919 0c0 1.36-1.12 2.48-2.479 2.48-1.368-.007-2.475-1.113-2.481-2.48 0-1.359 1.12-2.479 2.481-2.479 1.358-.001 2.479 1.12 2.479 2.479zm0-5.919c0 1.359-1.12 2.479-2.479 2.479-1.367-.007-2.475-1.112-2.481-2.479 0-1.361 1.12-2.481 2.481-2.481 1.358 0 2.479 1.12 2.479 2.481z"/></svg></div><div class="app-tile-name">Twilio SMS</div><div class="app-tile-cat">SMS</div></div>
-      <div class="app-tile" onclick="openBuilder('telegram')"><div class="app-tile-icon"><img src="https://cdn.simpleicons.org/telegram/2CA5E0" alt="Telegram"></div><div class="app-tile-name">Telegram</div><div class="app-tile-cat">Mesajlaşma</div></div>
-      <div class="app-tile" onclick="openBuilder('jira')"><div class="app-tile-icon"><img src="https://cdn.simpleicons.org/jira/0052CC" alt="Jira"></div><div class="app-tile-name">Jira</div><div class="app-tile-cat">Görev Yönetimi</div></div>
-      <div class="app-tile" onclick="openBuilder('linear')"><div class="app-tile-icon"><img src="https://cdn.simpleicons.org/linear/5E6AD2" alt="Linear"></div><div class="app-tile-name">Linear</div><div class="app-tile-cat">Görev Yönetimi</div></div>
-      <div class="app-tile" onclick="openBuilder('github')"><div class="app-tile-icon"><img src="https://cdn.simpleicons.org/github/181717" alt="GitHub" style="filter:invert(1)"></div><div class="app-tile-name">GitHub Issues</div><div class="app-tile-cat">Geliştirici</div></div>
-      <div class="app-tile" onclick="openBuilder('clickup')"><div class="app-tile-icon"><img src="https://cdn.simpleicons.org/clickup/7B68EE" alt="ClickUp"></div><div class="app-tile-name">ClickUp</div><div class="app-tile-cat">Görev Yönetimi</div></div>
-      <div class="app-tile" onclick="openBuilder('asana')"><div class="app-tile-icon"><img src="https://cdn.simpleicons.org/asana/F06A6A" alt="Asana"></div><div class="app-tile-name">Asana</div><div class="app-tile-cat">Görev Yönetimi</div></div>
-      <div class="app-tile" onclick="openBuilder('monday')"><div class="app-tile-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><g transform="matrix(3.208255 0 0 3.208255 -35.559129 -63.587202)"><path d="M13.513 35.76a2.433 2.433 0 0 1-2.059-3.723l4.377-6.99a2.432 2.432 0 1 1 4.123 2.582l-4.378 6.99a2.43 2.43 0 0 1-2.063 1.141z" fill="#ff3d57"/><path d="M21.056 35.76a2.433 2.433 0 0 1-2.063-3.723l4.38-6.99a2.432 2.432 0 1 1 4.117 2.582l-4.372 6.99a2.43 2.43 0 0 1-2.063 1.141z" fill="#ffcb00"/><ellipse ry="2.375" rx="2.436" cy="33.384" cx="28.597" fill="#00d647"/></g></svg></div><div class="app-tile-name">Monday.com</div><div class="app-tile-cat">Görev Yönetimi</div></div>
-      <div class="app-tile" onclick="openBuilder('hubspot')"><div class="app-tile-icon"><img src="https://cdn.simpleicons.org/hubspot/FF7A59" alt="HubSpot"></div><div class="app-tile-name">HubSpot</div><div class="app-tile-cat">CRM</div></div>
-      <div class="app-tile" onclick="openBuilder('pagerduty')"><div class="app-tile-icon"><img src="https://cdn.simpleicons.org/pagerduty/06AC38" alt="PagerDuty"></div><div class="app-tile-name">PagerDuty</div><div class="app-tile-cat">Olay Yönetimi</div></div>
-      <div class="app-tile" onclick="openBuilder('smartsheet')"><div class="app-tile-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 20"><path fill="#0e2a47" d="M2.52,9.97s.71-.98,1.63-1.01c1.45-.03,2.61,2.55,2.79,2.94,1.6-3.56,4.25-6.59,6.38-8.61H.18v14.75c0,.8-.12,1.4-.18,1.63.59-.09,2.79-.47,5.05-1.28,4.01-1.42,5.55-2.97,5.58-2.97l.09-.09.06.12s.5,1.1,1.01,1.69c.56.65.86.71,1.04.68.24-.06.39-.45.45-1.04s.12-1.93.12-3.56V4.45c-3.89,4.75-6.74,11.87-6.74,11.87,0,0-1.87-6.38-4.13-6.35Z"/></svg></div><div class="app-tile-name">Smartsheet</div><div class="app-tile-cat">Veritabanı</div></div>
-    </div>
-  </section>
-
-  <!-- INTEGRATIONS MANAGER -->
-  <section id="integrations-section">
-    <div class="section-header">
-      <div class="section-title">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.59 13.51 6.83 3.98"/><path d="m15.41 6.51-6.82 3.98"/></svg>
-        Entegrasyon Bağlantıları
-        <span class="section-badge" id="int-count-badge">0/30 bağlı</span>
+    <!-- SOL PANEL -->
+    <div class="wz-sidebar" id="wz-sidebar">
+      <p class="wz-panel-title" id="wz-sidebar-title">Tetikleyici seç</p>
+      <div id="wz-node-list">
+        <!-- JS ile dolacak -->
       </div>
     </div>
-    <div id="int-root"></div>
-  </section>
 
-  <!-- INLINE BUILDER -->
-  <section id="builder-section">
-    <div class="builder-toolbar">
-      <div class="builder-toolbar-title">Workflow Oluşturucu</div>
-      <input class="builder-name-inp" type="text" id="builder-name" placeholder="Workflow adı...">
-      <button class="btn btn-sm" onclick="closeBuilder()">İptal</button>
-      <button class="btn btn-primary btn-sm" onclick="saveWorkflow()">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-        Kaydet
+    <!-- MERKEZ KANVAS -->
+    <div class="wz-canvas" id="wz-canvas">
+      <div class="wz-canvas-hint">
+        ℹ Soldan bir seçenek seç, akışa ekle
+      </div>
+      <div id="wz-flow">
+        <!-- JS ile dolacak -->
+      </div>
+    </div>
+
+    <!-- SAĞ PANEL -->
+    <div class="wz-settings" id="wz-settings">
+      <p class="wz-panel-title">Ayarlar</p>
+      <div id="wz-settings-content">
+        <p style="font-size:12px; color:var(--muted);">Bir node seçin.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Alt bar -->
+  <div class="wz-footer">
+    <div class="wz-footer-status">
+      <div class="wz-status-dot" id="wz-status-dot" style="background:var(--muted);"></div>
+      <span id="wz-footer-text">Son çalışma yok</span>
+    </div>
+    <div style="display:flex; gap:8px;">
+      <button onclick="wzPrevStep()" style="padding:6px 14px; font-size:12px; border:0.5px solid var(--line); border-radius:8px; background:transparent; color:var(--ink); cursor:pointer;">
+        ← Geri
+      </button>
+      <button onclick="wzNextStep()" style="padding:6px 14px; font-size:12px; border:none; border-radius:8px; background:#6366f1; color:#fff; cursor:pointer;">
+        Devam →
       </button>
     </div>
-    <div class="builder-canvas" id="builder-canvas"></div>
-    <div class="builder-config" id="builder-config"></div>
-    <div class="builder-foot">
-      <span style="font-size:12px;color:var(--muted)" id="builder-hint">Tetikleyici node'una tıklayarak başlayın</span>
-      <button class="btn btn-sm btn-ghost" id="btn-test-builder" onclick="testCurrentRule()" style="display:none">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-        Test Et
+  </div>
+
+</div>
+
+<!-- Otomasyon listesi overlay -->
+<div id="wz-list-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.3); z-index:100; align-items:center; justify-content:center;">
+  <div style="background:var(--surface); border-radius:16px; width:560px; max-height:80vh; overflow:hidden; display:flex; flex-direction:column;">
+    <div style="display:flex; align-items:center; justify-content:space-between; padding:16px 20px; border-bottom:0.5px solid var(--line);">
+      <p style="font-size:15px; font-weight:500; color:var(--ink); margin:0;">Tüm Otomasyonlar</p>
+      <button onclick="wzHideList()" style="background:none; border:none; font-size:18px; color:var(--muted); cursor:pointer;">✕</button>
+    </div>
+    <div class="wz-auto-list" id="wz-auto-list" style="overflow-y:auto;">
+      <p style="font-size:13px; color:var(--muted); text-align:center; padding:20px;">Yükleniyor...</p>
+    </div>
+    <div style="padding:12px 20px; border-top:0.5px solid var(--line);">
+      <button onclick="wzNewAuto(); wzHideList();" style="width:100%; padding:9px; font-size:13px; border:1px dashed var(--surface-3); border-radius:10px; background:transparent; color:var(--muted); cursor:pointer;">
+        + Yeni Otomasyon Oluştur
       </button>
     </div>
-  </section>
-
-  <!-- MY AUTOMATIONS -->
-  <section id="automations-section">
-    <div class="section-header">
-      <div class="section-title">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-        Otomasyonlarım
-        <span class="section-badge" id="rule-count-badge">0</span>
-      </div>
-      <div style="display:flex;gap:8px;align-items:center">
-        <div class="list-toolbar" style="margin:0">
-          <div class="search-box">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-            <input type="text" placeholder="Ara..." id="search-input" oninput="filterRules()">
-          </div>
-          <select class="filter-select" id="status-filter" onchange="filterRules()">
-            <option value="all">Tümü</option>
-            <option value="active">Aktif</option>
-            <option value="inactive">Pasif</option>
-          </select>
-        </div>
-      </div>
-    </div>
-    <div class="rules-list" id="rules-list">
-      <div class="empty-state">
-        <div class="spin spin-dark" style="margin:0 auto 12px"></div>
-        <p>Yükleniyor...</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- RUN HISTORY -->
-  <section id="run-history">
-    <div class="section-header">
-      <div class="section-title">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-        Son Çalışmalar
-        <span class="section-badge" id="run-count-badge">0</span>
-      </div>
-      <button class="btn btn-ghost btn-sm" onclick="loadRuns()">Yenile</button>
-    </div>
-    <div class="runs-list" id="runs-list">
-      <div class="empty-state" style="padding:24px">
-        <p style="font-size:13px;color:var(--muted)">Henüz çalışma kaydı yok.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- AI AGENTS -->
-  <section id="agents-section" style="display:none;position:relative">
-
-    <!-- Upgrade overlay (hidden by default, shown when not ProMax) -->
-    <div class="agent-upgrade-overlay" id="agents-upgrade-overlay" style="display:none">
-      <span style="font-size:32px;margin-bottom:8px">✦</span>
-      <p style="font-weight:600;font-size:15px;margin:0 0 6px">AI Agents Pro Max'e özel</p>
-      <p style="font-size:13px;color:var(--muted);margin:0 0 20px;text-align:center;max-width:300px">Sınırsız otomasyon ve AI Agent erişimi için Pro Max'e geç.</p>
-      <a href="/pricing" style="background:var(--accent);color:#fff;border-radius:999px;padding:10px 24px;text-decoration:none;font-size:14px;font-weight:600">Pro Max'e Geç →</a>
-    </div>
-
-    <!-- Section header -->
-    <div class="section-header">
-      <div class="section-title">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-        AI Agents
-      </div>
-    </div>
-    <p style="font-size:14px;color:var(--muted);margin-bottom:4px;line-height:1.6">Doğal dille komut ver, agent adım adım tamamlar.</p>
-    <p style="font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.55">
-      <strong style="color:var(--ink-2)">Otomasyondan farkı:</strong> Agent komutu kendisi adımlara böler, karar verir ve hata olursa alternatif yol dener.
-    </p>
-
-    <!-- Şablon kartları -->
-    <div id="agent-templates" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:16px"></div>
-
-    <!-- Prompt input -->
-    <div class="agent-input-wrap">
-      <textarea id="agent-prompt" rows="3" placeholder="Örnek: Satış tablosunu analiz et, en yüksek 10 müşteriyi filtrele ve Slack #ops kanalına gönder"></textarea>
-      <input type="hidden" id="agent-template-id">
-      <div style="display:flex;gap:8px">
-        <button class="agent-run-btn" id="run-agent-btn" onclick="runAgent()" style="flex:1">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-          Agent'ı Çalıştır
-        </button>
-        <button onclick="openScheduleModal()"
-          style="padding:10px 14px;border:1px solid var(--border,#e5e7eb);border-radius:8px;background:none;color:var(--ink-2);font-size:13px;cursor:pointer;white-space:nowrap">
-          ⏰ Zamanla
-        </button>
-      </div>
-    </div>
-
-    <!-- Live log (hidden until run starts) -->
-    <div class="agent-log-wrap" id="agent-log-wrap" style="display:none">
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
-        <span id="agent-run-title" style="font-weight:500;font-size:15px;flex:1;color:var(--ink)"></span>
-        <span id="agent-status-badge"></span>
-      </div>
-      <div id="agent-steps-list"></div>
-      <div class="agent-result" id="agent-result" style="display:none"></div>
-    </div>
-
-    <!-- History -->
-    <div style="margin-top:32px">
-      <h3 style="font-size:14px;font-weight:600;color:var(--ink);margin-bottom:12px">Son Çalıştırmalar</h3>
-      <div id="agent-history-list">
-        <p style="font-size:13px;color:var(--muted)">Henüz çalıştırma yok.</p>
-      </div>
-    </div>
-
-    <!-- Zamanlanmış Agent'lar -->
-    <div id="agent-schedules-wrap" style="margin-top:24px">
-      <h3 style="font-size:14px;font-weight:500;margin-bottom:12px">⏰ Zamanlanmış Agent'lar</h3>
-      <div id="agent-schedules-list"></div>
-    </div>
-
-    <!-- Agent Belleği -->
-    <div id="agent-memory-wrap" style="margin-top:24px;padding:14px;background:var(--surface,#f9fafb);border-radius:10px;border:0.5px solid var(--border,#e5e7eb)">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-        <span style="font-size:13px;font-weight:500">🧠 Agent Belleği</span>
-        <span style="font-size:12px;color:#9ca3af">Geçmiş çalıştırmalardan öğrenildi</span>
-      </div>
-      <div id="agent-memory-list">
-        <p style="font-size:12px;color:#9ca3af;margin:0">Henüz bellek yok — agent çalıştıkça öğrenir.</p>
-      </div>
-    </div>
-
-  </section>
-
-</main>
-
-<!-- ═══════════════════ AGENT SCHEDULE MODAL ═══════════════════ -->
-<div id="schedule-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:1000;align-items:center;justify-content:center">
-  <div style="background:var(--surface,#fff);border-radius:12px;padding:24px;width:90%;max-width:420px;box-shadow:0 20px 60px rgba(0,0,0,.18)">
-    <h3 style="margin:0 0 16px;font-size:16px">Agent'ı Zamanla</h3>
-    <label style="font-size:13px;color:#374151">Ne zaman çalışsın?</label>
-    <select id="schedule-preset" style="width:100%;margin:6px 0 16px;padding:10px;border:1px solid var(--border,#e5e7eb);border-radius:8px;font-size:14px">
-      <option value="0 9 * * 1">Her Pazartesi 09:00</option>
-      <option value="0 9 * * *">Her gün 09:00</option>
-      <option value="0 9 * * 5">Her Cuma 09:00</option>
-      <option value="0 8 1 * *">Her ayın 1'i 08:00</option>
-    </select>
-    <button onclick="createSchedule()" style="width:100%;padding:11px;background:var(--accent,#16a34a);color:#fff;border:none;border-radius:8px;font-size:14px;cursor:pointer;font-weight:500">Zamanla</button>
-    <button onclick="document.getElementById('schedule-modal').style.display='none'" style="width:100%;padding:8px;background:none;border:none;font-size:13px;color:#6b7280;cursor:pointer;margin-top:6px">İptal</button>
   </div>
 </div>
 
-<!-- ═══════════════════ CREATE/EDIT MODAL ═══════════════════ -->
-<div class="modal-overlay" id="create-overlay" onclick="overlayClose(event,'create-overlay')">
-<div class="modal modal-lg">
-  <div class="modal-head">
-    <h2 id="modal-title">Yeni Otomasyon</h2>
-    <button class="modal-close" onclick="closeCreateModal()">✕</button>
-  </div>
-  <div class="modal-body">
-    <!-- Steps -->
-    <div class="steps">
-      <div class="step-item active" id="step-1-ind">
-        <div class="step-num">1</div>
-        <div class="step-label">Tetikleyici</div>
-      </div>
-      <div class="step-item" id="step-2-ind">
-        <div class="step-num">2</div>
-        <div class="step-label">Koşullar</div>
-      </div>
-      <div class="step-item" id="step-3-ind">
-        <div class="step-num">3</div>
-        <div class="step-label">Aksiyonlar</div>
-      </div>
-    </div>
-
-    <!-- Step 1: Trigger -->
-    <div id="step-1-body">
-      <div class="field-row">
-        <div class="field">
-          <label class="lbl">Otomasyon Adı *</label>
-          <input class="inp" type="text" id="f-name" placeholder="örn. Düşük Stok Uyarısı">
-        </div>
-      </div>
-      <div class="field">
-        <label class="lbl">Açıklama (opsiyonel)</label>
-        <input class="inp" type="text" id="f-desc" placeholder="Bu otomasyon ne yapar?">
-      </div>
-      <div class="divider"></div>
-      <div class="section-label">Tetikleyici Tipi</div>
-      <div class="field">
-        <select class="inp" id="f-trigger-type" onchange="renderTriggerFields()">
-          <option value="cell_condition">Hücre Koşulu</option>
-          <option value="threshold">Eşik Değeri (sayısal)</option>
-          <option value="schedule">Zamanlama</option>
-          <option value="date_arrived">Tarih Koşulu</option>
-          <option value="row_added">Yeni Satır Eklendi</option>
-          <option value="value_changed">Değer Değişimi</option>
-          <option value="ai_anomaly">AI Anomali Tespiti</option>
-          <option value="row_deleted">Satır Silindi</option>
-          <option value="multi_condition">Çoklu Koşul</option>
-          <option value="email_received">Email Alındı</option>
-          <option value="incoming_webhook">Gelen Webhook</option>
-          <option value="periodic_ai">Periyodik AI</option>
-        </select>
-      </div>
-      <div id="trigger-fields"></div>
-    </div>
-
-    <!-- Step 2: Conditions -->
-    <div id="step-2-body" style="display:none">
-      <p style="font-size:13px;color:var(--muted);margin-bottom:14px">
-        Opsiyonel ek koşullar ekleyin. Tüm koşullar sağlandığında aksiyonlar tetiklenir.
-      </p>
-      <div class="cond-list" id="cond-list"></div>
-      <button class="btn btn-sm" onclick="addCondition()" style="gap:5px">
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
-        Koşul Ekle
-      </button>
-    </div>
-
-    <!-- Step 3: Actions -->
-    <div id="step-3-body" style="display:none">
-      <p style="font-size:13px;color:var(--muted);margin-bottom:14px">
-        Koşullar sağlandığında gerçekleşecek aksiyonları tanımlayın. Birden fazla aksiyon ekleyebilirsiniz.
-      </p>
-      <div class="action-list" id="action-list"></div>
-      <button class="btn btn-sm" onclick="addAction()" style="gap:5px">
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
-        Aksiyon Ekle
-      </button>
-      <div class="interpolation-hint" style="margin-top:10px">
-        Metin alanlarında sütun değerlerini kullanabilirsiniz: <code>{Sütun Adı}</code> örn. <code>{Ürün Adı}</code>, <code>{Stok Miktarı}</code>
-      </div>
-      <div class="divider"></div>
-      <div class="field-row">
-        <div class="field">
-          <label class="lbl">Tetiklenme Sıklığı (saniye)</label>
-          <input class="inp" type="number" id="f-throttle" value="3600" min="60" placeholder="3600">
-          <div class="inp-hint">Aynı kural en az bu kadar aralıkla çalışır (varsayılan: 1 saat)</div>
-        </div>
-        <div class="field">
-          <label class="lbl">Durum</label>
-          <select class="inp" id="f-enabled">
-            <option value="true">Aktif</option>
-            <option value="false">Pasif</option>
-          </select>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="modal-foot">
-    <button class="btn" id="btn-prev" onclick="prevStep()" style="display:none">← Geri</button>
-    <div style="display:flex;gap:8px;margin-left:auto">
-      <button class="btn" onclick="testCurrentRule()" id="btn-test" style="display:none">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-        Test Et
-      </button>
-      <button class="btn btn-primary" id="btn-next" onclick="nextStep()">Devam Et →</button>
-    </div>
-  </div>
-</div>
-</div>
-
-<!-- ═══════════════════ AI MODAL ═══════════════════ -->
-<div class="modal-overlay" id="ai-overlay" onclick="overlayClose(event,'ai-overlay')">
-<div class="modal">
-  <div class="modal-head">
-    <h2>✨ AI ile Workflow Oluştur</h2>
-    <button class="modal-close" onclick="closeAIModal()">✕</button>
-  </div>
-  <div class="modal-body">
-    <p style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.6">
-      Ne yapmak istediğinizi Türkçe yazın. AI otomatik olarak uygun tetikleyici, koşul ve aksiyonları oluşturacak.
-    </p>
-    <textarea class="ai-textarea" id="ai-query" placeholder="örn. Stok 20'nin altına düşerse tedarikçiye Gmail ile bildirim gönder ve Notion'da sipariş sayfası oluştur" rows="4"></textarea>
-    <div style="font-size:11px;color:var(--muted);margin-top:6px">Örnekler:</div>
-    <div class="ai-examples">
-      <div class="ai-example" onclick="setAIExample(this)">Her gün sabah 09:00'da son ödeme tarihi geçmiş faturaları kontrol et ve ilgili kişiye Gmail gönder</div>
-      <div class="ai-example" onclick="setAIExample(this)">Stok miktarı 10'un altına düşen ürünler için Slack kanalına otomatik uyarı gönder</div>
-      <div class="ai-example" onclick="setAIExample(this)">Durum sütunu "Onaylandı" olduğunda Notion'da yeni bir sipariş sayfası oluştur</div>
-    </div>
-    <div id="ai-preview" style="display:none">
-      <div class="divider"></div>
-      <div class="ai-preview">
-        <div class="ai-preview-title">Oluşturulan Workflow</div>
-        <div id="ai-preview-content"></div>
-      </div>
-    </div>
-    <div id="ai-loading" style="display:none;text-align:center;padding:24px 0">
-      <div class="loading-dots"><span></span><span></span><span></span></div>
-      <p style="font-size:13px;color:var(--muted);margin-top:10px">AI workflow oluşturuyor...</p>
-    </div>
-  </div>
-  <div class="modal-foot">
-    <div></div>
-    <div style="display:flex;gap:8px">
-      <button class="btn" onclick="closeAIModal()">İptal</button>
-      <button class="btn btn-primary" id="btn-ai-generate" onclick="generateWorkflow()">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-        Oluştur
-      </button>
-      <button class="btn" id="btn-ai-use" style="display:none" onclick="useGeneratedWorkflow()">Düzenle ✎</button>
-    </div>
-  </div>
-</div>
-</div>
-
-<!-- ═══════════════════ RUN DETAIL MODAL ═══════════════════ -->
-<div class="modal-overlay" id="run-overlay" onclick="overlayClose(event,'run-overlay')">
-<div class="modal">
-  <div class="modal-head">
-    <h2>Çalışma Detayı</h2>
-    <button class="modal-close" onclick="document.getElementById('run-overlay').classList.remove('open')">✕</button>
-  </div>
-  <div class="modal-body" id="run-detail-body"></div>
-  <div class="modal-foot">
-    <div></div>
-    <div style="display:flex;gap:8px">
-      <button class="btn" id="btn-retry-run" onclick="retryRun()">Tekrar Çalıştır</button>
-      <button class="btn" onclick="document.getElementById('run-overlay').classList.remove('open')">Kapat</button>
-    </div>
-  </div>
-</div>
-</div>
+<!-- React mount noktası (entegrasyonlar için korunuyor) -->
+<div id="int-root" style="display:none;"></div>
 
 <!-- TOAST -->
 <div id="toast"></div>
@@ -4400,6 +4447,285 @@ document.addEventListener('keydown', e => {
       document.getElementById(id)?.classList.remove('open');
     });
   }
+});
+</script>
+
+<script>
+// ─── Wizard state ───────────────────────────────
+const wzState = {
+  step: 1,
+  trigger: null,
+  actions: [],
+  selectedNodeId: null,
+  autoId: null,
+  autoName: 'Yeni Otomasyon'
+};
+
+const WZ_TRIGGERS = [
+  { id: 'schedule', label: 'Zamanlama', desc: 'Belirli saatte çalış', color: '#eef2ff', iconColor: '#6366f1', icon: '⏰' },
+  { id: 'data_change', label: 'Veri Değişimi', desc: 'Tablo güncellenince', color: '#fef3c7', iconColor: '#d97706', icon: '📊' },
+  { id: 'webhook', label: 'Webhook', desc: 'Dış istek gelince', color: '#f0fdf4', iconColor: '#16a34a', icon: '🔗' },
+  { id: 'manual', label: 'Manuel', desc: 'Elle tetikle', color: '#fdf4ff', iconColor: '#9333ea', icon: '👆' }
+];
+
+const WZ_ACTIONS = [
+  { id: 'read_data', label: 'Veri Oku', desc: 'Tablo verisini çek', color: '#fffbeb', iconColor: '#d97706', icon: '📄', nodeClass: 'action-read' },
+  { id: 'ai_analyze', label: 'AI Analiz', desc: 'Veriyi analiz et', color: '#eef2ff', iconColor: '#6366f1', icon: '✦', nodeClass: 'action-ai' },
+  { id: 'send_slack', label: 'Slack Gönder', desc: 'Kanala mesaj at', color: '#f0fdf4', iconColor: '#16a34a', icon: '💬', nodeClass: 'action-slack' },
+  { id: 'send_email', label: 'Email Gönder', desc: 'Gmail ile gönder', color: '#fdf4ff', iconColor: '#9333ea', icon: '✉️', nodeClass: 'action-email' },
+  { id: 'create_report', label: 'Rapor Oluştur', desc: 'Excel/PDF çıktı', color: '#eff6ff', iconColor: '#2563eb', icon: '📊', nodeClass: '' },
+  { id: 'filter_data', label: 'Veri Filtrele', desc: 'Koşula göre filtrele', color: '#fff7ed', iconColor: '#ea580c', icon: '🔍', nodeClass: '' },
+  { id: 'update_table', label: 'Tablo Güncelle', desc: 'Veri yaz/güncelle', color: '#fef2f2', iconColor: '#dc2626', icon: '✏️', nodeClass: '' },
+  { id: 'send_drive', label: "Drive'a Kaydet", desc: "Google Drive'a gönder", color: '#f0fdf4', iconColor: '#16a34a', icon: '💾', nodeClass: '' }
+];
+
+function wzGoStep(n) {
+  wzState.step = n;
+  document.querySelectorAll('.wz-step').forEach((el, i) => {
+    el.classList.remove('active', 'done');
+    if (i + 1 < n) el.classList.add('done');
+    else if (i + 1 === n) el.classList.add('active');
+  });
+  wzRenderStep();
+}
+
+function wzNextStep() { if (wzState.step < 4) wzGoStep(wzState.step + 1); }
+function wzPrevStep() { if (wzState.step > 1) wzGoStep(wzState.step - 1); }
+
+function wzRenderStep() {
+  const sidebarTitle = document.getElementById('wz-sidebar-title');
+  const nodeList = document.getElementById('wz-node-list');
+  const settings = document.getElementById('wz-settings-content');
+
+  if (wzState.step === 1) {
+    sidebarTitle.textContent = 'Tetikleyici seç';
+    nodeList.innerHTML = WZ_TRIGGERS.map(t => `
+      <div class="wz-node ${wzState.trigger?.id === t.id ? 'selected' : ''}" onclick="wzSelectTrigger('${t.id}')">
+        <div class="wz-node-icon" style="background:${t.color};"><span style="font-size:14px;">${t.icon}</span></div>
+        <div><p class="wz-node-label">${t.label}</p><p class="wz-node-desc">${t.desc}</p></div>
+      </div>`).join('');
+    wzRenderFlow();
+    wzRenderTriggerSettings();
+  } else if (wzState.step === 2) {
+    sidebarTitle.textContent = 'Aksiyon ekle';
+    nodeList.innerHTML = WZ_ACTIONS.map(a => `
+      <div class="wz-node" onclick="wzAddAction('${a.id}')">
+        <div class="wz-node-icon" style="background:${a.color};"><span style="font-size:14px;">${a.icon}</span></div>
+        <div><p class="wz-node-label">${a.label}</p><p class="wz-node-desc">${a.desc}</p></div>
+      </div>`).join('');
+    wzRenderFlow();
+  } else if (wzState.step === 3) {
+    sidebarTitle.textContent = 'Genel ayarlar';
+    nodeList.innerHTML = `
+      <div style="padding:4px 0;">
+        <p class="wz-settings-label">Otomasyon adı</p>
+        <input type="text" value="${wzState.autoName}" oninput="wzState.autoName=this.value; document.getElementById('wz-auto-title').textContent=this.value;"
+          style="width:100%; padding:7px 9px; font-size:12px; border:0.5px solid var(--line); border-radius:8px; background:var(--surface-2); color:var(--ink); box-sizing:border-box; outline:none;" />
+        <p class="wz-settings-label" style="margin-top:10px;">Hata durumunda</p>
+        <select style="width:100%; padding:7px 9px; font-size:12px; border:0.5px solid var(--line); border-radius:8px; background:var(--surface-2); color:var(--ink);">
+          <option>Durdur ve bildir</option><option>Devam et</option><option>Tekrar dene (3x)</option>
+        </select>
+        <p class="wz-settings-label" style="margin-top:10px;">Bildirim</p>
+        <select style="width:100%; padding:7px 9px; font-size:12px; border:0.5px solid var(--line); border-radius:8px; background:var(--surface-2); color:var(--ink);">
+          <option>Hata olunca bildir</option><option>Her çalışmada bildir</option><option>Bildirim yok</option>
+        </select>
+      </div>`;
+    wzRenderFlow();
+  } else if (wzState.step === 4) {
+    sidebarTitle.textContent = 'Test & Yayınla';
+    nodeList.innerHTML = `
+      <div style="padding:4px 0;">
+        <p class="wz-settings-label">Otomasyon hazır</p>
+        <button onclick="wzRunAuto()" style="width:100%; padding:9px; font-size:13px; background:var(--accent); color:#fff; border:none; border-radius:8px; cursor:pointer; margin-bottom:8px;">▶ Test Çalıştır</button>
+        <button onclick="wzSaveAuto()" style="width:100%; padding:9px; font-size:13px; background:#6366f1; color:#fff; border:none; border-radius:8px; cursor:pointer;">🚀 Yayınla</button>
+        <div id="wz-test-result" style="margin-top:12px; font-size:11px; color:var(--muted);"></div>
+      </div>`;
+    wzRenderFlow();
+  }
+}
+
+function wzRenderFlow() {
+  const flow = document.getElementById('wz-flow');
+  let html = '';
+  if (wzState.trigger) {
+    const t = WZ_TRIGGERS.find(x => x.id === wzState.trigger.id) || {};
+    html += `<div class="flow-node trigger">
+      <div class="flow-node-icon" style="background:${t.color || '#eef2ff'};"><span style="font-size:14px;">${t.icon || '⚡'}</span></div>
+      <div style="flex:1;"><p class="flow-node-name">${t.label || 'Tetikleyici'}</p><p class="flow-node-sub">${wzState.trigger.label || ''}</p></div>
+      <span class="wz-badge" style="background:#eef2ff; color:#6366f1;">Tetikleyici</span>
+    </div>`;
+  } else {
+    html += `<div class="flow-add-btn" onclick="wzGoStep(1)">+ Tetikleyici seç</div>`;
+  }
+  wzState.actions.forEach((a, i) => {
+    const def = WZ_ACTIONS.find(x => x.id === a.id) || {};
+    html += `<div class="flow-connector"></div>
+    <div class="flow-node ${def.nodeClass || ''}" onclick="wzSelectAction(${i})">
+      <div class="flow-node-icon" style="background:${def.color || '#f9fafb'};"><span style="font-size:14px;">${def.icon || '⚙️'}</span></div>
+      <div style="flex:1;"><p class="flow-node-name">${def.label || a.id}</p><p class="flow-node-sub">${a.config?.desc || def.desc || ''}</p></div>
+      <button onclick="event.stopPropagation(); wzRemoveAction(${i})" style="background:none; border:none; color:var(--muted); cursor:pointer; font-size:14px; padding:2px 6px;">✕</button>
+    </div>`;
+  });
+  if (wzState.trigger && wzState.step === 2) {
+    html += `<div class="flow-connector"></div><div class="flow-add-btn" onclick="document.getElementById('wz-node-list').querySelector('.wz-node')?.focus()">+ Aksiyon ekle</div>`;
+  }
+  flow.innerHTML = html;
+}
+
+function wzSelectTrigger(id) {
+  const t = WZ_TRIGGERS.find(x => x.id === id);
+  wzState.trigger = { id, label: t?.label };
+  document.querySelectorAll('.wz-node').forEach(el => el.classList.remove('selected'));
+  event.currentTarget.classList.add('selected');
+  wzRenderFlow();
+  wzRenderTriggerSettings();
+  setTimeout(() => wzGoStep(2), 400);
+}
+
+function wzRenderTriggerSettings() {
+  const settings = document.getElementById('wz-settings-content');
+  if (!wzState.trigger) { settings.innerHTML = '<p style="font-size:12px; color:var(--muted);">Tetikleyici seçin.</p>'; return; }
+  if (wzState.trigger.id === 'schedule') {
+    settings.innerHTML = `
+      <p class="wz-settings-label">Ne zaman çalışsın?</p>
+      <select style="width:100%; padding:7px 9px; font-size:12px; border:0.5px solid var(--line); border-radius:8px; background:var(--surface-2); color:var(--ink); margin-bottom:12px;">
+        <option>Her gün 09:00</option><option>Her Pazartesi 09:00</option><option>Her Cuma 18:00</option><option>Her ayın 1'i</option><option>Özel...</option>
+      </select>
+      <p class="wz-settings-label">Saat dilimi</p>
+      <select style="width:100%; padding:7px 9px; font-size:12px; border:0.5px solid var(--line); border-radius:8px; background:var(--surface-2); color:var(--ink); margin-bottom:12px;">
+        <option>Europe/Istanbul (UTC+3)</option><option>UTC</option>
+      </select>`;
+  } else {
+    settings.innerHTML = `<p style="font-size:12px; color:var(--muted);"><strong style="color:var(--ink);">${wzState.trigger.label}</strong> tetikleyicisi seçildi.</p>`;
+  }
+}
+
+function wzAddAction(id) {
+  wzState.actions.push({ id, config: {} });
+  wzRenderFlow();
+  wzSelectAction(wzState.actions.length - 1);
+}
+
+function wzRemoveAction(i) {
+  wzState.actions.splice(i, 1);
+  wzRenderFlow();
+}
+
+function wzSelectAction(i) {
+  wzState.selectedNodeId = i;
+  const a = wzState.actions[i];
+  const def = WZ_ACTIONS.find(x => x.id === a?.id);
+  const settings = document.getElementById('wz-settings-content');
+  if (!def) return;
+  let html = `<p class="wz-settings-label">Node adı</p>
+    <input type="text" value="${def.label}" style="width:100%; padding:7px 9px; font-size:12px; border:0.5px solid var(--line); border-radius:8px; background:var(--surface-2); color:var(--ink); box-sizing:border-box; outline:none; margin-bottom:12px;" />`;
+  if (a.id === 'read_data') {
+    html += `<p class="wz-settings-label">Veri kaynağı</p>
+      <select style="width:100%; padding:7px 9px; font-size:12px; border:0.5px solid var(--line); border-radius:8px; background:var(--surface-2); color:var(--ink); margin-bottom:12px;">
+        <option>Aktif tablo</option><option>Google Sheets</option><option>Shopify siparişleri</option><option>CSV yükle</option>
+      </select>
+      <p class="wz-settings-label">Zaman aralığı</p>
+      <select style="width:100%; padding:7px 9px; font-size:12px; border:0.5px solid var(--line); border-radius:8px; background:var(--surface-2); color:var(--ink); margin-bottom:12px;">
+        <option>Son 7 gün</option><option>Son 30 gün</option><option>Bu ay</option><option>Tüm veri</option>
+      </select>`;
+  } else if (a.id === 'ai_analyze') {
+    html += `<p class="wz-settings-label">Komut</p>
+      <textarea style="width:100%; padding:7px 9px; font-size:12px; border:0.5px solid var(--line); border-radius:8px; background:var(--surface-2); color:var(--ink); box-sizing:border-box; outline:none; resize:vertical; min-height:70px; margin-bottom:12px;" placeholder="ör: Haftalık satış özetini çıkar"></textarea>`;
+  } else if (a.id === 'send_slack') {
+    html += `<p class="wz-settings-label">Kanal</p>
+      <input type="text" placeholder="#ops" style="width:100%; padding:7px 9px; font-size:12px; border:0.5px solid var(--line); border-radius:8px; background:var(--surface-2); color:var(--ink); box-sizing:border-box; outline:none; margin-bottom:12px;" />
+      <p class="wz-settings-label">Mesaj</p>
+      <textarea style="width:100%; padding:7px 9px; font-size:12px; border:0.5px solid var(--line); border-radius:8px; background:var(--surface-2); color:var(--ink); box-sizing:border-box; outline:none; resize:vertical; min-height:60px; margin-bottom:12px;" placeholder="ör: Haftalık rapor hazır ✓"></textarea>`;
+  } else if (a.id === 'send_email') {
+    html += `<p class="wz-settings-label">Alıcı</p>
+      <input type="text" placeholder="email@ornek.com" style="width:100%; padding:7px 9px; font-size:12px; border:0.5px solid var(--line); border-radius:8px; background:var(--surface-2); color:var(--ink); box-sizing:border-box; outline:none; margin-bottom:12px;" />
+      <p class="wz-settings-label">Konu</p>
+      <input type="text" placeholder="Haftalık Rapor" style="width:100%; padding:7px 9px; font-size:12px; border:0.5px solid var(--line); border-radius:8px; background:var(--surface-2); color:var(--ink); box-sizing:border-box; outline:none; margin-bottom:12px;" />`;
+  }
+  html += `<div style="border-top:0.5px solid var(--line); padding-top:10px; margin-top:4px;">
+    <button onclick="wzRemoveAction(${i})" style="width:100%; padding:7px; font-size:12px; background:none; border:0.5px solid var(--line); border-radius:8px; color:var(--rose); cursor:pointer;">Sil</button>
+  </div>`;
+  settings.innerHTML = html;
+}
+
+function wzShowList() { document.getElementById('wz-list-overlay').style.display = 'flex'; wzLoadList(); }
+function wzHideList() { document.getElementById('wz-list-overlay').style.display = 'none'; }
+
+async function wzLoadList() {
+  const list = document.getElementById('wz-auto-list');
+  try {
+    const res = await fetch(API + '/api/automations', { headers: authHeaders() });
+    const data = await res.json();
+    const rules = data.rules || data || [];
+    if (!rules.length) { list.innerHTML = '<p style="font-size:13px; color:var(--muted); text-align:center; padding:20px;">Henüz otomasyon yok.</p>'; return; }
+    list.innerHTML = rules.map(r => `
+      <div class="wz-auto-card" onclick="wzLoadAuto('${r.id}'); wzHideList();">
+        <div class="wz-auto-card-icon">${r.icon || '⚙️'}</div>
+        <div style="flex:1;"><p class="wz-auto-card-name">${r.name || r.title || 'İsimsiz'}</p><p class="wz-auto-card-sub">${r.trigger_label || ''} · ${r.action_count || 0} aksiyon</p></div>
+        <div class="wz-toggle ${r.active ? 'on' : ''}" onclick="event.stopPropagation(); wzToggleAuto('${r.id}', this)"></div>
+      </div>`).join('');
+  } catch(e) {
+    list.innerHTML = '<p style="font-size:13px; color:var(--muted); text-align:center; padding:20px;">Yüklenemedi.</p>';
+  }
+}
+
+function wzToggleAuto(id, el) {
+  el.classList.toggle('on');
+  fetch(API + '/api/automations/' + id + '/toggle', { method: 'POST', headers: authHeaders() }).catch(() => {});
+}
+
+function wzLoadAuto(id) {
+  document.getElementById('wz-auto-title').textContent = 'Otomasyon #' + id;
+  wzState.autoId = id;
+  wzGoStep(1);
+}
+
+function wzNewAuto() {
+  wzState.trigger = null;
+  wzState.actions = [];
+  wzState.autoId = null;
+  wzState.autoName = 'Yeni Otomasyon';
+  document.getElementById('wz-auto-title').textContent = 'Yeni Otomasyon';
+  wzGoStep(1);
+}
+
+async function wzSaveAuto() {
+  try {
+    const body = { name: wzState.autoName, trigger: wzState.trigger, actions: wzState.actions };
+    const url = wzState.autoId ? API + '/api/automations/' + wzState.autoId : API + '/api/automations';
+    const res = await fetch(url, { method: wzState.autoId ? 'PUT' : 'POST', headers: authHeaders(), body: JSON.stringify(body) });
+    if (res.ok) {
+      const badge = document.getElementById('wz-status-badge');
+      badge.textContent = 'Aktif';
+      badge.style.background = 'var(--accent-soft)';
+      badge.style.color = 'var(--accent)';
+      document.getElementById('wz-status-dot').style.background = 'var(--accent)';
+    }
+  } catch(e) {}
+}
+
+async function wzRunAuto() {
+  const btn = document.getElementById('wz-run-btn');
+  btn.textContent = '⏳ Çalışıyor...';
+  btn.disabled = true;
+  try {
+    if (wzState.autoId) await fetch(API + '/api/automations/' + wzState.autoId + '/run', { method: 'POST', headers: authHeaders() });
+    document.getElementById('wz-footer-text').textContent = 'Son çalışma: ' + new Date().toLocaleTimeString('tr-TR');
+    document.getElementById('wz-status-dot').style.background = 'var(--accent)';
+    const result = document.getElementById('wz-test-result');
+    if (result) result.textContent = '✓ Başarıyla çalıştı.';
+  } catch(e) {
+    const result = document.getElementById('wz-test-result');
+    if (result) result.textContent = '✗ Hata oluştu.';
+  } finally {
+    btn.textContent = '▶ Çalıştır';
+    btn.disabled = false;
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (typeof initAuth === 'function') initAuth();
+  wzGoStep(1);
 });
 </script>
 
