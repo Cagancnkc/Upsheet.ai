@@ -5358,17 +5358,7 @@ function IntegrationBrowser() {
 ReactDOM.createRoot(document.getElementById('int-root')).render(<IntegrationBrowser />);
 </script>
 
-<script type="text/babel">
-/* global ReactFlowLib */
-const {
-  ReactFlow, ReactFlowProvider, addEdge,
-  useNodesState, useEdgesState,
-  Controls, MiniMap, Background, BackgroundVariant,
-  Handle, Position,
-} = ReactFlowLib;
-
-const { useState, useCallback, useRef, useEffect } = React;
-
+<script>
 const WF_INTEGRATIONS = [
   {
     id:'trigger_schedule', name:'Zamanlama', cat:'Tetikleyiciler',
@@ -6339,6 +6329,51 @@ const WF_INTEGRATIONS = [
   },
 ];
 
+function wfRenderSidebar(q) {
+  var el = document.getElementById('wf-node-list');
+  if (!el) return;
+  var lq = (q || '').toLowerCase();
+  var filtered = WF_INTEGRATIONS.filter(function(i) {
+    return !lq || i.name.toLowerCase().includes(lq) || i.cat.toLowerCase().includes(lq) ||
+      i.ops.some(function(o) { return o.label.toLowerCase().includes(lq); });
+  });
+  var cats = filtered.map(function(i){return i.cat;}).filter(function(v,i,a){return a.indexOf(v)===i;});
+  el.innerHTML = cats.map(function(cat) {
+    var rows = filtered.filter(function(i){return i.cat===cat;}).map(function(i) {
+      return '<div class="wf-node-row" draggable="true" ondragstart="event.dataTransfer.setData('+
+        "'wf-node','"+i.id+"')\">"+
+        '<div class="wf-node-ico" style="background:'+i.color+'">'+i.icon+'</div>'+
+        '<div style="flex:1;min-width:0;">'+
+        '<p class="wf-node-lbl">'+i.name+'</p>'+
+        '<p class="wf-node-sub">'+i.ops.length+' operasyon</p>'+
+        '</div></div>';
+    }).join('');
+    return '<span class="wf-cat-label">'+cat+'</span>'+rows;
+  }).join('');
+}
+
+window.wfFilterNodes = function(q) { wfRenderSidebar(q); };
+
+// Render sidebar immediately — independent of ReactFlow/Babel loading
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', function() { wfRenderSidebar(''); });
+} else {
+  wfRenderSidebar('');
+}
+</script>
+
+<script type="text/babel">
+/* global ReactFlowLib */
+const {
+  ReactFlow, ReactFlowProvider, addEdge,
+  useNodesState, useEdgesState,
+  Controls, MiniMap, Background, BackgroundVariant,
+  Handle, Position,
+} = ReactFlowLib;
+
+const { useState, useCallback, useRef, useEffect } = React;
+
+
 function wfToast(msg, ms = 2500) {
   const el = document.getElementById('wf-toast');
   if (!el) return;
@@ -6599,28 +6634,6 @@ function WFApp() {
   );
 }
 
-function wfRenderSidebar(q) {
-  const el = document.getElementById('wf-node-list');
-  if (!el) return;
-  const lq = q.toLowerCase();
-  const filtered = WF_INTEGRATIONS.filter(i =>
-    !lq || i.name.toLowerCase().includes(lq) || i.cat.toLowerCase().includes(lq) ||
-    i.ops.some(o => o.label.toLowerCase().includes(lq))
-  );
-  const cats = [...new Set(filtered.map(i => i.cat))];
-  el.innerHTML = cats.map(cat => `
-    <span class="wf-cat-label">${cat}</span>
-    ${filtered.filter(i => i.cat === cat).map(i => `
-      <div class="wf-node-row" draggable="true" ondragstart="event.dataTransfer.setData('wf-node','${i.id}')">
-        <div class="wf-node-ico" style="background:${i.color}">${i.icon}</div>
-        <div style="flex:1;min-width:0;">
-          <p class="wf-node-lbl">${i.name}</p>
-          <p class="wf-node-sub">${i.ops.length} operasyon</p>
-        </div>
-      </div>
-    `).join('')}
-  `).join('');
-}
 
 ReactDOM.createRoot(document.getElementById('wf-rf-root')).render(
   <ReactFlowProvider><WFApp/></ReactFlowProvider>
