@@ -6486,7 +6486,7 @@ function WFApp() {
     const wrap = document.getElementById('wf-canvas-wrap');
     if (!wrap) return;
     const bounds = wrap.getBoundingClientRect();
-    const pos = rfInst.screenToFlowPosition({x: e.clientX - bounds.left, y: e.clientY - bounds.top});
+    const pos = rfInst.project({x: e.clientX - bounds.left, y: e.clientY - bounds.top});
     const integ = WF_INTEGRATIONS.find(i => i.id === intId);
     setNodes(ns => [...ns, {
       id: nextId(), type: 'wfNode', position: pos,
