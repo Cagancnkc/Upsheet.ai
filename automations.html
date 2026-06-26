@@ -5382,7 +5382,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'google_sheets', name:'Google Sheets', cat:'Veri & Tablolar',
-    icon:'📊', color:'#f0fdf4', type:'action',
+    icon:'<img src="https://cdn.simpleicons.org/googlesheets" width="20" height="20" onerror="wfIconErr(this)">', color:'#f0fdf4', type:'action',
     ops:[
       {id:'append_row',    label:'Yeni satır ekle (Append Row)'},
       {id:'get_rows',      label:'Satırları çek (Get Rows)'},
@@ -5396,7 +5396,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'slack', name:'Slack', cat:'Mesajlaşma',
-    icon:'💬', color:'#fff7ed', type:'action',
+    icon:'<img src="https://cdn.simpleicons.org/slack" width="20" height="20" onerror="wfIconErr(this)">', color:'#fff7ed', type:'action',
     ops:[
       {id:'send_message', label:'Mesaj gönder (Send Message)'},
       {id:'send_file',    label:'Dosya gönder (Send File)'},
@@ -5409,7 +5409,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'gmail', name:'Gmail', cat:'Mesajlaşma',
-    icon:'✉️', color:'#fdf4ff', type:'action',
+    icon:'<img src="https://cdn.simpleicons.org/gmail" width="20" height="20" onerror="wfIconErr(this)">', color:'#fdf4ff', type:'action',
     ops:[{id:'send_email',label:'Email gönder'},{id:'watch_inbox',label:'▶ Yeni email izle (Trigger)',isTrig:true}],
     fields:{
       send_email:[{key:'to',label:'Alıcı',type:'text',ph:'ornek@email.com'},{key:'subject',label:'Konu',type:'text',ph:'Haftalık Rapor'},{key:'body',label:'İçerik',type:'area',ph:'Merhaba,\n\n{{summary}}'}],
@@ -5417,7 +5417,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'shopify', name:'Shopify', cat:'E-ticaret',
-    icon:'🛍', color:'#fef9f0', type:'action',
+    icon:'<img src="https://cdn.simpleicons.org/shopify" width="20" height="20" onerror="wfIconErr(this)">', color:'#fef9f0', type:'action',
     ops:[
       {id:'new_order',    label:'▶ Yeni sipariş (Trigger)', isTrig:true},
       {id:'get_orders',   label:'Siparişleri çek'},
@@ -5430,7 +5430,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'hubspot', name:'HubSpot', cat:'CRM',
-    icon:'🔶', color:'#fff7ed', type:'action',
+    icon:'<img src="https://cdn.simpleicons.org/hubspot" width="20" height="20" onerror="wfIconErr(this)">', color:'#fff7ed', type:'action',
     ops:[{id:'create_contact',label:'Kişi oluştur'},{id:'get_contacts',label:'Kişileri çek'},{id:'create_deal',label:'Fırsat oluştur'}],
     fields:{
       create_contact:[{key:'email',label:'Email',type:'text',ph:'{{email}}'},{key:'firstname',label:'Ad',type:'text',ph:'{{name}}'}],
@@ -5447,7 +5447,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'google_drive', name:'Google Drive', cat:'Veri & Tablolar',
-    icon:'💾', color:'#f0fdf4', type:'action',
+    icon:'<img src="https://cdn.simpleicons.org/googledrive" width="20" height="20" onerror="wfIconErr(this)">', color:'#f0fdf4', type:'action',
     ops:[{id:'upload_file',label:'Dosya yükle'},{id:'get_file',label:'Dosya çek'},{id:'watch_folder',label:'▶ Klasör izle (Trigger)',isTrig:true}],
     fields:{
       upload_file:[{key:'folder_id',label:'Klasör ID',type:'text',ph:'Google Drive klasör ID'},{key:'filename',label:'Dosya adı',type:'text',ph:'rapor_{{date}}.csv'},{key:'content',label:'İçerik',type:'area',ph:'{{previous_output}}'}],
@@ -5474,7 +5474,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 1: E-TİCARET ──────────────────────────
   {
     id:'woocommerce', name:'WooCommerce', cat:'E-ticaret',
-    icon:'🛒', color:'#fdf4ff', type:'action',
+    icon:'<img src="https://cdn.simpleicons.org/woocommerce" width="20" height="20" onerror="wfIconErr(this)">', color:'#fdf4ff', type:'action',
     ops:[
       {id:'get_orders',    label:'Siparişleri çek'},
       {id:'get_products',  label:'Ürünleri çek'},
@@ -5490,7 +5490,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'trendyol', name:'Trendyol', cat:'E-ticaret',
-    icon:'🟠', color:'#fff7ed', type:'action',
+    icon:'<img src="https://www.trendyol.com/favicon.ico" width="20" height="20" onerror="wfIconErr(this)">', color:'#fff7ed', type:'action',
     ops:[
       {id:'get_orders',   label:'Siparişleri çek'},
       {id:'get_products', label:'Ürünleri çek'},
@@ -5506,7 +5506,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'hepsiburada', name:'Hepsiburada', cat:'E-ticaret',
-    icon:'🔵', color:'#eff6ff', type:'action',
+    icon:'<img src="https://www.hepsiburada.com/favicon.ico" width="20" height="20" onerror="wfIconErr(this)">', color:'#eff6ff', type:'action',
     ops:[
       {id:'get_orders',   label:'Siparişleri çek'},
       {id:'get_products', label:'Ürünleri çek'},
@@ -5521,7 +5521,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'etsy', name:'Etsy', cat:'E-ticaret',
-    icon:'🧡', color:'#fff7ed', type:'action',
+    icon:'<img src="https://cdn.simpleicons.org/etsy" width="20" height="20" onerror="wfIconErr(this)">', color:'#fff7ed', type:'action',
     ops:[
       {id:'get_orders',   label:'Siparişleri çek'},
       {id:'get_listings', label:'Ürünleri çek'},
@@ -5533,7 +5533,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'amazon', name:'Amazon', cat:'E-ticaret',
-    icon:'📦', color:'#fef9f0', type:'action',
+    icon:'<img src="https://cdn.simpleicons.org/amazon" width="20" height="20" onerror="wfIconErr(this)">', color:'#fef9f0', type:'action',
     ops:[
       {id:'get_orders',     label:'Siparişleri çek (MWS)'},
       {id:'get_inventory',  label:'Envanter çek'},
@@ -5549,7 +5549,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'bigcommerce', name:'BigCommerce', cat:'E-ticaret',
-    icon:'🏪', color:'#f0fdf4', type:'action',
+    icon:'<img src="https://cdn.simpleicons.org/bigcommerce" width="20" height="20" onerror="wfIconErr(this)">', color:'#f0fdf4', type:'action',
     ops:[
       {id:'get_orders',   label:'Siparişleri çek'},
       {id:'get_products', label:'Ürünleri çek'},
@@ -5563,7 +5563,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 1: E-POSTA PAZARLAMA ──────────────────
   {
     id:'klaviyo', name:'Klaviyo', cat:'Email Pazarlama',
-    icon:'📧', color:'#fdf4ff', type:'action',
+    icon:'<img src="https://cdn.simpleicons.org/klaviyo" width="20" height="20" onerror="wfIconErr(this)">', color:'#fdf4ff', type:'action',
     ops:[
       {id:'add_to_list',      label:'Listeye ekle'},
       {id:'remove_from_list', label:'Listeden çıkar'},
@@ -5585,7 +5585,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'mailchimp', name:'Mailchimp', cat:'Email Pazarlama',
-    icon:'🐵', color:'#fef3c7', type:'action',
+    icon:'<img src="https://cdn.simpleicons.org/mailchimp" width="20" height="20" onerror="wfIconErr(this)">', color:'#fef3c7', type:'action',
     ops:[
       {id:'add_subscriber',    label:'Abone ekle'},
       {id:'remove_subscriber', label:'Abone çıkar'},
@@ -5603,7 +5603,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'omnisend', name:'Omnisend', cat:'Email Pazarlama',
-    icon:'📨', color:'#eef2ff', type:'action',
+    icon:'<img src="https://cdn.simpleicons.org/omnisend" width="20" height="20" onerror="wfIconErr(this)">', color:'#eef2ff', type:'action',
     ops:[
       {id:'add_contact',   label:'Kişi ekle'},
       {id:'send_campaign', label:'Kampanya gönder'},
@@ -5618,7 +5618,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'activecampaign', name:'ActiveCampaign', cat:'Email Pazarlama',
-    icon:'📮', color:'#f0fdf4', type:'action',
+    icon:'<img src="https://cdn.simpleicons.org/activecampaign" width="20" height="20" onerror="wfIconErr(this)">', color:'#f0fdf4', type:'action',
     ops:[
       {id:'create_contact',    label:'Kişi oluştur'},
       {id:'add_to_list',       label:'Listeye ekle'},
@@ -5637,7 +5637,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 1: CRM & SATIŞ ───────────────────────
   {
     id:'salesforce', name:'Salesforce', cat:'CRM',
-    icon:'☁️', color:'#eff6ff', type:'action',
+    icon:'<img src="https://cdn.simpleicons.org/salesforce" width="20" height="20" onerror="wfIconErr(this)">', color:'#eff6ff', type:'action',
     ops:[
       {id:'create_lead',    label:'Lead oluştur'},
       {id:'update_lead',    label:'Lead güncelle'},
@@ -5656,7 +5656,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'pipedrive', name:'Pipedrive', cat:'CRM',
-    icon:'🔵', color:'#eff6ff', type:'action',
+    icon:'<img src="https://cdn.simpleicons.org/pipedrive" width="20" height="20" onerror="wfIconErr(this)">', color:'#eff6ff', type:'action',
     ops:[
       {id:'create_person', label:'Kişi oluştur'},
       {id:'create_deal',   label:'Anlaşma oluştur'},
@@ -5674,7 +5674,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'zoho_crm', name:'Zoho CRM', cat:'CRM',
-    icon:'🟣', color:'#fdf4ff', type:'action',
+    icon:'<img src="https://cdn.simpleicons.org/zoho" width="20" height="20" onerror="wfIconErr(this)">', color:'#fdf4ff', type:'action',
     ops:[
       {id:'create_lead',    label:'Lead oluştur'},
       {id:'create_contact', label:'Kişi oluştur'},
@@ -5692,7 +5692,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 1: PROJE YÖNETİMİ ────────────────────
   {
     id:'notion', name:'Notion', cat:'Proje Yönetimi',
-    icon:'📝', color:'#f9fafb', type:'action',
+    icon:'<img src="https://cdn.simpleicons.org/notion" width="20" height="20" onerror="wfIconErr(this)">', color:'#f9fafb', type:'action',
     ops:[
       {id:'create_page',    label:'Sayfa oluştur'},
       {id:'update_page',    label:'Sayfa güncelle'},
@@ -5714,7 +5714,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'airtable', name:'Airtable', cat:'Proje Yönetimi',
-    icon:'📋', color:'#f0fdf4', type:'action',
+    icon:'<img src="https://cdn.simpleicons.org/airtable" width="20" height="20" onerror="wfIconErr(this)">', color:'#f0fdf4', type:'action',
     ops:[
       {id:'create_record', label:'Kayıt oluştur'},
       {id:'update_record', label:'Kayıt güncelle'},
@@ -5732,7 +5732,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'trello', name:'Trello', cat:'Proje Yönetimi',
-    icon:'🟦', color:'#eff6ff', type:'action',
+    icon:'<img src="https://cdn.simpleicons.org/trello" width="20" height="20" onerror="wfIconErr(this)">', color:'#eff6ff', type:'action',
     ops:[
       {id:'create_card',  label:'Kart oluştur'},
       {id:'update_card',  label:'Kart güncelle'},
@@ -5750,7 +5750,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'asana', name:'Asana', cat:'Proje Yönetimi',
-    icon:'🎯', color:'#fff0f0', type:'action',
+    icon:'<img src="https://cdn.simpleicons.org/asana" width="20" height="20" onerror="wfIconErr(this)">', color:'#fff0f0', type:'action',
     ops:[
       {id:'create_task',  label:'Görev oluştur'},
       {id:'update_task',  label:'Görev güncelle'},
@@ -5769,7 +5769,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'monday', name:'Monday.com', cat:'Proje Yönetimi',
-    icon:'📅', color:'#fff0f9', type:'action',
+    icon:'<img src="https://cdn.simpleicons.org/mondaydotcom" width="20" height="20" onerror="wfIconErr(this)">', color:'#fff0f9', type:'action',
     ops:[
       {id:'create_item',  label:'Öğe oluştur'},
       {id:'update_item',  label:'Öğe güncelle'},
@@ -5786,7 +5786,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'jira', name:'Jira', cat:'Proje Yönetimi',
-    icon:'🔷', color:'#eff6ff', type:'action',
+    icon:'<img src="https://cdn.simpleicons.org/jira" width="20" height="20" onerror="wfIconErr(this)">', color:'#eff6ff', type:'action',
     ops:[
       {id:'create_issue',  label:'Issue oluştur'},
       {id:'update_issue',  label:'Issue güncelle'},
@@ -5805,7 +5805,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'linear', name:'Linear', cat:'Proje Yönetimi',
-    icon:'⚡', color:'#eef2ff', type:'action',
+    icon:'<img src="https://cdn.simpleicons.org/linear" width="20" height="20" onerror="wfIconErr(this)">', color:'#eef2ff', type:'action',
     ops:[
       {id:'create_issue',  label:'Issue oluştur'},
       {id:'update_issue',  label:'Issue güncelle'},
@@ -5823,7 +5823,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'clickup', name:'ClickUp', cat:'Proje Yönetimi',
-    icon:'🟣', color:'#f5f3ff', type:'action',
+    icon:'<img src="https://cdn.simpleicons.org/clickup" width="20" height="20" onerror="wfIconErr(this)">', color:'#f5f3ff', type:'action',
     ops:[
       {id:'create_task',   label:'Görev oluştur'},
       {id:'update_task',   label:'Görev güncelle'},
@@ -5842,7 +5842,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 1: MESAJLAŞMA ────────────────────────
   {
     id:'microsoft_teams', name:'Microsoft Teams', cat:'Mesajlaşma',
-    icon:'🟦', color:'#eff6ff', type:'action',
+    icon:'<img src="https://cdn.simpleicons.org/microsoftteams" width="20" height="20" onerror="wfIconErr(this)">', color:'#eff6ff', type:'action',
     ops:[
       {id:'send_message',   label:'Mesaj gönder'},
       {id:'create_meeting', label:'Toplantı oluştur'},
@@ -5859,7 +5859,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'whatsapp', name:'WhatsApp Business', cat:'Mesajlaşma',
-    icon:'💚', color:'#f0fdf4', type:'action',
+    icon:'<img src="https://cdn.simpleicons.org/whatsapp" width="20" height="20" onerror="wfIconErr(this)">', color:'#f0fdf4', type:'action',
     ops:[
       {id:'send_message',   label:'Mesaj gönder'},
       {id:'send_template',  label:'Şablon mesaj gönder'},
@@ -5874,7 +5874,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'telegram', name:'Telegram', cat:'Mesajlaşma',
-    icon:'✈️', color:'#eff6ff', type:'action',
+    icon:'<img src="https://cdn.simpleicons.org/telegram" width="20" height="20" onerror="wfIconErr(this)">', color:'#eff6ff', type:'action',
     ops:[
       {id:'send_message', label:'Mesaj gönder'},
       {id:'send_file',    label:'Dosya gönder'},
@@ -5889,7 +5889,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'discord', name:'Discord', cat:'Mesajlaşma',
-    icon:'🎮', color:'#eef2ff', type:'action',
+    icon:'<img src="https://cdn.simpleicons.org/discord" width="20" height="20" onerror="wfIconErr(this)">', color:'#eef2ff', type:'action',
     ops:[
       {id:'send_message',  label:'Mesaj gönder'},
       {id:'send_embed',    label:'Embed mesaj gönder'},
@@ -5906,7 +5906,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 1: FİNANS & ÖDEME ────────────────────
   {
     id:'stripe', name:'Stripe', cat:'Finans & Ödeme',
-    icon:'💳', color:'#eef2ff', type:'action',
+    icon:'<img src="https://cdn.simpleicons.org/stripe" width="20" height="20" onerror="wfIconErr(this)">', color:'#eef2ff', type:'action',
     ops:[
       {id:'create_customer',    label:'Müşteri oluştur'},
       {id:'create_invoice',     label:'Fatura oluştur'},
@@ -5925,7 +5925,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'iyzico', name:'İyzico', cat:'Finans & Ödeme',
-    icon:'💰', color:'#fff7ed', type:'action',
+    icon:'<img src="https://www.iyzico.com/favicon.ico" width="20" height="20" onerror="wfIconErr(this)">', color:'#fff7ed', type:'action',
     ops:[
       {id:'get_payments',  label:'Ödemeleri çek'},
       {id:'get_refunds',   label:'İadeleri çek'},
@@ -5940,7 +5940,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'paypal', name:'PayPal', cat:'Finans & Ödeme',
-    icon:'🅿️', color:'#eff6ff', type:'action',
+    icon:'<img src="https://cdn.simpleicons.org/paypal" width="20" height="20" onerror="wfIconErr(this)">', color:'#eff6ff', type:'action',
     ops:[
       {id:'get_transactions', label:'İşlemleri çek'},
       {id:'send_payment',     label:'Ödeme gönder'},
@@ -5955,7 +5955,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'quickbooks', name:'QuickBooks', cat:'Finans & Ödeme',
-    icon:'💼', color:'#f0fdf4', type:'action',
+    icon:'<img src="https://cdn.simpleicons.org/quickbooks" width="20" height="20" onerror="wfIconErr(this)">', color:'#f0fdf4', type:'action',
     ops:[
       {id:'create_invoice',  label:'Fatura oluştur'},
       {id:'get_invoices',    label:'Faturaları çek'},
@@ -5974,7 +5974,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 1: ANALİTİK ──────────────────────────
   {
     id:'google_analytics', name:'Google Analytics', cat:'Analitik',
-    icon:'📈', color:'#fff7ed', type:'action',
+    icon:'<img src="https://cdn.simpleicons.org/googleanalytics" width="20" height="20" onerror="wfIconErr(this)">', color:'#fff7ed', type:'action',
     ops:[
       {id:'get_sessions',    label:'Oturumları çek'},
       {id:'get_pageviews',   label:'Sayfa görüntüleme'},
@@ -5992,7 +5992,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'mixpanel', name:'Mixpanel', cat:'Analitik',
-    icon:'📊', color:'#fdf4ff', type:'action',
+    icon:'<img src="https://cdn.simpleicons.org/mixpanel" width="20" height="20" onerror="wfIconErr(this)">', color:'#fdf4ff', type:'action',
     ops:[
       {id:'track_event',   label:'Event gönder'},
       {id:'get_funnel',    label:'Funnel verisi çek'},
@@ -6011,7 +6011,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 1: DEPOLAMA ──────────────────────────
   {
     id:'dropbox', name:'Dropbox', cat:'Depolama',
-    icon:'📦', color:'#eff6ff', type:'action',
+    icon:'<img src="https://cdn.simpleicons.org/dropbox" width="20" height="20" onerror="wfIconErr(this)">', color:'#eff6ff', type:'action',
     ops:[
       {id:'upload_file',   label:'Dosya yükle'},
       {id:'download_file', label:'Dosya indir'},
@@ -6027,7 +6027,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'onedrive', name:'OneDrive', cat:'Depolama',
-    icon:'☁️', color:'#eff6ff', type:'action',
+    icon:'<img src="https://cdn.simpleicons.org/microsoftonedrive" width="20" height="20" onerror="wfIconErr(this)">', color:'#eff6ff', type:'action',
     ops:[
       {id:'upload_file',  label:'Dosya yükle'},
       {id:'get_file',     label:'Dosya çek'},
@@ -6045,7 +6045,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 1: GELİŞTİRİCİ ───────────────────────
   {
     id:'github', name:'GitHub', cat:'Geliştirici',
-    icon:'🐙', color:'#f9fafb', type:'action',
+    icon:'<img src="https://cdn.simpleicons.org/github" width="20" height="20" onerror="wfIconErr(this)">', color:'#f9fafb', type:'action',
     ops:[
       {id:'create_issue',   label:'Issue oluştur'},
       {id:'create_pr',      label:'Pull Request oluştur'},
@@ -6065,7 +6065,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'gitlab', name:'GitLab', cat:'Geliştirici',
-    icon:'🦊', color:'#fff7ed', type:'action',
+    icon:'<img src="https://cdn.simpleicons.org/gitlab" width="20" height="20" onerror="wfIconErr(this)">', color:'#fff7ed', type:'action',
     ops:[
       {id:'create_issue', label:'Issue oluştur'},
       {id:'get_issues',   label:"Issue'ları çek"},
@@ -6083,7 +6083,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 1: KARGO & LOJİSTİK ──────────────────
   {
     id:'yurtici', name:'Yurtiçi Kargo', cat:'Kargo & Lojistik',
-    icon:'🚚', color:'#fef9f0', type:'action',
+    icon:'<img src="https://www.yurticikargo.com/favicon.ico" width="20" height="20" onerror="wfIconErr(this)">', color:'#fef9f0', type:'action',
     ops:[
       {id:'create_shipment', label:'Gönderi oluştur'},
       {id:'track_shipment',  label:'Kargo takip'},
@@ -6100,7 +6100,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'aras', name:'Aras Kargo', cat:'Kargo & Lojistik',
-    icon:'🔴', color:'#fff0f0', type:'action',
+    icon:'<img src="https://www.araskargo.com.tr/favicon.ico" width="20" height="20" onerror="wfIconErr(this)">', color:'#fff0f0', type:'action',
     ops:[
       {id:'create_shipment', label:'Gönderi oluştur'},
       {id:'track_shipment',  label:'Kargo takip'},
@@ -6116,7 +6116,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'mng', name:'MNG Kargo', cat:'Kargo & Lojistik',
-    icon:'🟡', color:'#fef9f0', type:'action',
+    icon:'<img src="https://www.mngkargo.com.tr/favicon.ico" width="20" height="20" onerror="wfIconErr(this)">', color:'#fef9f0', type:'action',
     ops:[
       {id:'create_shipment', label:'Gönderi oluştur'},
       {id:'track_shipment',  label:'Kargo takip'},
@@ -6130,7 +6130,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'shipstation', name:'ShipStation', cat:'Kargo & Lojistik',
-    icon:'⚓', color:'#eff6ff', type:'action',
+    icon:'<img src="https://www.shipstation.com/favicon.ico" width="20" height="20" onerror="wfIconErr(this)">', color:'#eff6ff', type:'action',
     ops:[
       {id:'create_shipment',  label:'Gönderi oluştur'},
       {id:'get_shipments',    label:'Gönderileri çek'},
@@ -6148,7 +6148,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 1: PAZARLAMA ─────────────────────────
   {
     id:'google_ads', name:'Google Ads', cat:'Pazarlama',
-    icon:'🎯', color:'#fff7ed', type:'action',
+    icon:'<img src="https://cdn.simpleicons.org/googleads" width="20" height="20" onerror="wfIconErr(this)">', color:'#fff7ed', type:'action',
     ops:[
       {id:'get_campaigns',  label:'Kampanyaları çek'},
       {id:'get_stats',      label:'İstatistikleri çek'},
@@ -6165,7 +6165,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'meta_ads', name:'Meta Ads', cat:'Pazarlama',
-    icon:'📘', color:'#eff6ff', type:'action',
+    icon:'<img src="https://cdn.simpleicons.org/meta" width="20" height="20" onerror="wfIconErr(this)">', color:'#eff6ff', type:'action',
     ops:[
       {id:'get_campaigns', label:'Kampanyaları çek'},
       {id:'get_adsets',    label:"Ad set'leri çek"},
@@ -6183,7 +6183,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'tiktok_ads', name:'TikTok Ads', cat:'Pazarlama',
-    icon:'🎵', color:'#f9fafb', type:'action',
+    icon:'<img src="https://cdn.simpleicons.org/tiktok" width="20" height="20" onerror="wfIconErr(this)">', color:'#f9fafb', type:'action',
     ops:[
       {id:'get_campaigns', label:'Kampanyaları çek'},
       {id:'get_insights',  label:'İçgörüleri çek'},
@@ -6201,7 +6201,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 1: MÜŞTERİ HİZMETİ ──────────────────
   {
     id:'zendesk', name:'Zendesk', cat:'Müşteri Hizmetleri',
-    icon:'☎️', color:'#f0fdf4', type:'action',
+    icon:'<img src="https://cdn.simpleicons.org/zendesk" width="20" height="20" onerror="wfIconErr(this)">', color:'#f0fdf4', type:'action',
     ops:[
       {id:'create_ticket',  label:'Ticket oluştur'},
       {id:'update_ticket',  label:'Ticket güncelle'},
@@ -6219,7 +6219,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'intercom', name:'Intercom', cat:'Müşteri Hizmetleri',
-    icon:'💬', color:'#eef2ff', type:'action',
+    icon:'<img src="https://cdn.simpleicons.org/intercom" width="20" height="20" onerror="wfIconErr(this)">', color:'#eef2ff', type:'action',
     ops:[
       {id:'create_contact',   label:'Kişi oluştur'},
       {id:'send_message',     label:'Mesaj gönder'},
@@ -6235,7 +6235,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'freshdesk', name:'Freshdesk', cat:'Müşteri Hizmetleri',
-    icon:'🟢', color:'#f0fdf4', type:'action',
+    icon:'<img src="https://cdn.simpleicons.org/freshdesk" width="20" height="20" onerror="wfIconErr(this)">', color:'#f0fdf4', type:'action',
     ops:[
       {id:'create_ticket', label:'Ticket oluştur'},
       {id:'update_ticket', label:'Ticket güncelle'},
@@ -6254,7 +6254,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 1: GENEL ARAÇLAR ─────────────────────
   {
     id:'zapier_webhook', name:'Zapier Webhook', cat:'Gelişmiş',
-    icon:'⚡', color:'#fef3c7', type:'action',
+    icon:'<img src="https://cdn.simpleicons.org/zapier" width="20" height="20" onerror="wfIconErr(this)">', color:'#fef3c7', type:'action',
     ops:[
       {id:'send',    label:"Zapier'a veri gönder"},
       {id:'receive', label:"▶ Zapier'dan veri al (Trigger)", isTrig:true},
@@ -6268,7 +6268,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'make_webhook', name:'Make (Integromat)', cat:'Gelişmiş',
-    icon:'🔧', color:'#eef2ff', type:'action',
+    icon:'<img src="https://cdn.simpleicons.org/make" width="20" height="20" onerror="wfIconErr(this)">', color:'#eef2ff', type:'action',
     ops:[
       {id:'send',    label:"Make'e veri gönder"},
       {id:'receive', label:"▶ Make'den veri al (Trigger)", isTrig:true},
@@ -6353,6 +6353,7 @@ function wfRenderSidebar(q) {
 }
 
 window.wfFilterNodes = function(q) { wfRenderSidebar(q); };
+window.wfIconErr    = function(el) { el.style.display = 'none'; };
 
 // Render sidebar immediately — independent of ReactFlow/Babel loading
 if (document.readyState === 'loading') {
