@@ -6327,6 +6327,851 @@ const WF_INTEGRATIONS = [
       ],
     },
   },
+
+  // ── FAZ 2: İNSAN KAYNAKLARI ──────────────────
+  {
+    id:'bamboohr', name:'BambooHR', cat:'İnsan Kaynakları',
+    icon:'🎋', color:'#f0fdf4', type:'action',
+    ops:[
+      {id:'get_employees',    label:'Çalışanları çek'},
+      {id:'create_employee',  label:'Çalışan oluştur'},
+      {id:'update_employee',  label:'Çalışan güncelle'},
+      {id:'get_time_off',     label:'İzin kayıtlarını çek'},
+      {id:'new_employee',     label:'▶ Yeni çalışan (Trigger)', isTrig:true},
+    ],
+    fields:{
+      create_employee:[
+        {key:'firstName', label:'Ad',      type:'text', ph:'{{name}}'},
+        {key:'lastName',  label:'Soyad',   type:'text', ph:'{{surname}}'},
+        {key:'email',     label:'Email',   type:'text', ph:'{{email}}'},
+        {key:'department',label:'Departman',type:'text',ph:'Satış'},
+      ],
+      get_time_off:[
+        {key:'date_from', label:'Başlangıç', type:'text', ph:'{{month_start}}'},
+        {key:'date_to',   label:'Bitiş',     type:'text', ph:'{{month_end}}'},
+      ],
+    },
+  },
+  {
+    id:'workday', name:'Workday', cat:'İnsan Kaynakları',
+    icon:'☀️', color:'#fff7ed', type:'action',
+    ops:[
+      {id:'get_workers',      label:'Çalışanları çek'},
+      {id:'get_payroll',      label:'Bordro verisi çek'},
+      {id:'get_time_off',     label:'İzinleri çek'},
+      {id:'create_requisition',label:'İşe alım talebi oluştur'},
+    ],
+    fields:{
+      get_workers:[
+        {key:'department', label:'Departman', type:'text', ph:'Tüm departmanlar'},
+        {key:'status',     label:'Durum',     type:'select', opts:['Aktif','Pasif','Tümü']},
+      ],
+    },
+  },
+  {
+    id:'personio', name:'Personio', cat:'İnsan Kaynakları',
+    icon:'👥', color:'#eef2ff', type:'action',
+    ops:[
+      {id:'get_employees',   label:'Çalışanları çek'},
+      {id:'create_employee', label:'Çalışan ekle'},
+      {id:'get_absences',    label:'Devamsızlıkları çek'},
+      {id:'get_attendance',  label:'Devam kayıtları'},
+      {id:'new_employee',    label:'▶ Yeni çalışan (Trigger)', isTrig:true},
+    ],
+    fields:{
+      get_employees:[
+        {key:'status', label:'Durum', type:'select', opts:['Aktif','Pasif','Tümü']},
+      ],
+    },
+  },
+  {
+    id:'deel', name:'Deel', cat:'İnsan Kaynakları',
+    icon:'🌍', color:'#f0fdf4', type:'action',
+    ops:[
+      {id:'get_contracts',   label:'Sözleşmeleri çek'},
+      {id:'get_employees',   label:'Çalışanları çek'},
+      {id:'create_contract', label:'Sözleşme oluştur'},
+      {id:'get_payments',    label:'Ödemeleri çek'},
+    ],
+    fields:{
+      get_contracts:[
+        {key:'status', label:'Durum', type:'select', opts:['Aktif','Tamamlandı','İptal']},
+      ],
+    },
+  },
+  {
+    id:'gusto', name:'Gusto', cat:'İnsan Kaynakları',
+    icon:'💚', color:'#f0fdf4', type:'action',
+    ops:[
+      {id:'get_employees',  label:'Çalışanları çek'},
+      {id:'get_payroll',    label:'Bordro çek'},
+      {id:'get_time_off',   label:'İzinleri çek'},
+      {id:'run_payroll',    label:'Bordro çalıştır'},
+    ],
+    fields:{
+      get_payroll:[
+        {key:'date_from', label:'Dönem başlangıcı', type:'text', ph:'{{month_start}}'},
+        {key:'date_to',   label:'Dönem bitişi',     type:'text', ph:'{{month_end}}'},
+      ],
+    },
+  },
+  {
+    id:'rippling', name:'Rippling', cat:'İnsan Kaynakları',
+    icon:'⚡', color:'#fef3c7', type:'action',
+    ops:[
+      {id:'get_employees',   label:'Çalışanları çek'},
+      {id:'get_payroll',     label:'Bordro çek'},
+      {id:'onboard_employee',label:'Çalışan onboard et'},
+      {id:'new_employee',    label:'▶ Yeni çalışan (Trigger)', isTrig:true},
+    ],
+    fields:{
+      get_employees:[
+        {key:'department', label:'Departman', type:'text', ph:'Tümü'},
+        {key:'status',     label:'Durum',     type:'select', opts:['Aktif','Pasif']},
+      ],
+    },
+  },
+  {
+    id:'sap_hr', name:'SAP HR', cat:'İnsan Kaynakları',
+    icon:'🔷', color:'#eff6ff', type:'action',
+    ops:[
+      {id:'get_employees',  label:'Çalışanları çek'},
+      {id:'get_payroll',    label:'Bordro verisi çek'},
+      {id:'get_org_chart',  label:'Organizasyon şeması'},
+      {id:'get_leave',      label:'İzin kayıtları'},
+    ],
+    fields:{
+      get_employees:[
+        {key:'company_code', label:'Şirket kodu', type:'text', ph:'1000'},
+        {key:'date',         label:'Geçerlilik tarihi', type:'text', ph:'{{today}}'},
+      ],
+    },
+  },
+
+  // ── FAZ 2: ERP & MUHASEBE ────────────────────
+  {
+    id:'xero', name:'Xero', cat:'Muhasebe & ERP',
+    icon:'💙', color:'#eff6ff', type:'action',
+    ops:[
+      {id:'create_invoice',  label:'Fatura oluştur'},
+      {id:'get_invoices',    label:'Faturaları çek'},
+      {id:'create_contact',  label:'Kişi oluştur'},
+      {id:'get_payments',    label:'Ödemeleri çek'},
+      {id:'get_reports',     label:'Finansal raporları çek'},
+      {id:'new_invoice',     label:'▶ Yeni fatura (Trigger)', isTrig:true},
+    ],
+    fields:{
+      create_invoice:[
+        {key:'contact_id', label:'Kişi ID',  type:'text', ph:'{{contact_id}}'},
+        {key:'amount',     label:'Tutar',    type:'text', ph:'{{amount}}'},
+        {key:'due_date',   label:'Vade',     type:'text', ph:'{{due_date}}'},
+        {key:'description',label:'Açıklama', type:'area', ph:'{{description}}'},
+      ],
+      get_reports:[
+        {key:'report_type', label:'Rapor tipi', type:'select', opts:['BalanceSheet','ProfitAndLoss','CashSummary','AgedReceivables']},
+        {key:'date_from',   label:'Başlangıç',  type:'text', ph:'{{month_start}}'},
+      ],
+    },
+  },
+  {
+    id:'freshbooks', name:'FreshBooks', cat:'Muhasebe & ERP',
+    icon:'🟢', color:'#f0fdf4', type:'action',
+    ops:[
+      {id:'create_invoice',  label:'Fatura oluştur'},
+      {id:'get_invoices',    label:'Faturaları çek'},
+      {id:'create_expense',  label:'Gider ekle'},
+      {id:'get_clients',     label:'Müşterileri çek'},
+      {id:'new_payment',     label:'▶ Yeni ödeme (Trigger)', isTrig:true},
+    ],
+    fields:{
+      create_invoice:[
+        {key:'client_id',   label:'Müşteri ID', type:'text', ph:'{{client_id}}'},
+        {key:'amount',      label:'Tutar',      type:'text', ph:'{{amount}}'},
+        {key:'description', label:'Açıklama',   type:'area', ph:'{{service_description}}'},
+      ],
+    },
+  },
+  {
+    id:'netsuite', name:'NetSuite', cat:'Muhasebe & ERP',
+    icon:'🔴', color:'#fff0f0', type:'action',
+    ops:[
+      {id:'create_invoice',    label:'Fatura oluştur'},
+      {id:'get_invoices',      label:'Faturaları çek'},
+      {id:'create_customer',   label:'Müşteri oluştur'},
+      {id:'get_inventory',     label:'Envanter çek'},
+      {id:'create_sales_order',label:'Satış siparişi oluştur'},
+    ],
+    fields:{
+      get_inventory:[
+        {key:'location',  label:'Lokasyon', type:'text', ph:'Ana Depo'},
+        {key:'item_type', label:'Ürün tipi',type:'select', opts:['Tümü','Stok','Hizmet']},
+      ],
+    },
+  },
+  {
+    id:'parasut', name:'Paraşüt', cat:'Muhasebe & ERP',
+    icon:'🪂', color:'#eef2ff', type:'action',
+    ops:[
+      {id:'create_invoice',   label:'Fatura oluştur'},
+      {id:'get_invoices',     label:'Faturaları çek'},
+      {id:'create_expense',   label:'Gider ekle'},
+      {id:'get_contacts',     label:'Kişileri çek'},
+      {id:'get_reports',      label:'Raporları çek'},
+      {id:'new_invoice',      label:'▶ Yeni fatura (Trigger)', isTrig:true},
+    ],
+    fields:{
+      create_invoice:[
+        {key:'contact_id', label:'Müşteri/Tedarikçi ID', type:'text', ph:'{{contact_id}}'},
+        {key:'amount',     label:'Tutar (KDV hariç)',    type:'text', ph:'{{amount}}'},
+        {key:'vat_rate',   label:'KDV oranı (%)',        type:'select', opts:['0','1','8','10','18','20']},
+        {key:'due_date',   label:'Vade tarihi',          type:'text', ph:'{{due_date}}'},
+      ],
+    },
+  },
+  {
+    id:'sage', name:'Sage', cat:'Muhasebe & ERP',
+    icon:'🌿', color:'#f0fdf4', type:'action',
+    ops:[
+      {id:'create_invoice',  label:'Fatura oluştur'},
+      {id:'get_invoices',    label:'Faturaları çek'},
+      {id:'get_customers',   label:'Müşterileri çek'},
+      {id:'get_reports',     label:'Raporları çek'},
+    ],
+    fields:{
+      get_invoices:[
+        {key:'status',    label:'Durum',     type:'select', opts:['Tümü','Ödenmemiş','Ödenmiş','Gecikmiş']},
+        {key:'date_from', label:'Başlangıç', type:'text',   ph:'{{month_start}}'},
+      ],
+    },
+  },
+  {
+    id:'odoo', name:'Odoo', cat:'Muhasebe & ERP',
+    icon:'🟣', color:'#fdf4ff', type:'action',
+    ops:[
+      {id:'create_sale_order', label:'Satış siparişi oluştur'},
+      {id:'get_sale_orders',   label:'Satış siparişleri çek'},
+      {id:'create_invoice',    label:'Fatura oluştur'},
+      {id:'get_inventory',     label:'Envanter çek'},
+      {id:'create_contact',    label:'Kişi oluştur'},
+    ],
+    fields:{
+      create_sale_order:[
+        {key:'partner_id', label:'Müşteri ID', type:'text', ph:'{{customer_id}}'},
+        {key:'product_id', label:'Ürün ID',    type:'text', ph:'{{product_id}}'},
+        {key:'quantity',   label:'Miktar',     type:'text', ph:'1'},
+        {key:'price',      label:'Birim fiyat',type:'text', ph:'{{price}}'},
+      ],
+    },
+  },
+  {
+    id:'sap_erp', name:'SAP ERP', cat:'Muhasebe & ERP',
+    icon:'🔷', color:'#eff6ff', type:'action',
+    ops:[
+      {id:'create_po',      label:'Satınalma siparişi oluştur'},
+      {id:'get_inventory',  label:'Stok çek'},
+      {id:'get_orders',     label:'Siparişleri çek'},
+      {id:'get_financials', label:'Finansal verileri çek'},
+    ],
+    fields:{
+      get_inventory:[
+        {key:'plant',     label:'Fabrika/Depo kodu', type:'text', ph:'1000'},
+        {key:'material',  label:'Malzeme numarası', type:'text', ph:'{{material_no}}'},
+      ],
+    },
+  },
+
+  // ── FAZ 2: SOSYAL MEDYA ──────────────────────
+  {
+    id:'hootsuite', name:'Hootsuite', cat:'Sosyal Medya',
+    icon:'🦉', color:'#f0fdf4', type:'action',
+    ops:[
+      {id:'schedule_post',  label:'Gönderi zamanla'},
+      {id:'get_analytics',  label:'Analitik çek'},
+      {id:'get_posts',      label:'Gönderileri çek'},
+      {id:'monitor_stream', label:'Akış izle'},
+    ],
+    fields:{
+      schedule_post:[
+        {key:'message',     label:'Mesaj',     type:'area', ph:'{{post_content}}'},
+        {key:'scheduled_at',label:'Yayın zamanı',type:'text',ph:'{{scheduled_time}}'},
+        {key:'profiles',    label:'Profil ID\'leri',type:'text',ph:'instagram,twitter'},
+      ],
+    },
+  },
+  {
+    id:'buffer', name:'Buffer', cat:'Sosyal Medya',
+    icon:'📱', color:'#eef2ff', type:'action',
+    ops:[
+      {id:'create_post',   label:'Gönderi oluştur'},
+      {id:'schedule_post', label:'Gönderi zamanla'},
+      {id:'get_analytics', label:'Analitik çek'},
+      {id:'get_profiles',  label:'Profilleri çek'},
+    ],
+    fields:{
+      create_post:[
+        {key:'text',        label:'Metin',        type:'area', ph:'{{post_content}}'},
+        {key:'profile_ids', label:'Profil ID\'leri',type:'text',ph:'buffer_profile_id'},
+        {key:'scheduled_at',label:'Yayın zamanı', type:'text', ph:'{{scheduled_time}}'},
+      ],
+    },
+  },
+  {
+    id:'sprout_social', name:'Sprout Social', cat:'Sosyal Medya',
+    icon:'🌱', color:'#f0fdf4', type:'action',
+    ops:[
+      {id:'schedule_post',  label:'Gönderi zamanla'},
+      {id:'get_analytics',  label:'Analitik çek'},
+      {id:'get_messages',   label:'Mesajları çek'},
+      {id:'new_mention',    label:'▶ Yeni mention (Trigger)', isTrig:true},
+    ],
+    fields:{
+      get_analytics:[
+        {key:'profile_id', label:'Profil ID',  type:'text', ph:'sprout_profile_id'},
+        {key:'date_from',  label:'Başlangıç',  type:'text', ph:'{{30_days_ago}}'},
+        {key:'date_to',    label:'Bitiş',      type:'text', ph:'{{today}}'},
+      ],
+    },
+  },
+  {
+    id:'later', name:'Later', cat:'Sosyal Medya',
+    icon:'⏰', color:'#fdf4ff', type:'action',
+    ops:[
+      {id:'schedule_post',  label:'Gönderi zamanla'},
+      {id:'get_scheduled',  label:'Zamanlanmış gönderileri çek'},
+      {id:'get_analytics',  label:'Analitik çek'},
+    ],
+    fields:{
+      schedule_post:[
+        {key:'caption',      label:'Açıklama', type:'area', ph:'{{caption}}'},
+        {key:'scheduled_at', label:'Yayın zamanı', type:'text', ph:'{{scheduled_time}}'},
+        {key:'profile',      label:'Platform', type:'select', opts:['Instagram','TikTok','Pinterest','Twitter']},
+      ],
+    },
+  },
+  {
+    id:'publer', name:'Publer', cat:'Sosyal Medya',
+    icon:'📢', color:'#fff7ed', type:'action',
+    ops:[
+      {id:'create_post',   label:'Gönderi oluştur'},
+      {id:'schedule_post', label:'Gönderi zamanla'},
+      {id:'get_analytics', label:'Analitik çek'},
+    ],
+    fields:{
+      create_post:[
+        {key:'content',      label:'İçerik',   type:'area', ph:'{{post_content}}'},
+        {key:'scheduled_at', label:'Zaman',    type:'text', ph:'{{scheduled_time}}'},
+        {key:'accounts',     label:'Hesaplar', type:'text', ph:'instagram,facebook'},
+      ],
+    },
+  },
+
+  // ── FAZ 2: TOPLANTI & TAKVİM ─────────────────
+  {
+    id:'zoom', name:'Zoom', cat:'Toplantı & Video',
+    icon:'📹', color:'#eff6ff', type:'action',
+    ops:[
+      {id:'create_meeting',  label:'Toplantı oluştur'},
+      {id:'get_meetings',    label:'Toplantıları çek'},
+      {id:'get_recordings',  label:'Kayıtları çek'},
+      {id:'delete_meeting',  label:'Toplantı iptal et'},
+      {id:'new_recording',   label:'▶ Yeni kayıt (Trigger)', isTrig:true},
+    ],
+    fields:{
+      create_meeting:[
+        {key:'topic',      label:'Konu',     type:'text', ph:'{{meeting_topic}}'},
+        {key:'start_time', label:'Başlangıç',type:'text', ph:'{{start_time}}'},
+        {key:'duration',   label:'Süre (dk)',type:'text', ph:'60'},
+        {key:'agenda',     label:'Gündem',   type:'area', ph:'{{agenda}}'},
+      ],
+    },
+  },
+  {
+    id:'google_calendar', name:'Google Calendar', cat:'Toplantı & Video',
+    icon:'📅', color:'#fff7ed', type:'action',
+    ops:[
+      {id:'create_event',   label:'Etkinlik oluştur'},
+      {id:'get_events',     label:'Etkinlikleri çek'},
+      {id:'update_event',   label:'Etkinlik güncelle'},
+      {id:'delete_event',   label:'Etkinlik sil'},
+      {id:'new_event',      label:'▶ Yeni etkinlik (Trigger)', isTrig:true},
+    ],
+    fields:{
+      create_event:[
+        {key:'title',       label:'Başlık',     type:'text', ph:'{{event_title}}'},
+        {key:'start',       label:'Başlangıç',  type:'text', ph:'{{start_time}}'},
+        {key:'end',         label:'Bitiş',      type:'text', ph:'{{end_time}}'},
+        {key:'description', label:'Açıklama',   type:'area', ph:'{{description}}'},
+        {key:'attendees',   label:'Katılımcılar',type:'text',ph:'email1@ornek.com,email2@ornek.com'},
+      ],
+    },
+  },
+  {
+    id:'calendly', name:'Calendly', cat:'Toplantı & Video',
+    icon:'🗓', color:'#f0fdf4', type:'action',
+    ops:[
+      {id:'get_events',       label:'Etkinlikleri çek'},
+      {id:'get_invitees',     label:'Davetlileri çek'},
+      {id:'cancel_event',     label:'Etkinlik iptal et'},
+      {id:'new_booking',      label:'▶ Yeni rezervasyon (Trigger)', isTrig:true},
+      {id:'booking_cancelled',label:'▶ İptal (Trigger)', isTrig:true},
+    ],
+    fields:{
+      get_events:[
+        {key:'date_from', label:'Başlangıç', type:'text', ph:'{{today}}'},
+        {key:'date_to',   label:'Bitiş',     type:'text', ph:'{{7_days_later}}'},
+        {key:'status',    label:'Durum',     type:'select', opts:['active','cancelled']},
+      ],
+    },
+  },
+  {
+    id:'loom', name:'Loom', cat:'Toplantı & Video',
+    icon:'🎬', color:'#fdf4ff', type:'action',
+    ops:[
+      {id:'get_videos',    label:'Videoları çek'},
+      {id:'get_analytics', label:'Video analitiği çek'},
+      {id:'new_video',     label:'▶ Yeni video (Trigger)', isTrig:true},
+    ],
+    fields:{
+      get_videos:[
+        {key:'folder_id', label:'Klasör ID (opsiyonel)', type:'text', ph:'loom_folder_id'},
+        {key:'limit',     label:'Limit',                 type:'text', ph:'20'},
+      ],
+    },
+  },
+
+  // ── FAZ 2: FORM & ANKET ──────────────────────
+  {
+    id:'typeform', name:'Typeform', cat:'Form & Anket',
+    icon:'📋', color:'#eef2ff', type:'action',
+    ops:[
+      {id:'get_responses',   label:'Yanıtları çek'},
+      {id:'get_forms',       label:'Formları çek'},
+      {id:'new_response',    label:'▶ Yeni yanıt (Trigger)', isTrig:true},
+    ],
+    fields:{
+      get_responses:[
+        {key:'form_id',   label:'Form ID',    type:'text', ph:'typeform_form_id'},
+        {key:'date_from', label:'Başlangıç',  type:'text', ph:'{{7_days_ago}}'},
+        {key:'limit',     label:'Limit',      type:'text', ph:'50'},
+      ],
+    },
+  },
+  {
+    id:'jotform', name:'JotForm', cat:'Form & Anket',
+    icon:'📝', color:'#fff7ed', type:'action',
+    ops:[
+      {id:'get_submissions', label:'Başvuruları çek'},
+      {id:'get_forms',       label:'Formları çek'},
+      {id:'new_submission',  label:'▶ Yeni başvuru (Trigger)', isTrig:true},
+    ],
+    fields:{
+      get_submissions:[
+        {key:'form_id',   label:'Form ID',   type:'text', ph:'jotform_form_id'},
+        {key:'date_from', label:'Başlangıç', type:'text', ph:'{{7_days_ago}}'},
+        {key:'limit',     label:'Limit',     type:'text', ph:'50'},
+      ],
+    },
+  },
+  {
+    id:'surveymonkey', name:'SurveyMonkey', cat:'Form & Anket',
+    icon:'🐵', color:'#fef3c7', type:'action',
+    ops:[
+      {id:'get_surveys',     label:'Anketleri çek'},
+      {id:'get_responses',   label:'Yanıtları çek'},
+      {id:'create_survey',   label:'Anket oluştur'},
+      {id:'new_response',    label:'▶ Yeni yanıt (Trigger)', isTrig:true},
+    ],
+    fields:{
+      get_responses:[
+        {key:'survey_id', label:'Anket ID',  type:'text', ph:'surveymonkey_survey_id'},
+        {key:'date_from', label:'Başlangıç', type:'text', ph:'{{7_days_ago}}'},
+      ],
+    },
+  },
+  {
+    id:'tally', name:'Tally', cat:'Form & Anket',
+    icon:'✅', color:'#f0fdf4', type:'action',
+    ops:[
+      {id:'get_responses',  label:'Yanıtları çek'},
+      {id:'new_submission', label:'▶ Yeni gönderim (Trigger)', isTrig:true},
+    ],
+    fields:{
+      get_responses:[
+        {key:'form_id', label:'Form ID', type:'text', ph:'tally_form_id'},
+        {key:'limit',   label:'Limit',   type:'text', ph:'50'},
+      ],
+    },
+  },
+  {
+    id:'google_forms', name:'Google Forms', cat:'Form & Anket',
+    icon:'📄', color:'#fff7ed', type:'action',
+    ops:[
+      {id:'get_responses',  label:'Yanıtları çek'},
+      {id:'get_forms',      label:'Formları listele'},
+      {id:'new_response',   label:'▶ Yeni yanıt (Trigger)', isTrig:true},
+    ],
+    fields:{
+      get_responses:[
+        {key:'form_id', label:'Form ID',    type:'text', ph:'google_form_id'},
+        {key:'limit',   label:'Limit',      type:'text', ph:'50'},
+      ],
+    },
+  },
+
+  // ── FAZ 2: MÜŞTERİ BAŞARISI ─────────────────
+  {
+    id:'gorgias', name:'Gorgias', cat:'Müşteri Hizmetleri',
+    icon:'🎧', color:'#fdf4ff', type:'action',
+    ops:[
+      {id:'create_ticket',  label:'Ticket oluştur'},
+      {id:'get_tickets',    label:'Ticketları çek'},
+      {id:'update_ticket',  label:'Ticket güncelle'},
+      {id:'add_note',       label:'Not ekle'},
+      {id:'new_ticket',     label:'▶ Yeni ticket (Trigger)', isTrig:true},
+    ],
+    fields:{
+      create_ticket:[
+        {key:'customer_email',label:'Müşteri email', type:'text', ph:'{{email}}'},
+        {key:'subject',       label:'Konu',          type:'text', ph:'{{subject}}'},
+        {key:'body',          label:'Mesaj',         type:'area', ph:'{{message}}'},
+        {key:'channel',       label:'Kanal', type:'select', opts:['email','chat','sms','instagram','facebook']},
+      ],
+    },
+  },
+  {
+    id:'tidio', name:'Tidio', cat:'Müşteri Hizmetleri',
+    icon:'💬', color:'#eef2ff', type:'action',
+    ops:[
+      {id:'send_message',    label:'Mesaj gönder'},
+      {id:'get_conversations',label:'Konuşmaları çek'},
+      {id:'create_contact',  label:'Kişi oluştur'},
+      {id:'new_chat',        label:'▶ Yeni sohbet (Trigger)', isTrig:true},
+    ],
+    fields:{
+      send_message:[
+        {key:'visitor_id', label:'Ziyaretçi ID', type:'text', ph:'{{visitor_id}}'},
+        {key:'message',    label:'Mesaj',        type:'area', ph:'Merhaba! Nasıl yardımcı olabilirim?'},
+      ],
+    },
+  },
+  {
+    id:'helpscout', name:'Help Scout', cat:'Müşteri Hizmetleri',
+    icon:'🔭', color:'#f0fdf4', type:'action',
+    ops:[
+      {id:'create_conversation', label:'Konuşma oluştur'},
+      {id:'get_conversations',   label:'Konuşmaları çek'},
+      {id:'reply_conversation',  label:'Yanıt gönder'},
+      {id:'new_conversation',    label:'▶ Yeni konuşma (Trigger)', isTrig:true},
+    ],
+    fields:{
+      create_conversation:[
+        {key:'customer_email',label:'Müşteri email', type:'text', ph:'{{email}}'},
+        {key:'subject',       label:'Konu',          type:'text', ph:'{{subject}}'},
+        {key:'text',          label:'Mesaj',         type:'area', ph:'{{message}}'},
+        {key:'mailbox_id',    label:'Posta kutusu ID',type:'text',ph:'helpscout_mailbox_id'},
+      ],
+    },
+  },
+  {
+    id:'crisp', name:'Crisp', cat:'Müşteri Hizmetleri',
+    icon:'💎', color:'#eef2ff', type:'action',
+    ops:[
+      {id:'send_message',      label:'Mesaj gönder'},
+      {id:'get_conversations', label:'Konuşmaları çek'},
+      {id:'create_contact',    label:'Kişi oluştur'},
+      {id:'new_message',       label:'▶ Yeni mesaj (Trigger)', isTrig:true},
+    ],
+    fields:{
+      send_message:[
+        {key:'session_id', label:'Oturum ID', type:'text', ph:'{{session_id}}'},
+        {key:'message',    label:'Mesaj',     type:'area', ph:'{{message}}'},
+      ],
+    },
+  },
+
+  // ── FAZ 2: VERİ & İŞ ZEKÂsı ─────────────────
+  {
+    id:'tableau', name:'Tableau', cat:'Veri & İş Zekâsı',
+    icon:'📊', color:'#eff6ff', type:'action',
+    ops:[
+      {id:'get_views',       label:'Görünümleri çek'},
+      {id:'get_workbooks',   label:'Çalışma kitaplarını çek'},
+      {id:'refresh_extract', label:'Veri yenile'},
+      {id:'get_datasources', label:'Veri kaynaklarını çek'},
+    ],
+    fields:{
+      get_views:[
+        {key:'site_id',     label:'Site ID',    type:'text', ph:'tableau_site_id'},
+        {key:'workbook_id', label:'Workbook ID',type:'text', ph:'tableau_workbook_id'},
+      ],
+    },
+  },
+  {
+    id:'power_bi', name:'Power BI', cat:'Veri & İş Zekâsı',
+    icon:'🟡', color:'#fef3c7', type:'action',
+    ops:[
+      {id:'get_reports',    label:'Raporları çek'},
+      {id:'get_datasets',   label:'Datasetleri çek'},
+      {id:'refresh_dataset',label:'Dataset yenile'},
+      {id:'get_dashboards', label:'Dashboard\'ları çek'},
+    ],
+    fields:{
+      refresh_dataset:[
+        {key:'group_id',   label:'Grup/Workspace ID', type:'text', ph:'powerbi_group_id'},
+        {key:'dataset_id', label:'Dataset ID',        type:'text', ph:'powerbi_dataset_id'},
+      ],
+    },
+  },
+  {
+    id:'looker', name:'Looker', cat:'Veri & İş Zekâsı',
+    icon:'👁', color:'#eef2ff', type:'action',
+    ops:[
+      {id:'run_look',    label:'Look çalıştır'},
+      {id:'get_looks',   label:'Lookları çek'},
+      {id:'run_query',   label:'Sorgu çalıştır'},
+      {id:'get_dashboards',label:'Dashboard\'ları çek'},
+    ],
+    fields:{
+      run_look:[
+        {key:'look_id',     label:'Look ID',   type:'text', ph:'looker_look_id'},
+        {key:'result_format',label:'Format', type:'select', opts:['json','csv','xlsx']},
+      ],
+    },
+  },
+  {
+    id:'amplitude', name:'Amplitude', cat:'Veri & İş Zekâsı',
+    icon:'📈', color:'#fdf4ff', type:'action',
+    ops:[
+      {id:'track_event',    label:'Event gönder'},
+      {id:'identify_user',  label:'Kullanıcı tanımla'},
+      {id:'get_funnel',     label:'Funnel analizi çek'},
+      {id:'get_retention',  label:'Retention çek'},
+    ],
+    fields:{
+      track_event:[
+        {key:'user_id',     label:'Kullanıcı ID', type:'text', ph:'{{user_id}}'},
+        {key:'event_type',  label:'Event tipi',   type:'text', ph:'Purchase'},
+        {key:'event_props', label:'Özellikler (JSON)',type:'area',ph:'{"amount":"{{amount}}"}'},
+      ],
+    },
+  },
+  {
+    id:'semrush', name:'SEMrush', cat:'Veri & İş Zekâsı',
+    icon:'🔍', color:'#fef3c7', type:'action',
+    ops:[
+      {id:'get_domain_overview', label:'Domain analizi'},
+      {id:'get_keywords',        label:'Anahtar kelimeler'},
+      {id:'get_backlinks',       label:'Backlinkleri çek'},
+      {id:'get_positions',       label:'Sıralama pozisyonları'},
+    ],
+    fields:{
+      get_domain_overview:[
+        {key:'domain',   label:'Domain', type:'text', ph:'ornek.com'},
+        {key:'database', label:'Veritabanı', type:'select', opts:['tr','us','uk','de']},
+      ],
+    },
+  },
+
+  // ── FAZ 2: OTOMASYON ARAÇLARI ────────────────
+  {
+    id:'pabbly', name:'Pabbly Connect', cat:'Gelişmiş',
+    icon:'🔀', color:'#eef2ff', type:'action',
+    ops:[
+      {id:'send',    label:'Pabbly\'e veri gönder'},
+      {id:'receive', label:'▶ Pabbly\'den veri al (Trigger)', isTrig:true},
+    ],
+    fields:{
+      send:[
+        {key:'webhook_url', label:'Pabbly Webhook URL', type:'text', ph:'https://connect.pabbly.com/workflow/sendwebhookdata/...'},
+        {key:'data',        label:'Veri (JSON)',         type:'area', ph:'{"key":"{{value}}"}'},
+      ],
+    },
+  },
+  {
+    id:'workato', name:'Workato', cat:'Gelişmiş',
+    icon:'⚙️', color:'#f9fafb', type:'action',
+    ops:[
+      {id:'send',    label:'Workato\'ya veri gönder'},
+      {id:'receive', label:'▶ Workato\'dan veri al (Trigger)', isTrig:true},
+    ],
+    fields:{
+      send:[
+        {key:'webhook_url', label:'Workato Webhook URL', type:'text', ph:'https://www.workato.com/webhooks/rest/...'},
+        {key:'data',        label:'Veri (JSON)',          type:'area', ph:'{"key":"{{value}}"}'},
+      ],
+    },
+  },
+
+  // ── FAZ 2: İŞBİRLİĞİ ────────────────────────
+  {
+    id:'miro', name:'Miro', cat:'İşbirliği',
+    icon:'🟡', color:'#fef3c7', type:'action',
+    ops:[
+      {id:'create_board',  label:'Board oluştur'},
+      {id:'get_boards',    label:'Board\'ları çek'},
+      {id:'create_sticky', label:'Yapışkanlı not ekle'},
+      {id:'get_items',     label:'Board öğelerini çek'},
+    ],
+    fields:{
+      create_board:[
+        {key:'name',        label:'Board adı',  type:'text', ph:'{{board_name}}'},
+        {key:'description', label:'Açıklama',   type:'area', ph:'{{description}}'},
+      ],
+      create_sticky:[
+        {key:'board_id', label:'Board ID', type:'text', ph:'miro_board_id'},
+        {key:'content',  label:'İçerik',   type:'area', ph:'{{note_content}}'},
+        {key:'color',    label:'Renk', type:'select', opts:['yellow','green','blue','pink','purple','red']},
+      ],
+    },
+  },
+  {
+    id:'basecamp', name:'Basecamp', cat:'İşbirliği',
+    icon:'🏕', color:'#f0fdf4', type:'action',
+    ops:[
+      {id:'create_message',  label:'Mesaj oluştur'},
+      {id:'create_todo',     label:'Görev oluştur'},
+      {id:'get_projects',    label:'Projeleri çek'},
+      {id:'new_todo',        label:'▶ Yeni görev (Trigger)', isTrig:true},
+    ],
+    fields:{
+      create_todo:[
+        {key:'project_id', label:'Proje ID',  type:'text', ph:'basecamp_project_id'},
+        {key:'content',    label:'Görev',     type:'text', ph:'{{task_name}}'},
+        {key:'due_on',     label:'Bitiş tarihi',type:'text',ph:'{{due_date}}'},
+        {key:'assignee',   label:'Atanan',    type:'text', ph:'{{user_email}}'},
+      ],
+    },
+  },
+  {
+    id:'lark', name:'Lark / Feishu', cat:'İşbirliği',
+    icon:'🐦', color:'#eff6ff', type:'action',
+    ops:[
+      {id:'send_message',  label:'Mesaj gönder'},
+      {id:'create_doc',    label:'Döküman oluştur'},
+      {id:'create_task',   label:'Görev oluştur'},
+      {id:'new_message',   label:'▶ Yeni mesaj (Trigger)', isTrig:true},
+    ],
+    fields:{
+      send_message:[
+        {key:'chat_id', label:'Chat ID', type:'text', ph:'lark_chat_id'},
+        {key:'message', label:'Mesaj',   type:'area', ph:'{{message}}'},
+      ],
+    },
+  },
+  {
+    id:'confluence', name:'Confluence', cat:'İşbirliği',
+    icon:'📚', color:'#eff6ff', type:'action',
+    ops:[
+      {id:'create_page',  label:'Sayfa oluştur'},
+      {id:'update_page',  label:'Sayfa güncelle'},
+      {id:'get_pages',    label:'Sayfaları çek'},
+      {id:'new_page',     label:'▶ Yeni sayfa (Trigger)', isTrig:true},
+    ],
+    fields:{
+      create_page:[
+        {key:'space_key', label:'Alan anahtarı', type:'text', ph:'PROJ'},
+        {key:'title',     label:'Başlık',        type:'text', ph:'{{page_title}}'},
+        {key:'body',      label:'İçerik (HTML)', type:'area', ph:'<p>{{content}}</p>'},
+        {key:'parent_id', label:'Üst sayfa ID (opsiyonel)', type:'text', ph:'confluence_page_id'},
+      ],
+    },
+  },
+
+  // ── FAZ 2: REKLAM & PAZARLAMA ────────────────
+  {
+    id:'google_search_console', name:'Google Search Console', cat:'Pazarlama',
+    icon:'🔎', color:'#fff7ed', type:'action',
+    ops:[
+      {id:'get_performance', label:'Arama performansı çek'},
+      {id:'get_sitemaps',    label:'Site haritalarını çek'},
+      {id:'get_errors',      label:'Hataları çek'},
+    ],
+    fields:{
+      get_performance:[
+        {key:'site_url',  label:'Site URL',    type:'text', ph:'https://ornek.com'},
+        {key:'date_from', label:'Başlangıç',   type:'text', ph:'{{30_days_ago}}'},
+        {key:'date_to',   label:'Bitiş',       type:'text', ph:'{{today}}'},
+        {key:'dimensions',label:'Boyutlar',    type:'text', ph:'query,page,country'},
+      ],
+    },
+  },
+  {
+    id:'hubspot_marketing', name:'HubSpot Marketing', cat:'Pazarlama',
+    icon:'🔶', color:'#fff7ed', type:'action',
+    ops:[
+      {id:'send_email',       label:'Marketing email gönder'},
+      {id:'create_contact',   label:'Kişi oluştur'},
+      {id:'add_to_workflow',  label:'Workflow\'a ekle'},
+      {id:'get_campaigns',    label:'Kampanyaları çek'},
+      {id:'new_form_submit',  label:'▶ Form gönderimi (Trigger)', isTrig:true},
+    ],
+    fields:{
+      send_email:[
+        {key:'email_id',    label:'Email ID',     type:'text', ph:'hubspot_email_id'},
+        {key:'contact_ids', label:'Kişi ID\'leri',type:'text', ph:'{{contact_id}}'},
+      ],
+    },
+  },
+  {
+    id:'convertkit', name:'ConvertKit', cat:'Email Pazarlama',
+    icon:'📬', color:'#fef3c7', type:'action',
+    ops:[
+      {id:'add_subscriber',    label:'Abone ekle'},
+      {id:'remove_subscriber', label:'Abone çıkar'},
+      {id:'tag_subscriber',    label:'Etiket ekle'},
+      {id:'send_broadcast',    label:'Broadcast gönder'},
+      {id:'new_subscriber',    label:'▶ Yeni abone (Trigger)', isTrig:true},
+    ],
+    fields:{
+      add_subscriber:[
+        {key:'email',      label:'Email',     type:'text', ph:'{{email}}'},
+        {key:'first_name', label:'Ad',        type:'text', ph:'{{name}}'},
+        {key:'form_id',    label:'Form ID',   type:'text', ph:'convertkit_form_id'},
+      ],
+    },
+  },
+  {
+    id:'brevo', name:'Brevo (Sendinblue)', cat:'Email Pazarlama',
+    icon:'💙', color:'#eff6ff', type:'action',
+    ops:[
+      {id:'send_email',        label:'Email gönder'},
+      {id:'send_sms',          label:'SMS gönder'},
+      {id:'add_contact',       label:'Kişi ekle'},
+      {id:'create_campaign',   label:'Kampanya oluştur'},
+      {id:'new_contact',       label:'▶ Yeni kişi (Trigger)', isTrig:true},
+    ],
+    fields:{
+      send_email:[
+        {key:'to',       label:'Alıcı',    type:'text', ph:'{{email}}'},
+        {key:'subject',  label:'Konu',     type:'text', ph:'{{subject}}'},
+        {key:'html',     label:'HTML içerik',type:'area',ph:'<p>{{body}}</p>'},
+      ],
+      send_sms:[
+        {key:'phone',   label:'Telefon', type:'text', ph:'+905xxxxxxxxx'},
+        {key:'message', label:'Mesaj',   type:'area', ph:'{{sms_content}}'},
+      ],
+    },
+  },
+
+  // ── FAZ 2: DEPOLAMA & DÖKÜMAN ────────────────
+  {
+    id:'box', name:'Box', cat:'Depolama',
+    icon:'📦', color:'#eff6ff', type:'action',
+    ops:[
+      {id:'upload_file',   label:'Dosya yükle'},
+      {id:'download_file', label:'Dosya indir'},
+      {id:'create_folder', label:'Klasör oluştur'},
+      {id:'share_file',    label:'Dosya paylaş'},
+      {id:'new_file',      label:'▶ Yeni dosya (Trigger)', isTrig:true},
+    ],
+    fields:{
+      upload_file:[
+        {key:'folder_id', label:'Klasör ID', type:'text', ph:'box_folder_id'},
+        {key:'filename',  label:'Dosya adı', type:'text', ph:'{{filename}}'},
+        {key:'content',   label:'İçerik',    type:'area', ph:'{{previous_output}}'},
+      ],
+    },
+  },
 ];
 
 function wfRenderSidebar(q) {
