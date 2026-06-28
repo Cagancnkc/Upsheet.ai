@@ -6281,6 +6281,28 @@ const WF_INTEGRATIONS = [
     },
   },
   {
+    id:'n8n', name:'n8n', cat:'Gelişmiş',
+    icon:'<img src="https://logo.clearbit.com/n8n.io" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'⚙️\'"/>',
+    ops:[
+      {id:'trigger_workflow', label:'▶ Workflow tetikle (Trigger)', isTrig:true},
+      {id:'execute_workflow', label:'Workflow çalıştır'},
+      {id:'send_webhook',     label:'Webhook gönder'},
+    ],
+    fields:{
+      trigger_workflow:[
+        {key:'webhook_url', label:'n8n Webhook URL', type:'text', ph:'https://your-n8n.com/webhook/...'},
+      ],
+      execute_workflow:[
+        {key:'webhook_url', label:'n8n Webhook URL', type:'text', ph:'https://your-n8n.com/webhook/...'},
+        {key:'data',        label:'Veri (JSON)',      type:'area', ph:'{"key":"{{value}}"}'},
+      ],
+      send_webhook:[
+        {key:'webhook_url', label:'n8n Webhook URL', type:'text', ph:'https://your-n8n.com/webhook/...'},
+        {key:'data',        label:'Veri (JSON)',      type:'area', ph:'{"key":"{{value}}"}'},
+      ],
+    },
+  },
+  {
     id:'pdf_generator', name:'PDF Oluşturucu', cat:'Veri & Tablolar',
     icon:'<img src="https://logo.clearbit.com/adobe.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'⚙️\'"/>',
     ops:[
@@ -8543,28 +8565,6 @@ const WF_INTEGRATIONS = [
   },
 
   // ── FAZ 4: FİNTECH & KRİPTO ──────────────────
-  {
-    id:'binance', name:'Binance', cat:'Finans & Ödeme',
-    icon:'<img src="https://logo.clearbit.com/binance.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'⚙️\'"/>',
-    color:'#fef3c7', type:'action',
-    ops:[
-      {id:'get_ticker',      label:'Fiyat çek'},
-      {id:'get_account',     label:'Hesap bilgisi çek'},
-      {id:'get_orders',      label:'Siparişleri çek'},
-      {id:'get_trades',      label:'İşlemleri çek'},
-      {id:'price_alert',     label:'▶ Fiyat alarmı (Trigger)', isTrig:true},
-    ],
-    fields:{
-      get_ticker:[
-        {key:'symbol', label:'Sembol', type:'text', ph:'BTCUSDT'},
-      ],
-      price_alert:[
-        {key:'symbol',    label:'Sembol',           type:'text', ph:'BTCUSDT'},
-        {key:'threshold', label:'Eşik fiyat (USD)', type:'text', ph:'50000'},
-        {key:'direction', label:'Yön', type:'select', opts:['above','below']},
-      ],
-    },
-  },
   {
     id:'coingecko', name:'CoinGecko', cat:'Finans & Ödeme',
     icon:'<img src="https://logo.clearbit.com/coingecko.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'⚙️\'"/>',
