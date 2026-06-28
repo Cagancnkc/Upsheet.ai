@@ -1212,7 +1212,7 @@ textarea.inp{height:auto;padding:10px 12px;resize:vertical;min-height:72px}
 
   <!-- Bottom bar -->
   <div class="wf-bottombar">
-    <span id="wf-stats">0 node · 0 bağlantı</span>
+    <span id="wf-stats">200 entegrasyon · 0 bağlantı</span>
     <span id="wf-last-run">Henüz çalıştırılmadı</span>
     <span>Delete → sil · Sürükle → bağla</span>
   </div>
@@ -9116,10 +9116,10 @@ function WFApp() {
 
   useEffect(() => {
     const el = document.getElementById('wf-stats');
-    if (el) el.textContent = `${nodes.length} node · ${edges.length} bağlantı`;
+    if (el) el.textContent = `${WF_INTEGRATIONS.length} entegrasyon · ${edges.length} bağlantı`;
     const empty = document.getElementById('wf-empty');
     if (empty) empty.style.display = nodes.length ? 'none' : 'flex';
-  }, [nodes.length, edges.length]);
+  }, [edges.length]);
 
   useEffect(() => {
     const body = document.getElementById('wf-body');
