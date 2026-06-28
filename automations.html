@@ -8040,6 +8040,910 @@ const WF_INTEGRATIONS = [
       ],
     },
   },
+
+  // ── FAZ 4: MİCROSOFT EKOSİSTEMİ ─────────────
+  {
+    id:'ms_power_automate', name:'Power Automate', cat:'Microsoft',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/powerautomate.svg" width="16" height="16" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg)"/>',
+    color:'#eff6ff', type:'action',
+    ops:[
+      {id:'trigger_flow',   label:'Flow tetikle'},
+      {id:'get_flows',      label:'Flowları çek'},
+      {id:'run_flow',       label:'Flow çalıştır'},
+      {id:'new_flow_run',   label:'▶ Yeni flow çalışması (Trigger)', isTrig:true},
+    ],
+    fields:{
+      trigger_flow:[
+        {key:'flow_id',  label:'Flow ID',  type:'text', ph:'power_automate_flow_id'},
+        {key:'inputs',   label:'Girdiler (JSON)', type:'area', ph:'{"key":"{{value}}"}'},
+      ],
+    },
+  },
+  {
+    id:'ms_excel_online', name:'Excel Online', cat:'Microsoft',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/microsoftexcel.svg" width="16" height="16" style="filter:invert(48%) sepia(98%) saturate(400%) hue-rotate(90deg)"/>',
+    color:'#f0fdf4', type:'action',
+    ops:[
+      {id:'add_row',       label:'Satır ekle'},
+      {id:'update_row',    label:'Satır güncelle'},
+      {id:'get_rows',      label:'Satırları çek'},
+      {id:'get_tables',    label:'Tabloları listele'},
+      {id:'new_row',       label:'▶ Yeni satır (Trigger)', isTrig:true},
+    ],
+    fields:{
+      add_row:[
+        {key:'workbook_id', label:'Workbook ID', type:'text', ph:'excel_workbook_id'},
+        {key:'table_name',  label:'Tablo adı',   type:'text', ph:'Tablo1'},
+        {key:'values',      label:'Değerler (JSON)', type:'area', ph:'{"Ad":"{{name}}","Email":"{{email}}"}'},
+      ],
+    },
+  },
+  {
+    id:'ms_outlook', name:'Outlook', cat:'Microsoft',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/microsoftoutlook.svg" width="16" height="16" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg)"/>',
+    color:'#eff6ff', type:'action',
+    ops:[
+      {id:'send_email',     label:'Email gönder'},
+      {id:'get_emails',     label:'Emailleri çek'},
+      {id:'create_event',   label:'Takvim etkinliği oluştur'},
+      {id:'get_contacts',   label:'Kişileri çek'},
+      {id:'new_email',      label:'▶ Yeni email (Trigger)', isTrig:true},
+    ],
+    fields:{
+      send_email:[
+        {key:'to',       label:'Alıcı',    type:'text', ph:'{{email}}'},
+        {key:'subject',  label:'Konu',     type:'text', ph:'{{subject}}'},
+        {key:'body',     label:'İçerik',   type:'area', ph:'{{body}}'},
+      ],
+    },
+  },
+  {
+    id:'ms_sharepoint', name:'SharePoint', cat:'Microsoft',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/microsoftsharepoint.svg" width="16" height="16" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg)"/>',
+    color:'#eff6ff', type:'action',
+    ops:[
+      {id:'create_item',    label:'Liste öğesi oluştur'},
+      {id:'update_item',    label:'Liste öğesi güncelle'},
+      {id:'get_items',      label:'Liste öğelerini çek'},
+      {id:'upload_file',    label:'Dosya yükle'},
+      {id:'new_item',       label:'▶ Yeni öğe (Trigger)', isTrig:true},
+    ],
+    fields:{
+      create_item:[
+        {key:'site_url',   label:'Site URL',   type:'text', ph:'https://sirket.sharepoint.com/sites/site'},
+        {key:'list_name',  label:'Liste adı',  type:'text', ph:'Görevler'},
+        {key:'fields',     label:'Alanlar (JSON)', type:'area', ph:'{"Title":"{{title}}","Status":"Aktif"}'},
+      ],
+    },
+  },
+  {
+    id:'ms_dynamics', name:'Dynamics 365', cat:'Microsoft',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/dynamics365.svg" width="16" height="16" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'🔷\'" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg)"/>',
+    color:'#eff6ff', type:'action',
+    ops:[
+      {id:'create_lead',    label:'Lead oluştur'},
+      {id:'create_contact', label:'Kişi oluştur'},
+      {id:'create_opportunity', label:'Fırsat oluştur'},
+      {id:'get_accounts',   label:'Hesapları çek'},
+      {id:'new_lead',       label:'▶ Yeni lead (Trigger)', isTrig:true},
+    ],
+    fields:{
+      create_lead:[
+        {key:'firstname', label:'Ad',       type:'text', ph:'{{name}}'},
+        {key:'lastname',  label:'Soyad',    type:'text', ph:'{{surname}}'},
+        {key:'emailaddress1', label:'Email',type:'text', ph:'{{email}}'},
+        {key:'companyname',   label:'Şirket',type:'text',ph:'{{company}}'},
+      ],
+    },
+  },
+
+  // ── FAZ 4: SOSYAL MEDYA EK ───────────────────
+  {
+    id:'instagram', name:'Instagram', cat:'Sosyal Medya',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/instagram.svg" width="16" height="16" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(250deg)"/>',
+    color:'#fdf4ff', type:'action',
+    ops:[
+      {id:'get_media',       label:'Medyaları çek'},
+      {id:'get_insights',    label:'İçgörüleri çek'},
+      {id:'get_comments',    label:'Yorumları çek'},
+      {id:'reply_comment',   label:'Yoruma yanıt ver'},
+      {id:'new_comment',     label:'▶ Yeni yorum (Trigger)', isTrig:true},
+      {id:'new_mention',     label:'▶ Yeni mention (Trigger)', isTrig:true},
+    ],
+    fields:{
+      get_insights:[
+        {key:'metric', label:'Metrik', type:'select', opts:['reach','impressions','engagement','followers_count']},
+        {key:'period', label:'Dönem',  type:'select', opts:['day','week','days_28','month']},
+      ],
+    },
+  },
+  {
+    id:'youtube', name:'YouTube', cat:'Sosyal Medya',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/youtube.svg" width="16" height="16" style="filter:invert(27%) sepia(89%) saturate(1000%) hue-rotate(340deg)"/>',
+    color:'#fff0f0', type:'action',
+    ops:[
+      {id:'get_videos',      label:'Videoları çek'},
+      {id:'get_analytics',   label:'Analitik çek'},
+      {id:'get_comments',    label:'Yorumları çek'},
+      {id:'reply_comment',   label:'Yoruma yanıt ver'},
+      {id:'new_video',       label:'▶ Yeni video (Trigger)', isTrig:true},
+      {id:'new_comment',     label:'▶ Yeni yorum (Trigger)', isTrig:true},
+    ],
+    fields:{
+      get_analytics:[
+        {key:'channel_id', label:'Kanal ID',   type:'text', ph:'youtube_channel_id'},
+        {key:'date_from',  label:'Başlangıç',  type:'text', ph:'{{30_days_ago}}'},
+        {key:'metrics',    label:'Metrikler',  type:'text', ph:'views,likes,comments,subscribers'},
+      ],
+    },
+  },
+  {
+    id:'twitter_x', name:'Twitter / X', cat:'Sosyal Medya',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/x.svg" width="16" height="16" style="filter:brightness(0)"/>',
+    color:'#f9fafb', type:'action',
+    ops:[
+      {id:'post_tweet',      label:'Tweet gönder'},
+      {id:'get_tweets',      label:'Tweet çek'},
+      {id:'get_followers',   label:'Takipçileri çek'},
+      {id:'search_tweets',   label:'Tweet ara'},
+      {id:'new_mention',     label:'▶ Yeni mention (Trigger)', isTrig:true},
+      {id:'new_follower',    label:'▶ Yeni takipçi (Trigger)', isTrig:true},
+    ],
+    fields:{
+      post_tweet:[
+        {key:'text', label:'Tweet metni', type:'area', ph:'{{tweet_content}}'},
+      ],
+      search_tweets:[
+        {key:'query',      label:'Arama sorgusu', type:'text', ph:'{{keyword}} -is:retweet'},
+        {key:'max_results',label:'Maks sonuç',    type:'text', ph:'10'},
+      ],
+    },
+  },
+  {
+    id:'pinterest', name:'Pinterest', cat:'Sosyal Medya',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/pinterest.svg" width="16" height="16" style="filter:invert(27%) sepia(89%) saturate(1000%) hue-rotate(340deg)"/>',
+    color:'#fff0f0', type:'action',
+    ops:[
+      {id:'create_pin',     label:'Pin oluştur'},
+      {id:'get_pins',       label:'Pinleri çek'},
+      {id:'get_boards',     label:'Boardları çek'},
+      {id:'get_analytics',  label:'Analitik çek'},
+      {id:'new_pin',        label:'▶ Yeni pin (Trigger)', isTrig:true},
+    ],
+    fields:{
+      create_pin:[
+        {key:'board_id',    label:'Board ID',     type:'text', ph:'pinterest_board_id'},
+        {key:'title',       label:'Başlık',       type:'text', ph:'{{pin_title}}'},
+        {key:'description', label:'Açıklama',     type:'area', ph:'{{pin_description}}'},
+        {key:'link',        label:'Link URL',     type:'text', ph:'{{link_url}}'},
+        {key:'image_url',   label:'Görsel URL',   type:'text', ph:'{{image_url}}'},
+      ],
+    },
+  },
+
+  // ── FAZ 4: VİDEO & MEDYA ─────────────────────
+  {
+    id:'vimeo', name:'Vimeo', cat:'Video & Medya',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/vimeo.svg" width="16" height="16" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg)"/>',
+    color:'#eff6ff', type:'action',
+    ops:[
+      {id:'get_videos',      label:'Videoları çek'},
+      {id:'get_analytics',   label:'Video analitikleri'},
+      {id:'update_video',    label:'Video bilgisi güncelle'},
+      {id:'new_video',       label:'▶ Yeni video (Trigger)', isTrig:true},
+    ],
+    fields:{
+      get_videos:[
+        {key:'user_id', label:'Kullanıcı ID', type:'text', ph:'vimeo_user_id'},
+        {key:'limit',   label:'Limit',        type:'text', ph:'25'},
+      ],
+    },
+  },
+  {
+    id:'wistia', name:'Wistia', cat:'Video & Medya',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/wistia.svg" width="16" height="16" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'🎬\'" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg)"/>',
+    color:'#fff7ed', type:'action',
+    ops:[
+      {id:'get_medias',      label:'Medyaları çek'},
+      {id:'get_stats',       label:'Video istatistikleri'},
+      {id:'get_visitors',    label:'Ziyaretçi verileri'},
+      {id:'video_watched',   label:'▶ Video izlendi (Trigger)', isTrig:true},
+    ],
+    fields:{
+      get_stats:[
+        {key:'media_id',  label:'Medya ID',    type:'text', ph:'wistia_media_id'},
+        {key:'date_from', label:'Başlangıç',   type:'text', ph:'{{30_days_ago}}'},
+      ],
+    },
+  },
+  {
+    id:'cloudinary', name:'Cloudinary', cat:'Video & Medya',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/cloudinary.svg" width="16" height="16" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg)"/>',
+    color:'#eff6ff', type:'action',
+    ops:[
+      {id:'upload_image',    label:'Görsel yükle'},
+      {id:'upload_video',    label:'Video yükle'},
+      {id:'transform_image', label:'Görsel dönüştür'},
+      {id:'delete_asset',    label:'Varlık sil'},
+      {id:'get_resources',   label:'Kaynakları çek'},
+    ],
+    fields:{
+      upload_image:[
+        {key:'file_url',   label:'Dosya URL',     type:'text', ph:'{{image_url}}'},
+        {key:'folder',     label:'Klasör',        type:'text', ph:'my-folder'},
+        {key:'public_id',  label:'Genel ID',      type:'text', ph:'{{filename}}'},
+      ],
+      transform_image:[
+        {key:'public_id',  label:'Genel ID',      type:'text', ph:'{{image_id}}'},
+        {key:'width',      label:'Genişlik (px)', type:'text', ph:'800'},
+        {key:'height',     label:'Yükseklik (px)',type:'text', ph:'600'},
+        {key:'format',     label:'Format', type:'select', opts:['jpg','png','webp','avif']},
+      ],
+    },
+  },
+  {
+    id:'bannerbear', name:'Bannerbear', cat:'Video & Medya',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/bannerbear.svg" width="16" height="16" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'🐻\'" style="filter:invert(65%) sepia(80%) saturate(500%) hue-rotate(10deg)"/>',
+    color:'#fef3c7', type:'action',
+    ops:[
+      {id:'create_image',   label:'Görsel oluştur'},
+      {id:'create_video',   label:'Video oluştur'},
+      {id:'get_templates',  label:'Şablonları çek'},
+      {id:'image_created',  label:'▶ Görsel hazır (Trigger)', isTrig:true},
+    ],
+    fields:{
+      create_image:[
+        {key:'template_uid', label:'Şablon UID',      type:'text', ph:'bannerbear_template_uid'},
+        {key:'modifications',label:'Değişiklikler (JSON)', type:'area', ph:'[{"name":"title","text":"{{title}}"},{"name":"image","image_url":"{{img_url}}"}]'},
+      ],
+    },
+  },
+
+  // ── FAZ 4: ETKİNLİK & TOPLULUK ───────────────
+  {
+    id:'eventbrite', name:'Eventbrite', cat:'Etkinlik & Topluluk',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/eventbrite.svg" width="16" height="16" style="filter:invert(55%) sepia(80%) saturate(700%) hue-rotate(340deg)"/>',
+    color:'#fff7ed', type:'action',
+    ops:[
+      {id:'create_event',    label:'Etkinlik oluştur'},
+      {id:'get_events',      label:'Etkinlikleri çek'},
+      {id:'get_attendees',   label:'Katılımcıları çek'},
+      {id:'get_orders',      label:'Siparişleri çek'},
+      {id:'new_order',       label:'▶ Yeni bilet (Trigger)', isTrig:true},
+      {id:'new_attendee',    label:'▶ Yeni katılımcı (Trigger)', isTrig:true},
+    ],
+    fields:{
+      create_event:[
+        {key:'name',         label:'Etkinlik adı',   type:'text', ph:'{{event_name}}'},
+        {key:'start_date',   label:'Başlangıç',      type:'text', ph:'{{start_date}}'},
+        {key:'end_date',     label:'Bitiş',          type:'text', ph:'{{end_date}}'},
+        {key:'description',  label:'Açıklama',       type:'area', ph:'{{description}}'},
+        {key:'is_online',    label:'Online mi?', type:'select', opts:['true','false']},
+      ],
+    },
+  },
+  {
+    id:'luma', name:'Luma', cat:'Etkinlik & Topluluk',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/luma.svg" width="16" height="16" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'✨\'" style="filter:brightness(0)"/>',
+    color:'#f9fafb', type:'action',
+    ops:[
+      {id:'create_event',    label:'Etkinlik oluştur'},
+      {id:'get_events',      label:'Etkinlikleri çek'},
+      {id:'get_guests',      label:'Konukları çek'},
+      {id:'new_guest',       label:'▶ Yeni konuk (Trigger)', isTrig:true},
+    ],
+    fields:{
+      create_event:[
+        {key:'name',       label:'Etkinlik adı', type:'text', ph:'{{event_name}}'},
+        {key:'start_at',   label:'Başlangıç',    type:'text', ph:'{{start_time}}'},
+        {key:'end_at',     label:'Bitiş',        type:'text', ph:'{{end_time}}'},
+        {key:'timezone',   label:'Zaman dilimi', type:'text', ph:'Europe/Istanbul'},
+      ],
+    },
+  },
+  {
+    id:'beehiiv', name:'Beehiiv', cat:'Etkinlik & Topluluk',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/beehiiv.svg" width="16" height="16" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'🐝\'" style="filter:invert(65%) sepia(80%) saturate(500%) hue-rotate(10deg)"/>',
+    color:'#fef3c7', type:'action',
+    ops:[
+      {id:'add_subscriber',    label:'Abone ekle'},
+      {id:'remove_subscriber', label:'Abone çıkar'},
+      {id:'get_subscribers',   label:'Aboneleri çek'},
+      {id:'create_post',       label:'Gönderi oluştur'},
+      {id:'new_subscriber',    label:'▶ Yeni abone (Trigger)', isTrig:true},
+    ],
+    fields:{
+      add_subscriber:[
+        {key:'publication_id', label:'Yayın ID', type:'text', ph:'beehiiv_publication_id'},
+        {key:'email',          label:'Email',    type:'text', ph:'{{email}}'},
+        {key:'utm_source',     label:'UTM kaynak (opsiyonel)', type:'text', ph:'mocksheets'},
+      ],
+    },
+  },
+
+  // ── FAZ 4: MÜŞTERİ GERİ BİLDİRİMİ ──────────
+  {
+    id:'hotjar', name:'Hotjar', cat:'Analitik',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/hotjar.svg" width="16" height="16" style="filter:invert(55%) sepia(80%) saturate(700%) hue-rotate(340deg)"/>',
+    color:'#fff7ed', type:'action',
+    ops:[
+      {id:'get_recordings',  label:'Session kayıtları çek'},
+      {id:'get_heatmaps',    label:'Heatmap verisi çek'},
+      {id:'get_feedback',    label:'Geri bildirim çek'},
+      {id:'get_surveys',     label:'Anket yanıtları çek'},
+      {id:'new_feedback',    label:'▶ Yeni geri bildirim (Trigger)', isTrig:true},
+    ],
+    fields:{
+      get_recordings:[
+        {key:'site_id',   label:'Site ID',    type:'text', ph:'hotjar_site_id'},
+        {key:'date_from', label:'Başlangıç',  type:'text', ph:'{{7_days_ago}}'},
+        {key:'limit',     label:'Limit',      type:'text', ph:'50'},
+      ],
+    },
+  },
+  {
+    id:'canny', name:'Canny', cat:'Müşteri Hizmetleri',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/canny.svg" width="16" height="16" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'📌\'" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg)"/>',
+    color:'#eff6ff', type:'action',
+    ops:[
+      {id:'create_post',    label:'Gönderi oluştur'},
+      {id:'get_posts',      label:'Gönderileri çek'},
+      {id:'create_comment', label:'Yorum ekle'},
+      {id:'change_status',  label:'Durum değiştir'},
+      {id:'new_post',       label:'▶ Yeni gönderi (Trigger)', isTrig:true},
+      {id:'status_changed', label:'▶ Durum değişti (Trigger)', isTrig:true},
+    ],
+    fields:{
+      create_post:[
+        {key:'author_id',  label:'Yazar ID',  type:'text', ph:'{{user_id}}'},
+        {key:'board_id',   label:'Board ID',  type:'text', ph:'canny_board_id'},
+        {key:'title',      label:'Başlık',    type:'text', ph:'{{feature_title}}'},
+        {key:'details',    label:'Detaylar',  type:'area', ph:'{{feature_description}}'},
+      ],
+    },
+  },
+  {
+    id:'productboard', name:'ProductBoard', cat:'Müşteri Hizmetleri',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/productboard.svg" width="16" height="16" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'📋\'" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(250deg)"/>',
+    color:'#eef2ff', type:'action',
+    ops:[
+      {id:'create_note',     label:'Not oluştur'},
+      {id:'create_feature',  label:'Özellik oluştur'},
+      {id:'get_features',    label:'Özellikleri çek'},
+      {id:'new_note',        label:'▶ Yeni not (Trigger)', isTrig:true},
+    ],
+    fields:{
+      create_note:[
+        {key:'title',    label:'Başlık',   type:'text', ph:'{{note_title}}'},
+        {key:'content',  label:'İçerik',   type:'area', ph:'{{note_content}}'},
+        {key:'customer_email', label:'Müşteri email', type:'text', ph:'{{email}}'},
+      ],
+    },
+  },
+
+  // ── FAZ 4: GÜVENLİK & AUTH ───────────────────
+  {
+    id:'auth0', name:'Auth0', cat:'Güvenlik & Auth',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/auth0.svg" width="16" height="16" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(250deg)"/>',
+    color:'#eef2ff', type:'action',
+    ops:[
+      {id:'get_users',       label:'Kullanıcıları çek'},
+      {id:'create_user',     label:'Kullanıcı oluştur'},
+      {id:'update_user',     label:'Kullanıcı güncelle'},
+      {id:'block_user',      label:'Kullanıcı engelle'},
+      {id:'assign_role',     label:'Rol ata'},
+      {id:'new_signup',      label:'▶ Yeni kayıt (Trigger)', isTrig:true},
+      {id:'new_login',       label:'▶ Yeni giriş (Trigger)', isTrig:true},
+    ],
+    fields:{
+      create_user:[
+        {key:'email',      label:'Email',    type:'text', ph:'{{email}}'},
+        {key:'password',   label:'Şifre',    type:'text', ph:'{{secure_password}}'},
+        {key:'connection', label:'Bağlantı', type:'text', ph:'Username-Password-Authentication'},
+      ],
+    },
+  },
+  {
+    id:'okta', name:'Okta', cat:'Güvenlik & Auth',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/okta.svg" width="16" height="16" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg)"/>',
+    color:'#eff6ff', type:'action',
+    ops:[
+      {id:'create_user',     label:'Kullanıcı oluştur'},
+      {id:'get_users',       label:'Kullanıcıları çek'},
+      {id:'deactivate_user', label:'Kullanıcı deaktive et'},
+      {id:'assign_app',      label:'Uygulama ata'},
+      {id:'new_user',        label:'▶ Yeni kullanıcı (Trigger)', isTrig:true},
+    ],
+    fields:{
+      create_user:[
+        {key:'firstName', label:'Ad',    type:'text', ph:'{{name}}'},
+        {key:'lastName',  label:'Soyad', type:'text', ph:'{{surname}}'},
+        {key:'email',     label:'Email', type:'text', ph:'{{email}}'},
+        {key:'login',     label:'Kullanıcı adı', type:'text', ph:'{{email}}'},
+      ],
+    },
+  },
+  {
+    id:'cloudflare', name:'Cloudflare', cat:'Güvenlik & Auth',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/cloudflare.svg" width="16" height="16" style="filter:invert(55%) sepia(80%) saturate(700%) hue-rotate(340deg)"/>',
+    color:'#fff7ed', type:'action',
+    ops:[
+      {id:'purge_cache',     label:'Cache temizle'},
+      {id:'get_analytics',   label:'Analitik çek'},
+      {id:'create_dns',      label:'DNS kaydı oluştur'},
+      {id:'block_ip',        label:'IP engelle'},
+      {id:'get_zones',       label:'Zone\'ları çek'},
+    ],
+    fields:{
+      purge_cache:[
+        {key:'zone_id', label:'Zone ID', type:'text', ph:'cloudflare_zone_id'},
+        {key:'urls',    label:'URL\'ler (virgülle ayrılmış)', type:'area', ph:'https://ornek.com/page1\nhttps://ornek.com/page2'},
+      ],
+      get_analytics:[
+        {key:'zone_id',   label:'Zone ID',   type:'text', ph:'cloudflare_zone_id'},
+        {key:'date_from', label:'Başlangıç', type:'text', ph:'{{7_days_ago}}'},
+        {key:'date_to',   label:'Bitiş',     type:'text', ph:'{{today}}'},
+      ],
+    },
+  },
+
+  // ── FAZ 4: MUHASEBE TÜRKİYE ──────────────────
+  {
+    id:'logo_yazilim', name:'Logo Yazılım', cat:'Muhasebe & ERP',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/logotipo.svg" width="16" height="16" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'📊\'" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg)"/>',
+    color:'#eff6ff', type:'action',
+    ops:[
+      {id:'get_invoices',    label:'Faturaları çek'},
+      {id:'create_invoice',  label:'Fatura oluştur'},
+      {id:'get_customers',   label:'Müşterileri çek'},
+      {id:'get_stock',       label:'Stok bilgisi çek'},
+    ],
+    fields:{
+      create_invoice:[
+        {key:'customer_code', label:'Müşteri kodu', type:'text', ph:'{{customer_code}}'},
+        {key:'amount',        label:'Tutar',        type:'text', ph:'{{amount}}'},
+        {key:'vat_rate',      label:'KDV oranı',    type:'select', opts:['0','1','8','10','18','20']},
+      ],
+    },
+  },
+  {
+    id:'mikro_yazilim', name:'Mikro Yazılım', cat:'Muhasebe & ERP',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/mikro.svg" width="16" height="16" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'🧮\'" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg)"/>',
+    color:'#eff6ff', type:'action',
+    ops:[
+      {id:'get_invoices',   label:'Faturaları çek'},
+      {id:'get_customers',  label:'Müşterileri çek'},
+      {id:'get_stock',      label:'Stok çek'},
+      {id:'get_reports',    label:'Raporları çek'},
+    ],
+    fields:{
+      get_invoices:[
+        {key:'date_from', label:'Başlangıç', type:'text', ph:'{{month_start}}'},
+        {key:'date_to',   label:'Bitiş',     type:'text', ph:'{{month_end}}'},
+        {key:'type',      label:'Tür', type:'select', opts:['Satış','Alış','Tümü']},
+      ],
+    },
+  },
+  {
+    id:'netsis', name:'Netsis', cat:'Muhasebe & ERP',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/netsis.svg" width="16" height="16" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'💼\'" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg)"/>',
+    color:'#eff6ff', type:'action',
+    ops:[
+      {id:'get_orders',     label:'Siparişleri çek'},
+      {id:'get_invoices',   label:'Faturaları çek'},
+      {id:'get_stock',      label:'Stok çek'},
+      {id:'get_customers',  label:'Müşterileri çek'},
+    ],
+    fields:{
+      get_orders:[
+        {key:'date_from', label:'Başlangıç', type:'text', ph:'{{month_start}}'},
+        {key:'status',    label:'Durum', type:'select', opts:['Bekleyen','Tamamlanan','İptal']},
+      ],
+    },
+  },
+
+  // ── FAZ 4: FİNTECH & KRİPTO ──────────────────
+  {
+    id:'binance', name:'Binance', cat:'Finans & Ödeme',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/binance.svg" width="16" height="16" style="filter:invert(65%) sepia(80%) saturate(500%) hue-rotate(10deg)"/>',
+    color:'#fef3c7', type:'action',
+    ops:[
+      {id:'get_ticker',      label:'Fiyat çek'},
+      {id:'get_account',     label:'Hesap bilgisi çek'},
+      {id:'get_orders',      label:'Siparişleri çek'},
+      {id:'get_trades',      label:'İşlemleri çek'},
+      {id:'price_alert',     label:'▶ Fiyat alarmı (Trigger)', isTrig:true},
+    ],
+    fields:{
+      get_ticker:[
+        {key:'symbol', label:'Sembol', type:'text', ph:'BTCUSDT'},
+      ],
+      price_alert:[
+        {key:'symbol',    label:'Sembol',           type:'text', ph:'BTCUSDT'},
+        {key:'threshold', label:'Eşik fiyat (USD)', type:'text', ph:'50000'},
+        {key:'direction', label:'Yön', type:'select', opts:['above','below']},
+      ],
+    },
+  },
+  {
+    id:'coingecko', name:'CoinGecko', cat:'Finans & Ödeme',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/coingecko.svg" width="16" height="16" style="filter:invert(48%) sepia(98%) saturate(400%) hue-rotate(90deg)"/>',
+    color:'#f0fdf4', type:'action',
+    ops:[
+      {id:'get_price',       label:'Kripto fiyatı çek'},
+      {id:'get_market_data', label:'Piyasa verisi çek'},
+      {id:'get_trending',    label:'Trend coinler'},
+      {id:'get_history',     label:'Fiyat geçmişi'},
+    ],
+    fields:{
+      get_price:[
+        {key:'ids',            label:'Coin ID\'leri', type:'text', ph:'bitcoin,ethereum,solana'},
+        {key:'vs_currencies',  label:'Para birimleri',type:'text', ph:'usd,try,eur'},
+      ],
+    },
+  },
+  {
+    id:'stripe_treasury', name:'Stripe Treasury', cat:'Finans & Ödeme',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/stripe.svg" width="16" height="16" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(250deg)"/>',
+    color:'#eef2ff', type:'action',
+    ops:[
+      {id:'get_balance',       label:'Bakiye çek'},
+      {id:'create_transfer',   label:'Transfer oluştur'},
+      {id:'get_transactions',  label:'İşlemleri çek'},
+      {id:'get_financial_accounts', label:'Finansal hesapları çek'},
+    ],
+    fields:{
+      create_transfer:[
+        {key:'amount',      label:'Tutar (kuruş)', type:'text', ph:'10000'},
+        {key:'currency',    label:'Para birimi',   type:'select', opts:['usd','eur','try','gbp']},
+        {key:'destination', label:'Hedef hesap',   type:'text', ph:'acct_XXXXXXXXXX'},
+      ],
+    },
+  },
+
+  // ── FAZ 4: AZURE FONKSİYONLAR ────────────────
+  {
+    id:'azure_functions', name:'Azure Functions', cat:'Bulut & Altyapı',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/azurefunctions.svg" width="16" height="16" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'⚡\'" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg)"/>',
+    color:'#eff6ff', type:'action',
+    ops:[
+      {id:'invoke_function', label:'Fonksiyon çağır'},
+      {id:'get_functions',   label:'Fonksiyonları listele'},
+    ],
+    fields:{
+      invoke_function:[
+        {key:'function_url', label:'Fonksiyon URL',    type:'text', ph:'https://func.azurewebsites.net/api/MyFunc'},
+        {key:'payload',      label:'Yük (JSON)',       type:'area', ph:'{"key":"{{value}}"}'},
+        {key:'method',       label:'HTTP metodu', type:'select', opts:['POST','GET','PUT']},
+      ],
+    },
+  },
+
+  // ── FAZ 4: SAĞLIK & KLİNİK ───────────────────
+  {
+    id:'healthie', name:'Healthie', cat:'Sağlık',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/healthie.svg" width="16" height="16" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'🏥\'" style="filter:invert(48%) sepia(98%) saturate(400%) hue-rotate(90deg)"/>',
+    color:'#f0fdf4', type:'action',
+    ops:[
+      {id:'create_patient',   label:'Hasta oluştur'},
+      {id:'get_patients',     label:'Hastaları çek'},
+      {id:'create_appointment',label:'Randevu oluştur'},
+      {id:'get_appointments', label:'Randevuları çek'},
+      {id:'new_appointment',  label:'▶ Yeni randevu (Trigger)', isTrig:true},
+    ],
+    fields:{
+      create_appointment:[
+        {key:'contact_id',    label:'Hasta ID',       type:'text', ph:'healthie_patient_id'},
+        {key:'date',          label:'Tarih',          type:'text', ph:'{{appointment_date}}'},
+        {key:'time',          label:'Saat',           type:'text', ph:'{{appointment_time}}'},
+        {key:'appointment_type_id', label:'Tür ID',  type:'text', ph:'healthie_type_id'},
+      ],
+    },
+  },
+  {
+    id:'simplepractice', name:'SimplePractice', cat:'Sağlık',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/simplepractice.svg" width="16" height="16" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'🩺\'" style="filter:invert(48%) sepia(98%) saturate(400%) hue-rotate(90deg)"/>',
+    color:'#f0fdf4', type:'action',
+    ops:[
+      {id:'get_clients',       label:'Danışanları çek'},
+      {id:'get_appointments',  label:'Randevuları çek'},
+      {id:'create_appointment',label:'Randevu oluştur'},
+      {id:'new_appointment',   label:'▶ Yeni randevu (Trigger)', isTrig:true},
+    ],
+    fields:{
+      get_appointments:[
+        {key:'date_from', label:'Başlangıç', type:'text', ph:'{{today}}'},
+        {key:'date_to',   label:'Bitiş',     type:'text', ph:'{{7_days_later}}'},
+        {key:'status',    label:'Durum', type:'select', opts:['scheduled','completed','cancelled']},
+      ],
+    },
+  },
+
+  // ── FAZ 4: HUKUK & SÖZLEŞME ──────────────────
+  {
+    id:'clio', name:'Clio', cat:'Hukuk',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/clio.svg" width="16" height="16" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'⚖️\'" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg)"/>',
+    color:'#eff6ff', type:'action',
+    ops:[
+      {id:'create_matter',   label:'Dava oluştur'},
+      {id:'get_matters',     label:'Davaları çek'},
+      {id:'create_contact',  label:'Kişi oluştur'},
+      {id:'get_contacts',    label:'Kişileri çek'},
+      {id:'create_task',     label:'Görev oluştur'},
+      {id:'new_matter',      label:'▶ Yeni dava (Trigger)', isTrig:true},
+    ],
+    fields:{
+      create_matter:[
+        {key:'description',   label:'Açıklama',    type:'text', ph:'{{matter_description}}'},
+        {key:'client_id',     label:'Müvekkil ID', type:'text', ph:'{{client_id}}'},
+        {key:'practice_area', label:'Hukuk alanı', type:'text', ph:'Ticaret Hukuku'},
+      ],
+    },
+  },
+  {
+    id:'contractsafe', name:'ContractSafe', cat:'Hukuk',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/contractsafe.svg" width="16" height="16" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'📜\'" style="filter:invert(48%) sepia(98%) saturate(400%) hue-rotate(90deg)"/>',
+    color:'#f0fdf4', type:'action',
+    ops:[
+      {id:'get_contracts',    label:'Sözleşmeleri çek'},
+      {id:'create_contract',  label:'Sözleşme oluştur'},
+      {id:'get_expiring',     label:'Süresi dolanları çek'},
+      {id:'contract_expiring',label:'▶ Sözleşme bitiyor (Trigger)', isTrig:true},
+    ],
+    fields:{
+      get_expiring:[
+        {key:'days_until_expiry', label:'Kaç gün kaldı', type:'text', ph:'30'},
+      ],
+      create_contract:[
+        {key:'title',       label:'Başlık',         type:'text', ph:'{{contract_title}}'},
+        {key:'vendor',      label:'Tedarikçi/Taraf',type:'text', ph:'{{vendor_name}}'},
+        {key:'expiry_date', label:'Bitiş tarihi',   type:'text', ph:'{{expiry_date}}'},
+      ],
+    },
+  },
+
+  // ── FAZ 4: GAYRİMENKUL ───────────────────────
+  {
+    id:'follow_up_boss', name:'Follow Up Boss', cat:'Gayrimenkul',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/followupboss.svg" width="16" height="16" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'🏠\'" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg)"/>',
+    color:'#eff6ff', type:'action',
+    ops:[
+      {id:'create_person',   label:'Kişi oluştur'},
+      {id:'get_people',      label:'Kişileri çek'},
+      {id:'create_deal',     label:'Anlaşma oluştur'},
+      {id:'add_note',        label:'Not ekle'},
+      {id:'new_lead',        label:'▶ Yeni lead (Trigger)', isTrig:true},
+    ],
+    fields:{
+      create_person:[
+        {key:'firstName', label:'Ad',    type:'text', ph:'{{name}}'},
+        {key:'emails',    label:'Email', type:'text', ph:'{{email}}'},
+        {key:'phones',    label:'Telefon',type:'text',ph:'{{phone}}'},
+        {key:'source',    label:'Kaynak',type:'text', ph:'Mocksheets'},
+      ],
+    },
+  },
+  {
+    id:'propertybase', name:'Propertybase', cat:'Gayrimenkul',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/propertybase.svg" width="16" height="16" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'🏢\'" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(250deg)"/>',
+    color:'#eef2ff', type:'action',
+    ops:[
+      {id:'create_contact',  label:'Kişi oluştur'},
+      {id:'get_contacts',    label:'Kişileri çek'},
+      {id:'create_listing',  label:'İlan oluştur'},
+      {id:'get_listings',    label:'İlanları çek'},
+    ],
+    fields:{
+      create_listing:[
+        {key:'title',     label:'İlan başlığı',  type:'text', ph:'{{property_title}}'},
+        {key:'price',     label:'Fiyat',         type:'text', ph:'{{price}}'},
+        {key:'type',      label:'Tür', type:'select', opts:['Satılık','Kiralık','Satılık Ticari']},
+        {key:'city',      label:'Şehir',         type:'text', ph:'{{city}}'},
+      ],
+    },
+  },
+
+  // ── FAZ 4: YAPAY ZEKA EK ─────────────────────
+  {
+    id:'stability_ai', name:'Stability AI', cat:'AI & LLM',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/stability.svg" width="16" height="16" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'🎨\'" style="filter:brightness(0)"/>',
+    color:'#f9fafb', type:'action',
+    ops:[
+      {id:'generate_image',    label:'Görsel oluştur (Stable Diffusion)'},
+      {id:'image_to_image',    label:'Görsel dönüştür'},
+      {id:'upscale_image',     label:'Görsel büyüt'},
+      {id:'remove_background', label:'Arka plan kaldır'},
+    ],
+    fields:{
+      generate_image:[
+        {key:'prompt',           label:'Prompt',            type:'area', ph:'{{image_prompt}}'},
+        {key:'negative_prompt',  label:'Negatif prompt',    type:'area', ph:'blurry, low quality'},
+        {key:'model',            label:'Model', type:'select', opts:['stable-diffusion-xl-1024-v1-0','stable-diffusion-v1-6']},
+        {key:'width',            label:'Genişlik', type:'select', opts:['1024','768','512']},
+        {key:'height',           label:'Yükseklik',type:'select', opts:['1024','768','512']},
+      ],
+    },
+  },
+  {
+    id:'elevenlabs', name:'ElevenLabs', cat:'AI & LLM',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/elevenlabs.svg" width="16" height="16" style="filter:brightness(0)"/>',
+    color:'#f9fafb', type:'action',
+    ops:[
+      {id:'text_to_speech',  label:'Metin → Ses (TTS)'},
+      {id:'get_voices',      label:'Sesleri listele'},
+      {id:'clone_voice',     label:'Ses klonla'},
+    ],
+    fields:{
+      text_to_speech:[
+        {key:'text',      label:'Metin',    type:'area', ph:'{{text_content}}'},
+        {key:'voice_id',  label:'Ses ID',   type:'text', ph:'elevenlabs_voice_id'},
+        {key:'model_id',  label:'Model', type:'select', opts:['eleven_multilingual_v2','eleven_turbo_v2','eleven_monolingual_v1']},
+      ],
+    },
+  },
+  {
+    id:'replicate', name:'Replicate', cat:'AI & LLM',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/replicate.svg" width="16" height="16" style="filter:brightness(0)"/>',
+    color:'#f9fafb', type:'action',
+    ops:[
+      {id:'run_model',      label:'Model çalıştır'},
+      {id:'get_prediction', label:'Tahmin sonucu çek'},
+      {id:'get_models',     label:'Modelleri listele'},
+    ],
+    fields:{
+      run_model:[
+        {key:'model_version', label:'Model versiyonu', type:'text', ph:'stability-ai/sdxl:version_id'},
+        {key:'input',         label:'Girdi (JSON)',    type:'area', ph:'{"prompt":"{{prompt}}"}'},
+      ],
+    },
+  },
+
+  // ── YENİ UYGULAMALAR ─────────────────────────
+  {
+    id:'notion_forms', name:'Notion Forms', cat:'Form & Anket',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/notion.svg" width="16" height="16" style="filter:brightness(0)"/>',
+    color:'#f9fafb', type:'action',
+    ops:[
+      {id:'new_submission', label:'▶ Form dolduruldu (Trigger)', isTrig:true},
+      {id:'get_submissions',label:'Gönderileri çek'},
+    ],
+    fields:{
+      new_submission:[
+        {key:'database_id', label:'Database ID', type:'text', ph:'notion_database_id'},
+      ],
+    },
+  },
+  {
+    id:'wix', name:'Wix', cat:'İçerik & Tasarım',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/wix.svg" width="16" height="16" style="filter:brightness(0)"/>',
+    color:'#f9fafb', type:'action',
+    ops:[
+      {id:'get_orders',      label:'Mağaza siparişleri çek'},
+      {id:'get_members',     label:'Üyeleri çek'},
+      {id:'get_contacts',    label:'Kişileri çek'},
+      {id:'new_order',       label:'▶ Yeni sipariş (Trigger)', isTrig:true},
+      {id:'new_member',      label:'▶ Yeni üye (Trigger)', isTrig:true},
+      {id:'new_form_sub',    label:'▶ Form gönderimi (Trigger)', isTrig:true},
+    ],
+    fields:{
+      get_orders:[
+        {key:'status', label:'Durum', type:'select', opts:['PENDING','APPROVED','CANCELED','FULFILLED']},
+        {key:'limit',  label:'Limit', type:'text',   ph:'50'},
+      ],
+    },
+  },
+  {
+    id:'retool', name:'Retool', cat:'Gelişmiş',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/retool.svg" width="16" height="16" style="filter:brightness(0)"/>',
+    color:'#f9fafb', type:'action',
+    ops:[
+      {id:'trigger_workflow', label:'Retool workflow tetikle'},
+      {id:'get_workflows',    label:'Workflow\'ları çek'},
+      {id:'run_query',        label:'Veritabanı sorgusu çalıştır'},
+    ],
+    fields:{
+      trigger_workflow:[
+        {key:'workflow_id', label:'Workflow ID', type:'text', ph:'retool_workflow_id'},
+        {key:'payload',     label:'Veri (JSON)', type:'area', ph:'{"key":"{{value}}"}'},
+      ],
+    },
+  },
+  {
+    id:'attio', name:'Attio', cat:'CRM',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/attio.svg" width="16" height="16" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'🔗\'" style="filter:brightness(0)"/>',
+    color:'#f9fafb', type:'action',
+    ops:[
+      {id:'create_record',   label:'Kayıt oluştur'},
+      {id:'update_record',   label:'Kayıt güncelle'},
+      {id:'get_records',     label:'Kayıtları çek'},
+      {id:'create_note',     label:'Not ekle'},
+      {id:'new_record',      label:'▶ Yeni kayıt (Trigger)', isTrig:true},
+    ],
+    fields:{
+      create_record:[
+        {key:'object_type', label:'Nesne tipi', type:'select', opts:['people','companies','deals']},
+        {key:'attributes',  label:'Özellikler (JSON)', type:'area', ph:'{"name":"{{name}}","email_addresses":[{"email_address":"{{email}}"}]}'},
+      ],
+    },
+  },
+  {
+    id:'klaviyo_sms', name:'Klaviyo SMS', cat:'İletişim Altyapısı',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/klaviyo.svg" width="16" height="16" style="filter:brightness(0)"/>',
+    color:'#f9fafb', type:'action',
+    ops:[
+      {id:'send_sms',        label:'SMS gönder'},
+      {id:'subscribe_phone', label:'Telefon abone et'},
+      {id:'unsubscribe',     label:'Aboneliği iptal et'},
+      {id:'new_sms_reply',   label:'▶ SMS yanıtı (Trigger)', isTrig:true},
+    ],
+    fields:{
+      send_sms:[
+        {key:'phone',    label:'Telefon (+90...)', type:'text', ph:'+905xxxxxxxxx'},
+        {key:'message',  label:'Mesaj',            type:'area', ph:'Merhaba {{name}}, kampanyamız başladı!'},
+        {key:'list_id',  label:'Liste ID',         type:'text', ph:'klaviyo_list_id'},
+      ],
+    },
+  },
+  {
+    id:'render', name:'Render', cat:'Bulut & Altyapı',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/render.svg" width="16" height="16" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(250deg)"/>',
+    color:'#eef2ff', type:'action',
+    ops:[
+      {id:'deploy_service',   label:'Servis deploy et'},
+      {id:'get_services',     label:'Servisleri çek'},
+      {id:'get_deploys',      label:'Deploy geçmişi'},
+      {id:'restart_service',  label:'Servis yeniden başlat'},
+      {id:'deploy_success',   label:'▶ Deploy başarılı (Trigger)', isTrig:true},
+      {id:'deploy_failed',    label:'▶ Deploy başarısız (Trigger)', isTrig:true},
+    ],
+    fields:{
+      deploy_service:[
+        {key:'service_id', label:'Servis ID', type:'text', ph:'render_service_id'},
+        {key:'clear_cache',label:'Cache temizle', type:'select', opts:['true','false']},
+      ],
+    },
+  },
+  {
+    id:'railway', name:'Railway', cat:'Bulut & Altyapı',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/railway.svg" width="16" height="16" style="filter:brightness(0)"/>',
+    color:'#f9fafb', type:'action',
+    ops:[
+      {id:'deploy_project',  label:'Proje deploy et'},
+      {id:'get_projects',    label:'Projeleri çek'},
+      {id:'get_deployments', label:'Deployment\'ları çek'},
+      {id:'run_service',     label:'Servis çalıştır'},
+      {id:'deploy_success',  label:'▶ Deploy başarılı (Trigger)', isTrig:true},
+    ],
+    fields:{
+      deploy_project:[
+        {key:'project_id',     label:'Proje ID',  type:'text', ph:'railway_project_id'},
+        {key:'environment_id', label:'Ortam ID',  type:'text', ph:'railway_env_id'},
+      ],
+    },
+  },
+  {
+    id:'outscraper', name:'Outscraper', cat:'Veri & İş Zekâsı',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/outscraper.svg" width="16" height="16" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'🔍\'" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg)"/>',
+    color:'#eff6ff', type:'action',
+    ops:[
+      {id:'google_maps',      label:'Google Maps verisi çek'},
+      {id:'google_reviews',   label:'Google yorumları çek'},
+      {id:'emails_finder',    label:'Email bul'},
+      {id:'google_search',    label:'Google arama sonuçları'},
+    ],
+    fields:{
+      google_maps:[
+        {key:'query',   label:'Arama sorgusu', type:'text', ph:'Restoran İstanbul'},
+        {key:'limit',   label:'Limit',         type:'text', ph:'20'},
+        {key:'language',label:'Dil', type:'select', opts:['tr','en','de','fr']},
+      ],
+      google_reviews:[
+        {key:'place_id', label:'Place ID veya URL', type:'text', ph:'ChIJ...'},
+        {key:'limit',    label:'Yorum sayısı',      type:'text', ph:'100'},
+        {key:'sort',     label:'Sıralama', type:'select', opts:['most_relevant','newest','highest_rating','lowest_rating']},
+      ],
+    },
+  },
 ];
 
 function wfRenderSidebar(q) {
