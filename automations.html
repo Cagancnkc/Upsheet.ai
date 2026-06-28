@@ -5382,7 +5382,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'google_sheets', name:'Google Sheets', cat:'Veri & Tablolar',
-    icon:'<img src="https://upload.wikimedia.org/wikipedia/commons/a/ae/Google_Sheets_2020_Logo.svg" width="20" height="20" style="object-fit:contain;"/>',
+    icon:'<img src="https://logo.clearbit.com/sheets.google.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror="this.src='https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/googlesheets.svg'"/>',
     ops:[
       {id:'append_row',    label:'Yeni satır ekle (Append Row)'},
       {id:'get_rows',      label:'Satırları çek (Get Rows)'},
@@ -5396,7 +5396,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'slack', name:'Slack', cat:'Mesajlaşma',
-    icon:'<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Slack_icon_2019.svg/240px-Slack_icon_2019.svg.png" width="20" height="20" style="object-fit:contain;"/>',
+    icon:'<img src="https://logo.clearbit.com/slack.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror="this.src='https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/slack.svg'"/>',
     ops:[
       {id:'send_message', label:'Mesaj gönder (Send Message)'},
       {id:'send_file',    label:'Dosya gönder (Send File)'},
@@ -5409,7 +5409,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'gmail', name:'Gmail', cat:'Mesajlaşma',
-    icon:'<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Gmail_icon_%282020%29.svg/320px-Gmail_icon_%282020%29.svg.png" width="20" height="20" style="object-fit:contain;"/>',
+    icon:'<img src="https://logo.clearbit.com/gmail.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror="this.src='https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/gmail.svg'"/>',
     ops:[{id:'send_email',label:'Email gönder'},{id:'watch_inbox',label:'▶ Yeni email izle (Trigger)',isTrig:true}],
     fields:{
       send_email:[{key:'to',label:'Alıcı',type:'text',ph:'ornek@email.com'},{key:'subject',label:'Konu',type:'text',ph:'Haftalık Rapor'},{key:'body',label:'İçerik',type:'area',ph:'Merhaba,\n\n{{summary}}'}],
@@ -5417,7 +5417,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'shopify', name:'Shopify', cat:'E-ticaret',
-    icon:'<img src="https://logo.clearbit.com/shopify.com" width="22" height="22" style="border-radius:4px;object-fit:contain" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'<span style=&quot;font-size:14px&quot;>🛒</span>\'"/>',
+    icon:'<img src="https://logo.clearbit.com/shopify.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     ops:[
       {id:'new_order',    label:'▶ Yeni sipariş (Trigger)', isTrig:true},
       {id:'get_orders',   label:'Siparişleri çek'},
@@ -5430,7 +5430,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'hubspot', name:'HubSpot', cat:'CRM',
-    icon:'<img src="https://logo.clearbit.com/hubspot.com" width="22" height="22" style="border-radius:4px;object-fit:contain" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'<span style=&quot;font-size:14px&quot;>🧲</span>\'"/>',
+    icon:'<img src="https://logo.clearbit.com/hubspot.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     ops:[{id:'create_contact',label:'Kişi oluştur'},{id:'get_contacts',label:'Kişileri çek'},{id:'create_deal',label:'Fırsat oluştur'}],
     fields:{
       create_contact:[{key:'email',label:'Email',type:'text',ph:'{{email}}'},{key:'firstname',label:'Ad',type:'text',ph:'{{name}}'}],
@@ -5438,7 +5438,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'mocksheets_ai', name:'Mocksheets AI', cat:'Veri & Tablolar',
-    icon:'<img src="https://www.mocksheets.com/images/brand/logo-128x128.png" width="20" height="20" style="border-radius:4px;object-fit:contain;" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'✦\'"/>',
+    icon:'<img src="https://www.mocksheets.com/favicon.ico" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror="this.style.display='none';this.parentNode.innerHTML='✦'"/>',
     ops:[{id:'analyze',label:'Veriyi analiz et'},{id:'summarize',label:'Özet çıkar'},{id:'transform',label:'Veri dönüştür'}],
     fields:{
       analyze:  [{key:'prompt',label:'Komut',type:'area',ph:'Bu ayın en çok satan 10 ürünü listele'}],
@@ -5447,7 +5447,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'google_drive', name:'Google Drive', cat:'Veri & Tablolar',
-    icon:'<img src="https://upload.wikimedia.org/wikipedia/commons/1/12/Google_Drive_icon_%282020%29.svg" width="20" height="20" style="object-fit:contain;"/>',
+    icon:'<img src="https://logo.clearbit.com/drive.google.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror="this.src='https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/googledrive.svg'"/>',
     ops:[{id:'upload_file',label:'Dosya yükle'},{id:'get_file',label:'Dosya çek'},{id:'watch_folder',label:'▶ Klasör izle (Trigger)',isTrig:true}],
     fields:{
       upload_file:[{key:'folder_id',label:'Klasör ID',type:'text',ph:'Google Drive klasör ID'},{key:'filename',label:'Dosya adı',type:'text',ph:'rapor_{{date}}.csv'},{key:'content',label:'İçerik',type:'area',ph:'{{previous_output}}'}],
@@ -5474,7 +5474,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 1: E-TİCARET ──────────────────────────
   {
     id:'woocommerce', name:'WooCommerce', cat:'E-ticaret',
-    icon:'<img src="https://logo.clearbit.com/woocommerce.com" width="22" height="22" style="border-radius:4px;object-fit:contain" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'<span style=&quot;font-size:14px&quot;>🛒</span>\'"/>',
+    icon:'<img src="https://logo.clearbit.com/woocommerce.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     ops:[
       {id:'get_orders',    label:'Siparişleri çek'},
       {id:'get_products',  label:'Ürünleri çek'},
@@ -5490,7 +5490,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'trendyol', name:'Trendyol', cat:'E-ticaret',
-    icon:'<img src="https://logo.clearbit.com/trendyol.com" width="22" height="22" style="border-radius:4px;object-fit:contain" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'<span style=&quot;font-size:14px&quot;>🛒</span>\'"/>',
+    icon:'<img src="https://logo.clearbit.com/trendyol.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     ops:[
       {id:'get_orders',   label:'Siparişleri çek'},
       {id:'get_products', label:'Ürünleri çek'},
@@ -5506,7 +5506,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'hepsiburada', name:'Hepsiburada', cat:'E-ticaret',
-    icon:'<img src="https://logo.clearbit.com/hepsiburada.com" width="22" height="22" style="border-radius:4px;object-fit:contain" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'<span style=&quot;font-size:14px&quot;>🛒</span>\'"/>',
+    icon:'<img src="https://logo.clearbit.com/hepsiburada.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     ops:[
       {id:'get_orders',   label:'Siparişleri çek'},
       {id:'get_products', label:'Ürünleri çek'},
@@ -5521,7 +5521,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'etsy', name:'Etsy', cat:'E-ticaret',
-    icon:'<img src="https://logo.clearbit.com/etsy.com" width="22" height="22" style="border-radius:4px;object-fit:contain" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'<span style=&quot;font-size:14px&quot;>🛍️</span>\'"/>',
+    icon:'<img src="https://logo.clearbit.com/etsy.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     ops:[
       {id:'get_orders',   label:'Siparişleri çek'},
       {id:'get_listings', label:'Ürünleri çek'},
@@ -5533,7 +5533,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'amazon', name:'Amazon', cat:'E-ticaret',
-    icon:'<img src="https://logo.clearbit.com/amazon.com" width="22" height="22" style="border-radius:4px;object-fit:contain" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'<span style=&quot;font-size:14px&quot;>🛒</span>\'"/>',
+    icon:'<img src="https://logo.clearbit.com/amazon.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     ops:[
       {id:'get_orders',     label:'Siparişleri çek (MWS)'},
       {id:'get_inventory',  label:'Envanter çek'},
@@ -5563,7 +5563,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 1: E-POSTA PAZARLAMA ──────────────────
   {
     id:'klaviyo', name:'Klaviyo', cat:'Email Pazarlama',
-    icon:'<img src="https://logo.clearbit.com/klaviyo.com" width="22" height="22" style="border-radius:4px;object-fit:contain" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'<span style=&quot;font-size:14px&quot;>📧</span>\'"/>',
+    icon:'<img src="https://logo.clearbit.com/klaviyo.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     ops:[
       {id:'add_to_list',      label:'Listeye ekle'},
       {id:'remove_from_list', label:'Listeden çıkar'},
@@ -5585,7 +5585,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'mailchimp', name:'Mailchimp', cat:'Email Pazarlama',
-    icon:'<img src="https://logo.clearbit.com/mailchimp.com" width="22" height="22" style="border-radius:4px;object-fit:contain" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'<span style=&quot;font-size:14px&quot;>🐒</span>\'"/>',
+    icon:'<img src="https://logo.clearbit.com/mailchimp.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     ops:[
       {id:'add_subscriber',    label:'Abone ekle'},
       {id:'remove_subscriber', label:'Abone çıkar'},
@@ -5637,7 +5637,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 1: CRM & SATIŞ ───────────────────────
   {
     id:'salesforce', name:'Salesforce', cat:'CRM',
-    icon:'<img src="https://logo.clearbit.com/salesforce.com" width="22" height="22" style="border-radius:4px;object-fit:contain" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'<span style=&quot;font-size:14px&quot;>☁️</span>\'"/>',
+    icon:'<img src="https://logo.clearbit.com/salesforce.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     ops:[
       {id:'create_lead',    label:'Lead oluştur'},
       {id:'update_lead',    label:'Lead güncelle'},
@@ -5656,7 +5656,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'pipedrive', name:'Pipedrive', cat:'CRM',
-    icon:'<img src="https://logo.clearbit.com/pipedrive.com" width="22" height="22" style="border-radius:4px;object-fit:contain" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'<span style=&quot;font-size:14px&quot;>🎯</span>\'"/>',
+    icon:'<img src="https://logo.clearbit.com/pipedrive.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     ops:[
       {id:'create_person', label:'Kişi oluştur'},
       {id:'create_deal',   label:'Anlaşma oluştur'},
@@ -5692,7 +5692,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 1: PROJE YÖNETİMİ ────────────────────
   {
     id:'notion', name:'Notion', cat:'Proje Yönetimi',
-    icon:'<img src="https://logo.clearbit.com/notion.so" width="22" height="22" style="border-radius:4px;object-fit:contain" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'<span style=&quot;font-size:14px&quot;>📝</span>\'"/>',
+    icon:'<img src="https://logo.clearbit.com/notion.so" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     ops:[
       {id:'create_page',    label:'Sayfa oluştur'},
       {id:'update_page',    label:'Sayfa güncelle'},
@@ -5714,7 +5714,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'airtable', name:'Airtable', cat:'Proje Yönetimi',
-    icon:'<img src="https://logo.clearbit.com/airtable.com" width="22" height="22" style="border-radius:4px;object-fit:contain" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'<span style=&quot;font-size:14px&quot;>🗄️</span>\'"/>',
+    icon:'<img src="https://logo.clearbit.com/airtable.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     ops:[
       {id:'create_record', label:'Kayıt oluştur'},
       {id:'update_record', label:'Kayıt güncelle'},
@@ -5732,7 +5732,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'trello', name:'Trello', cat:'Proje Yönetimi',
-    icon:'<img src="https://logo.clearbit.com/trello.com" width="22" height="22" style="border-radius:4px;object-fit:contain" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'<span style=&quot;font-size:14px&quot;>📋</span>\'"/>',
+    icon:'<img src="https://logo.clearbit.com/trello.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     ops:[
       {id:'create_card',  label:'Kart oluştur'},
       {id:'update_card',  label:'Kart güncelle'},
@@ -5750,7 +5750,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'asana', name:'Asana', cat:'Proje Yönetimi',
-    icon:'<img src="https://logo.clearbit.com/asana.com" width="22" height="22" style="border-radius:4px;object-fit:contain" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'<span style=&quot;font-size:14px&quot;>✅</span>\'"/>',
+    icon:'<img src="https://logo.clearbit.com/asana.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     ops:[
       {id:'create_task',  label:'Görev oluştur'},
       {id:'update_task',  label:'Görev güncelle'},
@@ -5769,7 +5769,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'monday', name:'Monday.com', cat:'Proje Yönetimi',
-    icon:'<img src="https://logo.clearbit.com/monday.com" width="22" height="22" style="border-radius:4px;object-fit:contain" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'<span style=&quot;font-size:14px&quot;>📅</span>\'"/>',
+    icon:'<img src="https://logo.clearbit.com/monday.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     ops:[
       {id:'create_item',  label:'Öğe oluştur'},
       {id:'update_item',  label:'Öğe güncelle'},
@@ -5786,7 +5786,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'jira', name:'Jira', cat:'Proje Yönetimi',
-    icon:'<img src="https://logo.clearbit.com/atlassian.com" width="22" height="22" style="border-radius:4px;object-fit:contain" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'<span style=&quot;font-size:14px&quot;>🎯</span>\'"/>',
+    icon:'<img src="https://logo.clearbit.com/atlassian.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     ops:[
       {id:'create_issue',  label:'Issue oluştur'},
       {id:'update_issue',  label:'Issue güncelle'},
@@ -5805,7 +5805,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'linear', name:'Linear', cat:'Proje Yönetimi',
-    icon:'<img src="https://logo.clearbit.com/linear.app" width="22" height="22" style="border-radius:4px;object-fit:contain" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'<span style=&quot;font-size:14px&quot;>📐</span>\'"/>',
+    icon:'<img src="https://logo.clearbit.com/linear.app" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     ops:[
       {id:'create_issue',  label:'Issue oluştur'},
       {id:'update_issue',  label:'Issue güncelle'},
@@ -5823,7 +5823,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'clickup', name:'ClickUp', cat:'Proje Yönetimi',
-    icon:'<img src="https://logo.clearbit.com/clickup.com" width="22" height="22" style="border-radius:4px;object-fit:contain" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'<span style=&quot;font-size:14px&quot;>✅</span>\'"/>',
+    icon:'<img src="https://logo.clearbit.com/clickup.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     ops:[
       {id:'create_task',   label:'Görev oluştur'},
       {id:'update_task',   label:'Görev güncelle'},
@@ -5842,7 +5842,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 1: MESAJLAŞMA ────────────────────────
   {
     id:'microsoft_teams', name:'Microsoft Teams', cat:'Mesajlaşma',
-    icon:'<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Microsoft_Office_Teams_%282018%E2%80%93present%29.svg/240px-Microsoft_Office_Teams_%282018%E2%80%93present%29.svg.png" width="20" height="20" style="object-fit:contain;"/>',
+    icon:'<img src="https://logo.clearbit.com/microsoft.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror="this.src='https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/microsoftteams.svg'"/>',
     ops:[
       {id:'send_message',   label:'Mesaj gönder'},
       {id:'create_meeting', label:'Toplantı oluştur'},
@@ -5859,7 +5859,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'whatsapp', name:'WhatsApp Business', cat:'Mesajlaşma',
-    icon:'<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/WhatsApp.svg/240px-WhatsApp.svg.png" width="20" height="20" style="object-fit:contain;"/>',
+    icon:'<img src="https://logo.clearbit.com/whatsapp.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror="this.src='https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/whatsapp.svg'"/>',
     ops:[
       {id:'send_message',   label:'Mesaj gönder'},
       {id:'send_template',  label:'Şablon mesaj gönder'},
@@ -5874,7 +5874,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'telegram', name:'Telegram', cat:'Mesajlaşma',
-    icon:'<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Telegram_logo.svg/240px-Telegram_logo.svg.png" width="20" height="20" style="object-fit:contain;"/>',
+    icon:'<img src="https://logo.clearbit.com/telegram.org" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror="this.src='https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/telegram.svg'"/>',
     ops:[
       {id:'send_message', label:'Mesaj gönder'},
       {id:'send_file',    label:'Dosya gönder'},
@@ -5889,7 +5889,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'discord', name:'Discord', cat:'Mesajlaşma',
-    icon:'<img src="https://logo.clearbit.com/discord.com" width="22" height="22" style="border-radius:4px;object-fit:contain" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'<span style=&quot;font-size:14px&quot;>💬</span>\'"/>',
+    icon:'<img src="https://logo.clearbit.com/discord.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     ops:[
       {id:'send_message',  label:'Mesaj gönder'},
       {id:'send_embed',    label:'Embed mesaj gönder'},
@@ -5906,7 +5906,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 1: FİNANS & ÖDEME ────────────────────
   {
     id:'stripe', name:'Stripe', cat:'Finans & Ödeme',
-    icon:'<img src="https://logo.clearbit.com/stripe.com" width="22" height="22" style="border-radius:4px;object-fit:contain" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'<span style=&quot;font-size:14px&quot;>💳</span>\'"/>',
+    icon:'<img src="https://logo.clearbit.com/stripe.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     ops:[
       {id:'create_customer',    label:'Müşteri oluştur'},
       {id:'create_invoice',     label:'Fatura oluştur'},
@@ -5925,7 +5925,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'iyzico', name:'İyzico', cat:'Finans & Ödeme',
-    icon:'<img src="https://logo.clearbit.com/iyzico.com" width="22" height="22" style="border-radius:4px;object-fit:contain" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'<span style=&quot;font-size:14px&quot;>💳</span>\'"/>',
+    icon:'<img src="https://logo.clearbit.com/iyzico.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     ops:[
       {id:'get_payments',  label:'Ödemeleri çek'},
       {id:'get_refunds',   label:'İadeleri çek'},
@@ -5940,7 +5940,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'paypal', name:'PayPal', cat:'Finans & Ödeme',
-    icon:'<img src="https://logo.clearbit.com/paypal.com" width="22" height="22" style="border-radius:4px;object-fit:contain" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'<span style=&quot;font-size:14px&quot;>💰</span>\'"/>',
+    icon:'<img src="https://logo.clearbit.com/paypal.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     ops:[
       {id:'get_transactions', label:'İşlemleri çek'},
       {id:'send_payment',     label:'Ödeme gönder'},
@@ -5955,7 +5955,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'quickbooks', name:'QuickBooks', cat:'Finans & Ödeme',
-    icon:'<img src="https://logo.clearbit.com/quickbooks.intuit.com" width="22" height="22" style="border-radius:4px;object-fit:contain" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'<span style=&quot;font-size:14px&quot;>💰</span>\'"/>',
+    icon:'<img src="https://logo.clearbit.com/quickbooks.intuit.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     ops:[
       {id:'create_invoice',  label:'Fatura oluştur'},
       {id:'get_invoices',    label:'Faturaları çek'},
@@ -5974,7 +5974,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 1: ANALİTİK ──────────────────────────
   {
     id:'google_analytics', name:'Google Analytics', cat:'Analitik',
-    icon:'<img src="https://logo.clearbit.com/analytics.google.com" width="22" height="22" style="border-radius:4px;object-fit:contain" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'<span style=&quot;font-size:14px&quot;>📊</span>\'"/>',
+    icon:'<img src="https://logo.clearbit.com/analytics.google.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     ops:[
       {id:'get_sessions',    label:'Oturumları çek'},
       {id:'get_pageviews',   label:'Sayfa görüntüleme'},
@@ -6011,7 +6011,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 1: DEPOLAMA ──────────────────────────
   {
     id:'dropbox', name:'Dropbox', cat:'Depolama',
-    icon:'<img src="https://logo.clearbit.com/dropbox.com" width="22" height="22" style="border-radius:4px;object-fit:contain" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'<span style=&quot;font-size:14px&quot;>📦</span>\'"/>',
+    icon:'<img src="https://logo.clearbit.com/dropbox.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     ops:[
       {id:'upload_file',   label:'Dosya yükle'},
       {id:'download_file', label:'Dosya indir'},
@@ -6027,7 +6027,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'onedrive', name:'OneDrive', cat:'Depolama',
-    icon:'<img src="https://logo.clearbit.com/onedrive.com" width="22" height="22" style="border-radius:4px;object-fit:contain" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'<span style=&quot;font-size:14px&quot;>☁️</span>\'"/>',
+    icon:'<img src="https://logo.clearbit.com/microsoft.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     ops:[
       {id:'upload_file',  label:'Dosya yükle'},
       {id:'get_file',     label:'Dosya çek'},
@@ -6045,7 +6045,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 1: GELİŞTİRİCİ ───────────────────────
   {
     id:'github', name:'GitHub', cat:'Geliştirici',
-    icon:'<img src="https://logo.clearbit.com/github.com" width="22" height="22" style="border-radius:4px;object-fit:contain" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'<span style=&quot;font-size:14px&quot;>💻</span>\'"/>',
+    icon:'<img src="https://logo.clearbit.com/github.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     ops:[
       {id:'create_issue',   label:'Issue oluştur'},
       {id:'create_pr',      label:'Pull Request oluştur'},
@@ -6201,7 +6201,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 1: MÜŞTERİ HİZMETİ ──────────────────
   {
     id:'zendesk', name:'Zendesk', cat:'Müşteri Hizmetleri',
-    icon:'<img src="https://logo.clearbit.com/zendesk.com" width="22" height="22" style="border-radius:4px;object-fit:contain" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'<span style=&quot;font-size:14px&quot;>🎧</span>\'"/>',
+    icon:'<img src="https://logo.clearbit.com/zendesk.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     ops:[
       {id:'create_ticket',  label:'Ticket oluştur'},
       {id:'update_ticket',  label:'Ticket güncelle'},
@@ -6219,7 +6219,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'intercom', name:'Intercom', cat:'Müşteri Hizmetleri',
-    icon:'<img src="https://logo.clearbit.com/intercom.com" width="22" height="22" style="border-radius:4px;object-fit:contain" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'<span style=&quot;font-size:14px&quot;>💬</span>\'"/>',
+    icon:'<img src="https://logo.clearbit.com/intercom.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     ops:[
       {id:'create_contact',   label:'Kişi oluştur'},
       {id:'send_message',     label:'Mesaj gönder'},
@@ -6235,7 +6235,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'freshdesk', name:'Freshdesk', cat:'Müşteri Hizmetleri',
-    icon:'<img src="https://logo.clearbit.com/freshdesk.com" width="22" height="22" style="border-radius:4px;object-fit:contain" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'<span style=&quot;font-size:14px&quot;>🎧</span>\'"/>',
+    icon:'<img src="https://logo.clearbit.com/freshdesk.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     ops:[
       {id:'create_ticket', label:'Ticket oluştur'},
       {id:'update_ticket', label:'Ticket güncelle'},
@@ -6282,7 +6282,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'pdf_generator', name:'PDF Oluşturucu', cat:'Veri & Tablolar',
-    icon:'<img src="https://upload.wikimedia.org/wikipedia/commons/8/87/PDF_file_icon.svg" width="20" height="20" style="object-fit:contain;"/>',
+    icon:'<img src="https://logo.clearbit.com/adobe.com" width="20" height="20" style="object-fit:contain;border-radius:4px;"/>',
     ops:[
       {id:'generate_pdf', label:'PDF oluştur'},
       {id:'merge_pdfs',   label:"PDF'leri birleştir"},
@@ -6297,7 +6297,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'data_transform', name:'Veri Dönüştürücü', cat:'Veri & Tablolar',
-    icon:'<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Tableau_Logo.png/320px-Tableau_Logo.png" width="40" height="20" style="object-fit:contain;"/>',
+    icon:'<img src="https://logo.clearbit.com/n8n.io" width="20" height="20" style="object-fit:contain;border-radius:4px;"/>',
     ops:[
       {id:'json_to_csv',    label:'JSON → CSV'},
       {id:'csv_to_json',    label:'CSV → JSON'},
@@ -6331,7 +6331,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 2: İNSAN KAYNAKLARI ──────────────────
   {
     id:'bamboohr', name:'BambooHR', cat:'İnsan Kaynakları',
-    icon:'<img src="https://logo.clearbit.com/bamboohr.com" width="22" height="22" style="border-radius:4px;object-fit:contain" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'<span style=&quot;font-size:14px&quot;>👥</span>\'"/>',
+    icon:'<img src="https://logo.clearbit.com/bamboohr.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     ops:[
       {id:'get_employees',    label:'Çalışanları çek'},
       {id:'create_employee',  label:'Çalışan oluştur'},
@@ -6354,7 +6354,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'workday', name:'Workday', cat:'İnsan Kaynakları',
-    icon:'<img src="https://logo.clearbit.com/workday.com" width="22" height="22" style="border-radius:4px;object-fit:contain" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'<span style=&quot;font-size:14px&quot;>💼</span>\'"/>',
+    icon:'<img src="https://logo.clearbit.com/workday.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     ops:[
       {id:'get_workers',      label:'Çalışanları çek'},
       {id:'get_payroll',      label:'Bordro verisi çek'},
@@ -6451,7 +6451,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 2: ERP & MUHASEBE ────────────────────
   {
     id:'xero', name:'Xero', cat:'Muhasebe & ERP',
-    icon:'<img src="https://logo.clearbit.com/xero.com" width="22" height="22" style="border-radius:4px;object-fit:contain" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'<span style=&quot;font-size:14px&quot;>💹</span>\'"/>',
+    icon:'<img src="https://logo.clearbit.com/xero.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     ops:[
       {id:'create_invoice',  label:'Fatura oluştur'},
       {id:'get_invoices',    label:'Faturaları çek'},
@@ -6583,7 +6583,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 2: SOSYAL MEDYA ──────────────────────
   {
     id:'hootsuite', name:'Hootsuite', cat:'Sosyal Medya',
-    icon:'<img src="https://logo.clearbit.com/hootsuite.com" width="22" height="22" style="border-radius:4px;object-fit:contain" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'<span style=&quot;font-size:14px&quot;>🦉</span>\'"/>',
+    icon:'<img src="https://logo.clearbit.com/hootsuite.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     ops:[
       {id:'schedule_post',  label:'Gönderi zamanla'},
       {id:'get_analytics',  label:'Analitik çek'},
@@ -6600,7 +6600,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'buffer', name:'Buffer', cat:'Sosyal Medya',
-    icon:'<img src="https://logo.clearbit.com/buffer.com" width="22" height="22" style="border-radius:4px;object-fit:contain" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'<span style=&quot;font-size:14px&quot;>📊</span>\'"/>',
+    icon:'<img src="https://logo.clearbit.com/buffer.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     ops:[
       {id:'create_post',   label:'Gönderi oluştur'},
       {id:'schedule_post', label:'Gönderi zamanla'},
@@ -6668,7 +6668,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 2: TOPLANTI & TAKVİM ─────────────────
   {
     id:'zoom', name:'Zoom', cat:'Toplantı & Video',
-    icon:'<img src="https://logo.clearbit.com/zoom.us" width="22" height="22" style="border-radius:4px;object-fit:contain" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'<span style=&quot;font-size:14px&quot;>📹</span>\'"/>',
+    icon:'<img src="https://logo.clearbit.com/zoom.us" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     ops:[
       {id:'create_meeting',  label:'Toplantı oluştur'},
       {id:'get_meetings',    label:'Toplantıları çek'},
@@ -6707,7 +6707,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'calendly', name:'Calendly', cat:'Toplantı & Video',
-    icon:'<img src="https://logo.clearbit.com/calendly.com" width="22" height="22" style="border-radius:4px;object-fit:contain" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'<span style=&quot;font-size:14px&quot;>📅</span>\'"/>',
+    icon:'<img src="https://logo.clearbit.com/calendly.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     ops:[
       {id:'get_events',       label:'Etkinlikleri çek'},
       {id:'get_invitees',     label:'Davetlileri çek'},
@@ -6742,7 +6742,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 2: FORM & ANKET ──────────────────────
   {
     id:'typeform', name:'Typeform', cat:'Form & Anket',
-    icon:'<img src="https://logo.clearbit.com/typeform.com" width="22" height="22" style="border-radius:4px;object-fit:contain" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'<span style=&quot;font-size:14px&quot;>📋</span>\'"/>',
+    icon:'<img src="https://logo.clearbit.com/typeform.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     ops:[
       {id:'get_responses',   label:'Yanıtları çek'},
       {id:'get_forms',       label:'Formları çek'},
@@ -6892,7 +6892,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 2: VERİ & İŞ ZEKÂsı ─────────────────
   {
     id:'tableau', name:'Tableau', cat:'Veri & İş Zekâsı',
-    icon:'<img src="https://logo.clearbit.com/tableau.com" width="22" height="22" style="border-radius:4px;object-fit:contain" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'<span style=&quot;font-size:14px&quot;>📊</span>\'"/>',
+    icon:'<img src="https://logo.clearbit.com/tableau.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     ops:[
       {id:'get_views',       label:'Görünümleri çek'},
       {id:'get_workbooks',   label:'Çalışma kitaplarını çek'},
@@ -6908,7 +6908,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'power_bi', name:'Power BI', cat:'Veri & İş Zekâsı',
-    icon:'<img src="https://logo.clearbit.com/powerbi.microsoft.com" width="22" height="22" style="border-radius:4px;object-fit:contain" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'<span style=&quot;font-size:14px&quot;>📊</span>\'"/>',
+    icon:'<img src="https://logo.clearbit.com/powerbi.microsoft.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     ops:[
       {id:'get_reports',    label:'Raporları çek'},
       {id:'get_datasets',   label:'Datasetleri çek'},
@@ -6957,7 +6957,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'semrush', name:'SEMrush', cat:'Veri & İş Zekâsı',
-    icon:'<img src="https://logo.clearbit.com/semrush.com" width="22" height="22" style="border-radius:4px;object-fit:contain" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'<span style=&quot;font-size:14px&quot;>🔍</span>\'"/>',
+    icon:'<img src="https://logo.clearbit.com/semrush.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     ops:[
       {id:'get_domain_overview', label:'Domain analizi'},
       {id:'get_keywords',        label:'Anahtar kelimeler'},
@@ -7005,7 +7005,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 2: İŞBİRLİĞİ ────────────────────────
   {
     id:'miro', name:'Miro', cat:'İşbirliği',
-    icon:'<img src="https://logo.clearbit.com/miro.com" width="22" height="22" style="border-radius:4px;object-fit:contain" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'<span style=&quot;font-size:14px&quot;>🖼️</span>\'"/>',
+    icon:'<img src="https://logo.clearbit.com/miro.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     ops:[
       {id:'create_board',  label:'Board oluştur'},
       {id:'get_boards',    label:'Board\'ları çek'},
@@ -7060,7 +7060,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'confluence', name:'Confluence', cat:'İşbirliği',
-    icon:'<img src="https://logo.clearbit.com/atlassian.com" width="22" height="22" style="border-radius:4px;object-fit:contain" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'<span style=&quot;font-size:14px&quot;>📖</span>\'"/>',
+    icon:'<img src="https://logo.clearbit.com/atlassian.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     ops:[
       {id:'create_page',  label:'Sayfa oluştur'},
       {id:'update_page',  label:'Sayfa güncelle'},
@@ -7176,7 +7176,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 3: AI & LLM ARAÇLARI ─────────────────
   {
     id:'openai', name:'OpenAI', cat:'AI & LLM',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/openai.svg" width="16" height="16" style="filter:brightness(0)"/>',
+    icon:'<img src="https://logo.clearbit.com/openai.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     color:'#f9fafb', type:'action',
     ops:[
       {id:'chat_completion',  label:'Chat tamamlama (GPT-4o)'},
@@ -7201,7 +7201,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'anthropic', name:'Anthropic Claude', cat:'AI & LLM',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/anthropic.svg" width="16" height="16" style="filter:brightness(0)"/>',
+    icon:'<img src="https://logo.clearbit.com/anthropic.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     color:'#fdf4ff', type:'action',
     ops:[
       {id:'message',     label:'Mesaj gönder (Claude)'},
@@ -7288,7 +7288,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 3: E-İMZA & DÖKÜMAN ──────────────────
   {
     id:'docusign', name:'DocuSign', cat:'E-imza & Döküman',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/docusign.svg" width="16" height="16" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg)"/>',
+    icon:'<img src="https://logo.clearbit.com/docusign.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     color:'#eff6ff', type:'action',
     ops:[
       {id:'send_envelope',    label:'İmza için gönder'},
@@ -7381,7 +7381,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 3: İÇERİK & TASARIM ──────────────────
   {
     id:'wordpress', name:'WordPress', cat:'İçerik & Tasarım',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/wordpress.svg" width="16" height="16" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg)"/>',
+    icon:'<img src="https://logo.clearbit.com/wordpress.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     color:'#eff6ff', type:'action',
     ops:[
       {id:'create_post',    label:'Gönderi oluştur'},
@@ -7402,7 +7402,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'webflow', name:'Webflow', cat:'İçerik & Tasarım',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/webflow.svg" width="16" height="16" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg)"/>',
+    icon:'<img src="https://logo.clearbit.com/webflow.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     color:'#eff6ff', type:'action',
     ops:[
       {id:'create_item',    label:'CMS öğesi oluştur'},
@@ -7420,7 +7420,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'canva', name:'Canva', cat:'İçerik & Tasarım',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/canva.svg" width="16" height="16" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(250deg)"/>',
+    icon:'<img src="https://logo.clearbit.com/canva.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     color:'#eef2ff', type:'action',
     ops:[
       {id:'create_design',   label:'Tasarım oluştur'},
@@ -7440,7 +7440,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'figma', name:'Figma', cat:'İçerik & Tasarım',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/figma.svg" width="16" height="16"/>',
+    icon:'<img src="https://logo.clearbit.com/figma.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     color:'#fdf4ff', type:'action',
     ops:[
       {id:'get_file',       label:'Dosya çek'},
@@ -7503,7 +7503,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 3: BULUT & ALTYAPI ────────────────────
   {
     id:'aws_s3', name:'Amazon S3', cat:'Bulut & Altyapı',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/amazons3.svg" width="16" height="16" style="filter:invert(55%) sepia(80%) saturate(700%) hue-rotate(340deg)"/>',
+    icon:'<img src="https://logo.clearbit.com/aws.amazon.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     color:'#fff7ed', type:'action',
     ops:[
       {id:'upload_file',    label:'Dosya yükle'},
@@ -7524,7 +7524,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'google_cloud', name:'Google Cloud Storage', cat:'Bulut & Altyapı',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/googlecloud.svg" width="16" height="16" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg)"/>',
+    icon:'<img src="https://logo.clearbit.com/cloud.google.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     color:'#eff6ff', type:'action',
     ops:[
       {id:'upload_file',   label:'Dosya yükle'},
@@ -7560,7 +7560,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'vercel', name:'Vercel', cat:'Bulut & Altyapı',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/vercel.svg" width="16" height="16" style="filter:brightness(0)"/>',
+    icon:'<img src="https://logo.clearbit.com/vercel.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     color:'#f9fafb', type:'action',
     ops:[
       {id:'create_deployment', label:'Deployment oluştur'},
@@ -7577,7 +7577,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'supabase_db', name:'Supabase', cat:'Bulut & Altyapı',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/supabase.svg" width="16" height="16" style="filter:invert(48%) sepia(98%) saturate(400%) hue-rotate(90deg)"/>',
+    icon:'<img src="https://logo.clearbit.com/supabase.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     color:'#f0fdf4', type:'action',
     ops:[
       {id:'insert_row',   label:'Satır ekle'},
@@ -7603,7 +7603,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 3: İLETİŞİM ALTYAPISI ────────────────
   {
     id:'twilio', name:'Twilio', cat:'İletişim Altyapısı',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/twilio.svg" width="16" height="16" style="filter:invert(27%) sepia(89%) saturate(1000%) hue-rotate(340deg)"/>',
+    icon:'<img src="https://logo.clearbit.com/twilio.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     color:'#fff0f0', type:'action',
     ops:[
       {id:'send_sms',      label:'SMS gönder'},
@@ -7627,7 +7627,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'sendgrid', name:'SendGrid', cat:'İletişim Altyapısı',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/sendgrid.svg" width="16" height="16" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg)"/>',
+    icon:'<img src="https://logo.clearbit.com/sendgrid.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     color:'#eff6ff', type:'action',
     ops:[
       {id:'send_email',         label:'Email gönder'},
@@ -7846,7 +7846,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 3: VERİTABANI ────────────────────────
   {
     id:'mysql', name:'MySQL', cat:'Veritabanı',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/mysql.svg" width="16" height="16" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg)"/>',
+    icon:'<img src="https://logo.clearbit.com/mysql.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     color:'#eff6ff', type:'action',
     ops:[
       {id:'execute_query',  label:'SQL sorgusu çalıştır'},
@@ -7883,7 +7883,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'mongodb', name:'MongoDB', cat:'Veritabanı',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/mongodb.svg" width="16" height="16" style="filter:invert(48%) sepia(98%) saturate(400%) hue-rotate(90deg)"/>',
+    icon:'<img src="https://logo.clearbit.com/mongodb.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     color:'#f0fdf4', type:'action',
     ops:[
       {id:'find_documents',   label:'Dökümanları bul'},
@@ -7987,7 +7987,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 3: DİĞER İŞ ARAÇLARI ─────────────────
   {
     id:'smartsheet', name:'Smartsheet', cat:'Veri & Tablolar',
-    icon:'<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Smartsheet_logo_2023.svg/320px-Smartsheet_logo_2023.svg.png" width="40" height="20" style="object-fit:contain;"/>',
+    icon:'<img src="https://logo.clearbit.com/smartsheet.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror="this.src='https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/smartsheet.svg'"/>',
     color:'#eff6ff', type:'action',
     ops:[
       {id:'add_row',       label:'Satır ekle'},
@@ -8006,7 +8006,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'coda', name:'Coda', cat:'Veri & Tablolar',
-    icon:'<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Coda_logo_%282019%29.svg/320px-Coda_logo_%282019%29.svg.png" width="20" height="20" style="object-fit:contain;border-radius:4px;"/>',
+    icon:'<img src="https://logo.clearbit.com/coda.io" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror="this.src='https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/coda.svg'"/>',
     color:'#f9fafb', type:'action',
     ops:[
       {id:'insert_row',   label:'Satır ekle'},
@@ -8025,7 +8025,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'rows', name:'Rows', cat:'Veri & Tablolar',
-    icon:'<img src="https://upload.wikimedia.org/wikipedia/commons/a/ae/Google_Sheets_2020_Logo.svg" width="20" height="20" style="object-fit:contain;"/>',
+    icon:'<img src="https://logo.clearbit.com/rows.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror="this.src='https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/rows.svg'"/>',
     color:'#f9fafb', type:'action',
     ops:[
       {id:'insert_row',   label:'Satır ekle'},
@@ -8140,7 +8140,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 4: SOSYAL MEDYA EK ───────────────────
   {
     id:'instagram', name:'Instagram', cat:'Sosyal Medya',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/instagram.svg" width="16" height="16" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(250deg)"/>',
+    icon:'<img src="https://logo.clearbit.com/instagram.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     color:'#fdf4ff', type:'action',
     ops:[
       {id:'get_media',       label:'Medyaları çek'},
@@ -8159,7 +8159,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'youtube', name:'YouTube', cat:'Sosyal Medya',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/youtube.svg" width="16" height="16" style="filter:invert(27%) sepia(89%) saturate(1000%) hue-rotate(340deg)"/>',
+    icon:'<img src="https://logo.clearbit.com/youtube.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     color:'#fff0f0', type:'action',
     ops:[
       {id:'get_videos',      label:'Videoları çek'},
@@ -8179,7 +8179,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'twitter_x', name:'Twitter / X', cat:'Sosyal Medya',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/x.svg" width="16" height="16" style="filter:brightness(0)"/>',
+    icon:'<img src="https://logo.clearbit.com/twitter.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     color:'#f9fafb', type:'action',
     ops:[
       {id:'post_tweet',      label:'Tweet gönder'},
@@ -8201,7 +8201,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'pinterest', name:'Pinterest', cat:'Sosyal Medya',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/pinterest.svg" width="16" height="16" style="filter:invert(27%) sepia(89%) saturate(1000%) hue-rotate(340deg)"/>',
+    icon:'<img src="https://logo.clearbit.com/pinterest.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     color:'#fff0f0', type:'action',
     ops:[
       {id:'create_pin',     label:'Pin oluştur'},
@@ -8302,7 +8302,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 4: ETKİNLİK & TOPLULUK ───────────────
   {
     id:'eventbrite', name:'Eventbrite', cat:'Etkinlik & Topluluk',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/eventbrite.svg" width="16" height="16" style="filter:invert(55%) sepia(80%) saturate(700%) hue-rotate(340deg)"/>',
+    icon:'<img src="https://logo.clearbit.com/eventbrite.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     color:'#fff7ed', type:'action',
     ops:[
       {id:'create_event',    label:'Etkinlik oluştur'},
@@ -8364,7 +8364,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 4: MÜŞTERİ GERİ BİLDİRİMİ ──────────
   {
     id:'hotjar', name:'Hotjar', cat:'Analitik',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/hotjar.svg" width="16" height="16" style="filter:invert(55%) sepia(80%) saturate(700%) hue-rotate(340deg)"/>',
+    icon:'<img src="https://logo.clearbit.com/hotjar.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     color:'#fff7ed', type:'action',
     ops:[
       {id:'get_recordings',  label:'Session kayıtları çek'},
@@ -8424,7 +8424,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 4: GÜVENLİK & AUTH ───────────────────
   {
     id:'auth0', name:'Auth0', cat:'Güvenlik & Auth',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/auth0.svg" width="16" height="16" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(250deg)"/>',
+    icon:'<img src="https://logo.clearbit.com/auth0.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     color:'#eef2ff', type:'action',
     ops:[
       {id:'get_users',       label:'Kullanıcıları çek'},
@@ -8445,7 +8445,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'okta', name:'Okta', cat:'Güvenlik & Auth',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/okta.svg" width="16" height="16" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg)"/>',
+    icon:'<img src="https://logo.clearbit.com/okta.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     color:'#eff6ff', type:'action',
     ops:[
       {id:'create_user',     label:'Kullanıcı oluştur'},
@@ -8465,7 +8465,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'cloudflare', name:'Cloudflare', cat:'Güvenlik & Auth',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/cloudflare.svg" width="16" height="16" style="filter:invert(55%) sepia(80%) saturate(700%) hue-rotate(340deg)"/>',
+    icon:'<img src="https://logo.clearbit.com/cloudflare.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     color:'#fff7ed', type:'action',
     ops:[
       {id:'purge_cache',     label:'Cache temizle'},
@@ -8545,7 +8545,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 4: FİNTECH & KRİPTO ──────────────────
   {
     id:'binance', name:'Binance', cat:'Finans & Ödeme',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/binance.svg" width="16" height="16" style="filter:invert(65%) sepia(80%) saturate(500%) hue-rotate(10deg)"/>',
+    icon:'<img src="https://logo.clearbit.com/binance.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     color:'#fef3c7', type:'action',
     ops:[
       {id:'get_ticker',      label:'Fiyat çek'},
@@ -8815,7 +8815,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'wix', name:'Wix', cat:'İçerik & Tasarım',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/wix.svg" width="16" height="16" style="filter:brightness(0)"/>',
+    icon:'<img src="https://logo.clearbit.com/wix.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     color:'#f9fafb', type:'action',
     ops:[
       {id:'get_orders',      label:'Mağaza siparişleri çek'},
@@ -8834,7 +8834,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'retool', name:'Retool', cat:'Gelişmiş',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/retool.svg" width="16" height="16" style="filter:brightness(0)"/>',
+    icon:'<img src="https://logo.clearbit.com/retool.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     color:'#f9fafb', type:'action',
     ops:[
       {id:'trigger_workflow', label:'Retool workflow tetikle'},
@@ -8850,7 +8850,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'attio', name:'Attio', cat:'CRM',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/attio.svg" width="16" height="16" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'🔗\'" style="filter:brightness(0)"/>',
+    icon:'<img src="https://logo.clearbit.com/attio.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     color:'#f9fafb', type:'action',
     ops:[
       {id:'create_record',   label:'Kayıt oluştur'},
@@ -8886,7 +8886,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'render', name:'Render', cat:'Bulut & Altyapı',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/render.svg" width="16" height="16" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(250deg)"/>',
+    icon:'<img src="https://logo.clearbit.com/render.com" width="20" height="20" style="object-fit:contain;border-radius:4px;" onerror=\"this.style.display='none';this.parentNode.innerHTML='⚙️'\"/>',
     color:'#eef2ff', type:'action',
     ops:[
       {id:'deploy_service',   label:'Servis deploy et'},
