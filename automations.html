@@ -7172,6 +7172,874 @@ const WF_INTEGRATIONS = [
       ],
     },
   },
+
+  // ── FAZ 3: AI & LLM ARAÇLARI ─────────────────
+  {
+    id:'openai', name:'OpenAI', cat:'AI & LLM',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/openai.svg" width="16" height="16" style="filter:brightness(0)"/>',
+    color:'#f9fafb', type:'action',
+    ops:[
+      {id:'chat_completion',  label:'Chat tamamlama (GPT-4o)'},
+      {id:'image_generation', label:'Görsel oluştur (DALL-E)'},
+      {id:'transcription',    label:'Ses transkripsiyonu (Whisper)'},
+      {id:'embedding',        label:'Embedding oluştur'},
+      {id:'moderation',       label:'İçerik moderasyonu'},
+    ],
+    fields:{
+      chat_completion:[
+        {key:'model',       label:'Model', type:'select', opts:['gpt-4o','gpt-4o-mini','gpt-4-turbo','gpt-3.5-turbo']},
+        {key:'prompt',      label:'Sistem promptu', type:'area', ph:'Sen yardımcı bir asistansın.'},
+        {key:'user_message',label:'Kullanıcı mesajı', type:'area', ph:'{{input}}'},
+        {key:'temperature', label:'Temperature (0-1)', type:'text', ph:'0.7'},
+      ],
+      image_generation:[
+        {key:'prompt',  label:'Görsel açıklaması', type:'area', ph:'{{image_prompt}}'},
+        {key:'size',    label:'Boyut', type:'select', opts:['1024x1024','1792x1024','1024x1792']},
+        {key:'quality', label:'Kalite', type:'select', opts:['standard','hd']},
+      ],
+    },
+  },
+  {
+    id:'anthropic', name:'Anthropic Claude', cat:'AI & LLM',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/anthropic.svg" width="16" height="16" style="filter:brightness(0)"/>',
+    color:'#fdf4ff', type:'action',
+    ops:[
+      {id:'message',     label:'Mesaj gönder (Claude)'},
+      {id:'analyze',     label:'Döküman analiz et'},
+      {id:'summarize',   label:'Metin özetle'},
+      {id:'extract',     label:'Veri çıkar'},
+    ],
+    fields:{
+      message:[
+        {key:'model',       label:'Model', type:'select', opts:['claude-opus-4-6','claude-sonnet-4-6','claude-haiku-4-5']},
+        {key:'system',      label:'Sistem promptu', type:'area', ph:'Sen bir veri analisti asistanısın.'},
+        {key:'user_message',label:'Mesaj', type:'area', ph:'{{input}}'},
+        {key:'max_tokens',  label:'Max token', type:'text', ph:'1000'},
+      ],
+    },
+  },
+  {
+    id:'google_gemini', name:'Google Gemini', cat:'AI & LLM',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/googlegemini.svg" width="16" height="16" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg)"/>',
+    color:'#eff6ff', type:'action',
+    ops:[
+      {id:'generate_text',    label:'Metin oluştur'},
+      {id:'analyze_image',    label:'Görsel analiz et'},
+      {id:'chat',             label:'Sohbet et'},
+      {id:'embed_content',    label:'Embedding oluştur'},
+    ],
+    fields:{
+      generate_text:[
+        {key:'model',  label:'Model', type:'select', opts:['gemini-2.0-flash','gemini-1.5-pro','gemini-1.5-flash']},
+        {key:'prompt', label:'Prompt', type:'area', ph:'{{prompt}}'},
+      ],
+    },
+  },
+  {
+    id:'perplexity', name:'Perplexity AI', cat:'AI & LLM',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/perplexity.svg" width="16" height="16" style="filter:brightness(0)"/>',
+    color:'#f0fdf4', type:'action',
+    ops:[
+      {id:'search',  label:'Arama yap (web)'},
+      {id:'chat',    label:'Sohbet et'},
+    ],
+    fields:{
+      search:[
+        {key:'query', label:'Arama sorgusu', type:'text', ph:'{{search_query}}'},
+        {key:'model', label:'Model', type:'select', opts:['sonar-pro','sonar','sonar-deep-research']},
+      ],
+    },
+  },
+  {
+    id:'mistral', name:'Mistral AI', cat:'AI & LLM',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/mistral.svg" width="16" height="16" style="filter:invert(65%) sepia(80%) saturate(500%) hue-rotate(10deg)"/>',
+    color:'#fff7ed', type:'action',
+    ops:[
+      {id:'chat',      label:'Sohbet et'},
+      {id:'embed',     label:'Embedding oluştur'},
+      {id:'classify',  label:'Sınıflandır'},
+    ],
+    fields:{
+      chat:[
+        {key:'model',   label:'Model', type:'select', opts:['mistral-large-latest','mistral-small-latest','open-mistral-7b']},
+        {key:'prompt',  label:'Prompt', type:'area', ph:'{{prompt}}'},
+      ],
+    },
+  },
+  {
+    id:'cohere', name:'Cohere', cat:'AI & LLM',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/cohere.svg" width="16" height="16" style="filter:invert(38%) sepia(60%) saturate(700%) hue-rotate(250deg)"/>',
+    color:'#eef2ff', type:'action',
+    ops:[
+      {id:'generate',  label:'Metin oluştur'},
+      {id:'embed',     label:'Embedding oluştur'},
+      {id:'rerank',    label:'Sonuçları yeniden sırala'},
+      {id:'classify',  label:'Sınıflandır'},
+    ],
+    fields:{
+      generate:[
+        {key:'prompt',      label:'Prompt', type:'area', ph:'{{prompt}}'},
+        {key:'model',       label:'Model', type:'select', opts:['command-r-plus','command-r','command']},
+        {key:'max_tokens',  label:'Max token', type:'text', ph:'500'},
+      ],
+    },
+  },
+
+  // ── FAZ 3: E-İMZA & DÖKÜMAN ──────────────────
+  {
+    id:'docusign', name:'DocuSign', cat:'E-imza & Döküman',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/docusign.svg" width="16" height="16" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg)"/>',
+    color:'#eff6ff', type:'action',
+    ops:[
+      {id:'send_envelope',    label:'İmza için gönder'},
+      {id:'get_envelope',     label:'İmza durumu çek'},
+      {id:'create_template',  label:'Şablon oluştur'},
+      {id:'void_envelope',    label:'Belge iptal et'},
+      {id:'envelope_signed',  label:'▶ İmzalandı (Trigger)', isTrig:true},
+    ],
+    fields:{
+      send_envelope:[
+        {key:'template_id',     label:'Şablon ID',    type:'text', ph:'docusign_template_id'},
+        {key:'signer_email',    label:'İmzacı email', type:'text', ph:'{{email}}'},
+        {key:'signer_name',     label:'İmzacı adı',  type:'text', ph:'{{name}}'},
+        {key:'email_subject',   label:'Email konusu', type:'text', ph:'İmzanızı bekliyoruz'},
+      ],
+    },
+  },
+  {
+    id:'pandadoc', name:'PandaDoc', cat:'E-imza & Döküman',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/pandadoc.svg" width="16" height="16" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'📋\'" style="filter:invert(48%) sepia(98%) saturate(400%) hue-rotate(90deg)"/>',
+    color:'#f0fdf4', type:'action',
+    ops:[
+      {id:'create_document',  label:'Döküman oluştur'},
+      {id:'send_document',    label:'İmza için gönder'},
+      {id:'get_document',     label:'Döküman durumu çek'},
+      {id:'document_signed',  label:'▶ İmzalandı (Trigger)', isTrig:true},
+    ],
+    fields:{
+      create_document:[
+        {key:'template_id', label:'Şablon ID',    type:'text', ph:'pandadoc_template_id'},
+        {key:'name',        label:'Döküman adı',  type:'text', ph:'{{document_name}}'},
+        {key:'recipient_email',label:'Alıcı email',type:'text',ph:'{{email}}'},
+      ],
+    },
+  },
+  {
+    id:'hellosign', name:'Dropbox Sign', cat:'E-imza & Döküman',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/hellosign.svg" width="16" height="16" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg)"/>',
+    color:'#eff6ff', type:'action',
+    ops:[
+      {id:'send_request',    label:'İmza isteği gönder'},
+      {id:'get_request',     label:'İmza durumu çek'},
+      {id:'cancel_request',  label:'İsteği iptal et'},
+      {id:'request_signed',  label:'▶ İmzalandı (Trigger)', isTrig:true},
+    ],
+    fields:{
+      send_request:[
+        {key:'title',          label:'Başlık',       type:'text', ph:'{{document_title}}'},
+        {key:'signer_email',   label:'İmzacı email', type:'text', ph:'{{email}}'},
+        {key:'signer_name',    label:'İmzacı adı',   type:'text', ph:'{{name}}'},
+        {key:'file_url',       label:'Dosya URL',    type:'text', ph:'https://...'},
+      ],
+    },
+  },
+  {
+    id:'adobe_sign', name:'Adobe Sign', cat:'E-imza & Döküman',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/adobe.svg" width="16" height="16" style="filter:invert(27%) sepia(89%) saturate(1000%) hue-rotate(340deg)"/>',
+    color:'#fff0f0', type:'action',
+    ops:[
+      {id:'send_agreement',   label:'Anlaşma gönder'},
+      {id:'get_agreement',    label:'Anlaşma durumu çek'},
+      {id:'agreement_signed', label:'▶ İmzalandı (Trigger)', isTrig:true},
+    ],
+    fields:{
+      send_agreement:[
+        {key:'name',           label:'Anlaşma adı',  type:'text', ph:'{{agreement_name}}'},
+        {key:'signer_email',   label:'İmzacı email', type:'text', ph:'{{email}}'},
+        {key:'message',        label:'Mesaj',        type:'area', ph:'İmzanızı bekliyoruz.'},
+      ],
+    },
+  },
+  {
+    id:'signnow', name:'SignNow', cat:'E-imza & Döküman',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/signnow.svg" width="16" height="16" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'✍️\'" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg)"/>',
+    color:'#eff6ff', type:'action',
+    ops:[
+      {id:'send_invite',   label:'İmza daveti gönder'},
+      {id:'get_document',  label:'Döküman durumu çek'},
+      {id:'doc_signed',    label:'▶ İmzalandı (Trigger)', isTrig:true},
+    ],
+    fields:{
+      send_invite:[
+        {key:'document_id', label:'Döküman ID',   type:'text', ph:'signnow_doc_id'},
+        {key:'email',       label:'İmzacı email', type:'text', ph:'{{email}}'},
+        {key:'role',        label:'Rol',          type:'text', ph:'Signer'},
+      ],
+    },
+  },
+
+  // ── FAZ 3: İÇERİK & TASARIM ──────────────────
+  {
+    id:'wordpress', name:'WordPress', cat:'İçerik & Tasarım',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/wordpress.svg" width="16" height="16" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg)"/>',
+    color:'#eff6ff', type:'action',
+    ops:[
+      {id:'create_post',    label:'Gönderi oluştur'},
+      {id:'update_post',    label:'Gönderi güncelle'},
+      {id:'get_posts',      label:'Gönderileri çek'},
+      {id:'create_page',    label:'Sayfa oluştur'},
+      {id:'new_post',       label:'▶ Yeni gönderi (Trigger)', isTrig:true},
+      {id:'new_comment',    label:'▶ Yeni yorum (Trigger)', isTrig:true},
+    ],
+    fields:{
+      create_post:[
+        {key:'title',     label:'Başlık',   type:'text', ph:'{{post_title}}'},
+        {key:'content',   label:'İçerik',   type:'area', ph:'{{post_content}}'},
+        {key:'status',    label:'Durum', type:'select', opts:['publish','draft','pending']},
+        {key:'category',  label:'Kategori', type:'text', ph:'Genel'},
+      ],
+    },
+  },
+  {
+    id:'webflow', name:'Webflow', cat:'İçerik & Tasarım',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/webflow.svg" width="16" height="16" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg)"/>',
+    color:'#eff6ff', type:'action',
+    ops:[
+      {id:'create_item',    label:'CMS öğesi oluştur'},
+      {id:'update_item',    label:'CMS öğesi güncelle'},
+      {id:'get_items',      label:'CMS öğelerini çek'},
+      {id:'publish_site',   label:'Siteyi yayınla'},
+      {id:'new_form_sub',   label:'▶ Form gönderimi (Trigger)', isTrig:true},
+    ],
+    fields:{
+      create_item:[
+        {key:'collection_id', label:'Koleksiyon ID', type:'text', ph:'webflow_collection_id'},
+        {key:'fields',        label:'Alanlar (JSON)', type:'area', ph:'{"name":"{{name}}","slug":"{{slug}}"}'},
+      ],
+    },
+  },
+  {
+    id:'canva', name:'Canva', cat:'İçerik & Tasarım',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/canva.svg" width="16" height="16" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(250deg)"/>',
+    color:'#eef2ff', type:'action',
+    ops:[
+      {id:'create_design',   label:'Tasarım oluştur'},
+      {id:'export_design',   label:'Tasarım dışa aktar'},
+      {id:'get_designs',     label:'Tasarımları çek'},
+    ],
+    fields:{
+      create_design:[
+        {key:'design_type', label:'Tasarım tipi', type:'select', opts:['Social Post','Presentation','Logo','Flyer','Banner']},
+        {key:'title',       label:'Başlık',       type:'text',   ph:'{{design_title}}'},
+      ],
+      export_design:[
+        {key:'design_id', label:'Tasarım ID',  type:'text', ph:'canva_design_id'},
+        {key:'format',    label:'Format', type:'select', opts:['pdf','png','jpg','svg']},
+      ],
+    },
+  },
+  {
+    id:'figma', name:'Figma', cat:'İçerik & Tasarım',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/figma.svg" width="16" height="16"/>',
+    color:'#fdf4ff', type:'action',
+    ops:[
+      {id:'get_file',       label:'Dosya çek'},
+      {id:'get_comments',   label:'Yorumları çek'},
+      {id:'post_comment',   label:'Yorum ekle'},
+      {id:'export_image',   label:'Görsel dışa aktar'},
+      {id:'new_comment',    label:'▶ Yeni yorum (Trigger)', isTrig:true},
+    ],
+    fields:{
+      get_file:[
+        {key:'file_key', label:'Dosya anahtarı', type:'text', ph:'figma_file_key'},
+      ],
+      export_image:[
+        {key:'file_key',  label:'Dosya anahtarı', type:'text', ph:'figma_file_key'},
+        {key:'node_ids',  label:'Node ID\'leri',  type:'text', ph:'1:2,1:3'},
+        {key:'format',    label:'Format', type:'select', opts:['png','jpg','svg','pdf']},
+      ],
+    },
+  },
+  {
+    id:'contentful', name:'Contentful', cat:'İçerik & Tasarım',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/contentful.svg" width="16" height="16" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg)"/>',
+    color:'#eff6ff', type:'action',
+    ops:[
+      {id:'create_entry',   label:'İçerik oluştur'},
+      {id:'update_entry',   label:'İçerik güncelle'},
+      {id:'get_entries',    label:'İçerikleri çek'},
+      {id:'publish_entry',  label:'İçerik yayınla'},
+      {id:'new_entry',      label:'▶ Yeni içerik (Trigger)', isTrig:true},
+    ],
+    fields:{
+      create_entry:[
+        {key:'space_id',     label:'Space ID',      type:'text', ph:'contentful_space_id'},
+        {key:'content_type', label:'İçerik tipi',   type:'text', ph:'blogPost'},
+        {key:'fields',       label:'Alanlar (JSON)', type:'area', ph:'{"title":{"tr":"{{title}}"},"body":{"tr":"{{body}}"}}'},
+      ],
+    },
+  },
+  {
+    id:'ghost', name:'Ghost', cat:'İçerik & Tasarım',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/ghost.svg" width="16" height="16" style="filter:brightness(0)"/>',
+    color:'#f9fafb', type:'action',
+    ops:[
+      {id:'create_post',    label:'Yazı oluştur'},
+      {id:'update_post',    label:'Yazı güncelle'},
+      {id:'get_posts',      label:'Yazıları çek'},
+      {id:'new_post',       label:'▶ Yeni yazı (Trigger)', isTrig:true},
+      {id:'new_member',     label:'▶ Yeni üye (Trigger)', isTrig:true},
+    ],
+    fields:{
+      create_post:[
+        {key:'title',       label:'Başlık',   type:'text', ph:'{{post_title}}'},
+        {key:'html',        label:'İçerik',   type:'area', ph:'<p>{{content}}</p>'},
+        {key:'status',      label:'Durum', type:'select', opts:['published','draft','scheduled']},
+        {key:'tags',        label:'Etiketler',type:'text', ph:'teknoloji,ai'},
+      ],
+    },
+  },
+
+  // ── FAZ 3: BULUT & ALTYAPI ────────────────────
+  {
+    id:'aws_s3', name:'Amazon S3', cat:'Bulut & Altyapı',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/amazons3.svg" width="16" height="16" style="filter:invert(55%) sepia(80%) saturate(700%) hue-rotate(340deg)"/>',
+    color:'#fff7ed', type:'action',
+    ops:[
+      {id:'upload_file',    label:'Dosya yükle'},
+      {id:'download_file',  label:'Dosya indir'},
+      {id:'list_files',     label:'Dosyaları listele'},
+      {id:'delete_file',    label:'Dosya sil'},
+      {id:'get_url',        label:'Geçici URL oluştur'},
+      {id:'new_object',     label:'▶ Yeni dosya (Trigger)', isTrig:true},
+    ],
+    fields:{
+      upload_file:[
+        {key:'bucket',      label:'Bucket adı',  type:'text', ph:'my-bucket'},
+        {key:'key',         label:'Dosya yolu',  type:'text', ph:'raporlar/{{date}}/rapor.csv'},
+        {key:'content',     label:'İçerik',      type:'area', ph:'{{previous_output}}'},
+        {key:'content_type',label:'İçerik tipi', type:'select', opts:['text/csv','application/json','application/pdf','text/plain']},
+      ],
+    },
+  },
+  {
+    id:'google_cloud', name:'Google Cloud Storage', cat:'Bulut & Altyapı',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/googlecloud.svg" width="16" height="16" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg)"/>',
+    color:'#eff6ff', type:'action',
+    ops:[
+      {id:'upload_file',   label:'Dosya yükle'},
+      {id:'download_file', label:'Dosya indir'},
+      {id:'list_files',    label:'Dosyaları listele'},
+      {id:'delete_file',   label:'Dosya sil'},
+    ],
+    fields:{
+      upload_file:[
+        {key:'bucket',  label:'Bucket adı', type:'text', ph:'my-bucket'},
+        {key:'name',    label:'Dosya adı',  type:'text', ph:'{{filename}}'},
+        {key:'content', label:'İçerik',     type:'area', ph:'{{previous_output}}'},
+      ],
+    },
+  },
+  {
+    id:'azure_blob', name:'Azure Blob Storage', cat:'Bulut & Altyapı',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/microsoftazure.svg" width="16" height="16" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg)"/>',
+    color:'#eff6ff', type:'action',
+    ops:[
+      {id:'upload_blob',    label:'Blob yükle'},
+      {id:'download_blob',  label:'Blob indir'},
+      {id:'list_blobs',     label:'Blob\'ları listele'},
+      {id:'delete_blob',    label:'Blob sil'},
+    ],
+    fields:{
+      upload_blob:[
+        {key:'container', label:'Container adı', type:'text', ph:'my-container'},
+        {key:'blob_name', label:'Blob adı',      type:'text', ph:'{{filename}}'},
+        {key:'content',   label:'İçerik',        type:'area', ph:'{{previous_output}}'},
+      ],
+    },
+  },
+  {
+    id:'vercel', name:'Vercel', cat:'Bulut & Altyapı',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/vercel.svg" width="16" height="16" style="filter:brightness(0)"/>',
+    color:'#f9fafb', type:'action',
+    ops:[
+      {id:'create_deployment', label:'Deployment oluştur'},
+      {id:'get_deployments',   label:'Deployment\'ları çek'},
+      {id:'get_project',       label:'Proje bilgisi çek'},
+      {id:'new_deployment',    label:'▶ Yeni deployment (Trigger)', isTrig:true},
+    ],
+    fields:{
+      get_deployments:[
+        {key:'project_id', label:'Proje ID', type:'text', ph:'vercel_project_id'},
+        {key:'limit',      label:'Limit',    type:'text', ph:'10'},
+      ],
+    },
+  },
+  {
+    id:'supabase_db', name:'Supabase', cat:'Bulut & Altyapı',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/supabase.svg" width="16" height="16" style="filter:invert(48%) sepia(98%) saturate(400%) hue-rotate(90deg)"/>',
+    color:'#f0fdf4', type:'action',
+    ops:[
+      {id:'insert_row',   label:'Satır ekle'},
+      {id:'update_row',   label:'Satır güncelle'},
+      {id:'select_rows',  label:'Satırları çek'},
+      {id:'delete_row',   label:'Satır sil'},
+      {id:'rpc_call',     label:'Fonksiyon çağır (RPC)'},
+      {id:'new_row',      label:'▶ Yeni satır (Trigger)', isTrig:true},
+    ],
+    fields:{
+      insert_row:[
+        {key:'table',  label:'Tablo adı', type:'text', ph:'my_table'},
+        {key:'data',   label:'Veri (JSON)',type:'area', ph:'{"column1":"{{value1}}","column2":"{{value2}}"}'},
+      ],
+      select_rows:[
+        {key:'table',  label:'Tablo adı',    type:'text', ph:'my_table'},
+        {key:'filter', label:'Filtre (opsiyonel)', type:'text', ph:'status=eq.active'},
+        {key:'limit',  label:'Limit',        type:'text', ph:'100'},
+      ],
+    },
+  },
+
+  // ── FAZ 3: İLETİŞİM ALTYAPISI ────────────────
+  {
+    id:'twilio', name:'Twilio', cat:'İletişim Altyapısı',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/twilio.svg" width="16" height="16" style="filter:invert(27%) sepia(89%) saturate(1000%) hue-rotate(340deg)"/>',
+    color:'#fff0f0', type:'action',
+    ops:[
+      {id:'send_sms',      label:'SMS gönder'},
+      {id:'make_call',     label:'Arama yap'},
+      {id:'send_whatsapp', label:'WhatsApp mesajı gönder'},
+      {id:'new_sms',       label:'▶ Yeni SMS (Trigger)', isTrig:true},
+      {id:'new_call',      label:'▶ Yeni arama (Trigger)', isTrig:true},
+    ],
+    fields:{
+      send_sms:[
+        {key:'to',      label:'Alıcı (+90...)',  type:'text', ph:'+905xxxxxxxxx'},
+        {key:'from',    label:'Gönderen numara', type:'text', ph:'{{twilio_number}}'},
+        {key:'message', label:'Mesaj',           type:'area', ph:'{{sms_content}}'},
+      ],
+      make_call:[
+        {key:'to',      label:'Aranan (+90...)', type:'text', ph:'+905xxxxxxxxx'},
+        {key:'from',    label:'Arayan numara',   type:'text', ph:'{{twilio_number}}'},
+        {key:'twiml',   label:'TwiML URL',       type:'text', ph:'https://...'},
+      ],
+    },
+  },
+  {
+    id:'sendgrid', name:'SendGrid', cat:'İletişim Altyapısı',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/sendgrid.svg" width="16" height="16" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg)"/>',
+    color:'#eff6ff', type:'action',
+    ops:[
+      {id:'send_email',         label:'Email gönder'},
+      {id:'send_template',      label:'Şablonla gönder'},
+      {id:'add_contact',        label:'Kişi ekle'},
+      {id:'get_stats',          label:'İstatistikleri çek'},
+      {id:'email_opened',       label:'▶ Email açıldı (Trigger)', isTrig:true},
+      {id:'email_clicked',      label:'▶ Link tıklandı (Trigger)', isTrig:true},
+    ],
+    fields:{
+      send_email:[
+        {key:'to',       label:'Alıcı email', type:'text', ph:'{{email}}'},
+        {key:'from',     label:'Gönderen',    type:'text', ph:'noreply@sirketim.com'},
+        {key:'subject',  label:'Konu',        type:'text', ph:'{{subject}}'},
+        {key:'html',     label:'HTML içerik', type:'area', ph:'<p>{{body}}</p>'},
+      ],
+      send_template:[
+        {key:'to',          label:'Alıcı email',  type:'text', ph:'{{email}}'},
+        {key:'template_id', label:'Şablon ID',    type:'text', ph:'sendgrid_template_id'},
+        {key:'dynamic_data',label:'Dinamik veri', type:'area', ph:'{"name":"{{name}}","amount":"{{amount}}"}'},
+      ],
+    },
+  },
+  {
+    id:'vonage', name:'Vonage', cat:'İletişim Altyapısı',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/vonage.svg" width="16" height="16" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'📞\'" style="filter:invert(27%) sepia(89%) saturate(1000%) hue-rotate(340deg)"/>',
+    color:'#fff0f0', type:'action',
+    ops:[
+      {id:'send_sms',   label:'SMS gönder'},
+      {id:'make_call',  label:'Sesli arama yap'},
+      {id:'new_sms',    label:'▶ Yeni SMS (Trigger)', isTrig:true},
+    ],
+    fields:{
+      send_sms:[
+        {key:'to',      label:'Alıcı numara', type:'text', ph:'+905xxxxxxxxx'},
+        {key:'from',    label:'Gönderen',     type:'text', ph:'MOCKSHEETS'},
+        {key:'text',    label:'Mesaj',        type:'area', ph:'{{sms_content}}'},
+      ],
+    },
+  },
+  {
+    id:'messagebird', name:'MessageBird', cat:'İletişim Altyapısı',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/messagebird.svg" width="16" height="16" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'🐦\'" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg)"/>',
+    color:'#eff6ff', type:'action',
+    ops:[
+      {id:'send_sms',      label:'SMS gönder'},
+      {id:'send_email',    label:'Email gönder'},
+      {id:'send_whatsapp', label:'WhatsApp gönder'},
+    ],
+    fields:{
+      send_sms:[
+        {key:'originator', label:'Gönderen',     type:'text', ph:'MOCKSHEETS'},
+        {key:'recipients', label:'Alıcılar',     type:'text', ph:'+905xxxxxxxxx'},
+        {key:'body',       label:'Mesaj içeriği',type:'area', ph:'{{message}}'},
+      ],
+    },
+  },
+  {
+    id:'plivo', name:'Plivo', cat:'İletişim Altyapısı',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/plivo.svg" width="16" height="16" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'📱\'" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg)"/>',
+    color:'#eff6ff', type:'action',
+    ops:[
+      {id:'send_sms',  label:'SMS gönder'},
+      {id:'make_call', label:'Arama yap'},
+      {id:'new_sms',   label:'▶ Yeni SMS (Trigger)', isTrig:true},
+    ],
+    fields:{
+      send_sms:[
+        {key:'src',  label:'Kaynak numara',  type:'text', ph:'{{plivo_number}}'},
+        {key:'dst',  label:'Hedef numara',   type:'text', ph:'+905xxxxxxxxx'},
+        {key:'text', label:'Mesaj',          type:'area', ph:'{{sms_content}}'},
+      ],
+    },
+  },
+
+  // ── FAZ 3: E-TİCARET EK ──────────────────────
+  {
+    id:'magento', name:'Magento', cat:'E-ticaret',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/magento.svg" width="16" height="16" style="filter:invert(55%) sepia(80%) saturate(700%) hue-rotate(340deg)"/>',
+    color:'#fff7ed', type:'action',
+    ops:[
+      {id:'get_orders',    label:'Siparişleri çek'},
+      {id:'get_products',  label:'Ürünleri çek'},
+      {id:'update_stock',  label:'Stok güncelle'},
+      {id:'get_customers', label:'Müşterileri çek'},
+      {id:'new_order',     label:'▶ Yeni sipariş (Trigger)', isTrig:true},
+    ],
+    fields:{
+      get_orders:[
+        {key:'status', label:'Durum', type:'select', opts:['pending','processing','complete','canceled']},
+        {key:'limit',  label:'Limit', type:'text',   ph:'50'},
+      ],
+    },
+  },
+  {
+    id:'prestashop', name:'PrestaShop', cat:'E-ticaret',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/prestashop.svg" width="16" height="16" style="filter:invert(27%) sepia(89%) saturate(1000%) hue-rotate(340deg)"/>',
+    color:'#fff0f0', type:'action',
+    ops:[
+      {id:'get_orders',    label:'Siparişleri çek'},
+      {id:'get_products',  label:'Ürünleri çek'},
+      {id:'get_customers', label:'Müşterileri çek'},
+      {id:'new_order',     label:'▶ Yeni sipariş (Trigger)', isTrig:true},
+    ],
+    fields:{
+      get_orders:[
+        {key:'limit',  label:'Limit', type:'text', ph:'50'},
+        {key:'sort',   label:'Sırala', type:'select', opts:['date_add DESC','date_add ASC']},
+      ],
+    },
+  },
+  {
+    id:'ecwid', name:'Ecwid', cat:'E-ticaret',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/ecwid.svg" width="16" height="16" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'🛒\'" style="filter:invert(55%) sepia(80%) saturate(700%) hue-rotate(340deg)"/>',
+    color:'#fdf4ff', type:'action',
+    ops:[
+      {id:'get_orders',    label:'Siparişleri çek'},
+      {id:'get_products',  label:'Ürünleri çek'},
+      {id:'update_product',label:'Ürün güncelle'},
+      {id:'new_order',     label:'▶ Yeni sipariş (Trigger)', isTrig:true},
+    ],
+    fields:{
+      get_orders:[
+        {key:'limit',       label:'Limit', type:'text', ph:'100'},
+        {key:'fulfillment', label:'Karşılama durumu', type:'select', opts:['AWAITING_PROCESSING','PROCESSING','SHIPPED','DELIVERED']},
+      ],
+    },
+  },
+  {
+    id:'squarespace', name:'Squarespace', cat:'E-ticaret',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/squarespace.svg" width="16" height="16" style="filter:brightness(0)"/>',
+    color:'#f9fafb', type:'action',
+    ops:[
+      {id:'get_orders',    label:'Siparişleri çek'},
+      {id:'get_products',  label:'Ürünleri çek'},
+      {id:'new_order',     label:'▶ Yeni sipariş (Trigger)', isTrig:true},
+      {id:'new_form_sub',  label:'▶ Form gönderimi (Trigger)', isTrig:true},
+    ],
+    fields:{
+      get_orders:[
+        {key:'limit',       label:'Limit',           type:'text', ph:'50'},
+        {key:'fulfillment', label:'Karşılama durumu',type:'select',opts:['PENDING','FULFILLED','CANCELED']},
+      ],
+    },
+  },
+
+  // ── FAZ 3: REKLAM & SEO EK ───────────────────
+  {
+    id:'ahrefs', name:'Ahrefs', cat:'Veri & İş Zekâsı',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/ahrefs.svg" width="16" height="16" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg)"/>',
+    color:'#eff6ff', type:'action',
+    ops:[
+      {id:'get_backlinks',      label:'Backlinkleri çek'},
+      {id:'get_organic_keywords',label:'Organik anahtar kelimeler'},
+      {id:'get_site_audit',     label:'Site denetim raporu'},
+      {id:'get_competitors',    label:'Rakipleri çek'},
+    ],
+    fields:{
+      get_backlinks:[
+        {key:'target',  label:'Hedef domain', type:'text', ph:'ornek.com'},
+        {key:'limit',   label:'Limit',        type:'text', ph:'100'},
+        {key:'mode',    label:'Mod', type:'select', opts:['domain','exact','prefix','subdomains']},
+      ],
+    },
+  },
+  {
+    id:'google_tag_manager', name:'Google Tag Manager', cat:'Pazarlama',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/googletagmanager.svg" width="16" height="16" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg)"/>',
+    color:'#eff6ff', type:'action',
+    ops:[
+      {id:'get_containers',  label:'Containerları çek'},
+      {id:'get_tags',        label:'Etiketleri çek'},
+      {id:'publish_version', label:'Versiyon yayınla'},
+    ],
+    fields:{
+      get_containers:[
+        {key:'account_id', label:'Hesap ID', type:'text', ph:'gtm_account_id'},
+      ],
+    },
+  },
+  {
+    id:'linkedin_ads', name:'LinkedIn Ads', cat:'Pazarlama',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/linkedin.svg" width="16" height="16" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg)"/>',
+    color:'#eff6ff', type:'action',
+    ops:[
+      {id:'get_campaigns',  label:'Kampanyaları çek'},
+      {id:'get_analytics',  label:'Analitik çek'},
+      {id:'create_lead',    label:'Lead form oluştur'},
+      {id:'new_lead',       label:'▶ Yeni lead (Trigger)', isTrig:true},
+    ],
+    fields:{
+      get_analytics:[
+        {key:'account_id', label:'Hesap ID',  type:'text', ph:'linkedin_account_id'},
+        {key:'date_from',  label:'Başlangıç', type:'text', ph:'{{30_days_ago}}'},
+        {key:'date_to',    label:'Bitiş',     type:'text', ph:'{{today}}'},
+        {key:'metrics',    label:'Metrikler', type:'text', ph:'clicks,impressions,costInUsd'},
+      ],
+    },
+  },
+  {
+    id:'moz', name:'Moz', cat:'Veri & İş Zekâsı',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/moz.svg" width="16" height="16" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'🔍\'" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg)"/>',
+    color:'#eff6ff', type:'action',
+    ops:[
+      {id:'get_domain_metrics', label:'Domain metrikleri çek'},
+      {id:'get_keyword_metrics',label:'Anahtar kelime metrikleri'},
+      {id:'get_links',          label:'Linkleri çek'},
+    ],
+    fields:{
+      get_domain_metrics:[
+        {key:'site_url', label:'Site URL', type:'text', ph:'ornek.com'},
+      ],
+    },
+  },
+
+  // ── FAZ 3: VERİTABANI ────────────────────────
+  {
+    id:'mysql', name:'MySQL', cat:'Veritabanı',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/mysql.svg" width="16" height="16" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg)"/>',
+    color:'#eff6ff', type:'action',
+    ops:[
+      {id:'execute_query',  label:'SQL sorgusu çalıştır'},
+      {id:'insert_row',     label:'Satır ekle'},
+      {id:'update_row',     label:'Satır güncelle'},
+      {id:'select_rows',    label:'Satırları çek'},
+      {id:'delete_row',     label:'Satır sil'},
+    ],
+    fields:{
+      execute_query:[
+        {key:'query', label:'SQL sorgusu', type:'area', ph:'SELECT * FROM orders WHERE status = "active" LIMIT 100'},
+      ],
+      insert_row:[
+        {key:'table',  label:'Tablo adı',  type:'text', ph:'my_table'},
+        {key:'data',   label:'Veri (JSON)',type:'area', ph:'{"column1":"{{value1}}","column2":"{{value2}}"}'},
+      ],
+    },
+  },
+  {
+    id:'postgresql', name:'PostgreSQL', cat:'Veritabanı',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/postgresql.svg" width="16" height="16" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg)"/>',
+    color:'#eff6ff', type:'action',
+    ops:[
+      {id:'execute_query',  label:'SQL sorgusu çalıştır'},
+      {id:'insert_row',     label:'Satır ekle'},
+      {id:'update_row',     label:'Satır güncelle'},
+      {id:'select_rows',    label:'Satırları çek'},
+    ],
+    fields:{
+      execute_query:[
+        {key:'query', label:'SQL sorgusu', type:'area', ph:'SELECT * FROM orders WHERE created_at > NOW() - INTERVAL \'7 days\''},
+      ],
+    },
+  },
+  {
+    id:'mongodb', name:'MongoDB', cat:'Veritabanı',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/mongodb.svg" width="16" height="16" style="filter:invert(48%) sepia(98%) saturate(400%) hue-rotate(90deg)"/>',
+    color:'#f0fdf4', type:'action',
+    ops:[
+      {id:'find_documents',   label:'Dökümanları bul'},
+      {id:'insert_document',  label:'Döküman ekle'},
+      {id:'update_document',  label:'Döküman güncelle'},
+      {id:'delete_document',  label:'Döküman sil'},
+      {id:'aggregate',        label:'Aggregation çalıştır'},
+    ],
+    fields:{
+      find_documents:[
+        {key:'collection', label:'Koleksiyon', type:'text', ph:'my_collection'},
+        {key:'filter',     label:'Filtre (JSON)', type:'area', ph:'{"status":"active"}'},
+        {key:'limit',      label:'Limit',  type:'text', ph:'100'},
+      ],
+      insert_document:[
+        {key:'collection', label:'Koleksiyon',    type:'text', ph:'my_collection'},
+        {key:'document',   label:'Döküman (JSON)',type:'area', ph:'{"name":"{{name}}","email":"{{email}}"}'},
+      ],
+    },
+  },
+  {
+    id:'redis', name:'Redis', cat:'Veritabanı',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/redis.svg" width="16" height="16" style="filter:invert(27%) sepia(89%) saturate(1000%) hue-rotate(340deg)"/>',
+    color:'#fff0f0', type:'action',
+    ops:[
+      {id:'set_key',    label:'Anahtar kaydet (SET)'},
+      {id:'get_key',    label:'Anahtar oku (GET)'},
+      {id:'delete_key', label:'Anahtar sil (DEL)'},
+      {id:'push_list',  label:'Listeye ekle (LPUSH)'},
+      {id:'get_list',   label:'Listeden çek (LRANGE)'},
+    ],
+    fields:{
+      set_key:[
+        {key:'key',     label:'Anahtar', type:'text', ph:'user:{{user_id}}:session'},
+        {key:'value',   label:'Değer',   type:'area', ph:'{{value}}'},
+        {key:'expiry',  label:'Süre sonu (saniye)', type:'text', ph:'3600'},
+      ],
+      get_key:[
+        {key:'key', label:'Anahtar', type:'text', ph:'user:{{user_id}}:session'},
+      ],
+    },
+  },
+
+  // ── FAZ 3: EĞİTİM & LMS ──────────────────────
+  {
+    id:'teachable', name:'Teachable', cat:'Eğitim & LMS',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/teachable.svg" width="16" height="16" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'🎓\'" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg)"/>',
+    color:'#eff6ff', type:'action',
+    ops:[
+      {id:'get_students',    label:'Öğrencileri çek'},
+      {id:'enroll_student',  label:'Öğrenci kayıt et'},
+      {id:'get_courses',     label:'Kursları çek'},
+      {id:'get_enrollments', label:'Kayıtları çek'},
+      {id:'new_enrollment',  label:'▶ Yeni kayıt (Trigger)', isTrig:true},
+      {id:'new_sale',        label:'▶ Yeni satış (Trigger)', isTrig:true},
+    ],
+    fields:{
+      enroll_student:[
+        {key:'course_id', label:'Kurs ID',        type:'text', ph:'teachable_course_id'},
+        {key:'email',     label:'Öğrenci email',  type:'text', ph:'{{email}}'},
+      ],
+    },
+  },
+  {
+    id:'thinkific', name:'Thinkific', cat:'Eğitim & LMS',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/thinkific.svg" width="16" height="16" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'📚\'" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(250deg)"/>',
+    color:'#eef2ff', type:'action',
+    ops:[
+      {id:'get_students',    label:'Öğrencileri çek'},
+      {id:'enroll_student',  label:'Öğrenci kayıt et'},
+      {id:'get_courses',     label:'Kursları çek'},
+      {id:'new_enrollment',  label:'▶ Yeni kayıt (Trigger)', isTrig:true},
+    ],
+    fields:{
+      enroll_student:[
+        {key:'course_id',  label:'Kurs ID',       type:'text', ph:'thinkific_course_id'},
+        {key:'first_name', label:'Ad',             type:'text', ph:'{{name}}'},
+        {key:'email',      label:'Email',          type:'text', ph:'{{email}}'},
+      ],
+    },
+  },
+  {
+    id:'moodle', name:'Moodle', cat:'Eğitim & LMS',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/moodle.svg" width="16" height="16" style="filter:invert(55%) sepia(80%) saturate(700%) hue-rotate(340deg)"/>',
+    color:'#fff7ed', type:'action',
+    ops:[
+      {id:'get_users',      label:'Kullanıcıları çek'},
+      {id:'enroll_user',    label:'Kullanıcı kayıt et'},
+      {id:'get_courses',    label:'Kursları çek'},
+      {id:'get_grades',     label:'Notları çek'},
+    ],
+    fields:{
+      enroll_user:[
+        {key:'course_id', label:'Kurs ID',         type:'text', ph:'moodle_course_id'},
+        {key:'user_id',   label:'Kullanıcı ID',    type:'text', ph:'{{user_id}}'},
+        {key:'role_id',   label:'Rol ID',          type:'text', ph:'5'},
+      ],
+    },
+  },
+
+  // ── FAZ 3: DİĞER İŞ ARAÇLARI ─────────────────
+  {
+    id:'smartsheet', name:'Smartsheet', cat:'Veri & Tablolar',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/smartsheet.svg" width="16" height="16" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg)"/>',
+    color:'#eff6ff', type:'action',
+    ops:[
+      {id:'add_row',       label:'Satır ekle'},
+      {id:'update_row',    label:'Satır güncelle'},
+      {id:'get_rows',      label:'Satırları çek'},
+      {id:'get_sheets',    label:'Sayfaları çek'},
+      {id:'new_row',       label:'▶ Yeni satır (Trigger)', isTrig:true},
+      {id:'row_updated',   label:'▶ Satır güncellendi (Trigger)', isTrig:true},
+    ],
+    fields:{
+      add_row:[
+        {key:'sheet_id', label:'Sayfa ID',  type:'text', ph:'smartsheet_sheet_id'},
+        {key:'cells',    label:'Hücreler (JSON)', type:'area', ph:'[{"columnId":"{{col_id}}","value":"{{value}}"}]'},
+      ],
+    },
+  },
+  {
+    id:'coda', name:'Coda', cat:'Veri & Tablolar',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/coda.svg" width="16" height="16" style="filter:brightness(0)"/>',
+    color:'#f9fafb', type:'action',
+    ops:[
+      {id:'insert_row',   label:'Satır ekle'},
+      {id:'update_row',   label:'Satır güncelle'},
+      {id:'get_rows',     label:'Satırları çek'},
+      {id:'get_tables',   label:'Tabloları çek'},
+      {id:'new_row',      label:'▶ Yeni satır (Trigger)', isTrig:true},
+    ],
+    fields:{
+      insert_row:[
+        {key:'doc_id',   label:'Döküman ID', type:'text', ph:'coda_doc_id'},
+        {key:'table_id', label:'Tablo ID',   type:'text', ph:'coda_table_id'},
+        {key:'cells',    label:'Hücreler (JSON)', type:'area', ph:'[{"column":"Ad","value":"{{name}}"}]'},
+      ],
+    },
+  },
+  {
+    id:'rows', name:'Rows', cat:'Veri & Tablolar',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/rows.svg" width="16" height="16" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'📊\'" style="filter:brightness(0)"/>',
+    color:'#f9fafb', type:'action',
+    ops:[
+      {id:'insert_row',   label:'Satır ekle'},
+      {id:'get_rows',     label:'Satırları çek'},
+      {id:'update_row',   label:'Satır güncelle'},
+    ],
+    fields:{
+      insert_row:[
+        {key:'spreadsheet_id', label:'Tablo ID',    type:'text', ph:'rows_spreadsheet_id'},
+        {key:'table_id',       label:'Sayfa ID',    type:'text', ph:'rows_table_id'},
+        {key:'values',         label:'Değerler (JSON)', type:'area', ph:'{"Ad":"{{name}}","Email":"{{email}}"}'},
+      ],
+    },
+  },
 ];
 
 function wfRenderSidebar(q) {
