@@ -11,7 +11,6 @@
   gtag('config', 'G-H0KT59S6GP');
 </script>
 <meta charset="UTF-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://unpkg.com https://www.clarity.ms https://scripts.clarity.ms https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net; img-src 'self' data: blob: https://cdn.jsdelivr.net https://cdn.simpleicons.org https://svgl.app https://upload.wikimedia.org; connect-src 'self' https:; frame-src 'none'; object-src 'none';">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <meta name="description" content="Mocksheets ile stok uyarıları, fatura takibi ve raporları otomatikleştirin. Gmail, Slack, Notion, Airtable, Google Sheets, Zapier ve 11 entegrasyonla tek komutta iş akışı kurun. Formül yok, kod yok.">
@@ -1527,7 +1526,7 @@ const TEMPLATES = [
     }
   },
   {
-    id: 'stock-erp-webhook', icon: \"⚙️\", iconBg: '#f0fdf4', name: 'ERP Stok Entegrasyonu',
+    id: 'stock-erp-webhook', icon: '⚙️', iconBg: '#f0fdf4', name: 'ERP Stok Entegrasyonu',
     desc: 'Stok değişince ERP sistemine webhook gönder',
     tags: ['Webhook'], category: 'stok',
     data: {
@@ -1908,7 +1907,7 @@ function renderRules(filtered) {
     return;
   }
 
-  const ACTION_ICONS = { slack:'💬', teams:'🟣', gmail:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/gmail.svg" alt="Gmail" style="width:18px;height:18px;vertical-align:middle">', webhook:'🔗', make:\"⚙️\", notion:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/notion.svg" alt="Notion" style="width:18px;height:18px;vertical-align:middle">', notion_page:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/notion.svg" alt="Notion" style="width:18px;height:18px;vertical-align:middle">', airtable:'📊', update_cells:'✏️', notification:'🔔', discord:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/discord.svg" alt="Discord" style="width:18px;height:18px;vertical-align:middle">', 'google-chat':'💬', n8n:\"⚙️\", pipedream:'⚡', zapier:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/zapier.svg" alt="Zapier" style="width:18px;height:18px;vertical-align:middle">', ifttt:'🔀', sendgrid:'📧', mailchimp:'🐵', brevo:'📬', twilio:'📱', telegram:'✈️', jira:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/jira.svg" alt="Jira" style="width:18px;height:18px;vertical-align:middle">', linear:'🔷', github:'🐙', clickup:'✅', asana:'🌸', monday:'📅', hubspot:'🟠', pagerduty:'🔴', smartsheet:'📋', hubspot_create_deal:'🟠', hubspot_update_contact:'🟠', hubspot_add_note:'🟠', jira_add_comment:'📌', jira_transition:'📌', jira_assign:'📌', github_add_comment:'🐙', github_close_issue:'🐙', github_create_pr:'🐙', trello:'🃏', trello_add_comment:'🃏', trello_move_card:'🃏', clickup_update_task:'✅', clickup_add_comment:'✅', asana_complete_task:'🌸', asana_add_comment:'🌸', notion_update_page:'📝', airtable_update:'🗃️', monday_update_item:'📅', linear_update_issue:'🔷', linear_add_comment:'🔷', gmail_create_draft:'📧' };
+  const ACTION_ICONS = { slack:'💬', teams:'🟣', gmail:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/gmail.svg" alt="Gmail" style="width:18px;height:18px;vertical-align:middle">', webhook:'🔗', make:'⚙️', notion:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/notion.svg" alt="Notion" style="width:18px;height:18px;vertical-align:middle">', notion_page:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/notion.svg" alt="Notion" style="width:18px;height:18px;vertical-align:middle">', airtable:'📊', update_cells:'✏️', notification:'🔔', discord:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/discord.svg" alt="Discord" style="width:18px;height:18px;vertical-align:middle">', 'google-chat':'💬', n8n:'⚙️', pipedream:'⚡', zapier:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/zapier.svg" alt="Zapier" style="width:18px;height:18px;vertical-align:middle">', ifttt:'🔀', sendgrid:'📧', mailchimp:'🐵', brevo:'📬', twilio:'📱', telegram:'✈️', jira:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/jira.svg" alt="Jira" style="width:18px;height:18px;vertical-align:middle">', linear:'🔷', github:'🐙', clickup:'✅', asana:'🌸', monday:'📅', hubspot:'🟠', pagerduty:'🔴', smartsheet:'📋', hubspot_create_deal:'🟠', hubspot_update_contact:'🟠', hubspot_add_note:'🟠', jira_add_comment:'📌', jira_transition:'📌', jira_assign:'📌', github_add_comment:'🐙', github_close_issue:'🐙', github_create_pr:'🐙', trello:'🃏', trello_add_comment:'🃏', trello_move_card:'🃏', clickup_update_task:'✅', clickup_add_comment:'✅', asana_complete_task:'🌸', asana_add_comment:'🌸', notion_update_page:'📝', airtable_update:'🗃️', monday_update_item:'📅', linear_update_issue:'🔷', linear_add_comment:'🔷', gmail_create_draft:'📧' };
   el.innerHTML = rules.map(r => {
     const tc = r.trigger_config || {};
     const actions = Array.isArray(r.action_config) ? r.action_config : [r.action_config].filter(Boolean);
@@ -1995,38 +1994,31 @@ function filterRules() {
 
 function updateStats() {
   const active = allRules.filter(r => r.enabled).length;
-  const _statActive = document.getElementById('stat-active');
-  if (_statActive) _statActive.textContent = active + ' aktif';
-  const _dot = document.getElementById('stat-dot-active');
-  if (_dot) { _dot.style.background = active > 0 ? '#16a34a' : '#f59e0b'; _dot.classList.toggle('amber', active === 0); }
+  document.getElementById('stat-active').textContent = active + ' aktif';
+  document.getElementById('stat-dot-active').style.background = active > 0 ? '#16a34a' : '#f59e0b';
+  document.getElementById('stat-dot-active').classList.toggle('amber', active === 0);
 
   const totalRuns = allRuns.length;
-  const _statRuns = document.getElementById('stat-runs');
-  if (_statRuns) _statRuns.textContent = totalRuns + ' çalışma';
+  document.getElementById('stat-runs').textContent = totalRuns + ' çalışma';
 
   const successRuns = allRuns.filter(r => r.status === 'success').length;
   const rate = totalRuns > 0 ? Math.round((successRuns / totalRuns) * 100) : null;
-  const _statSuccess = document.getElementById('stat-success');
-  if (_statSuccess) _statSuccess.textContent = rate !== null ? '%' + rate + ' başarı' : '— başarı';
-  const _chipSuccess = document.getElementById('chip-success');
-  if (_chipSuccess) _chipSuccess.style.display = rate !== null ? '' : 'none';
+  document.getElementById('stat-success').textContent = rate !== null ? '%' + rate + ' başarı' : '— başarı';
+  document.getElementById('chip-success').style.display = rate !== null ? '' : 'none';
 }
 
 // ── LOAD RUNS ──────────────────────────────────────────────────────────────
 async function loadRuns() {
   try {
     const res = await fetch(API + '/api/automations/runs?limit=20', { headers: authHeaders() });
-    if (!res.ok) {
-      console.warn('Runs endpoint hatası:', res.status);
-      return;
-    }
+    if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
     allRuns = data.runs || data || [];
-    renderRuns();
-    updateStats();
-  } catch(e) {
-    console.warn('loadRuns başarısız:', e.message);
+  } catch (e) {
+    allRuns = [];
   }
+  renderRuns();
+  updateStats();
 }
 
 function renderRuns() {
@@ -4281,12 +4273,12 @@ const ACTION_TYPES = [
   { v: 'slack',        l: 'Slack',              icon: '💬' },
   { v: 'notion_page',  l: 'Notion Sayfası',     icon: '📝' },
   { v: 'webhook',      l: 'Webhook',            icon: '🔗' },
-  { v: 'make',         l: 'Make.com',           icon: \"⚙️\" },
+  { v: 'make',         l: 'Make.com',           icon: '⚙️' },
   { v: 'sheets_update',l: 'Sheets Güncelle',    icon: '📊' },
   { v: 'pdf_export',   l: 'PDF Dışa Aktar',     icon: '📄' },
   { v: 'discord',      l: 'Discord',            icon: '🎮' },
   { v: 'google-chat',  l: 'Google Chat',        icon: '💬' },
-  { v: 'n8n',          l: 'n8n',               icon: \"⚙️\" },
+  { v: 'n8n',          l: 'n8n',               icon: '⚙️' },
   { v: 'pipedream',    l: 'Pipedream',          icon: '⚡' },
   { v: 'zapier',       l: 'Zapier',             icon: '⚡' },
   { v: 'ifttt',        l: 'IFTTT',              icon: '🔀' },
@@ -4775,7 +4767,7 @@ function wzRenderFlow() {
     const def = WZ_ACTIONS.find(x => x.id === a.id) || {};
     html += `<div class="flow-connector"></div>
     <div class="flow-node ${def.nodeClass || ''}" onclick="wzSelectAction(${i})">
-      <div class="flow-node-icon" style="background:${def.color || '#f9fafb'};"><span style="font-size:14px;">${def.icon || \"⚙️\"}</span></div>
+      <div class="flow-node-icon" style="background:${def.color || '#f9fafb'};"><span style="font-size:14px;">${def.icon || '⚙️'}</span></div>
       <div style="flex:1;"><p class="flow-node-name">${def.label || a.id}</p><p class="flow-node-sub">${a.config?.desc || def.desc || ''}</p></div>
       <button onclick="event.stopPropagation(); wzRemoveAction(${i})" style="background:none; border:none; color:var(--muted); cursor:pointer; font-size:14px; padding:2px 6px;">✕</button>
     </div>`;
@@ -4875,7 +4867,7 @@ async function wzLoadList() {
     if (!rules.length) { list.innerHTML = '<p style="font-size:13px; color:var(--muted); text-align:center; padding:20px;">Henüz otomasyon yok.</p>'; return; }
     list.innerHTML = rules.map(r => `
       <div class="wz-auto-card" onclick="wzLoadAuto('${r.id}'); wzHideList();">
-        <div class="wz-auto-card-icon">${r.icon || \"⚙️\"}</div>
+        <div class="wz-auto-card-icon">${r.icon || '⚙️'}</div>
         <div style="flex:1;"><p class="wz-auto-card-name">${r.name || r.title || 'İsimsiz'}</p><p class="wz-auto-card-sub">${r.trigger_label || ''} · ${r.action_count || 0} aksiyon</p></div>
         <div class="wz-toggle ${r.active ? 'on' : ''}" onclick="event.stopPropagation(); wzToggleAuto('${r.id}', this)"></div>
       </div>`).join('');
@@ -5399,7 +5391,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'google_sheets', name:'Google Sheets', cat:'Veri & Tablolar',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/googlesheets.svg" width="20" height="20" style="filter:invert(35%) sepia(98%) saturate(400%) hue-rotate(95deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/googlesheets.svg" width="20" height="20" style="filter:invert(35%) sepia(98%) saturate(400%) hue-rotate(95deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'append_row',    label:'Yeni satır ekle (Append Row)'},
       {id:'get_rows',      label:'Satırları çek (Get Rows)'},
@@ -5413,7 +5405,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'slack', name:'Slack', cat:'Mesajlaşma',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/slack.svg" width="20" height="20" style="object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/slack.svg" width="20" height="20" style="object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'send_message', label:'Mesaj gönder (Send Message)'},
       {id:'send_file',    label:'Dosya gönder (Send File)'},
@@ -5434,7 +5426,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'shopify', name:'Shopify', cat:'E-ticaret',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/shopify.svg" width="20" height="20" style="filter:invert(62%) sepia(60%) saturate(400%) hue-rotate(60deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/shopify.svg" width="20" height="20" style="filter:invert(62%) sepia(60%) saturate(400%) hue-rotate(60deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'new_order',    label:'▶ Yeni sipariş (Trigger)', isTrig:true},
       {id:'get_orders',   label:'Siparişleri çek'},
@@ -5447,7 +5439,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'hubspot', name:'HubSpot', cat:'CRM',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/hubspot.svg" width="20" height="20" style="filter:invert(55%) sepia(60%) saturate(700%) hue-rotate(340deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/hubspot.svg" width="20" height="20" style="filter:invert(55%) sepia(60%) saturate(700%) hue-rotate(340deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[{id:'create_contact',label:'Kişi oluştur'},{id:'get_contacts',label:'Kişileri çek'},{id:'create_deal',label:'Fırsat oluştur'}],
     fields:{
       create_contact:[{key:'email',label:'Email',type:'text',ph:'{{email}}'},{key:'firstname',label:'Ad',type:'text',ph:'{{name}}'}],
@@ -5464,7 +5456,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'google_drive', name:'Google Drive', cat:'Veri & Tablolar',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/googledrive.svg" width="20" height="20" style="object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/googledrive.svg" width="20" height="20" style="object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[{id:'upload_file',label:'Dosya yükle'},{id:'get_file',label:'Dosya çek'},{id:'watch_folder',label:'▶ Klasör izle (Trigger)',isTrig:true}],
     fields:{
       upload_file:[{key:'folder_id',label:'Klasör ID',type:'text',ph:'Google Drive klasör ID'},{key:'filename',label:'Dosya adı',type:'text',ph:'rapor_{{date}}.csv'},{key:'content',label:'İçerik',type:'area',ph:'{{previous_output}}'}],
@@ -5491,7 +5483,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 1: E-TİCARET ──────────────────────────
   {
     id:'woocommerce', name:'WooCommerce', cat:'E-ticaret',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/telegram.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/telegram.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'get_orders',    label:'Siparişleri çek'},
       {id:'get_products',  label:'Ürünleri çek'},
@@ -5507,7 +5499,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'trendyol', name:'Trendyol', cat:'E-ticaret',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/discord.svg" width="20" height="20" style="filter:invert(38%) sepia(60%) saturate(700%) hue-rotate(250deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/discord.svg" width="20" height="20" style="filter:invert(38%) sepia(60%) saturate(700%) hue-rotate(250deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'get_orders',   label:'Siparişleri çek'},
       {id:'get_products', label:'Ürünleri çek'},
@@ -5523,7 +5515,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'hepsiburada', name:'Hepsiburada', cat:'E-ticaret',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/notion.svg" width="20" height="20" style="filter:brightness(0); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/notion.svg" width="20" height="20" style="filter:brightness(0); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'get_orders',   label:'Siparişleri çek'},
       {id:'get_products', label:'Ürünleri çek'},
@@ -5538,7 +5530,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'etsy', name:'Etsy', cat:'E-ticaret',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/airtable.svg" width="20" height="20" style="filter:invert(38%) sepia(60%) saturate(700%) hue-rotate(250deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/airtable.svg" width="20" height="20" style="filter:invert(38%) sepia(60%) saturate(700%) hue-rotate(250deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'get_orders',   label:'Siparişleri çek'},
       {id:'get_listings', label:'Ürünleri çek'},
@@ -5550,7 +5542,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'amazon', name:'Amazon', cat:'E-ticaret',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/trello.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/trello.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'get_orders',     label:'Siparişleri çek (MWS)'},
       {id:'get_inventory',  label:'Envanter çek'},
@@ -5566,7 +5558,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'bigcommerce', name:'BigCommerce', cat:'E-ticaret',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/asana.svg" width="20" height="20" style="filter:invert(55%) sepia(80%) saturate(700%) hue-rotate(340deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/asana.svg" width="20" height="20" style="filter:invert(55%) sepia(80%) saturate(700%) hue-rotate(340deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'get_orders',   label:'Siparişleri çek'},
       {id:'get_products', label:'Ürünleri çek'},
@@ -5580,7 +5572,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 1: E-POSTA PAZARLAMA ──────────────────
   {
     id:'klaviyo', name:'Klaviyo', cat:'Email Pazarlama',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/mondaydotcom.svg" width="20" height="20" style="object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/mondaydotcom.svg" width="20" height="20" style="object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'add_to_list',      label:'Listeye ekle'},
       {id:'remove_from_list', label:'Listeden çıkar'},
@@ -5602,7 +5594,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'mailchimp', name:'Mailchimp', cat:'Email Pazarlama',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/jira.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/jira.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'add_subscriber',    label:'Abone ekle'},
       {id:'remove_subscriber', label:'Abone çıkar'},
@@ -5620,7 +5612,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'omnisend', name:'Omnisend', cat:'Email Pazarlama',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/linear.svg" width="20" height="20" style="filter:invert(38%) sepia(60%) saturate(700%) hue-rotate(250deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/linear.svg" width="20" height="20" style="filter:invert(38%) sepia(60%) saturate(700%) hue-rotate(250deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'add_contact',   label:'Kişi ekle'},
       {id:'send_campaign', label:'Kampanya gönder'},
@@ -5635,7 +5627,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'activecampaign', name:'ActiveCampaign', cat:'Email Pazarlama',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/clickup.svg" width="20" height="20" style="filter:invert(38%) sepia(60%) saturate(700%) hue-rotate(250deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/clickup.svg" width="20" height="20" style="filter:invert(38%) sepia(60%) saturate(700%) hue-rotate(250deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'create_contact',    label:'Kişi oluştur'},
       {id:'add_to_list',       label:'Listeye ekle'},
@@ -5654,7 +5646,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 1: CRM & SATIŞ ───────────────────────
   {
     id:'salesforce', name:'Salesforce', cat:'CRM',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/github.svg" width="20" height="20" style="filter:brightness(0); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/github.svg" width="20" height="20" style="filter:brightness(0); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'create_lead',    label:'Lead oluştur'},
       {id:'update_lead',    label:'Lead güncelle'},
@@ -5673,7 +5665,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'pipedrive', name:'Pipedrive', cat:'CRM',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/salesforce.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/salesforce.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'create_person', label:'Kişi oluştur'},
       {id:'create_deal',   label:'Anlaşma oluştur'},
@@ -5691,7 +5683,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'zoho_crm', name:'Zoho CRM', cat:'CRM',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/pipedrive.svg" width="20" height="20" style="filter:invert(55%) sepia(80%) saturate(700%) hue-rotate(340deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/pipedrive.svg" width="20" height="20" style="filter:invert(55%) sepia(80%) saturate(700%) hue-rotate(340deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'create_lead',    label:'Lead oluştur'},
       {id:'create_contact', label:'Kişi oluştur'},
@@ -5709,7 +5701,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 1: PROJE YÖNETİMİ ────────────────────
   {
     id:'notion', name:'Notion', cat:'Proje Yönetimi',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/notion.svg" width="20" height="20" style="filter:brightness(0); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/notion.svg" width="20" height="20" style="filter:brightness(0); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'create_page',    label:'Sayfa oluştur'},
       {id:'update_page',    label:'Sayfa güncelle'},
@@ -5731,7 +5723,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'airtable', name:'Airtable', cat:'Proje Yönetimi',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/airtable.svg" width="20" height="20" style="filter:invert(38%) sepia(60%) saturate(700%) hue-rotate(250deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/airtable.svg" width="20" height="20" style="filter:invert(38%) sepia(60%) saturate(700%) hue-rotate(250deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'create_record', label:'Kayıt oluştur'},
       {id:'update_record', label:'Kayıt güncelle'},
@@ -5749,7 +5741,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'trello', name:'Trello', cat:'Proje Yönetimi',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/trello.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/trello.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'create_card',  label:'Kart oluştur'},
       {id:'update_card',  label:'Kart güncelle'},
@@ -5767,7 +5759,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'asana', name:'Asana', cat:'Proje Yönetimi',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/asana.svg" width="20" height="20" style="filter:invert(55%) sepia(80%) saturate(700%) hue-rotate(340deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/asana.svg" width="20" height="20" style="filter:invert(55%) sepia(80%) saturate(700%) hue-rotate(340deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'create_task',  label:'Görev oluştur'},
       {id:'update_task',  label:'Görev güncelle'},
@@ -5803,7 +5795,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'jira', name:'Jira', cat:'Proje Yönetimi',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/jira.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/jira.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'create_issue',  label:'Issue oluştur'},
       {id:'update_issue',  label:'Issue güncelle'},
@@ -5822,7 +5814,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'linear', name:'Linear', cat:'Proje Yönetimi',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/linear.svg" width="20" height="20" style="filter:invert(38%) sepia(60%) saturate(700%) hue-rotate(250deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/linear.svg" width="20" height="20" style="filter:invert(38%) sepia(60%) saturate(700%) hue-rotate(250deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'create_issue',  label:'Issue oluştur'},
       {id:'update_issue',  label:'Issue güncelle'},
@@ -5840,7 +5832,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'clickup', name:'ClickUp', cat:'Proje Yönetimi',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/clickup.svg" width="20" height="20" style="filter:invert(38%) sepia(60%) saturate(700%) hue-rotate(250deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/clickup.svg" width="20" height="20" style="filter:invert(38%) sepia(60%) saturate(700%) hue-rotate(250deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'create_task',   label:'Görev oluştur'},
       {id:'update_task',   label:'Görev güncelle'},
@@ -5859,7 +5851,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 1: MESAJLAŞMA ────────────────────────
   {
     id:'microsoft_teams', name:'Microsoft Teams', cat:'Mesajlaşma',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/microsoftteams.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(230deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/microsoftteams.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(230deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'send_message',   label:'Mesaj gönder'},
       {id:'create_meeting', label:'Toplantı oluştur'},
@@ -5876,7 +5868,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'whatsapp', name:'WhatsApp Business', cat:'Mesajlaşma',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/whatsapp.svg" width="20" height="20" style="filter:invert(48%) sepia(98%) saturate(400%) hue-rotate(90deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/whatsapp.svg" width="20" height="20" style="filter:invert(48%) sepia(98%) saturate(400%) hue-rotate(90deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'send_message',   label:'Mesaj gönder'},
       {id:'send_template',  label:'Şablon mesaj gönder'},
@@ -5891,7 +5883,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'telegram', name:'Telegram', cat:'Mesajlaşma',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/telegram.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/telegram.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'send_message', label:'Mesaj gönder'},
       {id:'send_file',    label:'Dosya gönder'},
@@ -5906,7 +5898,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'discord', name:'Discord', cat:'Mesajlaşma',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/discord.svg" width="20" height="20" style="filter:invert(38%) sepia(60%) saturate(700%) hue-rotate(250deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/discord.svg" width="20" height="20" style="filter:invert(38%) sepia(60%) saturate(700%) hue-rotate(250deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'send_message',  label:'Mesaj gönder'},
       {id:'send_embed',    label:'Embed mesaj gönder'},
@@ -5923,7 +5915,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 1: FİNANS & ÖDEME ────────────────────
   {
     id:'stripe', name:'Stripe', cat:'Finans & Ödeme',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/stripe.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(230deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/stripe.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(230deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'create_customer',    label:'Müşteri oluştur'},
       {id:'create_invoice',     label:'Fatura oluştur'},
@@ -5942,7 +5934,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'iyzico', name:'İyzico', cat:'Finans & Ödeme',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/iyzico.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/iyzico.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'get_payments',  label:'Ödemeleri çek'},
       {id:'get_refunds',   label:'İadeleri çek'},
@@ -5957,7 +5949,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'paypal', name:'PayPal', cat:'Finans & Ödeme',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/paypal.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/paypal.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'get_transactions', label:'İşlemleri çek'},
       {id:'send_payment',     label:'Ödeme gönder'},
@@ -5972,7 +5964,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'quickbooks', name:'QuickBooks', cat:'Finans & Ödeme',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/mailchimp.svg" width="20" height="20" style="filter:invert(65%) sepia(80%) saturate(500%) hue-rotate(10deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/mailchimp.svg" width="20" height="20" style="filter:invert(65%) sepia(80%) saturate(500%) hue-rotate(10deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'create_invoice',  label:'Fatura oluştur'},
       {id:'get_invoices',    label:'Faturaları çek'},
@@ -5991,7 +5983,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 1: ANALİTİK ──────────────────────────
   {
     id:'google_analytics', name:'Google Analytics', cat:'Analitik',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/googleanalytics.svg" width="20" height="20" style="filter:invert(55%) sepia(80%) saturate(700%) hue-rotate(340deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/googleanalytics.svg" width="20" height="20" style="filter:invert(55%) sepia(80%) saturate(700%) hue-rotate(340deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'get_sessions',    label:'Oturumları çek'},
       {id:'get_pageviews',   label:'Sayfa görüntüleme'},
@@ -6009,7 +6001,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'mixpanel', name:'Mixpanel', cat:'Analitik',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/klaviyo.svg" width="20" height="20" style="filter:brightness(0); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/klaviyo.svg" width="20" height="20" style="filter:brightness(0); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'track_event',   label:'Event gönder'},
       {id:'get_funnel',    label:'Funnel verisi çek'},
@@ -6028,7 +6020,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 1: DEPOLAMA ──────────────────────────
   {
     id:'dropbox', name:'Dropbox', cat:'Depolama',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/dropbox.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/dropbox.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'upload_file',   label:'Dosya yükle'},
       {id:'download_file', label:'Dosya indir'},
@@ -6044,7 +6036,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'onedrive', name:'OneDrive', cat:'Depolama',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/activecampaign.svg" width="20" height="20" style="filter:invert(38%) sepia(60%) saturate(500%) hue-rotate(120deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/activecampaign.svg" width="20" height="20" style="filter:invert(38%) sepia(60%) saturate(500%) hue-rotate(120deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'upload_file',  label:'Dosya yükle'},
       {id:'get_file',     label:'Dosya çek'},
@@ -6062,7 +6054,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 1: GELİŞTİRİCİ ───────────────────────
   {
     id:'github', name:'GitHub', cat:'Geliştirici',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/github.svg" width="20" height="20" style="filter:brightness(0); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/github.svg" width="20" height="20" style="filter:brightness(0); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'create_issue',   label:'Issue oluştur'},
       {id:'create_pr',      label:'Pull Request oluştur'},
@@ -6082,7 +6074,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'gitlab', name:'GitLab', cat:'Geliştirici',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/gitlab.svg" width="20" height="20" style="filter:invert(55%) sepia(80%) saturate(700%) hue-rotate(340deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/gitlab.svg" width="20" height="20" style="filter:invert(55%) sepia(80%) saturate(700%) hue-rotate(340deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'create_issue', label:'Issue oluştur'},
       {id:'get_issues',   label:"Issue'ları çek"},
@@ -6100,7 +6092,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 1: KARGO & LOJİSTİK ──────────────────
   {
     id:'yurtici', name:'Yurtiçi Kargo', cat:'Kargo & Lojistik',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/twilio.svg" width="20" height="20" style="filter:invert(27%) sepia(89%) saturate(1000%) hue-rotate(340deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/twilio.svg" width="20" height="20" style="filter:invert(27%) sepia(89%) saturate(1000%) hue-rotate(340deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'create_shipment', label:'Gönderi oluştur'},
       {id:'track_shipment',  label:'Kargo takip'},
@@ -6117,7 +6109,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'aras', name:'Aras Kargo', cat:'Kargo & Lojistik',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/sendgrid.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/sendgrid.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'create_shipment', label:'Gönderi oluştur'},
       {id:'track_shipment',  label:'Kargo takip'},
@@ -6133,7 +6125,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'mng', name:'MNG Kargo', cat:'Kargo & Lojistik',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/woocommerce.svg" width="20" height="20" style="filter:invert(38%) sepia(60%) saturate(500%) hue-rotate(250deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/woocommerce.svg" width="20" height="20" style="filter:invert(38%) sepia(60%) saturate(500%) hue-rotate(250deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'create_shipment', label:'Gönderi oluştur'},
       {id:'track_shipment',  label:'Kargo takip'},
@@ -6147,7 +6139,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'shipstation', name:'ShipStation', cat:'Kargo & Lojistik',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/etsy.svg" width="20" height="20" style="filter:invert(55%) sepia(80%) saturate(700%) hue-rotate(340deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/etsy.svg" width="20" height="20" style="filter:invert(55%) sepia(80%) saturate(700%) hue-rotate(340deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'create_shipment',  label:'Gönderi oluştur'},
       {id:'get_shipments',    label:'Gönderileri çek'},
@@ -6165,7 +6157,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 1: PAZARLAMA ─────────────────────────
   {
     id:'google_ads', name:'Google Ads', cat:'Pazarlama',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/amazon.svg" width="20" height="20" style="filter:invert(65%) sepia(80%) saturate(500%) hue-rotate(10deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/amazon.svg" width="20" height="20" style="filter:invert(65%) sepia(80%) saturate(500%) hue-rotate(10deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'get_campaigns',  label:'Kampanyaları çek'},
       {id:'get_stats',      label:'İstatistikleri çek'},
@@ -6182,7 +6174,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'meta_ads', name:'Meta Ads', cat:'Pazarlama',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/smartsheet.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/smartsheet.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'get_campaigns', label:'Kampanyaları çek'},
       {id:'get_adsets',    label:"Ad set'leri çek"},
@@ -6200,7 +6192,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'tiktok_ads', name:'TikTok Ads', cat:'Pazarlama',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/mixpanel.svg" width="20" height="20" style="filter:brightness(0); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/mixpanel.svg" width="20" height="20" style="filter:brightness(0); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'get_campaigns', label:'Kampanyaları çek'},
       {id:'get_insights',  label:'İçgörüleri çek'},
@@ -6218,7 +6210,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 1: MÜŞTERİ HİZMETİ ──────────────────
   {
     id:'zendesk', name:'Zendesk', cat:'Müşteri Hizmetleri',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/zendesk.svg" width="20" height="20" style="filter:invert(48%) sepia(98%) saturate(400%) hue-rotate(90deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/zendesk.svg" width="20" height="20" style="filter:invert(48%) sepia(98%) saturate(400%) hue-rotate(90deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'create_ticket',  label:'Ticket oluştur'},
       {id:'update_ticket',  label:'Ticket güncelle'},
@@ -6236,7 +6228,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'intercom', name:'Intercom', cat:'Müşteri Hizmetleri',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/intercom.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(250deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/intercom.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(250deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'create_contact',   label:'Kişi oluştur'},
       {id:'send_message',     label:'Mesaj gönder'},
@@ -6252,7 +6244,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'freshdesk', name:'Freshdesk', cat:'Müşteri Hizmetleri',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/freshdesk.svg" width="20" height="20" style="filter:invert(48%) sepia(98%) saturate(400%) hue-rotate(90deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/freshdesk.svg" width="20" height="20" style="filter:invert(48%) sepia(98%) saturate(400%) hue-rotate(90deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'create_ticket', label:'Ticket oluştur'},
       {id:'update_ticket', label:'Ticket güncelle'},
@@ -6299,7 +6291,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'n8n', name:'n8n', cat:'Gelişmiş',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/googleads.svg" width="20" height="20" style="filter:invert(55%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/googleads.svg" width="20" height="20" style="filter:invert(55%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'trigger_workflow', label:'▶ Workflow tetikle (Trigger)', isTrig:true},
       {id:'execute_workflow', label:'Workflow çalıştır'},
@@ -6321,7 +6313,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'pdf_generator', name:'PDF Oluşturucu', cat:'Veri & Tablolar',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/meta.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/meta.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'generate_pdf', label:'PDF oluştur'},
       {id:'merge_pdfs',   label:"PDF'leri birleştir"},
@@ -6336,7 +6328,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'data_transform', name:'Veri Dönüştürücü', cat:'Veri & Tablolar',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/tiktok.svg" width="20" height="20" style="filter:brightness(0); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/tiktok.svg" width="20" height="20" style="filter:brightness(0); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'json_to_csv',    label:'JSON → CSV'},
       {id:'csv_to_json',    label:'CSV → JSON'},
@@ -6370,7 +6362,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 2: İNSAN KAYNAKLARI ──────────────────
   {
     id:'bamboohr', name:'BambooHR', cat:'İnsan Kaynakları',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/bamboohr.svg" width="20" height="20" style="filter:invert(48%) sepia(98%) saturate(400%) hue-rotate(90deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/bamboohr.svg" width="20" height="20" style="filter:invert(48%) sepia(98%) saturate(400%) hue-rotate(90deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'get_employees',    label:'Çalışanları çek'},
       {id:'create_employee',  label:'Çalışan oluştur'},
@@ -6393,7 +6385,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'workday', name:'Workday', cat:'İnsan Kaynakları',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/workday.svg" width="20" height="20" style="filter:invert(38%) sepia(60%) saturate(700%) hue-rotate(250deg); object-fit:contain;" onerror="this.style.display=\'none\';this.parentNode.innerHTML='&#9881;'"/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/workday.svg" width="20" height="20" style="filter:invert(38%) sepia(60%) saturate(700%) hue-rotate(250deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='&#9881;'"/>',
     ops:[
       {id:'get_workers',      label:'Çalışanları çek'},
       {id:'get_payroll',      label:'Bordro verisi çek'},
@@ -6472,7 +6464,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'sap_hr', name:'SAP HR', cat:'İnsan Kaynakları',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/sap.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display=\'none\';this.parentNode.innerHTML='&#9881;'"/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/sap.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='&#9881;'"/>',
     ops:[
       {id:'get_employees',  label:'Çalışanları çek'},
       {id:'get_payroll',    label:'Bordro verisi çek'},
@@ -6490,7 +6482,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 2: ERP & MUHASEBE ────────────────────
   {
     id:'xero', name:'Xero', cat:'Muhasebe & ERP',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/xero.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/xero.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'create_invoice',  label:'Fatura oluştur'},
       {id:'get_invoices',    label:'Faturaları çek'},
@@ -6514,7 +6506,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'freshbooks', name:'FreshBooks', cat:'Muhasebe & ERP',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/freshbooks.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display=\'none\';this.parentNode.innerHTML='&#9881;'"/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/freshbooks.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='&#9881;'"/>',
     ops:[
       {id:'create_invoice',  label:'Fatura oluştur'},
       {id:'get_invoices',    label:'Faturaları çek'},
@@ -6569,7 +6561,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'sage', name:'Sage', cat:'Muhasebe & ERP',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/sage.svg" width="20" height="20" style="filter:invert(48%) sepia(98%) saturate(400%) hue-rotate(90deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/sage.svg" width="20" height="20" style="filter:invert(48%) sepia(98%) saturate(400%) hue-rotate(90deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'create_invoice',  label:'Fatura oluştur'},
       {id:'get_invoices',    label:'Faturaları çek'},
@@ -6585,7 +6577,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'odoo', name:'Odoo', cat:'Muhasebe & ERP',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/odoo.svg" width="20" height="20" style="filter:invert(38%) sepia(60%) saturate(700%) hue-rotate(250deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/odoo.svg" width="20" height="20" style="filter:invert(38%) sepia(60%) saturate(700%) hue-rotate(250deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'create_sale_order', label:'Satış siparişi oluştur'},
       {id:'get_sale_orders',   label:'Satış siparişleri çek'},
@@ -6604,7 +6596,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'sap_erp', name:'SAP ERP', cat:'Muhasebe & ERP',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/sap.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display=\'none\';this.parentNode.innerHTML='&#9881;'"/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/sap.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='&#9881;'"/>',
     ops:[
       {id:'create_po',      label:'Satınalma siparişi oluştur'},
       {id:'get_inventory',  label:'Stok çek'},
@@ -6622,7 +6614,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 2: SOSYAL MEDYA ──────────────────────
   {
     id:'hootsuite', name:'Hootsuite', cat:'Sosyal Medya',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/hootsuite.svg" width="20" height="20" style="filter:invert(70%) sepia(80%) saturate(500%) hue-rotate(10deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/hootsuite.svg" width="20" height="20" style="filter:invert(70%) sepia(80%) saturate(500%) hue-rotate(10deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'schedule_post',  label:'Gönderi zamanla'},
       {id:'get_analytics',  label:'Analitik çek'},
@@ -6639,7 +6631,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'buffer', name:'Buffer', cat:'Sosyal Medya',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/buffer.svg" width="20" height="20" style="filter:brightness(0); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/buffer.svg" width="20" height="20" style="filter:brightness(0); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'create_post',   label:'Gönderi oluştur'},
       {id:'schedule_post', label:'Gönderi zamanla'},
@@ -6656,7 +6648,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'sprout_social', name:'Sprout Social', cat:'Sosyal Medya',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/sproutsocial.svg" width="20" height="20" style="filter:invert(48%) sepia(98%) saturate(400%) hue-rotate(90deg); object-fit:contain;" onerror="this.style.display=\'none\';this.parentNode.innerHTML='&#9881;'"/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/sproutsocial.svg" width="20" height="20" style="filter:invert(48%) sepia(98%) saturate(400%) hue-rotate(90deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='&#9881;'"/>',
     ops:[
       {id:'schedule_post',  label:'Gönderi zamanla'},
       {id:'get_analytics',  label:'Analitik çek'},
@@ -6707,7 +6699,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 2: TOPLANTI & TAKVİM ─────────────────
   {
     id:'zoom', name:'Zoom', cat:'Toplantı & Video',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/zoom.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/zoom.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'create_meeting',  label:'Toplantı oluştur'},
       {id:'get_meetings',    label:'Toplantıları çek'},
@@ -6726,7 +6718,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'google_calendar', name:'Google Calendar', cat:'Toplantı & Video',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/googlecalendar.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/googlecalendar.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'create_event',   label:'Etkinlik oluştur'},
       {id:'get_events',     label:'Etkinlikleri çek'},
@@ -6746,7 +6738,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'calendly', name:'Calendly', cat:'Toplantı & Video',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/calendly.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/calendly.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'get_events',       label:'Etkinlikleri çek'},
       {id:'get_invitees',     label:'Davetlileri çek'},
@@ -6764,7 +6756,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'loom', name:'Loom', cat:'Toplantı & Video',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/loom.svg" width="20" height="20" style="filter:invert(38%) sepia(60%) saturate(700%) hue-rotate(250deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/loom.svg" width="20" height="20" style="filter:invert(38%) sepia(60%) saturate(700%) hue-rotate(250deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'get_videos',    label:'Videoları çek'},
       {id:'get_analytics', label:'Video analitiği çek'},
@@ -6781,7 +6773,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 2: FORM & ANKET ──────────────────────
   {
     id:'typeform', name:'Typeform', cat:'Form & Anket',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/typeform.svg" width="20" height="20" style="filter:brightness(0); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/typeform.svg" width="20" height="20" style="filter:brightness(0); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'get_responses',   label:'Yanıtları çek'},
       {id:'get_forms',       label:'Formları çek'},
@@ -6797,7 +6789,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'jotform', name:'JotForm', cat:'Form & Anket',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/jotform.svg" width="20" height="20" style="filter:invert(55%) sepia(80%) saturate(700%) hue-rotate(340deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/jotform.svg" width="20" height="20" style="filter:invert(55%) sepia(80%) saturate(700%) hue-rotate(340deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'get_submissions', label:'Başvuruları çek'},
       {id:'get_forms',       label:'Formları çek'},
@@ -6813,7 +6805,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'surveymonkey', name:'SurveyMonkey', cat:'Form & Anket',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/surveymonkey.svg" width="20" height="20" style="filter:invert(48%) sepia(98%) saturate(400%) hue-rotate(90deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/surveymonkey.svg" width="20" height="20" style="filter:invert(48%) sepia(98%) saturate(400%) hue-rotate(90deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'get_surveys',     label:'Anketleri çek'},
       {id:'get_responses',   label:'Yanıtları çek'},
@@ -6843,7 +6835,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'google_forms', name:'Google Forms', cat:'Form & Anket',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/googleforms.svg" width="20" height="20" style="filter:invert(55%) sepia(80%) saturate(700%) hue-rotate(340deg); object-fit:contain;" onerror="this.style.display=\'none\';this.parentNode.innerHTML='&#9881;'"/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/googleforms.svg" width="20" height="20" style="filter:invert(55%) sepia(80%) saturate(700%) hue-rotate(340deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='&#9881;'"/>',
     ops:[
       {id:'get_responses',  label:'Yanıtları çek'},
       {id:'get_forms',      label:'Formları listele'},
@@ -6860,7 +6852,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 2: MÜŞTERİ BAŞARISI ─────────────────
   {
     id:'gorgias', name:'Gorgias', cat:'Müşteri Hizmetleri',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/gorgias.svg" width="20" height="20" style="filter:invert(38%) sepia(60%) saturate(700%) hue-rotate(250deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/gorgias.svg" width="20" height="20" style="filter:invert(38%) sepia(60%) saturate(700%) hue-rotate(250deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'create_ticket',  label:'Ticket oluştur'},
       {id:'get_tickets',    label:'Ticketları çek'},
@@ -6895,7 +6887,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'helpscout', name:'Help Scout', cat:'Müşteri Hizmetleri',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/helpscout.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/helpscout.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'create_conversation', label:'Konuşma oluştur'},
       {id:'get_conversations',   label:'Konuşmaları çek'},
@@ -6931,7 +6923,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 2: VERİ & İŞ ZEKÂsı ─────────────────
   {
     id:'tableau', name:'Tableau', cat:'Veri & İş Zekâsı',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/tableau.svg" width="20" height="20" style="filter:invert(55%) sepia(80%) saturate(700%) hue-rotate(340deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/tableau.svg" width="20" height="20" style="filter:invert(55%) sepia(80%) saturate(700%) hue-rotate(340deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'get_views',       label:'Görünümleri çek'},
       {id:'get_workbooks',   label:'Çalışma kitaplarını çek'},
@@ -6947,7 +6939,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'power_bi', name:'Power BI', cat:'Veri & İş Zekâsı',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/microsoftpowerbi.svg" width="20" height="20" style="filter:invert(65%) sepia(80%) saturate(500%) hue-rotate(10deg); object-fit:contain;" onerror="this.style.display=\'none\';this.parentNode.innerHTML='&#9881;'"/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/microsoftpowerbi.svg" width="20" height="20" style="filter:invert(65%) sepia(80%) saturate(500%) hue-rotate(10deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='&#9881;'"/>',
     ops:[
       {id:'get_reports',    label:'Raporları çek'},
       {id:'get_datasets',   label:'Datasetleri çek'},
@@ -6963,7 +6955,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'looker', name:'Looker', cat:'Veri & İş Zekâsı',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/looker.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display=\'none\';this.parentNode.innerHTML='&#9881;'"/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/looker.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='&#9881;'"/>',
     ops:[
       {id:'run_look',    label:'Look çalıştır'},
       {id:'get_looks',   label:'Lookları çek'},
@@ -6979,7 +6971,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'amplitude', name:'Amplitude', cat:'Veri & İş Zekâsı',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/amplitude.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/amplitude.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'track_event',    label:'Event gönder'},
       {id:'identify_user',  label:'Kullanıcı tanımla'},
@@ -6996,7 +6988,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'semrush', name:'SEMrush', cat:'Veri & İş Zekâsı',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/semrush.svg" width="20" height="20" style="filter:invert(55%) sepia(80%) saturate(700%) hue-rotate(340deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/semrush.svg" width="20" height="20" style="filter:invert(55%) sepia(80%) saturate(700%) hue-rotate(340deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'get_domain_overview', label:'Domain analizi'},
       {id:'get_keywords',        label:'Anahtar kelimeler'},
@@ -7044,7 +7036,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 2: İŞBİRLİĞİ ────────────────────────
   {
     id:'miro', name:'Miro', cat:'İşbirliği',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/miro.svg" width="20" height="20" style="filter:invert(65%) sepia(80%) saturate(500%) hue-rotate(10deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/miro.svg" width="20" height="20" style="filter:invert(65%) sepia(80%) saturate(500%) hue-rotate(10deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'create_board',  label:'Board oluştur'},
       {id:'get_boards',    label:'Board\'ları çek'},
@@ -7065,7 +7057,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'basecamp', name:'Basecamp', cat:'İşbirliği',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/basecamp.svg" width="20" height="20" style="filter:invert(48%) sepia(98%) saturate(400%) hue-rotate(90deg); object-fit:contain;" onerror="this.style.display=\'none\';this.parentNode.innerHTML='&#9881;'"/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/basecamp.svg" width="20" height="20" style="filter:invert(48%) sepia(98%) saturate(400%) hue-rotate(90deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='&#9881;'"/>',
     ops:[
       {id:'create_message',  label:'Mesaj oluştur'},
       {id:'create_todo',     label:'Görev oluştur'},
@@ -7083,7 +7075,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'lark', name:'Lark / Feishu', cat:'İşbirliği',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/lark.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display=\'none\';this.parentNode.innerHTML='&#9881;'"/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/lark.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='&#9881;'"/>',
     ops:[
       {id:'send_message',  label:'Mesaj gönder'},
       {id:'create_doc',    label:'Döküman oluştur'},
@@ -7099,7 +7091,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'confluence', name:'Confluence', cat:'İşbirliği',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/confluence.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/confluence.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'create_page',  label:'Sayfa oluştur'},
       {id:'update_page',  label:'Sayfa güncelle'},
@@ -7119,7 +7111,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 2: REKLAM & PAZARLAMA ────────────────
   {
     id:'google_search_console', name:'Google Search Console', cat:'Pazarlama',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/googlesearchconsole.svg" width="20" height="20" style="filter:invert(55%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display=\'none\';this.parentNode.innerHTML='&#9881;'"/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/googlesearchconsole.svg" width="20" height="20" style="filter:invert(55%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='&#9881;'"/>',
     ops:[
       {id:'get_performance', label:'Arama performansı çek'},
       {id:'get_sitemaps',    label:'Site haritalarını çek'},
@@ -7136,7 +7128,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'hubspot_marketing', name:'HubSpot Marketing', cat:'Pazarlama',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/hubspot.svg" width="20" height="20" style="filter:invert(55%) sepia(60%) saturate(700%) hue-rotate(340deg); object-fit:contain;" onerror="this.style.display=\'none\';this.parentNode.innerHTML='&#9881;'"/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/hubspot.svg" width="20" height="20" style="filter:invert(55%) sepia(60%) saturate(700%) hue-rotate(340deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='&#9881;'"/>',
     ops:[
       {id:'send_email',       label:'Marketing email gönder'},
       {id:'create_contact',   label:'Kişi oluştur'},
@@ -7153,7 +7145,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'convertkit', name:'ConvertKit', cat:'Email Pazarlama',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/convertkit.svg" width="20" height="20" style="filter:invert(27%) sepia(89%) saturate(1000%) hue-rotate(340deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/convertkit.svg" width="20" height="20" style="filter:invert(27%) sepia(89%) saturate(1000%) hue-rotate(340deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'add_subscriber',    label:'Abone ekle'},
       {id:'remove_subscriber', label:'Abone çıkar'},
@@ -7171,7 +7163,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'brevo', name:'Brevo (Sendinblue)', cat:'Email Pazarlama',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/brevo.svg" width="20" height="20" style="filter:invert(48%) sepia(98%) saturate(400%) hue-rotate(90deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/brevo.svg" width="20" height="20" style="filter:invert(48%) sepia(98%) saturate(400%) hue-rotate(90deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     ops:[
       {id:'send_email',        label:'Email gönder'},
       {id:'send_sms',          label:'SMS gönder'},
@@ -7195,7 +7187,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 2: DEPOLAMA & DÖKÜMAN ────────────────
   {
     id:'box', name:'Box', cat:'Depolama',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/box.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display=\'none\';this.parentNode.innerHTML='&#9881;'"/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/box.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='&#9881;'"/>',
     ops:[
       {id:'upload_file',   label:'Dosya yükle'},
       {id:'download_file', label:'Dosya indir'},
@@ -7215,7 +7207,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 3: AI & LLM ARAÇLARI ─────────────────
   {
     id:'openai', name:'OpenAI', cat:'AI & LLM',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/openai.svg" width="20" height="20" style="filter:brightness(0); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/openai.svg" width="20" height="20" style="filter:brightness(0); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     color:'#f9fafb', type:'action',
     ops:[
       {id:'chat_completion',  label:'Chat tamamlama (GPT-4o)'},
@@ -7240,7 +7232,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'anthropic', name:'Anthropic Claude', cat:'AI & LLM',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/anthropic.svg" width="20" height="20" style="filter:brightness(0); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/anthropic.svg" width="20" height="20" style="filter:brightness(0); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     color:'#fdf4ff', type:'action',
     ops:[
       {id:'message',     label:'Mesaj gönder (Claude)'},
@@ -7259,7 +7251,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'google_gemini', name:'Google Gemini', cat:'AI & LLM',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/googlegemini.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display=\'none\';this.parentNode.innerHTML='&#9881;'"/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/googlegemini.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='&#9881;'"/>',
     color:'#eff6ff', type:'action',
     ops:[
       {id:'generate_text',    label:'Metin oluştur'},
@@ -7276,7 +7268,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'perplexity', name:'Perplexity AI', cat:'AI & LLM',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/perplexity.svg" width="20" height="20" style="filter:brightness(0); object-fit:contain;" onerror="this.style.display=\'none\';this.parentNode.innerHTML='&#9881;'"/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/perplexity.svg" width="20" height="20" style="filter:brightness(0); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='&#9881;'"/>',
     color:'#f0fdf4', type:'action',
     ops:[
       {id:'search',  label:'Arama yap (web)'},
@@ -7291,7 +7283,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'mistral', name:'Mistral AI', cat:'AI & LLM',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/mistral.svg" width="20" height="20" style="filter:invert(55%) sepia(80%) saturate(700%) hue-rotate(340deg); object-fit:contain;" onerror="this.style.display=\'none\';this.parentNode.innerHTML='&#9881;'"/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/mistral.svg" width="20" height="20" style="filter:invert(55%) sepia(80%) saturate(700%) hue-rotate(340deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='&#9881;'"/>',
     color:'#fff7ed', type:'action',
     ops:[
       {id:'chat',      label:'Sohbet et'},
@@ -7327,7 +7319,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 3: E-İMZA & DÖKÜMAN ──────────────────
   {
     id:'docusign', name:'DocuSign', cat:'E-imza & Döküman',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/docusign.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/docusign.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     color:'#eff6ff', type:'action',
     ops:[
       {id:'send_envelope',    label:'İmza için gönder'},
@@ -7347,7 +7339,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'pandadoc', name:'PandaDoc', cat:'E-imza & Döküman',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/pandadoc.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display=\'none\';this.parentNode.innerHTML='&#9881;'"/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/pandadoc.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='&#9881;'"/>',
     color:'#f0fdf4', type:'action',
     ops:[
       {id:'create_document',  label:'Döküman oluştur'},
@@ -7420,7 +7412,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 3: İÇERİK & TASARIM ──────────────────
   {
     id:'wordpress', name:'WordPress', cat:'İçerik & Tasarım',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/wordpress.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/wordpress.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     color:'#eff6ff', type:'action',
     ops:[
       {id:'create_post',    label:'Gönderi oluştur'},
@@ -7441,7 +7433,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'webflow', name:'Webflow', cat:'İçerik & Tasarım',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/webflow.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/webflow.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     color:'#eff6ff', type:'action',
     ops:[
       {id:'create_item',    label:'CMS öğesi oluştur'},
@@ -7459,7 +7451,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'canva', name:'Canva', cat:'İçerik & Tasarım',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/canva.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(250deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/canva.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(250deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     color:'#eef2ff', type:'action',
     ops:[
       {id:'create_design',   label:'Tasarım oluştur'},
@@ -7479,7 +7471,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'figma', name:'Figma', cat:'İçerik & Tasarım',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/figma.svg" width="20" height="20" style="object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/figma.svg" width="20" height="20" style="object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     color:'#fdf4ff', type:'action',
     ops:[
       {id:'get_file',       label:'Dosya çek'},
@@ -7501,7 +7493,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'contentful', name:'Contentful', cat:'İçerik & Tasarım',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/contentful.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/contentful.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     color:'#eff6ff', type:'action',
     ops:[
       {id:'create_entry',   label:'İçerik oluştur'},
@@ -7520,7 +7512,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'ghost', name:'Ghost', cat:'İçerik & Tasarım',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/ghost.svg" width="20" height="20" style="filter:brightness(0); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/ghost.svg" width="20" height="20" style="filter:brightness(0); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     color:'#f9fafb', type:'action',
     ops:[
       {id:'create_post',    label:'Yazı oluştur'},
@@ -7542,7 +7534,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 3: BULUT & ALTYAPI ────────────────────
   {
     id:'aws_s3', name:'Amazon S3', cat:'Bulut & Altyapı',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/amazons3.svg" width="20" height="20" style="filter:invert(55%) sepia(80%) saturate(700%) hue-rotate(340deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/amazons3.svg" width="20" height="20" style="filter:invert(55%) sepia(80%) saturate(700%) hue-rotate(340deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     color:'#fff7ed', type:'action',
     ops:[
       {id:'upload_file',    label:'Dosya yükle'},
@@ -7563,7 +7555,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'google_cloud', name:'Google Cloud Storage', cat:'Bulut & Altyapı',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/googlecloud.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/googlecloud.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     color:'#eff6ff', type:'action',
     ops:[
       {id:'upload_file',   label:'Dosya yükle'},
@@ -7581,7 +7573,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'azure_blob', name:'Azure Blob Storage', cat:'Bulut & Altyapı',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/microsoftazure.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display=\'none\';this.parentNode.innerHTML='&#9881;'"/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/microsoftazure.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='&#9881;'"/>',
     color:'#eff6ff', type:'action',
     ops:[
       {id:'upload_blob',    label:'Blob yükle'},
@@ -7599,7 +7591,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'vercel', name:'Vercel', cat:'Bulut & Altyapı',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/vercel.svg" width="20" height="20" style="filter:brightness(0); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/vercel.svg" width="20" height="20" style="filter:brightness(0); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     color:'#f9fafb', type:'action',
     ops:[
       {id:'create_deployment', label:'Deployment oluştur'},
@@ -7616,7 +7608,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'supabase_db', name:'Supabase', cat:'Bulut & Altyapı',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/supabase.svg" width="20" height="20" style="filter:invert(48%) sepia(98%) saturate(400%) hue-rotate(90deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/supabase.svg" width="20" height="20" style="filter:invert(48%) sepia(98%) saturate(400%) hue-rotate(90deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     color:'#f0fdf4', type:'action',
     ops:[
       {id:'insert_row',   label:'Satır ekle'},
@@ -7692,7 +7684,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'vonage', name:'Vonage', cat:'İletişim Altyapısı',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/vonage.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display=\'none\';this.parentNode.innerHTML='&#9881;'"/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/vonage.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='&#9881;'"/>',
     color:'#fff0f0', type:'action',
     ops:[
       {id:'send_sms',   label:'SMS gönder'},
@@ -7745,7 +7737,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 3: E-TİCARET EK ──────────────────────
   {
     id:'magento', name:'Magento', cat:'E-ticaret',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/magento.svg" width="20" height="20" style="filter:invert(55%) sepia(80%) saturate(700%) hue-rotate(340deg); object-fit:contain;" onerror="this.style.display=\'none\';this.parentNode.innerHTML='&#9881;'"/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/magento.svg" width="20" height="20" style="filter:invert(55%) sepia(80%) saturate(700%) hue-rotate(340deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='&#9881;'"/>',
     color:'#fff7ed', type:'action',
     ops:[
       {id:'get_orders',    label:'Siparişleri çek'},
@@ -7763,7 +7755,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'prestashop', name:'PrestaShop', cat:'E-ticaret',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/prestashop.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display=\'none\';this.parentNode.innerHTML='&#9881;'"/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/prestashop.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='&#9881;'"/>',
     color:'#fff0f0', type:'action',
     ops:[
       {id:'get_orders',    label:'Siparişleri çek'},
@@ -7780,7 +7772,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'ecwid', name:'Ecwid', cat:'E-ticaret',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/ecwid.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display=\'none\';this.parentNode.innerHTML='&#9881;'"/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/ecwid.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='&#9881;'"/>',
     color:'#fdf4ff', type:'action',
     ops:[
       {id:'get_orders',    label:'Siparişleri çek'},
@@ -7797,7 +7789,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'squarespace', name:'Squarespace', cat:'E-ticaret',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/squarespace.svg" width="20" height="20" style="filter:brightness(0); object-fit:contain;" onerror="this.style.display=\'none\';this.parentNode.innerHTML='&#9881;'"/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/squarespace.svg" width="20" height="20" style="filter:brightness(0); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='&#9881;'"/>',
     color:'#f9fafb', type:'action',
     ops:[
       {id:'get_orders',    label:'Siparişleri çek'},
@@ -7816,7 +7808,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 3: REKLAM & SEO EK ───────────────────
   {
     id:'ahrefs', name:'Ahrefs', cat:'Veri & İş Zekâsı',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/ahrefs.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/ahrefs.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     color:'#eff6ff', type:'action',
     ops:[
       {id:'get_backlinks',      label:'Backlinkleri çek'},
@@ -7834,7 +7826,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'google_tag_manager', name:'Google Tag Manager', cat:'Pazarlama',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/googletagmanager.svg" width="20" height="20" style="filter:invert(38%) sepia(60%) saturate(700%) hue-rotate(250deg); object-fit:contain;" onerror="this.style.display=\'none\';this.parentNode.innerHTML='&#9881;'"/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/googletagmanager.svg" width="20" height="20" style="filter:invert(38%) sepia(60%) saturate(700%) hue-rotate(250deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='&#9881;'"/>',
     color:'#eff6ff', type:'action',
     ops:[
       {id:'get_containers',  label:'Containerları çek'},
@@ -7849,7 +7841,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'linkedin_ads', name:'LinkedIn Ads', cat:'Pazarlama',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/linkedin.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/linkedin.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     color:'#eff6ff', type:'action',
     ops:[
       {id:'get_campaigns',  label:'Kampanyaları çek'},
@@ -7868,7 +7860,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'moz', name:'Moz', cat:'Veri & İş Zekâsı',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/moz.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display=\'none\';this.parentNode.innerHTML='&#9881;'"/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/moz.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='&#9881;'"/>',
     color:'#eff6ff', type:'action',
     ops:[
       {id:'get_domain_metrics', label:'Domain metrikleri çek'},
@@ -7885,7 +7877,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 3: VERİTABANI ────────────────────────
   {
     id:'mysql', name:'MySQL', cat:'Veritabanı',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/mysql.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/mysql.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     color:'#eff6ff', type:'action',
     ops:[
       {id:'execute_query',  label:'SQL sorgusu çalıştır'},
@@ -7906,7 +7898,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'postgresql', name:'PostgreSQL', cat:'Veritabanı',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/postgresql.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/postgresql.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     color:'#eff6ff', type:'action',
     ops:[
       {id:'execute_query',  label:'SQL sorgusu çalıştır'},
@@ -7922,7 +7914,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'mongodb', name:'MongoDB', cat:'Veritabanı',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/mongodb.svg" width="20" height="20" style="filter:invert(48%) sepia(98%) saturate(400%) hue-rotate(90deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/mongodb.svg" width="20" height="20" style="filter:invert(48%) sepia(98%) saturate(400%) hue-rotate(90deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     color:'#f0fdf4', type:'action',
     ops:[
       {id:'find_documents',   label:'Dökümanları bul'},
@@ -7945,7 +7937,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'redis', name:'Redis', cat:'Veritabanı',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/redis.svg" width="20" height="20" style="filter:invert(27%) sepia(89%) saturate(1000%) hue-rotate(340deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/redis.svg" width="20" height="20" style="filter:invert(27%) sepia(89%) saturate(1000%) hue-rotate(340deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     color:'#fff0f0', type:'action',
     ops:[
       {id:'set_key',    label:'Anahtar kaydet (SET)'},
@@ -8006,7 +7998,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'moodle', name:'Moodle', cat:'Eğitim & LMS',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/moodle.svg" width="20" height="20" style="filter:invert(55%) sepia(80%) saturate(700%) hue-rotate(340deg); object-fit:contain;" onerror="this.style.display=\'none\';this.parentNode.innerHTML='&#9881;'"/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/moodle.svg" width="20" height="20" style="filter:invert(55%) sepia(80%) saturate(700%) hue-rotate(340deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='&#9881;'"/>',
     color:'#fff7ed', type:'action',
     ops:[
       {id:'get_users',      label:'Kullanıcıları çek'},
@@ -8026,7 +8018,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 3: DİĞER İŞ ARAÇLARI ─────────────────
   {
     id:'smartsheet', name:'Smartsheet', cat:'Veri & Tablolar',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/smartsheet.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/smartsheet.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     color:'#eff6ff', type:'action',
     ops:[
       {id:'add_row',       label:'Satır ekle'},
@@ -8045,7 +8037,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'coda', name:'Coda', cat:'Veri & Tablolar',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/coda.svg" width="20" height="20" style="filter:brightness(0); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/coda.svg" width="20" height="20" style="filter:brightness(0); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     color:'#f9fafb', type:'action',
     ops:[
       {id:'insert_row',   label:'Satır ekle'},
@@ -8083,7 +8075,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 4: MİCROSOFT EKOSİSTEMİ ─────────────
   {
     id:'ms_power_automate', name:'Power Automate', cat:'Microsoft',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/powerautomate.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/powerautomate.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     color:'#eff6ff', type:'action',
     ops:[
       {id:'trigger_flow',   label:'Flow tetikle'},
@@ -8100,7 +8092,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'ms_excel_online', name:'Excel Online', cat:'Microsoft',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/microsoftexcel.svg" width="20" height="20" style="filter:invert(48%) sepia(98%) saturate(400%) hue-rotate(90deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/microsoftexcel.svg" width="20" height="20" style="filter:invert(48%) sepia(98%) saturate(400%) hue-rotate(90deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     color:'#f0fdf4', type:'action',
     ops:[
       {id:'add_row',       label:'Satır ekle'},
@@ -8119,7 +8111,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'ms_outlook', name:'Outlook', cat:'Microsoft',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/microsoftoutlook.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/microsoftoutlook.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     color:'#eff6ff', type:'action',
     ops:[
       {id:'send_email',     label:'Email gönder'},
@@ -8138,7 +8130,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'ms_sharepoint', name:'SharePoint', cat:'Microsoft',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/microsoftsharepoint.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/microsoftsharepoint.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     color:'#eff6ff', type:'action',
     ops:[
       {id:'create_item',    label:'Liste öğesi oluştur'},
@@ -8157,7 +8149,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'ms_dynamics', name:'Dynamics 365', cat:'Microsoft',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/microsoftdynamics365.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display=\'none\';this.parentNode.innerHTML='&#9881;'"/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/microsoftdynamics365.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='&#9881;'"/>',
     color:'#eff6ff', type:'action',
     ops:[
       {id:'create_lead',    label:'Lead oluştur'},
@@ -8179,7 +8171,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 4: SOSYAL MEDYA EK ───────────────────
   {
     id:'instagram', name:'Instagram', cat:'Sosyal Medya',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/instagram.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(250deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/instagram.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(250deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     color:'#fdf4ff', type:'action',
     ops:[
       {id:'get_media',       label:'Medyaları çek'},
@@ -8198,7 +8190,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'youtube', name:'YouTube', cat:'Sosyal Medya',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/youtube.svg" width="20" height="20" style="filter:invert(27%) sepia(89%) saturate(1000%) hue-rotate(340deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/youtube.svg" width="20" height="20" style="filter:invert(27%) sepia(89%) saturate(1000%) hue-rotate(340deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     color:'#fff0f0', type:'action',
     ops:[
       {id:'get_videos',      label:'Videoları çek'},
@@ -8218,7 +8210,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'twitter_x', name:'Twitter / X', cat:'Sosyal Medya',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/x.svg" width="20" height="20" style="filter:brightness(0); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/x.svg" width="20" height="20" style="filter:brightness(0); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     color:'#f9fafb', type:'action',
     ops:[
       {id:'post_tweet',      label:'Tweet gönder'},
@@ -8240,7 +8232,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'pinterest', name:'Pinterest', cat:'Sosyal Medya',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/pinterest.svg" width="20" height="20" style="filter:invert(27%) sepia(89%) saturate(1000%) hue-rotate(340deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/pinterest.svg" width="20" height="20" style="filter:invert(27%) sepia(89%) saturate(1000%) hue-rotate(340deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     color:'#fff0f0', type:'action',
     ops:[
       {id:'create_pin',     label:'Pin oluştur'},
@@ -8263,7 +8255,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 4: VİDEO & MEDYA ─────────────────────
   {
     id:'vimeo', name:'Vimeo', cat:'Video & Medya',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/vimeo.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/vimeo.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     color:'#eff6ff', type:'action',
     ops:[
       {id:'get_videos',      label:'Videoları çek'},
@@ -8297,7 +8289,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'cloudinary', name:'Cloudinary', cat:'Video & Medya',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/cloudinary.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/cloudinary.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     color:'#eff6ff', type:'action',
     ops:[
       {id:'upload_image',    label:'Görsel yükle'},
@@ -8341,7 +8333,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 4: ETKİNLİK & TOPLULUK ───────────────
   {
     id:'eventbrite', name:'Eventbrite', cat:'Etkinlik & Topluluk',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/eventbrite.svg" width="20" height="20" style="filter:invert(55%) sepia(80%) saturate(700%) hue-rotate(340deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/eventbrite.svg" width="20" height="20" style="filter:invert(55%) sepia(80%) saturate(700%) hue-rotate(340deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     color:'#fff7ed', type:'action',
     ops:[
       {id:'create_event',    label:'Etkinlik oluştur'},
@@ -8403,7 +8395,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 4: MÜŞTERİ GERİ BİLDİRİMİ ──────────
   {
     id:'hotjar', name:'Hotjar', cat:'Analitik',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/hotjar.svg" width="20" height="20" style="filter:invert(55%) sepia(80%) saturate(700%) hue-rotate(340deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/hotjar.svg" width="20" height="20" style="filter:invert(55%) sepia(80%) saturate(700%) hue-rotate(340deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     color:'#fff7ed', type:'action',
     ops:[
       {id:'get_recordings',  label:'Session kayıtları çek'},
@@ -8463,7 +8455,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 4: GÜVENLİK & AUTH ───────────────────
   {
     id:'auth0', name:'Auth0', cat:'Güvenlik & Auth',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/auth0.svg" width="20" height="20" style="filter:invert(38%) sepia(60%) saturate(700%) hue-rotate(250deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/auth0.svg" width="20" height="20" style="filter:invert(38%) sepia(60%) saturate(700%) hue-rotate(250deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     color:'#eef2ff', type:'action',
     ops:[
       {id:'get_users',       label:'Kullanıcıları çek'},
@@ -8484,7 +8476,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'okta', name:'Okta', cat:'Güvenlik & Auth',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/okta.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/okta.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     color:'#eff6ff', type:'action',
     ops:[
       {id:'create_user',     label:'Kullanıcı oluştur'},
@@ -8504,7 +8496,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'cloudflare', name:'Cloudflare', cat:'Güvenlik & Auth',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/cloudflare.svg" width="20" height="20" style="filter:invert(55%) sepia(80%) saturate(700%) hue-rotate(340deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/cloudflare.svg" width="20" height="20" style="filter:invert(55%) sepia(80%) saturate(700%) hue-rotate(340deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     color:'#fff7ed', type:'action',
     ops:[
       {id:'purge_cache',     label:'Cache temizle'},
@@ -8584,7 +8576,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 4: FİNTECH & KRİPTO ──────────────────
   {
     id:'coingecko', name:'CoinGecko', cat:'Finans & Ödeme',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/coingecko.svg" width="20" height="20" style="filter:invert(48%) sepia(98%) saturate(400%) hue-rotate(90deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/coingecko.svg" width="20" height="20" style="filter:invert(48%) sepia(98%) saturate(400%) hue-rotate(90deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     color:'#f0fdf4', type:'action',
     ops:[
       {id:'get_price',       label:'Kripto fiyatı çek'},
@@ -8601,7 +8593,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'stripe_treasury', name:'Stripe Treasury', cat:'Finans & Ödeme',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/stripe.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(230deg); object-fit:contain;" onerror="this.style.display=\'none\';this.parentNode.innerHTML='&#9881;'"/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/stripe.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(230deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='&#9881;'"/>',
     color:'#eef2ff', type:'action',
     ops:[
       {id:'get_balance',       label:'Bakiye çek'},
@@ -8621,7 +8613,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 4: AZURE FONKSİYONLAR ────────────────
   {
     id:'azure_functions', name:'Azure Functions', cat:'Bulut & Altyapı',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/microsoftazure.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display=\'none\';this.parentNode.innerHTML='&#9881;'"/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/microsoftazure.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='&#9881;'"/>',
     color:'#eff6ff', type:'action',
     ops:[
       {id:'invoke_function', label:'Fonksiyon çağır'},
@@ -8818,7 +8810,7 @@ const WF_INTEGRATIONS = [
   // ── YENİ UYGULAMALAR ─────────────────────────
   {
     id:'notion_forms', name:'Notion Forms', cat:'Form & Anket',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/notion.svg" width="20" height="20" style="filter:brightness(0); object-fit:contain;" onerror="this.style.display=\'none\';this.parentNode.innerHTML='&#9881;'"/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/notion.svg" width="20" height="20" style="filter:brightness(0); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='&#9881;'"/>',
     color:'#f9fafb', type:'action',
     ops:[
       {id:'new_submission', label:'▶ Form dolduruldu (Trigger)', isTrig:true},
@@ -8832,7 +8824,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'wix', name:'Wix', cat:'İçerik & Tasarım',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/wix.svg" width="20" height="20" style="filter:brightness(0); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/wix.svg" width="20" height="20" style="filter:brightness(0); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     color:'#f9fafb', type:'action',
     ops:[
       {id:'get_orders',      label:'Mağaza siparişleri çek'},
@@ -8851,7 +8843,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'retool', name:'Retool', cat:'Gelişmiş',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/retool.svg" width="20" height="20" style="filter:brightness(0); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/retool.svg" width="20" height="20" style="filter:brightness(0); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     color:'#f9fafb', type:'action',
     ops:[
       {id:'trigger_workflow', label:'Retool workflow tetikle'},
@@ -8867,7 +8859,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'attio', name:'Attio', cat:'CRM',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/attio.svg" width="20" height="20" style="filter:brightness(0); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/attio.svg" width="20" height="20" style="filter:brightness(0); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     color:'#f9fafb', type:'action',
     ops:[
       {id:'create_record',   label:'Kayıt oluştur'},
@@ -8885,7 +8877,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'klaviyo_sms', name:'Klaviyo SMS', cat:'İletişim Altyapısı',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/klaviyo.svg" width="20" height="20" style="filter:brightness(0); object-fit:contain;" onerror="this.style.display=\'none\';this.parentNode.innerHTML='&#9881;'"/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/klaviyo.svg" width="20" height="20" style="filter:brightness(0); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='&#9881;'"/>',
     color:'#f9fafb', type:'action',
     ops:[
       {id:'send_sms',        label:'SMS gönder'},
@@ -8903,7 +8895,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'render', name:'Render', cat:'Bulut & Altyapı',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/render.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(250deg); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/render.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(250deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     color:'#eef2ff', type:'action',
     ops:[
       {id:'deploy_service',   label:'Servis deploy et'},
@@ -8922,7 +8914,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'railway', name:'Railway', cat:'Bulut & Altyapı',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/railway.svg" width="20" height="20" style="filter:brightness(0); object-fit:contain;" onerror="this.style.display=\"none\";this.parentNode.innerHTML=\"\""/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/railway.svg" width="20" height="20" style="filter:brightness(0); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
     color:'#f9fafb', type:'action',
     ops:[
       {id:'deploy_project',  label:'Proje deploy et'},
@@ -8976,7 +8968,7 @@ function wfRenderSidebar(q) {
     var rows = filtered.filter(function(i){return i.cat===cat;}).map(function(i) {
       return '<div class="wf-node-row" draggable="true" ondragstart="event.dataTransfer.setData('+
         "'wf-node','"+i.id+"')\">"+
-        '<div class="wf-node-ico" style="background:'+(i.color||'#f4f4f5')+'">'+(i.icon&&(i.icon.startsWith('<img')||i.icon.startsWith('<svg'))?i.icon:'<span style="font-size:15px">'+(i.icon||\"⚙️\")+'</span>')+'</div>'+
+        '<div class="wf-node-ico" style="background:'+(i.color||'#f4f4f5')+'">'+(i.icon&&(i.icon.startsWith('<img')||i.icon.startsWith('<svg'))?i.icon:'<span style="font-size:15px">'+(i.icon||'⚙️')+'</span>')+'</div>'+
         '<div style="flex:1;min-width:0;">'+
         '<p class="wf-node-lbl">'+i.name+'</p>'+
         '<p class="wf-node-sub">'+i.ops.length+' operasyon</p>'+
