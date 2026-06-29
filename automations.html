@@ -1995,31 +1995,38 @@ function filterRules() {
 
 function updateStats() {
   const active = allRules.filter(r => r.enabled).length;
-  document.getElementById('stat-active').textContent = active + ' aktif';
-  document.getElementById('stat-dot-active').style.background = active > 0 ? '#16a34a' : '#f59e0b';
-  document.getElementById('stat-dot-active').classList.toggle('amber', active === 0);
+  const _statActive = document.getElementById('stat-active');
+  if (_statActive) _statActive.textContent = active + ' aktif';
+  const _dot = document.getElementById('stat-dot-active');
+  if (_dot) { _dot.style.background = active > 0 ? '#16a34a' : '#f59e0b'; _dot.classList.toggle('amber', active === 0); }
 
   const totalRuns = allRuns.length;
-  document.getElementById('stat-runs').textContent = totalRuns + ' çalışma';
+  const _statRuns = document.getElementById('stat-runs');
+  if (_statRuns) _statRuns.textContent = totalRuns + ' çalışma';
 
   const successRuns = allRuns.filter(r => r.status === 'success').length;
   const rate = totalRuns > 0 ? Math.round((successRuns / totalRuns) * 100) : null;
-  document.getElementById('stat-success').textContent = rate !== null ? '%' + rate + ' başarı' : '— başarı';
-  document.getElementById('chip-success').style.display = rate !== null ? '' : 'none';
+  const _statSuccess = document.getElementById('stat-success');
+  if (_statSuccess) _statSuccess.textContent = rate !== null ? '%' + rate + ' başarı' : '— başarı';
+  const _chipSuccess = document.getElementById('chip-success');
+  if (_chipSuccess) _chipSuccess.style.display = rate !== null ? '' : 'none';
 }
 
 // ── LOAD RUNS ──────────────────────────────────────────────────────────────
 async function loadRuns() {
   try {
     const res = await fetch(API + '/api/automations/runs?limit=20', { headers: authHeaders() });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
+    if (!res.ok) {
+      console.warn('Runs endpoint hatası:', res.status);
+      return;
+    }
     const data = await res.json();
     allRuns = data.runs || data || [];
-  } catch (e) {
-    allRuns = [];
+    renderRuns();
+    updateStats();
+  } catch(e) {
+    console.warn('loadRuns başarısız:', e.message);
   }
-  renderRuns();
-  updateStats();
 }
 
 function renderRuns() {
