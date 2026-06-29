@@ -138,7 +138,7 @@ app.use(helmet({
     directives: {
       defaultSrc: ["'self'"],
       scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://cdn.jsdelivr.net", "https://unpkg.com", "https://www.clarity.ms", "https://scripts.clarity.ms", "https://www.googletagmanager.com", "https://www.google-analytics.com"],
-      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdn.jsdelivr.net"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdn.jsdelivr.net"], // CSP updated
       fontSrc: ["'self'", "https://fonts.gstatic.com", "https://cdn.jsdelivr.net"],
       imgSrc: ["'self'", "data:", "blob:", "https://cdn.jsdelivr.net", "https://cdn.simpleicons.org", "https://svgl.app", "https://upload.wikimedia.org"],
       connectSrc: ["'self'", "https:"],
