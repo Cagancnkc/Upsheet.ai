@@ -11,7 +11,7 @@
   gtag('config', 'G-H0KT59S6GP');
 </script>
 <meta charset="UTF-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://unpkg.com https://www.clarity.ms https://scripts.clarity.ms https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net; img-src 'self' data: blob: https://cdn.jsdelivr.net https://cdn.simpleicons.org https://svgl.app https://upload.wikimedia.org; connect-src 'self' https:; frame-src 'none'; object-src 'none';">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://unpkg.com https://www.clarity.ms https://scripts.clarity.ms https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net; img-src 'self' data: blob: https://cdn.jsdelivr.net https://cdn.simpleicons.org https://svgl.app https://upload.wikimedia.org; connect-src 'self' https:; frame-src &apos;none&apos;; object-src &apos;none&apos;;">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <meta name="description" content="Mocksheets ile stok uyarıları, fatura takibi ve raporları otomatikleştirin. Gmail, Slack, Notion, Airtable, Google Sheets, Zapier ve 11 entegrasyonla tek komutta iş akışı kurun. Formül yok, kod yok.">
@@ -1527,7 +1527,7 @@ const TEMPLATES = [
     }
   },
   {
-    id: 'stock-erp-webhook', icon: '⚙️', iconBg: '#f0fdf4', name: 'ERP Stok Entegrasyonu',
+    id: 'stock-erp-webhook', icon: &apos;⚙️&apos;, iconBg: '#f0fdf4', name: 'ERP Stok Entegrasyonu',
     desc: 'Stok değişince ERP sistemine webhook gönder',
     tags: ['Webhook'], category: 'stok',
     data: {
@@ -1908,7 +1908,7 @@ function renderRules(filtered) {
     return;
   }
 
-  const ACTION_ICONS = { slack:'💬', teams:'🟣', gmail:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/gmail.svg" alt="Gmail" style="width:18px;height:18px;vertical-align:middle">', webhook:'🔗', make:'⚙️', notion:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/notion.svg" alt="Notion" style="width:18px;height:18px;vertical-align:middle">', notion_page:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/notion.svg" alt="Notion" style="width:18px;height:18px;vertical-align:middle">', airtable:'📊', update_cells:'✏️', notification:'🔔', discord:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/discord.svg" alt="Discord" style="width:18px;height:18px;vertical-align:middle">', 'google-chat':'💬', n8n:'⚙️', pipedream:'⚡', zapier:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/zapier.svg" alt="Zapier" style="width:18px;height:18px;vertical-align:middle">', ifttt:'🔀', sendgrid:'📧', mailchimp:'🐵', brevo:'📬', twilio:'📱', telegram:'✈️', jira:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/jira.svg" alt="Jira" style="width:18px;height:18px;vertical-align:middle">', linear:'🔷', github:'🐙', clickup:'✅', asana:'🌸', monday:'📅', hubspot:'🟠', pagerduty:'🔴', smartsheet:'📋', hubspot_create_deal:'🟠', hubspot_update_contact:'🟠', hubspot_add_note:'🟠', jira_add_comment:'📌', jira_transition:'📌', jira_assign:'📌', github_add_comment:'🐙', github_close_issue:'🐙', github_create_pr:'🐙', trello:'🃏', trello_add_comment:'🃏', trello_move_card:'🃏', clickup_update_task:'✅', clickup_add_comment:'✅', asana_complete_task:'🌸', asana_add_comment:'🌸', notion_update_page:'📝', airtable_update:'🗃️', monday_update_item:'📅', linear_update_issue:'🔷', linear_add_comment:'🔷', gmail_create_draft:'📧' };
+  const ACTION_ICONS = { slack:'💬', teams:'🟣', gmail:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/gmail.svg" alt="Gmail" style="width:18px;height:18px;vertical-align:middle">', webhook:'🔗', make:&apos;⚙️&apos;, notion:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/notion.svg" alt="Notion" style="width:18px;height:18px;vertical-align:middle">', notion_page:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/notion.svg" alt="Notion" style="width:18px;height:18px;vertical-align:middle">', airtable:'📊', update_cells:'✏️', notification:'🔔', discord:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/discord.svg" alt="Discord" style="width:18px;height:18px;vertical-align:middle">', 'google-chat':'💬', n8n:&apos;⚙️&apos;, pipedream:'⚡', zapier:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/zapier.svg" alt="Zapier" style="width:18px;height:18px;vertical-align:middle">', ifttt:'🔀', sendgrid:'📧', mailchimp:'🐵', brevo:'📬', twilio:'📱', telegram:'✈️', jira:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/jira.svg" alt="Jira" style="width:18px;height:18px;vertical-align:middle">', linear:'🔷', github:'🐙', clickup:'✅', asana:'🌸', monday:'📅', hubspot:'🟠', pagerduty:'🔴', smartsheet:'📋', hubspot_create_deal:'🟠', hubspot_update_contact:'🟠', hubspot_add_note:'🟠', jira_add_comment:'📌', jira_transition:'📌', jira_assign:'📌', github_add_comment:'🐙', github_close_issue:'🐙', github_create_pr:'🐙', trello:'🃏', trello_add_comment:'🃏', trello_move_card:'🃏', clickup_update_task:'✅', clickup_add_comment:'✅', asana_complete_task:'🌸', asana_add_comment:'🌸', notion_update_page:'📝', airtable_update:'🗃️', monday_update_item:'📅', linear_update_issue:'🔷', linear_add_comment:'🔷', gmail_create_draft:'📧' };
   el.innerHTML = rules.map(r => {
     const tc = r.trigger_config || {};
     const actions = Array.isArray(r.action_config) ? r.action_config : [r.action_config].filter(Boolean);
@@ -2009,7 +2009,7 @@ function updateStats() {
   const _statSuccess = document.getElementById('stat-success');
   if (_statSuccess) _statSuccess.textContent = rate !== null ? '%' + rate + ' başarı' : '— başarı';
   const _chipSuccess = document.getElementById('chip-success');
-  if (_chipSuccess) _chipSuccess.style.display = rate !== null ? '' : 'none';
+  if (_chipSuccess) _chipSuccess.style.display = rate !== null ? '' : &apos;none&apos;;
 }
 
 // ── LOAD RUNS ──────────────────────────────────────────────────────────────
@@ -2097,7 +2097,7 @@ async function testWorkflowCard(id, btn) {
   const origText = btn.textContent;
   btn.disabled = true;
   btn.textContent = '⟳ Test çalışıyor...';
-  if (resultDiv) resultDiv.style.display = 'none';
+  if (resultDiv) resultDiv.style.display = &apos;none&apos;;
 
   try {
     const res = await fetch(API + '/api/automations/' + id + '/test', {
@@ -2338,7 +2338,7 @@ function renderBuilderCanvas() {
   } else {
     hint.textContent = '✓ Workflow hazır — Kaydet\'e tıklayın';
   }
-  testBtn.style.display = builderEditId ? '' : 'none';
+  testBtn.style.display = builderEditId ? '' : &apos;none&apos;;
 }
 
 function selectBuilderNode(nodeId) {
@@ -3392,12 +3392,12 @@ function closeCreateModal() {
 
 function renderStepUI() {
   [1, 2, 3].forEach(s => {
-    document.getElementById(`step-${s}-body`).style.display = s === currentStep ? '' : 'none';
+    document.getElementById(`step-${s}-body`).style.display = s === currentStep ? '' : &apos;none&apos;;
     const ind = document.getElementById(`step-${s}-ind`);
     ind.className = 'step-item' + (s < currentStep ? ' done' : s === currentStep ? ' active' : '');
   });
-  document.getElementById('btn-prev').style.display = currentStep > 1 ? '' : 'none';
-  document.getElementById('btn-test').style.display = currentStep === 3 ? '' : 'none';
+  document.getElementById('btn-prev').style.display = currentStep > 1 ? '' : &apos;none&apos;;
+  document.getElementById('btn-test').style.display = currentStep === 3 ? '' : &apos;none&apos;;
   document.getElementById('btn-next').textContent = currentStep === 3 ? 'Kaydet ✓' : 'Devam Et →';
 
   if (currentStep === 2) renderConditions();
@@ -3470,7 +3470,7 @@ function renderTriggerFields(prefill) {
     const freqEl = document.getElementById('tc-freq');
     const timeEl = document.getElementById('tc-time');
     freqEl?.addEventListener('change', function() {
-      document.getElementById('cron-field').style.display = this.value === 'custom' ? '' : 'none';
+      document.getElementById('cron-field').style.display = this.value === 'custom' ? '' : &apos;none&apos;;
       updateSchedulePreview();
     });
     timeEl?.addEventListener('change', updateSchedulePreview);
@@ -4082,10 +4082,10 @@ async function testCurrentRule() {
 // ── AI BUILDER ─────────────────────────────────────────────────────────────
 function openAIModal() {
   document.getElementById('ai-overlay').classList.add('open');
-  document.getElementById('ai-preview').style.display = 'none';
-  document.getElementById('ai-loading').style.display = 'none';
+  document.getElementById('ai-preview').style.display = &apos;none&apos;;
+  document.getElementById('ai-loading').style.display = &apos;none&apos;;
   document.getElementById('btn-ai-generate').style.display = '';
-  document.getElementById('btn-ai-use').style.display = 'none';
+  document.getElementById('btn-ai-use').style.display = &apos;none&apos;;
   document.getElementById('ai-query').value = '';
   generatedWorkflow = null;
 }
@@ -4103,9 +4103,9 @@ async function generateWorkflow() {
   if (!query) { toast('Lütfen bir açıklama yazın', 'warning'); return; }
 
   document.getElementById('ai-loading').style.display = '';
-  document.getElementById('ai-preview').style.display = 'none';
+  document.getElementById('ai-preview').style.display = &apos;none&apos;;
   document.getElementById('btn-ai-generate').disabled = true;
-  document.getElementById('btn-ai-use').style.display = 'none';
+  document.getElementById('btn-ai-use').style.display = &apos;none&apos;;
 
   try {
     // 1. AI ile workflow üret
@@ -4115,7 +4115,7 @@ async function generateWorkflow() {
     const genData = await genRes.json();
     if (!genRes.ok || !genData.workflow) {
       toast(genData.error || 'Workflow oluşturulamadı', 'error');
-      document.getElementById('ai-loading').style.display = 'none';
+      document.getElementById('ai-loading').style.display = &apos;none&apos;;
       document.getElementById('btn-ai-generate').disabled = false;
       return;
     }
@@ -4138,7 +4138,7 @@ async function generateWorkflow() {
     const saveData = await saveRes.json();
     if (!saveRes.ok || !saveData.rule) {
       toast(saveData.error || 'Otomasyon kaydedilemedi', 'error');
-      document.getElementById('ai-loading').style.display = 'none';
+      document.getElementById('ai-loading').style.display = &apos;none&apos;;
       document.getElementById('btn-ai-generate').disabled = false;
       return;
     }
@@ -4150,7 +4150,7 @@ async function generateWorkflow() {
     loadRules();
   } catch { toast('Bağlantı hatası', 'error'); }
 
-  document.getElementById('ai-loading').style.display = 'none';
+  document.getElementById('ai-loading').style.display = &apos;none&apos;;
   document.getElementById('btn-ai-generate').disabled = false;
 }
 
@@ -4281,12 +4281,12 @@ const ACTION_TYPES = [
   { v: 'slack',        l: 'Slack',              icon: '💬' },
   { v: 'notion_page',  l: 'Notion Sayfası',     icon: '📝' },
   { v: 'webhook',      l: 'Webhook',            icon: '🔗' },
-  { v: 'make',         l: 'Make.com',           icon: '⚙️' },
+  { v: 'make',         l: 'Make.com',           icon: &apos;⚙️&apos; },
   { v: 'sheets_update',l: 'Sheets Güncelle',    icon: '📊' },
   { v: 'pdf_export',   l: 'PDF Dışa Aktar',     icon: '📄' },
   { v: 'discord',      l: 'Discord',            icon: '🎮' },
   { v: 'google-chat',  l: 'Google Chat',        icon: '💬' },
-  { v: 'n8n',          l: 'n8n',               icon: '⚙️' },
+  { v: 'n8n',          l: 'n8n',               icon: &apos;⚙️&apos; },
   { v: 'pipedream',    l: 'Pipedream',          icon: '⚡' },
   { v: 'zapier',       l: 'Zapier',             icon: '⚡' },
   { v: 'ifttt',        l: 'IFTTT',              icon: '🔀' },
@@ -4348,7 +4348,7 @@ function switchPageTab(tab) {
   if (tab === 'agents') {
     AUTOMATION_SECTIONS.forEach(id => {
       const el = document.getElementById(id);
-      if (el) el.style.display = 'none';
+      if (el) el.style.display = &apos;none&apos;;
     });
     document.getElementById('agents-section').style.display = 'block';
     checkProMax();
@@ -4361,7 +4361,7 @@ function switchPageTab(tab) {
       const el = document.getElementById(id);
       if (el) el.style.display = '';
     });
-    document.getElementById('agents-section').style.display = 'none';
+    document.getElementById('agents-section').style.display = &apos;none&apos;;
   }
 }
 
@@ -4375,7 +4375,7 @@ async function checkProMax() {
     if (res.status === 403) {
       overlay.style.display = 'flex';
     } else {
-      overlay.style.display = 'none';
+      overlay.style.display = &apos;none&apos;;
     }
   } catch {}
 }
@@ -4392,7 +4392,7 @@ async function runAgent() {
   logWrap.style.display = 'block';
   document.getElementById('agent-run-title').textContent = prompt.slice(0, 80) + (prompt.length > 80 ? '…' : '');
   document.getElementById('agent-steps-list').innerHTML = '';
-  document.getElementById('agent-result').style.display = 'none';
+  document.getElementById('agent-result').style.display = &apos;none&apos;;
   setAgentStatus('running');
 
   try {
@@ -4509,7 +4509,7 @@ async function loadAgentRun(runId) {
     const { run, steps } = await res.json();
     document.getElementById('agent-log-wrap').style.display = 'block';
     document.getElementById('agent-run-title').textContent = run.title || (run.prompt || '').slice(0, 80);
-    document.getElementById('agent-result').style.display = 'none';
+    document.getElementById('agent-result').style.display = &apos;none&apos;;
     setAgentStatus(run.status);
     renderAgentSteps(steps);
     if (run.result) {
@@ -4575,7 +4575,7 @@ async function createSchedule() {
       body: JSON.stringify({ prompt, cron_expr: cronExpr, label }),
     });
     if (!res.ok) throw new Error('API hatası');
-    document.getElementById('schedule-modal').style.display = 'none';
+    document.getElementById('schedule-modal').style.display = &apos;none&apos;;
     alert(`✅ Agent zamanlandı: ${label}`);
     loadSchedules();
   } catch { alert('Zamanlama oluşturulamadı.'); }
@@ -4775,7 +4775,7 @@ function wzRenderFlow() {
     const def = WZ_ACTIONS.find(x => x.id === a.id) || {};
     html += `<div class="flow-connector"></div>
     <div class="flow-node ${def.nodeClass || ''}" onclick="wzSelectAction(${i})">
-      <div class="flow-node-icon" style="background:${def.color || '#f9fafb'};"><span style="font-size:14px;">${def.icon || '⚙️'}</span></div>
+      <div class="flow-node-icon" style="background:${def.color || '#f9fafb'};"><span style="font-size:14px;">${def.icon || &apos;⚙️&apos;}</span></div>
       <div style="flex:1;"><p class="flow-node-name">${def.label || a.id}</p><p class="flow-node-sub">${a.config?.desc || def.desc || ''}</p></div>
       <button onclick="event.stopPropagation(); wzRemoveAction(${i})" style="background:none; border:none; color:var(--muted); cursor:pointer; font-size:14px; padding:2px 6px;">✕</button>
     </div>`;
@@ -4864,7 +4864,7 @@ function wzSelectAction(i) {
 }
 
 function wzShowList() { document.getElementById('wz-list-overlay').style.display = 'flex'; wzLoadList(); }
-function wzHideList() { document.getElementById('wz-list-overlay').style.display = 'none'; }
+function wzHideList() { document.getElementById('wz-list-overlay').style.display = &apos;none&apos;; }
 
 async function wzLoadList() {
   const list = document.getElementById('wz-auto-list');
@@ -4875,7 +4875,7 @@ async function wzLoadList() {
     if (!rules.length) { list.innerHTML = '<p style="font-size:13px; color:var(--muted); text-align:center; padding:20px;">Henüz otomasyon yok.</p>'; return; }
     list.innerHTML = rules.map(r => `
       <div class="wz-auto-card" onclick="wzLoadAuto('${r.id}'); wzHideList();">
-        <div class="wz-auto-card-icon">${r.icon || '⚙️'}</div>
+        <div class="wz-auto-card-icon">${r.icon || &apos;⚙️&apos;}</div>
         <div style="flex:1;"><p class="wz-auto-card-name">${r.name || r.title || 'İsimsiz'}</p><p class="wz-auto-card-sub">${r.trigger_label || ''} · ${r.action_count || 0} aksiyon</p></div>
         <div class="wz-toggle ${r.active ? 'on' : ''}" onclick="event.stopPropagation(); wzToggleAuto('${r.id}', this)"></div>
       </div>`).join('');
@@ -8976,7 +8976,7 @@ function wfRenderSidebar(q) {
     var rows = filtered.filter(function(i){return i.cat===cat;}).map(function(i) {
       return '<div class="wf-node-row" draggable="true" ondragstart="event.dataTransfer.setData('+
         "'wf-node','"+i.id+"')\">"+
-        '<div class="wf-node-ico" style="background:'+(i.color||'#f4f4f5')+'">'+(i.icon&&(i.icon.startsWith('<img')||i.icon.startsWith('<svg'))?i.icon:'<span style="font-size:15px">'+(i.icon||'⚙️')+'</span>')+'</div>'+
+        '<div class="wf-node-ico" style="background:'+(i.color||'#f4f4f5')+'">'+(i.icon&&(i.icon.startsWith('<img')||i.icon.startsWith('<svg'))?i.icon:'<span style="font-size:15px">'+(i.icon||&apos;⚙️&apos;)+'</span>')+'</div>'+
         '<div style="flex:1;min-width:0;">'+
         '<p class="wf-node-lbl">'+i.name+'</p>'+
         '<p class="wf-node-sub">'+i.ops.length+' operasyon</p>'+
@@ -8988,7 +8988,7 @@ function wfRenderSidebar(q) {
 
 window.wfRenderSidebar = wfRenderSidebar;
 window.wfFilterNodes = function(q) { wfRenderSidebar(q); };
-window.wfIconErr    = function(el) { el.style.display = 'none'; };
+window.wfIconErr    = function(el) { el.style.display = &apos;none&apos;; };
 
 // Render sidebar immediately — independent of ReactFlow/Babel loading
 if (document.readyState === 'loading') {
@@ -9153,7 +9153,7 @@ function WFApp() {
     const el = document.getElementById('wf-stats');
     if (el) el.textContent = `${WF_INTEGRATIONS.length} entegrasyon · ${edges.length} bağlantı`;
     const empty = document.getElementById('wf-empty');
-    if (empty) empty.style.display = nodes.length ? 'none' : 'flex';
+    if (empty) empty.style.display = nodes.length ? &apos;none&apos; : 'flex';
   }, [edges.length]);
 
   useEffect(() => {
@@ -9258,7 +9258,7 @@ function WFApp() {
       } catch { lb.innerHTML = '<p style="padding:20px;text-align:center;color:var(--muted);">Yüklenemedi</p>'; }
     };
 
-    window.wfHideList   = () => { document.getElementById('wf-overlay').style.display = 'none'; };
+    window.wfHideList   = () => { document.getElementById('wf-overlay').style.display = &apos;none&apos;; };
     window.wfLoadItem   = (id, name) => { setWfId(id); setNodes([]); setEdges([]); setSelNode(null); const n=document.getElementById('wf-name');if(n)n.value=name; wfToast(`"${name}" yüklendi`); };
     window.wfToggle     = async (id, el) => { el.classList.toggle('on'); const h=typeof authHeaders==='function'?authHeaders():{};await fetch(`${API}/api/automations/${id}/toggle`,{method:'POST',headers:h}).catch(()=>{}); };
     window.wfClosePanel = () => setSelNode(null);
