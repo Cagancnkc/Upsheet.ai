@@ -1857,6 +1857,7 @@ function filterTemplates(cat) {
 
 function renderTemplates() {
   const el = document.getElementById('template-scroll');
+  if (!el) return;
   const list = activeTplCat === 'all' ? TEMPLATES : TEMPLATES.filter(t => t.category === activeTplCat);
   document.getElementById('tpl-count-badge').textContent = list.length + ' şablon';
   el.innerHTML = list.map(t => `
@@ -4694,6 +4695,7 @@ function wzRenderStep() {
   const sidebarTitle = document.getElementById('wz-sidebar-title');
   const nodeList = document.getElementById('wz-node-list');
   const settings = document.getElementById('wz-settings-content');
+  if (!sidebarTitle || !nodeList || !settings) return;
 
   if (wzState.step === 1) {
     sidebarTitle.textContent = 'Tetikleyici seç';
