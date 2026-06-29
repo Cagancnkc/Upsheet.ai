@@ -1,80 +1,72 @@
 # Mocksheets
 
-> Mocksheets is an AI-powered spreadsheet assistant and mock data generator.
-> Users describe what they need in natural language and receive instant,
-> downloadable datasets in CSV, Excel (.xlsx), or JSON format.
-> Available at https://mocksheets.com
+> Operasyon yöneticileri ve e-ticaret ekipleri için
+> Türkçe AI tablo asistanı.
 
-## What Mocksheets Does
+## Ürün
 
-- Generates realistic mock data for software development and testing
-- Creates sample CSV files and Excel spreadsheets using Claude AI
-- Processes existing Excel/CSV files via natural language commands (edit, sort, filter, clean)
-- Supports both Turkish and English language input
-- Generates GDPR-safe fake data with no real personal information
+Mocksheets, Excel/CSV/PDF verilerini doğal dil komutlarıyla
+analiz eden bir web uygulamasıdır. Kullanıcılar Türkçe veya
+İngilizce komut yazarak:
 
-## Key Capabilities
+- Veri sıralama, filtreleme ve gruplama yapabilir
+- Formül yazmadan hesaplama yapabilir
+- 200+ uygulama ile entegrasyon kurabilir
+- Otomasyonlar oluşturabilir
+- AI Agents ile tekrarlayan işleri otomatize edebilir
 
-- Mock data generation from plain English descriptions
-- Fake dataset creation (names, emails, addresses, transactions, custom schemas)
-- CSV file generation with custom columns and row counts
-- Excel (.xlsx) file generation with proper data types and formulas
-- Test data creation with edge cases and boundary values
-- AI-powered spreadsheet manipulation (sort, filter, deduplicate, highlight)
+## Hedef Kitle
 
-## Key Use Cases
+- Operasyon yöneticileri
+- E-ticaret ekipleri (Shopify, Trendyol, Hepsiburada)
+- Finans ve muhasebe ekipleri
+- İnsan kaynakları departmanları
 
-- Developers generating test data for APIs, databases, and unit tests
-- QA engineers creating comprehensive test datasets with edge cases
-- Data analysts building sample datasets for demos and prototypes
-- Designers populating mockups with realistic data
-- Businesses generating fake customer/product/financial data for demos
+## Fiyatlandırma
 
-## Pricing
+- Başlangıç: Ücretsiz (günde 5 komut)
+- Pro: $15/ay (günde 60 komut, 10 otomasyon)
+- Pro Max: $21/ay (sınırsız, AI Agents dahil)
+- Takım: $59/ay (5 koltuk)
 
-- Free: 5 generations/day, 20/month, no credit card required
-- Pro: $15/month, 30/day, 200/month
-- Business: $59/month, unlimited
+## Entegrasyonlar
 
-## Supported Output Formats
+Google Sheets, Shopify, Slack, Gmail, HubSpot, Stripe,
+Notion, Airtable, Trello, Asana, Jira, GitHub ve
+190+ uygulama daha.
 
-- CSV (.csv) — compatible with any tool, database, or application
-- Excel (.xlsx) — compatible with Microsoft Excel, Google Sheets, LibreOffice
-- JSON — for API testing and developer tooling
+## Teknik Altyapı
 
-## Important URLs
+- Frontend: Vanilla JS (static HTML/CSS/JS)
+- Backend: Node.js / Express
+- Veritabanı: Supabase (PostgreSQL)
+- AI: Anthropic Claude (RAG pipeline ile)
+- Hosting: Vercel (frontend), Render (backend)
+- GDPR ve KVKK uyumlu
 
-- Homepage (Turkish): https://mocksheets.com/
-- Homepage (English): https://mocksheets.com/en
+## Önemli URL'ler
+
+- Ana Sayfa (Türkçe): https://mocksheets.com/
+- Ana Sayfa (İngilizce): https://mocksheets.com/en
+- Uygulama (giriş gerektirir): https://mocksheets.com/app
+- Entegrasyonlar: https://mocksheets.com/automations
 - Mock Data Generator: https://mocksheets.com/mock-data-generator
 - Fake Data Generator: https://mocksheets.com/fake-data-generator
 - CSV Generator: https://mocksheets.com/csv-generator
 - Test Data Generator: https://mocksheets.com/test-data-generator
-- AI Spreadsheet Generator: https://mocksheets.com/ai-spreadsheet-generator
-- Excel Mock Data: https://mocksheets.com/excel-mock-data
-- App (requires signup): https://mocksheets.com/app
-- Contact: helpmocksheets@gmail.com
+- Blog: https://mocksheets.com/blog
+- Destek: destek@mocksheets.com
 
-## Technical Details
+## Sıkça Sorulan Sorular
 
-- AI model: Claude (Anthropic) via RAG pipeline
-- Built with: Node.js backend, static HTML/CSS/JS frontend
-- Deployed on: Vercel
-- Auth: Supabase
+S: Verilerim güvende mi?
+C: Tüm veriler Supabase (PostgreSQL) üzerinde şifreli saklanır. GDPR ve KVKK uyumlu.
 
-## Frequently Asked Questions
+S: Kredi kartı olmadan başlayabilir miyim?
+C: Evet. Ücretsiz plan için kart gerekmez. Google hesabıyla 30 saniyede başlanır.
 
-Q: Is Mocksheets free?
-A: Yes, the free plan includes 5 generations per day and 20 per month. No credit card required.
+S: Hangi dosya formatları destekleniyor?
+C: .xlsx, .xls, .csv ve PDF (OCR ile tablo çıkarma). Dışa aktarma: Excel, CSV, JSON.
 
-Q: Is the generated data GDPR-safe?
-A: Yes. All generated data is entirely synthetic — no real personal information is used.
-
-Q: What is the difference between mock data and fake data?
-A: The terms are often used interchangeably. Mock data mimics a system's data structure for testing; fake data looks like real personal information but is entirely fictional. Mocksheets handles both.
-
-Q: Can I generate data in a specific format?
-A: Yes. Describe the schema, column names, data types, and row count in plain English. Mocksheets generates the data and exports it in CSV, Excel, or JSON format.
-
-Q: What industries does Mocksheets support?
-A: E-commerce, finance, HR, healthcare, SaaS, IoT, and any other domain — just describe your data needs in plain English.
+S: Shopify entegrasyonu nasıl çalışır?
+C: Shopify mağazası doğrudan bağlanır. Sipariş, ürün ve müşteri verileri otomatik aktarılır.

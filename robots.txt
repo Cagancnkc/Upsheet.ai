@@ -27,18 +27,36 @@ Allow: /images/
 # AI crawlers
 User-agent: GPTBot
 Allow: /
+Allow: /blog
+Allow: /llms.txt
 Disallow: /app
 Disallow: /auth
 Disallow: /dashboard
+
+User-agent: Claude-Web
+Allow: /
+Allow: /blog
+Allow: /llms.txt
+
+User-agent: anthropic-ai
+Allow: /
+Allow: /blog
+Allow: /llms.txt
 
 User-agent: Google-Extended
 Allow: /
 
 User-agent: PerplexityBot
 Allow: /
+Allow: /blog
+Allow: /llms.txt
 
 User-agent: ClaudeBot
 Allow: /
+Allow: /llms.txt
+
+User-agent: Bytespider
+Disallow: /
 
 # Sitemaps
 Sitemap: https://mocksheets.com/sitemap.xml
