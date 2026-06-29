@@ -2023,7 +2023,9 @@ async function loadRuns() {
 
 function renderRuns() {
   const el = document.getElementById('runs-list');
-  document.getElementById('run-count-badge').textContent = allRuns.length;
+  if (!el) return;
+  const _badge = document.getElementById('run-count-badge');
+  if (_badge) _badge.textContent = allRuns.length;
 
   if (!allRuns.length) {
     el.innerHTML = `<div class="empty-state" style="padding:24px"><p style="font-size:13px;color:var(--muted)">İlk workflow'unu çalıştırdığında burada görünecek.</p></div>`;
