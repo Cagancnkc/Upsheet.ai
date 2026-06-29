@@ -1857,8 +1857,10 @@ function filterTemplates(cat) {
 
 function renderTemplates() {
   const el = document.getElementById('template-scroll');
+  if (!el) return;
   const list = activeTplCat === 'all' ? TEMPLATES : TEMPLATES.filter(t => t.category === activeTplCat);
-  document.getElementById('tpl-count-badge').textContent = list.length + ' şablon';
+  const badge = document.getElementById('tpl-count-badge');
+  if (badge) badge.textContent = list.length + ' şablon';
   el.innerHTML = list.map(t => `
     <div class="tpl-card" data-tpl-id="${t.id}" onclick="openTemplateById(this.dataset.tplId)">
       <div class="tpl-icon" style="background:${t.iconBg}">${t.icon}</div>
@@ -4694,6 +4696,7 @@ function wzRenderStep() {
   const sidebarTitle = document.getElementById('wz-sidebar-title');
   const nodeList = document.getElementById('wz-node-list');
   const settings = document.getElementById('wz-settings-content');
+  if (!sidebarTitle || !nodeList) return;
 
   if (wzState.step === 1) {
     sidebarTitle.textContent = 'Tetikleyici seç';
@@ -4744,6 +4747,7 @@ function wzRenderStep() {
 
 function wzRenderFlow() {
   const flow = document.getElementById('wz-flow');
+  if (!flow) return;
   let html = '';
   if (wzState.trigger) {
     const t = WZ_TRIGGERS.find(x => x.id === wzState.trigger.id) || {};
@@ -4782,6 +4786,7 @@ function wzSelectTrigger(id) {
 
 function wzRenderTriggerSettings() {
   const settings = document.getElementById('wz-settings-content');
+  if (!settings) return;
   if (!wzState.trigger) { settings.innerHTML = '<p style="font-size:12px; color:var(--muted);">Tetikleyici seçin.</p>'; return; }
   if (wzState.trigger.id === 'schedule') {
     settings.innerHTML = `
@@ -4814,7 +4819,7 @@ function wzSelectAction(i) {
   const a = wzState.actions[i];
   const def = WZ_ACTIONS.find(x => x.id === a?.id);
   const settings = document.getElementById('wz-settings-content');
-  if (!def) return;
+  if (!settings || !def) return;
   let html = `<p class="wz-settings-label">Node adı</p>
     <input type="text" value="${def.label}" style="width:100%; padding:7px 9px; font-size:12px; border:0.5px solid var(--line); border-radius:8px; background:var(--surface-2); color:var(--ink); box-sizing:border-box; outline:none; margin-bottom:12px;" />`;
   if (a.id === 'read_data') {
@@ -5167,7 +5172,7 @@ const INTEGRATIONS = [
   { id:'webhook', name:'Özel Webhook', category:'Otomasyon', tier:'pro', logo:null, actions:["Herhangi URL'ye gönder",'HMAC imzalı veri aktar','Olay tetikle'], triggers:['Tablo güncellendi','Dışa aktarıldı'], useCase:'Kendi sistemine güvenli gerçek zamanlı veri akışı' },
   { id:'google-sheets', name:'Google Sheets', category:'Bulut', tier:'pro', popular:true, logo:'images/integrations/googlesheets.svg', actions:['Tablo aktar','Satır senkronize et','Rapor güncelle'], triggers:['Tablo oluşturuldu','Veri güncellendi'], useCase:"AI raporları otomatik Sheets'e gönderilir" },
   { id:'google-drive', name:'Google Drive', category:'Bulut', tier:'pro', logo:'images/integrations/googledrive.svg', actions:['Dosya oku','Excel aktar','CSV yükle'], triggers:['Dosya yüklendi','İçe aktarım başladı'], useCase:"Drive'daki Excel dosyalarına doğrudan eriş" },
-  { id:'gmail', name:'Gmail', category:'İletişim', tier:'pro', logo:'images/integrations/gmail.svg', actions:['E-posta gönder','Taslak oluştur','Toplu gönderim'], triggers:['Rapor hazır','Dışa aktarım tamamlandı'], useCase:'AI raporlarını otomatik e-posta ile paylaş' },
+  { id:'gmail', name:'Gmail', category:'İletişim', tier:'pro', logo:'https://cdn.simpleicons.org/gmail/EA4335', actions:['E-posta gönder','Taslak oluştur','Toplu gönderim'], triggers:['Rapor hazır','Dışa aktarım tamamlandı'], useCase:'AI raporlarını otomatik e-posta ile paylaş' },
   { id:'discord', name:'Discord', category:'Bildirim', tier:'pro', logo:'https://cdn.simpleicons.org/discord/5865F2', actions:['Kanal mesajı gönder','Uyarı ilet','Bildirim gönder'], useCase:'Discord kanalına otomatik ops bildirimi gönder' },
   { id:'google-chat', name:'Google Chat', category:'Bildirim', tier:'pro', logo:'https://cdn.simpleicons.org/googlechat/00897B', actions:['Space mesajı gönder','Uyarı paylaş'], useCase:"Google Chat Space'ine anlık uyarı ilet" },
   { id:'n8n', name:'n8n', category:'Otomasyon', tier:'pro', logo:'https://cdn.simpleicons.org/n8n/EA4B71', actions:['Workflow tetikle','Veri ilet','Webhook gönder'], useCase:'n8n workflow zincirini Mocksheets verisiyle başlat' },
@@ -5409,7 +5414,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'gmail', name:'Gmail', cat:'Mesajlaşma',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/gmail.svg" width="20" height="20" style="filter:invert(27%) sepia(89%) saturate(1000%) hue-rotate(340deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/gmail.svg" width="20" height="20" style="filter:invert(27%) sepia(89%) saturate(1000%) hue-rotate(340deg);object-fit:contain;" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'✉️\'"/>',
     ops:[{id:'send_email',label:'Email gönder'},{id:'watch_inbox',label:'▶ Yeni email izle (Trigger)',isTrig:true}],
     fields:{
       send_email:[{key:'to',label:'Alıcı',type:'text',ph:'ornek@email.com'},{key:'subject',label:'Konu',type:'text',ph:'Haftalık Rapor'},{key:'body',label:'İçerik',type:'area',ph:'Merhaba,\n\n{{summary}}'}],
@@ -5769,7 +5774,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'monday', name:'Monday.com', cat:'Proje Yönetimi',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/mondaydotcom.svg" width="20" height="20" style="filter:none; object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/mondaydotcom.svg" width="20" height="20" style="object-fit:contain;" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'📅\'"/>',
     ops:[
       {id:'create_item',  label:'Öğe oluştur'},
       {id:'update_item',  label:'Öğe güncelle'},
@@ -6254,7 +6259,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 1: GENEL ARAÇLAR ─────────────────────
   {
     id:'zapier_webhook', name:'Zapier Webhook', cat:'Gelişmiş',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/brevo.svg" width="20" height="20" style="filter:invert(48%) sepia(98%) saturate(400%) hue-rotate(90deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/zapier.svg" width="20" height="20" style="filter:invert(55%) sepia(80%) saturate(700%) hue-rotate(340deg);object-fit:contain;" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'⚡\'"/>',
     ops:[
       {id:'send',    label:"Zapier'a veri gönder"},
       {id:'receive', label:"▶ Zapier'dan veri al (Trigger)", isTrig:true},
@@ -6268,7 +6273,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'make_webhook', name:'Make (Integromat)', cat:'Gelişmiş',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/omnisend.svg" width="20" height="20" style="filter:invert(38%) sepia(60%) saturate(700%) hue-rotate(250deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/make.svg" width="20" height="20" style="filter:invert(38%) sepia(60%) saturate(700%) hue-rotate(250deg);object-fit:contain;" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'🔧\'"/>',
     ops:[
       {id:'send',    label:"Make'e veri gönder"},
       {id:'receive', label:"▶ Make'den veri al (Trigger)", isTrig:true},
@@ -7625,7 +7630,7 @@ const WF_INTEGRATIONS = [
   // ── FAZ 3: İLETİŞİM ALTYAPISI ────────────────
   {
     id:'twilio', name:'Twilio', cat:'İletişim Altyapısı',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/twilio.svg" width="20" height="20" style="filter:invert(27%) sepia(89%) saturate(1000%) hue-rotate(340deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/twilio.svg" width="20" height="20" style="filter:invert(27%) sepia(89%) saturate(1000%) hue-rotate(340deg);object-fit:contain;" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'📱\'"/>',
     color:'#fff0f0', type:'action',
     ops:[
       {id:'send_sms',      label:'SMS gönder'},
@@ -7649,7 +7654,7 @@ const WF_INTEGRATIONS = [
   },
   {
     id:'sendgrid', name:'SendGrid', cat:'İletişim Altyapısı',
-    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/sendgrid.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg); object-fit:contain;" onerror="this.style.display='none';this.parentNode.innerHTML='⚙️'"/>',
+    icon:'<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/twilio.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg);object-fit:contain;" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'📧\'"/>',
     color:'#eff6ff', type:'action',
     ops:[
       {id:'send_email',         label:'Email gönder'},
