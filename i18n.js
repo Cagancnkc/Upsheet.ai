@@ -9,6 +9,7 @@ const TRANSLATIONS = {
     'hero.badge': 'AI Operasyon Asistanı',
     'hero.title': 'Excel Verilerinizi<br><em><span class="accent">Tek Bir Cümleyle Düzenleyin.</span></em>',
     'hero.desc': 'Mocksheets, operasyon yöneticileri için tasarlandı. Formül yok, teknik bilgi yok — sadece ne yapmak istediğinizi yazın, gerisini Mocksheets halleder. <b style="color:var(--ink)">Haftada 7+ saat geri kazanın.</b>',
+    'hero.price.unit': '/ay',
     'hero.cta1': 'Ücretsiz Başla →',
     'hero.cta2': 'Canlı Gör →',
 
@@ -190,6 +191,7 @@ const TRANSLATIONS = {
     'hero.badge': 'AI Operations Assistant',
     'hero.title': 'Organize Your Excel Data<br><em><span class="accent">With a Single Sentence.</span></em>',
     'hero.desc': 'Mocksheets is designed for operations managers. No formulas, no technical knowledge — just write what you want to do, and Mocksheets handles the rest. <b style="color:var(--ink)">Save 7+ hours per week.</b>',
+    'hero.price.unit': '/mo',
     'hero.cta1': 'Start Free →',
     'hero.cta2': 'See Live →',
 
@@ -254,7 +256,7 @@ const TRANSLATIONS = {
 
     'built.with': 'Built with these technologies',
     'sectors.title': 'Works across every industry, every data type',
-    'sectors.ecom.name': 'E-commerce',
+    'sectors.ecom.name': 'Ecommerce',
     'sectors.ecom.desc': 'Orders, inventory, customers',
     'sectors.ops.name': 'Operations',
     'sectors.ops.desc': 'Processes, teams, tasks',
@@ -296,8 +298,8 @@ const TRANSLATIONS = {
     'demo.result.1': '5 rows · sorted',
     'demo.result.2': 'Quarter comparison',
     'demo.result.3': 'Sent to Slack',
-    'pricing.trial.desc': 'For the first month',
-    'pricing.trial.after': '· Standard pricing after',
+    'pricing.trial.desc': 'First month for $1',
+    'pricing.trial.after': '· then standard pricing',
     'source.excel': 'Excel',
     'source.csv': 'CSV',
     'source.pdf': 'PDF',
