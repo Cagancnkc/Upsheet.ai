@@ -2554,14 +2554,7 @@ var _billingPeriod = 'monthly';
 
 var _PRO = {
   monthly: 15,
-  yearly: 144,
-  features: [
-    'Ayda 500 AI komutu',
-    'PDF → tablo dönüştürme',
-    '10 aktif otomasyon',
-    '60 günlük sürüm geçmişi',
-    'E-posta desteği'
-  ]
+  yearly: 144
 };
 
 var _PROMAX = { monthly: 21, yearly: 202 };
@@ -2571,8 +2564,9 @@ function renderProCard() {
   var yearly = _billingPeriod === 'yearly';
   var featEl = document.getElementById('pro-features');
   if (featEl) {
-    featEl.innerHTML = _PRO.features.map(function(f) {
-      return '<li class="ms-row-feat"><span class="ms-feat-dash">—</span> ' + f + '</li>';
+    var featureKeys = ['pricing.pro.feat1','pricing.pro.feat2','pricing.pro.feat3','pricing.pro.feat4','pricing.pro.feat5'];
+    featEl.innerHTML = featureKeys.map(function(k) {
+      return '<li class="ms-row-feat"><span class="ms-feat-dash">—</span> <span data-i18n="' + k + '">' + i18n.t(k) + '</span></li>';
     }).join('');
   }
   var amountEl = document.getElementById('pro-price-amount');
