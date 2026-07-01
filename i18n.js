@@ -160,3 +160,9 @@ const i18n = {
 
 i18n.init();
 window.i18n = i18n;
+
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+  setTimeout(() => { i18n.applyAll(); i18n.updateToggle(); }, 0);
+} else {
+  document.addEventListener('DOMContentLoaded', () => { i18n.applyAll(); i18n.updateToggle(); });
+}
