@@ -1235,99 +1235,52 @@ textarea.inp{height:auto;padding:10px 12px;resize:vertical;min-height:72px}
       <button class="wf-btn" onclick="wfHideConnections()">✕</button>
     </div>
 
-    <div style="flex:1;overflow-y:auto;padding:16px 20px;">
+    <div style="padding:12px 20px;border-bottom:0.5px solid var(--line);display:flex;gap:8px;flex-wrap:wrap;">
+      <input id="conn-search" type="text" placeholder="Uygulama ara..."
+        style="flex:1;min-width:180px;padding:7px 10px;font-size:12px;border:0.5px solid var(--line);border-radius:8px;background:var(--surface-2);color:var(--ink);outline:none;"
+        oninput="wfFilterConnections(this.value)"/>
+      <select id="conn-cat-filter" onchange="wfFilterConnections(document.getElementById('conn-search').value)"
+        style="padding:7px 10px;font-size:12px;border:0.5px solid var(--line);border-radius:8px;background:var(--surface-2);color:var(--ink);outline:none;">
+        <option value="">Tüm kategoriler</option>
+        <option value="Mesajlaşma">Mesajlaşma</option>
+        <option value="E-ticaret">E-ticaret</option>
+        <option value="CRM">CRM</option>
+        <option value="Proje Yönetimi">Proje Yönetimi</option>
+        <option value="Email Pazarlama">Email Pazarlama</option>
+        <option value="Veri & Tablolar">Veri & Tablolar</option>
+        <option value="Finans & Ödeme">Finans & Ödeme</option>
+        <option value="Analitik">Analitik</option>
+        <option value="Depolama">Depolama</option>
+        <option value="Geliştirici">Geliştirici</option>
+        <option value="İnsan Kaynakları">İnsan Kaynakları</option>
+        <option value="Muhasebe & ERP">Muhasebe & ERP</option>
+        <option value="Sosyal Medya">Sosyal Medya</option>
+        <option value="Toplantı & Video">Toplantı & Video</option>
+        <option value="Form & Anket">Form & Anket</option>
+        <option value="Müşteri Hizmetleri">Müşteri Hizmetleri</option>
+        <option value="Veri & İş Zekâsı">Veri & İş Zekâsı</option>
+        <option value="İşbirliği">İşbirliği</option>
+        <option value="Kargo & Lojistik">Kargo & Lojistik</option>
+        <option value="Pazarlama">Pazarlama</option>
+        <option value="Bulut & Altyapı">Bulut & Altyapı</option>
+        <option value="AI & LLM">AI & LLM</option>
+        <option value="E-imza & Döküman">E-imza & Döküman</option>
+        <option value="İçerik & Tasarım">İçerik & Tasarım</option>
+        <option value="Veritabanı">Veritabanı</option>
+        <option value="Eğitim & LMS">Eğitim & LMS</option>
+        <option value="Gelişmiş">Gelişmiş</option>
+        <option value="Microsoft">Microsoft</option>
+        <option value="Güvenlik & Auth">Güvenlik & Auth</option>
+        <option value="Video & Medya">Video & Medya</option>
+        <option value="Etkinlik & Topluluk">Etkinlik & Topluluk</option>
+        <option value="Gayrimenkul">Gayrimenkul</option>
+        <option value="Sağlık">Sağlık</option>
+        <option value="Hukuk">Hukuk</option>
+      </select>
+    </div>
 
-      <div id="conn-google" style="display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:0.5px solid var(--line);">
-        <div style="display:flex;align-items:center;gap:12px;">
-          <div style="width:38px;height:38px;border-radius:10px;background:#EAF1FF;display:flex;align-items:center;justify-content:center;">
-            <img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/google.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg)"/>
-          </div>
-          <div>
-            <p style="font-size:13px;font-weight:500;color:var(--ink);margin:0 0 2px;">Google</p>
-            <p style="font-size:11px;color:var(--muted);margin:0;">Sheets · Gmail · Drive · Calendar</p>
-          </div>
-        </div>
-        <div id="conn-google-status"><button onclick="wfConnectGoogle()" class="wf-btn" style="font-size:12px;">Bağla</button></div>
-      </div>
-
-      <div id="conn-slack" style="display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:0.5px solid var(--line);">
-        <div style="display:flex;align-items:center;gap:12px;">
-          <div style="width:38px;height:38px;border-radius:10px;background:#F4EDE4;display:flex;align-items:center;justify-content:center;">
-            <img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/slack.svg" width="20" height="20"/>
-          </div>
-          <div>
-            <p style="font-size:13px;font-weight:500;color:var(--ink);margin:0 0 2px;">Slack</p>
-            <p style="font-size:11px;color:var(--muted);margin:0;">Kanal mesajları · Dosya gönderme</p>
-          </div>
-        </div>
-        <div id="conn-slack-status"><button onclick="wfConnectSlack()" class="wf-btn" style="font-size:12px;">Bağla</button></div>
-      </div>
-
-      <div id="conn-shopify" style="display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:0.5px solid var(--line);">
-        <div style="display:flex;align-items:center;gap:12px;">
-          <div style="width:38px;height:38px;border-radius:10px;background:#F0F7E6;display:flex;align-items:center;justify-content:center;">
-            <img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/shopify.svg" width="20" height="20" style="filter:invert(62%) sepia(60%) saturate(400%) hue-rotate(60deg)"/>
-          </div>
-          <div>
-            <p style="font-size:13px;font-weight:500;color:var(--ink);margin:0 0 2px;">Shopify</p>
-            <p style="font-size:11px;color:var(--muted);margin:0;">Sipariş · Ürün · Müşteri</p>
-          </div>
-        </div>
-        <div id="conn-shopify-status"><button onclick="wfConnectShopify()" class="wf-btn" style="font-size:12px;">Bağla</button></div>
-      </div>
-
-      <div id="conn-hubspot" style="display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:0.5px solid var(--line);">
-        <div style="display:flex;align-items:center;gap:12px;">
-          <div style="width:38px;height:38px;border-radius:10px;background:#FFF0EC;display:flex;align-items:center;justify-content:center;">
-            <img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/hubspot.svg" width="20" height="20" style="filter:invert(55%) sepia(60%) saturate(700%) hue-rotate(340deg)"/>
-          </div>
-          <div>
-            <p style="font-size:13px;font-weight:500;color:var(--ink);margin:0 0 2px;">HubSpot</p>
-            <p style="font-size:11px;color:var(--muted);margin:0;">CRM · Lead · Deal</p>
-          </div>
-        </div>
-        <div id="conn-hubspot-status"><button onclick="wfConnectHubspot()" class="wf-btn" style="font-size:12px;">Bağla</button></div>
-      </div>
-
-      <div id="conn-stripe" style="display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:0.5px solid var(--line);">
-        <div style="display:flex;align-items:center;gap:12px;">
-          <div style="width:38px;height:38px;border-radius:10px;background:#F0EFFE;display:flex;align-items:center;justify-content:center;">
-            <img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/stripe.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(230deg)"/>
-          </div>
-          <div>
-            <p style="font-size:13px;font-weight:500;color:var(--ink);margin:0 0 2px;">Stripe</p>
-            <p style="font-size:11px;color:var(--muted);margin:0;">Ödemeler · Abonelikler · Faturalar</p>
-          </div>
-        </div>
-        <div id="conn-stripe-status"><button onclick="wfConnectStripe()" class="wf-btn" style="font-size:12px;">Bağla</button></div>
-      </div>
-
-      <div id="conn-notion" style="display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:0.5px solid var(--line);">
-        <div style="display:flex;align-items:center;gap:12px;">
-          <div style="width:38px;height:38px;border-radius:10px;background:#F5F5F5;display:flex;align-items:center;justify-content:center;">
-            <img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/notion.svg" width="20" height="20"/>
-          </div>
-          <div>
-            <p style="font-size:13px;font-weight:500;color:var(--ink);margin:0 0 2px;">Notion</p>
-            <p style="font-size:11px;color:var(--muted);margin:0;">Sayfa · Veritabanı · İçerik</p>
-          </div>
-        </div>
-        <div id="conn-notion-status"><button onclick="wfConnectNotion()" class="wf-btn" style="font-size:12px;">Bağla</button></div>
-      </div>
-
-      <div id="conn-airtable" style="display:flex;align-items:center;justify-content:space-between;padding:14px 0;">
-        <div style="display:flex;align-items:center;gap:12px;">
-          <div style="width:38px;height:38px;border-radius:10px;background:#E6F9FF;display:flex;align-items:center;justify-content:center;">
-            <img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/airtable.svg" width="20" height="20" style="filter:invert(38%) sepia(60%) saturate(700%) hue-rotate(250deg)"/>
-          </div>
-          <div>
-            <p style="font-size:13px;font-weight:500;color:var(--ink);margin:0 0 2px;">Airtable</p>
-            <p style="font-size:11px;color:var(--muted);margin:0;">Tablo · Kayıt · Görünüm</p>
-          </div>
-        </div>
-        <div id="conn-airtable-status"><button onclick="wfConnectAirtable()" class="wf-btn" style="font-size:12px;">Bağla</button></div>
-      </div>
-
+    <div id="conn-list" style="flex:1;overflow-y:auto;padding:8px 20px;">
+      <!-- JS ile dolacak -->
     </div>
 
     <div style="padding:12px 20px;border-top:0.5px solid var(--line);background:var(--surface-2);border-radius:0 0 16px 16px;">
@@ -9468,6 +9421,213 @@ const WF_INTEGRATIONS = [
   },
 ];
 
+// ── WF_CONNECTIONS — WF_INTEGRATIONS'dan türetilir ───────────────────────────
+function getAuthType(id) {
+  const oauth = [
+    'google_sheets','google_drive','google_calendar','google_analytics',
+    'google_ads','google_search_console','google_gemini','google_cloud',
+    'google_bigquery','google_workspace','google_forms',
+    'gmail','slack','hubspot','hubspot_marketing','salesforce',
+    'pipedrive','notion','airtable','trello','asana','monday',
+    'jira','linear','clickup','microsoft_teams','ms_power_automate',
+    'ms_excel_online','ms_outlook','ms_sharepoint','ms_dynamics',
+    'ms_teams_forms','dropbox','onedrive','box','github','gitlab',
+    'zoom','calendly','loom','shopify','woocommerce','bigcommerce',
+    'magento','ecwid','squarespace','wix','wordpress','webflow',
+    'typeform','jotform','surveymonkey','zendesk','intercom',
+    'freshdesk','gorgias','helpscout','bamboohr','workday',
+    'personio','deel','gusto','rippling','xero','freshbooks',
+    'netsuite','sage','odoo','hootsuite','buffer','sprout_social',
+    'later','instagram','youtube','twitter_x','pinterest',
+    'miro','confluence','lark','basecamp','figma','canva',
+    'contentful','ghost','auth0','okta','docusign','pandadoc',
+    'hellosign','adobe_sign','eventbrite','luma','beehiiv',
+    'hotjar','canny','teachable','thinkific','moodle',
+    'tableau','looker','power_bi','amplitude','mixpanel',
+    'vimeo','cloudinary','bannerbear','binance','coingecko',
+    'clio','follow_up_boss','healthie','simplepractice',
+    'notion_forms','airtable_forms','render','railway','retool',
+    'attio','outscraper','klaviyo_sms',
+  ];
+  const apikey = [
+    'stripe','paypal','quickbooks','sendgrid','twilio','vonage',
+    'messagebird','plivo','mailchimp','klaviyo','omnisend',
+    'activecampaign','convertkit','brevo','openai','anthropic',
+    'mistral','cohere','perplexity','replicate','stability_ai',
+    'elevenlabs','semrush','ahrefs','moz',
+    'supabase_db','mysql','postgresql','mongodb','redis',
+    'aws_s3','cloudflare','shipstation',
+    'parasut','logo_yazilim','mikro_yazilim','netsis',
+    'iyzico','stripe_treasury','snowflake',
+  ];
+  const subdomain = ['shopify','woocommerce','hubspot','zendesk','freshdesk','intercom'];
+  if (subdomain.includes(id)) return 'subdomain+oauth';
+  if (oauth.includes(id)) return 'oauth';
+  if (apikey.includes(id)) return 'apikey';
+  return 'coming_soon';
+}
+
+const WF_CONNECTIONS = WF_INTEGRATIONS.map(i => ({
+  id: i.id,
+  name: i.name,
+  cat: i.cat,
+  iconUrl: i.iconUrl || '',
+  iconColor: i.iconColor || '#374151',
+  iconBg: i.iconBg || '#f4f4f5',
+  authType: getAuthType(i.id),
+}));
+
+let _connStatuses = {};
+
+function wfRenderConnections(filter, cat) {
+  const list = document.getElementById('conn-list');
+  if (!list) return;
+  filter = (filter || '').toLowerCase();
+  cat = cat || '';
+
+  const filtered = WF_CONNECTIONS.filter(c => {
+    const matchFilter = !filter || c.name.toLowerCase().includes(filter);
+    const matchCat = !cat || c.cat === cat;
+    return matchFilter && matchCat;
+  });
+
+  if (filtered.length === 0) {
+    list.innerHTML = '<p style="text-align:center;color:var(--muted);padding:24px;font-size:13px;">Uygulama bulunamadı</p>';
+    return;
+  }
+
+  const groups = {};
+  filtered.forEach(c => { if (!groups[c.cat]) groups[c.cat] = []; groups[c.cat].push(c); });
+
+  list.innerHTML = Object.entries(groups).map(([catName, items]) => `
+    <div style="margin-bottom:4px;">
+      <p style="font-size:10px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;padding:10px 0 4px;margin:0;">${catName}</p>
+      ${items.map(c => {
+        const connected = _connStatuses[c.id];
+        const isComingSoon = c.authType === 'coming_soon';
+        return `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:0.5px solid var(--line);">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:34px;height:34px;border-radius:8px;background:${c.iconBg};display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              ${c.iconUrl
+                ? `<img src="${c.iconUrl}" width="18" height="18" style="object-fit:contain;"/>`
+                : `<span style="font-size:13px;font-weight:600;color:${c.iconColor}">${c.name[0]}</span>`}
+            </div>
+            <div>
+              <p style="font-size:12px;font-weight:500;color:var(--ink);margin:0 0 1px;">${c.name}</p>
+              <p style="font-size:10px;color:var(--muted);margin:0;">${c.cat}</p>
+            </div>
+          </div>
+          <div>${connected
+            ? `<div style="display:flex;align-items:center;gap:6px;">
+                <span style="font-size:11px;color:#16a34a;font-weight:500;">✓ Bağlı</span>
+                <button onclick="wfDisconnect('${c.id}')" style="font-size:10px;padding:3px 8px;border:0.5px solid var(--line);border-radius:6px;background:transparent;color:var(--rose);cursor:pointer;">Kaldır</button>
+               </div>`
+            : isComingSoon
+              ? `<span style="font-size:10px;padding:3px 8px;border-radius:6px;background:var(--surface-2);color:var(--muted);">Yakında</span>`
+              : `<button onclick="wfConnectApp('${c.id}','${c.authType}')" style="font-size:11px;padding:5px 12px;border:0.5px solid var(--line);border-radius:7px;background:transparent;color:var(--ink);cursor:pointer;">Bağla</button>`
+          }</div>
+        </div>`;
+      }).join('')}
+    </div>
+  `).join('');
+}
+
+window.wfFilterConnections = function(q) {
+  const cat = document.getElementById('conn-cat-filter')?.value || '';
+  wfRenderConnections(q, cat);
+};
+
+function wfUpdateConnCount() {
+  const count = Object.values(_connStatuses).filter(Boolean).length;
+  const el = document.getElementById('wf-conn-count');
+  if (el) { el.textContent = count; el.style.background = count > 0 ? '#16a34a' : '#9ca3af'; }
+}
+
+function getApiKeyLabel(id) {
+  const labels = {
+    stripe: 'Stripe Secret Key (sk_live_...)',
+    paypal: 'PayPal Client Secret',
+    sendgrid: 'SendGrid API Key',
+    twilio: 'Twilio Auth Token',
+    openai: 'OpenAI API Key (sk-...)',
+    anthropic: 'Anthropic API Key (sk-ant-...)',
+    mailchimp: 'Mailchimp API Key',
+    klaviyo: 'Klaviyo Private API Key',
+    ahrefs: 'Ahrefs API Token',
+    semrush: 'SEMrush API Key',
+    mysql: 'MySQL Connection String',
+    postgresql: 'PostgreSQL Connection String',
+    mongodb: 'MongoDB Connection URI',
+    redis: 'Redis Connection URL',
+    aws_s3: 'AWS Access Key ID + Secret (virgülle ayır)',
+  };
+  return labels[id] || `${id} API Anahtarı`;
+}
+
+window.wfConnectApp = async function(integrationId, authType) {
+  const redirectUrl = encodeURIComponent(window.location.href.split('?')[0] + '?conn_success=' + integrationId);
+
+  if (authType === 'oauth' || authType === 'subdomain+oauth') {
+    if (integrationId === 'shopify' || integrationId === 'woocommerce') {
+      const domain = prompt('Mağaza adresinizi girin (örn: magazam.myshopify.com):');
+      if (!domain) return;
+      window.location.href = `${API}/api/${integrationId}/auth?shop=${encodeURIComponent(domain)}&redirect=${redirectUrl}`;
+      return;
+    }
+    if (['google_sheets','google_drive','google_calendar','google_analytics',
+         'google_ads','google_search_console','google_gemini','gmail',
+         'google_cloud','google_bigquery','google_workspace','google_forms'].includes(integrationId)) {
+      window.location.href = `${API}/api/integrations/google/connect?redirect=${redirectUrl}`;
+      return;
+    }
+    if (['microsoft_teams','ms_power_automate','ms_excel_online','ms_outlook',
+         'ms_sharepoint','ms_dynamics','ms_teams_forms','onedrive'].includes(integrationId)) {
+      window.location.href = `${API}/api/integrations/microsoft/connect?redirect=${redirectUrl}`;
+      return;
+    }
+    window.location.href = `${API}/api/integrations/${integrationId}/connect?redirect=${redirectUrl}`;
+    return;
+  }
+
+  if (authType === 'apikey') {
+    const label = getApiKeyLabel(integrationId);
+    const key = prompt(`${label} girin:`);
+    if (!key) return;
+    try {
+      const h = authHeaders();
+      const res = await fetch(`${API}/api/integrations/${integrationId}/connect`, {
+        method: 'POST',
+        headers: { ...h, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ api_key: key }),
+      });
+      if (res.ok) {
+        _connStatuses[integrationId] = true;
+        wfRenderConnections(
+          document.getElementById('conn-search')?.value || '',
+          document.getElementById('conn-cat-filter')?.value || ''
+        );
+        wfToast(`✓ ${integrationId} bağlandı`);
+        wfUpdateConnCount();
+      } else {
+        alert('Bağlantı başarısız. Anahtarı kontrol edin.');
+      }
+    } catch (e) { alert('Hata: ' + e.message); }
+  }
+};
+
+// conn_success URL param kontrolü (OAuth geri dönüşü)
+(function() {
+  const params = new URLSearchParams(window.location.search);
+  const connSuccess = params.get('conn_success');
+  if (connSuccess) {
+    _connStatuses[connSuccess] = true;
+    setTimeout(() => wfToast(`✓ ${connSuccess} başarıyla bağlandı`), 500);
+    const url = new URL(window.location);
+    url.searchParams.delete('conn_success');
+    window.history.replaceState({}, '', url);
+  }
+})();
+
 function wfRenderSidebar(q) {
   var el = document.getElementById('wf-node-list');
   if (!el) return;
@@ -9782,110 +9942,34 @@ ReactDOM.createRoot(document.getElementById('wf-rf-root')).render(
 // ── Bağlantılarım paneli ──────────────────────────────────────────────────────
 window.wfShowConnections = async function() {
   document.getElementById('wf-conn-overlay').style.display = 'flex';
-  await wfLoadConnectionStatuses();
+  try {
+    const h = authHeaders();
+    const res = await fetch(API + '/api/integrations/status', { headers: h });
+    if (res.ok) {
+      const data = await res.json();
+      _connStatuses = data;
+      wfUpdateConnCount();
+    }
+  } catch (e) { console.warn('Status yüklenemedi:', e); }
+  wfRenderConnections('', '');
 };
 
 window.wfHideConnections = function() {
   document.getElementById('wf-conn-overlay').style.display = 'none';
 };
 
-async function wfLoadConnectionStatuses() {
+window.wfDisconnect = async function(integrationId) {
+  if (!confirm('Bu bağlantıyı kaldırmak istediğinden emin misin?')) return;
   try {
     const h = authHeaders();
-    const res = await fetch(API + '/api/integrations/status', { headers: h });
-    if (!res.ok) return;
-    const data = await res.json();
-
-    let connectedCount = 0;
-    const integrations = ['google', 'slack', 'shopify', 'hubspot', 'stripe', 'notion', 'airtable'];
-
-    integrations.forEach(key => {
-      const statusEl = document.getElementById(`conn-${key}-status`);
-      if (!statusEl) return;
-      if (data[key]) {
-        connectedCount++;
-        statusEl.innerHTML = `
-          <div style="display:flex;align-items:center;gap:8px;">
-            <span style="font-size:11px;color:#16a34a;font-weight:500;">✓ Bağlı</span>
-            <button onclick="wfDisconnect('${key}')" class="wf-btn" style="font-size:11px;color:var(--rose);padding:4px 8px;">Kaldır</button>
-          </div>`;
-      } else {
-        const cap = key.charAt(0).toUpperCase() + key.slice(1);
-        statusEl.innerHTML = `<button onclick="wfConnect${cap}()" class="wf-btn" style="font-size:12px;">Bağla</button>`;
-      }
-    });
-
-    const countEl = document.getElementById('wf-conn-count');
-    if (countEl) {
-      countEl.textContent = connectedCount;
-      countEl.style.background = connectedCount > 0 ? '#16a34a' : '#9ca3af';
-    }
-  } catch (e) {
-    console.warn('Bağlantı durumları yüklenemedi:', e);
-  }
-}
-
-window.wfConnectGoogle = function() {
-  window.location.href = API + '/api/integrations/google/connect?redirect=' +
-    encodeURIComponent(window.location.href);
-};
-
-window.wfConnectSlack = function() {
-  window.location.href = API + '/api/integrations/slack/connect?redirect=' +
-    encodeURIComponent(window.location.href);
-};
-
-window.wfConnectShopify = function() {
-  const domain = prompt('Shopify mağaza adresinizi girin (örn: magazam.myshopify.com):');
-  if (!domain) return;
-  window.location.href = API + '/api/shopify/auth?shop=' + encodeURIComponent(domain) +
-    '&redirect=' + encodeURIComponent(window.location.href);
-};
-
-window.wfConnectHubspot = function() {
-  window.location.href = API + '/api/integrations/hubspot/connect?redirect=' +
-    encodeURIComponent(window.location.href);
-};
-
-window.wfConnectStripe = async function() {
-  const key = prompt('Stripe API anahtarınızı girin (sk_live_... veya sk_test_...):');
-  if (!key) return;
-  try {
-    const h = authHeaders();
-    const res = await fetch(API + '/api/integrations/stripe/connect', {
-      method: 'POST', headers: h,
-      body: JSON.stringify({ api_key: key }),
-    });
-    if (res.ok) { alert('Stripe bağlandı ✓'); wfLoadConnectionStatuses(); }
-    else alert('Bağlantı başarısız. API anahtarını kontrol edin.');
-  } catch (e) { alert('Hata: ' + e.message); }
-};
-
-window.wfConnectNotion = function() {
-  window.location.href = API + '/api/integrations/notion/connect?redirect=' +
-    encodeURIComponent(window.location.href);
-};
-
-window.wfConnectAirtable = async function() {
-  const key = prompt('Airtable Personal Access Token girin:');
-  if (!key) return;
-  try {
-    const h = authHeaders();
-    const res = await fetch(API + '/api/integrations/airtable/connect', {
-      method: 'POST', headers: h,
-      body: JSON.stringify({ api_key: key }),
-    });
-    if (res.ok) { alert('Airtable bağlandı ✓'); wfLoadConnectionStatuses(); }
-    else alert('Bağlantı başarısız.');
-  } catch (e) { alert('Hata: ' + e.message); }
-};
-
-window.wfDisconnect = async function(integration) {
-  if (!confirm(`${integration} bağlantısını kaldırmak istediğinizden emin misiniz?`)) return;
-  try {
-    const h = authHeaders();
-    await fetch(API + `/api/integrations/${integration}/disconnect`, { method: 'DELETE', headers: h });
-    wfLoadConnectionStatuses();
+    await fetch(`${API}/api/integrations/${integrationId}/disconnect`, { method: 'DELETE', headers: h });
+    _connStatuses[integrationId] = false;
+    wfRenderConnections(
+      document.getElementById('conn-search')?.value || '',
+      document.getElementById('conn-cat-filter')?.value || ''
+    );
+    wfUpdateConnCount();
+    wfToast(`${integrationId} bağlantısı kaldırıldı`);
   } catch (e) { console.warn('Bağlantı kaldırılamadı:', e); }
 };
 </script>
