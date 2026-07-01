@@ -1172,6 +1172,10 @@ textarea.inp{height:auto;padding:10px 12px;resize:vertical;min-height:72px}
       <button class="wf-btn violet" onclick="wfRun()">
         <i class="ti ti-player-play" aria-hidden="true"></i> Çalıştır
       </button>
+      <button class="wf-btn" onclick="wfShowConnections()" id="wf-conn-btn">
+        🔗 Bağlantılarım
+        <span id="wf-conn-count" style="background:#9ca3af;color:#fff;border-radius:20px;padding:1px 6px;font-size:10px;margin-left:4px;">0</span>
+      </button>
     </div>
   </div>
 
@@ -1217,6 +1221,122 @@ textarea.inp{height:auto;padding:10px 12px;resize:vertical;min-height:72px}
     <span>Delete → sil · Sürükle → bağla</span>
   </div>
 
+</div>
+
+<!-- Bağlantılarım overlay -->
+<div id="wf-conn-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:600;align-items:center;justify-content:center;" onclick="wfHideConnections()">
+  <div style="background:var(--surface);border-radius:16px;width:580px;max-height:85vh;display:flex;flex-direction:column;border:0.5px solid var(--line);" onclick="event.stopPropagation()">
+
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:0.5px solid var(--line);">
+      <div>
+        <p style="font-size:15px;font-weight:500;color:var(--ink);margin:0 0 2px;">Bağlantılarım</p>
+        <p style="font-size:12px;color:var(--muted);margin:0;">Workflow'larında kullanmak istediğin uygulamaları bağla</p>
+      </div>
+      <button class="wf-btn" onclick="wfHideConnections()">✕</button>
+    </div>
+
+    <div style="flex:1;overflow-y:auto;padding:16px 20px;">
+
+      <div id="conn-google" style="display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:0.5px solid var(--line);">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="width:38px;height:38px;border-radius:10px;background:#EAF1FF;display:flex;align-items:center;justify-content:center;">
+            <img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/google.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(190deg)"/>
+          </div>
+          <div>
+            <p style="font-size:13px;font-weight:500;color:var(--ink);margin:0 0 2px;">Google</p>
+            <p style="font-size:11px;color:var(--muted);margin:0;">Sheets · Gmail · Drive · Calendar</p>
+          </div>
+        </div>
+        <div id="conn-google-status"><button onclick="wfConnectGoogle()" class="wf-btn" style="font-size:12px;">Bağla</button></div>
+      </div>
+
+      <div id="conn-slack" style="display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:0.5px solid var(--line);">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="width:38px;height:38px;border-radius:10px;background:#F4EDE4;display:flex;align-items:center;justify-content:center;">
+            <img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/slack.svg" width="20" height="20"/>
+          </div>
+          <div>
+            <p style="font-size:13px;font-weight:500;color:var(--ink);margin:0 0 2px;">Slack</p>
+            <p style="font-size:11px;color:var(--muted);margin:0;">Kanal mesajları · Dosya gönderme</p>
+          </div>
+        </div>
+        <div id="conn-slack-status"><button onclick="wfConnectSlack()" class="wf-btn" style="font-size:12px;">Bağla</button></div>
+      </div>
+
+      <div id="conn-shopify" style="display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:0.5px solid var(--line);">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="width:38px;height:38px;border-radius:10px;background:#F0F7E6;display:flex;align-items:center;justify-content:center;">
+            <img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/shopify.svg" width="20" height="20" style="filter:invert(62%) sepia(60%) saturate(400%) hue-rotate(60deg)"/>
+          </div>
+          <div>
+            <p style="font-size:13px;font-weight:500;color:var(--ink);margin:0 0 2px;">Shopify</p>
+            <p style="font-size:11px;color:var(--muted);margin:0;">Sipariş · Ürün · Müşteri</p>
+          </div>
+        </div>
+        <div id="conn-shopify-status"><button onclick="wfConnectShopify()" class="wf-btn" style="font-size:12px;">Bağla</button></div>
+      </div>
+
+      <div id="conn-hubspot" style="display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:0.5px solid var(--line);">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="width:38px;height:38px;border-radius:10px;background:#FFF0EC;display:flex;align-items:center;justify-content:center;">
+            <img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/hubspot.svg" width="20" height="20" style="filter:invert(55%) sepia(60%) saturate(700%) hue-rotate(340deg)"/>
+          </div>
+          <div>
+            <p style="font-size:13px;font-weight:500;color:var(--ink);margin:0 0 2px;">HubSpot</p>
+            <p style="font-size:11px;color:var(--muted);margin:0;">CRM · Lead · Deal</p>
+          </div>
+        </div>
+        <div id="conn-hubspot-status"><button onclick="wfConnectHubspot()" class="wf-btn" style="font-size:12px;">Bağla</button></div>
+      </div>
+
+      <div id="conn-stripe" style="display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:0.5px solid var(--line);">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="width:38px;height:38px;border-radius:10px;background:#F0EFFE;display:flex;align-items:center;justify-content:center;">
+            <img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/stripe.svg" width="20" height="20" style="filter:invert(38%) sepia(80%) saturate(700%) hue-rotate(230deg)"/>
+          </div>
+          <div>
+            <p style="font-size:13px;font-weight:500;color:var(--ink);margin:0 0 2px;">Stripe</p>
+            <p style="font-size:11px;color:var(--muted);margin:0;">Ödemeler · Abonelikler · Faturalar</p>
+          </div>
+        </div>
+        <div id="conn-stripe-status"><button onclick="wfConnectStripe()" class="wf-btn" style="font-size:12px;">Bağla</button></div>
+      </div>
+
+      <div id="conn-notion" style="display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:0.5px solid var(--line);">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="width:38px;height:38px;border-radius:10px;background:#F5F5F5;display:flex;align-items:center;justify-content:center;">
+            <img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/notion.svg" width="20" height="20"/>
+          </div>
+          <div>
+            <p style="font-size:13px;font-weight:500;color:var(--ink);margin:0 0 2px;">Notion</p>
+            <p style="font-size:11px;color:var(--muted);margin:0;">Sayfa · Veritabanı · İçerik</p>
+          </div>
+        </div>
+        <div id="conn-notion-status"><button onclick="wfConnectNotion()" class="wf-btn" style="font-size:12px;">Bağla</button></div>
+      </div>
+
+      <div id="conn-airtable" style="display:flex;align-items:center;justify-content:space-between;padding:14px 0;">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="width:38px;height:38px;border-radius:10px;background:#E6F9FF;display:flex;align-items:center;justify-content:center;">
+            <img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/airtable.svg" width="20" height="20" style="filter:invert(38%) sepia(60%) saturate(700%) hue-rotate(250deg)"/>
+          </div>
+          <div>
+            <p style="font-size:13px;font-weight:500;color:var(--ink);margin:0 0 2px;">Airtable</p>
+            <p style="font-size:11px;color:var(--muted);margin:0;">Tablo · Kayıt · Görünüm</p>
+          </div>
+        </div>
+        <div id="conn-airtable-status"><button onclick="wfConnectAirtable()" class="wf-btn" style="font-size:12px;">Bağla</button></div>
+      </div>
+
+    </div>
+
+    <div style="padding:12px 20px;border-top:0.5px solid var(--line);background:var(--surface-2);border-radius:0 0 16px 16px;">
+      <p style="font-size:11px;color:var(--muted);margin:0;text-align:center;">
+        Bağladığın uygulamalar workflow node'larında otomatik kullanılır. Veriler şifreli saklanır.
+      </p>
+    </div>
+
+  </div>
 </div>
 
 <!-- Workflow listesi overlay -->
@@ -9658,6 +9778,116 @@ function WFApp() {
 ReactDOM.createRoot(document.getElementById('wf-rf-root')).render(
   <ReactFlowProvider><WFApp/></ReactFlowProvider>
 );
+
+// ── Bağlantılarım paneli ──────────────────────────────────────────────────────
+window.wfShowConnections = async function() {
+  document.getElementById('wf-conn-overlay').style.display = 'flex';
+  await wfLoadConnectionStatuses();
+};
+
+window.wfHideConnections = function() {
+  document.getElementById('wf-conn-overlay').style.display = 'none';
+};
+
+async function wfLoadConnectionStatuses() {
+  try {
+    const h = authHeaders();
+    const res = await fetch(API + '/api/integrations/status', { headers: h });
+    if (!res.ok) return;
+    const data = await res.json();
+
+    let connectedCount = 0;
+    const integrations = ['google', 'slack', 'shopify', 'hubspot', 'stripe', 'notion', 'airtable'];
+
+    integrations.forEach(key => {
+      const statusEl = document.getElementById(`conn-${key}-status`);
+      if (!statusEl) return;
+      if (data[key]) {
+        connectedCount++;
+        statusEl.innerHTML = `
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:11px;color:#16a34a;font-weight:500;">✓ Bağlı</span>
+            <button onclick="wfDisconnect('${key}')" class="wf-btn" style="font-size:11px;color:var(--rose);padding:4px 8px;">Kaldır</button>
+          </div>`;
+      } else {
+        const cap = key.charAt(0).toUpperCase() + key.slice(1);
+        statusEl.innerHTML = `<button onclick="wfConnect${cap}()" class="wf-btn" style="font-size:12px;">Bağla</button>`;
+      }
+    });
+
+    const countEl = document.getElementById('wf-conn-count');
+    if (countEl) {
+      countEl.textContent = connectedCount;
+      countEl.style.background = connectedCount > 0 ? '#16a34a' : '#9ca3af';
+    }
+  } catch (e) {
+    console.warn('Bağlantı durumları yüklenemedi:', e);
+  }
+}
+
+window.wfConnectGoogle = function() {
+  window.location.href = API + '/api/integrations/google/connect?redirect=' +
+    encodeURIComponent(window.location.href);
+};
+
+window.wfConnectSlack = function() {
+  window.location.href = API + '/api/integrations/slack/connect?redirect=' +
+    encodeURIComponent(window.location.href);
+};
+
+window.wfConnectShopify = function() {
+  const domain = prompt('Shopify mağaza adresinizi girin (örn: magazam.myshopify.com):');
+  if (!domain) return;
+  window.location.href = API + '/api/shopify/auth?shop=' + encodeURIComponent(domain) +
+    '&redirect=' + encodeURIComponent(window.location.href);
+};
+
+window.wfConnectHubspot = function() {
+  window.location.href = API + '/api/integrations/hubspot/connect?redirect=' +
+    encodeURIComponent(window.location.href);
+};
+
+window.wfConnectStripe = async function() {
+  const key = prompt('Stripe API anahtarınızı girin (sk_live_... veya sk_test_...):');
+  if (!key) return;
+  try {
+    const h = authHeaders();
+    const res = await fetch(API + '/api/integrations/stripe/connect', {
+      method: 'POST', headers: h,
+      body: JSON.stringify({ api_key: key }),
+    });
+    if (res.ok) { alert('Stripe bağlandı ✓'); wfLoadConnectionStatuses(); }
+    else alert('Bağlantı başarısız. API anahtarını kontrol edin.');
+  } catch (e) { alert('Hata: ' + e.message); }
+};
+
+window.wfConnectNotion = function() {
+  window.location.href = API + '/api/integrations/notion/connect?redirect=' +
+    encodeURIComponent(window.location.href);
+};
+
+window.wfConnectAirtable = async function() {
+  const key = prompt('Airtable Personal Access Token girin:');
+  if (!key) return;
+  try {
+    const h = authHeaders();
+    const res = await fetch(API + '/api/integrations/airtable/connect', {
+      method: 'POST', headers: h,
+      body: JSON.stringify({ api_key: key }),
+    });
+    if (res.ok) { alert('Airtable bağlandı ✓'); wfLoadConnectionStatuses(); }
+    else alert('Bağlantı başarısız.');
+  } catch (e) { alert('Hata: ' + e.message); }
+};
+
+window.wfDisconnect = async function(integration) {
+  if (!confirm(`${integration} bağlantısını kaldırmak istediğinizden emin misiniz?`)) return;
+  try {
+    const h = authHeaders();
+    await fetch(API + `/api/integrations/${integration}/disconnect`, { method: 'DELETE', headers: h });
+    wfLoadConnectionStatuses();
+  } catch (e) { console.warn('Bağlantı kaldırılamadı:', e); }
+};
 </script>
 
 </body>
