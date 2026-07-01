@@ -153,6 +153,10 @@ const TRANSLATIONS = {
     'pricing.team.feat6': 'Özel hesap yöneticisi',
     'pricing.team.period': '/ay · 5 koltuk',
     'pricing.team.badge': '⭐ En İyi Değer',
+    'pricing.free.cta': 'Google ile Kayıt Ol',
+    'pricing.pro.cta': "Pro'ya Geç",
+    'pricing.promax.cta': "Pro Max'a Geç",
+    'pricing.team.cta': 'Takım Kur',
 
     'faq.q1': 'Verilerim güvende mi?',
     'faq.a1': 'Tüm veriler Supabase (PostgreSQL) üzerinde şifreli saklanır. GDPR ve KVKK uyumlu altyapı. Verileriniz üçüncü taraflarla paylaşılmaz. Dilediğiniz zaman hesabınızı ve tüm verilerinizi silebilirsiniz.',
@@ -330,6 +334,10 @@ const TRANSLATIONS = {
     'pricing.team.feat6': 'Dedicated account manager',
     'pricing.team.period': '/mo · 5 seats',
     'pricing.team.badge': '⭐ Best Value',
+    'pricing.free.cta': 'Sign up with Google',
+    'pricing.pro.cta': 'Get Pro',
+    'pricing.promax.cta': 'Get Pro Max',
+    'pricing.team.cta': 'Start Team',
 
     'faq.q1': 'Is my data safe?',
     'faq.a1': 'All data is encrypted and stored on Supabase (PostgreSQL). GDPR and KVKK compliant infrastructure. Your data is never shared with third parties. You can delete your account and all data anytime.',
