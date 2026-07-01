@@ -1076,6 +1076,7 @@
         y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
     })(window, document, "clarity", "script", "xa2q453j9l");
 </script>
+<script src="/i18n.js"></script>
 </head>
 <body>
 
@@ -1088,17 +1089,18 @@
       <span class="brand-name">mocksheets<span class="dot">.</span></span>
     </a>
     <div class="nav-links">
-      <a href="#features">Özellikler</a>
-      <a href="#integrations">Otomasyonlar</a>
-      <a href="#pricing">Fiyatlar</a>
+      <a href="#features" data-i18n="nav.features">Özellikler</a>
+      <a href="#integrations" data-i18n="nav.automations">Otomasyonlar</a>
+      <a href="#pricing" data-i18n="nav.pricing">Fiyatlar</a>
     </div>
     <div class="nav-cta">
       <button class="theme-pill" id="indexThemeBtn" onclick="toggleIndexTheme()" aria-label="Temayı değiştir">
         <svg id="indexThemeIcon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg>
         <span id="indexThemeLabel">Koyu</span>
       </button>
-      <a href="/auth" class="btn btn-ghost">Giriş Yap</a>
-      <a href="/auth" class="btn btn-dark">Ücretsiz Başla →</a>
+      <button id="lang-toggle" onclick="i18n.toggle()" style="padding:6px 12px;border:0.5px solid var(--line);border-radius:8px;background:transparent;color:var(--ink);font-size:12px;font-weight:500;cursor:pointer;letter-spacing:.04em;">EN</button>
+      <a href="/auth" class="btn btn-ghost" data-i18n="nav.login">Giriş Yap</a>
+      <a href="/auth" class="btn btn-dark" data-i18n="nav.start">Ücretsiz Başla →</a>
     </div>
   </div>
 </nav>
@@ -1108,14 +1110,14 @@
 <!-- HERO -->
 <section class="hero">
   <div class="wrap">
-    <span class="eyebrow">AI Operasyon Asistanı</span>
+    <span class="eyebrow" data-i18n="hero.badge">AI Operasyon Asistanı</span>
 
-    <h1>
+    <h1 data-i18n-html="hero.title">
       Excel Verilerinizi<br>
       <em><span class="accent">Tek Bir Cümleyle Düzenleyin.</span></em>
     </h1>
 
-    <p class="hero-sub">
+    <p class="hero-sub" data-i18n-html="hero.desc">
       Mocksheets, operasyon yöneticileri için tasarlandı. Formül yok, teknik bilgi yok — sadece ne yapmak istediğinizi yazın, gerisini Mocksheets halleder.
       <b style="color:var(--ink)">Haftada 7+ saat geri kazanın.</b>
     </p>
@@ -1130,9 +1132,9 @@
 
     <div class="hero-actions">
       <a href="/auth" class="btn btn-dark" style="display:inline-flex;align-items:center;gap:8px">
-        Ücretsiz Başla →
+        <span data-i18n="hero.cta1">Ücretsiz Başla →</span>
       </a>
-      <a href="#demo" class="btn btn-outline">Canlı Gör →</a>
+      <a href="#demo" class="btn btn-outline" data-i18n="hero.cta2">Canlı Gör →</a>
     </div>
 
 
@@ -1243,8 +1245,8 @@
 
     <!-- Başlık -->
     <div style="text-align:center; margin-bottom:48px;">
-      <h2 style="font-size:clamp(28px,4vw,40px); font-weight:500; color:var(--ink,#111); margin:0 0 14px; line-height:1.2;">Veriden karara.<br>Üç adımda.</h2>
-      <p style="font-size:16px; color:var(--muted,#6b7280); margin:0 auto; max-width:460px; line-height:1.7;">Formül yok. Teknik bilgi yok. Sadece ne istediğinizi yazın — Mocksheets gerisini halleder.</p>
+      <h2 style="font-size:clamp(28px,4vw,40px); font-weight:500; color:var(--ink,#111); margin:0 0 14px; line-height:1.2;" data-i18n-html="steps.title">Veriden karara.<br>Üç adımda.</h2>
+      <p style="font-size:16px; color:var(--muted,#6b7280); margin:0 auto; max-width:460px; line-height:1.7;" data-i18n="steps.sub">Formül yok. Teknik bilgi yok. Sadece ne istediğinizi yazın — Mocksheets gerisini halleder.</p>
     </div>
 
     <!-- 3 Ana Kart -->
@@ -1258,9 +1260,9 @@
           </svg>
         </div>
         <div>
-          <p style="font-size:11px; color:#9ca3af; margin:0 0 8px; letter-spacing:0.08em;">01 · BAĞLA</p>
-          <h3 style="font-size:17px; font-weight:500; color:#111; margin:0 0 8px; line-height:1.4;">Veriniz neredeyse<br>oradan çekin.</h3>
-          <p style="font-size:13px; color:#6b7280; margin:0; line-height:1.7;">200'den fazla kaynakla bağlantı kurun. Veriyi içe aktarın, birleştirin, hazırlayın.</p>
+          <p style="font-size:11px; color:#9ca3af; margin:0 0 8px; letter-spacing:0.08em;" data-i18n="steps.1.label">01 · BAĞLA</p>
+          <h3 style="font-size:17px; font-weight:500; color:#111; margin:0 0 8px; line-height:1.4;" data-i18n-html="steps.1.title">Veriniz neredeyse<br>oradan çekin.</h3>
+          <p style="font-size:13px; color:#6b7280; margin:0; line-height:1.7;" data-i18n="steps.1.desc">200'den fazla kaynakla bağlantı kurun. Veriyi içe aktarın, birleştirin, hazırlayın.</p>
         </div>
         <div style="display:flex; flex-wrap:wrap; gap:7px; margin-top:auto;">
 
@@ -1326,9 +1328,9 @@
         </div>
 
         <div>
-          <p style="font-size:11px; color:#9ca3af; margin:0 0 8px; letter-spacing:0.08em;">02 · YAZ</p>
-          <h3 style="font-size:17px; font-weight:500; color:#111; margin:0 0 8px; line-height:1.4;">Türkçe sorun.<br>Mocksheets anlasın.</h3>
-          <p style="font-size:13px; color:#6b7280; margin:0; line-height:1.7;">Formül değil, cümle yazın. Zincirleme komutlar verin — bağlam hafızada kalır.</p>
+          <p style="font-size:11px; color:#9ca3af; margin:0 0 8px; letter-spacing:0.08em;" data-i18n="steps.2.label">02 · YAZ</p>
+          <h3 style="font-size:17px; font-weight:500; color:#111; margin:0 0 8px; line-height:1.4;" data-i18n-html="steps.2.title">Türkçe sorun.<br>Mocksheets anlasın.</h3>
+          <p style="font-size:13px; color:#6b7280; margin:0; line-height:1.7;" data-i18n="steps.2.desc">Formül değil, cümle yazın. Zincirleme komutlar verin — bağlam hafızada kalır.</p>
         </div>
 
         <div style="background:#f5f3ff; border:0.5px solid #ddd6fe; border-radius:10px; padding:14px; display:flex; flex-direction:column; gap:8px; margin-top:auto;">
@@ -1356,9 +1358,9 @@
         </div>
 
         <div>
-          <p style="font-size:11px; color:#9ca3af; margin:0 0 8px; letter-spacing:0.08em;">03 · ANALİZ ET</p>
-          <h3 style="font-size:17px; font-weight:500; color:#111; margin:0 0 8px; line-height:1.4;">Sonuç saniyeler içinde.<br>Paylaşıma hazır.</h3>
-          <p style="font-size:13px; color:#6b7280; margin:0; line-height:1.7;">Tablo, özet, grafik. Slack, Gmail veya Drive'a tek tıkla gönderin.</p>
+          <p style="font-size:11px; color:#9ca3af; margin:0 0 8px; letter-spacing:0.08em;" data-i18n="steps.3.label">03 · ANALİZ ET</p>
+          <h3 style="font-size:17px; font-weight:500; color:#111; margin:0 0 8px; line-height:1.4;" data-i18n-html="steps.3.title">Sonuç saniyeler içinde.<br>Paylaşıma hazır.</h3>
+          <p style="font-size:13px; color:#6b7280; margin:0; line-height:1.7;" data-i18n="steps.3.desc">Tablo, özet, grafik. Slack, Gmail veya Drive'a tek tıkla gönderin.</p>
         </div>
 
         <div style="display:flex; flex-direction:column; gap:6px; margin-top:auto;">
@@ -1474,7 +1476,7 @@
         <div class="section-eyebrow" style="color:rgba(255,255,255,.6)">— entegrasyonlar</div>
         <h2 class="section-title" style="color:#fff">Operasyon altyapınızın <em class="accent">içinde yaşar.</em></h2>
       </div>
-      <p class="section-sub" style="color:rgba(255,255,255,.7)">
+      <p class="section-sub" style="color:rgba(255,255,255,.7)" data-i18n="integrations.desc">
         Mocksheets, ekibinizin zaten kullandığı araçlarla bağlantı kurar. Veri içe aktar,
         otomasyonları tetikle, tablolarını senkronize et.
       </p>
@@ -2019,17 +2021,17 @@
         <span>Bu hafta katılan ekipler için —</span>
         <span class="ms-eyebrow-mono">HAZİRAN'26 KAMPANYASI</span>
       </div>
-      <h2 class="ms-title">
+      <h2 class="ms-title" data-i18n-html="pricing.title">
         Bir öğle yemeği fiyatına,<br/>
         <span class="ms-title-italic">bir operasyon uzmanı verimi.</span>
       </h2>
       <div class="ms-hero-bottom">
-        <p class="ms-lede">Ücretsiz planla başla, ihtiyacın olduğunda yükselt. Sözleşme yok, gizli ücret yok. İstediğin zaman iptal et.</p>
+        <p class="ms-lede" data-i18n="pricing.desc">Ücretsiz planla başla, ihtiyacın olduğunda yükselt. Sözleşme yok, gizli ücret yok. İstediğin zaman iptal et.</p>
         <div class="ms-toggle-wrap">
           <div class="ms-toggle-label">Faturalama</div>
           <div class="ms-toggle" role="tablist" aria-label="Faturalama dönemi">
-            <button id="ms-btn-monthly" class="ms-active" role="tab" aria-selected="true" onclick="setPricingPeriod('monthly')">Aylık</button>
-            <button id="ms-btn-yearly" role="tab" aria-selected="false" onclick="setPricingPeriod('yearly')">Yıllık <span class="ms-save-tag">-20%</span></button>
+            <button id="ms-btn-monthly" class="ms-active" role="tab" aria-selected="true" onclick="setPricingPeriod('monthly')" data-i18n="pricing.monthly">Aylık</button>
+            <button id="ms-btn-yearly" role="tab" aria-selected="false" onclick="setPricingPeriod('yearly')" data-i18n-html="pricing.yearly">Yıllık <span class="ms-save-tag">-20%</span></button>
           </div>
         </div>
       </div>
@@ -2040,7 +2042,7 @@
       <article class="ms-row">
         <div class="ms-row-idx">01</div>
         <div class="ms-row-meta">
-          <div class="ms-row-name">Başlangıç</div>
+          <div class="ms-row-name" data-i18n="pricing.free.name">Başlangıç</div>
           <div class="ms-row-tag">Mocksheets'i keşfetmek isteyenler için. Kart gerekmez.</div>
           <ul class="ms-row-feats">
             <li class="ms-row-feat"><span class="ms-feat-dash">—</span> Günde 5 AI komutu</li>
@@ -2070,7 +2072,7 @@
       <article class="ms-row" id="pro-card">
         <div class="ms-row-idx">02</div>
         <div class="ms-row-meta">
-          <div class="ms-row-name">Pro</div>
+          <div class="ms-row-name" data-i18n="pricing.pro.name">Pro</div>
           <div class="ms-row-tag">İlk 1 ay $1/ay · Kampanya bitmeden yakala.</div>
           <div class="ms-row-hook">Düzenli Excel kullanan operasyon yöneticileri için.</div>
           <ul class="ms-row-feats" id="pro-features">
@@ -2100,7 +2102,7 @@
         <div class="ms-row-idx">03</div>
         <div class="ms-row-meta">
           <div class="team-featured-badge">⭐ En İyi Değer</div>
-          <div class="ms-row-name">Pro Max</div>
+          <div class="ms-row-name" data-i18n="pricing.promax.name">Pro Max</div>
           <div class="ms-row-tag">Operasyonunu tam otomatize etmek isteyen yöneticiler için.</div>
           <ul class="ms-row-feats">
             <li class="ms-row-feat"><span class="ms-feat-dash" style="color:var(--accent)">✦</span> AI Agents (sınırsız)</li>
@@ -2133,7 +2135,7 @@
       <article class="ms-row" id="team-card" style="opacity:0.82">
         <div class="ms-row-idx">04</div>
         <div class="ms-row-meta">
-          <div class="ms-row-name">Takım</div>
+          <div class="ms-row-name" data-i18n="pricing.team.name">Takım</div>
           <div class="ms-row-tag">İlk 1 ay $1/ay · 5+ kişilik operasyon ekipleri için. Tek fatura.</div>
           <ul class="ms-row-feats">
             <li class="ms-row-feat"><span class="ms-feat-dash">—</span> Sınırsız AI komutu</li>
@@ -2177,8 +2179,8 @@
 <!-- FAQ ACCORDION -->
 <section id="faq" style="padding:80px 0 40px;background:var(--paper)">
   <div class="wrap" style="max-width:720px">
-    <h2 style="font-size:clamp(24px,4vw,36px);font-weight:800;letter-spacing:-.02em;margin:0 0 8px;text-align:center">Sık Sorulan Sorular</h2>
-    <p style="text-align:center;color:var(--muted,#6B7280);margin:0 0 40px">Aklınızdaki soruların yanıtı burada.</p>
+    <h2 style="font-size:clamp(24px,4vw,36px);font-weight:800;letter-spacing:-.02em;margin:0 0 8px;text-align:center" data-i18n="faq.title">Sık Sorulan Sorular</h2>
+    <p style="text-align:center;color:var(--muted,#6B7280);margin:0 0 40px" data-i18n="faq.sub">Aklınızdaki soruların yanıtı burada.</p>
 
     <div class="faq-list">
 
@@ -2306,10 +2308,10 @@ function toggleFaq(btn) {
   <div class="wrap">
     <div class="cta">
       <div class="micro" style="color:#ffffff80;margin-bottom:20px">— hadi başlayalım</div>
-      <h2>AI desteğiyle operasyon yönetmenin <em>en iyi yolu.</em></h2>
+      <h2 data-i18n-html="cta.title">AI desteğiyle operasyon yönetmenin <em>en iyi yolu.</em></h2>
       <div class="cta-actions">
-        <a href="/auth" class="btn btn-dark" style="display:inline-flex;align-items:center;gap:8px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="18" height="18" style="flex-shrink:0"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>Google ile Ücretsiz Başla</a>
-        <a href="/contact" class="btn btn-outline">Satışla Konuş</a>
+        <a href="/auth" class="btn btn-dark" style="display:inline-flex;align-items:center;gap:8px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="18" height="18" style="flex-shrink:0"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg><span data-i18n="cta.btn1">Google ile Ücretsiz Başla</span></a>
+        <a href="/contact" class="btn btn-outline" data-i18n="cta.btn2">Satışla Konuş</a>
       </div>
       <div class="cta-foot">
         <span><b>GDPR uyumlu</b> · veriniz sizin</span>
@@ -2328,13 +2330,13 @@ function toggleFaq(btn) {
           <img src="/images/brand/logo-128x128.png" alt="mocksheets" style="width:24px;height:24px;object-fit:contain;flex-shrink:0" loading="lazy">
           <span class="brand-name">mocksheets<span class="dot">.</span></span>
         </a>
-        <p style="margin:14px 0 0;max-width:36ch;color:var(--mute);font-size:14px;line-height:1.55">
+        <p style="margin:14px 0 0;max-width:36ch;color:var(--mute);font-size:14px;line-height:1.55" data-i18n="footer.desc">
           Operasyon ve e-ticaret ekipleri için tarayıcı tabanlı AI tablo asistanı.
         </p>
         <address style="font-style:normal"><a href="mailto:destek@mocksheets.com" style="display:inline-block;margin-top:10px;font-size:13px;color:var(--mute);text-decoration:none;">destek@mocksheets.com</a></address>
       </div>
       <div>
-        <h5>Ürün</h5>
+        <h5 data-i18n="footer.product">Ürün</h5>
         <ul>
           <li><a href="#features">Özellikler</a></li>
           <li><a href="#pricing">Fiyatlar</a></li>
@@ -2342,13 +2344,13 @@ function toggleFaq(btn) {
         </ul>
       </div>
       <div>
-        <h5>Kaynaklar</h5>
+        <h5 data-i18n="footer.resources">Kaynaklar</h5>
         <ul>
           <li><a href="/blog">Blog</a></li>
         </ul>
       </div>
       <div>
-        <h5>Şirket</h5>
+        <h5 data-i18n="footer.company">Şirket</h5>
         <ul>
           <li><a href="/about">Hakkımızda</a></li>
           <li><a href="/contact">İletişim</a></li>
@@ -2358,7 +2360,7 @@ function toggleFaq(btn) {
         </ul>
       </div>
       <div>
-        <h5>Araçlar</h5>
+        <h5 data-i18n="footer.tools">Araçlar</h5>
         <ul>
           <li><a href="/mock-data-generator">Örnek Veri Üretici</a></li>
           <li><a href="/fake-data-generator">Excel Veri Oluşturucu</a></li>
