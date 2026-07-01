@@ -1460,3 +1460,108 @@
 }
 [data-theme="dark"] #features h2,
 [data-theme="dark"] #features h3 { color: var(--fg, #f9fafb) !important; }
+
+/* ============ Mobile Tab Bar ============ */
+.mobile-tabbar {
+  display: none;
+  position: fixed; bottom: 0; left: 0; right: 0;
+  height: 60px; z-index: 400;
+  background: var(--surface);
+  border-top: 1px solid var(--line);
+  justify-content: space-around; align-items: center;
+}
+.mobile-tabbar .tab-btn {
+  flex: 1; display: flex; flex-direction: column; align-items: center;
+  gap: 3px; padding: 8px 0;
+  background: none; border: none; cursor: pointer;
+  color: var(--ink-4); font-size: 10px; font-weight: 500;
+  transition: color 0.15s;
+}
+.mobile-tabbar .tab-btn svg { stroke: currentColor; }
+.mobile-tabbar .tab-btn.active { color: var(--brand); }
+.mobile-tabbar .tab-btn:active { opacity: 0.7; }
+
+.drawer-backdrop {
+  display: none;
+  position: fixed; inset: 0; z-index: 299;
+  background: rgba(0,0,0,0.4);
+}
+.drawer-backdrop.active { display: block; }
+
+/* ============ Tablet (≤1024px) ============ */
+@media (max-width: 1024px) {
+  .app {
+    grid-template-columns: 220px 1fr;
+  }
+  .topbar {
+    grid-template-columns: 220px 1fr auto;
+  }
+  .rail {
+    display: none;
+    position: fixed; top: 0; right: 0; bottom: 0;
+    width: 320px; z-index: 300;
+    transform: translateX(100%);
+    transition: transform 0.25s ease;
+  }
+  .rail.open {
+    display: flex;
+    transform: translateX(0);
+  }
+  .cmd { min-width: 160px; }
+}
+
+/* ============ Mobile (≤768px) ============ */
+@media (max-width: 768px) {
+  .app {
+    grid-template-columns: 1fr;
+    grid-template-rows: 52px minmax(0, 1fr);
+    min-height: 0;
+  }
+  .topbar {
+    grid-template-columns: auto 1fr auto;
+  }
+  .brand { border-right: none; padding: 0 12px; }
+  .brand-name { display: none; }
+  .topbar-search { justify-content: flex-start; padding: 0 8px; }
+  .cmd { min-width: 0; width: 100%; max-width: 220px; }
+
+  /* Sidebar → left drawer */
+  .sidebar {
+    display: none;
+    position: fixed; top: 0; left: 0; bottom: 60px;
+    width: 280px; z-index: 300;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    overflow-y: auto;
+  }
+  .sidebar.open {
+    display: flex;
+    transform: translateX(0);
+  }
+
+  /* Rail → right drawer */
+  .rail {
+    display: none;
+    position: fixed; top: 0; right: 0; bottom: 60px;
+    width: min(320px, 92vw); z-index: 300;
+    transform: translateX(100%);
+    transition: transform 0.25s ease;
+  }
+  .rail.open {
+    display: flex;
+    transform: translateX(0);
+  }
+
+  /* Tab bar visible */
+  .mobile-tabbar { display: flex; }
+
+  /* Statusbar hidden on mobile (tab bar replaces bottom chrome) */
+  .statusbar { display: none; }
+
+  /* Toolbar: allow wrap on very small screens */
+  .toolbar { flex-wrap: nowrap; overflow-x: auto; }
+
+  /* Toolbar buttons slightly smaller */
+  .tb-btn { height: 26px !important; padding: 0 6px !important; font-size: 11px !important; }
+  .tb-icon { width: 26px !important; height: 26px !important; }
+}

@@ -3475,6 +3475,80 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   })();
 })();
+
+/* ============ Mobile Tab Bar ============ */
+(function() {
+  function initMobileNav() {
+    var tabBtns = document.querySelectorAll('.mobile-tabbar .tab-btn');
+    var sidebar = document.querySelector('.sidebar');
+    var rail = document.querySelector('.rail');
+    var backdrop = document.getElementById('drawerBackdrop');
+    if (!backdrop || !sidebar || !rail) return;
+
+    function closeAll() {
+      sidebar.classList.remove('open');
+      rail.classList.remove('open');
+      backdrop.classList.remove('active');
+      tabBtns.forEach(function(b) { b.classList.remove('active'); });
+    }
+
+    tabBtns.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var tab = btn.dataset.tab;
+        if (tab === 'sheet') { closeAll(); btn.classList.add('active'); return; }
+        if (tab === 'ai') {
+          var isOpen = rail.classList.contains('open');
+          closeAll();
+          if (!isOpen) { rail.classList.add('open'); backdrop.classList.add('active'); btn.classList.add('active'); }
+          return;
+        }
+        if (tab === 'menu') {
+          var isOpen = sidebar.classList.contains('open');
+          closeAll();
+          if (!isOpen) { sidebar.classList.add('open'); backdrop.classList.add('active'); btn.classList.add('active'); }
+        }
+      });
+    });
+
+    backdrop.addEventListener('click', closeAll);
+  }
+
+  function onResize() {
+    if (window.innerWidth > 768) {
+      var sidebar = document.querySelector('.sidebar');
+      var rail = document.querySelector('.rail');
+      var backdrop = document.getElementById('drawerBackdrop');
+      if (sidebar) sidebar.classList.remove('open');
+      if (rail) rail.classList.remove('open');
+      if (backdrop) backdrop.classList.remove('active');
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initMobileNav);
+  } else {
+    initMobileNav();
+  }
+  window.addEventListener('resize', onResize);
+})();
 </script>
+
+<!-- Mobile Tab Bar -->
+<nav class="mobile-tabbar" aria-label="Mobil navigasyon">
+  <button class="tab-btn active" data-tab="sheet" aria-label="Sayfa">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18"/></svg>
+    Sayfa
+  </button>
+  <button class="tab-btn" data-tab="ai" aria-label="AI Asistan">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    AI
+  </button>
+  <button class="tab-btn" data-tab="menu" aria-label="Menü">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    Menü
+  </button>
+</nav>
+<div class="drawer-backdrop" id="drawerBackdrop"></div>
+
 </body>
 </html>
