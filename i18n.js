@@ -204,3 +204,6 @@ const i18n = {
 
 i18n.init();
 window.i18n = i18n;
+
+// Debug: konsola yüklendi mesajı yaz
+console.log('[i18n] Yüklendi. Dil:', i18n.lang, '| Key sayısı:', Object.keys(TRANSLATIONS.tr).length);
