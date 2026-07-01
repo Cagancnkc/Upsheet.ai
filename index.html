@@ -1319,7 +1319,7 @@
 
       <!-- KART 2: YAZ (vurgulu) -->
       <div class="step-card-bg" style="background:#fff; border:2px solid #6366f1; border-radius:16px; padding:28px; display:flex; flex-direction:column; gap:18px; position:relative;">
-        <div style="position:absolute; top:-14px; left:50%; transform:translateX(-50%); background:#6366f1; color:#fff; font-size:11px; padding:4px 16px; border-radius:20px; white-space:nowrap; font-weight:500; letter-spacing:0.02em;">En güçlü adım</div>
+        <div style="position:absolute; top:-14px; left:50%; transform:translateX(-50%); background:#6366f1; color:#fff; font-size:11px; padding:4px 16px; border-radius:20px; white-space:nowrap; font-weight:500; letter-spacing:0.02em;"><span data-i18n="steps.2.badge">En güçlü adım</span></div>
 
         <div style="width:40px; height:40px; border-radius:10px; background:#eef2ff; border:0.5px solid #c7d2fe; display:flex; align-items:center; justify-content:center;">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -2045,15 +2045,15 @@
           <div class="ms-row-name" data-i18n="pricing.free.name">Başlangıç</div>
           <div class="ms-row-tag">Mocksheets'i keşfetmek isteyenler için. Kart gerekmez.</div>
           <ul class="ms-row-feats">
-            <li class="ms-row-feat"><span class="ms-feat-dash">—</span> Günde 5 AI komutu</li>
-            <li class="ms-row-feat"><span class="ms-feat-dash">—</span> Google Sheets senkronizasyonu</li>
-            <li class="ms-row-feat"><span class="ms-feat-dash">—</span> TR arayüz</li>
+            <li class="ms-row-feat"><span class="ms-feat-dash">—</span> <span data-i18n="pricing.free.feat1">Günde 5 AI komutu</span></li>
+            <li class="ms-row-feat"><span class="ms-feat-dash">—</span> <span data-i18n="pricing.free.feat2">Google Sheets senkronizasyonu</span></li>
+            <li class="ms-row-feat"><span class="ms-feat-dash">—</span> <span data-i18n="pricing.free.feat3">TR arayüz</span></li>
           </ul>
         </div>
         <div class="ms-row-price">
           <div class="ms-price-big"><span class="ms-price-cur">$</span>0</div>
           <div class="ms-price-sub">
-            <span class="ms-price-after">Sonsuza kadar ücretsiz</span>
+            <span class="ms-price-after" data-i18n="pricing.free.period">Sonsuza kadar ücretsiz</span>
           </div>
         </div>
         <div class="ms-row-cta">
@@ -2314,8 +2314,8 @@ function toggleFaq(btn) {
         <a href="/contact" class="btn btn-outline" data-i18n="cta.btn2">Satışla Konuş</a>
       </div>
       <div class="cta-foot">
-        <span><b>GDPR uyumlu</b> · veriniz sizin</span>
-        <span><b>İstediğin zaman iptal</b> · tek tıkla</span>
+        <span data-i18n-html="gdpr.text"><b>GDPR uyumlu</b> · veriniz sizin</span>
+        <span data-i18n-html="cancel.text"><b>İstediğin zaman iptal</b> · tek tıkla</span>
       </div>
     </div>
   </div>
@@ -2338,35 +2338,35 @@ function toggleFaq(btn) {
       <div>
         <h5 data-i18n="footer.product">Ürün</h5>
         <ul>
-          <li><a href="#features">Özellikler</a></li>
-          <li><a href="#pricing">Fiyatlar</a></li>
-          <li><a href="/automations">Otomasyonlar</a></li>
+          <li><a href="#features" data-i18n="footer.features">Özellikler</a></li>
+          <li><a href="#pricing" data-i18n="footer.pricing">Fiyatlar</a></li>
+          <li><a href="/automations" data-i18n="footer.automations">Otomasyonlar</a></li>
         </ul>
       </div>
       <div>
         <h5 data-i18n="footer.resources">Kaynaklar</h5>
         <ul>
-          <li><a href="/blog">Blog</a></li>
+          <li><a href="/blog" data-i18n="footer.blog">Blog</a></li>
         </ul>
       </div>
       <div>
         <h5 data-i18n="footer.company">Şirket</h5>
         <ul>
-          <li><a href="/about">Hakkımızda</a></li>
-          <li><a href="/contact">İletişim</a></li>
-          <li><a href="/kvkk">KVKK</a></li>
-          <li><a href="/privacy">Gizlilik</a></li>
-          <li><a href="/terms">Kullanım Koşulları</a></li>
+          <li><a href="/about" data-i18n="footer.about">Hakkımızda</a></li>
+          <li><a href="/contact" data-i18n="footer.contact">İletişim</a></li>
+          <li><a href="/kvkk" data-i18n="footer.kvkk">KVKK</a></li>
+          <li><a href="/privacy" data-i18n="footer.privacy">Gizlilik</a></li>
+          <li><a href="/terms" data-i18n="footer.terms">Kullanım Koşulları</a></li>
         </ul>
       </div>
       <div>
         <h5 data-i18n="footer.tools">Araçlar</h5>
         <ul>
-          <li><a href="/mock-data-generator">Örnek Veri Üretici</a></li>
-          <li><a href="/fake-data-generator">Excel Veri Oluşturucu</a></li>
-          <li><a href="/csv-generator">CSV Dosyası Oluştur</a></li>
-          <li><a href="/test-data-generator">Test Verisi Hazırla</a></li>
-          <li><a href="/excel-mock-data">Excel Şablon Verisi</a></li>
+          <li><a href="/mock-data-generator" data-i18n="footer.tool1">Örnek Veri Üretici</a></li>
+          <li><a href="/fake-data-generator" data-i18n="footer.tool2">Excel Veri Oluşturucu</a></li>
+          <li><a href="/csv-generator" data-i18n="footer.tool3">CSV Dosyası Oluştur</a></li>
+          <li><a href="/test-data-generator" data-i18n="footer.tool4">Test Verisi Hazırla</a></li>
+          <li><a href="/excel-mock-data" data-i18n="footer.tool5">Excel Şablon Verisi</a></li>
         </ul>
       </div>
     </div>

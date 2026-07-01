@@ -49,6 +49,27 @@ const TRANSLATIONS = {
     'footer.company': 'Şirket',
     'footer.tools': 'Araçlar',
     'footer.desc': 'Operasyon ve e-ticaret ekipleri için tarayıcı tabanlı AI tablo asistanı.',
+    'footer.features': 'Özellikler',
+    'footer.pricing': 'Fiyatlar',
+    'footer.automations': 'Otomasyonlar',
+    'footer.blog': 'Blog',
+    'footer.about': 'Hakkımızda',
+    'footer.contact': 'İletişim',
+    'footer.kvkk': 'KVKK',
+    'footer.privacy': 'Gizlilik',
+    'footer.terms': 'Kullanım Koşulları',
+    'footer.tool1': 'Örnek Veri Üretici',
+    'footer.tool2': 'Excel Veri Oluşturucu',
+    'footer.tool3': 'CSV Dosyası Oluştur',
+    'footer.tool4': 'Test Verisi Hazırla',
+    'footer.tool5': 'Excel Şablon Verisi',
+    'steps.2.badge': 'En güçlü adım',
+    'pricing.free.period': 'Sonsuza kadar ücretsiz',
+    'pricing.free.feat1': 'Günde 5 AI komutu',
+    'pricing.free.feat2': 'Google Sheets senkronizasyonu',
+    'pricing.free.feat3': 'TR arayüz',
+    'gdpr.text': '<b>GDPR uyumlu</b> · veriniz sizin',
+    'cancel.text': '<b>İstediğin zaman iptal</b> · tek tıkla',
   },
 
   en: {
@@ -101,6 +122,27 @@ const TRANSLATIONS = {
     'footer.company': 'Company',
     'footer.tools': 'Tools',
     'footer.desc': 'Browser-based AI spreadsheet assistant for operations and e-commerce teams.',
+    'footer.features': 'Features',
+    'footer.pricing': 'Pricing',
+    'footer.automations': 'Automations',
+    'footer.blog': 'Blog',
+    'footer.about': 'About',
+    'footer.contact': 'Contact',
+    'footer.kvkk': 'GDPR',
+    'footer.privacy': 'Privacy',
+    'footer.terms': 'Terms of Use',
+    'footer.tool1': 'Sample Data Generator',
+    'footer.tool2': 'Excel Data Creator',
+    'footer.tool3': 'Create CSV File',
+    'footer.tool4': 'Prepare Test Data',
+    'footer.tool5': 'Excel Template Data',
+    'steps.2.badge': 'Most powerful step',
+    'pricing.free.period': 'Free forever',
+    'pricing.free.feat1': '5 AI commands per day',
+    'pricing.free.feat2': 'Google Sheets sync',
+    'pricing.free.feat3': 'TR interface',
+    'gdpr.text': '<b>GDPR compliant</b> · your data is yours',
+    'cancel.text': '<b>Cancel anytime</b> · one click',
   }
 };
 
@@ -147,22 +189,18 @@ const i18n = {
   },
 
   init() {
-    document.addEventListener('DOMContentLoaded', () => {
+    const apply = () => {
       this.applyAll();
       this.updateToggle();
-    });
-    if (document.readyState !== 'loading') {
-      this.applyAll();
-      this.updateToggle();
+    };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', apply);
+    } else {
+      apply();
     }
+    setTimeout(() => { this.applyAll(); }, 500);
   }
 };
 
 i18n.init();
 window.i18n = i18n;
-
-if (document.readyState === 'complete' || document.readyState === 'interactive') {
-  setTimeout(() => { i18n.applyAll(); i18n.updateToggle(); }, 0);
-} else {
-  document.addEventListener('DOMContentLoaded', () => { i18n.applyAll(); i18n.updateToggle(); });
-}
