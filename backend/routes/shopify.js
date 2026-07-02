@@ -47,7 +47,7 @@ router.get('/auth', (req, res) => {
   const base = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 3001}`;
   const redirectUri = encodeURIComponent(`${base}/api/shopify/callback`);
   const scopes = encodeURIComponent(
-    process.env.SHOPIFY_SCOPES || 'read_orders,read_products,read_customers'
+    process.env.SHOPIFY_SCOPES || 'read_orders,read_products,read_customers,read_inventory'
   );
 
   res.redirect(
@@ -218,6 +218,68 @@ router.get('/data', requireAuth, async (req, res) => {
   });
   const shopData = await shopResp.json();
   res.json(shopData);
+});
+
+// ─── GET /api/shopify/sync ────────────────────────────────────────────────────
+router.get('/sync', requireAuth, async (req, res) => {
+  const { data: conn, error: connErr } = await getSupabase()
+    .from('shopify_connections')
+    .select('shop_domain, access_token')
+    .eq('user_id', req.user.id)
+    .single();
+
+  if (connErr || !conn) return res.status(404).json({ error: 'Shopify bağlantısı bulunamadı' });
+
+  const accessToken = decrypt(conn.access_token);
+  if (!accessToken) return res.status(500).json({ error: 'Token çözümlenemedi' });
+
+  const headers = { 'X-Shopify-Access-Token': accessToken };
+  const shop = conn.shop_domain;
+
+  try {
+    const [pResp, oResp] = await Promise.all([
+      fetch(`https://${shop}/admin/api/2024-01/products.json?limit=250`, { headers }),
+      fetch(`https://${shop}/admin/api/2024-01/orders.json?limit=250&status=any`, { headers }),
+    ]);
+    const [pJson, oJson] = await Promise.all([pResp.json(), oResp.json()]);
+
+    const productHeaders = ['urun_adi', 'varyant', 'sku', 'fiyat', 'stok', 'durum', 'kategori', 'olusturma_tarihi'];
+    const productRows = [];
+    for (const p of (pJson.products || [])) {
+      for (const v of (p.variants || [])) {
+        const stock = v.inventory_quantity ?? 0;
+        productRows.push([
+          p.title || '',
+          v.title || '',
+          v.sku || '',
+          v.price || '',
+          stock,
+          stock <= 5 ? 'Kritik' : 'Normal',
+          p.product_type || '',
+          (p.created_at || '').slice(0, 10),
+        ]);
+      }
+    }
+
+    const orderHeaders = ['siparis_no', 'musteri', 'tutar', 'durum', 'kargo_durumu', 'tarih', 'urun_sayisi'];
+    const orderRows = (oJson.orders || []).map(o => [
+      o.name || '',
+      (o.customer ? `${o.customer.first_name || ''} ${o.customer.last_name || ''}`.trim() : '') || o.email || '',
+      o.total_price || '',
+      o.financial_status || '',
+      o.fulfillment_status || 'unfulfilled',
+      (o.created_at || '').slice(0, 10),
+      (o.line_items || []).length,
+    ]);
+
+    res.json({
+      products: { headers: productHeaders, rows: productRows },
+      orders:   { headers: orderHeaders,   rows: orderRows   },
+    });
+  } catch (err) {
+    console.error('[shopify sync]', err.message);
+    res.status(502).json({ error: 'Shopify verisi alınamadı' });
+  }
 });
 
 // ─── DELETE /api/shopify/disconnect ──────────────────────────────────────────

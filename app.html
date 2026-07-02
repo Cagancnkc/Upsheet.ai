@@ -1884,6 +1884,54 @@
       .catch(function() {});
   }
 
+  async function syncShopifyData() {
+    var btn = document.getElementById('shopify-sync-btn');
+    var status = document.getElementById('shopify-sync-status');
+    if (btn) btn.disabled = true;
+    if (status) status.textContent = ' Yükleniyor…';
+    try {
+      var resp = await fetch(apiBase + '/api/shopify/sync', { headers: authHeaders() });
+      if (!resp.ok) throw new Error('sync-failed');
+      var data = await resp.json();
+
+      sheetsData[activeSheetIdx].data = JSON.parse(JSON.stringify(gridData));
+
+      var pData = emptyGridData();
+      data.products.headers.forEach(function(h, c) { if (c < GRID_COLS) pData[0][c].v = h; });
+      data.products.rows.forEach(function(row, i) {
+        var r = i + 1;
+        if (r < GRID_ROWS) row.forEach(function(val, c) {
+          if (c < GRID_COLS) pData[r][c].v = String(val != null ? val : '');
+        });
+      });
+      sheetsData.push({ name: 'Shopify Ürünler', color: 'var(--accent)', data: pData });
+
+      var oData = emptyGridData();
+      data.orders.headers.forEach(function(h, c) { if (c < GRID_COLS) oData[0][c].v = h; });
+      data.orders.rows.forEach(function(row, i) {
+        var r = i + 1;
+        if (r < GRID_ROWS) row.forEach(function(val, c) {
+          if (c < GRID_COLS) oData[r][c].v = String(val != null ? val : '');
+        });
+      });
+      sheetsData.push({ name: 'Shopify Siparişler', color: 'var(--accent)', data: oData });
+
+      activeSheetIdx = sheetsData.length - 2;
+      gridData = sheetsData[activeSheetIdx].data;
+      renderGrid();
+      renderSheetTabs();
+
+      if (status) status.textContent = ' ' + data.products.rows.length + ' ürün · ' + data.orders.rows.length + ' sipariş';
+      showToast('✅ Shopify verisi eklendi');
+    } catch (e) {
+      if (status) status.textContent = ' Hata';
+      showToast('❌ Shopify verisi alınamadı');
+    } finally {
+      if (btn) btn.disabled = false;
+    }
+  }
+  window.syncShopifyData = syncShopifyData;
+
   function checkShopifyStatus() {
     try {
       var local = JSON.parse(localStorage.getItem('int_shopify') || 'null');
@@ -1908,7 +1956,10 @@
       var el = document.createElement('div');
       el.id = 'shopify-indicator';
       el.style.cssText = 'display:flex;align-items:center;gap:8px;padding:7px 12px;margin:4px 8px;background:#f0fdf4;border:0.5px solid #bbf7d0;border-radius:8px;font-size:12px;color:#166534;';
-      el.innerHTML = '<svg width="8" height="8"><circle cx="4" cy="4" r="4" fill="#22c55e"/></svg><span>' + (shopName || 'Shopify bağlı') + '</span>';
+      el.innerHTML = '<svg width="8" height="8"><circle cx="4" cy="4" r="4" fill="#22c55e"/></svg>' +
+        '<span>' + (shopName || 'Shopify bağlı') + '</span>' +
+        '<button id="shopify-sync-btn" onclick="syncShopifyData()" style="margin-left:auto;background:#166534;color:#fff;border:none;padding:4px 10px;border-radius:6px;font-size:11px;cursor:pointer;">📥 Verimi Çek</button>' +
+        '<span id="shopify-sync-status" style="font-size:11px;color:#166534;"></span>';
       var ws = document.querySelector('.ws-switcher');
       if (ws && ws.parentNode) ws.parentNode.insertBefore(el, ws.nextSibling);
     }
@@ -3063,6 +3114,7 @@ document.addEventListener('DOMContentLoaded', function() {
   var _urlP = new URLSearchParams(location.search);
   if (_urlP.get('shopify') === 'connected') {
     history.replaceState({}, '', 'app.html');
+    if (typeof showToast === 'function') showToast('✅ Shopify bağlandı');
   }
   if (typeof checkShopifyStatus === 'function') checkShopifyStatus();
 });
