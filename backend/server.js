@@ -448,6 +448,60 @@ app.get('/api/integrations/slack/callback', async (req, res) => {
   }
 });
 
+// Frontend "Bağla" butonundan gelen genel /connect istekleri —
+// mevcut spesifik /auth rotalarına dispatch eder. checkLimit'ten ÖNCE tanımlı
+// olmalı ki AUTH_REQUIRED JSON yerine kullanıcıyı /auth sayfasına yönlendirebilelim.
+function _connectAuthUrl(req) {
+  const current = req.protocol + '://' + req.get('host') + req.originalUrl;
+  const frontend = process.env.FRONTEND_URL || 'https://www.mocksheets.com';
+  return `${frontend}/auth?redirect=${encodeURIComponent(current)}`;
+}
+
+async function _verifyConnectToken(req, res) {
+  const token = req.query.token || req.headers.authorization?.replace('Bearer ', '');
+  if (!token) { res.redirect(_connectAuthUrl(req)); return null; }
+  try {
+    const { createClient } = require('@supabase/supabase-js');
+    const sb = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
+    const { data, error } = await sb.auth.getUser(token);
+    if (error || !data?.user) { res.redirect(_connectAuthUrl(req)); return null; }
+    return token;
+  } catch (e) {
+    console.error('[connect verify]', e.message);
+    res.redirect(_connectAuthUrl(req));
+    return null;
+  }
+}
+
+app.get('/api/integrations/google/connect', async (req, res) => {
+  const token = await _verifyConnectToken(req, res);
+  if (!token) return;
+  const params = new URLSearchParams({ token, ...(req.query.redirect ? { redirect: req.query.redirect } : {}) });
+  res.redirect(`/api/integrations/sheets/auth?${params}`);
+});
+
+app.get('/api/integrations/microsoft/connect', async (req, res) => {
+  const token = await _verifyConnectToken(req, res);
+  if (!token) return;
+  const params = new URLSearchParams({ token, ...(req.query.redirect ? { redirect: req.query.redirect } : {}) });
+  res.redirect(`/api/integrations/excel/auth?${params}`);
+});
+
+const _CONNECT_MAP = {
+  slack: 'slack', gmail: 'gmail', notion: 'notion',
+  google_drive: 'drive', google_sheets: 'sheets',
+  ms_excel_online: 'excel', onedrive: 'excel',
+};
+app.get('/api/integrations/:integration/connect', async (req, res) => {
+  const target = _CONNECT_MAP[req.params.integration];
+  const frontend = process.env.FRONTEND_URL || 'https://www.mocksheets.com';
+  if (!target) return res.redirect(`${frontend}/automations?error=integration_not_supported&id=${encodeURIComponent(req.params.integration)}`);
+  const token = await _verifyConnectToken(req, res);
+  if (!token) return;
+  const params = new URLSearchParams({ token, ...(req.query.redirect ? { redirect: req.query.redirect } : {}) });
+  res.redirect(`/api/integrations/${target}/auth?${params}`);
+});
+
 app.use('/api/integrations', checkLimit, integrationsRouter);
 app.use('/api/automations', automationsRouter);
 app.use('/api/stripe', stripeRouter);

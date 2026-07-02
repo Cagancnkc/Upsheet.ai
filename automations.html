@@ -9568,24 +9568,30 @@ window.wfConnectApp = async function(integrationId, authType) {
   const redirectUrl = encodeURIComponent(window.location.href.split('?')[0] + '?conn_success=' + integrationId);
 
   if (authType === 'oauth' || authType === 'subdomain+oauth') {
+    let userToken = '';
+    try {
+      const h = authHeaders();
+      userToken = (h.Authorization || '').replace('Bearer ', '');
+    } catch(e) {}
+
     if (integrationId === 'shopify' || integrationId === 'woocommerce') {
       const domain = prompt('Mağaza adresinizi girin (örn: magazam.myshopify.com):');
       if (!domain) return;
-      window.location.href = `${API}/api/${integrationId}/auth?shop=${encodeURIComponent(domain)}&redirect=${redirectUrl}`;
+      window.location.href = `${API}/api/${integrationId}/auth?shop=${encodeURIComponent(domain)}&redirect=${redirectUrl}&token=${userToken}`;
       return;
     }
     if (['google_sheets','google_drive','google_calendar','google_analytics',
          'google_ads','google_search_console','google_gemini','gmail',
          'google_cloud','google_bigquery','google_workspace','google_forms'].includes(integrationId)) {
-      window.location.href = `${API}/api/integrations/google/connect?redirect=${redirectUrl}`;
+      window.location.href = `${API}/api/integrations/google/connect?redirect=${redirectUrl}&token=${userToken}`;
       return;
     }
     if (['microsoft_teams','ms_power_automate','ms_excel_online','ms_outlook',
          'ms_sharepoint','ms_dynamics','ms_teams_forms','onedrive'].includes(integrationId)) {
-      window.location.href = `${API}/api/integrations/microsoft/connect?redirect=${redirectUrl}`;
+      window.location.href = `${API}/api/integrations/microsoft/connect?redirect=${redirectUrl}&token=${userToken}`;
       return;
     }
-    window.location.href = `${API}/api/integrations/${integrationId}/connect?redirect=${redirectUrl}`;
+    window.location.href = `${API}/api/integrations/${integrationId}/connect?redirect=${redirectUrl}&token=${userToken}`;
     return;
   }
 
