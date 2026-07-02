@@ -40,7 +40,7 @@ const TRANSLATIONS = {
     'faq.sub': 'Aklınızdaki soruların yanıtı burada.',
 
     'cta.title': 'AI desteğiyle operasyon yönetmenin <em>en iyi yolu.</em>',
-    'cta.btn1': 'Google ile Ücretsiz Başla',
+    'cta.btn1': 'Shopify ile Ücretsiz Başla',
     'cta.btn2': 'Satışla Konuş',
 
     'footer.product': 'Ürün',
@@ -91,7 +91,7 @@ const TRANSLATIONS = {
     'faq.sub': 'Find answers to your questions here.',
 
     'cta.title': 'The best way to manage operations <em>with AI support.</em>',
-    'cta.btn1': 'Start Free with Google',
+    'cta.btn1': 'Start Free with Shopify',
     'cta.btn2': 'Talk to Sales',
 
     'footer.product': 'Product',
