@@ -1916,4 +1916,125 @@ router.get('/status', requireAuth, async (req, res) => {
   }
 });
 
+// ── WhatsApp Cloud API: Mesaj gönder ──────────────────────────────────────────
+router.post('/whatsapp/send', requireAuth, async (req, res) => {
+  const { phoneNumberId, to, message, accessToken } = req.body;
+  if (!phoneNumberId || !to || !message || !accessToken) {
+    return res.status(400).json({ error: 'phoneNumberId, to, message ve accessToken gerekli' });
+  }
+  try {
+    const url = `https://graph.facebook.com/v19.0/${encodeURIComponent(phoneNumberId)}/messages`;
+    const payload = { messaging_product: 'whatsapp', to, type: 'text', text: { body: message } };
+    const r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${accessToken}` }, body: JSON.stringify(payload), signal: AbortSignal.timeout(10000) });
+    const j = await r.json();
+    if (!r.ok) return res.status(r.status).json({ error: j.error?.message || `WhatsApp hatası: HTTP ${r.status}`, detail: j });
+    res.json({ success: true, message: `✅ WhatsApp mesajı gönderildi → ${to}`, messageId: j.messages?.[0]?.id });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── Google Calendar: Etkinlik oluştur ─────────────────────────────────────────
+router.post('/google-calendar/create', requireAuth, async (req, res) => {
+  const { calendarId, summary, description, start, end } = req.body;
+  if (!summary || !start || !end) {
+    return res.status(400).json({ error: 'summary, start ve end gerekli' });
+  }
+  const accessToken = await tokenManager.getValidAccessToken(req.user.id, 'google').catch(() => null)
+    || await tokenManager.getValidAccessToken(req.user.id, 'gmail').catch(() => null);
+  if (!accessToken) return res.status(401).json({ error: 'Google hesabı bağlı değil. Önce Google\'ı bağlayın.' });
+  try {
+    const cal = encodeURIComponent(calendarId || 'primary');
+    const toISO = (v) => {
+      const d = new Date(v);
+      return isNaN(d.getTime()) ? v : d.toISOString();
+    };
+    const payload = {
+      summary,
+      description: description || '',
+      start: { dateTime: toISO(start) },
+      end: { dateTime: toISO(end) },
+    };
+    const r = await fetch(`https://www.googleapis.com/calendar/v3/calendars/${cal}/events`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${accessToken}` }, body: JSON.stringify(payload), signal: AbortSignal.timeout(10000) });
+    const j = await r.json();
+    if (!r.ok) return res.status(r.status).json({ error: j.error?.message || `Google Calendar hatası: HTTP ${r.status}`, detail: j });
+    res.json({ success: true, message: `✅ Takvim etkinliği oluşturuldu: ${j.summary}`, eventId: j.id, htmlLink: j.htmlLink });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── Salesforce: Lead oluştur ──────────────────────────────────────────────────
+router.post('/salesforce/create-lead', requireAuth, async (req, res) => {
+  const { instanceUrl, accessToken, firstName, lastName, company, email } = req.body;
+  if (!instanceUrl || !accessToken || !lastName || !company) {
+    return res.status(400).json({ error: 'instanceUrl, accessToken, lastName ve company gerekli' });
+  }
+  try {
+    const base = instanceUrl.replace(/\/+$/, '');
+    const payload = { FirstName: firstName || '', LastName: lastName, Company: company, Email: email || '' };
+    const r = await fetch(`${base}/services/data/v58.0/sobjects/Lead`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${accessToken}` }, body: JSON.stringify(payload), signal: AbortSignal.timeout(10000) });
+    const j = await r.json();
+    if (!r.ok) {
+      const errMsg = Array.isArray(j) ? (j[0]?.message || j[0]?.errorCode) : (j.message || `Salesforce hatası: HTTP ${r.status}`);
+      return res.status(r.status).json({ error: errMsg, detail: j });
+    }
+    res.json({ success: true, message: `✅ Salesforce lead oluşturuldu: ${lastName}`, leadId: j.id });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── Pipedrive: Deal oluştur ───────────────────────────────────────────────────
+router.post('/pipedrive/create-deal', requireAuth, async (req, res) => {
+  const { apiToken, title, value, currency } = req.body;
+  if (!apiToken || !title) return res.status(400).json({ error: 'apiToken ve title gerekli' });
+  try {
+    const url = `https://api.pipedrive.com/v1/deals?api_token=${encodeURIComponent(apiToken)}`;
+    const numericValue = value !== undefined && value !== null && value !== '' ? Number(String(value).replace(',', '.')) : undefined;
+    const payload = { title };
+    if (numericValue !== undefined && !isNaN(numericValue)) payload.value = numericValue;
+    if (currency) payload.currency = currency;
+    const r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload), signal: AbortSignal.timeout(10000) });
+    const j = await r.json();
+    if (!r.ok || j.success === false) return res.status(r.ok ? 400 : r.status).json({ error: j.error || `Pipedrive hatası: HTTP ${r.status}`, detail: j.error_info });
+    res.json({ success: true, message: `✅ Pipedrive deal oluşturuldu: ${title}`, dealId: j.data?.id });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── HubSpot: Ticket oluştur ───────────────────────────────────────────────────
+router.post('/hubspot/create-ticket', requireAuth, async (req, res) => {
+  const { apiKey, subject, content, priority } = req.body;
+  if (!apiKey || !subject) return res.status(400).json({ error: 'apiKey ve subject gerekli' });
+  try {
+    const priorityMap = { LOW: 'LOW', MEDIUM: 'MEDIUM', HIGH: 'HIGH' };
+    const mappedPriority = priorityMap[String(priority || 'MEDIUM').toUpperCase()] || 'MEDIUM';
+    const payload = {
+      properties: {
+        subject,
+        content: content || '',
+        hs_pipeline: '0',
+        hs_pipeline_stage: '1',
+        hs_ticket_priority: mappedPriority,
+      },
+    };
+    const r = await fetch('https://api.hubapi.com/crm/v3/objects/tickets', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` }, body: JSON.stringify(payload), signal: AbortSignal.timeout(10000) });
+    const j = await r.json();
+    if (!r.ok) return res.status(r.status).json({ error: j.message || `HubSpot hatası: HTTP ${r.status}`, detail: j });
+    res.json({ success: true, message: `✅ HubSpot ticket oluşturuldu: ${subject}`, ticketId: j.id });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── Jira: Öncelik ayarla ──────────────────────────────────────────────────────
+router.post('/jira/set-priority', requireAuth, async (req, res) => {
+  const { email, apiToken, domain, issueKey, priority } = req.body;
+  if (!email || !apiToken || !domain || !issueKey || !priority) {
+    return res.status(400).json({ error: 'email, apiToken, domain, issueKey ve priority gerekli' });
+  }
+  try {
+    const auth = Buffer.from(`${email}:${apiToken}`).toString('base64');
+    const url = `https://${domain}.atlassian.net/rest/api/3/issue/${encodeURIComponent(issueKey)}`;
+    const payload = { fields: { priority: { name: priority } } };
+    const r = await fetch(url, { method: 'PUT', headers: { 'Content-Type': 'application/json', Authorization: `Basic ${auth}` }, body: JSON.stringify(payload), signal: AbortSignal.timeout(10000) });
+    if (r.status === 204) return res.json({ success: true, message: `✅ Jira issue ${issueKey} → öncelik: ${priority}` });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) return res.status(r.status).json({ error: j.errorMessages?.[0] || Object.values(j.errors || {})[0] || `Jira hatası: HTTP ${r.status}`, detail: j });
+    res.json({ success: true, message: `✅ Jira issue ${issueKey} → öncelik: ${priority}` });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
 module.exports = router;
