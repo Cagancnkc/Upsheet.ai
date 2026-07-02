@@ -1,14 +1,13 @@
 const TRANSLATIONS = {
   tr: {
     'nav.features': 'Özellikler',
-    'nav.automations': 'Otomasyonlar',
     'nav.pricing': 'Fiyatlar',
     'nav.login': 'Giriş Yap',
     'nav.start': 'Ücretsiz Başla →',
 
     'hero.badge': 'AI Operasyon Asistanı',
     'hero.title': 'Excel Verilerinizi<br><em><span class="accent">Tek Bir Cümleyle Düzenleyin.</span></em>',
-    'hero.desc': 'Mocksheets, operasyon yöneticileri için tasarlandı. Formül yok, teknik bilgi yok — sadece ne yapmak istediğinizi yazın, gerisini Mocksheets halleder. <b style="color:var(--ink)">Haftada 7+ saat geri kazanın.</b>',
+    'hero.desc': 'Excel\'inizi açmanıza bile gerek yok. Ne istediğinizi söyleyin, Mocksheets veriyi bulsun, işlesin, raporlasın — siz sonucu görün. <b style="color:var(--ink)">Haftada 7+ saat geri kazanın.</b>',
     'hero.cta1': 'Ücretsiz Başla →',
     'hero.cta2': 'Canlı Gör →',
 
@@ -18,14 +17,14 @@ const TRANSLATIONS = {
     'steps.1.title': 'Veriniz neredeyse<br>oradan çekin.',
     'steps.1.desc': '200\'den fazla kaynakla bağlantı kurun. Veriyi içe aktarın, birleştirin, hazırlayın.',
     'steps.2.label': '02 · YAZ',
-    'steps.2.title': 'Türkçe sorun.<br>Mocksheets anlasın.',
-    'steps.2.desc': 'Formül değil, cümle yazın. Zincirleme komutlar verin — bağlam hafızada kalır.',
+    'steps.2.title': 'Ne istediğinizi söyleyin.<br>Gerisini Mocksheets yapsın.',
+    'steps.2.desc': 'Formül değil, hedef yazın. Mocksheets adımları kendi planlar, siz sadece sonucu onaylarsınız.',
     'steps.3.label': '03 · ANALİZ ET',
     'steps.3.title': 'Sonuç saniyeler içinde.<br>Paylaşıma hazır.',
     'steps.3.desc': 'Tablo, özet, grafik. Slack, Gmail veya Drive\'a tek tıkla gönderin.',
 
     'integrations.title': 'Operasyon altyapınızın içinde yaşar.',
-    'integrations.desc': 'Mocksheets, ekibinizin zaten kullandığı araçlarla bağlantı kurar. Veri içe aktar, otomasyonları tetikle, tablolarını senkronize et.',
+    'integrations.desc': 'Google Sheets, Shopify, CRM\'iniz — Mocksheets nereden gelirse gelsin veriyi anlar ve sizin için işler.',
     'integrations.desc2': 'Ücretsiz planla başla, ihtiyacın olduğunda yükselt. Sözleşme yok, gizli ücret yok. İstediğin zaman iptal et.',
 
     'pricing.title': 'Bir öğle yemeği fiyatına,<br><span class="ms-title-italic">bir operasyon uzmanı verimi.</span>',
@@ -53,14 +52,13 @@ const TRANSLATIONS = {
 
   en: {
     'nav.features': 'Features',
-    'nav.automations': 'Automations',
     'nav.pricing': 'Pricing',
     'nav.login': 'Sign In',
     'nav.start': 'Start Free →',
 
     'hero.badge': 'AI Operations Assistant',
     'hero.title': 'Organize Your Excel Data<br><em><span class="accent">With a Single Sentence.</span></em>',
-    'hero.desc': 'Mocksheets is designed for operations managers. No formulas, no technical knowledge — just write what you want to do, and Mocksheets handles the rest. <b style="color:var(--ink)">Save 7+ hours per week.</b>',
+    'hero.desc': 'You don\'t even need to open Excel. Tell Mocksheets what you want — it finds the data, processes it, and reports back. <b style="color:var(--ink)">Save 7+ hours per week.</b>',
     'hero.cta1': 'Start Free →',
     'hero.cta2': 'See Live →',
 
@@ -70,14 +68,14 @@ const TRANSLATIONS = {
     'steps.1.title': 'Pull from wherever<br>your data lives.',
     'steps.1.desc': 'Connect to 200+ sources. Import, merge, and prepare your data.',
     'steps.2.label': '02 · WRITE',
-    'steps.2.title': 'Ask in plain English.<br>Mocksheets understands.',
-    'steps.2.desc': 'Write sentences, not formulas. Chain commands — context stays in memory.',
+    'steps.2.title': 'Tell us what you want.<br>Mocksheets handles the rest.',
+    'steps.2.desc': 'Write goals, not formulas. Mocksheets plans the steps itself — you just approve the result.',
     'steps.3.label': '03 · ANALYZE',
     'steps.3.title': 'Results in seconds.<br>Ready to share.',
     'steps.3.desc': 'Tables, summaries, charts. Send to Slack, Gmail, or Drive in one click.',
 
     'integrations.title': 'Lives inside your operations stack.',
-    'integrations.desc': 'Mocksheets connects with the tools your team already uses. Import data, trigger automations, sync your spreadsheets.',
+    'integrations.desc': 'Google Sheets, Shopify, your CRM — Mocksheets understands data from any source and processes it for you.',
     'integrations.desc2': 'Start with the free plan, upgrade when you need to. No contracts, no hidden fees. Cancel anytime.',
 
     'pricing.title': 'The price of a lunch,<br><span class="ms-title-italic">the output of an ops expert.</span>',

@@ -212,11 +212,6 @@
       <svg class="tpl-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
     </div>
     <div id="templates-panel" class="templates-panel"></div>
-    <div class="nav-item" id="nav-integrations" data-href="automations.html">
-      <svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-      Otomasyonlar
-      <span class="count">5</span>
-    </div>
     <div class="sidebar-section">
       Son tablolar
       <span class="add" title="Yeni">
@@ -464,10 +459,6 @@
           <span class="auto-bar-badge" id="autoBarBadge" style="display:none"></span>
           <span class="auto-bar-summary" id="autoBarSummary">Yükleniyor…</span>
           <div class="auto-bar-actions">
-            <a href="automations.html" class="auto-bar-manage-btn" onclick="event.stopPropagation()">
-              Yönet
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-            </a>
           </div>
         </div>
         <div class="auto-bar-body" id="autoBarBody"></div>
@@ -2431,10 +2422,9 @@
     ta.focus();
   });
 
-  // ── AD: Resource cards → integrations ─────────────────────────────────────
+  // ── AD: Resource cards ────────────────────────────────────────
   document.querySelectorAll('.resource').forEach(function (card) {
     card.style.cursor = 'pointer';
-    card.addEventListener('click', function () { window.location.href = '/automations'; });
   });
 
   // ── AE: Automation .more dropdown ────────────────────────────────────────
@@ -2724,7 +2714,6 @@
   <div class="am-item" data-action="delete" style="padding:7px 14px;font-size:12px;cursor:pointer;color:var(--rose);">Sil</div>
 </div>
 
-<script src="js/automations.js"></script>
 <script src="js/auto-panel.js"></script>
 <script>if (typeof renderAutomationList === 'function') renderAutomationList();</script>
 

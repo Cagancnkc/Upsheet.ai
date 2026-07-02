@@ -519,8 +519,6 @@ const agentsRouter = require('./routes/agents');
 app.use('/api/agents', agentsRouter);
 const shopifyRouter = require('./routes/shopify');
 app.use('/api/shopify', shopifyRouter);
-const workflowsRouter = require('./routes/workflows');
-app.use('/api/workflows', workflowsRouter);
 const translateRouter = require('./routes/translate');
 app.use('/api/translate', translateRouter);
 app.post('/api/loops/contact', async (req, res) => {
