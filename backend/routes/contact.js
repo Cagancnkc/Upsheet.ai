@@ -62,7 +62,7 @@ router.post('/', limiter, async (req, res) => {
 
       await transporter.sendMail({
         from: process.env.MAIL_USER,
-        to: 'helpmocksheets@gmail.com',
+        to: 'destek@mocksheets.com',
         replyTo: email,
         subject: `[Mocksheets İletişim] ${subject || 'Mesaj'} — ${name.trim()}`,
         html: `

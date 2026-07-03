@@ -24,7 +24,7 @@ module.exports = async function handler(req, res) {
   if (!process.env.MAIL_USER || !process.env.MAIL_PASS) {
     console.error('[contact] MAIL_USER veya MAIL_PASS env eksik');
     return res.status(500).json({
-      error: 'Sunucu yapılandırma hatası. helpmocksheets@gmail.com adresine yazın.'
+      error: 'Sunucu yapılandırma hatası. destek@mocksheets.com adresine yazın.'
     });
   }
 
@@ -36,7 +36,7 @@ module.exports = async function handler(req, res) {
 
     await transporter.sendMail({
       from: process.env.MAIL_USER,
-      to: 'helpmocksheets@gmail.com',
+      to: 'destek@mocksheets.com',
       replyTo: email,
       subject: `[Mocksheets İletişim] ${subject || 'Mesaj'} — ${name.trim()}`,
       html: `
@@ -66,7 +66,7 @@ module.exports = async function handler(req, res) {
   } catch (mailErr) {
     console.error('[contact] Mail hatası:', mailErr.message);
     return res.status(500).json({
-      error: 'Mesaj gönderilemedi. helpmocksheets@gmail.com adresine yazın.'
+      error: 'Mesaj gönderilemedi. destek@mocksheets.com adresine yazın.'
     });
   }
 
