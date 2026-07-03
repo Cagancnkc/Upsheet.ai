@@ -3,12 +3,12 @@ const TRANSLATIONS = {
     'nav.features': 'Özellikler',
     'nav.pricing': 'Fiyatlar',
     'nav.login': 'Giriş Yap',
-    'nav.start': 'Ücretsiz Başla →',
+    'nav.start': 'Shopify ile Ücretsiz Başla',
 
     'hero.badge': 'AI Operasyon Asistanı',
     'hero.title': 'Excel Verilerinizi<br><em><span class="accent">Tek Bir Cümleyle Düzenleyin.</span></em>',
     'hero.desc': 'Excel\'inizi açmanıza bile gerek yok. Ne istediğinizi söyleyin, Mocksheets veriyi bulsun, işlesin, raporlasın — siz sonucu görün. <b style="color:var(--ink)">Haftada 7+ saat geri kazanın.</b>',
-    'hero.cta1': 'Ücretsiz Başla →',
+    'hero.cta1': 'Shopify ile Ücretsiz Başla',
     'hero.cta2': 'Canlı Gör →',
 
     'steps.title': 'Veriden karara.<br>Üç adımda.',
@@ -54,12 +54,12 @@ const TRANSLATIONS = {
     'nav.features': 'Features',
     'nav.pricing': 'Pricing',
     'nav.login': 'Sign In',
-    'nav.start': 'Start Free →',
+    'nav.start': 'Start Free with Shopify',
 
     'hero.badge': 'AI Operations Assistant',
     'hero.title': 'Organize Your Excel Data<br><em><span class="accent">With a Single Sentence.</span></em>',
     'hero.desc': 'You don\'t even need to open Excel. Tell Mocksheets what you want — it finds the data, processes it, and reports back. <b style="color:var(--ink)">Save 7+ hours per week.</b>',
-    'hero.cta1': 'Start Free →',
+    'hero.cta1': 'Start Free with Shopify',
     'hero.cta2': 'See Live →',
 
     'steps.title': 'From data to decision.<br>In three steps.',
