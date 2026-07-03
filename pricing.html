@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-H0KT59S6GP"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-H0KT59S6GP');
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Stok takibi, sipariş raporu, kâr marjı analizi — elle yapmayı bırakın. Aylık $0'dan başlayan planlar, istediğiniz zaman iptal edin.">
+<link rel="canonical" href="https://mocksheets.com/pricing">
+<meta property="og:title" content="Fiyatlandırma — Mocksheets | E-ticaret İçin AI Excel Asistanı">
+<meta property="og:description" content="Stok takibi, sipariş raporu, kâr marjı analizi — elle yapmayı bırakın. Aylık $0'dan başlayan planlar, istediğiniz zaman iptal edin.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://mocksheets.com/pricing">
+<meta property="og:image" content="https://mocksheets.com/images/brand/logo-128x128.png">
+<link rel="icon" type="image/png" href="/images/brand/logo-128x128.png">
+<title>Fiyatlandırma — Mocksheets | E-ticaret İçin AI Excel Asistanı</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&family=Geist+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/landing.css">
+<style>
+:root{
+  --brand:#16a34a;--brand-dark:#15803d;--brand-soft:#dcfce7;
+  --ink:#0a0612;--muted:#6b6478;--line:#E5E7EB;--bg:#F7F7F5;
+}
+body{background:var(--bg);font-family:'Geist',system-ui,-apple-system,sans-serif;color:var(--ink);margin:0}
+a{color:inherit}
+.pricing-wrap{max-width:1180px;margin:0 auto;padding:100px 24px 40px}
+.pricing-hero{text-align:center;margin-bottom:40px}
+.pricing-hero h1{font-size:clamp(36px,5vw,64px);line-height:1.05;letter-spacing:-.03em;font-weight:700;margin:0 0 14px}
+.pricing-hero p{font-size:17px;color:var(--muted);max-width:600px;margin:0 auto 24px;line-height:1.6}
+.hero-toggle{display:inline-flex;padding:3px;background:#fff;border-radius:99px;border:1px solid var(--line)}
+.hero-toggle button{border:0;background:transparent;padding:10px 20px;border-radius:99px;font-family:inherit;font-size:14px;color:var(--muted);cursor:pointer;font-weight:500;display:inline-flex;align-items:center;gap:8px}
+.hero-toggle button.active{background:var(--ink);color:#fff}
+.save-pill{background:var(--brand-soft);color:var(--brand-dark);font-size:11px;font-weight:700;padding:3px 8px;border-radius:99px;font-family:'Geist Mono',monospace}
+.hero-toggle button.active .save-pill{background:rgba(255,255,255,.15);color:#a7f3d0}
+
+/* ROI Calculator */
+.roi-calc{background:#fff;border:1.5px solid var(--line);border-radius:20px;padding:36px;margin:40px 0 60px;max-width:900px;margin-left:auto;margin-right:auto}
+.roi-calc h2{font-size:22px;font-weight:800;margin:0 0 24px;text-align:center}
+.roi-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px}
+.roi-grid label{display:block;font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.roi-grid output{color:var(--brand);font-weight:800;font-size:16px}
+.roi-grid input[type=range]{width:100%;margin-top:10px;accent-color:var(--brand)}
+.roi-grid select{width:100%;margin-top:10px;padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;background:#fff;font-family:inherit;font-size:14px;cursor:pointer}
+.roi-result{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;padding-top:20px;border-top:1px solid var(--line)}
+.roi-result>div{text-align:center;padding:16px 8px}
+.roi-result span{display:block;font-size:12px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em}
+.roi-result b{display:block;font-size:24px;font-weight:800;color:var(--ink)}
+.roi-result .roi-net{background:linear-gradient(135deg,var(--brand),var(--brand-dark));border-radius:12px;color:#fff}
+.roi-result .roi-net span{color:rgba(255,255,255,.85)}
+.roi-result .roi-net b{color:#fff}
+@media(max-width:640px){.roi-grid,.roi-result{grid-template-columns:1fr}}
+
+  /* Reused from git 8e37ac8 — .ms-pricing-a stack */
+  .ms-pricing-a {
+    --ms-bg: #ffffff; --ms-ink: #0a0612; --ms-muted: #6b6478;
+    --ms-line: #ece9f2; --ms-purple: #16a34a; --ms-purple-soft: #dcfce7;
+    background: var(--ms-bg); color: var(--ms-ink);
+    font-family: 'Geist', system-ui, -apple-system, sans-serif;
+    font-feature-settings: 'ss01','cv11'; -webkit-font-smoothing: antialiased;
+    padding: 48px 0 40px; border-radius:20px; border:1.5px solid var(--line);
+  }
+  .ms-pricing-a *, .ms-pricing-a *::before, .ms-pricing-a *::after { box-sizing: border-box; }
+  .ms-pricing-a .ms-inner { max-width: 1180px; margin: 0 auto; padding: 0 40px; }
+  .ms-pricing-a .ms-hero { border-bottom: 1px solid var(--ms-line); padding-bottom: 24px; }
+  .ms-pricing-a .ms-eyebrow { display: inline-flex; align-items: center; gap: 10px; font-family: 'Geist Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.08em; color: var(--ms-muted); text-transform: uppercase; }
+  .ms-pricing-a .ms-eyebrow-dot { width: 7px; height: 7px; border-radius: 99px; background: var(--ms-purple); }
+  .ms-pricing-a .ms-eyebrow-mono { color: var(--ms-purple); font-weight: 600; }
+  .ms-pricing-a .ms-title { font-size: clamp(32px, 4vw, 56px); line-height: 1.02; letter-spacing: -0.035em; margin: 16px 0 0; font-weight: 500; color: var(--ms-ink); text-wrap: balance; }
+  .ms-pricing-a .ms-title-italic { font-family: 'Instrument Serif', serif; font-style: italic; font-weight: 400; color: var(--ms-purple); }
+  .ms-pricing-a .ms-hero-bottom { margin-top: 24px; display: grid; grid-template-columns: 1.4fr 1fr; gap: 40px; align-items: end; }
+  .ms-pricing-a .ms-lede { margin: 0; font-size: 16px; line-height: 1.5; color: var(--ms-muted); max-width: 520px; }
+  .ms-pricing-a .ms-toggle-wrap { justify-self: end; text-align: right; }
+  .ms-pricing-a .ms-toggle-label { font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: 0.1em; color: var(--ms-muted); text-transform: uppercase; margin-bottom: 8px; }
+  .ms-pricing-a .ms-toggle { display: inline-flex; padding: 3px; background: #fff; border-radius: 99px; border: 1px solid var(--ms-line); }
+  .ms-pricing-a .ms-toggle button { border: 0; background: transparent; padding: 8px 16px; border-radius: 99px; font-family: inherit; font-size: 13px; color: var(--ms-muted); cursor: pointer; font-weight: 500; display: inline-flex; align-items: center; gap: 6px; }
+  .ms-pricing-a .ms-toggle button.ms-active { background: var(--ms-ink); color: #fff; }
+  .ms-pricing-a .ms-save-tag { color: var(--ms-purple); font-family: 'Geist Mono', monospace; font-size: 10px; }
+  .ms-pricing-a .ms-toggle button.ms-active .ms-save-tag { color: #a7f3d0; }
+  .ms-pricing-a .ms-plans { margin-top: 8px; }
+  .ms-pricing-a .ms-row { display: grid; grid-template-columns: 60px 1.4fr 220px 200px; align-items: start; gap: 32px; padding: 32px 0; border-bottom: 1px solid var(--ms-line); }
+  .ms-pricing-a .ms-row-idx { font-family: 'Instrument Serif', serif; font-style: italic; font-size: 42px; color: var(--ms-purple); line-height: 1; margin-top: 4px; }
+  .ms-pricing-a .ms-row-name { font-size: 30px; font-weight: 500; letter-spacing: -0.025em; display: flex; align-items: center; gap: 14px; }
+  .ms-pricing-a .ms-row-tag { margin-top: 6px; color: var(--ms-muted); font-size: 14px; }
+  .ms-pricing-a .ms-row-hook{ margin-top:4px; color:var(--ms-purple); font-size:13px; font-weight:600; }
+  .ms-pricing-a .ms-row-feats { margin: 16px 0 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; }
+  .ms-pricing-a .ms-row-feat { font-size: 14px; color: var(--ms-ink); display: flex; gap: 8px; }
+  .ms-pricing-a .ms-feat-dash { color: var(--ms-purple); font-family: 'Geist Mono', monospace; }
+  .ms-pricing-a .ms-row-price { text-align: left; }
+  .ms-pricing-a .ms-price-big { font-size: 76px; line-height: 0.9; font-weight: 500; letter-spacing: -0.05em; color: var(--ms-ink); font-feature-settings: 'tnum'; }
+  .ms-pricing-a .ms-price-cur { font-size: 28px; vertical-align: top; color: var(--ms-purple); font-weight: 500; }
+  .ms-pricing-a .ms-price-sub { margin-top: 10px; display: flex; flex-direction: column; gap: 2px; }
+  .ms-pricing-a .ms-price-after { font-size: 13px; color: var(--ms-muted); }
+  .ms-pricing-a .ms-row-cta { display: flex; align-items: flex-start; justify-content: flex-end; }
+  .ms-pricing-a .ms-cta { font-family: inherit; font-size: 14px; font-weight: 500; padding: 13px 22px; border-radius: 99px; cursor: pointer; border: 1px solid var(--ms-ink); background: transparent; color: var(--ms-ink); display: inline-flex; align-items: center; gap: 10px; transition: all .15s ease; white-space: nowrap; text-decoration: none; }
+  .ms-pricing-a .ms-cta:hover { transform: translateY(-1px); }
+  .ms-pricing-a .ms-cta.ms-filled { background: var(--ms-ink); border-color: var(--ms-ink); color: #fff; }
+  .ms-pricing-a .ms-cta-arrow { font-size: 16px; margin-top: -1px; }
+  .ms-pricing-a .ms-cta-gicon { width: 16px; height: 16px; display: inline-block; }
+  .ms-pricing-a .ms-footnote { margin-top: 28px; display: flex; align-items: center; gap: 16px; color: var(--ms-muted); font-size: 13px; }
+  .ms-pricing-a .ms-foot-mono { font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: 0.1em; background: var(--ms-purple); color: #fff; padding: 4px 8px; border-radius: 3px; text-transform: uppercase; font-weight: 600; }
+  .pricing-yearly-note{ font-size:13px; color:var(--ms-muted); margin-top:8px; line-height:1.6; }
+  .pricing-yearly-note strong{ font-size:18px; color:var(--ms-ink); }
+  .yearly-monthly-equiv{ color:#9ca3af; font-size:12px; }
+  .pricing-yearly-note small{ color:#9ca3af; font-size:11px; }
+  .hidden{ display:none !important; }
+  .ms-row.team-featured{ position:relative; }
+  .team-featured-badge{ display:inline-block; background:linear-gradient(135deg,#16a34a,#15803d); color:#fff; font-size:11px; font-weight:700; padding:4px 12px; border-radius:99px; letter-spacing:.05em; margin-bottom:10px; }
+  @media (max-width: 980px) {
+    .ms-pricing-a { padding: 32px 0 24px; }
+    .ms-pricing-a .ms-inner { padding: 0 20px; }
+    .ms-pricing-a .ms-hero-bottom { grid-template-columns: 1fr; gap: 18px; }
+    .ms-pricing-a .ms-toggle-wrap { justify-self: start; text-align: left; }
+    .ms-pricing-a .ms-row { grid-template-columns: 36px 1fr; grid-template-areas: "idx name" ". tag" ". feats" ". price" ". cta"; gap: 14px; padding: 28px 0; }
+    .ms-pricing-a .ms-row-idx { grid-area: idx; font-size: 28px; }
+    .ms-pricing-a .ms-row-name { grid-area: name; font-size: 24px; flex-wrap: wrap; }
+    .ms-pricing-a .ms-row-tag { grid-area: tag; }
+    .ms-pricing-a .ms-row-feats { grid-area: feats; }
+    .ms-pricing-a .ms-row-price { grid-area: price; }
+    .ms-pricing-a .ms-row-cta { grid-area: cta; justify-content: flex-start; }
+    .ms-pricing-a .ms-price-big { font-size: 60px; }
+  }
+
+/* Comparison table */
+.pricing-compare{margin:80px auto 60px;max-width:1000px}
+.pricing-compare h2{font-size:28px;font-weight:800;text-align:center;margin:0 0 32px;letter-spacing:-.02em}
+.compare-table{width:100%;border-collapse:separate;border-spacing:0;background:#fff;border:1.5px solid var(--line);border-radius:16px;overflow:hidden;font-size:14px}
+.compare-table th,.compare-table td{padding:14px 16px;text-align:center;border-bottom:1px solid var(--line)}
+.compare-table th{background:#FAFAFA;font-weight:700;color:var(--ink);font-size:13px}
+.compare-table th:first-child,.compare-table td:first-child{text-align:left;font-weight:600;color:var(--muted)}
+.compare-table tr:last-child td{border-bottom:0}
+.compare-table .col-highlight{background:var(--brand-soft)}
+.compare-check{color:var(--brand);font-weight:700}
+.compare-dash{color:#cbd5e1}
+@media(max-width:640px){.compare-table{font-size:12px}.compare-table th,.compare-table td{padding:10px 8px}}
+
+/* Trust band */
+.trust-band{display:flex;justify-content:center;gap:40px;flex-wrap:wrap;padding:32px 24px;margin:40px 0;color:var(--muted);font-size:14px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.trust-band span{display:inline-flex;align-items:center;gap:8px}
+.trust-band span::before{content:"✓";color:var(--brand);font-weight:800}
+
+/* FAQ */
+.pricing-faq{max-width:760px;margin:60px auto}
+.pricing-faq h2{font-size:28px;font-weight:800;text-align:center;margin:0 0 28px;letter-spacing:-.02em}
+.pricing-faq details{background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:18px 22px;margin-bottom:12px;cursor:pointer}
+.pricing-faq details[open]{border-color:var(--brand)}
+.pricing-faq summary{font-weight:700;font-size:15px;list-style:none;display:flex;justify-content:space-between;align-items:center}
+.pricing-faq summary::after{content:"+";font-size:22px;color:var(--brand);font-weight:400;transition:transform .2s}
+.pricing-faq details[open] summary::after{transform:rotate(45deg)}
+.pricing-faq details p{margin:12px 0 0;font-size:14px;color:var(--muted);line-height:1.7}
+
+/* Final CTA */
+.final-cta{background:linear-gradient(135deg,var(--brand),var(--brand-dark));color:#fff;border-radius:24px;padding:56px 32px;text-align:center;margin:60px 0 40px}
+.final-cta h2{font-size:32px;font-weight:800;margin:0 0 20px;letter-spacing:-.02em}
+.final-cta a{display:inline-flex;align-items:center;gap:10px;background:#fff;color:var(--brand-dark);padding:16px 32px;border-radius:99px;text-decoration:none;font-weight:700;font-size:16px;transition:transform .15s}
+.final-cta a:hover{transform:translateY(-2px)}
+</style>
+<script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "xa2q453j9l");
+</script>
+</head>
+<body>
+<nav class="lp-nav">
+  <a href="/" class="lp-nav-logo">
+    <img src="/images/brand/logo-128x128.png" alt="mocksheets" style="width:24px;height:24px;object-fit:contain;flex-shrink:0">
+    <span>mocksheets<span class="brand-dot">.</span></span>
+  </a>
+  <a href="/" class="lp-nav-cta">← Ana Sayfa</a>
+</nav>
+
+<div class="pricing-wrap">
+
+  <section class="pricing-hero">
+    <h1>Excel'de saatler harcamayı bırakın.</h1>
+    <p>E-ticaret operasyonunuz için AI kopilot. İlk ay $1 — istediğiniz zaman iptal.</p>
+  </section>
+
+  <section class="roi-calc" aria-label="ROI Hesaplayıcı">
+    <h2>Aylık ne kadar kazanırsınız?</h2>
+    <div class="roi-grid">
+      <label>Haftalık Excel süreniz: <output id="roi-hours-val">10</output> saat
+        <input type="range" id="roi-hours" min="1" max="40" value="10" aria-label="Haftalık Excel süresi">
+      </label>
+      <label>Rolünüz
+        <select id="roi-role" aria-label="Rol seçimi">
+          <option value="15">Küçük işletme sahibi ($15/saat)</option>
+          <option value="25" selected>Operasyon yöneticisi ($25/saat)</option>
+          <option value="40">Ajans / danışman ($40/saat)</option>
+        </select>
+      </label>
+    </div>
+    <div class="roi-result">
+      <div><span>Aylık kazanılan zaman</span><b id="roi-time">28 saat</b></div>
+      <div><span>Aylık $ değeri</span><b id="roi-value">$700</b></div>
+      <div class="roi-net"><span>Mocksheets Pro sonrası net kazanç</span><b id="roi-net">$685/ay</b></div>
+    </div>
+  </section>
+
+  <section class="ms-pricing-a" id="pricing" aria-label="Fiyatlandırma planları">
+    <div class="ms-inner">
+      <div class="ms-hero">
+        <div class="ms-eyebrow">
+          <span class="ms-eyebrow-dot"></span>
+          <span>Bu hafta katılan ekipler için —</span>
+          <span class="ms-eyebrow-mono">HAZİRAN'26 KAMPANYASI</span>
+        </div>
+        <h2 class="ms-title">
+          Bir öğle yemeği fiyatına,<br/>
+          <span class="ms-title-italic">bir operasyon uzmanı verimi.</span>
+        </h2>
+        <div class="ms-hero-bottom">
+          <p class="ms-lede">Ücretsiz planla başla, ihtiyacın olduğunda yükselt. Sözleşme yok, gizli ücret yok. İstediğin zaman iptal et.</p>
+          <div class="ms-toggle-wrap">
+            <div class="ms-toggle-label">Faturalama</div>
+            <div class="ms-toggle" role="tablist" aria-label="Faturalama dönemi">
+              <button id="ms-btn-monthly" class="ms-active" role="tab" aria-selected="true" onclick="setPricingPeriod('monthly')">Aylık</button>
+              <button id="ms-btn-yearly" role="tab" aria-selected="false" onclick="setPricingPeriod('yearly')">Yıllık <span class="ms-save-tag">-20%</span></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ms-plans">
+
+        <article class="ms-row">
+          <div class="ms-row-idx">01</div>
+          <div class="ms-row-meta">
+            <div class="ms-row-name">Başlangıç</div>
+            <div class="ms-row-tag">Mocksheets'i keşfetmek isteyenler için. Kart gerekmez.</div>
+            <ul class="ms-row-feats">
+              <li class="ms-row-feat"><span class="ms-feat-dash">—</span> Günde 5 AI komutu</li>
+              <li class="ms-row-feat"><span class="ms-feat-dash">—</span> Google Sheets senkronizasyonu</li>
+              <li class="ms-row-feat"><span class="ms-feat-dash">—</span> TR arayüz + destek</li>
+            </ul>
+          </div>
+          <div class="ms-row-price">
+            <div class="ms-price-big"><span class="ms-price-cur">$</span>0</div>
+            <div class="ms-price-sub">
+              <span class="ms-price-after">Sonsuza kadar ücretsiz</span>
+            </div>
+          </div>
+          <div class="ms-row-cta">
+            <a href="/auth" class="ms-cta">
+              <img class="ms-cta-gicon" src="https://cdn.simpleicons.org/shopify/95BF47" alt="Shopify" width="20" height="20" loading="lazy">
+              Shopify ile Kayıt Ol
+            </a>
+          </div>
+        </article>
+
+        <article class="ms-row" id="pro-card">
+          <div class="ms-row-idx">02</div>
+          <div class="ms-row-meta">
+            <div class="ms-row-name">Pro</div>
+            <div class="ms-row-tag">İlk 1 ay $1/ay · Kampanya bitmeden yakala.</div>
+            <div class="ms-row-hook">Shopify, Trendyol, Hepsiburada satıcıları için.</div>
+            <ul class="ms-row-feats" id="pro-features"></ul>
+          </div>
+          <div class="ms-row-price">
+            <div class="ms-price-big" id="pro-price-big"><span class="ms-price-cur">$</span><span id="pro-price-amount">1</span></div>
+            <div class="ms-price-sub">
+              <span class="ms-price-after" id="proAfter">İlk 1 ay · sonra $15/ay</span>
+              <span class="pricing-yearly-note hidden" id="pro-yearly-note">
+                <strong id="pro-yearly-price">$144</strong>/yıl
+                <span class="yearly-monthly-equiv" id="pro-yearly-equiv">(aylık $12'ye denk)</span><br>
+                <small>Kampanya yıllık planlarda geçerli değildir.</small>
+              </span>
+            </div>
+          </div>
+          <div class="ms-row-cta" style="flex-direction:column;align-items:flex-end;gap:10px;">
+            <a id="proCheckoutBtn" href="/auth?plan=pro" target="_blank" class="ms-cta ms-filled">
+              Pro'ya Geç →
+              <span class="ms-cta-arrow">→</span>
+            </a>
+          </div>
+        </article>
+
+        <article class="ms-row team-featured" id="promax-card">
+          <div class="ms-row-idx">03</div>
+          <div class="ms-row-meta">
+            <div class="team-featured-badge">⭐ En İyi Değer</div>
+            <div class="ms-row-name">Pro Max</div>
+            <div class="ms-row-tag">Operasyonunu tam otomatize etmek isteyen yöneticiler için.</div>
+            <ul class="ms-row-feats">
+              <li class="ms-row-feat"><span class="ms-feat-dash" style="color:var(--ms-purple)">✦</span> AI Agents (sınırsız)</li>
+              <li class="ms-row-feat"><span class="ms-feat-dash">—</span> 1500 komut/ay</li>
+              <li class="ms-row-feat"><span class="ms-feat-dash">—</span> Sınırsız AI görevi</li>
+              <li class="ms-row-feat"><span class="ms-feat-dash">—</span> PDF → tablo (sınırsız)</li>
+              <li class="ms-row-feat"><span class="ms-feat-dash">—</span> 90 günlük sürüm geçmişi</li>
+              <li class="ms-row-feat"><span class="ms-feat-dash">—</span> Tüm entegrasyonlar</li>
+              <li class="ms-row-feat"><span class="ms-feat-dash">—</span> API erişimi</li>
+            </ul>
+          </div>
+          <div class="ms-row-price">
+            <div class="ms-price-big" style="margin-top:10px"><span class="ms-price-cur">$</span><span id="promax-price-amount">1</span></div>
+            <div class="ms-price-sub" style="margin-top:4px">
+              <span class="ms-price-after" id="promax-price-after">İlk 1 ay · sonra $21/ay</span>
+              <span class="pricing-yearly-note hidden" id="promax-yearly-note">
+                <strong id="promax-yearly-price">$202</strong>/yıl
+                <span id="promax-yearly-equiv">(aylık $17'ye denk)</span>
+              </span>
+            </div>
+          </div>
+          <div class="ms-row-cta">
+            <a id="promaxCheckoutBtn" href="/auth?plan=promax" target="_blank" class="ms-cta ms-filled">
+              Pro Max'a Geç →
+              <span class="ms-cta-arrow">→</span>
+            </a>
+          </div>
+        </article>
+
+        <article class="ms-row" id="team-card" style="opacity:0.9">
+          <div class="ms-row-idx">04</div>
+          <div class="ms-row-meta">
+            <div class="ms-row-name">Takım</div>
+            <div class="ms-row-tag">İlk 1 ay $1/ay · 5+ kişilik operasyon ekipleri için. Tek fatura.</div>
+            <ul class="ms-row-feats">
+              <li class="ms-row-feat"><span class="ms-feat-dash">—</span> Sınırsız AI komutu</li>
+              <li class="ms-row-feat"><span class="ms-feat-dash">—</span> 5 koltuk dahil (+$8/ek koltuk)</li>
+              <li class="ms-row-feat"><span class="ms-feat-dash">—</span> Sınırsız AI görevi</li>
+              <li class="ms-row-feat"><span class="ms-feat-dash">—</span> SSO + denetim günlüğü</li>
+              <li class="ms-row-feat"><span class="ms-feat-dash">—</span> Özel hesap yöneticisi</li>
+            </ul>
+          </div>
+          <div class="ms-row-price">
+            <div class="ms-price-big" style="margin-top:10px"><span class="ms-price-cur">$</span><span id="team-price-amount">1</span></div>
+            <div class="ms-price-sub" style="margin-top:4px">
+              <span class="ms-price-after" id="team-price-after">İlk 1 ay · sonra $59/ay · 5 koltuk</span>
+              <span class="pricing-yearly-note hidden" id="team-yearly-note">
+                <strong id="team-yearly-price">$566</strong>/yıl
+                <span id="team-yearly-equiv">(aylık $47'ye denk)</span>
+              </span>
+            </div>
+          </div>
+          <div class="ms-row-cta">
+            <a id="teamCheckoutBtn" href="/auth?plan=biz" target="_blank" class="ms-cta">
+              Takım Kur →
+              <span class="ms-cta-arrow">→</span>
+            </a>
+          </div>
+        </article>
+
+      </div>
+
+      <div class="ms-footnote">
+        <span class="ms-foot-mono">KAMPANYA</span>
+        <span>GDPR uyumlu · İstediğin zaman iptal</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="pricing-compare" aria-label="Plan karşılaştırması">
+    <h2>Planları karşılaştırın</h2>
+    <div style="overflow-x:auto">
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>Özellik</th>
+          <th>Başlangıç</th>
+          <th>Pro</th>
+          <th class="col-highlight">Pro Max</th>
+          <th>Takım</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>AI komut / ay</td><td>150 (5/gün)</td><td>200</td><td class="col-highlight">1500</td><td>Sınırsız</td></tr>
+        <tr><td>PDF → tablo</td><td><span class="compare-dash">—</span></td><td>10/ay</td><td class="col-highlight">Sınırsız</td><td>Sınırsız</td></tr>
+        <tr><td>AI Agents</td><td><span class="compare-dash">—</span></td><td><span class="compare-dash">—</span></td><td class="col-highlight"><span class="compare-check">✓</span></td><td><span class="compare-check">✓</span></td></tr>
+        <tr><td>Versiyon geçmişi</td><td>7 gün</td><td>30 gün</td><td class="col-highlight">90 gün</td><td>1 yıl</td></tr>
+        <tr><td>API erişimi</td><td><span class="compare-dash">—</span></td><td><span class="compare-dash">—</span></td><td class="col-highlight"><span class="compare-check">✓</span></td><td><span class="compare-check">✓</span></td></tr>
+        <tr><td>Koltuk sayısı</td><td>1</td><td>1</td><td class="col-highlight">1</td><td>5 (+$8/ek)</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </section>
+
+  <div class="trust-band">
+    <span>GDPR uyumlu · veriniz sizin</span>
+    <span>İstediğin zaman iptal · tek tıkla</span>
+  </div>
+
+  <section class="pricing-faq" aria-label="Sık sorulan sorular">
+    <h2>Sık sorulan sorular</h2>
+    <details>
+      <summary>Kredi kartı olmadan başlayabilir miyim?</summary>
+      <p>Evet. Başlangıç planı tamamen ücretsiz ve süresizdir. Kredi kartı bilgisi istemeden hemen kullanmaya başlayabilirsiniz.</p>
+    </details>
+    <details>
+      <summary>$1 ilk ay teklifi nasıl çalışır?</summary>
+      <p>Pro ve Pro Max planları için ilk ay yalnızca $1 ödersiniz. Sonraki aylarda normal ücret ($15/ay Pro, $21/ay Pro Max) uygulanır. İstediğiniz zaman tek tıkla iptal edebilirsiniz — sorusuz.</p>
+    </details>
+    <details>
+      <summary>Verilerim nerede saklanıyor?</summary>
+      <p>Tüm verileriniz AB bölgesindeki Supabase altyapısında şifreli olarak saklanır. GDPR tam uyumlu — verileriniz size aittir ve istediğiniz zaman silebilir veya dışa aktarabilirsiniz.</p>
+    </details>
+    <details>
+      <summary>Türkçe komutlar destekleniyor mu?</summary>
+      <p>Evet, Mocksheets Türkçe-öncelikli tasarlandı. KDV, SGK, maaş, aylık rapor gibi Türk muhasebe ve operasyon terimleri doğal olarak destekleniyor.</p>
+    </details>
+  </section>
+
+  <section class="final-cta">
+    <h2>Bugün başlayın, kredi kartı gerekmez.</h2>
+    <a href="/auth">Ücretsiz başla →</a>
+  </section>
+
+</div>
+
+<footer style="text-align:center;padding:32px 24px;border-top:1px solid #E5E7EB;margin-top:40px;font-size:13px;color:#9CA3AF">
+  <p>© 2026 Mocksheets · <a href="/" style="color:#9CA3AF">Ana Sayfa</a> · <a href="/contact" style="color:#9CA3AF">İletişim</a> · <a href="/kvkk" style="color:#9CA3AF">KVKK</a> · <a href="/privacy" style="color:#9CA3AF">Gizlilik</a> · <a href="/terms" style="color:#9CA3AF">Koşullar</a></p>
+</footer>
+
+<script>
+var _billingPeriod = 'monthly';
+var _PRO = {
+  monthly: 15,
+  yearly: 144,
+  features: [
+    '200 AI komutu / ay',
+    'PDF → tablo (10/ay)',
+    '10 aktif AI görevi',
+    '30 gün versiyon geçmişi',
+    'E-posta desteği'
+  ]
+};
+var _PROMAX = { monthly: 21, yearly: 202 };
+var _TEAM   = { monthly: 59, yearly: 566 };
+
+function renderProCard() {
+  var yearly = _billingPeriod === 'yearly';
+  var featEl = document.getElementById('pro-features');
+  if (featEl) {
+    featEl.innerHTML = _PRO.features.map(function(f) {
+      return '<li class="ms-row-feat"><span class="ms-feat-dash">—</span> ' + f + '</li>';
+    }).join('');
+  }
+  var amountEl = document.getElementById('pro-price-amount');
+  var afterEl = document.getElementById('proAfter');
+  var yearlyNoteEl = document.getElementById('pro-yearly-note');
+  var yearlyPriceEl = document.getElementById('pro-yearly-price');
+  var yearlyEquivEl = document.getElementById('pro-yearly-equiv');
+  var ctaEl = document.getElementById('proCheckoutBtn');
+  if (yearly) {
+    if (amountEl) amountEl.textContent = _PRO.yearly;
+    if (afterEl) afterEl.classList.add('hidden');
+    if (yearlyNoteEl) yearlyNoteEl.classList.remove('hidden');
+    if (yearlyPriceEl) yearlyPriceEl.textContent = '$' + _PRO.yearly;
+    if (yearlyEquivEl) yearlyEquivEl.textContent = '(aylık $' + Math.round(_PRO.yearly / 12) + '\'ye denk)';
+  } else {
+    if (amountEl) amountEl.textContent = 1;
+    if (afterEl) { afterEl.classList.remove('hidden'); afterEl.textContent = 'İlk 1 ay · sonra $' + _PRO.monthly + '/ay'; }
+    if (yearlyNoteEl) yearlyNoteEl.classList.add('hidden');
+  }
+  if (ctaEl) ctaEl.href = '/auth?plan=pro';
+}
+
+function renderProMaxCard() {
+  var yearly = _billingPeriod === 'yearly';
+  var amountEl = document.getElementById('promax-price-amount');
+  var afterEl = document.getElementById('promax-price-after');
+  var yearlyNoteEl = document.getElementById('promax-yearly-note');
+  var yearlyPriceEl = document.getElementById('promax-yearly-price');
+  var yearlyEquivEl = document.getElementById('promax-yearly-equiv');
+  var ctaEl = document.getElementById('promaxCheckoutBtn');
+  if (yearly) {
+    if (amountEl) amountEl.textContent = _PROMAX.yearly;
+    if (afterEl) afterEl.classList.add('hidden');
+    if (yearlyNoteEl) yearlyNoteEl.classList.remove('hidden');
+    if (yearlyPriceEl) yearlyPriceEl.textContent = '$' + _PROMAX.yearly;
+    if (yearlyEquivEl) yearlyEquivEl.textContent = '(aylık $' + Math.round(_PROMAX.yearly / 12) + '\'ye denk)';
+  } else {
+    if (amountEl) amountEl.textContent = 1;
+    if (afterEl) { afterEl.classList.remove('hidden'); afterEl.textContent = 'İlk 1 ay · sonra $' + _PROMAX.monthly + '/ay'; }
+    if (yearlyNoteEl) yearlyNoteEl.classList.add('hidden');
+  }
+  if (ctaEl) ctaEl.href = '/auth?plan=promax';
+}
+
+function renderTeamCard() {
+  var yearly = _billingPeriod === 'yearly';
+  var amountEl = document.getElementById('team-price-amount');
+  var afterEl  = document.getElementById('team-price-after');
+  var noteEl   = document.getElementById('team-yearly-note');
+  var priceEl  = document.getElementById('team-yearly-price');
+  var equivEl  = document.getElementById('team-yearly-equiv');
+  if (yearly) {
+    if (amountEl) amountEl.textContent = _TEAM.yearly;
+    if (afterEl)  afterEl.classList.add('hidden');
+    if (noteEl)   noteEl.classList.remove('hidden');
+    if (priceEl)  priceEl.textContent = '$' + _TEAM.yearly;
+    if (equivEl)  equivEl.textContent = "(aylık $" + Math.round(_TEAM.yearly / 12) + "'ye denk)";
+  } else {
+    if (amountEl) amountEl.textContent = 1;
+    if (afterEl)  { afterEl.classList.remove('hidden'); afterEl.textContent = 'İlk 1 ay · sonra $' + _TEAM.monthly + '/ay · 5 koltuk'; }
+    if (noteEl)   noteEl.classList.add('hidden');
+  }
+}
+
+function setPricingPeriod(p) {
+  _billingPeriod = p;
+  var yearly = p === 'yearly';
+  document.getElementById('ms-btn-monthly').classList.toggle('ms-active', !yearly);
+  document.getElementById('ms-btn-yearly').classList.toggle('ms-active', yearly);
+  document.getElementById('ms-btn-monthly').setAttribute('aria-selected', String(!yearly));
+  document.getElementById('ms-btn-yearly').setAttribute('aria-selected', String(yearly));
+  var sl = window._stripeLinks || {};
+  var per = yearly ? 'yearly' : 'monthly';
+  var proBtn = document.getElementById('proCheckoutBtn');
+  var promaxBtn = document.getElementById('promaxCheckoutBtn');
+  if (proBtn && sl.pro && sl.pro[per]) proBtn.href = sl.pro[per];
+  if (promaxBtn && sl.promax && sl.promax[per]) promaxBtn.href = sl.promax[per];
+  renderProCard();
+  renderProMaxCard();
+  renderTeamCard();
+}
+
+/* ROI Calculator */
+function updateROI() {
+  var hours = parseInt(document.getElementById('roi-hours').value, 10);
+  var hourlyRate = parseInt(document.getElementById('roi-role').value, 10);
+  var weeklyTimeSaved = hours * 0.65;
+  var monthlyTimeSaved = weeklyTimeSaved * 4.33;
+  var monthlyValue = monthlyTimeSaved * hourlyRate;
+  var netGain = monthlyValue - 15;
+  document.getElementById('roi-hours-val').textContent = hours;
+  document.getElementById('roi-time').textContent = Math.round(monthlyTimeSaved) + ' saat';
+  document.getElementById('roi-value').textContent = '$' + Math.round(monthlyValue);
+  document.getElementById('roi-net').textContent = '$' + Math.round(netGain) + '/ay';
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  renderProCard();
+  renderProMaxCard();
+  renderTeamCard();
+  document.getElementById('roi-hours').addEventListener('input', updateROI);
+  document.getElementById('roi-role').addEventListener('change', updateROI);
+  updateROI();
+});
+</script>
+
+<script>
+(function() {
+  var apiBase = window.location.hostname === 'localhost'
+    ? 'http://localhost:3001'
+    : 'https://upsheet-ai.onrender.com';
+  fetch(apiBase + '/api/stripe/links')
+    .then(function(r) { return r.ok ? r.json() : null; })
+    .then(function(data) {
+      if (!data) return;
+      window._stripeLinks = data;
+      var isYearly = document.getElementById('ms-btn-yearly')
+        && document.getElementById('ms-btn-yearly').getAttribute('aria-selected') === 'true';
+      var per = isYearly ? 'yearly' : 'monthly';
+      var proBtn = document.getElementById('proCheckoutBtn');
+      var promaxBtn = document.getElementById('promaxCheckoutBtn');
+      if (proBtn && data.pro && data.pro[per]) proBtn.href = data.pro[per];
+      if (promaxBtn && data.promax && data.promax[per]) promaxBtn.href = data.promax[per];
+    })
+    .catch(function() {});
+}());
+</script>
+</body>
+</html>
