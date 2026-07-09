@@ -71,4 +71,43 @@ async function sendEvent(email, eventName, eventProperties = {}) {
   }
 }
 
-module.exports = { createContact, updateContact, sendEvent };
+async function sendScenarioEmail(email, scenarioKey, extraFields = {}) {
+  if (!configured() || !email) return;
+  try {
+    const scenarios = require('../data/emailScenarios');
+    const scenario = scenarios[scenarioKey];
+    if (!scenario) {
+      console.error(`[mailchimp] Bilinmeyen senaryo: ${scenarioKey}`);
+      return;
+    }
+
+    const subscriberHash = hash(email);
+    const mergeFields = {
+      MAILTITLE: scenario.title,
+      MAILBODY: scenario.body,
+      MAILCTA: scenario.cta_text,
+      MAILCTAURL: scenario.cta_url,
+    };
+
+    Object.entries(extraFields).forEach(([k, v]) => {
+      const key = String(k).toUpperCase().slice(0, 10);
+      mergeFields[key] = typeof v === 'string' ? v : String(v);
+    });
+
+    await mailchimp.lists.setListMember(LIST_ID(), subscriberHash, {
+      email_address: email,
+      status_if_new: 'subscribed',
+      merge_fields: mergeFields
+    });
+
+    await mailchimp.lists.createListMemberEvent(LIST_ID(), subscriberHash, {
+      name: scenarioKey.slice(0, 30),
+      properties: {}
+    });
+    console.log(`[mailchimp] ${scenarioKey} → ${email}`);
+  } catch (e) {
+    console.error(`[mailchimp] sendScenarioEmail(${scenarioKey}):`, e.message || e);
+  }
+}
+
+module.exports = { createContact, updateContact, sendEvent, sendScenarioEmail };

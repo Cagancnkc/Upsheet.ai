@@ -14,13 +14,13 @@ async function runStillFree3d() {
     .lte('created_at', cutoff)
     .eq('still_free_3d_sent', false);
 
-  const { sendEvent } = require('../services/mailchimp');
+  const { sendScenarioEmail } = require('../services/mailchimp');
   for (const row of rows || []) {
     try {
       const { data: { user } } = await sb.auth.admin.getUserById(row.user_id);
       if (user?.email) {
         const fn = user.user_metadata?.full_name || user.email.split('@')[0];
-        await sendEvent(user.email, 'still_free_after_3_days', { firstName: fn });
+        await sendScenarioEmail(user.email, 'still_free_after_3_days');
         await sb.from('user_usage').update({ still_free_3d_sent: true }).eq('user_id', row.user_id);
       }
     } catch (e) { console.error('[emailTriggers] still_free_3d:', e.message); }
@@ -37,13 +37,13 @@ async function runWinback7d() {
     .lte('cancelled_at', to)
     .eq('winback_7d_sent', false);
 
-  const { sendEvent } = require('../services/mailchimp');
+  const { sendScenarioEmail } = require('../services/mailchimp');
   for (const row of rows || []) {
     try {
       const { data: { user } } = await sb.auth.admin.getUserById(row.user_id);
       if (user?.email) {
         const fn = user.user_metadata?.full_name || user.email.split('@')[0];
-        await sendEvent(user.email, 'winback_offer_7d', { firstName: fn });
+        await sendScenarioEmail(user.email, 'winback_offer_7d');
         await sb.from('user_usage').update({ winback_7d_sent: true }).eq('user_id', row.user_id);
       }
     } catch (e) { console.error('[emailTriggers] winback_7d:', e.message); }
@@ -60,13 +60,13 @@ async function runWinback30d() {
     .lte('cancelled_at', to)
     .eq('winback_30d_sent', false);
 
-  const { sendEvent } = require('../services/mailchimp');
+  const { sendScenarioEmail } = require('../services/mailchimp');
   for (const row of rows || []) {
     try {
       const { data: { user } } = await sb.auth.admin.getUserById(row.user_id);
       if (user?.email) {
         const fn = user.user_metadata?.full_name || user.email.split('@')[0];
-        await sendEvent(user.email, 'winback_offer_30d', { firstName: fn });
+        await sendScenarioEmail(user.email, 'winback_offer_30d');
         await sb.from('user_usage').update({ winback_30d_sent: true }).eq('user_id', row.user_id);
       }
     } catch (e) { console.error('[emailTriggers] winback_30d:', e.message); }
@@ -81,13 +81,13 @@ async function runInactive14d() {
     .lt('last_active_at', cutoff)
     .eq('inactive_14d_sent', false);
 
-  const { sendEvent } = require('../services/mailchimp');
+  const { sendScenarioEmail } = require('../services/mailchimp');
   for (const row of rows || []) {
     try {
       const { data: { user } } = await sb.auth.admin.getUserById(row.user_id);
       if (user?.email) {
         const fn = user.user_metadata?.full_name || user.email.split('@')[0];
-        await sendEvent(user.email, 'user_inactive_14d', { firstName: fn });
+        await sendScenarioEmail(user.email, 'user_inactive_14d');
         await sb.from('user_usage').update({ inactive_14d_sent: true }).eq('user_id', row.user_id);
       }
     } catch (e) { console.error('[emailTriggers] inactive_14d:', e.message); }
@@ -102,13 +102,13 @@ async function runInactive30d() {
     .lt('last_active_at', cutoff)
     .eq('inactive_30d_sent', false);
 
-  const { sendEvent } = require('../services/mailchimp');
+  const { sendScenarioEmail } = require('../services/mailchimp');
   for (const row of rows || []) {
     try {
       const { data: { user } } = await sb.auth.admin.getUserById(row.user_id);
       if (user?.email) {
         const fn = user.user_metadata?.full_name || user.email.split('@')[0];
-        await sendEvent(user.email, 'user_inactive_30d', { firstName: fn });
+        await sendScenarioEmail(user.email, 'user_inactive_30d');
         await sb.from('user_usage').update({ inactive_30d_sent: true }).eq('user_id', row.user_id);
       }
     } catch (e) { console.error('[emailTriggers] inactive_30d:', e.message); }

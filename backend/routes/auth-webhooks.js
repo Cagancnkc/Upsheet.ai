@@ -2,7 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const { createClient } = require('@supabase/supabase-js');
-const { createContact, sendEvent } = require('../services/mailchimp');
+const { createContact, sendScenarioEmail } = require('../services/mailchimp');
 
 function getSupabase() {
   return createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
@@ -44,8 +44,8 @@ router.post('/new-user', async (req, res) => {
       commandCount: 0,
       signupDate: new Date().toISOString(),
     }).catch(e => console.error('[loops] createContact signup:', e.message));
-    sendEvent(email, 'user_signed_up', { firstName })
-      .catch(e => console.error('[loops] user_signed_up:', e.message));
+    sendScenarioEmail(email, 'user_signed_up')
+      .catch(e => console.error('[mailchimp] user_signed_up:', e.message));
 
     res.json({ ok: true });
   } catch (err) {

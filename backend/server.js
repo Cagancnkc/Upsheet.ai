@@ -6,7 +6,7 @@ const fetch   = require('node-fetch');
 const { processExcelCommand } = require('./rag/pipeline');
 const tokenManager = require('./services/tokenManager');
 const { createClient: _createSbClient } = require('@supabase/supabase-js');
-const { updateContact: loopsUpdate, sendEvent: loopsEvent } = require('./services/mailchimp');
+const { updateContact: loopsUpdate, sendScenarioEmail } = require('./services/mailchimp');
 
 let _sbForAuth = null;
 function getSbForAuth() {
@@ -596,17 +596,15 @@ app.post('/api/chat', checkLimit, async (req, res) => {
         });
       }
       if (newCount === 3) {
-        loopsEvent(userEmail, 'engaged_user', { firstName, commandCount: newCount });
+        sendScenarioEmail(userEmail, 'engaged_user').catch(() => {});
       }
       const dailyLimit = req.plan.ai_commands_per_day;
       if (req.usage.plan === 'free' && dailyLimit !== Infinity
           && req.usage.ai_commands_used_today + 1 >= dailyLimit) {
-        loopsEvent(userEmail, 'limit_reached', { firstName, plan: 'free', limit: dailyLimit });
+        sendScenarioEmail(userEmail, 'limit_reached').catch(() => {});
       }
       if (newCount === 100) {
-        const timeSaved = (100 * 0.85 * 5 / 60).toFixed(1);
-        loopsEvent(userEmail, 'milestone_100_commands',
-          { firstName, commandCount: 100, timeSaved: timeSaved + ' saat' });
+        sendScenarioEmail(userEmail, 'milestone_100_commands').catch(() => {});
       }
 
       // Quota alerts: %80 ve %100
@@ -614,10 +612,10 @@ app.post('/api/chat', checkLimit, async (req, res) => {
       if (monthlyLimit !== Infinity) {
         const percentUsed = (newCount / monthlyLimit) * 100;
         if (percentUsed >= 100 && !req.usage.quota_100_sent_month) {
-          loopsEvent(userEmail, 'quota_reached', { firstName, limit: monthlyLimit });
+          sendScenarioEmail(userEmail, 'quota_reached').catch(() => {});
           getSbForAuth().from('user_usage').update({ quota_100_sent_month: true }).eq('user_id', req.user.id).catch(() => {});
         } else if (percentUsed >= 80 && percentUsed < 100 && !req.usage.quota_80_sent_month) {
-          loopsEvent(userEmail, 'quota_80_percent', { firstName, limit: monthlyLimit, used: newCount });
+          sendScenarioEmail(userEmail, 'quota_80_percent').catch(() => {});
           getSbForAuth().from('user_usage').update({ quota_80_sent_month: true }).eq('user_id', req.user.id).catch(() => {});
         }
       }
@@ -849,12 +847,11 @@ app.listen(PORT, '0.0.0.0', () => {
           .lte('created_at', cutoff)
           .eq('first_command_at', null)
           .eq('inactive_24h_sent', false);
-        const { sendEvent: ise } = require('./services/mailchimp');
+        const { sendScenarioEmail: sse } = require('./services/mailchimp');
         for (const row of rows || []) {
           const { data: { user } } = await sb.auth.admin.getUserById(row.user_id);
           if (user?.email) {
-            const fn = user.user_metadata?.full_name || user.email.split('@')[0];
-            await ise(user.email, 'no_first_command_24h', { firstName: fn });
+            await sse(user.email, 'no_first_command_24h');
             await sb.from('user_usage').update({ inactive_24h_sent: true }).eq('user_id', row.user_id);
           }
         }

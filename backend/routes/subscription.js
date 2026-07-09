@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 const Stripe = require('stripe');
 const { createClient } = require('@supabase/supabase-js');
-const { sendEvent: loopsEvent } = require('../services/mailchimp');
+const { sendScenarioEmail } = require('../services/mailchimp');
 
 let _stripe = null;
 function getStripe() {
@@ -182,16 +182,13 @@ router.post('/cancel', async (req, res) => {
     });
     const endDate = new Date(sub.current_period_end * 1000).toLocaleDateString('tr-TR');
 
-    // Loops: subscription_cancelled event
+    // Mailchimp: subscription_cancelled event
     try {
       const { data: { user: cUser } } = await sb.auth.admin.getUserById(user.id);
       if (cUser?.email) {
-        const firstName = cUser.user_metadata?.full_name || cUser.email.split('@')[0];
-        loopsEvent(cUser.email, 'subscription_cancelled', {
-          firstName, previousPlan: usage?.plan || 'pro', endDate
-        });
+        sendScenarioEmail(cUser.email, 'subscription_cancelled');
       }
-    } catch (e) { console.error('[loops] cancel event:', e.message); }
+    } catch (e) { console.error('[mailchimp] cancel event:', e.message); }
 
     return res.json({ success: true, endDate, message: `Aboneliğin ${endDate} tarihinde sona erecek.` });
   } catch (err) {

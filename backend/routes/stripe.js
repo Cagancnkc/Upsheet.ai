@@ -2,7 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const Stripe = require('stripe');
-const { updateContact: loopsUpdate, sendEvent: mcEvent } = require('../services/mailchimp');
+const { updateContact: loopsUpdate, sendScenarioEmail } = require('../services/mailchimp');
 
 // stripe instance — lazily initialized so module loads even without env vars
 let _stripe = null;
@@ -209,11 +209,8 @@ router.post('/webhook',
           if (session.customer_email) {
             loopsUpdate(session.customer_email, { userGroup: plan, subscriptionTier: plan, subscriptionStatus: 'active' })
               .catch(e => console.error('[mailchimp] checkout update:', e.message));
-            mcEvent(session.customer_email, 'plan_upgraded', {
-              plan,
-              period: period || '',
-              amount: String(session.amount_total || '')
-            }).catch(e => console.error('[mailchimp] plan_upgraded:', e.message));
+            sendScenarioEmail(session.customer_email, 'plan_upgraded')
+              .catch(e => console.error('[mailchimp] plan_upgraded:', e.message));
           }
         } else {
           console.log('✅ Ödeme tamamlandı:', session.customer_email);
@@ -259,7 +256,7 @@ router.post('/webhook',
           if (aUser?.email) {
             loopsUpdate(aUser.email, { subscriptionStatus: subStatus, subscriptionTier: newPlan })
               .catch(e => console.error('[mailchimp] sub updated:', e.message));
-            mcEvent(aUser.email, 'plan_changed', { newPlan, oldPlan: uRec.plan || '' })
+            sendScenarioEmail(aUser.email, 'plan_changed')
               .catch(e => console.error('[mailchimp] plan_changed:', e.message));
           }
         }
@@ -289,7 +286,7 @@ router.post('/webhook',
           if (dUser?.email) {
             loopsUpdate(dUser.email, { subscriptionStatus: 'free', subscriptionTier: '' })
               .catch(e => console.error('[mailchimp] sub deleted:', e.message));
-            mcEvent(dUser.email, 'plan_cancelled', { plan: prevPlan })
+            sendScenarioEmail(dUser.email, 'plan_cancelled')
               .catch(e => console.error('[mailchimp] plan_cancelled:', e.message));
           }
         }
@@ -307,10 +304,8 @@ router.post('/webhook',
             .eq('stripe_subscription_id', invoice.subscription);
         }
         if (invoice.customer_email) {
-          mcEvent(invoice.customer_email, 'payment_failed', {
-            attemptCount: String(invoice.attempt_count || ''),
-            amount: String(invoice.amount_due || '')
-          }).catch(e => console.error('[mailchimp] payment_failed:', e.message));
+          sendScenarioEmail(invoice.customer_email, 'payment_failed')
+            .catch(e => console.error('[mailchimp] payment_failed:', e.message));
         }
         break;
       }
