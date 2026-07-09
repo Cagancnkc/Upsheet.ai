@@ -3065,6 +3065,28 @@ body[data-app-mode="agent"] #agent-panel { display:flex !important; }
 .int-status-badge{font-size:11px;padding:2px 8px;border-radius:99px;font-weight:600;}
 .int-status-badge.connected{background:#eafac9;color:#3a5a18;}
 .int-status-badge.error{background:#fee2e2;color:#b91c1c;}
+.agent-upsell-modal{width:480px;max-width:92vw;border-radius:20px;overflow:hidden;}
+.aum-header{background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);padding:32px 28px 24px;display:flex;justify-content:space-between;align-items:flex-start;position:relative;}
+.aum-icon-wrap{width:56px;height:56px;background:rgba(255,255,255,0.12);border-radius:14px;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.2);}
+.aum-icon-wrap svg{stroke:#fff;width:24px;height:24px;}
+.aum-close{color:rgba(255,255,255,0.6);background:none;border:none;cursor:pointer;font-size:16px;line-height:1;padding:4px;border-radius:6px;transition:color 0.15s;}
+.aum-close:hover{color:#fff;background:rgba(255,255,255,0.1);}
+.aum-body{padding:24px 28px 20px;}
+.aum-badge{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(90deg,#7c3aed22,#2563eb22);border:1px solid #7c3aed44;color:#7c3aed;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;padding:4px 10px;border-radius:20px;margin-bottom:12px;}
+.aum-title{font-size:22px;font-weight:700;color:var(--ink);margin:0 0 8px;}
+.aum-desc{font-size:14px;color:var(--ink-3);line-height:1.6;margin:0 0 20px;}
+.aum-features{list-style:none;padding:0;margin:0 0 20px;display:flex;flex-direction:column;gap:8px;}
+.aum-features li{font-size:13.5px;color:var(--ink-2);display:flex;align-items:center;gap:10px;}
+.aum-features li::before{content:'✓';width:18px;height:18px;flex-shrink:0;background:linear-gradient(135deg,#7c3aed,#2563eb);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:bold;}
+.aum-plans{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:0;}
+.aum-plan-pill{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:500;}
+.aum-plan-pill.locked{background:var(--line);color:var(--ink-4);}
+.aum-plan-pill.unlocked{background:linear-gradient(90deg,#7c3aed18,#2563eb18);border:1px solid #7c3aed33;color:#7c3aed;}
+.aum-footer{padding:16px 28px 24px;display:flex;flex-direction:column;gap:10px;border-top:1px solid var(--line);}
+.aum-cta-btn{display:block;text-align:center;padding:13px 20px;background:linear-gradient(135deg,#7c3aed,#2563eb);color:#fff;border-radius:10px;font-size:14px;font-weight:600;text-decoration:none;transition:opacity 0.15s,transform 0.1s;}
+.aum-cta-btn:hover{opacity:0.92;transform:translateY(-1px);}
+.aum-secondary-btn{background:none;border:none;cursor:pointer;color:var(--ink-4);font-size:13px;text-align:center;padding:4px;transition:color 0.15s;}
+.aum-secondary-btn:hover{color:var(--ink);}
 </style>
 
 <script>
@@ -3402,6 +3424,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
   window.closeSubscriptionModal = function() {
     document.getElementById('subscription-modal').style.display = 'none';
+  };
+
+  window.openAgentUpsellModal = function(currentPlan) {
+    var display = { free: 'Başlangıç (Ücretsiz)', pro_normal: 'Pro', pro: 'Pro' };
+    var label = display[currentPlan] || 'Mevcut Plan';
+    var pill = document.getElementById('aum-current-plan');
+    if (pill) pill.textContent = label + ' · Kilitli';
+    document.getElementById('agent-upsell-overlay').style.display = 'flex';
+  };
+
+  window.closeAgentUpsellModal = function() {
+    document.getElementById('agent-upsell-overlay').style.display = 'none';
   };
 
   window.setSubPeriod = function(period) {
@@ -3775,6 +3809,17 @@ async function runColumnTranslate() {
   var currentConversationId = null;
 
   window.setAppMode = function(mode) {
+    if (mode === 'agent') {
+      var plan = (function() {
+        try { return JSON.parse(localStorage.getItem('mocksheets_plan'))?.plan || 'free'; }
+        catch(e) { return 'free'; }
+      })();
+      var allowed = plan === 'pro_max' || plan === 'promax' || plan === 'team' || plan === 'business';
+      if (!allowed) {
+        openAgentUpsellModal(plan);
+        return;
+      }
+    }
     document.body.dataset.appMode = mode;
     var normalBtn = document.getElementById('mode-normal-btn');
     var agentBtn = document.getElementById('mode-agent-btn');
@@ -3959,6 +4004,38 @@ async function runColumnTranslate() {
     </div>
 
     <p id="tr-status" style="font-size:12px;color:#6b7280;margin:10px 0 0;text-align:center;"></p>
+  </div>
+</div>
+
+<!-- AI Agents Upsell Modal -->
+<div id="agent-upsell-overlay" class="ms-overlay" style="display:none;" onclick="if(event.target===this)closeAgentUpsellModal()">
+  <div class="ms-modal agent-upsell-modal">
+    <div class="aum-header">
+      <div class="aum-icon-wrap">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 2.2"/><circle cx="12" cy="12" r="1"/></svg>
+      </div>
+      <button class="aum-close" onclick="closeAgentUpsellModal()">✕</button>
+    </div>
+    <div class="aum-body">
+      <div class="aum-badge">Pro Max & Takım</div>
+      <h2 class="aum-title">AI Agents</h2>
+      <p class="aum-desc">Tekrarlayan operasyonlarını otomatikleştir. AI Agent tablonu analiz eder, rapor oluşturur ve sana öneride bulunur.</p>
+      <ul class="aum-features">
+        <li>Otomatik rapor & analiz</li>
+        <li>Çok adımlı görev yürütme</li>
+        <li>Shopify & Google Sheets entegrasyonu</li>
+        <li>Türkçe doğal dil komutları</li>
+      </ul>
+      <div class="aum-plans">
+        <div class="aum-plan-pill locked" id="aum-current-plan">Free · Kilitli</div>
+        <div class="aum-plan-pill unlocked">Pro Max · ✓ Dahil</div>
+        <div class="aum-plan-pill unlocked">Takım · ✓ Dahil</div>
+      </div>
+    </div>
+    <div class="aum-footer">
+      <a href="/pricing" class="aum-cta-btn">Planı Yükselt →</a>
+      <button class="aum-secondary-btn" onclick="closeAgentUpsellModal()">Şimdi Değil</button>
+    </div>
   </div>
 </div>
 
