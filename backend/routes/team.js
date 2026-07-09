@@ -2,6 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const { createClient } = require('@supabase/supabase-js');
+const { sendEvent: mcEvent } = require('../services/mailchimp');
 
 let _sb = null;
 function getSb() {
@@ -125,19 +126,11 @@ router.post('/invite', requireAuth, async (req, res) => {
   const inviterName = inviterData?.user?.user_metadata?.first_name ||
     inviterData?.user?.email?.split('@')[0] || 'Takım yöneticisi';
 
-  if (process.env.LOOPS_API_KEY) {
-    fetch('https://app.loops.so/api/v1/events/send', {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${process.env.LOOPS_API_KEY}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        eventName: 'team_invitation_sent',
-        email: email.toLowerCase(),
-        teamName: team.name,
-        inviterName,
-        inviteLink
-      })
-    }).catch(e => console.error('[loops] team invite failed:', e.message));
-  }
+  mcEvent(email.toLowerCase(), 'team_invitation_sent', {
+    teamName: team.name,
+    inviterName,
+    inviteLink
+  }).catch(e => console.error('[mailchimp] team_invitation_sent:', e.message));
 
   res.json({ ok: true, inviteLink });
 });

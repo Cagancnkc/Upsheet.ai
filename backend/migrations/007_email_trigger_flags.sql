@@ -1,0 +1,13 @@
+-- Email trigger flags and tracking columns
+ALTER TABLE user_usage
+  ADD COLUMN IF NOT EXISTS first_command_at TIMESTAMPTZ,
+  ADD COLUMN IF NOT EXISTS last_active_at TIMESTAMPTZ,
+  ADD COLUMN IF NOT EXISTS cancelled_at TIMESTAMPTZ,
+  ADD COLUMN IF NOT EXISTS inactive_24h_sent BOOLEAN DEFAULT false,
+  ADD COLUMN IF NOT EXISTS still_free_3d_sent BOOLEAN DEFAULT false,
+  ADD COLUMN IF NOT EXISTS winback_7d_sent BOOLEAN DEFAULT false,
+  ADD COLUMN IF NOT EXISTS winback_30d_sent BOOLEAN DEFAULT false,
+  ADD COLUMN IF NOT EXISTS inactive_14d_sent BOOLEAN DEFAULT false,
+  ADD COLUMN IF NOT EXISTS inactive_30d_sent BOOLEAN DEFAULT false,
+  ADD COLUMN IF NOT EXISTS quota_80_sent_month BOOLEAN DEFAULT false,
+  ADD COLUMN IF NOT EXISTS quota_100_sent_month BOOLEAN DEFAULT false;

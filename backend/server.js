@@ -6,7 +6,7 @@ const fetch   = require('node-fetch');
 const { processExcelCommand } = require('./rag/pipeline');
 const tokenManager = require('./services/tokenManager');
 const { createClient: _createSbClient } = require('@supabase/supabase-js');
-const { updateContact: loopsUpdate, sendEvent: loopsEvent } = require('./lib/loops');
+const { updateContact: loopsUpdate, sendEvent: loopsEvent } = require('./services/mailchimp');
 
 let _sbForAuth = null;
 function getSbForAuth() {
@@ -608,6 +608,19 @@ app.post('/api/chat', checkLimit, async (req, res) => {
         loopsEvent(userEmail, 'milestone_100_commands',
           { firstName, commandCount: 100, timeSaved: timeSaved + ' saat' });
       }
+
+      // Quota alerts: %80 ve %100
+      const monthlyLimit = req.plan.ai_commands_per_month;
+      if (monthlyLimit !== Infinity) {
+        const percentUsed = (newCount / monthlyLimit) * 100;
+        if (percentUsed >= 100 && !req.usage.quota_100_sent_month) {
+          loopsEvent(userEmail, 'quota_reached', { firstName, limit: monthlyLimit });
+          getSbForAuth().from('user_usage').update({ quota_100_sent_month: true }).eq('user_id', req.user.id).catch(() => {});
+        } else if (percentUsed >= 80 && percentUsed < 100 && !req.usage.quota_80_sent_month) {
+          loopsEvent(userEmail, 'quota_80_percent', { firstName, limit: monthlyLimit, used: newCount });
+          getSbForAuth().from('user_usage').update({ quota_80_sent_month: true }).eq('user_id', req.user.id).catch(() => {});
+        }
+      }
     } catch (e) {
       console.error('[loops] chat events:', e.message);
     }
@@ -824,8 +837,28 @@ app.listen(PORT, '0.0.0.0', () => {
   try {
     const cron = require('node-cron');
     const { runSendScheduledEmails } = require('./jobs/sendScheduledEmails');
-    cron.schedule('0 * * * *', () => {
-      runSendScheduledEmails().catch(e => console.error('[email-job]', e.message));
+    cron.schedule('0 * * * *', async () => {
+      await runSendScheduledEmails().catch(e => console.error('[email-job]', e.message));
+
+      // Check for inactive_24h: users who signed up 24h ago but never ran a command
+      try {
+        const sb = _createSbClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
+        const cutoff = new Date(Date.now() - 24 * 3600000).toISOString();
+        const { data: rows } = await sb.from('user_usage')
+          .select('user_id')
+          .lte('created_at', cutoff)
+          .eq('first_command_at', null)
+          .eq('inactive_24h_sent', false);
+        const { sendEvent: ise } = require('./services/mailchimp');
+        for (const row of rows || []) {
+          const { data: { user } } = await sb.auth.admin.getUserById(row.user_id);
+          if (user?.email) {
+            const fn = user.user_metadata?.full_name || user.email.split('@')[0];
+            await ise(user.email, 'no_first_command_24h', { firstName: fn });
+            await sb.from('user_usage').update({ inactive_24h_sent: true }).eq('user_id', row.user_id);
+          }
+        }
+      } catch (e) { console.error('[inactive_24h]', e.message); }
     }, { timezone: 'Europe/Istanbul' });
     console.log('[email-job] Saatlik email job başlatıldı');
   } catch (e) { console.error('[email-job] Init error:', e.message); }
@@ -834,7 +867,7 @@ app.listen(PORT, '0.0.0.0', () => {
   try {
     const cron2 = require('node-cron');
     cron2.schedule('30 8 * * *', async () => {
-      const { sendEvent: lse } = require('./lib/loops');
+      const { sendEvent: lse } = require('./services/mailchimp');
       const sb2 = _createSbClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
       const now = new Date();
 
@@ -873,7 +906,7 @@ app.listen(PORT, '0.0.0.0', () => {
 
     // Loops — haftalık özet (Pazartesi 09:00)
     cron2.schedule('0 9 * * 1', async () => {
-      const { sendEvent: lse } = require('./lib/loops');
+      const { sendEvent: lse } = require('./services/mailchimp');
       const sb3 = _createSbClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
       const weekAgo = new Date(Date.now() - 7 * 86400000).toISOString();
       const { data: rows } = await sb3.from('user_usage')
@@ -894,6 +927,20 @@ app.listen(PORT, '0.0.0.0', () => {
 
     console.log('[loops-cron] Loops cron jobları başlatıldı');
   } catch (e) { console.error('[loops-cron] Init error:', e.message); }
+
+  // Email trigger cron jobs
+  try {
+    const cron3 = require('node-cron');
+    const { runStillFree3d, runWinback7d, runWinback30d, runInactive14d, runInactive30d } = require('./jobs/emailTriggers');
+
+    cron3.schedule('0 9 * * *', () => runStillFree3d().catch(e => console.error('[emailTriggers] still_free_3d:', e.message)), { timezone: 'Europe/Istanbul' });
+    cron3.schedule('0 10 * * *', () => runWinback7d().catch(e => console.error('[emailTriggers] winback_7d:', e.message)), { timezone: 'Europe/Istanbul' });
+    cron3.schedule('15 10 * * *', () => runWinback30d().catch(e => console.error('[emailTriggers] winback_30d:', e.message)), { timezone: 'Europe/Istanbul' });
+    cron3.schedule('0 11 * * *', () => runInactive14d().catch(e => console.error('[emailTriggers] inactive_14d:', e.message)), { timezone: 'Europe/Istanbul' });
+    cron3.schedule('15 11 * * *', () => runInactive30d().catch(e => console.error('[emailTriggers] inactive_30d:', e.message)), { timezone: 'Europe/Istanbul' });
+
+    console.log('[emailTriggers] 5 cron job başlatıldı');
+  } catch (e) { console.error('[emailTriggers] Init error:', e.message); }
 
   // Render free tier'ı uyanık tut: her 14 dakikada self-ping
   const SELF_URL = process.env.RENDER_EXTERNAL_URL || `http://localhost:${PORT}`;

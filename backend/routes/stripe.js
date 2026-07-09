@@ -2,7 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const Stripe = require('stripe');
-const { updateContact: loopsUpdate } = require('../lib/loops');
+const { updateContact: loopsUpdate, sendEvent: mcEvent } = require('../services/mailchimp');
 
 // stripe instance — lazily initialized so module loads even without env vars
 let _stripe = null;
@@ -206,12 +206,14 @@ router.post('/webhook',
             }
           }
 
-          if (session.customer_email && process.env.LOOPS_API_KEY) {
-            fetch('https://app.loops.so/api/v1/contacts/update', {
-              method: 'PUT',
-              headers: { Authorization: `Bearer ${process.env.LOOPS_API_KEY}`, 'Content-Type': 'application/json' },
-              body: JSON.stringify({ email: session.customer_email, userGroup: plan })
-            }).catch(e => console.error('[loops] contact update failed:', e.message));
+          if (session.customer_email) {
+            loopsUpdate(session.customer_email, { userGroup: plan, subscriptionTier: plan, subscriptionStatus: 'active' })
+              .catch(e => console.error('[mailchimp] checkout update:', e.message));
+            mcEvent(session.customer_email, 'plan_upgraded', {
+              plan,
+              period: period || '',
+              amount: String(session.amount_total || '')
+            }).catch(e => console.error('[mailchimp] plan_upgraded:', e.message));
           }
         } else {
           console.log('✅ Ödeme tamamlandı:', session.customer_email);
@@ -249,14 +251,16 @@ router.post('/webhook',
           })
           .eq('stripe_subscription_id', sub.id);
 
-        // Loops contact sync
+        // Mailchimp contact sync
         const { data: uRec } = await sbUpd.from('user_usage')
-          .select('user_id').eq('stripe_subscription_id', sub.id).single();
+          .select('user_id, plan').eq('stripe_subscription_id', sub.id).single();
         if (uRec?.user_id) {
           const { data: { user: aUser } } = await sbUpd.auth.admin.getUserById(uRec.user_id);
           if (aUser?.email) {
             loopsUpdate(aUser.email, { subscriptionStatus: subStatus, subscriptionTier: newPlan })
-              .catch(e => console.error('[loops] sub updated:', e.message));
+              .catch(e => console.error('[mailchimp] sub updated:', e.message));
+            mcEvent(aUser.email, 'plan_changed', { newPlan, oldPlan: uRec.plan || '' })
+              .catch(e => console.error('[mailchimp] plan_changed:', e.message));
           }
         }
         break;
@@ -267,20 +271,26 @@ router.post('/webhook',
         const { createClient: createClientDel } = require('@supabase/supabase-js');
         const sbDel = createClientDel(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
 
+        const { data: preDel } = await sbDel.from('user_usage')
+          .select('plan').eq('stripe_subscription_id', sub.id).single();
+        const prevPlan = preDel?.plan || '';
+
         await sbDel.from('user_usage')
-          .update({ plan: 'free', subscription_status: 'canceled', plan_ends_at: null })
+          .update({ plan: 'free', subscription_status: 'canceled', plan_ends_at: null, cancelled_at: new Date().toISOString() })
           .eq('stripe_subscription_id', sub.id);
 
         console.log(`❌ Abonelik iptal: ${sub.id} → free plan`);
 
-        // Loops contact sync
+        // Mailchimp contact sync
         const { data: dRec } = await sbDel.from('user_usage')
           .select('user_id').eq('stripe_subscription_id', sub.id).single();
         if (dRec?.user_id) {
           const { data: { user: dUser } } = await sbDel.auth.admin.getUserById(dRec.user_id);
           if (dUser?.email) {
             loopsUpdate(dUser.email, { subscriptionStatus: 'free', subscriptionTier: '' })
-              .catch(e => console.error('[loops] sub deleted:', e.message));
+              .catch(e => console.error('[mailchimp] sub deleted:', e.message));
+            mcEvent(dUser.email, 'plan_cancelled', { plan: prevPlan })
+              .catch(e => console.error('[mailchimp] plan_cancelled:', e.message));
           }
         }
         break;
@@ -295,6 +305,12 @@ router.post('/webhook',
           await sbF.from('user_usage')
             .update({ subscription_status: 'past_due' })
             .eq('stripe_subscription_id', invoice.subscription);
+        }
+        if (invoice.customer_email) {
+          mcEvent(invoice.customer_email, 'payment_failed', {
+            attemptCount: String(invoice.attempt_count || ''),
+            amount: String(invoice.amount_due || '')
+          }).catch(e => console.error('[mailchimp] payment_failed:', e.message));
         }
         break;
       }

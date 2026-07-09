@@ -2,7 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const { createClient } = require('@supabase/supabase-js');
-const { createContact, sendEvent } = require('../lib/loops');
+const { createContact, sendEvent } = require('../services/mailchimp');
 
 function getSupabase() {
   return createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);

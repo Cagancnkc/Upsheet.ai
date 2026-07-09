@@ -4,6 +4,7 @@ const router = express.Router();
 const { createClient } = require('@supabase/supabase-js');
 const Anthropic = require('@anthropic-ai/sdk');
 const requireProMax = require('../middleware/requireProMax');
+const { sendEvent: mcEvent } = require('../services/mailchimp');
 
 let _supabase = null;
 function getSupabase() {
@@ -123,6 +124,19 @@ router.post('/chat', async (req, res) => {
     .eq('id', convId);
 
   res.json({ reply, conversationId: convId });
+});
+
+// POST /api/agent/track-cancel-intent
+router.post('/track-cancel-intent', async (req, res) => {
+  const { reason } = req.body || {};
+  try {
+    mcEvent(req.user.email, 'cancel_intent', { reason: reason || '' })
+      .catch(e => console.error('[mailchimp] cancel_intent:', e.message));
+    res.json({ ok: true });
+  } catch (e) {
+    console.error('[agent/track-cancel-intent]', e.message);
+    res.status(500).json({ error: 'Hata kaydedilemedi' });
+  }
 });
 
 module.exports = router;

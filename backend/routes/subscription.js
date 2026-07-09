@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 const Stripe = require('stripe');
 const { createClient } = require('@supabase/supabase-js');
-const { sendEvent: loopsEvent } = require('../lib/loops');
+const { sendEvent: loopsEvent } = require('../services/mailchimp');
 
 let _stripe = null;
 function getStripe() {
