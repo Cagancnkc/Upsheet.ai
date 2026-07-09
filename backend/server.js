@@ -517,6 +517,8 @@ const teamRouter = require('./routes/team');
 app.use('/api/team', teamRouter);
 const agentsRouter = require('./routes/agents');
 app.use('/api/agents', agentsRouter);
+const agentRouter = require('./routes/agent');
+app.use('/api/agent', agentRouter);
 const shopifyRouter = require('./routes/shopify');
 app.use('/api/shopify', shopifyRouter);
 const translateRouter = require('./routes/translate');
