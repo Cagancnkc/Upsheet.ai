@@ -3,12 +3,12 @@ const TRANSLATIONS = {
     'nav.features': 'Özellikler',
     'nav.pricing': 'Fiyatlar',
     'nav.login': 'Giriş Yap',
-    'nav.start': 'Shopify ile Ücretsiz Başla',
+    'nav.start': 'Ücretsiz Kayıt Ol',
 
     'hero.badge': 'AI Operasyon Asistanı',
     'hero.title': 'Excel Verilerinizi<br><em><span class="accent">Tek Bir Cümleyle Düzenleyin.</span></em>',
     'hero.desc': 'Excel\'inizi açmanıza bile gerek yok. Ne istediğinizi söyleyin, Mocksheets veriyi bulsun, işlesin, raporlasın — siz sonucu görün. <b style="color:var(--ink)">Haftada 7+ saat geri kazanın.</b>',
-    'hero.cta1': 'Shopify ile Ücretsiz Başla',
+    'hero.cta1': 'Ücretsiz Kayıt Ol',
     'hero.cta2': 'Canlı Gör →',
 
     'steps.title': 'Veriden karara.<br>Üç adımda.',
@@ -40,7 +40,7 @@ const TRANSLATIONS = {
     'faq.sub': 'Aklınızdaki soruların yanıtı burada.',
 
     'cta.title': 'AI desteğiyle operasyon yönetmenin <em>en iyi yolu.</em>',
-    'cta.btn1': 'Shopify ile Ücretsiz Başla',
+    'cta.btn1': 'Ücretsiz Kayıt Ol',
     'cta.btn2': 'Satışla Konuş',
 
     'footer.product': 'Ürün',
@@ -54,12 +54,12 @@ const TRANSLATIONS = {
     'nav.features': 'Features',
     'nav.pricing': 'Pricing',
     'nav.login': 'Sign In',
-    'nav.start': 'Start Free with Shopify',
+    'nav.start': 'Sign Up Free',
 
     'hero.badge': 'AI Operations Assistant',
     'hero.title': 'Organize Your Excel Data<br><em><span class="accent">With a Single Sentence.</span></em>',
     'hero.desc': 'You don\'t even need to open Excel. Tell Mocksheets what you want — it finds the data, processes it, and reports back. <b style="color:var(--ink)">Save 7+ hours per week.</b>',
-    'hero.cta1': 'Start Free with Shopify',
+    'hero.cta1': 'Sign Up Free',
     'hero.cta2': 'See Live →',
 
     'steps.title': 'From data to decision.<br>In three steps.',
@@ -91,7 +91,7 @@ const TRANSLATIONS = {
     'faq.sub': 'Find answers to your questions here.',
 
     'cta.title': 'The best way to manage operations <em>with AI support.</em>',
-    'cta.btn1': 'Start Free with Shopify',
+    'cta.btn1': 'Sign Up Free',
     'cta.btn2': 'Talk to Sales',
 
     'footer.product': 'Product',
