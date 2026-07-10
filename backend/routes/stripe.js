@@ -2,7 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const Stripe = require('stripe');
-const { updateContact: loopsUpdate, sendScenarioEmail } = require('../services/mailchimp');
+const { upsertContact: loopsUpdate, sendScenarioEmail } = require('../services/brevo');
 
 // stripe instance — lazily initialized so module loads even without env vars
 let _stripe = null;
@@ -208,9 +208,9 @@ router.post('/webhook',
 
           if (session.customer_email) {
             loopsUpdate(session.customer_email, { userGroup: plan, subscriptionTier: plan, subscriptionStatus: 'active' })
-              .catch(e => console.error('[mailchimp] checkout update:', e.message));
+              .catch(e => console.error('[brevo] checkout update:', e.message));
             sendScenarioEmail(session.customer_email, 'plan_upgraded')
-              .catch(e => console.error('[mailchimp] plan_upgraded:', e.message));
+              .catch(e => console.error('[brevo] plan_upgraded:', e.message));
           }
         } else {
           console.log('✅ Ödeme tamamlandı:', session.customer_email);
@@ -255,9 +255,9 @@ router.post('/webhook',
           const { data: { user: aUser } } = await sbUpd.auth.admin.getUserById(uRec.user_id);
           if (aUser?.email) {
             loopsUpdate(aUser.email, { subscriptionStatus: subStatus, subscriptionTier: newPlan })
-              .catch(e => console.error('[mailchimp] sub updated:', e.message));
+              .catch(e => console.error('[brevo] sub updated:', e.message));
             sendScenarioEmail(aUser.email, 'plan_changed')
-              .catch(e => console.error('[mailchimp] plan_changed:', e.message));
+              .catch(e => console.error('[brevo] plan_changed:', e.message));
           }
         }
         break;
@@ -285,9 +285,9 @@ router.post('/webhook',
           const { data: { user: dUser } } = await sbDel.auth.admin.getUserById(dRec.user_id);
           if (dUser?.email) {
             loopsUpdate(dUser.email, { subscriptionStatus: 'free', subscriptionTier: '' })
-              .catch(e => console.error('[mailchimp] sub deleted:', e.message));
+              .catch(e => console.error('[brevo] sub deleted:', e.message));
             sendScenarioEmail(dUser.email, 'plan_cancelled')
-              .catch(e => console.error('[mailchimp] plan_cancelled:', e.message));
+              .catch(e => console.error('[brevo] plan_cancelled:', e.message));
           }
         }
         break;
@@ -305,7 +305,7 @@ router.post('/webhook',
         }
         if (invoice.customer_email) {
           sendScenarioEmail(invoice.customer_email, 'payment_failed')
-            .catch(e => console.error('[mailchimp] payment_failed:', e.message));
+            .catch(e => console.error('[brevo] payment_failed:', e.message));
         }
         break;
       }

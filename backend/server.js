@@ -6,7 +6,7 @@ const fetch   = require('node-fetch');
 const { processExcelCommand } = require('./rag/pipeline');
 const tokenManager = require('./services/tokenManager');
 const { createClient: _createSbClient } = require('@supabase/supabase-js');
-const { updateContact: loopsUpdate, sendScenarioEmail } = require('./services/mailchimp');
+const { upsertContact: loopsUpdate, sendScenarioEmail } = require('./services/brevo');
 
 let _sbForAuth = null;
 function getSbForAuth() {
@@ -847,7 +847,7 @@ app.listen(PORT, '0.0.0.0', () => {
           .lte('created_at', cutoff)
           .eq('first_command_at', null)
           .eq('inactive_24h_sent', false);
-        const { sendScenarioEmail: sse } = require('./services/mailchimp');
+        const { sendScenarioEmail: sse } = require('./services/brevo');
         for (const row of rows || []) {
           const { data: { user } } = await sb.auth.admin.getUserById(row.user_id);
           if (user?.email) {
@@ -864,7 +864,7 @@ app.listen(PORT, '0.0.0.0', () => {
   try {
     const cron2 = require('node-cron');
     cron2.schedule('30 8 * * *', async () => {
-      const { sendEvent: lse } = require('./services/mailchimp');
+      const { sendEventToBrevo: lse } = require('./services/brevo');
       const sb2 = _createSbClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
       const now = new Date();
 
@@ -903,7 +903,7 @@ app.listen(PORT, '0.0.0.0', () => {
 
     // Loops — haftalık özet (Pazartesi 09:00)
     cron2.schedule('0 9 * * 1', async () => {
-      const { sendEvent: lse } = require('./services/mailchimp');
+      const { sendEventToBrevo: lse } = require('./services/brevo');
       const sb3 = _createSbClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
       const weekAgo = new Date(Date.now() - 7 * 86400000).toISOString();
       const { data: rows } = await sb3.from('user_usage')

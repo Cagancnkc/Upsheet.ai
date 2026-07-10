@@ -2,7 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const { createClient } = require('@supabase/supabase-js');
-const { sendScenarioEmail } = require('../services/mailchimp');
+const { sendScenarioEmail } = require('../services/brevo');
 
 let _sb = null;
 function getSb() {
@@ -127,7 +127,7 @@ router.post('/invite', requireAuth, async (req, res) => {
     inviterData?.user?.email?.split('@')[0] || 'Takım yöneticisi';
 
   sendScenarioEmail(email.toLowerCase(), 'team_invitation_sent')
-    .catch(e => console.error('[mailchimp] team_invitation_sent:', e.message));
+    .catch(e => console.error('[brevo] team_invitation_sent:', e.message));
 
   res.json({ ok: true, inviteLink });
 });

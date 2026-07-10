@@ -4,7 +4,7 @@ const router = express.Router();
 const { createClient } = require('@supabase/supabase-js');
 const Anthropic = require('@anthropic-ai/sdk');
 const requireProMax = require('../middleware/requireProMax');
-const { sendScenarioEmail } = require('../services/mailchimp');
+const { sendScenarioEmail } = require('../services/brevo');
 
 let _supabase = null;
 function getSupabase() {
@@ -131,7 +131,7 @@ router.post('/track-cancel-intent', async (req, res) => {
   const { reason } = req.body || {};
   try {
     sendScenarioEmail(req.user.email, 'cancel_intent')
-      .catch(e => console.error('[mailchimp] cancel_intent:', e.message));
+      .catch(e => console.error('[brevo] cancel_intent:', e.message));
     res.json({ ok: true });
   } catch (e) {
     console.error('[agent/track-cancel-intent]', e.message);

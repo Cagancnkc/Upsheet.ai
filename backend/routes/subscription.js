@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 const Stripe = require('stripe');
 const { createClient } = require('@supabase/supabase-js');
-const { sendScenarioEmail } = require('../services/mailchimp');
+const { sendScenarioEmail } = require('../services/brevo');
 
 let _stripe = null;
 function getStripe() {
@@ -188,7 +188,7 @@ router.post('/cancel', async (req, res) => {
       if (cUser?.email) {
         sendScenarioEmail(cUser.email, 'subscription_cancelled');
       }
-    } catch (e) { console.error('[mailchimp] cancel event:', e.message); }
+    } catch (e) { console.error('[brevo] cancel event:', e.message); }
 
     return res.json({ success: true, endDate, message: `Aboneliğin ${endDate} tarihinde sona erecek.` });
   } catch (err) {
