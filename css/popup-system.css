@@ -1,0 +1,482 @@
+/* ================================================================
+   Mocksheets — Popup System CSS
+   ================================================================ */
+
+/* ----------------------------------------------------------------
+   SHARED BASE
+   ---------------------------------------------------------------- */
+.ms-popup-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.ms-popup-overlay.ms-visible { opacity: 1; }
+
+/* ----------------------------------------------------------------
+   POPUP 1 — EXIT INTENT MODAL
+   ---------------------------------------------------------------- */
+.ms-exit-modal {
+  background: #0f172a;
+  border: 1px solid #16a34a;
+  border-radius: 20px;
+  padding: 40px;
+  max-width: 480px;
+  width: 100%;
+  position: relative;
+  text-align: center;
+  box-shadow: 0 0 60px rgba(22, 163, 74, 0.15), 0 25px 60px rgba(0, 0, 0, 0.5);
+  transform: scale(0.92);
+  opacity: 0;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+              opacity 0.3s ease;
+}
+.ms-popup-overlay.ms-visible .ms-exit-modal {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.ms-exit-badge {
+  display: inline-block;
+  background: rgba(22, 163, 74, 0.12);
+  border: 1px solid rgba(22, 163, 74, 0.3);
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 12px;
+  color: #4ade80;
+  font-weight: 500;
+  margin-bottom: 20px;
+}
+
+.ms-exit-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #f8fafc;
+  line-height: 1.25;
+  margin: 0 0 10px;
+}
+.ms-exit-title .ms-accent { color: #16a34a; }
+
+.ms-exit-sub {
+  font-size: 15px;
+  color: #94a3b8;
+  margin: 0 0 20px;
+  line-height: 1.5;
+}
+
+.ms-exit-features {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+.ms-exit-feat {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 12px;
+  color: #64748b;
+}
+
+.ms-exit-cta {
+  display: block;
+  width: 100%;
+  height: 52px;
+  line-height: 52px;
+  background: #16a34a;
+  color: white;
+  text-decoration: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  box-shadow: 0 4px 20px rgba(22, 163, 74, 0.35);
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+.ms-exit-cta:hover { background: #15803d; transform: scale(1.02); color: white; }
+.ms-exit-cta:active { transform: scale(0.98); }
+
+.ms-exit-dismiss {
+  display: block;
+  margin-top: 14px;
+  font-size: 13px;
+  color: #64748b;
+  cursor: pointer;
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: center;
+  transition: color 0.15s ease;
+}
+.ms-exit-dismiss:hover { color: #94a3b8; }
+
+/* ----------------------------------------------------------------
+   SHARED CLOSE BUTTON
+   ---------------------------------------------------------------- */
+.ms-close-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: #94a3b8;
+  transition: background 0.15s ease;
+  line-height: 1;
+}
+.ms-close-btn:hover { background: rgba(255, 255, 255, 0.15); }
+
+/* ----------------------------------------------------------------
+   MOBILE BOTTOM SHEET (Popup 1 mobile)
+   ---------------------------------------------------------------- */
+@media (max-width: 768px) {
+  .ms-popup-overlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+  .ms-exit-modal {
+    border-radius: 20px 20px 0 0;
+    padding: 28px;
+    max-width: 100%;
+    max-height: 65vh;
+    overflow-y: auto;
+    transform: translateY(100%);
+    opacity: 1;
+  }
+  .ms-popup-overlay.ms-visible .ms-exit-modal {
+    transform: translateY(0);
+    transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+  }
+  .ms-exit-title { font-size: 22px; }
+  .ms-exit-cta { height: 56px; line-height: 56px; font-size: 15px; }
+  .ms-sheet-handle {
+    width: 40px;
+    height: 4px;
+    background: #334155;
+    border-radius: 2px;
+    margin: 0 auto 20px;
+  }
+}
+
+/* ----------------------------------------------------------------
+   POPUP 2 — SCROLL DEPTH SNACKBAR
+   ---------------------------------------------------------------- */
+.ms-snackbar {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 320px;
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-left: 3px solid #16a34a;
+  border-radius: 12px;
+  padding: 16px 18px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+  z-index: 99990;
+  transform: translateX(110%);
+  transition: transform 0.35s ease-out;
+  overflow: hidden;
+}
+.ms-snackbar.ms-visible { transform: translateX(0); }
+
+.ms-snackbar-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+.ms-snackbar-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #f8fafc;
+}
+.ms-snackbar-close {
+  width: 24px;
+  height: 24px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #64748b;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: color 0.15s;
+  flex-shrink: 0;
+}
+.ms-snackbar-close:hover { color: #94a3b8; }
+
+.ms-snackbar-body {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.ms-snackbar-price {
+  font-size: 15px;
+  font-weight: 700;
+  color: #16a34a;
+}
+.ms-snackbar-link {
+  font-size: 13px;
+  color: #94a3b8;
+  text-decoration: underline;
+  cursor: pointer;
+  margin-left: auto;
+  transition: color 0.15s;
+}
+.ms-snackbar-link:hover { color: #f8fafc; }
+
+.ms-snackbar-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  background: #16a34a;
+  width: 100%;
+  transform-origin: left;
+  animation: ms-progress-shrink 8s linear forwards;
+}
+.ms-snackbar:hover .ms-snackbar-progress { animation-play-state: paused; }
+
+@keyframes ms-progress-shrink {
+  from { transform: scaleX(1); }
+  to   { transform: scaleX(0); }
+}
+
+@media (max-width: 768px) {
+  .ms-snackbar {
+    right: 16px;
+    left: 16px;
+    width: auto;
+    bottom: 80px;
+  }
+}
+
+/* ----------------------------------------------------------------
+   POPUP 3 — CAMPAIGN STRIP
+   ---------------------------------------------------------------- */
+.ms-campaign-strip {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 44px;
+  background: linear-gradient(90deg, #052e16, #14532d);
+  border-bottom: 1px solid rgba(22, 163, 74, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99995;
+  font-size: 13px;
+  color: #f8fafc;
+  transform: translateY(-100%);
+  transition: transform 0.3s ease;
+}
+.ms-campaign-strip.ms-visible { transform: translateY(0); }
+
+.ms-strip-text { white-space: nowrap; }
+
+.ms-strip-btn {
+  display: inline-block;
+  background: #16a34a;
+  color: white;
+  text-decoration: none;
+  padding: 4px 14px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-left: 12px;
+  transition: opacity 0.15s;
+  white-space: nowrap;
+}
+.ms-strip-btn:hover { opacity: 0.85; color: white; }
+
+.ms-strip-close {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  color: #94a3b8;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px 8px;
+  transition: color 0.15s;
+}
+.ms-strip-close:hover { color: #f8fafc; }
+
+body.has-strip { padding-top: 44px; }
+
+@media (max-width: 480px) {
+  .ms-strip-text { font-size: 11px; }
+}
+
+/* ----------------------------------------------------------------
+   POPUP 4 — FEATURE TOOLTIP (app.html)
+   ---------------------------------------------------------------- */
+.ms-tooltip-wrap {
+  position: absolute;
+  bottom: calc(100% + 12px);
+  left: 50%;
+  transform: translateX(-50%) translateY(6px);
+  width: 280px;
+  background: #1e293b;
+  border: 1px solid #16a34a;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  z-index: 9999;
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  pointer-events: none;
+}
+.ms-tooltip-wrap.ms-visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+  pointer-events: auto;
+}
+.ms-tooltip-wrap::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: #16a34a;
+}
+.ms-tooltip-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #f8fafc;
+  margin-bottom: 6px;
+}
+.ms-tooltip-body {
+  font-size: 12px;
+  color: #94a3b8;
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+.ms-tooltip-cta {
+  display: block;
+  width: 100%;
+  padding: 8px;
+  background: #16a34a;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  transition: background 0.15s;
+}
+.ms-tooltip-cta:hover { background: #15803d; color: white; }
+.ms-tooltip-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: none;
+  border: none;
+  color: #64748b;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 2px 6px;
+}
+
+/* ----------------------------------------------------------------
+   POPUP 5 — SOCIAL PROOF TOAST
+   ---------------------------------------------------------------- */
+.ms-sp-toast {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  width: 280px;
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  z-index: 99989;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transform: translateX(-110%);
+  transition: transform 0.3s ease-out;
+}
+.ms-sp-toast.ms-visible { transform: translateX(0); }
+
+.ms-sp-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: white;
+  flex-shrink: 0;
+}
+.ms-sp-content {}
+.ms-sp-text {
+  font-size: 13px;
+  color: #e2e8f0;
+  line-height: 1.4;
+}
+.ms-sp-time {
+  font-size: 11px;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+@media (max-width: 768px) {
+  .ms-sp-toast {
+    left: 16px;
+    right: 16px;
+    width: auto;
+    bottom: 80px;
+  }
+}
+
+/* ----------------------------------------------------------------
+   ACCESSIBILITY & REDUCED MOTION
+   ---------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .ms-popup-overlay,
+  .ms-exit-modal,
+  .ms-snackbar,
+  .ms-campaign-strip,
+  .ms-tooltip-wrap,
+  .ms-sp-toast {
+    animation: none !important;
+    transition: opacity 0.1s !important;
+  }
+  .ms-snackbar-progress { animation: none !important; }
+}
+
+/* Screen reader only */
+.ms-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
