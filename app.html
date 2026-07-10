@@ -1197,8 +1197,9 @@ body[data-app-mode="agent"] #agent-panel { display:flex !important; }
   function renderRowHeaders() {
     var rh = document.getElementById('row-headers');
     if (!rh) return;
-    var html = '';
+    var html = '<div class="row-headers-inner" style="position:absolute;top:0;left:0;right:0;">';
     for (var r = 1; r <= GRID_ROWS; r++) html += '<div>' + r + '</div>';
+    html += '</div>';
     rh.innerHTML = html;
   }
 
@@ -1206,6 +1207,8 @@ body[data-app-mode="agent"] #agent-panel { display:flex !important; }
   function renderGrid() {
     var body = document.getElementById('grid-body');
     if (!body) return;
+    body.style.width  = (GRID_COLS * 96) + 'px';
+    body.style.height = (GRID_ROWS * 28) + 'px';
     body.innerHTML = '';
     for (var r = 0; r < GRID_ROWS; r++) {
       for (var c = 0; c < GRID_COLS; c++) {
@@ -1803,12 +1806,12 @@ body[data-app-mode="agent"] #agent-panel { display:flex !important; }
 
   // ── Scroll sync: grid-scroll → col/row headers ───────────────────────────
   var gridScrollEl  = document.getElementById('grid-scroll');
-  var colHeadersEl  = document.querySelector('.col-headers');
-  var rowHeadersEl  = document.querySelector('.row-headers');
   if (gridScrollEl) {
     gridScrollEl.addEventListener('scroll', function () {
-      if (colHeadersEl) colHeadersEl.style.transform = 'translateX(-' + this.scrollLeft + 'px)';
-      if (rowHeadersEl) rowHeadersEl.style.transform = 'translateY(-' + this.scrollTop + 'px)';
+      var colH = document.querySelector('.col-headers');
+      var rowI = document.querySelector('.row-headers-inner');
+      if (colH) colH.style.transform = 'translateX(-' + this.scrollLeft + 'px)';
+      if (rowI) rowI.style.transform = 'translateY(-' + this.scrollTop + 'px)';
     });
   }
 
