@@ -19,7 +19,7 @@
 <link rel="stylesheet" href="mocksheets-styles.css" />
 <link rel="icon" type="image/png" href="/images/brand/logo-128x128.png">
 <link rel="apple-touch-icon" href="/images/brand/logo-128x128.png">
-<script src="https://cdn.jsdelivr.net/npm/xlsx@0.20.3/dist/xlsx.full.min.js"></script>
+<script src="/js/xlsx.full.min.js"></script>
 
 <script type="text/javascript">
     (function(c,l,a,r,i,t,y){
@@ -2406,12 +2406,23 @@ body[data-app-mode="agent"] #agent-panel { display:flex !important; }
   fileInput.addEventListener('change', function () {
     var file = this.files && this.files[0];
     if (!file) return;
+    if (typeof XLSX === 'undefined') {
+      addMsg('ai', '⚠️ Excel kütüphanesi yüklenemedi. Sayfayı yenileyip tekrar deneyin.');
+      return;
+    }
     var reader = new FileReader();
+    reader.onerror = function () {
+      addMsg('ai', '⚠️ Dosya okunamadı: Dosya erişim hatası.');
+    };
     reader.onload = function (e) {
       try {
         var data = new Uint8Array(e.target.result);
         var wb = XLSX.read(data, { type: 'array' });
-        var ws = wb.Sheets[wb.SheetNames[0]];
+        var ws = wb.SheetNames[0] ? wb.Sheets[wb.SheetNames[0]] : null;
+        if (!ws) {
+          addMsg('ai', '⚠️ Dosya okunamadı: Geçerli çalışma sayfası bulunamadı.');
+          return;
+        }
         var rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
         loadDataIntoGrid(rows);
         addRecentFile(file.name, rows);
