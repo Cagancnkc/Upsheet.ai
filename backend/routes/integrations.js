@@ -2037,4 +2037,123 @@ router.post('/jira/set-priority', requireAuth, async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+// ── HubSpot OAuth ─────────────────────────────────────────────────────────
+router.get('/hubspot/connect', async (req, res) => {
+  const { token } = req.query;
+  if (!process.env.HUBSPOT_CLIENT_ID || !process.env.HUBSPOT_REDIRECT_URI) {
+    return res.status(500).send('HubSpot yapılandırılmadı (env eksik)');
+  }
+  const state = Buffer.from(JSON.stringify({ token })).toString('base64');
+  res.redirect(
+    'https://app.hubspot.com/oauth/authorize' +
+    '?client_id=' + encodeURIComponent(process.env.HUBSPOT_CLIENT_ID) +
+    '&redirect_uri=' + encodeURIComponent(process.env.HUBSPOT_REDIRECT_URI) +
+    '&scope=' + encodeURIComponent('crm.objects.contacts.read crm.objects.contacts.write') +
+    '&state=' + encodeURIComponent(state)
+  );
+});
+
+router.get('/hubspot/callback', async (req, res) => {
+  try {
+    const { code, state } = req.query;
+    const { token } = JSON.parse(Buffer.from(state, 'base64').toString());
+    const sb = _getSb();
+    const { data: { user } } = await sb.auth.getUser(token);
+    if (!user) return res.status(401).send('Geçersiz oturum');
+    const t = await fetch('https://api.hubapi.com/oauth/v1/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        grant_type: 'authorization_code',
+        client_id: process.env.HUBSPOT_CLIENT_ID,
+        client_secret: process.env.HUBSPOT_CLIENT_SECRET,
+        redirect_uri: process.env.HUBSPOT_REDIRECT_URI,
+        code
+      })
+    }).then(r => r.json());
+    if (!t.access_token) return res.status(400).send('HubSpot token alınamadı: ' + (t.message || ''));
+    await sb.from('user_integrations').upsert({
+      user_id: user.id, provider: 'hubspot', status: 'active',
+      metadata: {
+        access_token: t.access_token,
+        refresh_token: t.refresh_token,
+        expires_at: Date.now() + (t.expires_in || 0) * 1000
+      }
+    }, { onConflict: 'user_id,provider' });
+    res.redirect((process.env.CLIENT_URL || '') + '/app.html?integration=hubspot');
+  } catch (e) {
+    console.error('[hubspot/callback]', e);
+    res.status(500).send('HubSpot bağlantı hatası: ' + e.message);
+  }
+});
+
+// ── Stripe Connect OAuth ──────────────────────────────────────────────────
+router.get('/stripe-connect/connect', async (req, res) => {
+  const { token } = req.query;
+  if (!process.env.STRIPE_CONNECT_CLIENT_ID) {
+    return res.status(500).send('Stripe Connect yapılandırılmadı (env eksik)');
+  }
+  const state = Buffer.from(JSON.stringify({ token })).toString('base64');
+  res.redirect(
+    'https://connect.stripe.com/oauth/authorize' +
+    '?response_type=code' +
+    '&client_id=' + encodeURIComponent(process.env.STRIPE_CONNECT_CLIENT_ID) +
+    '&scope=read_write' +
+    '&state=' + encodeURIComponent(state)
+  );
+});
+
+router.get('/stripe-connect/callback', async (req, res) => {
+  try {
+    const { code, state } = req.query;
+    const { token } = JSON.parse(Buffer.from(state, 'base64').toString());
+    const sb = _getSb();
+    const { data: { user } } = await sb.auth.getUser(token);
+    if (!user) return res.status(401).send('Geçersiz oturum');
+    const resp = await fetch('https://connect.stripe.com/oauth/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        client_secret: process.env.STRIPE_SECRET_KEY,
+        code, grant_type: 'authorization_code'
+      })
+    }).then(r => r.json());
+    if (!resp.access_token) return res.status(400).send('Stripe token alınamadı: ' + (resp.error_description || ''));
+    await sb.from('user_integrations').upsert({
+      user_id: user.id, provider: 'stripe-connect', status: 'active',
+      metadata: {
+        stripe_user_id: resp.stripe_user_id,
+        access_token: resp.access_token,
+        refresh_token: resp.refresh_token
+      }
+    }, { onConflict: 'user_id,provider' });
+    res.redirect((process.env.CLIENT_URL || '') + '/app.html?integration=stripe');
+  } catch (e) {
+    console.error('[stripe-connect/callback]', e);
+    res.status(500).send('Stripe bağlantı hatası: ' + e.message);
+  }
+});
+
+// ── Notion token save ─────────────────────────────────────────────────────
+router.post('/notion/save-token', requireAuth, async (req, res) => {
+  const { token: notionToken } = req.body;
+  if (!notionToken || !notionToken.startsWith('secret_')) {
+    return res.status(400).json({ error: 'Geçersiz Notion token' });
+  }
+  try {
+    const test = await fetch('https://api.notion.com/v1/users/me', {
+      headers: { 'Authorization': 'Bearer ' + notionToken, 'Notion-Version': '2022-06-28' }
+    });
+    if (!test.ok) return res.status(400).json({ error: 'Notion doğrulanamadı' });
+    const sb = _getSb();
+    await sb.from('user_integrations').upsert({
+      user_id: req.user.id, provider: 'notion', status: 'active',
+      metadata: { token: notionToken }
+    }, { onConflict: 'user_id,provider' });
+    res.json({ ok: true });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 module.exports = router;

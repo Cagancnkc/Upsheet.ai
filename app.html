@@ -220,6 +220,13 @@
       <svg class="tpl-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
     </div>
     <div id="templates-panel" class="templates-panel"></div>
+    <div class="nav-item" id="apps-menu-toggle">
+      <svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      Uygulamalar
+      <span class="count" id="apps-count">7</span>
+      <svg class="tpl-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div id="apps-panel" class="templates-panel"></div>
     <div class="sidebar-section">
       Son tablolar
       <span class="add" title="Yeni">
@@ -816,8 +823,19 @@
 /* ── Templates accordion ── */
 .tpl-chevron { flex-shrink:0; transition:transform .2s; opacity:.5; margin-left:auto; }
 #nav-templates.open .tpl-chevron { transform:rotate(180deg); }
+#apps-menu-toggle.open .tpl-chevron { transform:rotate(180deg); }
 .templates-panel { max-height:0; overflow:hidden; transition:max-height 0.28s ease; }
 .templates-panel.open { max-height:440px; overflow-y:auto; }
+
+/* ── Apps panel ── */
+.apps-row { display:flex; align-items:center; gap:10px; padding:8px 12px; font-size:13px; }
+.apps-row:hover { background:var(--surface-3); }
+.apps-icon { width:18px; height:18px; flex-shrink:0; }
+.apps-name { flex:1; color:var(--ink-2); }
+.apps-dot { width:8px; height:8px; border-radius:50%; background:#d1d5db; }
+.apps-btn { padding:4px 10px; border:1px solid var(--line-2); background:#fff; border-radius:6px; cursor:pointer; font-size:12px; color:var(--ink-2); }
+.apps-btn.connected { border-color:#10b981; color:#059669; }
+.apps-btn:hover { background:var(--surface-3); }
 .template-category { padding:7px 12px 3px; font-size:10.5px; font-weight:600; color:var(--ink-3); text-transform:uppercase; letter-spacing:.05em; display:flex; align-items:center; gap:5px; }
 .template-item { display:flex; align-items:flex-start; gap:8px; padding:6px 12px 6px 16px; cursor:pointer; border-radius:var(--radius-sm); transition:background .12s; margin:0 4px; }
 .template-item:hover { background:var(--surface-3); }
@@ -2769,6 +2787,131 @@ body[data-app-mode="agent"] #agent-panel { display:flex !important; }
     var _tplBadge = document.getElementById('templates-count');
     if (_tplBadge) _tplBadge.textContent = SHEET_TEMPLATES.reduce(function(s, c) { return s + c.templates.length; }, 0);
   }
+
+  // ── Apps Panel (Uygulamalar) ─────────────────────────────────────────────
+  var APPS_CONFIG = [
+    { id:'google',    name:'Google Workspace', icon:'https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/google.svg',    provider:'google-sheets',   connect:'oauth' },
+    { id:'microsoft', name:'Microsoft 365',    icon:'https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/microsoft.svg', provider:'microsoft-excel', connect:'oauth' },
+    { id:'slack',     name:'Slack',            icon:'https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/slack.svg',     provider:'slack',           connect:'oauth' },
+    { id:'shopify',   name:'Shopify',          icon:'https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/shopify.svg',   provider:'shopify',         connect:'shopify' },
+    { id:'hubspot',   name:'HubSpot',          icon:'https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/hubspot.svg',   provider:'hubspot',         connect:'oauth' },
+    { id:'stripe',    name:'Stripe',           icon:'https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/stripe.svg',    provider:'stripe-connect',  connect:'oauth' },
+    { id:'notion',    name:'Notion',           icon:'https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/notion.svg',    provider:'notion',          connect:'token' }
+  ];
+
+  window.toggleAppsPanel = function() {
+    var panel = document.getElementById('apps-panel');
+    var nav   = document.getElementById('apps-menu-toggle');
+    if (!panel || !nav) return;
+    if (panel.classList.contains('open')) {
+      panel.classList.remove('open'); nav.classList.remove('open'); return;
+    }
+    if (!panel.dataset.rendered) { renderAppsList(); panel.dataset.rendered = 'true'; }
+    loadAppConnectionStatus();
+    panel.classList.add('open'); nav.classList.add('open');
+  };
+
+  function renderAppsList() {
+    var panel = document.getElementById('apps-panel');
+    if (!panel) return;
+    panel.innerHTML = '';
+    APPS_CONFIG.forEach(function(app){
+      var row = document.createElement('div');
+      row.className = 'apps-row';
+      row.dataset.appId = app.id;
+      row.innerHTML =
+        '<img class="apps-icon" alt="">'+
+        '<span class="apps-name"></span>'+
+        '<span class="apps-dot"></span>'+
+        '<button class="apps-btn" data-action="connect">Bağla</button>';
+      row.querySelector('.apps-icon').src = app.icon;
+      row.querySelector('.apps-name').textContent = app.name;
+      var btn = row.querySelector('.apps-btn');
+      btn.dataset.appId = app.id;
+      var dot = row.querySelector('.apps-dot');
+      dot.dataset.dot = app.id;
+      btn.addEventListener('click', function(e){
+        e.stopPropagation();
+        var id = this.dataset.appId;
+        if (this.dataset.action === 'connect') connectApp(id);
+        else disconnectApp(id);
+      });
+      panel.appendChild(row);
+    });
+  }
+
+  function loadAppConnectionStatus() {
+    var base = (typeof apiBase !== 'undefined' ? apiBase : '');
+    var headers = (typeof authHeaders === 'function' ? authHeaders() : {});
+    fetch(base + '/api/integrations/status', { headers: headers })
+      .then(function(r){ return r.json(); })
+      .then(function(data){
+        if (typeof _ddIntStatuses !== 'undefined') _ddIntStatuses = data || {};
+        var statuses = data || {};
+        APPS_CONFIG.forEach(function(app){
+          var s = statuses[app.provider];
+          var active = !!(s && s.status === 'active');
+          var dot = document.querySelector('[data-dot="'+app.id+'"]');
+          var btn = document.querySelector('.apps-btn[data-app-id="'+app.id+'"]');
+          if (dot) dot.style.background = active ? '#10b981' : '#d1d5db';
+          if (btn) {
+            btn.textContent = active ? 'Bağlantıyı kes' : 'Bağla';
+            btn.dataset.action = active ? 'disconnect' : 'connect';
+            btn.classList.toggle('connected', active);
+          }
+        });
+      })
+      .catch(function(e){ console.error('[apps] status:', e); });
+  }
+
+  function connectApp(appId) {
+    var app = APPS_CONFIG.find(function(a){ return a.id === appId; });
+    if (!app) return;
+    var base = (typeof apiBase !== 'undefined' ? apiBase : '');
+    var token = (window.getToken && getToken()) || localStorage.getItem('sb-access-token') || '';
+    if (app.connect === 'shopify') {
+      var shop = prompt('Shopify mağaza adı (ör: mystore.myshopify.com):');
+      if (!shop) return;
+      window.location = base + '/api/shopify/auth?shop=' + encodeURIComponent(shop) + '&token=' + encodeURIComponent(token);
+      return;
+    }
+    if (app.connect === 'token') { openNotionTokenModal(); return; }
+    window.location = base + '/api/integrations/' + app.provider + '/connect?token=' + encodeURIComponent(token);
+  }
+
+  function disconnectApp(appId) {
+    var app = APPS_CONFIG.find(function(a){ return a.id === appId; });
+    if (!app) return;
+    if (!confirm(app.name + ' bağlantısı kesilsin mi?')) return;
+    var base = (typeof apiBase !== 'undefined' ? apiBase : '');
+    var headers = (typeof authHeaders === 'function' ? authHeaders() : {});
+    fetch(base + '/api/integrations/' + app.provider + '/disconnect', {
+      method: 'DELETE', headers: headers
+    })
+      .then(function(r){ return r.json(); })
+      .then(function(){ loadAppConnectionStatus(); })
+      .catch(function(e){ alert('Bağlantı kesilemedi: ' + e.message); });
+  }
+
+  function openNotionTokenModal() {
+    var tok = prompt('Notion Integration Token (secret_... ile başlar):');
+    if (!tok) return;
+    var base = (typeof apiBase !== 'undefined' ? apiBase : '');
+    var headers = Object.assign({'Content-Type':'application/json'}, (typeof authHeaders === 'function' ? authHeaders() : {}));
+    fetch(base + '/api/integrations/notion/save-token', {
+      method:'POST', headers: headers,
+      body: JSON.stringify({ token: tok })
+    })
+      .then(function(r){ return r.json(); })
+      .then(function(res){
+        if (res.ok) loadAppConnectionStatus();
+        else alert('Notion token kaydedilemedi: ' + (res.error||''));
+      })
+      .catch(function(e){ alert('Notion hata: ' + e.message); });
+  }
+
+  var _appsToggleEl = document.getElementById('apps-menu-toggle');
+  if (_appsToggleEl) _appsToggleEl.addEventListener('click', window.toggleAppsPanel);
 
   // ── Google Sheets OAuth Import ────────────────────────────────────────────
   function showSheetsStatus(message, type) {
