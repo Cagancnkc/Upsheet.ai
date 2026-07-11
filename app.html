@@ -40,7 +40,7 @@
     </div>
 
     <div class="topbar-search" style="display:flex;align-items:center;gap:8px;">
-      <div class="cmd" style="max-width:320px;">
+      <div id="navbar-sheet-mode-search" class="cmd" style="max-width:320px;">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
         Ara
         <span class="kbd">
@@ -58,7 +58,15 @@
       </div>
     </div>
 
+    <div id="navbar-agent-mode-title" style="display:none;align-items:center;gap:8px;flex:1;max-width:420px;">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/>
+      </svg>
+      <input id="agent-title-input" type="text" value="Yeni Sohbet" disabled>
+    </div>
+
     <div class="top-actions">
+      <div id="navbar-sheet-mode" style="display:contents;">
       <button class="icon-btn" title="Yardım">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
       </button>
@@ -187,6 +195,30 @@
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
         PDF Ekle
       </button>
+      </div>
+
+      <div id="navbar-agent-mode-actions" style="display:none;align-items:center;gap:6px;">
+        <div style="position:relative;">
+          <button id="navbar-apps-btn" type="button" class="agent-navbar-btn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+              <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+            </svg>
+            <span>Uygulamalar</span>
+            <span id="navbar-apps-count"></span>
+          </button>
+        </div>
+        <button id="navbar-help-btn" type="button" class="agent-navbar-icon-btn" aria-label="Yardım">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+        </button>
+        <button id="navbar-notif-btn" type="button" class="agent-navbar-icon-btn" aria-label="Bildirimler">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
+          </svg>
+        </button>
+      </div>
     </div>
   </header>
 
@@ -915,6 +947,46 @@ body[data-app-mode="agent"] .main,
 body[data-app-mode="agent"] .sidebar,
 body[data-app-mode="agent"] .rail { display:none !important; }
 body[data-app-mode="agent"] #agent-panel { display:flex !important; }
+
+/* Mode-aware navbar toggle */
+body[data-app-mode="agent"] #navbar-sheet-mode-search,
+body[data-app-mode="agent"] #navbar-sheet-mode { display: none !important; }
+body[data-app-mode="agent"] #navbar-agent-mode-title { display: flex !important; }
+body[data-app-mode="agent"] #navbar-agent-mode-actions { display: flex !important; }
+
+/* Agent navbar — title */
+#agent-title-input {
+  flex: 1; border: none; outline: none; background: transparent;
+  font-size: 14px; font-weight: 500; color: var(--ink);
+  padding: 4px 6px; border-radius: 6px;
+  transition: background .15s ease;
+  font-family: inherit;
+}
+#agent-title-input:focus:not(:disabled) { background: var(--line); }
+#agent-title-input:disabled { opacity: 0.55; cursor: default; }
+
+/* Agent navbar — pill button */
+.agent-navbar-btn {
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px 12px;
+  border: 0.5px solid var(--line); border-radius: 10px;
+  background: var(--surface); color: var(--ink-3, #374151);
+  font-size: 12px; font-weight: 500; cursor: pointer; font-family: inherit;
+}
+.agent-navbar-btn:hover { background: var(--line); }
+#navbar-apps-count {
+  display: none; background: #16a34a; color: #fff;
+  border-radius: 999px; font-size: 10px; padding: 1px 6px; line-height: 1.4;
+}
+
+/* Agent navbar — icon buttons */
+.agent-navbar-icon-btn {
+  width: 32px; height: 32px;
+  border: 0.5px solid var(--line); border-radius: 10px;
+  background: var(--surface); color: var(--ink-4, #6b7280);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+}
+.agent-navbar-icon-btn:hover { background: var(--line); color: var(--ink); }
 
 #agent-panel {
   position:fixed; inset:60px 0 0 0; display:flex; flex-direction:row;
@@ -4086,6 +4158,7 @@ async function runColumnTranslate() {
   window.newAgentConversation = function() {
     currentConversationId = null;
     renderEmptyState();
+    _aiSetTitleInput('Yeni Sohbet', false);
     var input = document.getElementById('agent-input');
     if (input) input.focus();
   };
@@ -4119,6 +4192,7 @@ async function runColumnTranslate() {
       .then(function(r) { return r.json(); })
       .then(function(data) {
         renderAgentMessages(data.messages || []);
+        _aiSetTitleInput((data.conversation && data.conversation.title) || 'Sohbet', true);
         loadAgentConversations();
       })
       .catch(function() {});
@@ -4215,11 +4289,24 @@ async function runColumnTranslate() {
   }
 
   function updateAiAppsBadge() {
-    var badge = _aiEl('ai-apps-count-badge');
-    if (!badge || typeof APPS_CONFIG === 'undefined') return;
+    if (typeof APPS_CONFIG === 'undefined') return;
     var count = APPS_CONFIG.filter(_aiIsAppActive).length;
-    if (count > 0) { badge.style.display = 'inline-block'; badge.textContent = count; }
-    else { badge.style.display = 'none'; }
+    ['ai-apps-count-badge', 'navbar-apps-count'].forEach(function(id) {
+      var b = document.getElementById(id);
+      if (!b) return;
+      if (count > 0) { b.style.display = 'inline-block'; b.textContent = count; }
+      else { b.style.display = 'none'; }
+    });
+  }
+
+  function _aiRestoreDropdownPosition() {
+    var dd = _aiEl('ai-apps-dropdown');
+    if (!dd) return;
+    dd.style.position = '';
+    dd.style.top = '';
+    dd.style.right = '';
+    dd.style.left = '';
+    dd.style.bottom = '';
   }
 
   function _aiWireApps() {
@@ -4228,6 +4315,7 @@ async function runColumnTranslate() {
     if (!pill || !dd) return;
     pill.addEventListener('click', function(e) {
       e.stopPropagation();
+      _aiRestoreDropdownPosition();
       var open = dd.style.display === 'block';
       dd.style.display = open ? 'none' : 'block';
       if (!open) {
@@ -4239,6 +4327,60 @@ async function runColumnTranslate() {
       if (!dd.contains(e.target) && e.target !== pill && !pill.contains(e.target)) {
         dd.style.display = 'none';
       }
+    });
+  }
+
+  function _aiWireNavbarApps() {
+    var btn = document.getElementById('navbar-apps-btn');
+    var dd  = _aiEl('ai-apps-dropdown');
+    if (!btn || !dd) return;
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      if (typeof loadAppConnectionStatus === 'function') loadAppConnectionStatus();
+      renderAiAppsDropdown();
+      var isOpenFixed = dd.style.display === 'block' && dd.style.position === 'fixed';
+      if (isOpenFixed) { dd.style.display = 'none'; _aiRestoreDropdownPosition(); return; }
+      var rect = btn.getBoundingClientRect();
+      dd.style.position = 'fixed';
+      dd.style.top = (rect.bottom + 6) + 'px';
+      dd.style.right = (window.innerWidth - rect.right) + 'px';
+      dd.style.left = 'auto';
+      dd.style.bottom = 'auto';
+      dd.style.display = 'block';
+    });
+    document.addEventListener('click', function(e) {
+      if (dd.style.position !== 'fixed') return;
+      if (!dd.contains(e.target) && e.target !== btn && !btn.contains(e.target)) {
+        dd.style.display = 'none';
+        _aiRestoreDropdownPosition();
+      }
+    });
+  }
+
+  function _aiSetTitleInput(title, editable) {
+    var input = document.getElementById('agent-title-input');
+    if (!input) return;
+    input.value = title || 'Yeni Sohbet';
+    input.disabled = !editable;
+  }
+
+  function _aiWireTitleInput() {
+    var input = document.getElementById('agent-title-input');
+    if (!input) return;
+    input.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') { e.preventDefault(); this.blur(); }
+    });
+    input.addEventListener('blur', function() {
+      if (!currentConversationId || this.disabled) return;
+      var title = (this.value || '').trim();
+      if (!title) { this.value = 'Yeni Sohbet'; return; }
+      fetch(apiBase + '/api/agent/conversations/' + currentConversationId, {
+        method: 'PATCH',
+        headers: agentHeaders(),
+        body: JSON.stringify({ title: title })
+      })
+        .then(function() { if (typeof loadAgentConversations === 'function') loadAgentConversations(); })
+        .catch(function(err) { console.warn('Başlık güncellenemedi:', err); });
     });
   }
 
@@ -4279,6 +4421,9 @@ async function runColumnTranslate() {
   _aiWireInput();
   _aiWireApps();
   _aiWireAttach();
+  _aiWireNavbarApps();
+  _aiWireTitleInput();
+  _aiSetTitleInput('Yeni Sohbet', false);
 
   window.sendAgentMessage = function() {
     var input = document.getElementById('agent-input');
@@ -4312,7 +4457,10 @@ async function runColumnTranslate() {
         appendMessage('assistant', data.reply || '(boş yanıt)');
         var wasNew = !currentConversationId;
         currentConversationId = data.conversationId;
-        if (wasNew) loadAgentConversations();
+        if (wasNew) {
+          _aiSetTitleInput(data.title || 'Yeni Sohbet', true);
+          loadAgentConversations();
+        }
       })
       .catch(function(err) {
         if (typing.parentNode) typing.parentNode.removeChild(typing);

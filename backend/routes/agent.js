@@ -69,12 +69,13 @@ router.post('/chat', async (req, res) => {
 
   const sb = getSupabase();
   let convId = conversationId;
+  let convTitle = null;
 
   if (!convId) {
-    const title = message.trim().slice(0, 50);
+    convTitle = message.trim().slice(0, 50);
     const { data: newConv, error: convErr } = await sb
       .from('agent_conversations')
-      .insert({ user_id: req.user.id, title })
+      .insert({ user_id: req.user.id, title: convTitle })
       .select('id')
       .single();
     if (convErr || !newConv) return res.status(500).json({ error: 'Sohbet oluşturulamadı' });
@@ -123,7 +124,23 @@ router.post('/chat', async (req, res) => {
     .update({ updated_at: new Date().toISOString() })
     .eq('id', convId);
 
-  res.json({ reply, conversationId: convId });
+  res.json({ reply, conversationId: convId, title: convTitle });
+});
+
+router.patch('/conversations/:id', async (req, res) => {
+  try {
+    const title = (req.body?.title || '').trim().slice(0, 100);
+    if (!title) return res.status(400).json({ error: 'Başlık gerekli' });
+    const sb = getSupabase();
+    const { error } = await sb.from('agent_conversations')
+      .update({ title })
+      .eq('id', req.params.id)
+      .eq('user_id', req.user.id);
+    if (error) return res.status(500).json({ error: error.message });
+    res.json({ ok: true });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
 });
 
 // POST /api/agent/track-cancel-intent
