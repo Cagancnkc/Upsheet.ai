@@ -23,14 +23,15 @@ async function requireProMax(req, res, next) {
     .eq('user_id', user.id)
     .single();
 
+  // TEMP: Pro Max kapısı geçici olarak devre dışı (giriş testi için)
   // 'promax' yeni plan adı; 'business' eski eşdeğeri (mevcut kullanıcılar için)
   const plan = usage?.plan;
-  if (plan !== 'promax' && plan !== 'business') {
-    return res.status(403).json({
-      error: 'Bu özellik Pro Max planına özeldir.',
-      upgrade_required: true
-    });
-  }
+  // if (plan !== 'promax' && plan !== 'business') {
+  //   return res.status(403).json({
+  //     error: 'Bu özellik Pro Max planına özeldir.',
+  //     upgrade_required: true
+  //   });
+  // }
 
   req.user = user;
   req.userPlan = plan;

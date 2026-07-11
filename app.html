@@ -3968,17 +3968,18 @@ async function runColumnTranslate() {
   var currentConversationId = null;
 
   window.setAppMode = function(mode) {
-    if (mode === 'agent') {
-      var plan = (function() {
-        try { return JSON.parse(localStorage.getItem('mocksheets_plan'))?.plan || 'free'; }
-        catch(e) { return 'free'; }
-      })();
-      var allowed = plan === 'pro_max' || plan === 'promax' || plan === 'team' || plan === 'business';
-      if (!allowed) {
-        openAgentUpsellModal(plan);
-        return;
-      }
-    }
+    // TEMP: AI Agent plan kapısı geçici olarak kapatıldı (giriş testi için)
+    // if (mode === 'agent') {
+    //   var plan = (function() {
+    //     try { return JSON.parse(localStorage.getItem('mocksheets_plan'))?.plan || 'free'; }
+    //     catch(e) { return 'free'; }
+    //   })();
+    //   var allowed = plan === 'pro_max' || plan === 'promax' || plan === 'team' || plan === 'business';
+    //   if (!allowed) {
+    //     openAgentUpsellModal(plan);
+    //     return;
+    //   }
+    // }
     document.body.dataset.appMode = mode;
     var normalBtn = document.getElementById('mode-normal-btn');
     var agentBtn = document.getElementById('mode-agent-btn');
