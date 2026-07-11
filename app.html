@@ -293,11 +293,35 @@
       </div>
 
       <div class="agent-input-area">
-        <div class="agent-input-wrap">
-          <textarea id="agent-input" rows="1" placeholder="Bir şey sor veya bir görev tarif et..." onkeydown="handleAgentKeydown(event)"></textarea>
-          <button class="agent-send-btn" id="agent-send-btn" onclick="sendAgentMessage()">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-          </button>
+        <div id="ai-input-wrap">
+          <input id="ai-file-input" type="file" accept="image/*,.pdf,.xlsx,.csv" multiple>
+          <div id="ai-attach-row"></div>
+          <div id="ai-input-card">
+            <textarea id="agent-input" rows="1" placeholder="Bir şey sor veya bir görev tarif et..."></textarea>
+            <div id="ai-bottom-bar">
+              <div style="position:relative;">
+                <button id="ai-apps-pill" type="button">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+                    <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+                  </svg>
+                  <span>Uygulamalar</span>
+                  <span id="ai-apps-count-badge"></span>
+                </button>
+                <div id="ai-apps-dropdown"><div id="ai-apps-dropdown-list"></div></div>
+              </div>
+              <button id="ai-attach-btn" type="button" aria-label="Dosya ekle">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+              </button>
+            </div>
+            <button id="ai-send-btn" type="button" aria-label="Gönder">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/>
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
     </section>
@@ -958,23 +982,70 @@ body[data-app-mode="agent"] #agent-panel { display:flex !important; }
 .agent-input-area {
   border-top:1px solid var(--line); padding:16px 20px; background:var(--surface);
 }
-.agent-input-wrap {
-  max-width:720px; margin:0 auto; display:flex; gap:8px; align-items:flex-end;
-  border:1px solid var(--line); border-radius:14px; padding:8px 8px 8px 14px;
-  background:var(--surface-2);
+#ai-input-wrap { position:relative; width:100%; max-width:720px; margin:0 auto; }
+#ai-file-input { display:none; }
+#ai-attach-row { display:none; gap:8px; padding:8px 8px 4px; overflow-x:auto; }
+#ai-input-card {
+  position:relative; border:1px solid var(--line); border-radius:20px;
+  background:var(--surface-2); transition:box-shadow .2s ease, border-color .2s ease;
 }
-.agent-input-wrap:focus-within { border-color:var(--ink); }
+#ai-input-card.focused { border-color:#16a34a; box-shadow:0 0 0 3px rgba(22,163,74,0.10); }
 #agent-input {
-  flex:1; border:none; outline:none; background:transparent; resize:none;
-  font-family:inherit; font-size:14px; line-height:1.5; color:var(--ink);
-  max-height:180px; padding:6px 0;
+  width:100%; box-sizing:border-box; resize:none; border:none; outline:none;
+  background:transparent; padding:14px 48px 44px 16px; font-family:inherit;
+  font-size:14px; line-height:22px; color:var(--ink); max-height:160px;
+  overflow-y:hidden;
 }
-.agent-send-btn {
-  width:32px; height:32px; border-radius:8px; border:none; cursor:pointer;
-  background:var(--ink); color:var(--surface); display:flex; align-items:center; justify-content:center;
+#ai-bottom-bar {
+  position:absolute; left:8px; right:44px; bottom:8px;
+  display:flex; align-items:center; gap:4px;
+}
+#ai-apps-pill {
+  display:flex; align-items:center; gap:6px; padding:5px 10px; border:none;
+  border-radius:999px; background:transparent; color:var(--ink-4);
+  font-size:12px; font-weight:600; cursor:pointer; font-family:inherit;
+}
+#ai-apps-pill:hover { background:var(--line); }
+#ai-apps-count-badge {
+  display:none; background:#16a34a; color:#fff; border-radius:999px;
+  font-size:10px; padding:1px 6px; line-height:1.4;
+}
+#ai-apps-dropdown {
+  display:none; position:absolute; bottom:36px; left:0; width:220px;
+  background:var(--surface); border:1px solid var(--line); border-radius:16px;
+  padding:6px; box-shadow:0 8px 24px rgba(0,0,0,0.08); z-index:50;
+}
+#ai-attach-btn {
+  margin-left:auto; width:28px; height:28px; border:none; border-radius:999px;
+  background:transparent; color:var(--ink-4); cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+}
+#ai-attach-btn:hover { background:var(--line); color:var(--ink); }
+#ai-send-btn {
+  position:absolute; right:8px; bottom:8px; width:32px; height:32px; border:none;
+  border-radius:999px; background:var(--ink); color:var(--surface); cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+}
+#ai-send-btn:hover { opacity:0.9; }
+.ai-apps-row {
+  width:100%; display:flex; align-items:center; gap:8px; padding:8px 10px;
+  border:none; background:transparent; border-radius:10px; cursor:pointer;
+  text-align:left; font-family:inherit;
+}
+.ai-apps-row:hover { background:var(--line); }
+.ai-apps-row-icon { width:16px; height:16px; object-fit:contain; flex-shrink:0; }
+.ai-apps-row-name { font-size:12px; color:var(--ink); flex:1; }
+.ai-apps-row-status-dot { width:6px; height:6px; border-radius:999px; background:#16a34a; }
+.ai-apps-row-status-txt { font-size:10px; color:var(--ink-4); }
+.ai-attach-chip {
+  display:flex; align-items:center; gap:6px; padding:6px 10px;
+  background:var(--line); border-radius:12px; font-size:12px; color:var(--ink);
   flex-shrink:0;
 }
-.agent-send-btn:disabled { opacity:0.4; cursor:not-allowed; }
+.ai-attach-chip button {
+  border:none; background:transparent; cursor:pointer;
+  display:flex; align-items:center; color:var(--ink-4); padding:0;
+}
 </style>
 
 <script src="js/templates.js"></script>
@@ -2859,6 +2930,7 @@ body[data-app-mode="agent"] #agent-panel { display:flex !important; }
             btn.classList.toggle('connected', active);
           }
         });
+        if (typeof updateAiAppsBadge === 'function') updateAiAppsBadge();
       })
       .catch(function(e){ console.error('[apps] status:', e); });
   }
@@ -4076,12 +4148,137 @@ async function runColumnTranslate() {
     return msg;
   }
 
-  window.handleAgentKeydown = function(e) {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      sendAgentMessage();
-    }
-  };
+  var _aiAttachments = [];
+  function _aiEl(id) { return document.getElementById(id); }
+
+  function _aiWireInput() {
+    var input = _aiEl('agent-input');
+    var card  = _aiEl('ai-input-card');
+    if (!input || !card) return;
+    input.addEventListener('input', function() {
+      this.style.height = 'auto';
+      var h = Math.min(this.scrollHeight, 160);
+      this.style.height = h + 'px';
+      this.style.overflowY = this.scrollHeight > 160 ? 'auto' : 'hidden';
+    });
+    input.addEventListener('focus', function(){ card.classList.add('focused'); });
+    input.addEventListener('blur',  function(){ card.classList.remove('focused'); });
+    input.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); window.sendAgentMessage(); }
+    });
+    var sendBtn = _aiEl('ai-send-btn');
+    if (sendBtn) sendBtn.addEventListener('click', function(){ window.sendAgentMessage(); });
+  }
+
+  function _aiIsAppActive(app) {
+    return !!(typeof _ddIntStatuses !== 'undefined'
+      && _ddIntStatuses[app.provider]
+      && _ddIntStatuses[app.provider].status === 'active');
+  }
+
+  function renderAiAppsDropdown() {
+    var list = _aiEl('ai-apps-dropdown-list');
+    if (!list || typeof APPS_CONFIG === 'undefined') return;
+    list.innerHTML = '';
+    APPS_CONFIG.forEach(function(app) {
+      var connected = _aiIsAppActive(app);
+      var row = document.createElement('button');
+      row.type = 'button'; row.className = 'ai-apps-row';
+      var icon = document.createElement('img');
+      icon.className = 'ai-apps-row-icon';
+      icon.src = app.icon;
+      icon.alt = '';
+      icon.onerror = function(){ this.style.display = 'none'; };
+      var name = document.createElement('span');
+      name.className = 'ai-apps-row-name'; name.textContent = app.name;
+      var status = document.createElement('span');
+      if (connected) status.className = 'ai-apps-row-status-dot';
+      else { status.className = 'ai-apps-row-status-txt'; status.textContent = 'Bağlı değil'; }
+      row.appendChild(icon); row.appendChild(name); row.appendChild(status);
+      row.dataset.appId = app.id;
+      row.addEventListener('click', function() {
+        var id = this.dataset.appId;
+        var a = APPS_CONFIG.find(function(x){ return x.id === id; });
+        if (!a) return;
+        if (!_aiIsAppActive(a)) {
+          connectApp(id);
+        } else {
+          var inp = _aiEl('agent-input');
+          var mention = '@' + a.name.split(' ')[0] + ' ';
+          inp.value = mention + inp.value; inp.focus();
+          _aiEl('ai-apps-dropdown').style.display = 'none';
+        }
+      });
+      list.appendChild(row);
+    });
+    updateAiAppsBadge();
+  }
+
+  function updateAiAppsBadge() {
+    var badge = _aiEl('ai-apps-count-badge');
+    if (!badge || typeof APPS_CONFIG === 'undefined') return;
+    var count = APPS_CONFIG.filter(_aiIsAppActive).length;
+    if (count > 0) { badge.style.display = 'inline-block'; badge.textContent = count; }
+    else { badge.style.display = 'none'; }
+  }
+
+  function _aiWireApps() {
+    var pill = _aiEl('ai-apps-pill');
+    var dd   = _aiEl('ai-apps-dropdown');
+    if (!pill || !dd) return;
+    pill.addEventListener('click', function(e) {
+      e.stopPropagation();
+      var open = dd.style.display === 'block';
+      dd.style.display = open ? 'none' : 'block';
+      if (!open) {
+        if (typeof loadAppConnectionStatus === 'function') loadAppConnectionStatus();
+        renderAiAppsDropdown();
+      }
+    });
+    document.addEventListener('click', function(e) {
+      if (!dd.contains(e.target) && e.target !== pill && !pill.contains(e.target)) {
+        dd.style.display = 'none';
+      }
+    });
+  }
+
+  function renderAiAttachments() {
+    var row = _aiEl('ai-attach-row');
+    if (!row) return;
+    if (_aiAttachments.length === 0) { row.style.display = 'none'; row.innerHTML = ''; return; }
+    row.style.display = 'flex'; row.innerHTML = '';
+    _aiAttachments.forEach(function(file, idx) {
+      var chip = document.createElement('div'); chip.className = 'ai-attach-chip';
+      var name = document.createElement('span');
+      name.textContent = file.name.length > 18 ? (file.name.slice(0, 15) + '...') : file.name;
+      var rm = document.createElement('button');
+      rm.type = 'button'; rm.dataset.idx = idx;
+      rm.innerHTML = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+      rm.addEventListener('click', function() {
+        _aiAttachments.splice(parseInt(this.dataset.idx, 10), 1);
+        renderAiAttachments();
+      });
+      chip.appendChild(name); chip.appendChild(rm);
+      row.appendChild(chip);
+    });
+  }
+
+  function _aiWireAttach() {
+    var btn = _aiEl('ai-attach-btn');
+    var fileIn = _aiEl('ai-file-input');
+    if (!btn || !fileIn) return;
+    btn.addEventListener('click', function(){ fileIn.click(); });
+    fileIn.addEventListener('change', function(e) {
+      var files = Array.from(e.target.files || []);
+      files.forEach(function(f){ _aiAttachments.push(f); });
+      renderAiAttachments();
+      e.target.value = '';
+    });
+  }
+
+  _aiWireInput();
+  _aiWireApps();
+  _aiWireAttach();
 
   window.sendAgentMessage = function() {
     var input = document.getElementById('agent-input');
@@ -4089,6 +4286,8 @@ async function runColumnTranslate() {
     var text = (input.value || '').trim();
     if (!text) return;
     input.value = '';
+    _aiAttachments = [];
+    renderAiAttachments();
     appendMessage('user', text);
 
     var typing = document.createElement('div');
