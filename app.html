@@ -4582,6 +4582,9 @@ async function runColumnTranslate() {
   _aiWireTitleInput();
   _aiSetTitleInput('Yeni Sohbet', false);
 
+  console.log('[debug] ai-apps-pill element:', document.getElementById('ai-apps-pill'));
+  console.log('[debug] _aiAppsPill değişkeni:', typeof _aiAppsPill !== 'undefined' ? _aiAppsPill : 'TANIMLI DEĞİL');
+
   window.sendAgentMessage = function() {
     var input = document.getElementById('agent-input');
     if (!input) return;
