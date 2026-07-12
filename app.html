@@ -283,35 +283,45 @@
 
   <!-- ============ AGENT PANEL ============ -->
   <div id="agent-panel" style="display:none;">
+    <nav class="agent-rail">
+      <div class="agent-rail-logo" aria-label="Mocksheets">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 3v18M3 9h18"/></svg>
+      </div>
+      <button type="button" class="agent-rail-btn active" title="AI Agents" aria-label="AI Agents">
+        <i class="ti ti-messages"></i>
+      </button>
+      <button type="button" class="agent-rail-btn" id="rail-back-to-sheet-btn" title="Tabloya dön" aria-label="Tabloya dön">
+        <i class="ti ti-table"></i>
+      </button>
+    </nav>
+
     <aside class="agent-sidebar">
-      <div style="padding:16px;">
-        <button id="new-agent-chat-btn" type="button"
-          style="width:100%;display:flex;align-items:center;justify-content:center;gap:8px;padding:8px 16px;background:#111827;color:#fff;border:none;border-radius:12px;font-size:13px;font-weight:600;cursor:pointer;transition:background .15s ease;">
-          <i class="ti ti-plus" style="font-size:15px;"></i>
+      <div class="agent-sidebar-top">
+        <button id="new-agent-chat-btn" type="button" class="agent-new-chat-btn">
+          <i class="ti ti-plus"></i>
           Yeni Sohbet
         </button>
       </div>
 
-      <div style="padding:0 16px 16px;">
-        <button id="sidebar-tools-btn" type="button"
-          style="width:100%;display:flex;align-items:center;gap:8px;padding:8px 16px;background:transparent;border:0.5px solid #e5e7eb;border-radius:12px;color:#374151;font-size:12px;font-weight:500;cursor:pointer;transition:background .15s ease,border-color .15s ease;">
-          <i class="ti ti-tools" style="font-size:15px;color:#16a34a;"></i>
-          Araçlar &amp; Skills
-          <i class="ti ti-chevron-right" style="font-size:13px;margin-left:auto;color:#9ca3af;"></i>
+      <div class="agent-sidebar-section">
+        <button id="sidebar-tools-btn" type="button" class="agent-sidebar-row">
+          <i class="ti ti-tools" style="color:#16a34a;"></i>
+          <span>Araçlar &amp; Skills</span>
+          <i class="ti ti-chevron-right agent-row-chevron"></i>
         </button>
       </div>
 
-      <div style="flex:1;overflow-y:auto;padding:0 16px 16px;">
+      <div class="agent-history-scroll">
         <div id="agent-history-today" class="agent-history-group" style="display:none;">
-          <p style="font-size:10px;font-weight:600;color:#9ca3af;text-transform:uppercase;letter-spacing:.04em;margin:16px 0 8px;">Bugün</p>
+          <p class="agent-history-title">Bugün</p>
           <div class="agent-history-list"></div>
         </div>
         <div id="agent-history-week" class="agent-history-group" style="display:none;">
-          <p style="font-size:10px;font-weight:600;color:#9ca3af;text-transform:uppercase;letter-spacing:.04em;margin:16px 0 8px;">Bu Hafta</p>
+          <p class="agent-history-title">Bu Hafta</p>
           <div class="agent-history-list"></div>
         </div>
         <div id="agent-history-older" class="agent-history-group" style="display:none;">
-          <p style="font-size:10px;font-weight:600;color:#9ca3af;text-transform:uppercase;letter-spacing:.04em;margin:16px 0 8px;">Daha Eski</p>
+          <p class="agent-history-title">Daha Eski</p>
           <div class="agent-history-list"></div>
         </div>
         <div id="agent-history-empty" style="display:none;text-align:center;padding:32px 16px;">
@@ -319,12 +329,24 @@
         </div>
       </div>
 
-      <div style="padding:16px;border-top:0.5px solid #e5e7eb;">
-        <button id="sidebar-apps-btn" type="button"
-          style="width:100%;display:flex;align-items:center;gap:8px;padding:8px 16px;background:transparent;border:none;border-radius:12px;color:#6b7280;font-size:12px;cursor:pointer;transition:background .15s ease;">
-          <i class="ti ti-apps" style="font-size:15px;"></i>
+      <div id="agent-usage-card" class="agent-usage-card" style="display:none;">
+        <div class="agent-usage-header">
+          <span class="agent-usage-plan">Free plan</span>
+          <span class="agent-usage-count"><span id="agent-usage-used">0</span> / <span id="agent-usage-limit">20</span> AI komutu</span>
+        </div>
+        <div class="agent-usage-bar"><div id="agent-usage-fill" class="agent-usage-fill"></div></div>
+        <button type="button" id="agent-upgrade-btn" class="agent-upgrade-btn">
+          Pro'ya yükselt <span class="agent-upgrade-price">$1/ay</span>
+          <i class="ti ti-arrow-right"></i>
+        </button>
+        <a href="#" id="agent-manage-sub" class="agent-manage-sub">Aboneliğimi Yönet</a>
+      </div>
+
+      <div class="agent-sidebar-footer">
+        <button id="sidebar-apps-btn" type="button" class="agent-sidebar-row">
+          <i class="ti ti-apps"></i>
           <span id="sidebar-apps-label">Uygulamalar</span>
-          <span id="sidebar-apps-count" style="display:none;background:#16a34a;color:#fff;border-radius:999px;font-size:10px;padding:2px 8px;margin-left:auto;"></span>
+          <span id="sidebar-apps-count" class="agent-apps-count"></span>
         </button>
       </div>
     </aside>
@@ -1045,32 +1067,211 @@ body[data-app-mode="agent"] #navbar-agent-mode-actions {
 
 #agent-panel {
   position:fixed; inset:60px 0 0 0; display:flex; flex-direction:row;
-  background:var(--surface); z-index:100; color:var(--ink);
+  background:#faf9f6; z-index:100; color:var(--ink);
 }
+
+/* Icon rail (66px, dark) */
+.agent-rail {
+  width:66px; background:#14171f; display:flex; flex-direction:column;
+  align-items:center; padding:16px 0 12px; gap:8px; flex-shrink:0;
+}
+.agent-rail-logo {
+  width:40px; height:40px; border-radius:12px;
+  background:linear-gradient(135deg,#189e63,#14171f);
+  display:flex; align-items:center; justify-content:center; margin-bottom:8px;
+}
+.agent-rail-btn {
+  width:40px; height:40px; border:none; border-radius:12px;
+  background:transparent; color:#9ca3af; cursor:pointer;
+  display:flex; align-items:center; justify-content:center; font-size:20px;
+  transition:background .15s ease, color .15s ease;
+}
+.agent-rail-btn:hover { background:rgba(255,255,255,.06); color:#fff; }
+.agent-rail-btn.active { background:rgba(46,204,130,.15); color:#34d68f; }
+
+/* Sidebar (282px, light) */
 .agent-sidebar {
-  width:260px; border-right:1px solid var(--line); background:var(--surface-2);
-  display:flex; flex-direction:column; padding:0; gap:0; overflow-y:auto;
+  width:282px; background:#faf9f6; border-right:1px solid #eeece6;
+  display:flex; flex-direction:column; padding:0; gap:0; flex-shrink:0;
 }
+.agent-sidebar-top { padding:16px 16px 8px; }
+.agent-new-chat-btn {
+  width:100%; display:flex; align-items:center; justify-content:center; gap:8px;
+  padding:10px 16px;
+  background:linear-gradient(135deg,#252932,#14171f);
+  color:#fff; border:none; border-radius:14px;
+  font-size:13px; font-weight:600; cursor:pointer;
+  transition:transform .15s ease, box-shadow .15s ease;
+  font-family:inherit;
+}
+.agent-new-chat-btn:hover { transform:translateY(-1px); box-shadow:0 6px 16px rgba(20,23,31,.24); }
+.agent-new-chat-btn .ti { font-size:15px; }
+
+.agent-sidebar-section { padding:0 16px 16px; }
+.agent-sidebar-row {
+  width:100%; display:flex; align-items:center; gap:8px; padding:8px 12px;
+  background:transparent; border:0.5px solid #eeece6; border-radius:12px;
+  color:#374151; font-size:12px; font-weight:500; cursor:pointer;
+  transition:background .15s ease, border-color .15s ease;
+  font-family:inherit;
+}
+.agent-sidebar-row:hover { background:#f0fdf4; border-color:#189e63; }
+.agent-sidebar-row .ti { font-size:15px; }
+.agent-row-chevron { margin-left:auto; color:#9ca3af; font-size:13px !important; }
+.agent-apps-count {
+  display:none; background:#16a34a; color:#fff; border-radius:999px;
+  font-size:10px; padding:2px 8px; margin-left:auto;
+}
+
+.agent-history-scroll { flex:1; overflow-y:auto; padding:0 16px 16px; }
+.agent-history-title {
+  font-size:10px; font-weight:700; color:#9ca3af;
+  text-transform:uppercase; letter-spacing:.06em; margin:16px 0 8px;
+}
+
+/* Usage card */
+.agent-usage-card {
+  margin:0 16px 12px; padding:14px; border-radius:16px;
+  background:#fff; border:0.5px solid #eeece6;
+  box-shadow:0 1px 2px rgba(20,23,31,.04);
+}
+.agent-usage-header {
+  display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;
+}
+.agent-usage-plan {
+  font-size:11px; font-weight:600; color:#146e46;
+  background:#e2f6ea; border-radius:999px; padding:2px 8px;
+}
+.agent-usage-count { font-size:11px; color:#6b7280; }
+.agent-usage-bar {
+  height:6px; background:#eeece6; border-radius:999px; overflow:hidden;
+}
+.agent-usage-fill {
+  height:100%; width:0%;
+  background:linear-gradient(90deg,#2ecc82,#189e63);
+  border-radius:999px; transition:width .3s ease;
+}
+.agent-upgrade-btn {
+  margin-top:12px; width:100%; display:flex; align-items:center; justify-content:center;
+  gap:6px; padding:9px 12px;
+  background:linear-gradient(135deg,#252932,#14171f);
+  color:#fff; border:none; border-radius:12px;
+  font-size:12px; font-weight:600; cursor:pointer; font-family:inherit;
+  transition:transform .15s ease;
+}
+.agent-upgrade-btn:hover { transform:translateY(-1px); }
+.agent-upgrade-price {
+  background:rgba(46,204,130,.2); color:#34d68f;
+  border-radius:6px; padding:1px 6px; font-size:11px; font-weight:700;
+}
+.agent-manage-sub {
+  display:block; text-align:center; margin-top:8px;
+  font-size:11px; color:#6b7280; text-decoration:none;
+}
+.agent-manage-sub:hover { color:#189e63; }
+
+.agent-sidebar-footer { padding:12px 16px 16px; border-top:0.5px solid #eeece6; }
+
+/* Main */
 .agent-main {
   flex:1; display:flex; flex-direction:column; overflow:hidden;
-  background:var(--surface);
+  background:#faf9f6;
 }
 #agent-messages {
-  flex:1; overflow-y:auto; padding:32px 20px; display:flex; flex-direction:column;
+  flex:1; overflow-y:auto; padding:32px 24px; display:flex; flex-direction:column;
   gap:16px; align-items:stretch;
 }
 .agent-messages-inner { max-width:720px; width:100%; margin:0 auto; display:flex; flex-direction:column; gap:16px; }
+
+/* Empty state */
 .agent-empty {
-  max-width:520px; margin:auto; text-align:center; padding:60px 20px;
-  color:var(--ink-3, var(--ink));
+  width:100%; max-width:840px; margin:0 auto; padding:24px 8px 40px;
 }
-.agent-empty-icon {
-  width:56px; height:56px; margin:0 auto 16px; border-radius:14px;
-  background:var(--surface-2); display:flex; align-items:center; justify-content:center;
-  border:1px solid var(--line); color:var(--ink);
+.agent-empty-greeting {
+  text-align:center; margin-bottom:36px;
 }
-.agent-empty-title { font-size:18px; font-weight:600; color:var(--ink); margin-bottom:6px; }
-.agent-empty-sub { font-size:13px; color:var(--ink-4); }
+.agent-empty-greeting-title {
+  font-size:34px; font-weight:600; letter-spacing:-0.02em; margin:0 0 8px;
+  background:linear-gradient(135deg,#14171f 0%,#189e63 60%,#2ecc82 100%);
+  -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+  line-height:1.1;
+}
+.agent-empty-greeting-sub {
+  font-size:14px; color:#6b7280; margin:0;
+}
+
+.agent-quick-pills {
+  display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-bottom:24px;
+}
+.agent-quick-pill {
+  display:inline-flex; align-items:center; gap:8px; padding:10px 16px;
+  background:#fff; border:0.5px solid #eeece6; border-radius:999px;
+  color:#374151; font-size:13px; font-weight:500; cursor:pointer;
+  font-family:inherit; transition:border-color .15s ease, color .15s ease, transform .15s ease;
+}
+.agent-quick-pill:hover { border-color:#189e63; color:#146e46; transform:translateY(-1px); }
+.agent-quick-pill .ti { font-size:16px; color:#16a34a; }
+
+/* Shortcut row */
+.agent-shortcut-row {
+  display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin:24px 0 40px;
+}
+.agent-shortcut {
+  position:relative; display:inline-flex; align-items:center; gap:6px;
+  padding:8px 14px; background:#fff; border:0.5px solid #eeece6; border-radius:999px;
+  color:#374151; font-size:12px; cursor:pointer; font-family:inherit;
+  transition:border-color .15s ease, color .15s ease;
+}
+.agent-shortcut:hover { border-color:#189e63; color:#146e46; }
+.agent-shortcut .ti { font-size:14px; color:#6b7280; }
+.agent-shortcut:hover .ti { color:#189e63; }
+.agent-shortcut-badge {
+  position:absolute; top:-6px; right:-4px;
+  background:#e55c5c; color:#fff; font-size:9px; font-weight:700;
+  padding:1px 6px; border-radius:999px; letter-spacing:.02em;
+}
+
+/* Workflow section */
+.agent-workflow-section { margin-top:24px; }
+.agent-workflow-title {
+  font-size:16px; font-weight:600; color:#14171f; margin:0 0 4px;
+}
+.agent-workflow-sub {
+  font-size:12px; color:#6b7280; margin:0 0 16px;
+}
+.agent-workflow-tabs {
+  display:flex; flex-wrap:wrap; gap:6px; margin-bottom:16px;
+}
+.agent-workflow-tab {
+  padding:6px 14px; border:0.5px solid #eeece6; background:#fff;
+  border-radius:999px; font-size:12px; color:#374151; cursor:pointer;
+  font-family:inherit; transition:background .15s ease, color .15s ease, border-color .15s ease;
+}
+.agent-workflow-tab:hover { border-color:#189e63; color:#146e46; }
+.agent-workflow-tab.active { background:#14171f; border-color:#14171f; color:#fff; }
+.agent-workflow-grid {
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:12px;
+}
+.agent-workflow-card {
+  padding:16px; background:#fff; border:0.5px solid #eeece6; border-radius:16px;
+  text-align:left; cursor:pointer; font-family:inherit;
+  transition:border-color .15s ease, transform .15s ease, box-shadow .15s ease;
+  display:flex; flex-direction:column; gap:8px;
+}
+.agent-workflow-card:hover {
+  border-color:#189e63; transform:translateY(-2px);
+  box-shadow:0 8px 20px rgba(20,23,31,.06);
+}
+.agent-workflow-card-icon {
+  width:36px; height:36px; border-radius:10px; background:#e2f6ea;
+  color:#146e46; display:flex; align-items:center; justify-content:center; font-size:18px;
+}
+.agent-workflow-card-name {
+  font-size:13px; font-weight:600; color:#14171f; margin:0;
+}
+.agent-workflow-card-desc {
+  font-size:11px; color:#6b7280; margin:0; line-height:1.4;
+}
 
 .agent-msg { display:flex; gap:12px; padding:10px 0; }
 .agent-msg-role {
@@ -1083,24 +1284,24 @@ body[data-app-mode="agent"] #navbar-agent-mode-actions {
 .agent-msg-typing { opacity:0.6; font-style:italic; }
 
 .agent-input-area {
-  border-top:1px solid var(--line); padding:16px 20px; background:var(--surface);
+  border-top:1px solid #eeece6; padding:16px 24px 20px; background:#faf9f6;
 }
-#ai-input-wrap { position:relative; width:100%; max-width:720px; margin:0 auto; }
+#ai-input-wrap { position:relative; width:100%; max-width:820px; margin:0 auto; }
 #ai-file-input { display:none; }
 #ai-attach-row { display:none; gap:8px; padding:8px 8px 4px; overflow-x:auto; }
 #ai-input-card {
-  position:relative; border:1px solid var(--line); border-radius:20px;
-  background:var(--surface-2); transition:box-shadow .2s ease, border-color .2s ease;
+  position:relative; border:1.6px solid #189e63; border-radius:20px;
+  background:#fff; transition:box-shadow .2s ease, border-color .2s ease;
 }
-#ai-input-card.focused { border-color:#16a34a; box-shadow:0 0 0 3px rgba(22,163,74,0.10); }
+#ai-input-card.focused { border-color:#16a34a; box-shadow:0 0 0 4px rgba(46,204,130,0.14); }
 #agent-input {
   width:100%; box-sizing:border-box; resize:none; border:none; outline:none;
-  background:transparent; padding:14px 48px 44px 16px; font-family:inherit;
+  background:transparent; padding:16px 60px 48px 18px; font-family:inherit;
   font-size:14px; line-height:22px; color:var(--ink); max-height:160px;
   overflow-y:hidden;
 }
 #ai-bottom-bar {
-  position:absolute; left:8px; right:48px; bottom:8px;
+  position:absolute; left:8px; right:56px; bottom:8px;
   display:flex; align-items:center; gap:8px;
 }
 #ai-apps-pill, #ai-tools-pill {
@@ -1133,11 +1334,14 @@ body[data-app-mode="agent"] #navbar-agent-mode-actions {
 }
 #ai-attach-btn:hover { background:#f0fdf4; color:#16a34a; }
 #ai-send-btn {
-  position:absolute; right:8px; bottom:8px; width:32px; height:32px; border:none;
-  border-radius:999px; background:var(--ink); color:var(--surface); cursor:pointer;
+  position:absolute; right:8px; bottom:8px; width:40px; height:40px; border:none;
+  border-radius:999px;
+  background:linear-gradient(135deg,#252932,#14171f);
+  color:#fff; cursor:pointer;
   display:flex; align-items:center; justify-content:center;
+  transition:transform .15s ease, box-shadow .15s ease;
 }
-#ai-send-btn:hover { opacity:0.9; }
+#ai-send-btn:hover { transform:translateY(-1px); box-shadow:0 6px 16px rgba(20,23,31,.24); }
 .ai-apps-row {
   width:100%; display:flex; align-items:center; gap:8px; padding:8px 16px;
   border:none; background:transparent; border-radius:8px; cursor:pointer;
@@ -4179,51 +4383,184 @@ async function runColumnTranslate() {
     if (agentBtn) agentBtn.classList.toggle('active', mode === 'agent');
     if (mode === 'agent') {
       loadAgentConversations();
+      renderUsageCard();
       if (!currentConversationId) renderEmptyState();
     }
   };
 
+  var QUICK_ACTIONS = [
+    { icon: 'ti-box',         label: 'Stoku kritik olan ürünleri bul', prompt: 'Stoku kritik seviyeye düşen ürünleri bul' },
+    { icon: 'ti-trending-up', label: 'En çok satanları listele',       prompt: 'Bu ayki en çok satan ürünleri listele' },
+    { icon: 'ti-broom',       label: 'CSV dosyamı temizle',            prompt: 'CSV dosyamı temizle, tekrar eden satırları sil' },
+    { icon: 'ti-coin',        label: 'Kâr marjını hesapla',            prompt: 'Ürün bazında kâr marjını hesapla' }
+  ];
+
+  var SHORTCUTS = [
+    { icon: 'ti-presentation',  label: 'Slaytlar' },
+    { icon: 'ti-file-text',     label: 'Dökümanlar' },
+    { icon: 'ti-photo',         label: 'Posterler', badge: 'Yeni' },
+    { icon: 'ti-table',         label: 'Tablolar' },
+    { icon: 'ti-world',         label: 'Web Siteleri' },
+    { icon: 'ti-code',          label: 'Kod' },
+    { icon: 'ti-video',         label: 'Videolar' },
+    { icon: 'ti-calendar-time', label: 'Zamanlanmış Görevler' },
+    { icon: 'ti-sparkles',      label: 'Tüm Yetenekler' }
+  ];
+
+  var WORKFLOW_CATEGORIES = ['Tümü','Ofis','Veri & Analiz','Finans','İçerik Üretimi','Üretkenlik','Pazarlama'];
+
+  var WORKFLOW_CARDS = [
+    { icon:'ti-math-function', name:'Excel Formül Uzmanı', desc:'Karmaşık formülleri sen tarif et, ben yazayım.', cat:['Ofis','Veri & Analiz'], prompt:'Bir Excel formülü yazmama yardım et: ' },
+    { icon:'ti-table-options', name:'Pivot Tablo Uzmanı', desc:'Verini özetle, kategori bazında rapor çıkar.', cat:['Ofis','Veri & Analiz'], prompt:'Verimden pivot tablo oluştur' },
+    { icon:'ti-broom',         name:'Veri Temizleme Uzmanı', desc:'Duplike, boşluk, yanlış formatı bir tıkla temizle.', cat:['Veri & Analiz','Üretkenlik'], prompt:'Verimi temizle: duplike satırları sil, boşlukları düzelt' },
+    { icon:'ti-package',       name:'Stok Analizi Uzmanı', desc:'Kritik stok, hızlı devir, ölü stok analizi.', cat:['Veri & Analiz','Ofis'], prompt:'Stok durumumu analiz et: kritik seviyedeki ürünleri göster' },
+    { icon:'ti-report-money',  name:'Finansal Rapor Uzmanı', desc:'Gelir, gider, kâr marjı ve nakit akış raporları.', cat:['Finans'], prompt:'Bu ayki finansal raporumu hazırla' },
+    { icon:'ti-presentation',  name:'Sunum Uzmanı', desc:'Verinden hızlıca sunum taslağı çıkar.', cat:['İçerik Üretimi','Üretkenlik'], prompt:'Bu tablodan sunum taslağı hazırla' },
+    { icon:'ti-robot',         name:'Otomasyon Uzmanı', desc:'Tekrarlayan işleri otomatikleştirmek için akış kur.', cat:['Üretkenlik'], prompt:'Şu tekrarlayan işlemi otomatikleştir: ' },
+    { icon:'ti-chart-bar',     name:'Pazarlama Raporu Uzmanı', desc:'Kampanya, dönüşüm, ROAS raporları.', cat:['Pazarlama','Finans'], prompt:'Pazarlama kampanya performansımı analiz et' }
+  ];
+
+  var _activeWorkflowCat = 'Tümü';
+
+  function _buildQuickPills() {
+    return QUICK_ACTIONS.map(function(s) {
+      return '<button type="button" class="agent-quick-pill" data-prompt="' + s.prompt.replace(/"/g,'&quot;') + '">' +
+        '<i class="ti ' + s.icon + '"></i><span>' + s.label + '</span></button>';
+    }).join('');
+  }
+
+  function _buildShortcutRow() {
+    return SHORTCUTS.map(function(s) {
+      var badge = s.badge ? '<span class="agent-shortcut-badge">' + s.badge + '</span>' : '';
+      return '<button type="button" class="agent-shortcut" data-label="' + s.label + '">' +
+        '<i class="ti ' + s.icon + '"></i><span>' + s.label + '</span>' + badge + '</button>';
+    }).join('');
+  }
+
+  function _buildWorkflowTabs() {
+    return WORKFLOW_CATEGORIES.map(function(c) {
+      var active = c === _activeWorkflowCat ? ' active' : '';
+      return '<button type="button" class="agent-workflow-tab' + active + '" data-cat="' + c.replace(/"/g,'&quot;') + '">' + c + '</button>';
+    }).join('');
+  }
+
+  function _buildWorkflowGrid() {
+    var cards = _activeWorkflowCat === 'Tümü'
+      ? WORKFLOW_CARDS
+      : WORKFLOW_CARDS.filter(function(c) { return c.cat.indexOf(_activeWorkflowCat) !== -1; });
+    return cards.map(function(c) {
+      return '<button type="button" class="agent-workflow-card" data-prompt="' + c.prompt.replace(/"/g,'&quot;') + '">' +
+        '<div class="agent-workflow-card-icon"><i class="ti ' + c.icon + '"></i></div>' +
+        '<p class="agent-workflow-card-name">' + c.name + '</p>' +
+        '<p class="agent-workflow-card-desc">' + c.desc + '</p></button>';
+    }).join('');
+  }
+
+  function _fillPromptFromDataset(el) {
+    var input = document.getElementById('agent-input');
+    if (!input) return;
+    input.value = el.dataset.prompt || '';
+    input.focus();
+    input.dispatchEvent(new Event('input'));
+  }
+
   function renderEmptyState() {
     var box = document.getElementById('agent-messages');
     if (!box) return;
-    var suggestions = [
-      { icon: 'ti-box',          label: 'Stoku kritik olan ürünleri bul',       prompt: 'Stoku kritik seviyeye düşen ürünleri bul' },
-      { icon: 'ti-trending-up',  label: 'En çok satanları listele',             prompt: 'Bu ayki en çok satan ürünleri listele' },
-      { icon: 'ti-broom',        label: 'CSV dosyamı temizle',                  prompt: 'CSV dosyamı temizle, tekrar eden satırları sil' },
-      { icon: 'ti-coin',         label: 'Kâr marjını hesapla',                  prompt: 'Ürün bazında kâr marjını hesapla' }
-    ];
-    var chipsHtml = suggestions.map(function(s) {
-      return '<button class="ai-suggestion-chip" data-prompt="' + s.prompt.replace(/"/g, '&quot;') + '" ' +
-        'style="padding:8px 16px;border:0.5px solid #e5e7eb;border-radius:999px;' +
-        'background:#fff;color:#374151;font-size:12px;cursor:pointer;' +
-        'display:flex;align-items:center;gap:8px;font-family:inherit;' +
-        'transition:border-color .15s ease,color .15s ease;">' +
-        '<i class="ti ' + s.icon + '" style="font-size:16px;"></i>' +
-        '<span>' + s.label + '</span></button>';
-    }).join('');
 
     box.innerHTML =
-      '<div class="agent-empty" style="text-align:center;padding:64px 24px;max-width:480px;margin:0 auto;">' +
-        '<div style="width:48px;height:48px;border-radius:16px;background:#f0fdf4;' +
-             'display:flex;align-items:center;justify-content:center;margin:0 auto 24px;">' +
-          '<i class="ti ti-sparkles" style="font-size:24px;color:#16a34a;"></i>' +
+      '<div class="agent-empty">' +
+        '<div class="agent-empty-greeting">' +
+          '<h1 class="agent-empty-greeting-title">Merhaba, ben Mocksheets AI</h1>' +
+          '<p class="agent-empty-greeting-sub">Ne yapmak istersiniz?</p>' +
         '</div>' +
-        '<p style="font-size:18px;font-weight:600;color:#111827;margin:0 0 8px;' +
-             'font-style:italic;letter-spacing:-0.01em;">Merhaba, ben Mocksheets AI</p>' +
-        '<p style="font-size:13px;color:#6b7280;margin:0 0 32px;">Ne yapmak istersiniz?</p>' +
-        '<div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;">' + chipsHtml + '</div>' +
+        '<div class="agent-quick-pills">' + _buildQuickPills() + '</div>' +
+        '<div class="agent-shortcut-row">' + _buildShortcutRow() + '</div>' +
+        '<div class="agent-workflow-section">' +
+          '<h2 class="agent-workflow-title">Önerilen İş Akışları</h2>' +
+          '<p class="agent-workflow-sub">Uzmanlaşmış ajanlarla işini daha hızlı bitir.</p>' +
+          '<div class="agent-workflow-tabs" id="agent-workflow-tabs">' + _buildWorkflowTabs() + '</div>' +
+          '<div class="agent-workflow-grid" id="agent-workflow-grid">' + _buildWorkflowGrid() + '</div>' +
+        '</div>' +
       '</div>';
 
-    box.querySelectorAll('.ai-suggestion-chip').forEach(function(chip) {
-      chip.addEventListener('mouseenter', function() { this.style.borderColor = '#16a34a'; this.style.color = '#16a34a'; });
-      chip.addEventListener('mouseleave', function() { this.style.borderColor = '#e5e7eb'; this.style.color = '#374151'; });
-      chip.addEventListener('click', function() {
-        var input = document.getElementById('agent-input');
-        if (!input) return;
-        input.value = this.dataset.prompt || '';
-        input.focus();
-        input.dispatchEvent(new Event('input'));
+    box.querySelectorAll('.agent-quick-pill').forEach(function(el) {
+      el.addEventListener('click', function() { _fillPromptFromDataset(this); });
+    });
+
+    box.querySelectorAll('.agent-shortcut').forEach(function(el) {
+      el.addEventListener('click', function() {
+        var label = this.dataset.label || '';
+        if (label === 'Tablolar' && typeof window.setAppMode === 'function') {
+          window.setAppMode('sheet');
+          return;
+        }
+        alert(label + ' — yakında');
       });
+    });
+
+    _wireWorkflowSection(box);
+  }
+
+  function _wireWorkflowSection(scope) {
+    var tabs = scope.querySelectorAll('.agent-workflow-tab');
+    tabs.forEach(function(tab) {
+      tab.addEventListener('click', function() {
+        _activeWorkflowCat = this.dataset.cat || 'Tümü';
+        var tabsBox = scope.querySelector('#agent-workflow-tabs');
+        var gridBox = scope.querySelector('#agent-workflow-grid');
+        if (tabsBox) tabsBox.innerHTML = _buildWorkflowTabs();
+        if (gridBox) gridBox.innerHTML = _buildWorkflowGrid();
+        _wireWorkflowSection(scope);
+      });
+    });
+    scope.querySelectorAll('.agent-workflow-card').forEach(function(el) {
+      el.addEventListener('click', function() { _fillPromptFromDataset(this); });
+    });
+  }
+
+  function renderUsageCard() {
+    var card = document.getElementById('agent-usage-card');
+    if (!card) return;
+    fetch(apiBase + '/api/usage', { headers: agentHeaders() })
+      .then(function(r) { return r.ok ? r.json() : null; })
+      .then(function(data) {
+        if (!data) return;
+        var plan = (data.plan || 'free').toLowerCase();
+        var used = Number((data.used && data.used.today) || 0);
+        var dailyLimit = data.limits && data.limits.ai_commands_per_day;
+        var unlimited = (dailyLimit === null || dailyLimit === undefined);
+        var limit = unlimited ? 0 : Number(dailyLimit);
+        var usedEl = document.getElementById('agent-usage-used');
+        var limitEl = document.getElementById('agent-usage-limit');
+        var fillEl = document.getElementById('agent-usage-fill');
+        var planEl = card.querySelector('.agent-usage-plan');
+        if (usedEl) usedEl.textContent = used;
+        if (limitEl) limitEl.textContent = unlimited ? '∞' : limit;
+        if (fillEl) fillEl.style.width = (unlimited ? 100 : Math.min(100, Math.round((used/Math.max(limit,1))*100))) + '%';
+        if (planEl) planEl.textContent = (data.plan_name || (plan.charAt(0).toUpperCase() + plan.slice(1))) + ' plan';
+        var upBtn = document.getElementById('agent-upgrade-btn');
+        if (upBtn) upBtn.style.display = (plan === 'free') ? 'flex' : 'none';
+        card.style.display = 'block';
+      })
+      .catch(function() {});
+  }
+
+  function _wireUsageCard() {
+    var up = document.getElementById('agent-upgrade-btn');
+    if (up) up.addEventListener('click', function() {
+      if (typeof window.openUpgradeModal === 'function') window.openUpgradeModal();
+      else window.location.href = '/#pricing';
+    });
+    var mng = document.getElementById('agent-manage-sub');
+    if (mng) mng.addEventListener('click', function(e) {
+      e.preventDefault();
+      if (typeof window.openBillingPortal === 'function') window.openBillingPortal();
+      else window.location.href = '/account.html';
+    });
+    var backBtn = document.getElementById('rail-back-to-sheet-btn');
+    if (backBtn) backBtn.addEventListener('click', function() {
+      if (typeof window.setAppMode === 'function') window.setAppMode('sheet');
     });
   }
 
@@ -4611,6 +4948,7 @@ async function runColumnTranslate() {
   _wireAiBottomBar();
   _aiWireAttach();
   _aiWireTitleInput();
+  _wireUsageCard();
   _aiSetTitleInput('Yeni Sohbet', false);
 
   window.sendAgentMessage = function() {
