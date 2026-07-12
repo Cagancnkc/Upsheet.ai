@@ -283,25 +283,49 @@
   <!-- ============ AGENT PANEL ============ -->
   <div id="agent-panel" style="display:none;">
     <aside class="agent-sidebar">
-      <button class="agent-new-btn" onclick="newAgentConversation()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Yeni Sohbet
-      </button>
-
-      <div class="agent-section">Araçlar</div>
-      <div class="agent-tool-item disabled" onclick="alert('Yakında')">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-        Slaytlar
-        <span class="agent-badge">Yakında</span>
-      </div>
-      <div class="agent-tool-item disabled" onclick="alert('Yakında')">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-        Belgeler
-        <span class="agent-badge">Yakında</span>
+      <div style="padding:16px;">
+        <button id="new-agent-chat-btn" type="button"
+          style="width:100%;display:flex;align-items:center;justify-content:center;gap:8px;padding:8px 16px;background:#111827;color:#fff;border:none;border-radius:12px;font-size:13px;font-weight:600;cursor:pointer;transition:background .15s ease;">
+          <i class="ti ti-plus" style="font-size:15px;"></i>
+          Yeni Sohbet
+        </button>
       </div>
 
-      <div class="agent-section">Geçmiş</div>
-      <div id="agent-conversation-list"></div>
+      <div style="padding:0 16px 16px;">
+        <button id="sidebar-tools-btn" type="button"
+          style="width:100%;display:flex;align-items:center;gap:8px;padding:8px 16px;background:transparent;border:0.5px solid #e5e7eb;border-radius:12px;color:#374151;font-size:12px;font-weight:500;cursor:pointer;transition:background .15s ease,border-color .15s ease;">
+          <i class="ti ti-tools" style="font-size:15px;color:#16a34a;"></i>
+          Araçlar &amp; Skills
+          <i class="ti ti-chevron-right" style="font-size:13px;margin-left:auto;color:#9ca3af;"></i>
+        </button>
+      </div>
+
+      <div style="flex:1;overflow-y:auto;padding:0 16px 16px;">
+        <div id="agent-history-today" class="agent-history-group" style="display:none;">
+          <p style="font-size:10px;font-weight:600;color:#9ca3af;text-transform:uppercase;letter-spacing:.04em;margin:16px 0 8px;">Bugün</p>
+          <div class="agent-history-list"></div>
+        </div>
+        <div id="agent-history-week" class="agent-history-group" style="display:none;">
+          <p style="font-size:10px;font-weight:600;color:#9ca3af;text-transform:uppercase;letter-spacing:.04em;margin:16px 0 8px;">Bu Hafta</p>
+          <div class="agent-history-list"></div>
+        </div>
+        <div id="agent-history-older" class="agent-history-group" style="display:none;">
+          <p style="font-size:10px;font-weight:600;color:#9ca3af;text-transform:uppercase;letter-spacing:.04em;margin:16px 0 8px;">Daha Eski</p>
+          <div class="agent-history-list"></div>
+        </div>
+        <div id="agent-history-empty" style="display:none;text-align:center;padding:32px 16px;">
+          <p style="font-size:12px;color:#9ca3af;">Henüz sohbet geçmişiniz yok</p>
+        </div>
+      </div>
+
+      <div style="padding:16px;border-top:0.5px solid #e5e7eb;">
+        <button id="sidebar-apps-btn" type="button"
+          style="width:100%;display:flex;align-items:center;gap:8px;padding:8px 16px;background:transparent;border:none;border-radius:12px;color:#6b7280;font-size:12px;cursor:pointer;transition:background .15s ease;">
+          <i class="ti ti-apps" style="font-size:15px;"></i>
+          <span id="sidebar-apps-label">Uygulamalar</span>
+          <span id="sidebar-apps-count" style="display:none;background:#16a34a;color:#fff;border-radius:999px;font-size:10px;padding:2px 8px;margin-left:auto;"></span>
+        </button>
+      </div>
     </aside>
 
     <section class="agent-main">
@@ -1024,32 +1048,8 @@ body[data-app-mode="agent"] #navbar-agent-mode-actions {
 }
 .agent-sidebar {
   width:260px; border-right:1px solid var(--line); background:var(--surface-2);
-  display:flex; flex-direction:column; padding:16px 12px; gap:6px; overflow-y:auto;
+  display:flex; flex-direction:column; padding:0; gap:0; overflow-y:auto;
 }
-.agent-new-btn {
-  display:flex; align-items:center; gap:8px; padding:9px 12px; border-radius:8px;
-  background:var(--ink); color:var(--surface); border:none; cursor:pointer;
-  font-size:13px; font-weight:500; margin-bottom:12px;
-}
-.agent-new-btn:hover { opacity:0.9; }
-.agent-section { font-size:11px; font-weight:600; color:var(--ink-4); text-transform:uppercase; letter-spacing:0.5px; padding:12px 8px 4px; }
-.agent-tool-item {
-  display:flex; align-items:center; gap:8px; padding:8px 10px; border-radius:6px;
-  font-size:13px; cursor:pointer; color:var(--ink-2, var(--ink)); opacity:0.55;
-}
-.agent-tool-item:hover { background:var(--line); opacity:0.75; }
-.agent-badge {
-  margin-left:auto; font-size:10px; padding:2px 6px; border-radius:10px;
-  background:var(--line); color:var(--ink-4); font-weight:500;
-}
-#agent-conversation-list { display:flex; flex-direction:column; gap:2px; }
-.agent-conv-item {
-  padding:8px 10px; border-radius:6px; font-size:13px; cursor:pointer;
-  color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-}
-.agent-conv-item:hover { background:var(--line); }
-.agent-conv-item.active { background:var(--line); font-weight:500; }
-
 .agent-main {
   flex:1; display:flex; flex-direction:column; overflow:hidden;
   background:var(--surface);
@@ -4232,7 +4232,42 @@ async function runColumnTranslate() {
     _aiSetTitleInput('Yeni Sohbet', false);
     var input = document.getElementById('agent-input');
     if (input) input.focus();
+    loadAgentConversations();
   };
+
+  function _wireAgentSidebar() {
+    var newBtn = document.getElementById('new-agent-chat-btn');
+    if (newBtn) {
+      newBtn.addEventListener('click', function() { window.newAgentConversation(); });
+      newBtn.addEventListener('mouseenter', function() { this.style.background = '#16a34a'; });
+      newBtn.addEventListener('mouseleave', function() { this.style.background = '#111827'; });
+    }
+
+    var toolsBtn = document.getElementById('sidebar-tools-btn');
+    if (toolsBtn) {
+      toolsBtn.addEventListener('click', function() {
+        var pill = document.getElementById('ai-tools-pill');
+        if (pill) pill.click();
+      });
+      toolsBtn.addEventListener('mouseenter', function() {
+        this.style.background = '#f0fdf4'; this.style.borderColor = '#16a34a';
+      });
+      toolsBtn.addEventListener('mouseleave', function() {
+        this.style.background = 'transparent'; this.style.borderColor = '#e5e7eb';
+      });
+    }
+
+    var appsBtn = document.getElementById('sidebar-apps-btn');
+    if (appsBtn) {
+      appsBtn.addEventListener('click', function() {
+        var pill = document.getElementById('ai-apps-pill');
+        if (pill) pill.click();
+      });
+      appsBtn.addEventListener('mouseenter', function() { this.style.background = '#f0fdf4'; });
+      appsBtn.addEventListener('mouseleave', function() { this.style.background = 'transparent'; });
+    }
+  }
+  _wireAgentSidebar();
 
   window.agentToolSoon = function() {
     alert('Yakında');
@@ -4241,20 +4276,65 @@ async function runColumnTranslate() {
   function loadAgentConversations() {
     fetch(apiBase + '/api/agent/conversations', { headers: agentHeaders() })
       .then(function(r) { return r.ok ? r.json() : { conversations: [] }; })
-      .then(function(data) {
-        var list = document.getElementById('agent-conversation-list');
-        if (!list) return;
-        list.innerHTML = '';
-        (data.conversations || []).forEach(function(c) {
-          var item = document.createElement('div');
-          item.className = 'agent-conv-item';
-          if (c.id === currentConversationId) item.classList.add('active');
-          item.textContent = c.title || 'Sohbet';
-          item.onclick = function() { openAgentConversation(c.id); };
-          list.appendChild(item);
-        });
-      })
+      .then(function(data) { renderGroupedHistory(data.conversations || []); })
       .catch(function() {});
+  }
+
+  function renderGroupedHistory(conversations) {
+    var now = new Date();
+    var startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    var startOfWeek = new Date(startOfToday);
+    startOfWeek.setDate(startOfWeek.getDate() - 7);
+
+    var groups = { today: [], week: [], older: [] };
+    conversations.forEach(function(c) {
+      var updated = new Date(c.updated_at || c.created_at || 0);
+      if (updated >= startOfToday) groups.today.push(c);
+      else if (updated >= startOfWeek) groups.week.push(c);
+      else groups.older.push(c);
+    });
+
+    var emptyEl = document.getElementById('agent-history-empty');
+    if (emptyEl) emptyEl.style.display = conversations.length === 0 ? 'block' : 'none';
+
+    renderHistoryGroup('agent-history-today', groups.today);
+    renderHistoryGroup('agent-history-week',  groups.week);
+    renderHistoryGroup('agent-history-older', groups.older);
+  }
+
+  function renderHistoryGroup(containerId, items) {
+    var groupEl = document.getElementById(containerId);
+    if (!groupEl) return;
+    if (items.length === 0) { groupEl.style.display = 'none'; return; }
+    groupEl.style.display = 'block';
+
+    var list = groupEl.querySelector('.agent-history-list');
+    list.innerHTML = '';
+
+    items.forEach(function(c) {
+      var isActive = c.id === currentConversationId;
+      var row = document.createElement('button');
+      row.type = 'button';
+      row.style.cssText = 'width:100%;text-align:left;padding:8px 16px;margin-bottom:2px;' +
+        'border:none;border-radius:8px;font-size:13px;cursor:pointer;overflow:hidden;' +
+        'text-overflow:ellipsis;white-space:nowrap;transition:background .15s ease;' +
+        'border-left:2px solid ' + (isActive ? '#16a34a' : 'transparent') + ';' +
+        'background:' + (isActive ? '#f0fdf4' : 'transparent') + ';' +
+        'color:' + (isActive ? '#111827' : '#374151') + ';';
+
+      row.textContent = c.title || 'Yeni Sohbet';
+      row.dataset.convId = c.id;
+
+      row.addEventListener('mouseenter', function() {
+        if (this.dataset.convId !== currentConversationId) this.style.background = '#f0fdf4';
+      });
+      row.addEventListener('mouseleave', function() {
+        if (this.dataset.convId !== currentConversationId) this.style.background = 'transparent';
+      });
+      row.addEventListener('click', function() { openAgentConversation(this.dataset.convId); });
+
+      list.appendChild(row);
+    });
   }
 
   function openAgentConversation(id) {
@@ -4375,11 +4455,14 @@ async function runColumnTranslate() {
   }
 
   function updateAiAppsBadge() {
-    var badge = document.getElementById('ai-apps-count-badge');
-    if (!badge || typeof APPS_CONFIG === 'undefined') return;
+    if (typeof APPS_CONFIG === 'undefined') return;
     var count = APPS_CONFIG.filter(_aiIsAppActive).length;
-    if (count > 0) { badge.style.display = 'inline-block'; badge.textContent = count; }
-    else { badge.style.display = 'none'; }
+    var badges = document.querySelectorAll('#ai-apps-count-badge, #sidebar-apps-count');
+    badges.forEach(function(badge) {
+      if (!badge) return;
+      badge.style.display = count > 0 ? 'inline-block' : 'none';
+      if (count > 0) badge.textContent = count;
+    });
   }
 
   function _wireAiBottomBar() {
