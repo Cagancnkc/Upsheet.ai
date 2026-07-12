@@ -3,6 +3,7 @@ const express = require('express');
 const router = express.Router();
 const { createClient } = require('@supabase/supabase-js');
 const Anthropic = require('@anthropic-ai/sdk');
+const PDFDocument = require('pdfkit');
 const requireProMax = require('../middleware/requireProMax');
 const { sendScenarioEmail } = require('../services/brevo');
 
@@ -153,6 +154,30 @@ router.post('/track-cancel-intent', async (req, res) => {
   } catch (e) {
     console.error('[agent/track-cancel-intent]', e.message);
     res.status(500).json({ error: 'Hata kaydedilemedi' });
+  }
+});
+
+// POST /api/agent/export-pdf
+router.post('/export-pdf', async (req, res) => {
+  try {
+    const { content, title } = req.body;
+    if (!content) return res.status(400).json({ error: 'İçerik gerekli' });
+    const doc = new PDFDocument({ margin: 50 });
+    const chunks = [];
+    doc.on('data', chunk => chunks.push(chunk));
+    doc.on('end', () => {
+      const buf = Buffer.concat(chunks);
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', 'attachment; filename="' + (title || 'mocksheets-rapor') + '.pdf"');
+      res.send(buf);
+    });
+    doc.fontSize(18).text(title || 'Mocksheets Raporu', { align: 'left' });
+    doc.moveDown();
+    doc.fontSize(11).text(content, { align: 'left', lineGap: 4 });
+    doc.end();
+  } catch(e) {
+    console.error('[agent/export-pdf]', e.message);
+    res.status(500).json({ error: e.message });
   }
 });
 
