@@ -982,6 +982,28 @@ body[data-app-mode="agent"] #navbar-sheet-mode { display: none !important; }
 body[data-app-mode="agent"] #navbar-agent-mode-title { display: flex !important; }
 body[data-app-mode="agent"] #navbar-agent-mode-actions { display: flex !important; }
 
+/* Agent mode — grid wrap fix (4 child, 4 kolon) */
+body[data-app-mode="agent"] .topbar {
+  grid-template-columns: 248px auto 1fr auto;
+}
+body[data-app-mode="agent"] .topbar-search {
+  padding: 0 8px;
+  justify-content: flex-start;
+}
+body[data-app-mode="agent"] #navbar-agent-mode-title {
+  min-width: 0;
+  overflow: hidden;
+}
+body[data-app-mode="agent"] #agent-title-input {
+  min-width: 0;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+body[data-app-mode="agent"] #navbar-agent-mode-actions {
+  flex-shrink: 0;
+}
+
 /* Agent navbar — title */
 #agent-title-input {
   flex: 1; border: none; outline: none; background: transparent;
@@ -4365,12 +4387,15 @@ async function runColumnTranslate() {
     if (!pill || !dd) return;
     pill.addEventListener('click', function(e) {
       e.stopPropagation();
+      console.log('[debug] apps pill clicked, dd:', dd, 'display:', dd.style.display);
+      console.log('[debug] APPS_CONFIG defined:', typeof APPS_CONFIG !== 'undefined');
       var navDd   = document.getElementById('navbar-apps-dropdown');
       var toolsDd = document.getElementById('ai-tools-dropdown');
       if (navDd)   navDd.style.display   = 'none';
       if (toolsDd) toolsDd.style.display = 'none';
       var open = dd.style.display === 'block';
       dd.style.display = open ? 'none' : 'block';
+      console.log('[debug] new display:', dd.style.display);
       if (!open) {
         if (typeof loadAppConnectionStatus === 'function') loadAppConnectionStatus();
         renderAiAppsDropdown();
@@ -4391,6 +4416,7 @@ async function runColumnTranslate() {
     if (!btn || !dd) return;
     btn.addEventListener('click', function(e) {
       e.stopPropagation();
+      console.log('[debug] navbar apps btn clicked');
       if (typeof loadAppConnectionStatus === 'function') loadAppConnectionStatus();
       var isOpen = dd.style.display === 'block';
       if (appsDd)  appsDd.style.display  = 'none';
