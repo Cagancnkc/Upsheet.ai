@@ -16,6 +16,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;550;600;700&family=JetBrains+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css" />
 <link rel="stylesheet" href="mocksheets-styles.css" />
 <link rel="icon" type="image/png" href="/images/brand/logo-128x128.png">
 <link rel="apple-touch-icon" href="/images/brand/logo-128x128.png">
@@ -197,20 +198,7 @@
       </button>
       </div>
 
-      <div id="navbar-agent-mode-actions" style="display:none;align-items:center;gap:6px;">
-        <div style="position:relative;">
-          <button id="navbar-apps-btn" type="button" class="agent-navbar-btn">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
-              <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
-            </svg>
-            <span>Uygulamalar</span>
-            <span id="navbar-apps-count"></span>
-          </button>
-          <div id="navbar-apps-dropdown" style="display:none;position:absolute;top:38px;right:0;width:220px;background:var(--surface);border:0.5px solid var(--line);border-radius:16px;padding:6px;box-shadow:0 8px 24px rgba(0,0,0,.08);z-index:60;">
-            <div id="navbar-apps-dropdown-list"></div>
-          </div>
-        </div>
+      <div id="navbar-agent-mode-actions" style="display:none;align-items:center;gap:8px;">
         <button id="navbar-help-btn" type="button" class="agent-navbar-icon-btn" aria-label="Yardım">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>
@@ -317,15 +305,7 @@
     </aside>
 
     <section class="agent-main">
-      <div id="agent-messages">
-        <div class="agent-empty">
-          <div class="agent-empty-icon">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/></svg>
-          </div>
-          <div class="agent-empty-title">Mocksheets AI Agent'a hoş geldiniz.</div>
-          <div class="agent-empty-sub">Bir soru sorun veya bir görev tarif edin.</div>
-        </div>
-      </div>
+      <div id="agent-messages"></div>
 
       <div class="agent-input-area">
         <div id="ai-input-wrap">
@@ -334,12 +314,9 @@
           <div id="ai-input-card">
             <textarea id="agent-input" rows="1" placeholder="Bir şey sor veya bir görev tarif et..."></textarea>
             <div id="ai-bottom-bar">
-              <div id="ai-apps-wrap" style="position:relative;">
+              <div style="position:relative;">
                 <button id="ai-apps-pill" type="button">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
-                    <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
-                  </svg>
+                  <i class="ti ti-apps" style="font-size:16px;"></i>
                   <span>Uygulamalar</span>
                   <span id="ai-apps-count-badge"></span>
                 </button>
@@ -347,42 +324,28 @@
               </div>
               <div style="position:relative;">
                 <button id="ai-tools-pill" type="button">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
-                  </svg>
+                  <i class="ti ti-tools" style="font-size:16px;"></i>
                   <span>Araçlar</span>
                 </button>
-                <div id="ai-tools-dropdown" style="display:none;position:absolute;bottom:36px;left:0;width:200px;background:var(--surface);border:0.5px solid var(--line);border-radius:16px;padding:6px;box-shadow:0 8px 24px rgba(0,0,0,.08);z-index:50;">
-                  <button type="button" class="ai-tool-item" data-tool="pdf"
-                    style="width:100%;display:flex;align-items:center;gap:8px;padding:8px 10px;border:none;background:transparent;border-radius:10px;cursor:pointer;text-align:left;">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
-                         fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                      <polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/><line x1="9" y1="11" x2="15" y2="11"/>
-                    </svg>
-                    <span style="font-size:12px;color:var(--ink);flex:1;">PDF Oluştur</span>
+                <div id="ai-tools-dropdown">
+                  <button type="button" class="ai-tool-item" data-tool="pdf">
+                    <i class="ti ti-file-type-pdf" style="font-size:16px;color:#dc2626;"></i>
+                    <span class="ai-tool-name">PDF Oluştur</span>
                   </button>
                   <button type="button" class="ai-tool-item" data-tool="slides">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M2 3h20"/><path d="M21 3v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V3"/><path d="m7 21 5-5 5 5"/>
-                    </svg>
+                    <i class="ti ti-presentation" style="font-size:16px;color:#374151;"></i>
                     <span class="ai-tool-name">Slaytlar</span>
                     <span class="ai-tool-soon">Yakında</span>
                   </button>
                   <button type="button" class="ai-tool-item" data-tool="skills">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/>
-                      <path d="M9 18h6"/><path d="M10 22h4"/>
-                    </svg>
+                    <i class="ti ti-bulb" style="font-size:16px;color:#374151;"></i>
                     <span class="ai-tool-name">Skills</span>
                     <span class="ai-tool-soon">Yakında</span>
                   </button>
                 </div>
               </div>
               <button id="ai-attach-btn" type="button" aria-label="Dosya ekle">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-                </svg>
+                <i class="ti ti-plus" style="font-size:16px;"></i>
               </button>
             </div>
             <button id="ai-send-btn" type="button" aria-label="Gönder">
@@ -1045,10 +1008,6 @@ body[data-app-mode="agent"] #navbar-agent-mode-actions {
   font-size: 12px; font-weight: 500; cursor: pointer; font-family: inherit;
 }
 .agent-navbar-btn:hover { background: var(--line); }
-#navbar-apps-count {
-  display: none; background: #16a34a; color: #fff;
-  border-radius: 999px; font-size: 10px; padding: 1px 6px; line-height: 1.4;
-}
 
 /* Agent navbar — icon buttons */
 .agent-navbar-icon-btn {
@@ -1140,30 +1099,38 @@ body[data-app-mode="agent"] #navbar-agent-mode-actions {
   overflow-y:hidden;
 }
 #ai-bottom-bar {
-  position:absolute; left:8px; right:44px; bottom:8px;
-  display:flex; align-items:center; gap:4px;
+  position:absolute; left:8px; right:48px; bottom:8px;
+  display:flex; align-items:center; gap:8px;
 }
-#ai-apps-pill {
-  display:flex; align-items:center; gap:6px; padding:5px 10px; border:none;
-  border-radius:999px; background:transparent; color:var(--ink-4);
+#ai-apps-pill, #ai-tools-pill {
+  display:flex; align-items:center; gap:8px; padding:8px 16px; border:none;
+  border-radius:999px; background:transparent; color:#6b7280;
   font-size:12px; font-weight:600; cursor:pointer; font-family:inherit;
+  transition:color .15s ease, background .15s ease;
 }
-#ai-apps-pill:hover { background:var(--line); }
+#ai-apps-pill:hover, #ai-tools-pill:hover { background:#f0fdf4; color:#16a34a; }
 #ai-apps-count-badge {
   display:none; background:#16a34a; color:#fff; border-radius:999px;
-  font-size:10px; padding:1px 6px; line-height:1.4;
+  font-size:10px; padding:2px 8px; line-height:1.4;
 }
 #ai-apps-dropdown {
-  display:none; position:absolute; bottom:36px; left:0; width:220px;
-  background:var(--surface); border:1px solid var(--line); border-radius:16px;
-  padding:6px; box-shadow:0 8px 24px rgba(0,0,0,0.08); z-index:50;
+  display:none; position:absolute; bottom:48px; left:0; width:224px;
+  max-height:280px; overflow-y:auto;
+  background:var(--surface); border:0.5px solid #e5e7eb; border-radius:16px;
+  padding:8px; box-shadow:0 8px 24px rgba(17,24,39,.12); z-index:200;
+}
+#ai-tools-dropdown {
+  display:none; position:absolute; bottom:48px; left:0; width:208px;
+  background:var(--surface); border:0.5px solid #e5e7eb; border-radius:16px;
+  padding:8px; box-shadow:0 8px 24px rgba(17,24,39,.12); z-index:200;
 }
 #ai-attach-btn {
-  margin-left:auto; width:28px; height:28px; border:none; border-radius:999px;
-  background:transparent; color:var(--ink-4); cursor:pointer;
+  margin-left:auto; width:32px; height:32px; border:none; border-radius:999px;
+  background:transparent; color:#6b7280; cursor:pointer;
   display:flex; align-items:center; justify-content:center;
+  transition:background .15s ease, color .15s ease;
 }
-#ai-attach-btn:hover { background:var(--line); color:var(--ink); }
+#ai-attach-btn:hover { background:#f0fdf4; color:#16a34a; }
 #ai-send-btn {
   position:absolute; right:8px; bottom:8px; width:32px; height:32px; border:none;
   border-radius:999px; background:var(--ink); color:var(--surface); cursor:pointer;
@@ -1171,45 +1138,34 @@ body[data-app-mode="agent"] #navbar-agent-mode-actions {
 }
 #ai-send-btn:hover { opacity:0.9; }
 .ai-apps-row {
-  width:100%; display:flex; align-items:center; gap:8px; padding:8px 10px;
-  border:none; background:transparent; border-radius:10px; cursor:pointer;
+  width:100%; display:flex; align-items:center; gap:8px; padding:8px 16px;
+  border:none; background:transparent; border-radius:8px; cursor:pointer;
   text-align:left; font-family:inherit;
+  transition:background .15s ease;
 }
-.ai-apps-row:hover { background:var(--line); }
+.ai-apps-row:hover { background:#f0fdf4; }
 .ai-apps-row-icon { width:16px; height:16px; object-fit:contain; flex-shrink:0; }
 .ai-apps-row-name { font-size:12px; color:var(--ink); flex:1; }
-.ai-apps-row-status-dot { width:6px; height:6px; border-radius:999px; background:#16a34a; }
-.ai-apps-row-status-txt { font-size:10px; color:var(--ink-4); }
+.ai-apps-row-status-dot { width:8px; height:8px; border-radius:999px; background:#16a34a; }
+.ai-apps-row-status-txt { font-size:10px; color:#9ca3af; }
 .ai-attach-chip {
-  display:flex; align-items:center; gap:6px; padding:6px 10px;
-  background:var(--line); border-radius:12px; font-size:12px; color:var(--ink);
+  display:flex; align-items:center; gap:8px; padding:8px 16px;
+  background:var(--line); border-radius:16px; font-size:12px; color:var(--ink);
   flex-shrink:0;
 }
 .ai-attach-chip button {
   border:none; background:transparent; cursor:pointer;
   display:flex; align-items:center; color:var(--ink-4); padding:0;
 }
-/* Navbar apps — ayrı dropdown */
-#navbar-apps-dropdown {
-  position:absolute; top:38px; right:0; width:220px;
-  background:var(--surface); border:0.5px solid var(--line); border-radius:16px;
-  padding:6px; box-shadow:0 8px 24px rgba(0,0,0,.08); z-index:60;
-}
-/* Tools pill */
-#ai-tools-pill {
-  display:flex; align-items:center; gap:6px; padding:5px 10px; border:none;
-  border-radius:999px; background:transparent; color:var(--ink-4);
-  font-size:12px; font-weight:600; cursor:pointer; font-family:inherit;
-}
-#ai-tools-pill:hover { background:var(--line); }
 .ai-tool-item {
-  width:100%; display:flex; align-items:center; gap:8px; padding:8px 10px;
-  border:none; background:transparent; border-radius:10px; cursor:pointer;
+  width:100%; display:flex; align-items:center; gap:8px; padding:8px 16px;
+  border:none; background:transparent; border-radius:8px; cursor:pointer;
   text-align:left; font-family:inherit;
+  transition:background .15s ease;
 }
-.ai-tool-item:hover { background:var(--line); }
+.ai-tool-item:hover { background:#f0fdf4; }
 .ai-tool-name { font-size:12px; color:var(--ink); flex:1; }
-.ai-tool-soon { font-size:10px; color:var(--ink-4); }
+.ai-tool-soon { font-size:10px; color:#9ca3af; }
 </style>
 
 <script src="js/templates.js"></script>
@@ -4229,22 +4185,45 @@ async function runColumnTranslate() {
   function renderEmptyState() {
     var box = document.getElementById('agent-messages');
     if (!box) return;
-    box.innerHTML = '';
-    var empty = document.createElement('div');
-    empty.className = 'agent-empty';
-    var icon = document.createElement('div');
-    icon.className = 'agent-empty-icon';
-    icon.textContent = '✨';
-    var title = document.createElement('div');
-    title.className = 'agent-empty-title';
-    title.textContent = 'Mocksheets AI Agent\'a hoş geldiniz';
-    var sub = document.createElement('div');
-    sub.className = 'agent-empty-sub';
-    sub.textContent = 'Bir soru sorun veya bir görev tanımlayın.';
-    empty.appendChild(icon);
-    empty.appendChild(title);
-    empty.appendChild(sub);
-    box.appendChild(empty);
+    var suggestions = [
+      { icon: 'ti-box',          label: 'Stoku kritik olan ürünleri bul',       prompt: 'Stoku kritik seviyeye düşen ürünleri bul' },
+      { icon: 'ti-trending-up',  label: 'En çok satanları listele',             prompt: 'Bu ayki en çok satan ürünleri listele' },
+      { icon: 'ti-broom',        label: 'CSV dosyamı temizle',                  prompt: 'CSV dosyamı temizle, tekrar eden satırları sil' },
+      { icon: 'ti-coin',         label: 'Kâr marjını hesapla',                  prompt: 'Ürün bazında kâr marjını hesapla' }
+    ];
+    var chipsHtml = suggestions.map(function(s) {
+      return '<button class="ai-suggestion-chip" data-prompt="' + s.prompt.replace(/"/g, '&quot;') + '" ' +
+        'style="padding:8px 16px;border:0.5px solid #e5e7eb;border-radius:999px;' +
+        'background:#fff;color:#374151;font-size:12px;cursor:pointer;' +
+        'display:flex;align-items:center;gap:8px;font-family:inherit;' +
+        'transition:border-color .15s ease,color .15s ease;">' +
+        '<i class="ti ' + s.icon + '" style="font-size:16px;"></i>' +
+        '<span>' + s.label + '</span></button>';
+    }).join('');
+
+    box.innerHTML =
+      '<div class="agent-empty" style="text-align:center;padding:64px 24px;max-width:480px;margin:0 auto;">' +
+        '<div style="width:48px;height:48px;border-radius:16px;background:#f0fdf4;' +
+             'display:flex;align-items:center;justify-content:center;margin:0 auto 24px;">' +
+          '<i class="ti ti-sparkles" style="font-size:24px;color:#16a34a;"></i>' +
+        '</div>' +
+        '<p style="font-size:18px;font-weight:600;color:#111827;margin:0 0 8px;' +
+             'font-style:italic;letter-spacing:-0.01em;">Merhaba, ben Mocksheets AI</p>' +
+        '<p style="font-size:13px;color:#6b7280;margin:0 0 32px;">Ne yapmak istersiniz?</p>' +
+        '<div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;">' + chipsHtml + '</div>' +
+      '</div>';
+
+    box.querySelectorAll('.ai-suggestion-chip').forEach(function(chip) {
+      chip.addEventListener('mouseenter', function() { this.style.borderColor = '#16a34a'; this.style.color = '#16a34a'; });
+      chip.addEventListener('mouseleave', function() { this.style.borderColor = '#e5e7eb'; this.style.color = '#374151'; });
+      chip.addEventListener('click', function() {
+        var input = document.getElementById('agent-input');
+        if (!input) return;
+        input.value = this.dataset.prompt || '';
+        input.focus();
+        input.dispatchEvent(new Event('input'));
+      });
+    });
   }
 
   window.newAgentConversation = function() {
@@ -4342,26 +4321,40 @@ async function runColumnTranslate() {
       && _ddIntStatuses[app.provider].status === 'active');
   }
 
-  function renderAiAppsDropdown(listId, dropdownId) {
-    var list = _aiEl(listId || 'ai-apps-dropdown-list');
-    var dropEl = _aiEl(dropdownId || 'ai-apps-dropdown');
+  function _closeAllAiDropdowns() {
+    ['ai-apps-dropdown', 'ai-tools-dropdown'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) el.style.display = 'none';
+    });
+  }
+
+  function renderAiAppsDropdown() {
+    var list = _aiEl('ai-apps-dropdown-list');
     if (!list || typeof APPS_CONFIG === 'undefined') return;
     list.innerHTML = '';
     APPS_CONFIG.forEach(function(app) {
       var connected = _aiIsAppActive(app);
       var row = document.createElement('button');
-      row.type = 'button'; row.className = 'ai-apps-row';
+      row.type = 'button';
+      row.className = 'ai-apps-row';
       var icon = document.createElement('img');
       icon.className = 'ai-apps-row-icon';
       icon.src = app.icon;
       icon.alt = '';
-      icon.onerror = function(){ this.style.display = 'none'; };
+      icon.onerror = function() { this.style.display = 'none'; };
       var name = document.createElement('span');
-      name.className = 'ai-apps-row-name'; name.textContent = app.name;
+      name.className = 'ai-apps-row-name';
+      name.textContent = app.name;
       var status = document.createElement('span');
-      if (connected) status.className = 'ai-apps-row-status-dot';
-      else { status.className = 'ai-apps-row-status-txt'; status.textContent = 'Bağlı değil'; }
-      row.appendChild(icon); row.appendChild(name); row.appendChild(status);
+      if (connected) {
+        status.className = 'ai-apps-row-status-dot';
+      } else {
+        status.className = 'ai-apps-row-status-txt';
+        status.textContent = 'Bağlı değil';
+      }
+      row.appendChild(icon);
+      row.appendChild(name);
+      row.appendChild(status);
       row.dataset.appId = app.id;
       row.addEventListener('click', function() {
         var id = this.dataset.appId;
@@ -4372,9 +4365,9 @@ async function runColumnTranslate() {
         } else {
           var inp = _aiEl('agent-input');
           var mention = '@' + a.name.split(' ')[0] + ' ';
-          inp.value = mention + inp.value; inp.focus();
-          if (dropEl) dropEl.style.display = 'none';
+          if (inp) { inp.value = mention + inp.value; inp.focus(); }
         }
+        _closeAllAiDropdowns();
       });
       list.appendChild(row);
     });
@@ -4382,95 +4375,45 @@ async function runColumnTranslate() {
   }
 
   function updateAiAppsBadge() {
-    if (typeof APPS_CONFIG === 'undefined') return;
+    var badge = document.getElementById('ai-apps-count-badge');
+    if (!badge || typeof APPS_CONFIG === 'undefined') return;
     var count = APPS_CONFIG.filter(_aiIsAppActive).length;
-    ['ai-apps-count-badge', 'navbar-apps-count'].forEach(function(id) {
-      var b = document.getElementById(id);
-      if (!b) return;
-      if (count > 0) { b.style.display = 'inline-block'; b.textContent = count; }
-      else { b.style.display = 'none'; }
-    });
+    if (count > 0) { badge.style.display = 'inline-block'; badge.textContent = count; }
+    else { badge.style.display = 'none'; }
   }
 
-  function _aiRestoreDropdownPosition() {
-    var dd = _aiEl('ai-apps-dropdown');
-    if (!dd) return;
-    dd.style.position = '';
-    dd.style.top = '';
-    dd.style.right = '';
-    dd.style.left = '';
-    dd.style.bottom = '';
-  }
+  function _wireAiBottomBar() {
+    var appsPill = _aiEl('ai-apps-pill');
+    var appsDd   = _aiEl('ai-apps-dropdown');
+    var toolsPill = _aiEl('ai-tools-pill');
+    var toolsDd   = _aiEl('ai-tools-dropdown');
 
-  function _aiWireApps() {
-    var pill = _aiEl('ai-apps-pill');
-    var dd   = _aiEl('ai-apps-dropdown');
-    if (!pill || !dd) return;
-    pill.addEventListener('click', function(e) {
-      e.stopPropagation();
-      console.log('[debug] apps pill clicked, dd:', dd, 'display:', dd.style.display);
-      console.log('[debug] APPS_CONFIG defined:', typeof APPS_CONFIG !== 'undefined');
-      var navDd   = document.getElementById('navbar-apps-dropdown');
-      var toolsDd = document.getElementById('ai-tools-dropdown');
-      if (navDd)   navDd.style.display   = 'none';
-      if (toolsDd) toolsDd.style.display = 'none';
-      var open = dd.style.display === 'block';
-      dd.style.display = open ? 'none' : 'block';
-      console.log('[debug] new display:', dd.style.display);
-      if (!open) {
-        if (typeof loadAppConnectionStatus === 'function') loadAppConnectionStatus();
-        renderAiAppsDropdown();
-      }
-    });
-    document.addEventListener('click', function(e) {
-      if (!dd.contains(e.target) && e.target !== pill && !pill.contains(e.target)) {
-        dd.style.display = 'none';
-      }
-    });
-  }
+    if (appsPill && appsDd) {
+      appsPill.addEventListener('click', function(e) {
+        e.stopPropagation();
+        var open = appsDd.style.display === 'block';
+        _closeAllAiDropdowns();
+        if (!open) {
+          if (typeof loadAppConnectionStatus === 'function') loadAppConnectionStatus();
+          appsDd.style.display = 'block';
+          renderAiAppsDropdown();
+        }
+      });
+    }
 
-  function _aiWireNavbarApps() {
-    var btn    = document.getElementById('navbar-apps-btn');
-    var dd     = document.getElementById('navbar-apps-dropdown');
-    var appsDd = _aiEl('ai-apps-dropdown');
-    var toolsDd= document.getElementById('ai-tools-dropdown');
-    if (!btn || !dd) return;
-    btn.addEventListener('click', function(e) {
-      e.stopPropagation();
-      console.log('[debug] navbar apps btn clicked');
-      if (typeof loadAppConnectionStatus === 'function') loadAppConnectionStatus();
-      var isOpen = dd.style.display === 'block';
-      if (appsDd)  appsDd.style.display  = 'none';
-      if (toolsDd) toolsDd.style.display = 'none';
-      dd.style.display = isOpen ? 'none' : 'block';
-      if (!isOpen) renderAiAppsDropdown('navbar-apps-dropdown-list', 'navbar-apps-dropdown');
-    });
-    document.addEventListener('click', function(e) {
-      if (!dd.contains(e.target) && e.target !== btn && !btn.contains(e.target)) {
-        dd.style.display = 'none';
-      }
-    });
-  }
+    if (toolsPill && toolsDd) {
+      toolsPill.addEventListener('click', function(e) {
+        e.stopPropagation();
+        var open = toolsDd.style.display === 'block';
+        _closeAllAiDropdowns();
+        if (!open) toolsDd.style.display = 'block';
+      });
+    }
 
-  function _aiWireTools() {
-    var pill    = document.getElementById('ai-tools-pill');
-    var dd      = document.getElementById('ai-tools-dropdown');
-    var appsDd  = _aiEl('ai-apps-dropdown');
-    var navDd   = document.getElementById('navbar-apps-dropdown');
-    if (!pill || !dd) return;
-    pill.addEventListener('click', function(e) {
-      e.stopPropagation();
-      var isOpen = dd.style.display === 'block';
-      if (appsDd) appsDd.style.display = 'none';
-      if (navDd)  navDd.style.display  = 'none';
-      dd.style.display = isOpen ? 'none' : 'block';
-    });
     document.querySelectorAll('.ai-tool-item').forEach(function(btn) {
-      btn.addEventListener('mouseenter', function() { this.style.background = 'var(--line)'; });
-      btn.addEventListener('mouseleave', function() { this.style.background = 'transparent'; });
       btn.addEventListener('click', async function() {
         var tool = this.dataset.tool;
-        dd.style.display = 'none';
+        _closeAllAiDropdowns();
         if (tool === 'pdf') {
           await exportLastMessageAsPdf();
         } else {
@@ -4478,9 +4421,15 @@ async function runColumnTranslate() {
         }
       });
     });
+
     document.addEventListener('click', function(e) {
-      if (!dd.contains(e.target) && e.target !== pill && !pill.contains(e.target)) {
-        dd.style.display = 'none';
+      if (appsDd && appsDd.style.display === 'block' &&
+          !appsDd.contains(e.target) && appsPill && !appsPill.contains(e.target)) {
+        appsDd.style.display = 'none';
+      }
+      if (toolsDd && toolsDd.style.display === 'block' &&
+          !toolsDd.contains(e.target) && toolsPill && !toolsPill.contains(e.target)) {
+        toolsDd.style.display = 'none';
       }
     });
   }
@@ -4575,15 +4524,10 @@ async function runColumnTranslate() {
   }
 
   _aiWireInput();
-  _aiWireApps();
+  _wireAiBottomBar();
   _aiWireAttach();
-  _aiWireNavbarApps();
-  _aiWireTools();
   _aiWireTitleInput();
   _aiSetTitleInput('Yeni Sohbet', false);
-
-  console.log('[debug] ai-apps-pill element:', document.getElementById('ai-apps-pill'));
-  console.log('[debug] _aiAppsPill değişkeni:', typeof _aiAppsPill !== 'undefined' ? _aiAppsPill : 'TANIMLI DEĞİL');
 
   window.sendAgentMessage = function() {
     var input = document.getElementById('agent-input');
