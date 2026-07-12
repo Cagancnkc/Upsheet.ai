@@ -5,7 +5,7 @@ const { createClient } = require('@supabase/supabase-js');
 const Anthropic = require('@anthropic-ai/sdk');
 const PDFDocument = require('pdfkit');
 const requireProMax = require('../middleware/requireProMax');
-const { sendScenarioEmail } = require('../services/brevo');
+const { sendScenarioEmail } = require('../services/loops');
 
 let _supabase = null;
 function getSupabase() {

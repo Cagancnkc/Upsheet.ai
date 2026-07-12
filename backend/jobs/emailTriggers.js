@@ -14,7 +14,7 @@ async function runStillFree3d() {
     .lte('created_at', cutoff)
     .eq('still_free_3d_sent', false);
 
-  const { sendScenarioEmail } = require('../services/brevo');
+  const { sendScenarioEmail } = require('../services/loops');
   for (const row of rows || []) {
     try {
       const { data: { user } } = await sb.auth.admin.getUserById(row.user_id);
@@ -37,7 +37,7 @@ async function runWinback7d() {
     .lte('cancelled_at', to)
     .eq('winback_7d_sent', false);
 
-  const { sendScenarioEmail } = require('../services/brevo');
+  const { sendScenarioEmail } = require('../services/loops');
   for (const row of rows || []) {
     try {
       const { data: { user } } = await sb.auth.admin.getUserById(row.user_id);
@@ -60,7 +60,7 @@ async function runWinback30d() {
     .lte('cancelled_at', to)
     .eq('winback_30d_sent', false);
 
-  const { sendScenarioEmail } = require('../services/brevo');
+  const { sendScenarioEmail } = require('../services/loops');
   for (const row of rows || []) {
     try {
       const { data: { user } } = await sb.auth.admin.getUserById(row.user_id);
@@ -81,7 +81,7 @@ async function runInactive14d() {
     .lt('last_active_at', cutoff)
     .eq('inactive_14d_sent', false);
 
-  const { sendScenarioEmail } = require('../services/brevo');
+  const { sendScenarioEmail } = require('../services/loops');
   for (const row of rows || []) {
     try {
       const { data: { user } } = await sb.auth.admin.getUserById(row.user_id);
@@ -102,7 +102,7 @@ async function runInactive30d() {
     .lt('last_active_at', cutoff)
     .eq('inactive_30d_sent', false);
 
-  const { sendScenarioEmail } = require('../services/brevo');
+  const { sendScenarioEmail } = require('../services/loops');
   for (const row of rows || []) {
     try {
       const { data: { user } } = await sb.auth.admin.getUserById(row.user_id);

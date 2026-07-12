@@ -6,7 +6,7 @@ const fetch   = require('node-fetch');
 const { processExcelCommand } = require('./rag/pipeline');
 const tokenManager = require('./services/tokenManager');
 const { createClient: _createSbClient } = require('@supabase/supabase-js');
-const { upsertContact: loopsUpdate, sendScenarioEmail } = require('./services/brevo');
+const { upsertContact, sendEvent, sendScenarioEmail } = require('./services/loops');
 
 let _sbForAuth = null;
 function getSbForAuth() {
@@ -589,7 +589,7 @@ app.post('/api/chat', checkLimit, async (req, res) => {
       const firstName = req.user.user_metadata?.full_name || userEmail.split('@')[0];
 
       if (newCount <= 5 || newCount % 5 === 0) {
-        loopsUpdate(userEmail, {
+        upsertContact(userEmail, {
           commandCount: newCount,
           subscriptionStatus: req.usage.subscription_status || 'inactive',
           subscriptionTier: req.usage.plan || 'free',
@@ -847,7 +847,7 @@ app.listen(PORT, '0.0.0.0', () => {
           .lte('created_at', cutoff)
           .eq('first_command_at', null)
           .eq('inactive_24h_sent', false);
-        const { sendScenarioEmail: sse } = require('./services/brevo');
+        const { sendScenarioEmail: sse } = require('./services/loops');
         for (const row of rows || []) {
           const { data: { user } } = await sb.auth.admin.getUserById(row.user_id);
           if (user?.email) {
@@ -864,7 +864,7 @@ app.listen(PORT, '0.0.0.0', () => {
   try {
     const cron2 = require('node-cron');
     cron2.schedule('30 8 * * *', async () => {
-      const { sendEventToBrevo: lse } = require('./services/brevo');
+      const { sendEvent: lse } = require('./services/loops');
       const sb2 = _createSbClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
       const now = new Date();
 
@@ -879,7 +879,7 @@ app.listen(PORT, '0.0.0.0', () => {
           const { data: { user } } = await sb2.auth.admin.getUserById(row.user_id);
           if (user?.email) {
             const fn = user.user_metadata?.full_name || user.email.split('@')[0];
-            lse(user.email, `day${daysAgo}_no_command`, { firstName: fn }).catch(console.error);
+            lse(user.email, `day${daysAgo}_no_command`, {}, { firstName: fn }).catch(console.error);
           }
         }
       }
@@ -895,7 +895,7 @@ app.listen(PORT, '0.0.0.0', () => {
         if (user?.email) {
           const fn = user.user_metadata?.full_name || user.email.split('@')[0];
           const endDate = new Date(row.plan_ends_at).toLocaleDateString('tr-TR');
-          lse(user.email, 'campaign_ending', { firstName: fn, plan: row.plan, endDate }).catch(console.error);
+          lse(user.email, 'campaign_ending', {}, { firstName: fn, plan: row.plan, endDate }).catch(console.error);
         }
       }
       console.log('[loops-cron] günlük kontrol tamam');
@@ -903,7 +903,7 @@ app.listen(PORT, '0.0.0.0', () => {
 
     // Loops — haftalık özet (Pazartesi 09:00)
     cron2.schedule('0 9 * * 1', async () => {
-      const { sendEventToBrevo: lse } = require('./services/brevo');
+      const { sendEvent: lse } = require('./services/loops');
       const sb3 = _createSbClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
       const weekAgo = new Date(Date.now() - 7 * 86400000).toISOString();
       const { data: rows } = await sb3.from('user_usage')
@@ -914,7 +914,7 @@ app.listen(PORT, '0.0.0.0', () => {
         if (user?.email) {
           const fn = user.user_metadata?.full_name || user.email.split('@')[0];
           const timeSaved = (row.ai_commands_used_month * 0.85 * 5 / 60).toFixed(1);
-          lse(user.email, 'weekly_summary',
+          lse(user.email, 'weekly_summary', {},
             { firstName: fn, commandCount: row.ai_commands_used_month, timeSaved: timeSaved + ' saat' })
             .catch(console.error);
         }

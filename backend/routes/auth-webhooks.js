@@ -2,7 +2,6 @@
 const express = require('express');
 const router = express.Router();
 const { createClient } = require('@supabase/supabase-js');
-const { upsertContact, sendScenarioEmail } = require('../services/brevo');
 
 function getSupabase() {
   return createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
@@ -36,16 +35,7 @@ router.post('/new-user', async (req, res) => {
   try {
     await scheduleOnboardingEmails(user_id || id || null, email);
 
-    const firstName = email.split('@')[0];
-    upsertContact(email, {
-      userId: user_id || id || '',
-      subscriptionStatus: 'free',
-      subscriptionTier: '',
-      commandCount: 0,
-      signupDate: new Date().toISOString(),
-    }).catch(e => console.error('[loops] upsertContact signup:', e.message));
-    sendScenarioEmail(email, 'user_signed_up')
-      .catch(e => console.error('[brevo] user_signed_up:', e.message));
+    // Loops native Supabase integration handles contact creation and user_signed_up events
 
     res.json({ ok: true });
   } catch (err) {

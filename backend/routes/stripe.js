@@ -2,7 +2,6 @@
 const express = require('express');
 const router = express.Router();
 const Stripe = require('stripe');
-const { upsertContact: loopsUpdate, sendScenarioEmail } = require('../services/brevo');
 
 // stripe instance — lazily initialized so module loads even without env vars
 let _stripe = null;
@@ -207,10 +206,7 @@ router.post('/webhook',
           }
 
           if (session.customer_email) {
-            loopsUpdate(session.customer_email, { userGroup: plan, subscriptionTier: plan, subscriptionStatus: 'active' })
-              .catch(e => console.error('[brevo] checkout update:', e.message));
-            sendScenarioEmail(session.customer_email, 'plan_upgraded')
-              .catch(e => console.error('[brevo] plan_upgraded:', e.message));
+            // Loops native Stripe integration handles subscription creation events
           }
         } else {
           console.log('✅ Ödeme tamamlandı:', session.customer_email);
@@ -254,10 +250,7 @@ router.post('/webhook',
         if (uRec?.user_id) {
           const { data: { user: aUser } } = await sbUpd.auth.admin.getUserById(uRec.user_id);
           if (aUser?.email) {
-            loopsUpdate(aUser.email, { subscriptionStatus: subStatus, subscriptionTier: newPlan })
-              .catch(e => console.error('[brevo] sub updated:', e.message));
-            sendScenarioEmail(aUser.email, 'plan_changed')
-              .catch(e => console.error('[brevo] plan_changed:', e.message));
+            // Loops native Stripe integration handles subscription updates
           }
         }
         break;
@@ -284,10 +277,7 @@ router.post('/webhook',
         if (dRec?.user_id) {
           const { data: { user: dUser } } = await sbDel.auth.admin.getUserById(dRec.user_id);
           if (dUser?.email) {
-            loopsUpdate(dUser.email, { subscriptionStatus: 'free', subscriptionTier: '' })
-              .catch(e => console.error('[brevo] sub deleted:', e.message));
-            sendScenarioEmail(dUser.email, 'plan_cancelled')
-              .catch(e => console.error('[brevo] plan_cancelled:', e.message));
+            // Loops native Stripe integration handles subscription deletions
           }
         }
         break;
@@ -304,8 +294,7 @@ router.post('/webhook',
             .eq('stripe_subscription_id', invoice.subscription);
         }
         if (invoice.customer_email) {
-          sendScenarioEmail(invoice.customer_email, 'payment_failed')
-            .catch(e => console.error('[brevo] payment_failed:', e.message));
+          // Loops native Stripe integration handles payment failures
         }
         break;
       }

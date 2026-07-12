@@ -2,7 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const { createClient } = require('@supabase/supabase-js');
-const { sendScenarioEmail } = require('../services/brevo');
+const { sendScenarioEmail } = require('../services/loops');
 
 let _sb = null;
 function getSb() {
