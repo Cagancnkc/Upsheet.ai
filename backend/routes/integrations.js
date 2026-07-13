@@ -1494,6 +1494,40 @@ router.post('/monday/create-item', requireAuth, async (req, res) => {
 });
 
 // ── HubSpot ───────────────────────────────────────────────────────────────────
+router.get('/hubspot/pull-data', requireAuth, async (req, res) => {
+  try {
+    const sb = _getSb();
+    const { data: integ } = await sb
+      .from('user_integrations')
+      .select('access_token')
+      .eq('user_id', req.user.id)
+      .eq('provider', 'hubspot')
+      .single();
+    if (!integ?.access_token) return res.status(404).json({ error: 'HubSpot bağlantısı bulunamadı' });
+
+    const { decrypt } = require('../services/encryption');
+    const token = decrypt(integ.access_token);
+
+    const hsRes = await fetch('https://api.hubapi.com/crm/v3/objects/contacts?limit=100&properties=firstname,lastname,email,phone,lifecyclestage', {
+      headers: { 'Authorization': 'Bearer ' + token },
+    });
+    if (!hsRes.ok) return res.status(hsRes.status).json({ error: 'HubSpot API hatası' });
+    const hsData = await hsRes.json();
+
+    const rows = (hsData.results || []).map(c => ([
+      c.properties.firstname || '',
+      c.properties.lastname || '',
+      c.properties.email || '',
+      c.properties.phone || '',
+      c.properties.lifecyclestage || '',
+    ]));
+
+    res.json({ sheets: [{ name: 'HubSpot Contactlar', rows: [['Ad', 'Soyad', 'Email', 'Telefon', 'Aşama'], ...rows] }] });
+  } catch(e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 router.post('/hubspot/create-contact', requireAuth, async (req, res) => {
   const { token, email, firstName, lastName } = req.body;
   if (!token || !email) return res.status(400).json({ error: 'token ve email gerekli' });
@@ -1746,6 +1780,58 @@ router.post('/asana/add-comment', requireAuth, async (req, res) => {
 });
 
 // ── Notion: Sayfa güncelle ────────────────────────────────────────────────────
+router.get('/notion/pull-data', requireAuth, async (req, res) => {
+  try {
+    const sb = _getSb();
+    const { data: integ } = await sb
+      .from('user_integrations')
+      .select('access_token')
+      .eq('user_id', req.user.id)
+      .eq('provider', 'notion')
+      .single();
+    if (!integ?.access_token) return res.status(404).json({ error: 'Notion bağlantısı bulunamadı' });
+
+    const { decrypt } = require('../services/encryption');
+    const token = decrypt(integ.access_token);
+    const notionHeaders = { 'Authorization': 'Bearer ' + token, 'Notion-Version': '2022-06-28', 'Content-Type': 'application/json' };
+
+    const searchRes = await fetch('https://api.notion.com/v1/search', {
+      method: 'POST',
+      headers: notionHeaders,
+      body: JSON.stringify({ filter: { property: 'object', value: 'database' } }),
+    });
+    const searchData = await searchRes.json();
+    const firstDb = (searchData.results || [])[0];
+    if (!firstDb) return res.json({ sheets: [{ name: 'Notion', rows: [['Veritabanı bulunamadı']] }] });
+
+    const queryRes = await fetch(`https://api.notion.com/v1/databases/${firstDb.id}/query`, {
+      method: 'POST', headers: notionHeaders,
+    });
+    const queryData = await queryRes.json();
+    const dbName = firstDb.title?.[0]?.plain_text || 'Database';
+
+    const propKeys = Object.keys(firstDb.properties || {});
+    const rows = (queryData.results || []).map(page => propKeys.map(key => {
+      const p = page.properties[key];
+      if (!p) return '';
+      if (p.type === 'title') return p.title?.[0]?.plain_text || '';
+      if (p.type === 'rich_text') return p.rich_text?.[0]?.plain_text || '';
+      if (p.type === 'number') return p.number != null ? String(p.number) : '';
+      if (p.type === 'select') return p.select?.name || '';
+      if (p.type === 'multi_select') return (p.multi_select || []).map(s => s.name).join(', ');
+      if (p.type === 'date') return p.date?.start || '';
+      if (p.type === 'email') return p.email || '';
+      if (p.type === 'phone_number') return p.phone_number || '';
+      if (p.type === 'checkbox') return p.checkbox ? 'Evet' : 'Hayır';
+      return '';
+    }));
+
+    res.json({ sheets: [{ name: 'Notion — ' + dbName, rows: [propKeys, ...rows] }] });
+  } catch(e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 router.post('/notion/update-page', requireAuth, async (req, res) => {
   const { token, pageId, properties } = req.body;
   if (!token || !pageId) return res.status(400).json({ error: 'token ve pageId gerekli' });

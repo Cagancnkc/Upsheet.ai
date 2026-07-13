@@ -2439,6 +2439,66 @@
   }
   window.syncShopifyData = syncShopifyData;
 
+  async function pullDataFromApp(appId) {
+    if (appId === 'shopify') { syncShopifyData(); return; }
+
+    var urlBase = window.location.hostname === 'localhost' ? 'http://localhost:3001' : 'https://upsheet-ai.onrender.com';
+
+    if (appId === 'google') {
+      var sheetUrl = prompt('Google Sheets URL\'sini girin:');
+      if (!sheetUrl) return;
+      try {
+        var r = await fetch(urlBase + '/api/integrations/sheets/import-oauth', {
+          method: 'POST',
+          headers: authHeaders(),
+          body: JSON.stringify({ spreadsheet_url: sheetUrl })
+        });
+        if (!r.ok) { var e = await r.json(); throw new Error(e.error || r.status); }
+        var data = await r.json();
+        var h = data.headers || [];
+        var rows2d = [h].concat((data.rows || []).map(function(row) {
+          return h.map(function(k) { return row[k] != null ? String(row[k]) : ''; });
+        }));
+        _pushPulledSheet('Google Sheets', [rows2d]);
+        showToast('✅ Google Sheets verisi eklendi');
+      } catch(e) { showToast('❌ Google Sheets alınamadı: ' + e.message); }
+      return;
+    }
+
+    var endpointMap = { hubspot: '/api/integrations/hubspot/pull-data', notion: '/api/integrations/notion/pull-data' };
+    var endpoint = endpointMap[appId];
+    if (!endpoint) { alert('Bu uygulama için veri çekme henüz desteklenmiyor.'); return; }
+
+    try {
+      var resp = await fetch(urlBase + endpoint, { headers: authHeaders() });
+      if (!resp.ok) { var err = await resp.json(); throw new Error(err.error || resp.status); }
+      var result = await resp.json();
+      var sheets = result.sheets || [];
+      _pushPulledSheet(null, sheets.map(function(s) { return s.rows; }), sheets.map(function(s) { return s.name; }));
+      showToast('✅ Veri başarıyla çekildi (' + sheets.length + ' sayfa)');
+    } catch(e) { showToast('❌ Veri alınamadı: ' + e.message); }
+  }
+
+  function _pushPulledSheet(defaultName, rowsPerSheet, names) {
+    rowsPerSheet.forEach(function(rows2d, i) {
+      var sheetName = (names && names[i]) || defaultName || 'İçe Aktarılan Veri';
+      var newData = emptyGridData();
+      (rows2d || []).forEach(function(row, ri) {
+        if (ri < GRID_ROWS) (row || []).forEach(function(val, ci) {
+          if (ci < GRID_COLS) newData[ri][ci].v = String(val != null ? val : '');
+        });
+      });
+      sheetsData[activeSheetIdx].data = JSON.parse(JSON.stringify(gridData));
+      sheetsData.push({ name: sheetName, color: 'var(--accent)', data: newData });
+    });
+    activeSheetIdx = sheetsData.length - 1;
+    gridData = sheetsData[activeSheetIdx].data;
+    renderGrid();
+    renderSheetTabs();
+  }
+
+  window.pullDataFromApp = pullDataFromApp;
+
   function checkShopifyStatus() {
     try {
       var local = JSON.parse(localStorage.getItem('int_shopify') || 'null');
@@ -3124,12 +3184,12 @@
 
   // ── Apps Panel (Uygulamalar) ─────────────────────────────────────────────
   var APPS_CONFIG = [
-    { id:'google',    name:'Google Workspace', icon:'https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/google.svg',    provider:'google-sheets',   connect:'oauth' },
-    { id:'microsoft', name:'Microsoft 365',    icon:'https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/microsoft.svg', provider:'microsoft-excel', connect:'oauth' },
-    { id:'slack',     name:'Slack',            icon:'https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/slack.svg',     provider:'slack',           connect:'oauth' },
-    { id:'shopify',   name:'Shopify',          icon:'https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/shopify.svg',   provider:'shopify',         connect:'shopify' },
-    { id:'hubspot',   name:'HubSpot',          icon:'https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/hubspot.svg',   provider:'hubspot',         connect:'oauth' },
-    { id:'notion',    name:'Notion',           icon:'https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/notion.svg',    provider:'notion',          connect:'token' }
+    { id:'google',    name:'Google Workspace', icon:'https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/google.svg',    provider:'google-sheets',   connect:'oauth',    capabilities:['import','export'] },
+    { id:'microsoft', name:'Microsoft 365',    icon:'https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/microsoft.svg', provider:'microsoft-excel', connect:'oauth',    capabilities:['export'] },
+    { id:'slack',     name:'Slack',            icon:'https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/slack.svg',     provider:'slack',           connect:'oauth',    capabilities:['export'] },
+    { id:'shopify',   name:'Shopify',          icon:'https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/shopify.svg',   provider:'shopify',         connect:'shopify',  capabilities:['import'] },
+    { id:'hubspot',   name:'HubSpot',          icon:'https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/hubspot.svg',   provider:'hubspot',         connect:'oauth',    capabilities:['import','export'] },
+    { id:'notion',    name:'Notion',           icon:'https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/notion.svg',    provider:'notion',          connect:'token',    capabilities:['import','export'] }
   ];
 
   window.toggleAppsPanel = function() {
@@ -3169,6 +3229,21 @@
         if (this.dataset.action === 'connect') connectApp(id);
         else disconnectApp(id);
       });
+      if (app.capabilities && app.capabilities.includes('import')) {
+        var pullBtn = document.createElement('button');
+        pullBtn.className = 'apps-pull-btn';
+        pullBtn.title = 'Verimi Çek';
+        pullBtn.dataset.appId = app.id;
+        pullBtn.style.cssText = 'width:24px;height:24px;border:none;border-radius:8px;background:transparent;color:#16a34a;cursor:pointer;display:none;align-items:center;justify-content:center;flex-shrink:0;';
+        pullBtn.innerHTML = '<i class="ti ti-download" style="font-size:14px;"></i>';
+        pullBtn.addEventListener('mouseenter', function() { this.style.background = '#f0fdf4'; });
+        pullBtn.addEventListener('mouseleave', function() { this.style.background = 'transparent'; });
+        pullBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          if (typeof window.pullDataFromApp === 'function') window.pullDataFromApp(this.dataset.appId);
+        });
+        row.appendChild(pullBtn);
+      }
       panel.appendChild(row);
     });
   }
@@ -3192,6 +3267,8 @@
             btn.dataset.action = active ? 'disconnect' : 'connect';
             btn.classList.toggle('connected', active);
           }
+          var pullBtnEl = document.querySelector('.apps-pull-btn[data-app-id="'+app.id+'"]');
+          if (pullBtnEl) pullBtnEl.style.display = active ? 'flex' : 'none';
         });
         if (typeof updateAiAppsBadge === 'function') updateAiAppsBadge();
       })
