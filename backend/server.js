@@ -567,7 +567,7 @@ app.post('/api/demo-command', (req, res) => {
 
 app.post('/api/chat', checkLimit, async (req, res) => {
   try {
-    const { message, sheetContext, sheetData, sheetName, history } = req.body;
+    const { message, sheetContext, sheetData, sheetName, history, confirmed } = req.body;
     if (!message || !message.trim())
       return res.status(400).json({ error: 'Mesaj boş olamaz' });
 
@@ -576,6 +576,13 @@ app.post('/api/chat', checkLimit, async (req, res) => {
 
     let sheetArr = sheetContext || sheetData || [];
     if (sheetArr.length > 200) sheetArr = sheetArr.slice(0, 200);
+
+    const destructiveKw = ['sil', 'kaldır', 'temizle', 'boşalt', 'çıkar'];
+    const isDestructive = destructiveKw.some(kw => message.toLowerCase().includes(kw));
+    if (isDestructive && !confirmed) {
+      const nonEmptyRows = sheetArr.filter(row => Array.isArray(row) && row.some(c => c !== '' && c !== null && c !== undefined)).length;
+      return res.json({ requiresConfirmation: true, estimatedAffectedRows: nonEmptyRows, previewMessage: `Bu işlem veri içeren ~${nonEmptyRows} satırı etkileyebilir.` });
+    }
 
     const result = await processExcelCommand(message.trim(), sheetArr, history || [], req.user?.id);
 

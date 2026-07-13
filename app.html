@@ -518,6 +518,16 @@
           </div>
         </div>
 
+        <div id="command-status-indicator" style="display:none;align-items:center;gap:8px;padding:8px 16px;font-size:12px;color:#6b7280;margin-top:8px;">
+          <div style="width:14px;height:14px;border:2px solid #e5e7eb;border-top-color:#16a34a;border-radius:999px;animation:spin .6s linear infinite;"></div>
+          <span id="command-status-text">Veriyi okuyorum...</span>
+        </div>
+
+        <button id="undo-last-ai-btn" type="button" style="display:none;align-items:center;gap:8px;padding:8px 16px;border:0.5px solid #e5e7eb;border-radius:999px;background:#fff;color:#374151;font-size:12px;cursor:pointer;transition:border-color .15s ease;margin-top:8px;font-weight:500;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg>
+          Son AI işlemini geri al
+        </button>
+
         <div class="ai-suggest">Önerilen istemler</div>
         <div class="chip-row">
           <span class="chip">
@@ -835,7 +845,22 @@
 .sub-cancel-note { font-size:11px; color:var(--ink-4); margin-top:6px; }
 
 .topbar { position: sticky; top: 0; z-index: 200; }
+@keyframes spin { to { transform: rotate(360deg); } }
 </style>
+
+<div id="confirm-action-modal" style="display:none;position:fixed;inset:0;background:rgba(17,24,39,.4);z-index:400;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:20px;padding:24px;width:360px;box-shadow:0 20px 48px rgba(17,24,39,.2);">
+    <div style="width:40px;height:40px;border-radius:12px;background:#fef3c7;display:flex;align-items:center;justify-content:center;margin-bottom:16px;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 20h20Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+    </div>
+    <p style="font-size:15px;font-weight:600;color:#111827;margin:0 0 8px;">Bu işlemi onaylıyor musunuz?</p>
+    <p id="confirm-action-message" style="font-size:13px;color:#6b7280;margin:0 0 24px;"></p>
+    <div style="display:flex;gap:8px;">
+      <button id="confirm-action-cancel" type="button" style="flex:1;padding:8px 16px;border:0.5px solid #e5e7eb;border-radius:12px;background:#fff;color:#374151;font-size:13px;font-weight:500;cursor:pointer;">Vazgeç</button>
+      <button id="confirm-action-proceed" type="button" style="flex:1;padding:8px 16px;border:none;border-radius:12px;background:#dc2626;color:#fff;font-size:13px;font-weight:600;cursor:pointer;">Evet, Uygula</button>
+    </div>
+  </div>
+</div>
 
 <script src="js/templates.js"></script>
 <script>
@@ -1735,21 +1760,66 @@
     return mentioned;
   }
 
-  function sendCommand() {
+  var _pendingConfirmedCommand = null;
+  function showConfirmModal(message, onConfirm) {
+    document.getElementById('confirm-action-message').textContent = message;
+    document.getElementById('confirm-action-modal').style.display = 'flex';
+    _pendingConfirmedCommand = onConfirm;
+  }
+
+  function startCommandStatusSequence() {
+    var indicator = document.getElementById('command-status-indicator');
+    var text = document.getElementById('command-status-text');
+    if (!indicator || !text) return null;
+    indicator.style.display = 'flex';
+    var steps = ['Veriyi okuyorum...', 'Analiz ediyorum...', 'Uyguluyorum...'];
+    var i = 0;
+    text.textContent = steps[0];
+    var interval = setInterval(function() {
+      i = (i + 1) % steps.length;
+      text.textContent = steps[i];
+    }, 1200);
+    return interval;
+  }
+
+  function stopCommandStatusSequence(intervalId) {
+    if (intervalId) clearInterval(intervalId);
+    var indicator = document.getElementById('command-status-indicator');
+    if (indicator) indicator.style.display = 'none';
+  }
+
+  document.getElementById('confirm-action-cancel')?.addEventListener('click', function() {
+    document.getElementById('confirm-action-modal').style.display = 'none';
+    _pendingConfirmedCommand = null;
+  });
+
+  document.getElementById('confirm-action-proceed')?.addEventListener('click', function() {
+    document.getElementById('confirm-action-modal').style.display = 'none';
+    if (_pendingConfirmedCommand) _pendingConfirmedCommand();
+    _pendingConfirmedCommand = null;
+  });
+
+  document.getElementById('undo-last-ai-btn')?.addEventListener('click', function() {
+    undoAction();
+    this.style.display = 'none';
+  });
+
+  function sendCommand(confirmed) {
     if (!aiTextarea) return;
     var cmd = aiTextarea.value.trim();
     if (!cmd) return;
-    addMsg('user', cmd);
-    aiTextarea.value = '';
+    if (!confirmed) addMsg('user', cmd);
+    if (!confirmed) aiTextarea.value = '';
     if (aiSend) aiSend.classList.add('loading');
     aiTextarea.disabled = true;
+    var _statusInterval = startCommandStatusSequence();
     var headers = { 'Content-Type': 'application/json' };
     var token = getAuthToken();
     if (token) headers['Authorization'] = 'Bearer ' + token;
     var apiBase = window.location.hostname === 'localhost' ? 'http://localhost:3001' : 'https://upsheet-ai.onrender.com';
     fetch(apiBase + '/api/chat', {
       method: 'POST', headers: headers,
-      body: JSON.stringify({ message: cmd, sheetData: getGridForAPI(), mentionedApps: extractMentions(cmd) })
+      body: JSON.stringify({ message: cmd, sheetData: getGridForAPI(), mentionedApps: extractMentions(cmd), confirmed: confirmed || false })
     })
       .then(function (res) {
         return res.json().then(function (data) {
@@ -1768,10 +1838,17 @@
             addMsg('ai', errMsg);
             return;
           }
+          if (data.requiresConfirmation) {
+            showConfirmModal(data.previewMessage, function() {
+              sendCommand(true);
+            });
+            return;
+          }
           var msg = data.reply || (data.action ? 'İşlem uygulandı: ' + data.action : 'Tamamlandı');
           addMsg('ai', msg);
           applyGridAction(data);
           incrementCount();
+          document.getElementById('undo-last-ai-btn').style.display = 'flex';
         });
       })
       .catch(function (err) {
@@ -1779,6 +1856,7 @@
         console.error('[Mocksheets AI]', err);
       })
       .finally(function () {
+        stopCommandStatusSequence(_statusInterval);
         if (aiSend) aiSend.classList.remove('loading');
         aiTextarea.disabled = false;
         aiTextarea.focus();
