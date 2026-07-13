@@ -495,8 +495,9 @@
           </span>
         </div>
 
-        <div class="ai-input">
+        <div class="ai-input" style="position:relative;">
           <textarea rows="3" placeholder="Tabloya ne yapmak istersin? Örn: A:F arasına haftalık satış verisi ekle…"></textarea>
+          <div id="ghost-text-layer" style="position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;white-space:pre-wrap;color:#c7c7cc;z-index:-1;padding:inherit;font-size:inherit;font-family:inherit;line-height:inherit;"></div>
           <div id="mention-popup" style="display:none;position:absolute;bottom:100%;left:0;margin-bottom:8px;width:240px;max-height:240px;overflow-y:auto;background:#fff;border:0.5px solid #e5e7eb;border-radius:16px;padding:8px;box-shadow:0 8px 24px rgba(17,24,39,.12);z-index:300;">
             <p style="font-size:10px;font-weight:600;color:#9ca3af;text-transform:uppercase;letter-spacing:.04em;margin:0 0 8px;padding:0 8px;">Bağlı Uygulamalar</p>
             <div id="mention-popup-list"></div>
@@ -522,6 +523,8 @@
           <div style="width:14px;height:14px;border:2px solid #e5e7eb;border-top-color:#16a34a;border-radius:999px;animation:spin .6s linear infinite;"></div>
           <span id="command-status-text">Veriyi okuyorum...</span>
         </div>
+
+        <div id="command-stream-text" style="display:none;padding:8px 16px;font-size:13px;color:#374151;line-height:1.6;"></div>
 
         <button id="undo-last-ai-btn" type="button" style="display:none;align-items:center;gap:8px;padding:8px 16px;border:0.5px solid #e5e7eb;border-radius:999px;background:#fff;color:#374151;font-size:12px;cursor:pointer;transition:border-color .15s ease;margin-top:8px;font-weight:500;">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg>
@@ -1804,15 +1807,39 @@
     this.style.display = 'none';
   });
 
+  var _cmdHistory = [], _cmdHistIdx = -1;
+  function pushCmdHistory(t) {
+    if (!t.trim()) return;
+    _cmdHistory.unshift(t);
+    if (_cmdHistory.length > 50) _cmdHistory.pop();
+    _cmdHistIdx = -1;
+  }
+
+  var COMMAND_SUGGESTIONS = [
+    'Stoku kritik seviyeye düşen ürünleri bul',
+    'Bu ayki en çok satan ürünleri listele',
+    'Tekrar eden satırları sil',
+    'Boş hücreleri temizle',
+    'Ürün bazında kâr marjını hesapla',
+    'Tarihe göre sırala',
+    'Toplam tutarı hesapla',
+    'Kategori bazında grupla'
+  ];
+
   function sendCommand(confirmed) {
     if (!aiTextarea) return;
     var cmd = aiTextarea.value.trim();
     if (!cmd) return;
-    if (!confirmed) addMsg('user', cmd);
+    if (!confirmed) {
+      addMsg('user', cmd);
+      pushCmdHistory(cmd);
+    }
     if (!confirmed) aiTextarea.value = '';
     if (aiSend) aiSend.classList.add('loading');
     aiTextarea.disabled = true;
     var _statusInterval = startCommandStatusSequence();
+    var streamEl = document.getElementById('command-stream-text');
+    if (streamEl) { streamEl.style.display = 'block'; streamEl.textContent = ''; }
     var headers = { 'Content-Type': 'application/json' };
     var token = getAuthToken();
     if (token) headers['Authorization'] = 'Bearer ' + token;
@@ -1822,34 +1849,73 @@
       body: JSON.stringify({ message: cmd, sheetData: getGridForAPI(), mentionedApps: extractMentions(cmd), confirmed: confirmed || false })
     })
       .then(function (res) {
-        return res.json().then(function (data) {
-          if (!res.ok) {
-            var code = data.code || '';
-            var errMsg;
-            if (code === 'AUTH_REQUIRED' || res.status === 401) {
-              errMsg = '⚠️ Lütfen giriş yapın. Komutlar için hesabınıza giriş yapmanız gerekiyor.';
-            } else if (code === 'DAILY_LIMIT_REACHED') {
-              errMsg = '⚠️ Günlük AI komut limitinize ulaştınız (' + data.used + '/' + data.limit + '). Yarın sıfırlanır.';
-            } else if (code === 'MONTHLY_LIMIT_REACHED') {
-              errMsg = '⚠️ Aylık AI komut limitinize ulaştınız. Ayın 1\'inde sıfırlanır.';
-            } else {
-              errMsg = '⚠️ Sunucu hatası (' + res.status + '): ' + (data.error || 'Bilinmeyen hata');
+        var contentType = res.headers.get('content-type') || '';
+        if (contentType.includes('text/event-stream')) {
+          return res.body.getReader().then(function(reader) {
+            var decoder = new TextDecoder();
+            var buffer = '';
+            function processStream() {
+              return reader.read().then(function(chunk) {
+                if (chunk.done) return Promise.resolve();
+                buffer += decoder.decode(chunk.value, { stream: true });
+                var lines = buffer.split('\n\n');
+                buffer = lines.pop();
+                for (var i = 0; i < lines.length; i++) {
+                  var line = lines[i];
+                  if (!line.startsWith('data: ')) continue;
+                  var payload = line.slice(6);
+                  if (payload === '[DONE]') continue;
+                  try {
+                    var event = JSON.parse(payload);
+                    if (event.type === 'text' && streamEl) {
+                      streamEl.textContent += event.chunk;
+                    } else if (event.type === 'result') {
+                      if (event.reply) addMsg('ai', event.reply);
+                      applyGridAction(event);
+                      incrementCount();
+                      document.getElementById('undo-last-ai-btn').style.display = 'flex';
+                    } else if (event.type === 'error') {
+                      if (streamEl) streamEl.textContent = 'Hata: ' + event.message;
+                    }
+                  } catch (e) {
+                    console.error('[Stream parse]', e);
+                  }
+                }
+                return processStream();
+              });
             }
-            addMsg('ai', errMsg);
-            return;
-          }
-          if (data.requiresConfirmation) {
-            showConfirmModal(data.previewMessage, function() {
-              sendCommand(true);
-            });
-            return;
-          }
-          var msg = data.reply || (data.action ? 'İşlem uygulandı: ' + data.action : 'Tamamlandı');
-          addMsg('ai', msg);
-          applyGridAction(data);
-          incrementCount();
-          document.getElementById('undo-last-ai-btn').style.display = 'flex';
-        });
+            return processStream();
+          });
+        } else {
+          return res.json().then(function(data) {
+            if (!res.ok) {
+              var code = data.code || '';
+              var errMsg;
+              if (code === 'AUTH_REQUIRED' || res.status === 401) {
+                errMsg = '⚠️ Lütfen giriş yapın. Komutlar için hesabınıza giriş yapmanız gerekiyor.';
+              } else if (code === 'DAILY_LIMIT_REACHED') {
+                errMsg = '⚠️ Günlük AI komut limitinize ulaştınız (' + data.used + '/' + data.limit + '). Yarın sıfırlanır.';
+              } else if (code === 'MONTHLY_LIMIT_REACHED') {
+                errMsg = '⚠️ Aylık AI komut limitinize ulaştınız. Ayın 1\'inde sıfırlanır.';
+              } else {
+                errMsg = '⚠️ Sunucu hatası (' + res.status + '): ' + (data.error || 'Bilinmeyen hata');
+              }
+              addMsg('ai', errMsg);
+              return;
+            }
+            if (data.requiresConfirmation) {
+              showConfirmModal(data.previewMessage, function() {
+                sendCommand(true);
+              });
+              return;
+            }
+            var msg = data.reply || (data.action ? 'İşlem uygulandı: ' + data.action : 'Tamamlandı');
+            addMsg('ai', msg);
+            applyGridAction(data);
+            incrementCount();
+            document.getElementById('undo-last-ai-btn').style.display = 'flex';
+          });
+        }
       })
       .catch(function (err) {
         addMsg('ai', 'Bağlantı hatası. Backend çalışıyor mu?');
@@ -1866,6 +1932,54 @@
   if (aiSend) {
     aiSend.addEventListener('click', sendCommand);
   }
+
+  (function() {
+    if (!aiTextarea) return;
+    aiTextarea.addEventListener('keydown', function(e) {
+      var mentionPopup = document.getElementById('mention-popup');
+      if (mentionPopup && mentionPopup.style.display === 'block') return;
+      if (e.key === 'ArrowUp' && aiTextarea.selectionStart === 0) {
+        if (_cmdHistory.length === 0) return;
+        e.preventDefault();
+        _cmdHistIdx = Math.min(_cmdHistIdx + 1, _cmdHistory.length - 1);
+        aiTextarea.value = _cmdHistory[_cmdHistIdx];
+        aiTextarea.setSelectionRange(aiTextarea.value.length, aiTextarea.value.length);
+      }
+      if (e.key === 'ArrowDown' && _cmdHistIdx >= 0) {
+        e.preventDefault();
+        _cmdHistIdx--;
+        aiTextarea.value = _cmdHistIdx >= 0 ? _cmdHistory[_cmdHistIdx] : '';
+        aiTextarea.setSelectionRange(aiTextarea.value.length, aiTextarea.value.length);
+      }
+    });
+  })();
+
+  (function() {
+    var cmdInput = document.querySelector('.ai-input textarea');
+    var ghostLayer = document.getElementById('ghost-text-layer');
+    if (!cmdInput || !ghostLayer) return;
+    cmdInput.addEventListener('input', function() {
+      var value = cmdInput.value;
+      if (!value || value.length < 3) { ghostLayer.textContent = ''; return; }
+      var match = COMMAND_SUGGESTIONS.find(function(s) {
+        return s.toLowerCase().startsWith(value.toLowerCase()) && s.length > value.length;
+      });
+      if (match) {
+        ghostLayer.textContent = value + match.slice(value.length);
+      } else {
+        ghostLayer.textContent = '';
+      }
+    });
+    cmdInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Tab' && ghostLayer.textContent) {
+        e.preventDefault();
+        cmdInput.value = ghostLayer.textContent;
+        ghostLayer.textContent = '';
+        cmdInput.setSelectionRange(cmdInput.value.length, cmdInput.value.length);
+      }
+    });
+    cmdInput.addEventListener('blur', function() { ghostLayer.textContent = ''; });
+  })();
 
   var aiImprove = document.getElementById('ai-improve');
   if (aiImprove) {

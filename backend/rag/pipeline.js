@@ -353,4 +353,86 @@ async function processExcelCommand(userCommand, sheetContext, history = [], user
   };
 }
 
-module.exports = { processExcelCommand };
+async function streamExcelCommand(userCommand, sheetContext, history = [], userId = null, onChunk) {
+  console.log('[Pipeline] Stream komut:', userCommand?.slice(0, 80));
+  const t0 = Date.now();
+
+  try {
+    let ragContext = [];
+    try {
+      ragContext = await retrieveRelevantExamples(userCommand);
+      console.log(`RAG: ${ragContext.length} örnek bulundu`);
+    } catch (e) {
+      console.warn('RAG retrieval failed, continuing without context:', e.message);
+    }
+
+    const stream = await anthropic.messages.stream({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 500,
+      temperature: 0.1,
+
+      system: [
+        {
+          type: 'text',
+          text: getSystemPrompt(),
+          cache_control: { type: 'ephemeral' }
+        }
+      ],
+
+      messages: [
+        ...history.slice(-8).map(h => ({ role: h.role, content: String(h.content).slice(0, 500) })),
+        {
+          role: 'user',
+          content: [
+            {
+              type: 'text',
+              text: getRagContext(ragContext),
+              cache_control: { type: 'ephemeral' }
+            },
+            {
+              type: 'text',
+              text: getUserPrompt(userCommand, sheetContext || '')
+            }
+          ]
+        }
+      ]
+    });
+
+    let fullText = '';
+    for await (const event of stream) {
+      if (event.type === 'content_block_delta' && event.delta?.text) {
+        fullText += event.delta.text;
+        if (onChunk) onChunk(event.delta.text);
+      }
+    }
+
+    const result = parseAIResponse(fullText);
+    const ms = Date.now() - t0;
+    getSupabase().from('performance_logs').insert({
+      user_id: userId || null,
+      command_text: userCommand?.slice(0, 500),
+      response_ms: ms,
+      success: true
+    }).then(() => {}, () => {});
+    return result;
+
+  } catch (err) {
+    const ms = Date.now() - t0;
+    getSupabase().from('performance_logs').insert({
+      user_id: userId || null,
+      command_text: userCommand?.slice(0, 500),
+      response_ms: ms,
+      success: false,
+      error_msg: err.message?.slice(0, 500)
+    }).then(() => {}, () => {});
+
+    console.error('[Pipeline] Stream failed:', err.message);
+    return {
+      action: 'message',
+      reply: '⚠️ Komut işlenemedi. Lütfen farklı bir ifade deneyin.',
+      changes: []
+    };
+  }
+}
+
+module.exports = { processExcelCommand, streamExcelCommand };

@@ -3,7 +3,7 @@ require('dotenv').config();
 const express = require('express');
 const cors    = require('cors');
 const fetch   = require('node-fetch');
-const { processExcelCommand } = require('./rag/pipeline');
+const { processExcelCommand, streamExcelCommand } = require('./rag/pipeline');
 const tokenManager = require('./services/tokenManager');
 const { createClient: _createSbClient } = require('@supabase/supabase-js');
 const { upsertContact, sendEvent, sendScenarioEmail } = require('./services/loops');
@@ -584,11 +584,16 @@ app.post('/api/chat', checkLimit, async (req, res) => {
       return res.json({ requiresConfirmation: true, estimatedAffectedRows: nonEmptyRows, previewMessage: `Bu işlem veri içeren ~${nonEmptyRows} satırı etkileyebilir.` });
     }
 
-    const result = await processExcelCommand(message.trim(), sheetArr, history || [], req.user?.id);
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+
+    const result = await streamExcelCommand(message.trim(), sheetArr, history || [], req.user?.id, (chunk) => {
+      res.write(`data: ${JSON.stringify({ type: 'text', chunk })}\n\n`);
+    });
 
     await incrementUsage(req.user.id);
 
-    // Loops email events — hata chat akışını durdurmasın
     try {
       const newCount = (req.usage.ai_commands_used_month || 0) + 1;
       const userEmail = req.user.email;
@@ -613,7 +618,6 @@ app.post('/api/chat', checkLimit, async (req, res) => {
         sendScenarioEmail(userEmail, 'milestone_100_commands').catch(() => {});
       }
 
-      // Quota alerts: %80 ve %100
       const monthlyLimit = req.plan.ai_commands_per_month;
       if (monthlyLimit !== Infinity) {
         const percentUsed = (newCount / monthlyLimit) * 100;
@@ -646,20 +650,20 @@ app.post('/api/chat', checkLimit, async (req, res) => {
       }).then(() => {}).catch(() => {});
     }
 
-    res.json({
-      ...result,
-      usage: {
-        plan: usage.plan,
-        commands_used_today: usage.ai_commands_used_today + 1,
-        commands_used_month: usage.ai_commands_used_month + 1,
-        daily_limit: plan.ai_commands_per_day === Infinity ? null : plan.ai_commands_per_day,
-        monthly_limit: monthLimit === Infinity ? null : monthLimit,
-        remaining_this_month: remaining
-      }
-    });
+    res.write(`data: ${JSON.stringify({ type: 'result', ...result, usage: {
+      plan: usage.plan,
+      commands_used_today: usage.ai_commands_used_today + 1,
+      commands_used_month: usage.ai_commands_used_month + 1,
+      daily_limit: plan.ai_commands_per_day === Infinity ? null : plan.ai_commands_per_day,
+      monthly_limit: monthLimit === Infinity ? null : monthLimit,
+      remaining_this_month: remaining
+    } })}\n\n`);
+    res.write('data: [DONE]\n\n');
+    res.end();
   } catch (error) {
     console.error('/api/chat hatası:', error);
-    res.status(500).json({ action: 'message', changes: [], reply: 'Sunucu hatası. Lütfen tekrar deneyin.' });
+    res.write(`data: ${JSON.stringify({ type: 'error', message: error.message })}\n\n`);
+    res.end();
   }
 });
 
