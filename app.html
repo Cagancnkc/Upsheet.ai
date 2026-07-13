@@ -502,6 +502,14 @@
             <p style="font-size:10px;font-weight:600;color:#9ca3af;text-transform:uppercase;letter-spacing:.04em;margin:0 0 8px;padding:0 8px;">Bağlı Uygulamalar</p>
             <div id="mention-popup-list"></div>
           </div>
+          <div id="slash-popup" style="display:none;position:absolute;bottom:100%;left:0;margin-bottom:8px;width:280px;max-height:320px;overflow-y:auto;background:#fff;border:0.5px solid #e5e7eb;border-radius:16px;padding:8px;box-shadow:0 8px 24px rgba(17,24,39,.12);z-index:300;">
+            <p style="font-size:10px;font-weight:600;color:#9ca3af;text-transform:uppercase;letter-spacing:.04em;margin:0 0 8px;padding:0 8px;">Hazır Komutlar</p>
+            <div id="slash-popup-presets"></div>
+            <div id="slash-popup-favorites-section" style="display:none;">
+              <p style="font-size:10px;font-weight:600;color:#9ca3af;text-transform:uppercase;letter-spacing:.04em;margin:16px 0 8px;padding:0 8px;">Favorilerim</p>
+              <div id="slash-popup-favorites"></div>
+            </div>
+          </div>
           <div class="ai-input-foot">
             <span class="ai-tool" title="Dosya ekle">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
@@ -529,6 +537,11 @@
         <button id="undo-last-ai-btn" type="button" style="display:none;align-items:center;gap:8px;padding:8px 16px;border:0.5px solid #e5e7eb;border-radius:999px;background:#fff;color:#374151;font-size:12px;cursor:pointer;transition:border-color .15s ease;margin-top:8px;font-weight:500;">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg>
           Son AI işlemini geri al
+        </button>
+
+        <button id="star-last-command-btn" type="button" style="display:none;align-items:center;gap:6px;padding:8px 16px;border:0.5px solid #e5e7eb;border-radius:999px;background:#fff;color:#9ca3af;font-size:12px;cursor:pointer;transition:color .15s ease;margin-top:8px;font-weight:500;">
+          <i class="ti ti-star" style="font-size:14px;"></i>
+          Kaydet
         </button>
 
         <div class="ai-suggest">Önerilen istemler</div>
@@ -1826,6 +1839,40 @@
     'Kategori bazında grupla'
   ];
 
+  var SLASH_PRESETS = [
+    { key: 'rapor',    label: 'Haftalık rapor oluştur',  command: 'Bu haftaki verileri özetleyip rapor oluştur' },
+    { key: 'temizle', label: 'Veriyi temizle',           command: 'Tekrar eden satırları sil, boş hücreleri temizle' },
+    { key: 'sirala',  label: 'Sırala',                   command: 'Verileri A sütununa göre sırala' },
+    { key: 'stok',    label: 'Kritik stok bul',          command: 'Stoku kritik seviyeye düşen ürünleri bul' },
+    { key: 'karmarji',label: 'Kâr marjı hesapla',       command: 'Ürün bazında kâr marjını hesapla' },
+    { key: 'grafik',  label: 'Grafik oluştur',           command: 'Bu veriden bir grafik oluştur' },
+  ];
+  var _userFavoriteCommands = [];
+  var _lastExecutedCommand = '';
+
+  function loadFavoriteCommands() {
+    var token = getAuthToken();
+    if (!token) return;
+    fetch(apiBase + '/api/integrations/favorite-commands',
+      { headers: { 'Authorization': 'Bearer ' + token } })
+      .then(function(r) { return r.ok ? r.json() : null; })
+      .then(function(data) { if (data) _userFavoriteCommands = data.favorites || []; })
+      .catch(function(e) { console.warn('Favoriler yüklenemedi:', e); });
+  }
+
+  function addFavoriteCommand(commandText) {
+    var token = getAuthToken();
+    if (!token) return;
+    fetch(apiBase + '/api/integrations/favorite-commands', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ command_text: commandText })
+    })
+      .then(function(r) { return r.ok ? r.json() : null; })
+      .then(function() { loadFavoriteCommands(); })
+      .catch(function(e) { console.warn('Favori eklenemedi:', e); });
+  }
+
   function sendCommand(confirmed) {
     if (!aiTextarea) return;
     var cmd = aiTextarea.value.trim();
@@ -1835,6 +1882,14 @@
       pushCmdHistory(cmd);
     }
     if (!confirmed) aiTextarea.value = '';
+    var _starBtn = document.getElementById('star-last-command-btn');
+    if (_starBtn) {
+      _starBtn.style.display = 'none';
+      _starBtn.style.color = '#9ca3af';
+      _starBtn.disabled = false;
+      var _si = _starBtn.querySelector('i');
+      if (_si) _si.className = 'ti ti-star';
+    }
     if (aiSend) aiSend.classList.add('loading');
     aiTextarea.disabled = true;
     var _statusInterval = startCommandStatusSequence();
@@ -1874,6 +1929,8 @@
                       applyGridAction(event);
                       incrementCount();
                       document.getElementById('undo-last-ai-btn').style.display = 'flex';
+                      _lastExecutedCommand = cmd;
+                      if (_starBtn) _starBtn.style.display = 'flex';
                     } else if (event.type === 'error') {
                       if (streamEl) streamEl.textContent = 'Hata: ' + event.message;
                     }
@@ -1914,6 +1971,9 @@
             applyGridAction(data);
             incrementCount();
             document.getElementById('undo-last-ai-btn').style.display = 'flex';
+            _lastExecutedCommand = cmd;
+            var _sb = document.getElementById('star-last-command-btn');
+            if (_sb) _sb.style.display = 'flex';
           });
         }
       })
@@ -2099,6 +2159,8 @@
 
         popupList.appendChild(row);
       });
+      var slashPop = document.getElementById('slash-popup');
+      if (slashPop) slashPop.style.display = 'none';
       popup.style.display = 'block';
     }
 
@@ -2115,6 +2177,120 @@
       if (popup.style.display === 'block' && !popup.contains(e.target) && e.target !== cmdInput) {
         popup.style.display = 'none';
       }
+    });
+  })();
+
+  // ── Slash Popup ───────────────────────────────────────────────────────────
+  (function() {
+    var cmdInput = document.querySelector('.ai-input textarea');
+    var popup = document.getElementById('slash-popup');
+    if (!cmdInput || !popup) return;
+
+    function getCurrentSlashQuery() {
+      var cursorPos = cmdInput.selectionStart;
+      var text = cmdInput.value.slice(0, cursorPos);
+      if (text.charAt(0) !== '/') return null;
+      if (text.indexOf(' ') !== -1) return null;
+      return text.slice(1);
+    }
+
+    function renderSlashPopup(query) {
+      var presetList = document.getElementById('slash-popup-presets');
+      var favSection = document.getElementById('slash-popup-favorites-section');
+      var favList = document.getElementById('slash-popup-favorites');
+      var filtered = SLASH_PRESETS.filter(function(p) {
+        return p.key.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
+               p.label.toLowerCase().indexOf(query.toLowerCase()) !== -1;
+      });
+      presetList.innerHTML = '';
+      filtered.forEach(function(preset) {
+        var row = document.createElement('button');
+        row.type = 'button';
+        row.style.cssText = 'width:100%;display:flex;align-items:center;gap:8px;padding:8px;border:none;background:transparent;border-radius:8px;cursor:pointer;text-align:left;transition:background .15s ease;';
+        row.addEventListener('mouseenter', function() { this.style.background = '#f0fdf4'; });
+        row.addEventListener('mouseleave', function() { this.style.background = 'transparent'; });
+        var slashLabel = document.createElement('span');
+        slashLabel.textContent = '/' + preset.key;
+        slashLabel.style.cssText = 'font-size:12px;font-weight:600;color:#16a34a;min-width:72px;';
+        var desc = document.createElement('span');
+        desc.textContent = preset.label;
+        desc.style.cssText = 'font-size:12px;color:#111827;flex:1;';
+        row.appendChild(slashLabel);
+        row.appendChild(desc);
+        row.addEventListener('click', function() { insertSlashCommand(preset.command); });
+        presetList.appendChild(row);
+      });
+      if (_userFavoriteCommands.length > 0) {
+        favSection.style.display = 'block';
+        favList.innerHTML = '';
+        _userFavoriteCommands.forEach(function(fav) {
+          var row = document.createElement('button');
+          row.type = 'button';
+          row.style.cssText = 'width:100%;display:flex;align-items:center;gap:8px;padding:8px;border:none;background:transparent;border-radius:8px;cursor:pointer;text-align:left;transition:background .15s ease;';
+          row.addEventListener('mouseenter', function() { this.style.background = '#fefce8'; });
+          row.addEventListener('mouseleave', function() { this.style.background = 'transparent'; });
+          var icon = document.createElement('i');
+          icon.className = 'ti ti-star-filled';
+          icon.style.cssText = 'font-size:13px;color:#d97706;flex-shrink:0;';
+          var desc = document.createElement('span');
+          var txt = fav.command_text || '';
+          desc.textContent = txt.length > 40 ? txt.slice(0, 37) + '...' : txt;
+          desc.style.cssText = 'font-size:12px;color:#111827;flex:1;';
+          row.appendChild(icon);
+          row.appendChild(desc);
+          row.addEventListener('click', function() { insertSlashCommand(fav.command_text); });
+          favList.appendChild(row);
+        });
+      } else {
+        favSection.style.display = 'none';
+      }
+      popup.style.display = (filtered.length > 0 || _userFavoriteCommands.length > 0) ? 'block' : 'none';
+    }
+
+    function insertSlashCommand(commandText) {
+      cmdInput.value = commandText;
+      cmdInput.focus();
+      cmdInput.setSelectionRange(commandText.length, commandText.length);
+      popup.style.display = 'none';
+      var ghost = document.getElementById('ghost-text-layer');
+      if (ghost) ghost.textContent = '';
+    }
+
+    cmdInput.addEventListener('input', function() {
+      var query = getCurrentSlashQuery();
+      if (query !== null) {
+        var mp = document.getElementById('mention-popup');
+        if (mp) mp.style.display = 'none';
+        renderSlashPopup(query);
+      } else {
+        popup.style.display = 'none';
+      }
+    });
+
+    cmdInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && popup.style.display === 'block') {
+        popup.style.display = 'none';
+      }
+    });
+
+    document.addEventListener('click', function(e) {
+      if (popup.style.display === 'block' && !popup.contains(e.target) && e.target !== cmdInput) {
+        popup.style.display = 'none';
+      }
+    });
+  })();
+
+  // ── Star Button Handler ───────────────────────────────────────────────────
+  (function() {
+    var starBtn = document.getElementById('star-last-command-btn');
+    if (!starBtn) return;
+    starBtn.addEventListener('click', function() {
+      if (!_lastExecutedCommand) return;
+      addFavoriteCommand(_lastExecutedCommand);
+      var icon = starBtn.querySelector('i');
+      if (icon) icon.className = 'ti ti-star-filled';
+      starBtn.style.color = '#d97706';
+      starBtn.disabled = true;
     });
   })();
 
@@ -3585,6 +3761,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (typeof showToast === 'function') showToast('✅ Shopify bağlandı');
   }
   if (typeof checkShopifyStatus === 'function') checkShopifyStatus();
+  if (typeof loadFavoriteCommands === 'function') loadFavoriteCommands();
 });
 </script>
 

@@ -2120,4 +2120,50 @@ router.post('/notion/save-token', requireAuth, async (req, res) => {
   }
 });
 
+// ── Favorite Commands ─────────────────────────────────────────────────────
+router.get('/favorite-commands', requireAuth, async (req, res) => {
+  try {
+    const sb = _getSb();
+    const { data, error } = await sb
+      .from('favorite_commands')
+      .select('id, command_text')
+      .eq('user_id', req.user.id)
+      .order('created_at', { ascending: false })
+      .limit(10);
+    if (error) throw error;
+    res.json({ favorites: data || [] });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+router.post('/favorite-commands', requireAuth, async (req, res) => {
+  try {
+    const { command_text } = req.body;
+    if (!command_text) return res.status(400).json({ error: 'Komut metni gerekli' });
+    const sb = _getSb();
+    const { data, error } = await sb
+      .from('favorite_commands')
+      .insert({ user_id: req.user.id, command_text })
+      .select()
+      .single();
+    if (error) throw error;
+    res.json(data);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+router.delete('/favorite-commands/:id', requireAuth, async (req, res) => {
+  try {
+    const sb = _getSb();
+    await sb.from('favorite_commands').delete()
+      .eq('id', req.params.id)
+      .eq('user_id', req.user.id);
+    res.json({ ok: true });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 module.exports = router;
