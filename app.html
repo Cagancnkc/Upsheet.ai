@@ -287,26 +287,19 @@
     <div class="agent-topbar">
       <div class="agent-topbar-left">
         <div class="agent-topbar-logo">
-          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="3" width="18" height="18" rx="2" stroke="#189e63" fill="#f0fdf4"/>
-            <path d="M9 3v18M3 9h18" stroke="#189e63"/>
-          </svg>
+          <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAAiACIDASIAAhEBAxEB/8QAFwAAAwEAAAAAAAAAAAAAAAAAAAECBP/EABsQAQEAAwADAAAAAAAAAAAAAAECEQExUYEh/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwByXfRXfRX8AAAAAAAAAAAAAAAA/9k=" alt="logo" style="width:34px;height:34px;"/>
         </div>
         <div class="agent-topbar-brand">
           <span>mocksheets</span><span class="agent-brand-dot">.</span>
         </div>
         <div class="agent-topbar-pill">
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10"/>
-            <path d="M12 6v6l4 2"/>
-          </svg>
           <span>Mocksheets AI</span>
         </div>
       </div>
     </div>
 
     <div class="agent-container">
-      <!-- Dark icon rail (66px) -->
+      <!-- Icon rail (66px) -->
       <div class="agent-rail">
         <button type="button" class="agent-rail-btn" tabindex="-1">
           <i class="ti ti-layout-grid"></i>
@@ -315,23 +308,25 @@
 
       <!-- Sidebar (282px) -->
       <aside class="agent-sidebar">
-        <!-- Yeni Sohbet button -->
         <div class="agent-sidebar-content">
-          <button id="new-agent-chat-btn" type="button" class="agent-new-chat-btn">
+          <!-- Yeni Sohbet button -->
+          <button id="new-agent-chat-btn" type="button" class="agent-new-chat-btn" onclick="startNewAgentChat()">
             <i class="ti ti-plus"></i>
             Yeni Sohbet
           </button>
 
-          <!-- Araçlar & Skills row -->
+          <!-- Araçlar & Skills -->
           <div class="agent-sidebar-section">
-            <button id="sidebar-tools-btn" type="button" class="agent-sidebar-row">
-              <i class="ti ti-tools" style="color:#16a34a;"></i>
+            <button type="button" class="agent-sidebar-row">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:#2ecc82;">
+                <circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/>
+              </svg>
               <span>Araçlar & Skills</span>
-              <i class="ti ti-chevron-right agent-row-chevron"></i>
+              <i class="ti ti-chevron-right" style="margin-left:auto;font-size:12px;color:#9ca3af;"></i>
             </button>
           </div>
 
-          <!-- History scroll area -->
+          <!-- History scroll -->
           <div class="agent-history-scroll">
             <div id="agent-history-today" class="agent-history-group" style="display:none;">
               <p class="agent-history-title">BUGÜN</p>
@@ -357,99 +352,63 @@
           <p class="agent-usage-count-big"><span id="agent-usage-used">0</span>/<span id="agent-usage-limit">20</span> AI komutu kullanıldı</p>
           <p class="agent-usage-reset">Bu ay limitin sıfırlanmasına 4 gün kaldı</p>
           <div class="agent-usage-bar"><div id="agent-usage-fill" class="agent-usage-fill"></div></div>
-          <button type="button" id="agent-upgrade-btn" class="agent-upgrade-btn">
-            Pro'ya yükselt · <span class="agent-upgrade-price">$1/ay</span> →
-          </button>
-          <a href="#" id="agent-manage-sub" class="agent-manage-sub">Aboneliğimi Yönet</a>
+          <button type="button" class="agent-upgrade-btn">Pro'ya yükselt · $1/ay →</button>
+          <a href="#" class="agent-manage-sub">Aboneliğimi Yönet</a>
         </div>
 
-        <!-- Apps footer -->
+        <!-- Footer -->
         <div class="agent-sidebar-footer">
-          <button id="sidebar-apps-btn" type="button" class="agent-sidebar-row">
-            <i class="ti ti-apps"></i>
-            <span id="sidebar-apps-label">Uygulamalar</span>
-            <span id="sidebar-apps-count" class="agent-apps-count"></span>
+          <button type="button" class="agent-sidebar-row">
+            <i class="ti ti-apps" style="font-size:14px;"></i>
+            <span>Uygulamalar</span>
           </button>
         </div>
       </aside>
 
-      <!-- Main content area -->
+      <!-- Main area -->
       <main class="agent-main">
         <div id="agent-messages"></div>
 
         <!-- Input area -->
         <div class="agent-input-area">
           <div id="ai-input-wrap">
-            <input id="ai-file-input" type="file" accept="image/*,.pdf,.xlsx,.csv" multiple>
-            <div id="ai-attach-row"></div>
+            <input id="ai-file-input" type="file" accept="image/*,.pdf,.xlsx,.csv" multiple style="display:none;">
+            <div id="ai-attach-row" style="display:none;gap:8px;padding:8px 8px 4px;overflow-x:auto;"></div>
             <div id="ai-input-card">
               <textarea id="agent-input" rows="1" placeholder="Mocksheets AI'ya bir şey sor…"></textarea>
               <div id="ai-bottom-bar">
-                <button id="ai-toggle-goal" type="button" class="agent-toggle-pill" data-toggle="goal">
-                  <span>Hedef</span>
-                </button>
-                <button id="ai-toggle-tools" type="button" class="agent-toggle-pill" data-toggle="tools">
-                  <span>Araç Bağla</span>
-                </button>
-                <button id="ai-toggle-skills" type="button" class="agent-toggle-pill" data-toggle="skills">
-                  <span>Skills</span>
-                </button>
-                <button id="ai-attach-btn" type="button" aria-label="Dosya ekle">
-                  <i class="ti ti-paperclip"></i>
+                <button type="button" class="agent-toggle-pill" data-toggle="goal"><span>Hedef</span></button>
+                <button type="button" class="agent-toggle-pill" data-toggle="tools"><span>Araç Bağla</span></button>
+                <button type="button" class="agent-toggle-pill" data-toggle="skills"><span>Skills</span></button>
+                <button id="ai-attach-btn" type="button" style="margin-left:auto;width:28px;height:28px;border:none;border-radius:50%;background:transparent;color:#6b7280;cursor:pointer;display:flex;align-items:center;justify-content:center;">
+                  <i class="ti ti-paperclip" style="font-size:16px;"></i>
                 </button>
               </div>
-              <button id="ai-send-btn" type="button" aria-label="Gönder">
+              <button id="ai-send-btn" type="button" style="position:absolute;right:8px;bottom:8px;width:40px;height:40px;border:none;border-radius:50%;background:#14171f;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;">
                 <i class="ti ti-arrow-up" style="font-size:16px;"></i>
               </button>
             </div>
           </div>
         </div>
 
-        <!-- App tabs -->
+        <!-- App tiles -->
         <div class="agent-apps-tabs">
           <div class="agent-apps-row">
-            <button class="agent-app-tile" style="background-color:#ec7a3a;">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="8" height="8" fill="#fff"/><rect x="13" y="3" width="8" height="8" fill="#fff"/></svg>
-              <span>Slaytlar</span>
-            </button>
-            <button class="agent-app-tile" style="background-color:#3d6bea;">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="8" height="8" fill="#fff"/><rect x="13" y="13" width="8" height="8" fill="#fff"/></svg>
-              <span>Dökümanlar</span>
-            </button>
-            <button class="agent-app-tile" style="background-color:#e0459b;">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="13" width="8" height="8" fill="#fff"/><rect x="13" y="3" width="8" height="8" fill="#fff"/></svg>
-              <span class="agent-app-tile-badge">Posterler<span class="agent-app-badge">Yeni</span></span>
-            </button>
-            <button class="agent-app-tile" style="background-color:#189e63;">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="13" width="8" height="8" fill="#fff"/><rect x="13" y="13" width="8" height="8" fill="#fff"/></svg>
-              <span>Tablolar</span>
-            </button>
-            <button class="agent-app-tile" style="background-color:#1a9e8f;">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="8" height="8" fill="#fff"/></svg>
-              <span>Web Siteleri</span>
-            </button>
-            <button class="agent-app-tile" style="background-color:#14171f;">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="13" y="3" width="8" height="8" fill="#fff"/></svg>
-              <span>Kod</span>
-            </button>
-            <button class="agent-app-tile" style="background-color:#7c4fe0;">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="13" y="13" width="8" height="8" fill="#fff"/></svg>
-              <span>Videolar</span>
-            </button>
+            <button class="agent-app-tile" style="background-color:#ec7a3a;"><span>Slaytlar</span></button>
+            <button class="agent-app-tile" style="background-color:#3d6bea;"><span>Dökümanlar</span></button>
+            <button class="agent-app-tile" style="background-color:#e0459b;"><span>Posterler</span><span class="agent-app-badge">Yeni</span></button>
+            <button class="agent-app-tile" style="background-color:#189e63;"><span>Tablolar</span></button>
+            <button class="agent-app-tile" style="background-color:#1a9e8f;"><span>Web Siteleri</span></button>
+            <button class="agent-app-tile" style="background-color:#14171f;"><span>Kod</span></button>
+            <button class="agent-app-tile" style="background-color:#7c4fe0;"><span>Videolar</span></button>
           </div>
           <div class="agent-apps-row">
-            <button class="agent-app-tile" style="background-color:#c98a1f;">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="8" height="8" fill="#fff"/><rect x="3" y="13" width="8" height="8" fill="#fff"/></svg>
-              <span>Zamanlanmış Görevler</span>
-            </button>
-            <button class="agent-app-tile" style="background-color:#14171f;">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="13" y="3" width="8" height="8" fill="#fff"/><rect x="13" y="13" width="8" height="8" fill="#fff"/></svg>
-              <span>Tüm Yetenekler</span>
-            </button>
+            <button class="agent-app-tile" style="background-color:#c98a1f;"><span>Zamanlanmış Görevler</span></button>
+            <button class="agent-app-tile" style="background-color:#14171f;"><span>Tüm Yetenekler</span></button>
           </div>
         </div>
 
-        <!-- Workflow section -->
+        <!-- Workflows -->
         <div class="agent-workflows">
           <h2 class="agent-workflows-title">Önerilen İş Akışları</h2>
           <div class="agent-workflow-tabs">
@@ -463,88 +422,60 @@
           </div>
           <div class="agent-workflow-grid">
             <div class="agent-workflow-card">
-              <div class="agent-workflow-icon" style="background-color:#e2f6ea;">
-                <i class="ti ti-checklist" style="color:#146e46;font-size:18px;"></i>
-              </div>
-              <h3 class="agent-workflow-card-name">Proje Planı</h3>
-              <div class="agent-workflow-tags">
-                <span class="agent-workflow-tag">Planlama</span>
-                <span class="agent-workflow-tag">Takım</span>
-              </div>
-              <p class="agent-workflow-desc">Proje detaylarından yapılacaklar listesi oluşturun</p>
-              <div class="agent-workflow-footer">3 Yetenek · 124 kullanım</div>
+              <div class="agent-workflow-icon" style="background-color:#e2f6ea;"><svg width="18" height="18" viewBox="0 0 24 24" fill="#2ecc82"><path d="M4 4h4v4H4zm6 0h4v4h-4zm6 0h4v4h-4zm-12 6h4v4H4zm6 0h4v4h-4zm6 0h4v4h-4zm-12 6h4v4H4zm6 0h4v4h-4z"/></svg></div>
+              <h3 class="agent-workflow-card-name">Excel Formül Uzmanı</h3>
+              <div class="agent-workflow-tags"><span>Formüller</span><span>Otomasyon</span></div>
+              <p class="agent-workflow-desc">Excel formüllerinizi optimize et ve hatalarını düzelt</p>
+              <div class="agent-workflow-footer">6 Yetenek · 118.1K kullanım</div>
             </div>
             <div class="agent-workflow-card">
-              <div class="agent-workflow-icon" style="background-color:#e0edff;">
-                <i class="ti ti-chart-bar" style="color:#3d6bea;font-size:18px;"></i>
-              </div>
-              <h3 class="agent-workflow-card-name">Satış Analizi</h3>
-              <div class="agent-workflow-tags">
-                <span class="agent-workflow-tag">Analiz</span>
-                <span class="agent-workflow-tag">Rapor</span>
-              </div>
-              <p class="agent-workflow-desc">Satış verilerini analiz edin ve trendleri belirleyin</p>
-              <div class="agent-workflow-footer">5 Yetenek · 87 kullanım</div>
+              <div class="agent-workflow-icon" style="background-color:#dcf3f1;"><svg width="18" height="18" viewBox="0 0 24 24" fill="#1a9e8f"><path d="M3 5h8v8H3V5zm10 0h8v8h-8V5zM3 15h8v8H3v-8zm10 0h8v8h-8v-8z"/></svg></div>
+              <h3 class="agent-workflow-card-name">Pivot Tablo Uzmanı</h3>
+              <div class="agent-workflow-tags"><span>Pivot</span><span>Görselleştirme</span></div>
+              <p class="agent-workflow-desc">Pivot tablolarını hızlı ve etkili oluştur</p>
+              <div class="agent-workflow-footer">6 Yetenek · 108.7K kullanım</div>
             </div>
             <div class="agent-workflow-card">
-              <div class="agent-workflow-icon" style="background-color:#fef1e0;">
-                <i class="ti ti-file-type-pdf" style="color:#ec7a3a;font-size:18px;"></i>
-              </div>
-              <h3 class="agent-workflow-card-name">Rapordan Tablo</h3>
-              <div class="agent-workflow-tags">
-                <span class="agent-workflow-tag">PDF</span>
-                <span class="agent-workflow-tag">Veri</span>
-              </div>
-              <p class="agent-workflow-desc">PDF raporlarından tablosal veri çıkarın</p>
-              <div class="agent-workflow-footer">4 Yetenek · 156 kullanım</div>
+              <div class="agent-workflow-icon" style="background-color:#e4ebfd;"><svg width="18" height="18" viewBox="0 0 24 24" fill="#3d6bea"><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/><circle cx="5" cy="12" r="2"/></svg></div>
+              <h3 class="agent-workflow-card-name">Veri Temizleme Uzmanı</h3>
+              <div class="agent-workflow-tags"><span>CSV</span><span>Veri Analizi</span></div>
+              <p class="agent-workflow-desc">CSV verilerinizi temizle ve normalize et</p>
+              <div class="agent-workflow-footer">5 Yetenek · 96.4K kullanım</div>
             </div>
             <div class="agent-workflow-card">
-              <div class="agent-workflow-icon" style="background-color:#f2e6ff;">
-                <i class="ti ti-sparkles" style="color:#7c4fe0;font-size:18px;"></i>
-              </div>
-              <h3 class="agent-workflow-card-name">İçerik Oluştur</h3>
-              <div class="agent-workflow-tags">
-                <span class="agent-workflow-tag">Yazma</span>
-                <span class="agent-workflow-tag">AI</span>
-              </div>
-              <p class="agent-workflow-desc">Verinizden pazarlama içeriği oluşturun</p>
-              <div class="agent-workflow-footer">6 Yetenek · 203 kullanım</div>
+              <div class="agent-workflow-icon" style="background-color:#ece5fb;"><svg width="18" height="18" viewBox="0 0 24 24" fill="#7c4fe0"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg></div>
+              <h3 class="agent-workflow-card-name">Stok Analizi Uzmanı</h3>
+              <div class="agent-workflow-tags"><span>Envanter</span><span>Tahminleme</span></div>
+              <p class="agent-workflow-desc">Stok seviyelerini analiz et ve tahmin oluştur</p>
+              <div class="agent-workflow-footer">8 Yetenek · 130.4K kullanım</div>
             </div>
             <div class="agent-workflow-card">
-              <div class="agent-workflow-icon" style="background-color:#ffe4e6;">
-                <i class="ti ti-heart" style="color:#e0459b;font-size:18px;"></i>
-              </div>
-              <h3 class="agent-workflow-card-name">Müşteri Takibi</h3>
-              <div class="agent-workflow-tags">
-                <span class="agent-workflow-tag">CRM</span>
-                <span class="agent-workflow-tag">İlişki</span>
-              </div>
-              <p class="agent-workflow-desc">Müşteri etkileşimlerini organize edin ve takip edin</p>
-              <div class="agent-workflow-footer">4 Yetenek · 92 kullanım</div>
+              <div class="agent-workflow-icon" style="background-color:#fdecdb;"><svg width="18" height="18" viewBox="0 0 24 24" fill="#ec7a3a"><rect x="3" y="5" width="3" height="14"/><rect x="10" y="5" width="3" height="14"/><rect x="17" y="5" width="3" height="14"/></svg></div>
+              <h3 class="agent-workflow-card-name">Finansal Rapor Uzmanı</h3>
+              <div class="agent-workflow-tags"><span>Finans</span><span>Raporlama</span></div>
+              <p class="agent-workflow-desc">Finansal raporları otomatik oluştur</p>
+              <div class="agent-workflow-footer">7 Yetenek · 124.4K kullanım</div>
             </div>
             <div class="agent-workflow-card">
-              <div class="agent-workflow-icon" style="background-color:#e1f5f5;">
-                <i class="ti ti-wave-sine" style="color:#1a9e8f;font-size:18px;"></i>
-              </div>
-              <h3 class="agent-workflow-card-name">Pazarlama Kampanyası</h3>
-              <div class="agent-workflow-tags">
-                <span class="agent-workflow-tag">Pazarlama</span>
-                <span class="agent-workflow-tag">Planlama</span>
-              </div>
-              <p class="agent-workflow-desc">Pazarlama kampanyası planı ve çizelgesi oluşturun</p>
-              <div class="agent-workflow-footer">5 Yetenek · 178 kullanım</div>
+              <div class="agent-workflow-icon" style="background-color:#fce3f0;"><svg width="18" height="18" viewBox="0 0 24 24" fill="#e0459b"><path d="M8 5v14l11-7z"/></svg></div>
+              <h3 class="agent-workflow-card-name">Sunum Uzmanı</h3>
+              <div class="agent-workflow-tags"><span>Slaytlar</span><span>Anlatım</span></div>
+              <p class="agent-workflow-desc">Profesyonel sunumlar oluştur hızlıca</p>
+              <div class="agent-workflow-footer">7 Yetenek · 112.2K kullanım</div>
             </div>
             <div class="agent-workflow-card">
-              <div class="agent-workflow-icon" style="background-color:#fef3d8;">
-                <i class="ti ti-coins" style="color:#c98a1f;font-size:18px;"></i>
-              </div>
-              <h3 class="agent-workflow-card-name">Bütçe Planı</h3>
-              <div class="agent-workflow-tags">
-                <span class="agent-workflow-tag">Finans</span>
-                <span class="agent-workflow-tag">Bütçe</span>
-              </div>
-              <p class="agent-workflow-desc">Maliyetleri analiz edin ve bütçe planı oluşturun</p>
-              <div class="agent-workflow-footer">6 Yetenek · 145 kullanım</div>
+              <div class="agent-workflow-icon" style="background-color:#faf1e0;"><svg width="18" height="18" viewBox="0 0 24 24" fill="#c98a1f"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg></div>
+              <h3 class="agent-workflow-card-name">Otomasyon Uzmanı</h3>
+              <div class="agent-workflow-tags"><span>Otomasyon</span><span>Zaman Tasarrufu</span></div>
+              <p class="agent-workflow-desc">İşlemlerinizi otomatikleştir ve hızlandır</p>
+              <div class="agent-workflow-footer">5 Yetenek · 89.3K kullanım</div>
+            </div>
+            <div class="agent-workflow-card">
+              <div class="agent-workflow-icon" style="background-color:#fdecdb;"><svg width="18" height="18" viewBox="0 0 24 24" fill="#ec7a3a"><rect x="3" y="5" width="3" height="14"/><rect x="10" y="5" width="3" height="14"/><rect x="17" y="5" width="3" height="14"/></svg></div>
+              <h3 class="agent-workflow-card-name">Pazarlama Raporu Uzmanı</h3>
+              <div class="agent-workflow-tags"><span>Pazarlama</span><span>Kampanya Analizi</span></div>
+              <p class="agent-workflow-desc">Pazarlama verilerinizi analiz et</p>
+              <div class="agent-workflow-footer">6 Yetenek · 102.5K kullanım</div>
             </div>
           </div>
         </div>
@@ -1140,48 +1071,18 @@ body[data-app-mode="agent"] .main,
 body[data-app-mode="agent"] .sidebar,
 body[data-app-mode="agent"] .rail { display:none !important; }
 body[data-app-mode="agent"] #agent-panel { display:flex !important; }
-
-/* Mode-aware navbar toggle */
 body[data-app-mode="agent"] #navbar-sheet-mode-search,
 body[data-app-mode="agent"] #navbar-sheet-mode { display: none !important; }
 body[data-app-mode="agent"] #navbar-agent-mode-title { display: flex !important; }
 body[data-app-mode="agent"] #navbar-agent-mode-actions { display: flex !important; }
+body[data-app-mode="agent"] .topbar { grid-template-columns: 248px auto 1fr auto; }
+body[data-app-mode="agent"] .topbar-search { padding: 0 8px; justify-content: flex-start; }
+body[data-app-mode="agent"] #navbar-agent-mode-title { min-width: 0; overflow: hidden; }
+body[data-app-mode="agent"] #agent-title-input { min-width: 0; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
+body[data-app-mode="agent"] #navbar-agent-mode-actions { flex-shrink: 0; }
+.topbar { position: sticky; top: 0; z-index: 200; }
+.agent-main { overflow: visible; }
 
-/* Agent mode — grid wrap fix (4 child, 4 kolon) */
-body[data-app-mode="agent"] .topbar {
-  grid-template-columns: 248px auto 1fr auto;
-}
-body[data-app-mode="agent"] .topbar-search {
-  padding: 0 8px;
-  justify-content: flex-start;
-}
-body[data-app-mode="agent"] #navbar-agent-mode-title {
-  min-width: 0;
-  overflow: hidden;
-}
-body[data-app-mode="agent"] #agent-title-input {
-  min-width: 0;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
-}
-body[data-app-mode="agent"] #navbar-agent-mode-actions {
-  flex-shrink: 0;
-}
-
-/* Navbar — sticky + z-index (scroll sırasında sabit kalmasını sağla) */
-.topbar {
-  position: sticky;
-  top: 0;
-  z-index: 200;
-}
-
-/* Agent main — overflow visible (dropdown'ın kesilmesini engelle) */
-.agent-main {
-  overflow: visible;
-}
-
-/* Agent navbar — title */
 #agent-title-input {
   flex: 1; border: none; outline: none; background: transparent;
   font-size: 14px; font-weight: 500; color: var(--ink);
@@ -1192,29 +1093,10 @@ body[data-app-mode="agent"] #navbar-agent-mode-actions {
 #agent-title-input:focus:not(:disabled) { background: var(--line); }
 #agent-title-input:disabled { opacity: 0.55; cursor: default; }
 
-/* Agent navbar — pill button */
-.agent-navbar-btn {
-  display: flex; align-items: center; gap: 6px;
-  padding: 6px 12px;
-  border: 0.5px solid var(--line); border-radius: 10px;
-  background: var(--surface); color: var(--ink-3, #374151);
-  font-size: 12px; font-weight: 500; cursor: pointer; font-family: inherit;
-}
-.agent-navbar-btn:hover { background: var(--line); }
-
-/* Agent navbar — icon buttons */
-.agent-navbar-icon-btn {
-  width: 32px; height: 32px;
-  border: 0.5px solid var(--line); border-radius: 10px;
-  background: var(--surface); color: var(--ink-4, #6b7280);
-  cursor: pointer; display: flex; align-items: center; justify-content: center;
-}
-.agent-navbar-icon-btn:hover { background: var(--line); color: var(--ink); }
-
 #agent-panel {
   position:fixed; inset:60px 0 0 0; display:flex; flex-direction:column;
   background:#fdfdfc; z-index:100; color:var(--ink);
-  border-radius:18px 18px 0 0; box-shadow:0 -40px 100px rgba(20,23,31,0.10);
+  border-radius:18px 18px 0 0; box-shadow:0 30px 90px rgba(20,23,31,0.16);
 }
 
 /* Top bar (68px) */
@@ -1230,75 +1112,77 @@ body[data-app-mode="agent"] #navbar-agent-mode-actions {
   width:34px; height:34px; display:flex; align-items:center; justify-content:center;
   flex-shrink:0;
 }
+.agent-topbar-logo img {
+  width:34px; height:34px; border-radius:4px;
+}
 .agent-topbar-brand {
-  font-size:16px; font-weight:600; color:#14171f; letter-spacing:-0.01em;
+  font-size:16px; font-weight:800; color:#14171f; letter-spacing:-0.01em;
 }
 .agent-brand-dot {
-  color:#189e63; font-weight:700;
+  color:#2ecc82; font-weight:800;
 }
 .agent-topbar-pill {
   display:flex; align-items:center; gap:6px;
-  padding:6px 16px; background:linear-gradient(135deg,#f4faf6,#eaf6ee);
+  padding:8px 16px; background:linear-gradient(180deg,#f4faf6,#eaf6ee);
   border:1px solid #d3ecdd; border-radius:999px;
-  font-size:12px; font-weight:600; color:#16a34a; margin-left:12px;
+  font-size:12px; font-weight:600; color:#16a34a; margin-left:16px;
 }
-.agent-topbar-pill i { font-size:12px; }
 
 /* Container for rail + sidebar + main */
 .agent-container {
   flex:1; display:flex; overflow:hidden;
 }
 
-/* Dark 66px icon rail */
+/* Icon rail (66px) */
 .agent-rail {
   width:66px; flex-shrink:0;
-  background:linear-gradient(180deg,#252932 0%,#101319 100%);
-  border-right:1px solid #0a0c11;
+  background:linear-gradient(180deg,#faf9f6 0%,#f6f5f1 100%);
+  border-right:1px solid #eeece6;
   display:flex; flex-direction:column; align-items:center;
-  padding:16px 0; gap:10px;
+  padding:12px 0; gap:10px;
 }
 .agent-rail-btn {
-  width:40px; height:40px; border-radius:12px;
-  background:linear-gradient(135deg,#252932,#101319);
-  border:0.5px solid rgba(255,255,255,.06);
+  width:37px; height:37px; border-radius:12px;
+  background:linear-gradient(135deg,#252932 0%,#14171f 100%);
+  border:none;
   color:#e5e7eb; cursor:pointer;
   display:flex; align-items:center; justify-content:center;
-  transition:transform .15s ease, background .15s ease;
+  transition:transform .15s ease, box-shadow .15s ease;
+  font-size:18px;
 }
-.agent-rail-btn:hover { transform:translateY(-1px); background:#2a2f3a; }
-.agent-rail-btn .ti { font-size:18px; }
+.agent-rail-btn:hover { transform:translateY(-2px); box-shadow:0 4px 12px rgba(20,23,31,.16); }
 
-/* Sidebar (282px, light) */
+/* Sidebar (282px) */
 .agent-sidebar {
-  width:282px; background:#faf9f6; border-right:1px solid #eeece6;
+  width:282px; background:linear-gradient(180deg,#faf9f6 0%,#f6f5f1 100%);
+  border-right:1px solid #eeece6;
   display:flex; flex-direction:column; padding:0; gap:0; flex-shrink:0;
 }
 .agent-sidebar-content {
   flex:1; overflow-y:auto; display:flex; flex-direction:column; padding:12px 0 0;
 }
 .agent-new-chat-btn {
-  margin:0 12px 8px; width:calc(100% - 24px); display:flex; align-items:center; justify-content:center; gap:8px;
+  margin:0 12px 12px; width:calc(100% - 24px); display:flex; align-items:center; justify-content:center; gap:8px;
   padding:10px 16px;
-  background:linear-gradient(135deg,#252932,#101319);
-  color:#fff; border:none; border-radius:12px;
+  background:linear-gradient(135deg,#252932 0%,#101319 100%);
+  color:#fff; border:none; border-radius:11px;
   font-size:13px; font-weight:600; cursor:pointer;
   transition:transform .15s ease, box-shadow .15s ease;
   font-family:inherit;
 }
-.agent-new-chat-btn:hover { transform:translateY(-1px); box-shadow:0 6px 16px rgba(20,23,31,.24); }
-.agent-new-chat-btn .ti { font-size:15px; }
+.agent-new-chat-btn:hover { transform:translateY(-2px); box-shadow:0 8px 20px rgba(20,23,31,.20); }
+.agent-new-chat-btn i { font-size:14px; }
 
 .agent-sidebar-section { padding:0 8px 12px; }
 .agent-sidebar-row {
-  margin:0 8px; width:calc(100% - 16px); display:flex; align-items:center; gap:8px; padding:8px 12px;
-  background:transparent; border:0.5px solid #eeece6; border-radius:12px;
+  margin:0 8px; width:calc(100% - 16px); display:flex; align-items:center; gap:10px; padding:8px 12px;
+  background:transparent; border:0.5px solid #eeece6; border-radius:10px;
   color:#374151; font-size:12px; font-weight:500; cursor:pointer;
   transition:background .15s ease, border-color .15s ease;
   font-family:inherit;
 }
-.agent-sidebar-row:hover { background:#f0fdf4; border-color:#189e63; }
-.agent-sidebar-row .ti { font-size:15px; }
-.agent-row-chevron { margin-left:auto; color:#9ca3af; font-size:13px !important; }
+.agent-sidebar-row:hover { background:rgba(46,204,130,0.06); border-color:#d3ecdd; }
+.agent-sidebar-row svg { flex-shrink:0; }
 
 .agent-history-scroll { flex:1; overflow-y:auto; padding:0 8px; margin-bottom:8px; }
 .agent-history-group { }
@@ -1314,7 +1198,7 @@ body[data-app-mode="agent"] #navbar-agent-mode-actions {
 /* Usage card — dark */
 .agent-usage-card {
   margin:8px 12px; padding:16px; border-radius:12px;
-  background:linear-gradient(180deg,#1a1d25 0%,#101319 100%);
+  background:linear-gradient(180deg,#161a1f 0%,#0c0e12 100%);
   border:0.5px solid rgba(255,255,255,.06);
   box-shadow:0 8px 24px rgba(20,23,31,.18), inset 0 1px 0 rgba(255,255,255,.04);
   color:#e5e7eb;
@@ -1330,26 +1214,25 @@ body[data-app-mode="agent"] #navbar-agent-mode-actions {
   font-size:11px; color:#9ca3af; margin:0 0 12px;
 }
 .agent-usage-bar {
-  height:4px; background:rgba(255,255,255,.08); border-radius:999px; overflow:hidden;
+  height:6px; background:rgba(255,255,255,.06); border-radius:999px; overflow:hidden;
+  margin-bottom:12px;
 }
 .agent-usage-fill {
-  height:100%; width:0%;
+  height:100%; width:100%;
   background:linear-gradient(90deg,#2ecc82,#189e63);
   border-radius:999px; transition:width .3s ease;
 }
 .agent-upgrade-btn {
-  margin-top:12px; width:100%; display:flex; align-items:center; justify-content:center;
+  width:100%; display:flex; align-items:center; justify-content:center;
   gap:4px; padding:10px 12px;
   background:#fff; color:#14171f; border:none; border-radius:10px;
   font-size:12px; font-weight:600; cursor:pointer; font-family:inherit;
   transition:transform .15s ease, box-shadow .15s ease;
+  margin-bottom:8px;
 }
 .agent-upgrade-btn:hover { transform:translateY(-1px); box-shadow:0 6px 16px rgba(255,255,255,.10); }
-.agent-upgrade-price {
-  color:#189e63; font-weight:700;
-}
 .agent-manage-sub {
-  display:block; text-align:center; margin-top:10px;
+  display:block; text-align:center;
   padding:8px 12px; border:0.5px solid rgba(255,255,255,.10); border-radius:10px;
   font-size:11px; color:#9ca3af; text-decoration:none;
   transition:background .15s ease, color .15s ease, border-color .15s ease;
@@ -1357,53 +1240,49 @@ body[data-app-mode="agent"] #navbar-agent-mode-actions {
 .agent-manage-sub:hover { color:#fff; background:rgba(255,255,255,.04); border-color:rgba(255,255,255,.16); }
 
 .agent-sidebar-footer { padding:12px 8px 12px; border-top:0.5px solid #eeece6; }
-.agent-apps-count {
-  display:none; background:#16a34a; color:#fff; border-radius:999px;
-  font-size:10px; padding:2px 8px; margin-left:auto;
-}
 
 /* Main area */
 .agent-main {
   flex:1; display:flex; flex-direction:column; overflow:hidden;
   background:
-    radial-gradient(circle at 50% 40%, rgba(46,204,130,0.10), transparent 60%),
-    linear-gradient(#edece7 1px, transparent 1px) 0 0 / 64px 64px,
-    linear-gradient(90deg,#edece7 1px, transparent 1px) 0 0 / 64px 64px,
-    #faf9f6;
+    radial-gradient(ellipse at 50% 0%, rgba(46,204,130,0.05)),
+    linear-gradient(#f1f0ec 1px, transparent 1px) 0 0 / 100% 64px,
+    linear-gradient(90deg, #f1f0ec 1px, transparent 1px) 0 0 / 64px 100%,
+    #fefefd;
 }
 
 /* Messages area */
 #agent-messages {
-  flex:1; overflow-y:auto; padding:32px 24px; display:flex; flex-direction:column;
-  gap:16px; align-items:stretch; position:relative; z-index:1;
+  flex:1; overflow-y:auto; padding:40px 24px 32px; display:flex; flex-direction:column;
+  gap:16px; align-items:center; position:relative; z-index:1;
 }
 
 /* Empty state */
 .agent-empty {
-  width:100%; max-width:900px; margin:0 auto; padding:24px 8px 40px;
+  width:100%; max-width:900px; margin:0 auto;
   display:flex; flex-direction:column; align-items:center; gap:24px;
 }
 .agent-empty-avatar {
-  width:58px; height:58px; border-radius:12px;
-  background:linear-gradient(135deg,#252932,#101319);
+  width:58px; height:58px; border-radius:50%;
+  background:linear-gradient(135deg,#252932 0%,#101319 100%);
   color:#fff; display:flex; align-items:center; justify-content:center;
-  font-size:26px;
+  font-size:26px; flex-shrink:0;
 }
 .agent-empty-greeting-title {
-  font-size:28px; font-weight:600; font-style:italic; letter-spacing:-0.02em; margin:0;
+  font-size:28px; font-weight:800; font-style:italic; letter-spacing:-0.02em; margin:0;
   background:linear-gradient(135deg,#14171f 0%,#189e63 100%);
   -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
-  line-height:1.15;
+  line-height:1.2;
 }
 .agent-empty-greeting-sub {
-  font-size:15px; color:#5c6270; margin:8px 0 0;
+  font-size:15px; color:#8b8f9c; margin:0;
 }
 .agent-suggestion-pills {
   display:flex; flex-wrap:wrap; gap:12px; justify-content:center; max-width:900px;
 }
 .agent-suggestion-pill {
   display:inline-flex; align-items:center; gap:8px; padding:12px 22px;
-  background:#fdfdfc; border:1px solid #e6e4dd; border-radius:22px;
+  background:#ffffff; border:1px solid #e6e4dd; border-radius:22px;
   color:#3a3f4c; font-size:13px; font-weight:500; cursor:pointer;
   font-family:inherit;
   transition:border-color .15s ease, box-shadow .15s ease;
@@ -1419,7 +1298,7 @@ body[data-app-mode="agent"] #navbar-agent-mode-actions {
 }
 #ai-input-wrap { position:relative; width:100%; max-width:900px; margin:0 auto; }
 #ai-file-input { display:none; }
-#ai-attach-row { display:none; gap:8px; padding:8px 8px 4px; overflow-x:auto; }
+#ai-attach-row { display:none; }
 #ai-input-card {
   position:relative; border:1.6px solid #2ecc82; border-radius:20px;
   background:#fff; box-shadow:0 20px 60px rgba(46,204,130,0.15);
@@ -1441,29 +1320,11 @@ body[data-app-mode="agent"] #navbar-agent-mode-actions {
   border-radius:999px; background:transparent;
   font-size:11px; font-weight:500; cursor:pointer; font-family:inherit;
   transition:all .15s ease;
-}
-.agent-toggle-pill {
   background:#f2f1ec; border-color:#e6e4dd; color:#3a3f4c;
 }
 .agent-toggle-pill.active,
 .agent-toggle-pill[data-active="true"] {
   background:#e2f6ea; border-color:#bfe6cc; color:#177a4c;
-}
-#ai-attach-btn {
-  margin-left:auto; width:28px; height:28px; border:none; border-radius:999px;
-  background:transparent; color:#6b7280; cursor:pointer;
-  display:flex; align-items:center; justify-content:center;
-  transition:background .15s ease, color .15s ease;
-  font-size:16px;
-}
-#ai-attach-btn:hover { background:#f0fdf4; color:#16a34a; }
-#ai-send-btn {
-  position:absolute; right:8px; bottom:8px; width:40px; height:40px; border:none;
-  border-radius:999px;
-  background:#14171f;
-  color:#fff; cursor:pointer;
-  display:flex; align-items:center; justify-content:center;
-  transition:transform .15s ease, box-shadow .15s ease;
 }
 #ai-send-btn:hover { transform:translateY(-1px); box-shadow:0 6px 16px rgba(20,23,31,.24); }
 
@@ -1475,15 +1336,14 @@ body[data-app-mode="agent"] #navbar-agent-mode-actions {
   display:flex; flex-wrap:wrap; gap:10px; justify-content:center;
 }
 .agent-app-tile {
-  display:flex; align-items:center; gap:8px; padding:8px 14px;
+  display:flex; align-items:center; justify-content:center;
+  gap:8px; padding:8px 14px;
   background:transparent; border:none; border-radius:10px;
   color:#fdfdfc; font-size:12px; font-weight:500; cursor:pointer;
   font-family:inherit; transition:opacity .15s ease;
+  min-width:80px;
 }
-.agent-app-tile:hover { opacity:0.8; }
-.agent-app-tile-badge {
-  position:relative;
-}
+.agent-app-tile:hover { opacity:0.85; }
 .agent-app-badge {
   display:inline-block; background:#dc2626; color:#fff; font-size:9px;
   font-weight:700; padding:2px 6px; border-radius:3px; margin-left:4px;
@@ -1517,8 +1377,8 @@ body[data-app-mode="agent"] #navbar-agent-mode-actions {
   display:flex; flex-direction:column; gap:8px;
 }
 .agent-workflow-card:hover {
-  border-color:#189e63; transform:translateY(-2px);
-  box-shadow:0 8px 20px rgba(20,23,31,.06);
+  border-color:#2ecc82; transform:translateY(-2px);
+  box-shadow:0 8px 24px rgba(46,204,130,.08);
 }
 .agent-workflow-icon {
   width:32px; height:32px; border-radius:10px;
