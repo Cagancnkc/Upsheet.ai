@@ -497,6 +497,10 @@
 
         <div class="ai-input">
           <textarea rows="3" placeholder="Tabloya ne yapmak istersin? Örn: A:F arasına haftalık satış verisi ekle…"></textarea>
+          <div id="mention-popup" style="display:none;position:absolute;bottom:100%;left:0;margin-bottom:8px;width:240px;max-height:240px;overflow-y:auto;background:#fff;border:0.5px solid #e5e7eb;border-radius:16px;padding:8px;box-shadow:0 8px 24px rgba(17,24,39,.12);z-index:300;">
+            <p style="font-size:10px;font-weight:600;color:#9ca3af;text-transform:uppercase;letter-spacing:.04em;margin:0 0 8px;padding:0 8px;">Bağlı Uygulamalar</p>
+            <div id="mention-popup-list"></div>
+          </div>
           <div class="ai-input-foot">
             <span class="ai-tool" title="Dosya ekle">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
@@ -1719,6 +1723,18 @@
     return null;
   }
 
+  function extractMentions(commandText) {
+    if (typeof APPS_CONFIG === 'undefined') return [];
+    var mentioned = [];
+    APPS_CONFIG.forEach(function(app) {
+      var shortName = app.name.split(' ')[0];
+      if (commandText.indexOf('@' + shortName) !== -1) {
+        mentioned.push(app.id);
+      }
+    });
+    return mentioned;
+  }
+
   function sendCommand() {
     if (!aiTextarea) return;
     var cmd = aiTextarea.value.trim();
@@ -1733,7 +1749,7 @@
     var apiBase = window.location.hostname === 'localhost' ? 'http://localhost:3001' : 'https://upsheet-ai.onrender.com';
     fetch(apiBase + '/api/chat', {
       method: 'POST', headers: headers,
-      body: JSON.stringify({ message: cmd, sheetData: getGridForAPI() })
+      body: JSON.stringify({ message: cmd, sheetData: getGridForAPI(), mentionedApps: extractMentions(cmd) })
     })
       .then(function (res) {
         return res.json().then(function (data) {
@@ -1815,6 +1831,98 @@
       }
     });
   }
+
+  // ── @ Mention Popup ───────────────────────────────────────────────────────
+  (function() {
+    var cmdInput = document.querySelector('.ai-input textarea');
+    var popup = document.getElementById('mention-popup');
+    var popupList = document.getElementById('mention-popup-list');
+    if (!cmdInput || !popup) return;
+
+    var mentionStartIndex = -1;
+
+    function getCurrentMentionQuery() {
+      var cursorPos = cmdInput.selectionStart;
+      var textBeforeCursor = cmdInput.value.slice(0, cursorPos);
+      var atIndex = textBeforeCursor.lastIndexOf('@');
+      if (atIndex === -1) return null;
+      var textAfterAt = textBeforeCursor.slice(atIndex + 1);
+      if (textAfterAt.indexOf(' ') !== -1) return null;
+      mentionStartIndex = atIndex;
+      return textAfterAt;
+    }
+
+    function renderMentionPopup(query) {
+      if (typeof APPS_CONFIG === 'undefined') return;
+      var filtered = APPS_CONFIG.filter(function(app) {
+        return app.name.toLowerCase().indexOf(query.toLowerCase()) !== -1;
+      });
+      if (filtered.length === 0) { popup.style.display = 'none'; return; }
+      popupList.innerHTML = '';
+      filtered.forEach(function(app) {
+        var connected = !!(typeof _ddIntStatuses !== 'undefined' && _ddIntStatuses[app.provider] && _ddIntStatuses[app.provider].status === 'active');
+        var row = document.createElement('button');
+        row.type = 'button';
+        row.style.cssText = 'width:100%;display:flex;align-items:center;gap:8px;padding:8px;border:none;background:transparent;border-radius:8px;cursor:pointer;text-align:left;transition:background .15s ease;';
+        row.addEventListener('mouseenter', function() { this.style.background = '#f0fdf4'; });
+        row.addEventListener('mouseleave', function() { this.style.background = 'transparent'; });
+
+        var icon = document.createElement('img');
+        icon.src = app.icon;
+        icon.width = 16; icon.height = 16;
+        icon.style.objectFit = 'contain';
+        icon.onerror = function() { this.style.display = 'none'; };
+
+        var nameEl = document.createElement('span');
+        nameEl.textContent = app.name;
+        nameEl.style.cssText = 'font-size:12px;color:#111827;flex:1;';
+
+        var statusEl = document.createElement('span');
+        if (connected) {
+          statusEl.style.cssText = 'width:8px;height:8px;border-radius:999px;background:#16a34a;flex-shrink:0;';
+        } else {
+          statusEl.style.cssText = 'font-size:10px;color:#9ca3af;';
+          statusEl.textContent = 'Bağlı değil';
+        }
+
+        row.appendChild(icon);
+        row.appendChild(nameEl);
+        row.appendChild(statusEl);
+
+        row.addEventListener('click', function() {
+          if (!connected) { connectApp(app.id); popup.style.display = 'none'; return; }
+          var value = cmdInput.value;
+          var cursorPos = cmdInput.selectionStart;
+          var before = value.slice(0, mentionStartIndex);
+          var after = value.slice(cursorPos);
+          var mentionText = '@' + app.name.split(' ')[0] + ' ';
+          cmdInput.value = before + mentionText + after;
+          var newPos = (before + mentionText).length;
+          cmdInput.focus();
+          cmdInput.setSelectionRange(newPos, newPos);
+          popup.style.display = 'none';
+        });
+
+        popupList.appendChild(row);
+      });
+      popup.style.display = 'block';
+    }
+
+    cmdInput.addEventListener('input', function() {
+      var query = getCurrentMentionQuery();
+      if (query !== null) { renderMentionPopup(query); } else { popup.style.display = 'none'; }
+    });
+
+    cmdInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && popup.style.display === 'block') { popup.style.display = 'none'; }
+    });
+
+    document.addEventListener('click', function(e) {
+      if (popup.style.display === 'block' && !popup.contains(e.target) && e.target !== cmdInput) {
+        popup.style.display = 'none';
+      }
+    });
+  })();
 
   // ── Search Modal ──────────────────────────────────────────────────────────
   var searchModal   = document.getElementById('search-modal');
