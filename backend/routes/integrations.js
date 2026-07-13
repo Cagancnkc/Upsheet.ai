@@ -1880,42 +1880,6 @@ router.post('/smartsheet/add-row', requireAuth, async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// GET /api/integrations/status — kullanıcının bağlı entegrasyonlarını döndür
-router.get('/status', requireAuth, async (req, res) => {
-  try {
-    const sb = _getSb();
-    const { data } = await sb
-      .from('user_integrations')
-      .select('integration_type')
-      .eq('user_id', req.user.id);
-
-    const connected = {};
-    (data || []).forEach(row => { connected[row.integration_type] = true; });
-
-    const googleTokens = await tokenManager.getToken(req.user.id, 'google').catch(() => null);
-    if (googleTokens) connected.google = true;
-
-    const { data: shopifyData } = await sb
-      .from('shopify_connections')
-      .select('id')
-      .eq('user_id', req.user.id)
-      .limit(1);
-    if (shopifyData?.length > 0) connected.shopify = true;
-
-    res.json({
-      google: !!connected.google,
-      slack: !!connected.slack,
-      shopify: !!connected.shopify,
-      hubspot: !!connected.hubspot,
-      stripe: !!connected.stripe,
-      notion: !!connected.notion,
-      airtable: !!connected.airtable,
-    });
-  } catch (e) {
-    res.status(500).json({ error: e.message });
-  }
-});
-
 // ── WhatsApp Cloud API: Mesaj gönder ──────────────────────────────────────────
 router.post('/whatsapp/send', requireAuth, async (req, res) => {
   const { phoneNumberId, to, message, accessToken } = req.body;
