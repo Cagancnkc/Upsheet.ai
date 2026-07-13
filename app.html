@@ -283,6 +283,11 @@
 
   <!-- ============ AGENT PANEL ============ -->
   <div id="agent-panel" style="display:none;">
+    <div class="agent-icon-rail" aria-hidden="true">
+      <button type="button" class="agent-rail-btn" tabindex="-1">
+        <i class="ti ti-layout-grid"></i>
+      </button>
+    </div>
     <aside class="agent-sidebar">
       <div class="agent-sidebar-header">
         <div class="agent-sidebar-brand">
@@ -1066,8 +1071,27 @@ body[data-app-mode="agent"] #navbar-agent-mode-actions {
 
 #agent-panel {
   position:fixed; inset:60px 0 0 0; display:flex; flex-direction:row;
-  background:#faf9f6; z-index:100; color:var(--ink);
+  background:#fdfdfc; z-index:100; color:var(--ink);
 }
+
+/* Dark 66px icon rail */
+.agent-icon-rail {
+  width:66px; flex-shrink:0;
+  background:linear-gradient(180deg,#14171f 0%,#101319 100%);
+  border-right:1px solid #0a0c11;
+  display:flex; flex-direction:column; align-items:center;
+  padding:16px 0; gap:10px;
+}
+.agent-rail-btn {
+  width:40px; height:40px; border-radius:12px;
+  background:linear-gradient(135deg,#252932,#14171f);
+  border:0.5px solid rgba(255,255,255,.06);
+  color:#e5e7eb; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  transition:transform .15s ease, background .15s ease;
+}
+.agent-rail-btn:hover { transform:translateY(-1px); background:#2a2f3a; }
+.agent-rail-btn .ti { font-size:18px; }
 
 /* Sidebar (282px, light) */
 .agent-sidebar {
@@ -1079,11 +1103,14 @@ body[data-app-mode="agent"] #navbar-agent-mode-actions {
   padding:14px 16px 10px;
 }
 .agent-sidebar-brand {
-  display:flex; align-items:center; gap:8px;
-  font-size:13px; font-weight:600; color:#14171f; letter-spacing:-0.01em;
+  display:inline-flex; align-items:center; gap:8px;
+  padding:6px 12px 6px 8px;
+  background:linear-gradient(135deg,#f4faf6,#eaf6ee);
+  border:0.5px solid #d3ecdd; border-radius:999px;
+  font-size:12.5px; font-weight:600; color:#14171f; letter-spacing:-0.01em;
 }
 .agent-brand-mark {
-  width:24px; height:24px; border-radius:8px;
+  width:22px; height:22px; border-radius:7px;
   background:#e2f6ea; display:flex; align-items:center; justify-content:center;
 }
 .agent-sidebar-back {
@@ -1174,26 +1201,39 @@ body[data-app-mode="agent"] #navbar-agent-mode-actions {
 /* Main */
 .agent-main {
   flex:1; display:flex; flex-direction:column; overflow:hidden;
-  background:#faf9f6;
+  position:relative;
+  background:
+    radial-gradient(ellipse 900px 600px at 50% 22%, rgba(46,204,130,0.10), transparent 70%),
+    linear-gradient(#f1f0ec 1px, transparent 1px) 0 0 / 64px 64px,
+    linear-gradient(90deg, #f1f0ec 1px, transparent 1px) 0 0 / 64px 64px,
+    #fefefd;
 }
 #agent-messages {
   flex:1; overflow-y:auto; padding:32px 24px; display:flex; flex-direction:column;
-  gap:16px; align-items:stretch;
+  gap:16px; align-items:stretch; position:relative; z-index:1;
 }
 .agent-messages-inner { max-width:720px; width:100%; margin:0 auto; display:flex; flex-direction:column; gap:16px; }
 
 /* Empty state */
 .agent-empty {
-  width:100%; max-width:840px; margin:0 auto; padding:24px 8px 40px;
+  width:100%; max-width:900px; margin:0 auto; padding:24px 8px 40px;
 }
 .agent-empty-greeting {
-  text-align:center; margin-bottom:36px;
+  text-align:center; margin-bottom:32px;
+  display:flex; flex-direction:column; align-items:center; gap:16px;
+}
+.agent-empty-avatar {
+  width:58px; height:58px; border-radius:16px;
+  background:linear-gradient(135deg,#252932,#101319);
+  color:#e2f6ea; display:flex; align-items:center; justify-content:center;
+  font-size:26px;
+  box-shadow:0 8px 22px rgba(20,23,31,.16), inset 0 1px 0 rgba(255,255,255,.06);
 }
 .agent-empty-greeting-title {
-  font-size:34px; font-weight:600; letter-spacing:-0.02em; margin:0 0 8px;
+  font-size:28px; font-weight:600; font-style:italic; letter-spacing:-0.02em; margin:0 0 4px;
   background:linear-gradient(135deg,#14171f 0%,#189e63 60%,#2ecc82 100%);
   -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
-  line-height:1.1;
+  line-height:1.15;
 }
 .agent-empty-greeting-sub {
   font-size:14px; color:#6b7280; margin:0;
@@ -1203,12 +1243,17 @@ body[data-app-mode="agent"] #navbar-agent-mode-actions {
   display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-bottom:24px;
 }
 .agent-quick-pill {
-  display:inline-flex; align-items:center; gap:8px; padding:10px 16px;
-  background:#fff; border:0.5px solid #eeece6; border-radius:999px;
+  display:inline-flex; align-items:center; gap:8px; padding:10px 18px;
+  background:#fff; border:0.5px solid #eeece6; border-radius:22px;
   color:#374151; font-size:13px; font-weight:500; cursor:pointer;
-  font-family:inherit; transition:border-color .15s ease, color .15s ease, transform .15s ease;
+  font-family:inherit;
+  box-shadow:0 1px 2px rgba(20,23,31,.03);
+  transition:border-color .15s ease, color .15s ease, transform .15s ease, box-shadow .15s ease;
 }
-.agent-quick-pill:hover { border-color:#189e63; color:#146e46; transform:translateY(-1px); }
+.agent-quick-pill:hover {
+  border-color:#189e63; color:#146e46; transform:translateY(-1px);
+  box-shadow:0 6px 14px rgba(46,204,130,.14);
+}
 .agent-quick-pill .ti { font-size:16px; color:#16a34a; }
 
 /* Shortcut row */
@@ -1249,13 +1294,13 @@ body[data-app-mode="agent"] #navbar-agent-mode-actions {
 .agent-workflow-tab:hover { border-color:#189e63; color:#146e46; }
 .agent-workflow-tab.active { background:#14171f; border-color:#14171f; color:#fff; }
 .agent-workflow-grid {
-  display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:12px;
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:12px;
 }
 .agent-workflow-card {
   padding:16px; background:#fff; border:0.5px solid #eeece6; border-radius:16px;
   text-align:left; cursor:pointer; font-family:inherit;
   transition:border-color .15s ease, transform .15s ease, box-shadow .15s ease;
-  display:flex; flex-direction:column; gap:8px;
+  display:flex; flex-direction:column; gap:10px;
 }
 .agent-workflow-card:hover {
   border-color:#189e63; transform:translateY(-2px);
@@ -1265,12 +1310,31 @@ body[data-app-mode="agent"] #navbar-agent-mode-actions {
   width:36px; height:36px; border-radius:10px; background:#e2f6ea;
   color:#146e46; display:flex; align-items:center; justify-content:center; font-size:18px;
 }
+.agent-workflow-card:nth-child(6n+1) .agent-workflow-card-icon { background:#e2f6ea; color:#146e46; }
+.agent-workflow-card:nth-child(6n+2) .agent-workflow-card-icon { background:#e0edff; color:#1e57c9; }
+.agent-workflow-card:nth-child(6n+3) .agent-workflow-card-icon { background:#fef1e0; color:#c17612; }
+.agent-workflow-card:nth-child(6n+4) .agent-workflow-card-icon { background:#f2e6ff; color:#7a3ecb; }
+.agent-workflow-card:nth-child(6n+5) .agent-workflow-card-icon { background:#ffe4e6; color:#c2384a; }
+.agent-workflow-card:nth-child(6n+6) .agent-workflow-card-icon { background:#e1f5f5; color:#1a8f8f; }
 .agent-workflow-card-name {
   font-size:13px; font-weight:600; color:#14171f; margin:0;
+}
+.agent-workflow-card-tags {
+  display:flex; flex-wrap:wrap; gap:6px;
+}
+.agent-workflow-card-tag {
+  font-size:10px; font-weight:500; color:#6b7280;
+  background:#f4f3ef; border:0.5px solid #eeece6; border-radius:999px;
+  padding:2px 8px; letter-spacing:.01em;
 }
 .agent-workflow-card-desc {
   font-size:11px; color:#6b7280; margin:0; line-height:1.4;
 }
+.agent-workflow-card-footer {
+  margin-top:auto; padding-top:8px; border-top:0.5px dashed #eeece6;
+  font-size:10.5px; color:#9ca3af; font-weight:500; letter-spacing:.01em;
+}
+.agent-workflow-card-footer strong { color:#374151; font-weight:600; }
 
 .agent-msg { display:flex; gap:12px; padding:10px 0; }
 .agent-msg-role {
@@ -4409,14 +4473,14 @@ async function runColumnTranslate() {
   var WORKFLOW_CATEGORIES = ['Tümü','Ofis','Veri & Analiz','Finans','İçerik Üretimi','Üretkenlik','Pazarlama'];
 
   var WORKFLOW_CARDS = [
-    { icon:'ti-math-function', name:'Excel Formül Uzmanı', desc:'Karmaşık formülleri sen tarif et, ben yazayım.', cat:['Ofis','Veri & Analiz'], prompt:'Bir Excel formülü yazmama yardım et: ' },
-    { icon:'ti-table-options', name:'Pivot Tablo Uzmanı', desc:'Verini özetle, kategori bazında rapor çıkar.', cat:['Ofis','Veri & Analiz'], prompt:'Verimden pivot tablo oluştur' },
-    { icon:'ti-broom',         name:'Veri Temizleme Uzmanı', desc:'Duplike, boşluk, yanlış formatı bir tıkla temizle.', cat:['Veri & Analiz','Üretkenlik'], prompt:'Verimi temizle: duplike satırları sil, boşlukları düzelt' },
-    { icon:'ti-package',       name:'Stok Analizi Uzmanı', desc:'Kritik stok, hızlı devir, ölü stok analizi.', cat:['Veri & Analiz','Ofis'], prompt:'Stok durumumu analiz et: kritik seviyedeki ürünleri göster' },
-    { icon:'ti-report-money',  name:'Finansal Rapor Uzmanı', desc:'Gelir, gider, kâr marjı ve nakit akış raporları.', cat:['Finans'], prompt:'Bu ayki finansal raporumu hazırla' },
-    { icon:'ti-presentation',  name:'Sunum Uzmanı', desc:'Verinden hızlıca sunum taslağı çıkar.', cat:['İçerik Üretimi','Üretkenlik'], prompt:'Bu tablodan sunum taslağı hazırla' },
-    { icon:'ti-robot',         name:'Otomasyon Uzmanı', desc:'Tekrarlayan işleri otomatikleştirmek için akış kur.', cat:['Üretkenlik'], prompt:'Şu tekrarlayan işlemi otomatikleştir: ' },
-    { icon:'ti-chart-bar',     name:'Pazarlama Raporu Uzmanı', desc:'Kampanya, dönüşüm, ROAS raporları.', cat:['Pazarlama','Finans'], prompt:'Pazarlama kampanya performansımı analiz et' }
+    { icon:'ti-math-function', name:'Excel Formül Uzmanı', desc:'Karmaşık formülleri sen tarif et, ben yazayım.', cat:['Ofis','Veri & Analiz'], skills:8, usage:'118.1K', prompt:'Bir Excel formülü yazmama yardım et: ' },
+    { icon:'ti-table-options', name:'Pivot Tablo Uzmanı', desc:'Verini özetle, kategori bazında rapor çıkar.', cat:['Ofis','Veri & Analiz'], skills:6, usage:'74.3K', prompt:'Verimden pivot tablo oluştur' },
+    { icon:'ti-broom',         name:'Veri Temizleme Uzmanı', desc:'Duplike, boşluk, yanlış formatı bir tıkla temizle.', cat:['Veri & Analiz','Üretkenlik'], skills:5, usage:'56.8K', prompt:'Verimi temizle: duplike satırları sil, boşlukları düzelt' },
+    { icon:'ti-package',       name:'Stok Analizi Uzmanı', desc:'Kritik stok, hızlı devir, ölü stok analizi.', cat:['Veri & Analiz','Ofis'], skills:7, usage:'42.5K', prompt:'Stok durumumu analiz et: kritik seviyedeki ürünleri göster' },
+    { icon:'ti-report-money',  name:'Finansal Rapor Uzmanı', desc:'Gelir, gider, kâr marjı ve nakit akış raporları.', cat:['Finans'], skills:9, usage:'89.2K', prompt:'Bu ayki finansal raporumu hazırla' },
+    { icon:'ti-presentation',  name:'Sunum Uzmanı', desc:'Verinden hızlıca sunum taslağı çıkar.', cat:['İçerik Üretimi','Üretkenlik'], skills:4, usage:'31.7K', prompt:'Bu tablodan sunum taslağı hazırla' },
+    { icon:'ti-robot',         name:'Otomasyon Uzmanı', desc:'Tekrarlayan işleri otomatikleştirmek için akış kur.', cat:['Üretkenlik'], skills:6, usage:'22.4K', prompt:'Şu tekrarlayan işlemi otomatikleştir: ' },
+    { icon:'ti-chart-bar',     name:'Pazarlama Raporu Uzmanı', desc:'Kampanya, dönüşüm, ROAS raporları.', cat:['Pazarlama','Finans'], skills:5, usage:'38.9K', prompt:'Pazarlama kampanya performansımı analiz et' }
   ];
 
   var _activeWorkflowCat = 'Tümü';
@@ -4448,10 +4512,17 @@ async function runColumnTranslate() {
       ? WORKFLOW_CARDS
       : WORKFLOW_CARDS.filter(function(c) { return c.cat.indexOf(_activeWorkflowCat) !== -1; });
     return cards.map(function(c) {
+      var tags = (c.cat || []).slice(0,2).map(function(t) {
+        return '<span class="agent-workflow-card-tag">' + t + '</span>';
+      }).join('');
+      var footer = '<strong>' + (c.skills || 0) + ' Yetenek</strong> · ' + (c.usage || '0') + ' kullanım';
       return '<button type="button" class="agent-workflow-card" data-prompt="' + c.prompt.replace(/"/g,'&quot;') + '">' +
         '<div class="agent-workflow-card-icon"><i class="ti ' + c.icon + '"></i></div>' +
         '<p class="agent-workflow-card-name">' + c.name + '</p>' +
-        '<p class="agent-workflow-card-desc">' + c.desc + '</p></button>';
+        '<div class="agent-workflow-card-tags">' + tags + '</div>' +
+        '<p class="agent-workflow-card-desc">' + c.desc + '</p>' +
+        '<p class="agent-workflow-card-footer">' + footer + '</p>' +
+        '</button>';
     }).join('');
   }
 
@@ -4470,8 +4541,11 @@ async function runColumnTranslate() {
     box.innerHTML =
       '<div class="agent-empty">' +
         '<div class="agent-empty-greeting">' +
-          '<h1 class="agent-empty-greeting-title">Merhaba, ben Mocksheets AI</h1>' +
-          '<p class="agent-empty-greeting-sub">Ne yapmak istersiniz?</p>' +
+          '<div class="agent-empty-avatar"><i class="ti ti-sparkles"></i></div>' +
+          '<div>' +
+            '<h1 class="agent-empty-greeting-title">Merhaba, ben Mocksheets AI</h1>' +
+            '<p class="agent-empty-greeting-sub">Ne yapmak istersiniz?</p>' +
+          '</div>' +
         '</div>' +
         '<div class="agent-quick-pills">' + _buildQuickPills() + '</div>' +
         '<div class="agent-shortcut-row">' + _buildShortcutRow() + '</div>' +
