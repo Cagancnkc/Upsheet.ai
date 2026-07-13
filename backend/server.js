@@ -584,6 +584,8 @@ app.post('/api/chat', checkLimit, async (req, res) => {
       return res.json({ requiresConfirmation: true, estimatedAffectedRows: nonEmptyRows, previewMessage: `Bu işlem veri içeren ~${nonEmptyRows} satırı etkileyebilir.` });
     }
 
+    res.setHeader('Access-Control-Allow-Origin', req.headers.origin || 'https://www.mocksheets.com');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
