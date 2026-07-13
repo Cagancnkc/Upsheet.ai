@@ -1834,6 +1834,8 @@
 
   // ── @ Mention Popup ───────────────────────────────────────────────────────
   (function() {
+    console.log('[mention-debug] textarea bulundu mu:', document.querySelector('.ai-input textarea'));
+    console.log('[mention-debug] tüm .ai-input elementleri:', document.querySelectorAll('.ai-input').length);
     var cmdInput = document.querySelector('.ai-input textarea');
     var popup = document.getElementById('mention-popup');
     var popupList = document.getElementById('mention-popup-list');
