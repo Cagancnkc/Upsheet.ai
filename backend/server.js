@@ -492,10 +492,10 @@ const _CONNECT_MAP = {
   google_drive: 'drive', google_sheets: 'sheets',
   ms_excel_online: 'excel', onedrive: 'excel',
 };
-app.get('/api/integrations/:integration/connect', async (req, res) => {
+app.get('/api/integrations/:integration/connect', async (req, res, next) => {
   const target = _CONNECT_MAP[req.params.integration];
   const frontend = process.env.FRONTEND_URL || 'https://www.mocksheets.com';
-  if (!target) return res.redirect(`${frontend}/automations?error=integration_not_supported&id=${encodeURIComponent(req.params.integration)}`);
+  if (!target) return next();
   const token = await _verifyConnectToken(req, res);
   if (!token) return;
   const params = new URLSearchParams({ token, ...(req.query.redirect ? { redirect: req.query.redirect } : {}) });

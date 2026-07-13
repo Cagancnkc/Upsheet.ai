@@ -883,6 +883,10 @@
 (function () {
   'use strict';
 
+  var apiBase = window.location.hostname === 'localhost'
+    ? 'http://localhost:3001'
+    : 'https://upsheet-ai.onrender.com';
+
   function escapeHtml(s) {
     return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
@@ -1898,7 +1902,6 @@
     var headers = { 'Content-Type': 'application/json' };
     var token = getAuthToken();
     if (token) headers['Authorization'] = 'Bearer ' + token;
-    var apiBase = window.location.hostname === 'localhost' ? 'http://localhost:3001' : 'https://upsheet-ai.onrender.com';
     fetch(apiBase + '/api/chat', {
       method: 'POST', headers: headers,
       body: JSON.stringify({ message: cmd, sheetData: getGridForAPI(), mentionedApps: extractMentions(cmd), confirmed: confirmed || false })
@@ -2050,7 +2053,6 @@
       var headers = { 'Content-Type': 'application/json' };
       var token = getAuthToken();
       if (token) headers['Authorization'] = 'Bearer ' + token;
-      var apiBase = window.location.hostname === 'localhost' ? 'http://localhost:3001' : 'https://upsheet-ai.onrender.com';
       fetch(apiBase + '/api/improve-prompt', {
         method: 'POST',
         headers: headers,
@@ -2680,8 +2682,6 @@
     if (!file) return;
     this.value = '';
 
-    var apiBase = window.location.hostname === 'localhost'
-      ? 'http://localhost:3001' : 'https://upsheet-ai.onrender.com';
     var origHTML = pdfAddBtn ? pdfAddBtn.innerHTML : '';
     if (pdfAddBtn) { pdfAddBtn.disabled = true; pdfAddBtn.textContent = '⟳ İşleniyor…'; }
 
@@ -3184,8 +3184,8 @@
 
   // ── Apps Panel (Uygulamalar) ─────────────────────────────────────────────
   var APPS_CONFIG = [
-    { id:'google',    name:'Google Workspace', icon:'https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/google.svg',    provider:'google-sheets',   connect:'oauth',    capabilities:['import','export'] },
-    { id:'microsoft', name:'Microsoft 365',    icon:'https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/microsoft.svg', provider:'microsoft-excel', connect:'oauth',    capabilities:['export'] },
+    { id:'google',    name:'Google Workspace', icon:'https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/google.svg',    provider:'google',    connect:'oauth',    capabilities:['import','export'] },
+    { id:'microsoft', name:'Microsoft 365',    icon:'https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/microsoft.svg', provider:'microsoft', connect:'oauth',    capabilities:['export'] },
     { id:'slack',     name:'Slack',            icon:'https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/slack.svg',     provider:'slack',           connect:'oauth',    capabilities:['export'] },
     { id:'shopify',   name:'Shopify',          icon:'https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/shopify.svg',   provider:'shopify',         connect:'shopify',  capabilities:['import'] },
     { id:'hubspot',   name:'HubSpot',          icon:'https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/hubspot.svg',   provider:'hubspot',         connect:'oauth',    capabilities:['import','export'] },
@@ -3278,7 +3278,7 @@
   function connectApp(appId) {
     var app = APPS_CONFIG.find(function(a){ return a.id === appId; });
     if (!app) return;
-    var base = (typeof apiBase !== 'undefined' ? apiBase : '');
+    var base = apiBase;
     var token = (window.getToken && getToken()) || localStorage.getItem('sb-access-token') || '';
     if (app.connect === 'shopify') {
       var shop = prompt('Shopify mağaza adı (ör: mystore.myshopify.com):');
@@ -3294,7 +3294,7 @@
     var app = APPS_CONFIG.find(function(a){ return a.id === appId; });
     if (!app) return;
     if (!confirm(app.name + ' bağlantısı kesilsin mi?')) return;
-    var base = (typeof apiBase !== 'undefined' ? apiBase : '');
+    var base = apiBase;
     var headers = (typeof authHeaders === 'function' ? authHeaders() : {});
     fetch(base + '/api/integrations/' + app.provider + '/disconnect', {
       method: 'DELETE', headers: headers
@@ -3307,7 +3307,7 @@
   function openNotionTokenModal() {
     var tok = prompt('Notion Integration Token (secret_... ile başlar):');
     if (!tok) return;
-    var base = (typeof apiBase !== 'undefined' ? apiBase : '');
+    var base = apiBase;
     var headers = Object.assign({'Content-Type':'application/json'}, (typeof authHeaders === 'function' ? authHeaders() : {}));
     fetch(base + '/api/integrations/notion/save-token', {
       method:'POST', headers: headers,
@@ -3352,7 +3352,6 @@
     btn.textContent = 'Çekiliyor...';
     showSheetsStatus('Veri çekiliyor...', 'loading');
 
-    var apiBase = window.location.hostname === 'localhost' ? 'http://localhost:3001' : 'https://upsheet-ai.onrender.com';
     var token = getAuthToken();
 
     fetch(apiBase + '/api/integrations/sheets/import-oauth', {
