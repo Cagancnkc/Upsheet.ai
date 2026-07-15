@@ -3,1017 +3,750 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Katalog Sağlığı — Mocksheets</title>
+  <title>Workspace — Mocksheets</title>
   <meta name="theme-color" content="#166534">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="description" content="Shopify kataloğunuzun sağlık durumunu gerçek zamanlı takip edin">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    html, body {
-      font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: #f8f7f5;
-      color: #111827;
-    }
-
-    body { min-height: 100vh; display: flex; }
-
-    .sidebar {
-      width: 280px;
-      background: #fff;
-      border-right: 1px solid #e5e7eb;
-      padding: 24px 0;
-      position: fixed;
-      height: 100vh;
-      overflow-y: auto;
-      z-index: 100;
-    }
-
-    .sidebar-logo {
-      padding: 0 24px;
-      margin-bottom: 32px;
-      font-size: 18px;
-      font-weight: 700;
-      color: #111827;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .sidebar-nav {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      padding: 0 12px;
-    }
-
-    .sidebar-item {
-      padding: 10px 16px;
-      border-radius: 10px;
-      cursor: pointer;
-      font-size: 14px;
-      color: #6b7280;
-      border: 1px solid transparent;
-      transition: all 0.2s;
-    }
-
-    .sidebar-item:hover {
-      background: #f9fafb;
-      color: #111827;
-    }
-
-    .sidebar-item.active {
-      background: #f0fdf4;
-      color: #166534;
-      border-color: #16a34a;
-    }
-
-    .sidebar-divider {
-      height: 1px;
-      background: #e5e7eb;
-      margin: 12px 0;
-    }
-
-    .sidebar-section-title {
-      padding: 8px 16px;
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
-      color: #9ca3af;
-      margin-top: 12px;
-    }
-
-    .main-content {
-      margin-left: 280px;
-      flex: 1;
-      padding: 40px;
-    }
-
-    .header {
-      margin-bottom: 32px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .header-left h1 {
-      font-size: 28px;
-      font-weight: 700;
-      margin-bottom: 4px;
-    }
-
-    .header-left p {
-      font-size: 14px;
-      color: #6b7280;
-    }
-
-    .header-actions {
-      display: flex;
-      gap: 12px;
-    }
-
-    button {
-      padding: 10px 20px;
-      border: none;
-      border-radius: 10px;
-      font-size: 14px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .btn-primary {
-      background: #16a34a;
-      color: #fff;
-    }
-
-    .btn-primary:hover {
-      background: #15803d;
-    }
-
-    .btn-secondary {
-      background: #f3f4f6;
-      color: #111827;
-      border: 1px solid #e5e7eb;
-    }
-
-    .btn-secondary:hover {
-      background: #f9fafb;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 20px;
-      margin-bottom: 32px;
-    }
-
-    .card {
-      background: #fff;
-      border: 1px solid #e5e7eb;
-      border-radius: 16px;
-      padding: 24px;
-      transition: all 0.2s;
-    }
-
-    .card:hover {
-      border-color: #d1d5db;
-      box-shadow: 0 4px 12px rgba(17, 24, 39, 0.06);
-    }
-
-    .health-score-card {
-      grid-column: 1 / -1;
-      background: linear-gradient(135deg, #f0fdf4 0%, #fef9c3 100%);
-    }
-
-    .health-score-value {
-      font-size: 56px;
-      font-weight: 700;
-      color: #166534;
-      display: flex;
-      align-items: baseline;
-      margin-bottom: 8px;
-    }
-
-    .health-score-value span {
-      font-size: 24px;
-      color: #6b7280;
-      margin-left: 4px;
-    }
-
-    .health-score-label {
-      font-size: 14px;
-      color: #6b7280;
-      margin-bottom: 16px;
-    }
-
-    .health-score-status {
-      padding: 12px 16px;
-      background: rgba(22, 165, 74, 0.1);
-      border-left: 3px solid #16a34a;
-      border-radius: 8px;
-      font-size: 13px;
-      color: #166534;
-    }
-
-    .metric-card {
-      text-align: center;
-    }
-
-    .metric-value {
-      font-size: 32px;
-      font-weight: 700;
-      color: #16a34a;
-      margin-bottom: 8px;
-    }
-
-    .metric-label {
-      font-size: 13px;
-      color: #6b7280;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .issue-card {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .issue-card:hover {
-      background: #f9fafb;
-    }
-
-    .issue-icon {
-      width: 48px;
-      height: 48px;
-      background: #fef3c7;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 24px;
-      flex-shrink: 0;
-    }
-
-    .issue-card.critical .issue-icon {
-      background: #fee2e2;
-      color: #dc2626;
-    }
-
-    .issue-card.high .issue-icon {
-      background: #fef3c7;
-      color: #f59e0b;
-    }
-
-    .issue-card.medium .issue-icon {
-      background: #e0e7ff;
-      color: #6366f1;
-    }
-
-    .issue-content h3 {
-      font-size: 14px;
-      font-weight: 600;
-      margin-bottom: 4px;
-    }
-
-    .issue-content p {
-      font-size: 13px;
-      color: #6b7280;
-    }
-
-    .issue-count {
-      font-size: 20px;
-      font-weight: 700;
-      color: #111827;
-      margin-left: auto;
-    }
-
-    .section-title {
-      font-size: 18px;
-      font-weight: 700;
-      margin-bottom: 20px;
-      margin-top: 32px;
-    }
-
-    .metrics-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 16px;
-      margin-bottom: 24px;
-    }
-
-    .metric-item {
-      padding: 16px;
-      background: #fff;
-      border: 1px solid #e5e7eb;
-      border-radius: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .metric-item-label {
-      font-size: 12px;
-      color: #6b7280;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .metric-item-value {
-      font-size: 24px;
-      font-weight: 700;
-      color: #111827;
-    }
-
-    .metric-item-progress {
-      height: 4px;
-      background: #e5e7eb;
-      border-radius: 2px;
-      overflow: hidden;
-    }
-
-    .metric-item-progress-bar {
-      height: 100%;
-      background: #16a34a;
-      border-radius: 2px;
-      transition: width 0.3s ease;
-    }
-
-    .trend-chart {
-      background: #fff;
-      border: 1px solid #e5e7eb;
-      border-radius: 16px;
-      padding: 24px;
-      grid-column: 1 / -1;
-    }
-
-    .chart-title {
-      font-size: 16px;
-      font-weight: 600;
-      margin-bottom: 20px;
-    }
-
-    .trend-items {
-      display: flex;
-      gap: 32px;
-      justify-content: space-between;
-    }
-
-    .trend-item {
-      flex: 1;
-      text-align: center;
-    }
-
-    .trend-label {
-      font-size: 12px;
-      color: #6b7280;
-      margin-bottom: 8px;
-    }
-
-    .trend-value {
-      font-size: 32px;
-      font-weight: 700;
-      color: #166534;
-      margin-bottom: 4px;
-    }
-
-    .trend-change {
-      font-size: 13px;
-      color: #16a34a;
-      font-weight: 600;
-    }
-
-    .suggestions-grid {
-      grid-column: 1 / -1;
-    }
-
-    .suggestion-item {
-      background: #fff;
-      border: 1px solid #e5e7eb;
-      border-radius: 16px;
-      padding: 20px;
-      margin-bottom: 12px;
-      display: flex;
-      align-items: flex-start;
-      gap: 16px;
-    }
-
-    .suggestion-icon {
-      width: 48px;
-      height: 48px;
-      background: #f0fdf4;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 24px;
-      flex-shrink: 0;
-    }
-
-    .suggestion-content {
-      flex: 1;
-    }
-
-    .suggestion-content h3 {
-      font-size: 14px;
-      font-weight: 600;
-      margin-bottom: 4px;
-    }
-
-    .suggestion-content p {
-      font-size: 13px;
-      color: #6b7280;
-      margin-bottom: 12px;
-    }
-
-    .suggestion-benefit {
-      display: flex;
-      gap: 12px;
-      font-size: 12px;
-      color: #166534;
-      font-weight: 500;
-    }
-
-    .suggestion-benefit::before {
-      content: '✓';
-      flex-shrink: 0;
-    }
-
-    .suggestion-action {
-      display: flex;
-      gap: 8px;
-      margin-top: 12px;
-    }
-
-    .btn-action {
-      padding: 8px 16px;
-      border: 1px solid #e5e7eb;
-      background: #fff;
-      border-radius: 8px;
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .btn-action:hover {
-      background: #f9fafb;
-    }
-
-    .btn-action.primary {
-      background: #16a34a;
-      color: #fff;
-      border-color: #16a34a;
-    }
-
-    .btn-action.primary:hover {
-      background: #15803d;
-    }
-
-    .quality-card {
-      background: #fff;
-      border: 1px solid #e5e7eb;
-      border-radius: 16px;
-      padding: 24px;
-    }
-
-    .quality-items {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-
-    .quality-item {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .quality-item-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .quality-item-label {
-      font-size: 14px;
-      font-weight: 600;
-    }
-
-    .quality-item-value {
-      font-size: 13px;
-      color: #6b7280;
-    }
-
-    .quality-item-progress {
-      height: 8px;
-      background: #e5e7eb;
-      border-radius: 4px;
-      overflow: hidden;
-    }
-
-    .quality-item-progress-bar {
-      height: 100%;
-      background: linear-gradient(90deg, #16a34a 0%, #86efac 100%);
-      border-radius: 4px;
-      transition: width 0.3s ease;
-    }
-
-    .quick-actions {
-      grid-column: 1 / -1;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 12px;
-    }
-
-    .quick-action-btn {
-      padding: 16px;
-      background: #fff;
-      border: 1px solid #e5e7eb;
-      border-radius: 12px;
-      font-size: 14px;
-      font-weight: 600;
-      color: #166534;
-      cursor: pointer;
-      transition: all 0.2s;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      justify-content: center;
-    }
-
-    .quick-action-btn:hover {
-      background: #f0fdf4;
-      border-color: #16a34a;
-    }
-
-    .quick-action-btn::before {
-      font-size: 18px;
-    }
-
+    html, body { font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8f7f5; color: #111827; min-height: 100vh; }
+    body { display: flex; }
+
+    /* Sidebar */
+    .sidebar { width: 280px; background: #fff; border-right: 1px solid #e5e7eb; padding: 24px 0; position: fixed; height: 100vh; overflow-y: auto; z-index: 100; display: flex; flex-direction: column; }
+    .sidebar-logo { padding: 0 24px; margin-bottom: 8px; font-size: 14px; font-weight: 700; color: #111827; display: flex; align-items: center; gap: 8px; }
+
+    /* Workspace Switcher */
+    .ws-switcher { padding: 12px 16px 12px 24px; margin: 0 12px 20px 12px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 10px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: 500; color: #111827; transition: all 0.2s; }
+    .ws-switcher:hover { background: #f3f4f6; }
+    .ws-switcher svg { width: 16px; height: 16px; }
+    .ws-dropdown { display: none; position: absolute; top: 120px; left: 12px; right: 12px; background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 1000; }
+    .ws-dropdown.open { display: flex; flex-direction: column; }
+    .ws-item { padding: 12px 16px; border-bottom: 1px solid #f3f4f6; cursor: pointer; font-size: 13px; color: #6b7280; transition: all 0.2s; }
+    .ws-item:hover { background: #f9fafb; color: #111827; }
+    .ws-item.active { background: #f0fdf4; color: #166534; border-left: 3px solid #16a34a; }
+    .ws-item-new { padding: 12px 16px; text-align: center; color: #16a34a; font-size: 12px; font-weight: 600; cursor: pointer; }
+
+    /* Search */
+    .search-bar { padding: 0 12px; margin-bottom: 20px; }
+    .search-bar input { width: 100%; padding: 10px 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 13px; background: #f9fafb; }
+    .search-bar input:focus { outline: none; border-color: #16a34a; background: #fff; }
+
+    /* Sidebar Nav */
+    .sidebar-nav { display: flex; flex-direction: column; gap: 4px; padding: 0 12px; flex: 1; }
+    .sidebar-divider { height: 1px; background: #e5e7eb; margin: 12px 0; }
+    .sidebar-section-title { padding: 8px 16px; font-size: 11px; font-weight: 600; text-transform: uppercase; color: #9ca3af; margin-top: 12px; }
+    .sidebar-item { padding: 10px 16px; border-radius: 10px; cursor: pointer; font-size: 13px; color: #6b7280; border: 1px solid transparent; transition: all 0.2s; display: flex; align-items: center; gap: 10px; }
+    .sidebar-item:hover { background: #f9fafb; color: #111827; }
+    .sidebar-item.active { background: #f0fdf4; color: #166534; border-color: #16a34a; font-weight: 500; }
+    .sidebar-item-icon { font-size: 16px; }
+
+    /* Main Content */
+    .main-content { margin-left: 280px; flex: 1; padding: 40px; overflow-y: auto; }
+    .header { margin-bottom: 32px; display: flex; justify-content: space-between; align-items: center; }
+    .header h1 { font-size: 28px; font-weight: 700; margin-bottom: 4px; }
+    .header p { font-size: 14px; color: #6b7280; }
+    .header-actions { display: flex; gap: 12px; }
+
+    /* Buttons */
+    button { padding: 10px 20px; border: none; border-radius: 10px; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+    .btn-primary { background: #16a34a; color: #fff; }
+    .btn-primary:hover { background: #15803d; }
+    .btn-secondary { background: #f3f4f6; color: #111827; border: 1px solid #e5e7eb; }
+    .btn-secondary:hover { background: #f9fafb; }
+    .btn-small { padding: 6px 12px; font-size: 12px; border: 1px solid #e5e7eb; background: #fff; border-radius: 8px; }
+    .btn-small:hover { background: #f9fafb; }
+    .btn-small.primary { background: #16a34a; color: #fff; border-color: #16a34a; }
+    .btn-small.primary:hover { background: #15803d; }
+
+    /* View Management */
+    .view { display: none; }
+    .view.active { display: block; }
+
+    /* Grid & Cards */
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; margin-bottom: 32px; }
+    .card { background: #fff; border: 1px solid #e5e7eb; border-radius: 16px; padding: 24px; transition: all 0.2s; }
+    .card:hover { border-color: #d1d5db; box-shadow: 0 4px 12px rgba(17, 24, 39, 0.06); }
+
+    /* Project Card */
+    .project-card { cursor: pointer; }
+    .project-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+    .project-name { font-size: 16px; font-weight: 600; color: #111827; }
+    .star-btn { font-size: 18px; background: none; border: none; cursor: pointer; padding: 0; color: #d1d5db; transition: all 0.2s; }
+    .star-btn:hover { color: #f59e0b; }
+    .star-btn.active { color: #f59e0b; }
+    .project-meta { font-size: 12px; color: #9ca3af; margin-bottom: 12px; }
+    .project-stats { display: flex; gap: 16px; margin-bottom: 12px; }
+    .project-stats span { font-size: 13px; color: #6b7280; }
+    .health-badge { background: #f0fdf4; color: #166534; padding: 2px 8px; border-radius: 4px; font-weight: 500; }
+    .validation-badge { background: #eff6ff; color: #0c4a6e; padding: 2px 8px; border-radius: 4px; font-weight: 500; }
+    .project-footer { font-size: 12px; color: #9ca3af; padding-top: 12px; border-top: 1px solid #f3f4f6; margin-bottom: 12px; }
+    .project-quick-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+    .project-quick-actions button { padding: 6px 10px; font-size: 12px; }
+
+    /* Catalog Card */
+    .catalog-card { cursor: pointer; }
+    .catalog-name { font-size: 15px; font-weight: 600; margin-bottom: 12px; }
+    .catalog-stats { display: flex; gap: 12px; margin-bottom: 12px; font-size: 13px; }
+    .catalog-stats div { display: flex; align-items: center; gap: 4px; }
+    .badge-green { background: #f0fdf4; color: #166534; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 500; }
+    .badge-blue { background: #eff6ff; color: #0c4a6e; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 500; }
+    .catalog-footer { font-size: 12px; color: #9ca3af; margin-top: 12px; padding-top: 12px; border-top: 1px solid #f3f4f6; }
+    .catalog-actions { display: flex; gap: 6px; margin-top: 12px; }
+    .catalog-actions button { padding: 6px 10px; font-size: 12px; }
+
+    /* Empty State */
+    .empty-state { text-align: center; padding: 60px 40px; }
+    .empty-icon { font-size: 64px; margin-bottom: 24px; display: block; }
+    .empty-state h2 { font-size: 24px; font-weight: 700; margin-bottom: 12px; }
+    .empty-state p { font-size: 14px; color: #6b7280; margin-bottom: 24px; max-width: 400px; margin-left: auto; margin-right: auto; }
+    .templates-hint { font-size: 13px; color: #9ca3af; margin-top: 32px; }
+    .templates-hint a { color: #16a34a; text-decoration: none; font-weight: 500; }
+
+    /* Modal */
+    .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1001; }
+    .modal-overlay.open { display: flex; align-items: center; justify-content: center; }
+    .modal { background: #fff; border-radius: 16px; padding: 32px; max-width: 500px; width: 90%; box-shadow: 0 20px 25px rgba(0,0,0,0.15); }
+    .modal-header { font-size: 20px; font-weight: 700; margin-bottom: 24px; }
+    .modal-close { position: absolute; top: 16px; right: 16px; background: none; border: none; font-size: 24px; cursor: pointer; color: #9ca3af; }
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px; color: #111827; }
+    .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 10px 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-family: inherit; font-size: 13px; }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus { outline: none; border-color: #16a34a; }
+    .form-group textarea { resize: vertical; min-height: 80px; }
+    .modal-actions { display: flex; gap: 12px; margin-top: 24px; }
+    .modal-actions button { flex: 1; }
+
+    /* Templates Grid */
+    .templates-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; margin-bottom: 24px; }
+    .template-card { padding: 16px; border: 2px solid #e5e7eb; border-radius: 12px; text-align: center; cursor: pointer; transition: all 0.2s; }
+    .template-card:hover { border-color: #16a34a; background: #f0fdf4; }
+    .template-icon { font-size: 32px; margin-bottom: 8px; }
+    .template-name { font-size: 12px; font-weight: 600; }
+
+    /* Team List */
+    .team-list { display: flex; flex-direction: column; gap: 12px; }
+    .team-member { display: flex; align-items: center; justify-content: space-between; padding: 16px; background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; }
+    .member-info { display: flex; flex-direction: column; gap: 4px; }
+    .member-name { font-size: 14px; font-weight: 600; }
+    .member-role { font-size: 12px; color: #6b7280; }
+    .member-actions { display: flex; gap: 8px; }
+
+    /* Activity Feed */
+    .activity-feed { display: flex; flex-direction: column; gap: 16px; }
+    .activity-item { padding: 16px; background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; border-left: 3px solid #16a34a; }
+    .activity-action { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+    .activity-detail { font-size: 13px; color: #6b7280; margin-bottom: 4px; }
+    .activity-meta { font-size: 12px; color: #9ca3af; }
+
+    /* Project Detail */
+    .project-detail-header { margin-bottom: 32px; }
+    .project-detail-back { font-size: 14px; color: #16a34a; cursor: pointer; margin-bottom: 12px; text-decoration: none; }
+    .project-detail-title { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+    .project-detail-meta { font-size: 14px; color: #6b7280; display: flex; gap: 16px; }
+
+    /* Section Title */
+    .section-title { font-size: 18px; font-weight: 700; margin-bottom: 20px; margin-top: 32px; }
+    .section-title:first-child { margin-top: 0; }
+
+    /* Responsive */
     @media (max-width: 768px) {
-      .sidebar {
-        width: 0;
-        transform: translateX(-100%);
-        transition: transform 0.3s;
-      }
-
-      .main-content {
-        margin-left: 0;
-        padding: 20px;
-      }
-
-      .sidebar.open {
-        width: 280px;
-        transform: translateX(0);
-      }
-
-      .health-score-value {
-        font-size: 40px;
-      }
-
-      .trend-items {
-        flex-direction: column;
-        gap: 16px;
-      }
+      .sidebar { width: 0; transform: translateX(-100%); transition: transform 0.3s; }
+      .main-content { margin-left: 0; padding: 20px; }
+      .sidebar.open { width: 280px; transform: translateX(0); }
+      .grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
+  <!-- Sidebar -->
   <div class="sidebar">
     <div class="sidebar-logo">📊 Mocksheets</div>
 
+    <div class="ws-switcher" onclick="toggleWsSwitcher()">
+      <span id="ws-name">CNKC Studio</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+    </div>
+    <div id="ws-dropdown" class="ws-dropdown"></div>
+
+    <div class="search-bar">
+      <input type="text" id="search-input" placeholder="Ara..." onkeyup="handleSearch(this.value)">
+    </div>
+
     <div class="sidebar-nav">
-      <div class="sidebar-item active">
-        Katalog Sağlığı
+      <div class="sidebar-item active" data-view="projects" onclick="showView('projects')">
+        <span class="sidebar-item-icon">📊</span>
+        Dashboard
       </div>
-      <div class="sidebar-item">
-        Tüm Raporlar
+      <div class="sidebar-item" data-view="projects" onclick="showView('projects')">
+        <span class="sidebar-item-icon">📁</span>
+        Projeler
       </div>
-      <div class="sidebar-item">
-        Entegrasyonlar
+      <div class="sidebar-item" data-view="catalogs" onclick="showView('catalogs')">
+        <span class="sidebar-item-icon">📋</span>
+        Kataloglar
       </div>
-      <div class="sidebar-item">
+      <div class="sidebar-item" onclick="window.location.href='/app.html'">
+        <span class="sidebar-item-icon">🤖</span>
+        AI İşlemleri
+      </div>
+      <div class="sidebar-item" data-view="activity" onclick="showView('activity')">
+        <span class="sidebar-item-icon">✅</span>
+        Validation
+      </div>
+      <div class="sidebar-item" onclick="window.location.href='/import.html'">
+        <span class="sidebar-item-icon">⬆️</span>
+        İçe Aktarma
+      </div>
+      <div class="sidebar-item" data-view="activity" onclick="showView('activity')">
+        <span class="sidebar-item-icon">📅</span>
+        Geçmiş
+      </div>
+      <div class="sidebar-item" data-view="team" onclick="showView('team')">
+        <span class="sidebar-item-icon">👥</span>
+        Takım
+      </div>
+      <div class="sidebar-item" data-view="settings" onclick="showView('settings')">
+        <span class="sidebar-item-icon">⚙️</span>
         Ayarlar
       </div>
     </div>
 
     <div class="sidebar-divider"></div>
+  </div>
 
-    <div class="sidebar-section-title">Yardım</div>
-    <div class="sidebar-nav">
-      <div class="sidebar-item">
-        Dokümantasyon
+  <!-- Main Content -->
+  <div class="main-content">
+    <!-- Projects View -->
+    <div id="view-projects" class="view active">
+      <div class="header">
+        <div class="header-left">
+          <h1>Projeler</h1>
+          <p>Tüm Shopify katalog projelerinizi yönetin</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn-primary" onclick="openNewProjectModal()">+ Yeni Proje</button>
+        </div>
       </div>
-      <div class="sidebar-item">
-        İletişim
+
+      <div id="projects-empty" class="empty-state" style="display:none;">
+        <div class="empty-icon">🚀</div>
+        <h2>İlk Shopify Projeni Oluştur</h2>
+        <p>Projeler sayesinde farklı mağazalarınızı, kataloglarınızı ve AI işlemlerinizi tek yerden yönetin.</p>
+        <button class="btn-primary" onclick="openNewProjectModal()">İlk Projemi Oluştur</button>
+        <div class="templates-hint">
+          veya <a href="#" onclick="openTemplates();return false;">hazır şablon</a> kullan
+        </div>
+      </div>
+
+      <div id="projects-container" class="grid"></div>
+    </div>
+
+    <!-- Project Detail View -->
+    <div id="view-project-detail" class="view">
+      <div class="project-detail-header">
+        <a class="project-detail-back" onclick="showView('projects')">← Geri</a>
+        <h1 class="project-detail-title" id="detail-project-name"></h1>
+        <div class="project-detail-meta">
+          <span id="detail-project-brand"></span>
+          <span id="detail-project-store"></span>
+          <span class="health-badge" id="detail-project-health"></span>
+        </div>
+      </div>
+
+      <div class="section-title">Kataloglar</div>
+      <div id="catalogs-container" class="grid"></div>
+
+      <div class="section-title">Son Aktiviteler</div>
+      <div id="project-activity" class="activity-feed"></div>
+    </div>
+
+    <!-- Catalogs View -->
+    <div id="view-catalogs" class="view">
+      <div class="header">
+        <h1>Tüm Kataloglar</h1>
+        <p>Tüm çalışma alanlarındaki kataloglar</p>
+      </div>
+      <div id="all-catalogs-container" class="grid"></div>
+    </div>
+
+    <!-- Team View -->
+    <div id="view-team" class="view">
+      <div class="header">
+        <div>
+          <h1>Takım</h1>
+          <p>Çalışma alanı üyeleri ve rolleri yönetin</p>
+        </div>
+        <button class="btn-primary" onclick="openInviteModal()">+ Davet Et</button>
+      </div>
+      <div id="team-container" class="team-list"></div>
+    </div>
+
+    <!-- Activity View -->
+    <div id="view-activity" class="view">
+      <h1>Aktivite</h1>
+      <p style="color:#6b7280; margin-bottom:32px;">Çalışma alanındaki tüm işlemler</p>
+      <div id="activity-container" class="activity-feed"></div>
+    </div>
+
+    <!-- Settings View -->
+    <div id="view-settings" class="view">
+      <h1>Ayarlar</h1>
+      <p style="color:#6b7280; margin-bottom:32px;">Çalışma alanı ayarlarınız</p>
+      <div class="card">
+        <div style="font-size:14px; color:#6b7280;">Ayarlar sayfası hazırlanıyor...</div>
       </div>
     </div>
   </div>
 
-  <div class="main-content">
-    <div class="header">
-      <div class="header-left">
-        <h1>Katalog Sağlığı</h1>
-        <p>Shopify kataloğunuzun genel durumunu takip edin</p>
-      </div>
-      <div class="header-actions">
-        <button class="btn-secondary" onclick="refreshDashboard()">Yenile</button>
-        <button class="btn-primary" onclick="openApp()">Uygulamaya Git</button>
+  <!-- New Project Modal -->
+  <div id="modal-new-project" class="modal-overlay">
+    <div class="modal" style="position:relative;">
+      <button class="modal-close" onclick="closeModal('modal-new-project')">×</button>
+      <div class="modal-header">Yeni Proje Oluştur</div>
+      <form onsubmit="submitNewProject(event)">
+        <div class="form-group">
+          <label>Proje Adı *</label>
+          <input type="text" id="form-project-name" required>
+        </div>
+        <div class="form-group">
+          <label>Marka</label>
+          <input type="text" id="form-brand">
+        </div>
+        <div class="form-group">
+          <label>Mağaza URL</label>
+          <input type="text" id="form-store" placeholder="mağaza.myshopify.com">
+        </div>
+        <div class="form-group">
+          <label>Açıklama</label>
+          <textarea id="form-description"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Varsayılan Dil</label>
+          <select id="form-language">
+            <option value="tr">Türkçe</option>
+            <option value="en">English</option>
+          </select>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" onclick="closeModal('modal-new-project')">İptal</button>
+          <button type="submit" class="btn-primary">Oluştur</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Templates Modal -->
+  <div id="modal-templates" class="modal-overlay">
+    <div class="modal" style="position:relative;">
+      <button class="modal-close" onclick="closeModal('modal-templates')">×</button>
+      <div class="modal-header">Hazır Şablon Seç</div>
+      <div class="templates-grid" id="templates-grid"></div>
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="closeModal('modal-templates')">İptal</button>
       </div>
     </div>
+  </div>
 
-    <!-- Health Score Card -->
-    <div class="card health-score-card">
-      <div class="health-score-value">
-        <span id="healthScore">91</span><span>/100</span>
-      </div>
-      <p class="health-score-label">Genel Katalog Sağlığı</p>
-      <div class="health-score-status" id="healthStatus">
-        Kataloğunuz iyi durumda ancak geliştirilebilecek alanlar bulunuyor
-      </div>
-    </div>
-
-    <!-- Health Metrics -->
-    <div class="section-title">Sağlık Metrikleri</div>
-    <div class="metrics-grid">
-      <div class="metric-item">
-        <div class="metric-item-label">SEO Kalitesi</div>
-        <div class="metric-item-value" id="metricSEO">72%</div>
-        <div class="metric-item-progress">
-          <div class="metric-item-progress-bar" style="width: 72%"></div>
+  <!-- Invite Modal -->
+  <div id="modal-invite" class="modal-overlay">
+    <div class="modal" style="position:relative;">
+      <button class="modal-close" onclick="closeModal('modal-invite')">×</button>
+      <div class="modal-header">Takım Üyesi Davet Et</div>
+      <form onsubmit="submitInvite(event)">
+        <div class="form-group">
+          <label>E-Posta *</label>
+          <input type="email" id="form-invite-email" required>
         </div>
-      </div>
-      <div class="metric-item">
-        <div class="metric-item-label">Açıklamalar</div>
-        <div class="metric-item-value" id="metricDescriptions">95%</div>
-        <div class="metric-item-progress">
-          <div class="metric-item-progress-bar" style="width: 95%"></div>
+        <div class="form-group">
+          <label>Rol</label>
+          <select id="form-invite-role">
+            <option value="editor">Editor</option>
+            <option value="viewer">Viewer</option>
+            <option value="admin">Admin</option>
+          </select>
         </div>
-      </div>
-      <div class="metric-item">
-        <div class="metric-item-label">Görseller</div>
-        <div class="metric-item-value" id="metricImages">83%</div>
-        <div class="metric-item-progress">
-          <div class="metric-item-progress-bar" style="width: 83%"></div>
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" onclick="closeModal('modal-invite')">İptal</button>
+          <button type="submit" class="btn-primary">Davet Gönder</button>
         </div>
-      </div>
-      <div class="metric-item">
-        <div class="metric-item-label">Etiketler</div>
-        <div class="metric-item-value" id="metricTags">67%</div>
-        <div class="metric-item-progress">
-          <div class="metric-item-progress-bar" style="width: 67%"></div>
-        </div>
-      </div>
-      <div class="metric-item">
-        <div class="metric-item-label">Vendor Tutarlılığı</div>
-        <div class="metric-item-value" id="metricVendor">100%</div>
-        <div class="metric-item-progress">
-          <div class="metric-item-progress-bar" style="width: 100%"></div>
-        </div>
-      </div>
-      <div class="metric-item">
-        <div class="metric-item-label">Google Shopping</div>
-        <div class="metric-item-value" id="metricGoogleShopping">78%</div>
-        <div class="metric-item-progress">
-          <div class="metric-item-progress-bar" style="width: 78%"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Issues -->
-    <div class="section-title">Bulunmuş Sorunlar</div>
-    <div class="grid">
-      <div class="card issue-card critical" onclick="filterByIssue('missing-seo')">
-        <div class="issue-icon">⚠️</div>
-        <div class="issue-content">
-          <h3>Eksik SEO</h3>
-          <p>Meta açıklama veya başlık yok</p>
-        </div>
-        <div class="issue-count" id="count-missing-seo">238</div>
-      </div>
-
-      <div class="card issue-card high" onclick="filterByIssue('missing-image')">
-        <div class="issue-icon">🖼️</div>
-        <div class="issue-content">
-          <h3>Eksik Görsel</h3>
-          <p>Ürünün görseli bulunmuyor</p>
-        </div>
-        <div class="issue-count" id="count-missing-image">17</div>
-      </div>
-
-      <div class="card issue-card high" onclick="filterByIssue('duplicate-title')">
-        <div class="issue-icon">📋</div>
-        <div class="issue-content">
-          <h3>Yinelenen Başlık</h3>
-          <p>Birden fazla ürünün aynı başlığı var</p>
-        </div>
-        <div class="issue-count" id="count-duplicate-title">41</div>
-      </div>
-
-      <div class="card issue-card medium" onclick="filterByIssue('missing-description')">
-        <div class="issue-icon">📝</div>
-        <div class="issue-content">
-          <h3>Eksik Açıklama</h3>
-          <p>Ürün açıklaması boş veya çok kısa</p>
-        </div>
-        <div class="issue-count" id="count-missing-description">59</div>
-      </div>
-
-      <div class="card issue-card medium" onclick="filterByIssue('invalid-vendor')">
-        <div class="issue-icon">🏢</div>
-        <div class="issue-content">
-          <h3>Yanlış Vendor</h3>
-          <p>Vendor adı standart değil</p>
-        </div>
-        <div class="issue-count" id="count-invalid-vendor">12</div>
-      </div>
-
-      <div class="card issue-card medium" onclick="filterByIssue('broken-html')">
-        <div class="issue-icon">🔧</div>
-        <div class="issue-content">
-          <h3>Bozuk HTML</h3>
-          <p>Açıklamada HTML formatlama hatası</p>
-        </div>
-        <div class="issue-count" id="count-broken-html">23</div>
-      </div>
-    </div>
-
-    <!-- Trend Chart -->
-    <div class="section-title">Zaman İçindeki Gelişim</div>
-    <div class="grid">
-      <div class="trend-chart">
-        <div class="chart-title">Katalog Sağlık Puanı Trendi</div>
-        <div class="trend-items">
-          <div class="trend-item">
-            <div class="trend-label">Bugün</div>
-            <div class="trend-value" id="trend-today">91</div>
-            <div class="trend-change">Başlangıç</div>
-          </div>
-          <div class="trend-item">
-            <div class="trend-label">Geçen Hafta</div>
-            <div class="trend-value" id="trend-week">84</div>
-            <div class="trend-change">+7 puan</div>
-          </div>
-          <div class="trend-item">
-            <div class="trend-label">Geçen Ay</div>
-            <div class="trend-value" id="trend-month">76</div>
-            <div class="trend-change">+15 puan</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- AI Suggestions -->
-    <div class="section-title">AI Önerileri</div>
-    <div class="grid suggestions-grid">
-      <div class="suggestion-item">
-        <div class="suggestion-icon">🎯</div>
-        <div class="suggestion-content">
-          <h3>SEO Puanınızı Optimize Edin</h3>
-          <p>SEO puanınızı %72'den %95'e çıkarabiliriz. 238 ürüne meta açıklama ekleyerek Google'da daha üst sıralarda görünebilirsiniz.</p>
-          <div class="suggestion-benefit">Arama sonuçlarında +45% daha fazla görünürlük</div>
-          <div class="suggestion-action">
-            <button class="btn-action primary" onclick="applySuggestion('seo')">SEO Oluştur</button>
-            <button class="btn-action">Detay Gör</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="suggestion-item">
-        <div class="suggestion-icon">📸</div>
-        <div class="suggestion-content">
-          <h3>Görselleri Tamamlayın</h3>
-          <p>17 ürünün görseli bulunmuyor. Ürünlerin görseline sahip olması dönüşüm oranını %23 artırabilir.</p>
-          <div class="suggestion-benefit">Dönüşüm oranında +23% iyileşme beklentisi</div>
-          <div class="suggestion-action">
-            <button class="btn-action primary" onclick="applySuggestion('images')">Görselleri Ekle</button>
-            <button class="btn-action">Detay Gör</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="suggestion-item">
-        <div class="suggestion-icon">💬</div>
-        <div class="suggestion-content">
-          <h3>Açıklamaları Yazın</h3>
-          <p>59 ürünün açıklaması yok veya çok kısa. İyi yazılmış açıklamalar müşteri memnuniyetini %18 arttırabilir.</p>
-          <div class="suggestion-benefit">Ürün sayfası geri dönüş %18 azalması</div>
-          <div class="suggestion-action">
-            <button class="btn-action primary" onclick="applySuggestion('descriptions')">Açıklama Yazın</button>
-            <button class="btn-action">Detay Gör</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="suggestion-item">
-        <div class="suggestion-icon">🏷️</div>
-        <div class="suggestion-content">
-          <h3>Etiketleri Standartlaştırın</h3>
-          <p>Etiketler (tags) tutarsız. Standart bir etiket sistemi kurarak ürün keşfiyatılabilirliğini %34 arttırabiliriz.</p>
-          <div class="suggestion-benefit">Ürün keşfiyatılabilirliğinde +34% artış</div>
-          <div class="suggestion-action">
-            <button class="btn-action primary" onclick="applySuggestion('tags')">Etiketleri Düzenle</button>
-            <button class="btn-action">Detay Gör</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Expected Improvement -->
-    <div class="section-title">Beklenen İyileşme</div>
-    <div class="grid">
-      <div class="card" style="text-align: center;">
-        <div style="display: grid; grid-template-columns: 1fr auto 1fr; gap: 32px; align-items: center;">
-          <div>
-            <p style="font-size: 12px; color: #6b7280; margin-bottom: 8px;">Mevcut</p>
-            <div style="font-size: 40px; font-weight: 700; color: #111827;">91</div>
-          </div>
-          <div style="font-size: 32px; color: #16a34a;">↓</div>
-          <div>
-            <p style="font-size: 12px; color: #6b7280; margin-bottom: 8px;">AI Sonrası</p>
-            <div style="font-size: 40px; font-weight: 700; color: #16a34a;">98</div>
-          </div>
-        </div>
-        <div style="margin-top: 24px; padding-top: 24px; border-top: 1px solid #e5e7eb; text-align: left;">
-          <p style="font-size: 13px; color: #6b7280; margin-bottom: 8px;">Uygulanacak İyileştirmeler:</p>
-          <div style="display: flex; flex-direction: column; gap: 8px; font-size: 13px; color: #166534; font-weight: 500;">
-            <div>✓ +238 SEO meta açıklaması oluşturulacak</div>
-            <div>✓ +59 ürün açıklaması yazılacak</div>
-            <div>✓ +41 başlık optimize edilecek</div>
-            <div>✓ +17 eksik görsel tespit edildi</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Catalog Quality -->
-    <div class="section-title">Katalog Kalite Analizi</div>
-    <div class="grid">
-      <div class="quality-card">
-        <div class="quality-items">
-          <div class="quality-item">
-            <div class="quality-item-header">
-              <span class="quality-item-label">SEO Kalitesi</span>
-              <span class="quality-item-value">72%</span>
-            </div>
-            <div class="quality-item-progress">
-              <div class="quality-item-progress-bar" style="width: 72%"></div>
-            </div>
-          </div>
-
-          <div class="quality-item">
-            <div class="quality-item-header">
-              <span class="quality-item-label">İçerik Kalitesi</span>
-              <span class="quality-item-value">85%</span>
-            </div>
-            <div class="quality-item-progress">
-              <div class="quality-item-progress-bar" style="width: 85%"></div>
-            </div>
-          </div>
-
-          <div class="quality-item">
-            <div class="quality-item-header">
-              <span class="quality-item-label">Veri Tutarlılığı</span>
-              <span class="quality-item-value">90%</span>
-            </div>
-            <div class="quality-item-progress">
-              <div class="quality-item-progress-bar" style="width: 90%"></div>
-            </div>
-          </div>
-
-          <div class="quality-item">
-            <div class="quality-item-header">
-              <span class="quality-item-label">Google Shopping Uyumluluğu</span>
-              <span class="quality-item-value">78%</span>
-            </div>
-            <div class="quality-item-progress">
-              <div class="quality-item-progress-bar" style="width: 78%"></div>
-            </div>
-          </div>
-
-          <div class="quality-item">
-            <div class="quality-item-header">
-              <span class="quality-item-label">Arama Deneyimi</span>
-              <span class="quality-item-value">88%</span>
-            </div>
-            <div class="quality-item-progress">
-              <div class="quality-item-progress-bar" style="width: 88%"></div>
-            </div>
-          </div>
-
-          <div class="quality-item">
-            <div class="quality-item-header">
-              <span class="quality-item-label">Kategori Düzeni</span>
-              <span class="quality-item-value">92%</span>
-            </div>
-            <div class="quality-item-progress">
-              <div class="quality-item-progress-bar" style="width: 92%"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Quick Actions -->
-    <div class="section-title">Hızlı İşlemler</div>
-    <div class="quick-actions">
-      <button class="quick-action-btn" onclick="applySuggestion('seo')">
-        SEO Oluştur
-      </button>
-      <button class="quick-action-btn" onclick="applySuggestion('descriptions')">
-        Eksikleri Doldur
-      </button>
-      <button class="quick-action-btn" onclick="applySuggestion('titles')">
-        Başlıkları Temizle
-      </button>
-      <button class="quick-action-btn" onclick="applySuggestion('tags')">
-        Etiketleri Düzenle
-      </button>
-      <button class="quick-action-btn" onclick="applySuggestion('vendor')">
-        Vendor Standartlaştır
-      </button>
-      <button class="quick-action-btn" onclick="applySuggestion('all')">
-        Tüm Sorunları Düzelt
-      </button>
-    </div>
-
-    <div style="margin-top: 64px; padding-top: 32px; border-top: 1px solid #e5e7eb; text-align: center; color: #9ca3af; font-size: 13px;">
-      <p>Son güncelleme: Bugün saat 14:32</p>
+      </form>
     </div>
   </div>
 
   <script>
-    (function() {
-      // Authentication check
-      function checkAuth() {
-        const token = localStorage.getItem('sb-access-token');
-        if (!token) {
-          window.location.href = '/auth?redirect=/dashboard.html';
-        }
-      }
+    let currentView = 'projects';
+    let currentWorkspace = 'cnkc-studio';
+    let currentProject = null;
 
-      function openApp() {
-        window.location.href = '/app.html';
-      }
+    // ===== DATA MANAGEMENT =====
 
-      function refreshDashboard() {
-        // In production, this would fetch fresh data from backend
-        console.log('Dashboard refreshing...');
-        // Simulate refresh animation
-        document.querySelector('.header-actions button:first-child').textContent = 'Güncelleniyor...';
-        setTimeout(() => {
-          document.querySelector('.header-actions button:first-child').textContent = 'Yenile';
-        }, 1500);
-      }
+    function loadWorkspaces() {
+      const stored = localStorage.getItem('mocksheets_workspaces');
+      if (stored) return JSON.parse(stored);
+      const defaults = [
+        { id: 'cnkc-studio', name: 'CNKC Studio' },
+        { id: 'nike-team', name: 'Nike Team' },
+        { id: 'demo', name: 'Demo Workspace' }
+      ];
+      localStorage.setItem('mocksheets_workspaces', JSON.stringify(defaults));
+      return defaults;
+    }
 
-      function filterByIssue(issueType) {
-        // Navigate to app with filter
-        window.location.href = '/app.html?filter=' + issueType;
-      }
+    function loadCurrentWorkspace() {
+      return localStorage.getItem('mocksheets_current_workspace') || 'cnkc-studio';
+    }
 
-      function applySuggestion(suggestionType) {
-        // Navigate to app with preset command
-        const commands = {
-          'seo': 'tüm ürünlere seo meta açıklaması ekle',
-          'descriptions': 'boş açıklamaları doldur',
-          'titles': 'başlıkları temizle ve optimize et',
-          'tags': 'etiketleri standartlaştır',
-          'vendor': 'vendor adlarını standart hale getir',
-          'images': 'eksik görselleri tespit et',
-          'all': 'kataloğu tamamen optimize et'
-        };
+    function saveCurrentWorkspace(id) {
+      localStorage.setItem('mocksheets_current_workspace', id);
+      currentWorkspace = id;
+    }
 
-        const command = commands[suggestionType] || 'katalog sağlığını analiz et';
-        window.location.href = '/app.html?command=' + encodeURIComponent(command);
-      }
-
-      // Mock data for demonstration
-      const mockHealthData = {
-        overall: 91,
-        metrics: {
-          seo: 72,
-          descriptions: 95,
-          images: 83,
-          tags: 67,
-          vendor: 100,
-          googleShopping: 78
+    function loadProjects() {
+      const stored = localStorage.getItem('mocksheets_projects');
+      if (stored) return JSON.parse(stored);
+      const defaults = [
+        {
+          id: 'p1', workspaceId: 'cnkc-studio', name: 'Nike Europe', brand: 'Nike', store: 'nike-europe.myshopify.com',
+          description: 'Avrupa pazarı kataloğu', language: 'tr', health: 94, validation: 88, productCount: 2487,
+          favorite: false, archived: false, updatedAt: '2 saat önce', createdAt: '2026-07-01',
+          catalogs: [
+            { id: 'c1', name: 'Spring Collection', products: 842, health: 96, validation: 92, updatedAt: '2s' },
+            { id: 'c2', name: 'Summer Collection', products: 1645, health: 91, validation: 85, updatedAt: '1g' }
+          ],
+          members: [{ name: 'Çağan', role: 'Owner', email: 'cagancanakci3827@gmail.com', lastActive: '2s' }],
+          activity: [
+            { action: 'SEO oluşturuldu', detail: '421 ürün', user: 'Çağan', time: '2s' },
+            { action: 'Validation çalıştırıldı', detail: 'Nike Europe', user: 'Çağan', time: '1g' }
+          ]
         },
-        issues: {
-          'missing-seo': 238,
-          'missing-image': 17,
-          'duplicate-title': 41,
-          'missing-description': 59,
-          'invalid-vendor': 12,
-          'broken-html': 23
+        {
+          id: 'p2', workspaceId: 'cnkc-studio', name: 'Adidas Summer', brand: 'Adidas', store: 'adidas-summer.myshopify.com',
+          description: 'Yaz koleksiyonu', language: 'tr', health: 88, validation: 85, productCount: 1241,
+          favorite: false, archived: false, updatedAt: '1 gün önce', createdAt: '2026-06-15',
+          catalogs: [
+            { id: 'c3', name: 'Main Collection', products: 1241, health: 88, validation: 85, updatedAt: '1g' }
+          ],
+          members: [{ name: 'Çağan', role: 'Owner', email: 'cagancanakci3827@gmail.com', lastActive: '1g' }],
+          activity: []
         },
-        trend: {
-          today: 91,
-          week: 84,
-          month: 76
+        {
+          id: 'p3', workspaceId: 'cnkc-studio', name: 'Outlet', brand: 'Premium', store: 'outlet.myshopify.com',
+          description: 'Outlet ürünleri', language: 'tr', health: 97, validation: 92, productCount: 892,
+          favorite: true, archived: false, updatedAt: '3 saat önce', createdAt: '2026-05-20',
+          catalogs: [
+            { id: 'c4', name: 'Clearance', products: 892, health: 97, validation: 92, updatedAt: '3s' }
+          ],
+          members: [{ name: 'Çağan', role: 'Owner', email: 'cagancanakci3827@gmail.com', lastActive: '3s' }],
+          activity: [
+            { action: 'CSV içe aktarıldı', detail: 'Clearance', user: 'Çağan', time: '3s' }
+          ]
         }
-      };
+      ];
+      localStorage.setItem('mocksheets_projects', JSON.stringify(defaults));
+      return defaults;
+    }
 
-      // Expose functions globally
-      window.openApp = openApp;
-      window.refreshDashboard = refreshDashboard;
-      window.filterByIssue = filterByIssue;
-      window.applySuggestion = applySuggestion;
+    function saveProjects(projects) {
+      localStorage.setItem('mocksheets_projects', JSON.stringify(projects));
+    }
 
-      // Initialize on load
-      document.addEventListener('DOMContentLoaded', function() {
-        checkAuth();
-        // Data is already populated via HTML attributes
+    // ===== UI FUNCTIONS =====
+
+    function showView(name) {
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      document.getElementById('view-' + name).classList.add('active');
+      document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+      document.querySelector('[data-view="' + name + '"]')?.classList.add('active');
+      currentView = name;
+
+      if (name === 'projects') renderProjects();
+      else if (name === 'catalogs') renderAllCatalogs();
+      else if (name === 'team') renderTeam();
+      else if (name === 'activity') renderActivity();
+    }
+
+    function toggleWsSwitcher() {
+      const dropdown = document.getElementById('ws-dropdown');
+      dropdown.classList.toggle('open');
+      if (dropdown.classList.contains('open')) renderWorkspaces();
+    }
+
+    function renderWorkspaces() {
+      const dropdown = document.getElementById('ws-dropdown');
+      const workspaces = loadWorkspaces();
+      dropdown.innerHTML = workspaces.map(ws => `
+        <div class="ws-item ${ws.id === currentWorkspace ? 'active' : ''}" onclick="selectWorkspace('${ws.id}')">${ws.name}</div>
+      `).join('') + '<div class="ws-item-new" onclick="alert(\'Yeni workspace oluşturma yakında...\')">+ Yeni Workspace</div>';
+    }
+
+    function selectWorkspace(id) {
+      saveCurrentWorkspace(id);
+      document.getElementById('ws-name').textContent = loadWorkspaces().find(w => w.id === id).name;
+      document.getElementById('ws-dropdown').classList.remove('open');
+      renderProjects();
+    }
+
+    function renderProjects() {
+      const projects = loadProjects().filter(p => p.workspaceId === currentWorkspace && !p.archived);
+      const container = document.getElementById('projects-container');
+      const empty = document.getElementById('projects-empty');
+
+      if (projects.length === 0) {
+        container.innerHTML = '';
+        empty.style.display = 'block';
+        return;
+      }
+
+      empty.style.display = 'none';
+      const favorites = projects.filter(p => p.favorite).sort((a, b) => a.name.localeCompare(b.name));
+      const rest = projects.filter(p => !p.favorite).sort((a, b) => a.name.localeCompare(b.name));
+      const sorted = [...favorites, ...rest];
+
+      container.innerHTML = sorted.map(p => `
+        <div class="card project-card" data-searchable="${p.name} ${p.brand}">
+          <div class="project-card-header">
+            <div class="project-name">${p.name}</div>
+            <button class="star-btn ${p.favorite ? 'active' : ''}" onclick="toggleFav('${p.id}',event)">★</button>
+          </div>
+          <div class="project-meta">${p.brand} · ${p.store}</div>
+          <div class="project-stats">
+            <span>${p.productCount} ürün</span>
+            <span class="health-badge">Health ${p.health}</span>
+          </div>
+          <div class="project-footer">Son güncelleme: ${p.updatedAt}</div>
+          <div class="project-quick-actions">
+            <button class="btn-small" onclick="openProjectDetail('${p.id}')">Aç</button>
+            <button class="btn-small" onclick="window.location.href='/app.html'">Optimize</button>
+            <button class="btn-small" onclick="alert('CSV indirme yakında...')">CSV</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function toggleFav(id, e) {
+      e.stopPropagation();
+      const projects = loadProjects();
+      const p = projects.find(x => x.id === id);
+      p.favorite = !p.favorite;
+      saveProjects(projects);
+      renderProjects();
+    }
+
+    function openProjectDetail(id) {
+      currentProject = id;
+      const project = loadProjects().find(p => p.id === id);
+      document.getElementById('detail-project-name').textContent = project.name;
+      document.getElementById('detail-project-brand').textContent = project.brand;
+      document.getElementById('detail-project-store').textContent = project.store;
+      document.getElementById('detail-project-health').textContent = `Health ${project.health}`;
+
+      const catalogsContainer = document.getElementById('catalogs-container');
+      catalogsContainer.innerHTML = project.catalogs.map(c => `
+        <div class="card catalog-card" data-searchable="${c.name}">
+          <div class="catalog-name">${c.name}</div>
+          <div class="catalog-stats">
+            <div>${c.products} ürün</div>
+            <div class="badge-green">Health ${c.health}</div>
+            <div class="badge-blue">Valid ${c.validation}</div>
+          </div>
+          <div class="catalog-footer">${c.updatedAt}</div>
+          <div class="catalog-actions">
+            <button class="btn-small" onclick="window.location.href='/app.html'">Aç</button>
+            <button class="btn-small">Optimize</button>
+            <button class="btn-small">CSV</button>
+            <button class="btn-small">Geçmiş</button>
+          </div>
+        </div>
+      `).join('');
+
+      const activityContainer = document.getElementById('project-activity');
+      activityContainer.innerHTML = project.activity.length > 0 ? project.activity.map(a => `
+        <div class="activity-item">
+          <div class="activity-action">${a.action}</div>
+          ${a.detail ? `<div class="activity-detail">${a.detail}</div>` : ''}
+          <div class="activity-meta">${a.user} · ${a.time}</div>
+        </div>
+      `).join('') : '<div style="color:#9ca3af; font-size:13px;">Henüz aktivite yok</div>';
+
+      showView('project-detail');
+    }
+
+    function renderAllCatalogs() {
+      const projects = loadProjects().filter(p => p.workspaceId === currentWorkspace);
+      const container = document.getElementById('all-catalogs-container');
+      const allCatalogs = [];
+      projects.forEach(p => {
+        p.catalogs.forEach(c => allCatalogs.push({ ...c, projectName: p.name, projectId: p.id }));
       });
-    })();
+
+      container.innerHTML = allCatalogs.map(c => `
+        <div class="card catalog-card" data-searchable="${c.name} ${c.projectName}">
+          <div class="catalog-name">${c.name}</div>
+          <div style="font-size:12px; color:#9ca3af; margin-bottom:12px;">${c.projectName}</div>
+          <div class="catalog-stats">
+            <div>${c.products} ürün</div>
+            <div class="badge-green">Health ${c.health}</div>
+            <div class="badge-blue">Valid ${c.validation}</div>
+          </div>
+          <div class="catalog-footer">${c.updatedAt}</div>
+          <div class="catalog-actions">
+            <button class="btn-small" onclick="window.location.href='/app.html'">Aç</button>
+            <button class="btn-small">CSV</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderTeam() {
+      const projects = loadProjects().filter(p => p.workspaceId === currentWorkspace);
+      const members = new Map();
+      projects.forEach(p => {
+        p.members.forEach(m => {
+          if (!members.has(m.email)) members.set(m.email, m);
+        });
+      });
+
+      const container = document.getElementById('team-container');
+      container.innerHTML = Array.from(members.values()).map(m => `
+        <div class="team-member">
+          <div class="member-info">
+            <div class="member-name">${m.name}</div>
+            <div class="member-role">${m.role} · Son aktif: ${m.lastActive}</div>
+          </div>
+          <div class="member-actions">
+            <button class="btn-small" onclick="alert('Rol değiştirme yakında...')">Düzenle</button>
+            <button class="btn-small" onclick="alert('Üye kaldırma yakında...')">Kaldır</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderActivity() {
+      const projects = loadProjects().filter(p => p.workspaceId === currentWorkspace);
+      const allActivity = [];
+      projects.forEach(p => {
+        p.activity.forEach(a => allActivity.push({ ...a, projectName: p.name }));
+      });
+      allActivity.sort((a, b) => {
+        const order = { '2s': 0, '1g': 1, '3s': 2 };
+        return (order[a.time] || 999) - (order[b.time] || 999);
+      });
+
+      const container = document.getElementById('activity-container');
+      container.innerHTML = allActivity.length > 0 ? allActivity.map(a => `
+        <div class="activity-item">
+          <div class="activity-action">${a.action}</div>
+          ${a.detail ? `<div class="activity-detail">${a.detail}</div>` : ''}
+          <div class="activity-meta">${a.projectName} · ${a.user} · ${a.time}</div>
+        </div>
+      `).join('') : '<div style="color:#9ca3af; font-size:13px;">Henüz aktivite yok</div>';
+    }
+
+    function handleSearch(q) {
+      const lower = q.toLowerCase();
+      document.querySelectorAll('[data-searchable]').forEach(el => {
+        el.style.display = el.dataset.searchable.toLowerCase().includes(lower) ? '' : 'none';
+      });
+    }
+
+    // ===== MODALS =====
+
+    function openNewProjectModal() {
+      document.getElementById('modal-new-project').classList.add('open');
+      document.getElementById('form-project-name').focus();
+    }
+
+    function openTemplates() {
+      const templates = [
+        { icon: '🛒', name: 'Shopify Store' },
+        { icon: '👗', name: 'Fashion' },
+        { icon: '💻', name: 'Electronics' },
+        { icon: '💄', name: 'Cosmetics' },
+        { icon: '🛋️', name: 'Furniture' }
+      ];
+      document.getElementById('templates-grid').innerHTML = templates.map((t, i) => `
+        <div class="template-card" onclick="selectTemplate(${i})">
+          <div class="template-icon">${t.icon}</div>
+          <div class="template-name">${t.name}</div>
+        </div>
+      `).join('');
+      document.getElementById('modal-templates').classList.add('open');
+    }
+
+    function selectTemplate(index) {
+      document.getElementById('modal-templates').classList.remove('open');
+      openNewProjectModal();
+    }
+
+    function openInviteModal() {
+      document.getElementById('modal-invite').classList.add('open');
+      document.getElementById('form-invite-email').focus();
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('open');
+    }
+
+    function submitNewProject(e) {
+      e.preventDefault();
+      const projects = loadProjects();
+      const newProject = {
+        id: 'p' + Date.now(),
+        workspaceId: currentWorkspace,
+        name: document.getElementById('form-project-name').value,
+        brand: document.getElementById('form-brand').value || 'Brand',
+        store: document.getElementById('form-store').value || 'mağaza.myshopify.com',
+        description: document.getElementById('form-description').value,
+        language: document.getElementById('form-language').value,
+        health: 85, validation: 80, productCount: 0,
+        favorite: false, archived: false,
+        updatedAt: 'az önce', createdAt: new Date().toISOString().split('T')[0],
+        catalogs: [], members: [{ name: 'Çağan', role: 'Owner', email: 'cagancanakci3827@gmail.com', lastActive: 'az önce' }],
+        activity: []
+      };
+      projects.push(newProject);
+      saveProjects(projects);
+      closeModal('modal-new-project');
+      renderProjects();
+      document.getElementById('form-project-name').value = '';
+      document.getElementById('form-brand').value = '';
+      document.getElementById('form-store').value = '';
+      document.getElementById('form-description').value = '';
+    }
+
+    function submitInvite(e) {
+      e.preventDefault();
+      alert('Davet gönderildi: ' + document.getElementById('form-invite-email').value);
+      closeModal('modal-invite');
+      document.getElementById('form-invite-email').value = '';
+    }
+
+    // ===== INIT =====
+
+    function checkAuth() {
+      const token = localStorage.getItem('sb-access-token');
+      if (!token) window.location.href = '/auth?redirect=/dashboard.html';
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      checkAuth();
+      currentWorkspace = loadCurrentWorkspace();
+      loadWorkspaces();
+      loadProjects();
+      document.getElementById('ws-name').textContent = loadWorkspaces().find(w => w.id === currentWorkspace).name;
+      renderProjects();
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.ws-switcher') && !e.target.closest('.ws-dropdown')) {
+        document.getElementById('ws-dropdown').classList.remove('open');
+      }
+    });
   </script>
 </body>
 </html>
