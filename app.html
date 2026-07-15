@@ -652,6 +652,44 @@
       </div>
     </div>
 
+    <div id="bulk-action-bar" style="display:none;align-items:center;
+         justify-content:space-between;padding:10px 24px;background:#f0fdf4;
+         border-bottom:0.5px solid #d1fae5;flex-shrink:0;">
+      <span id="bulk-selected-label" style="font-size:12px;font-weight:600;color:#16a34a;"></span>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <button class="bulk-action-btn" data-action="titles" type="button"
+          style="padding:6px 12px;border:0.5px solid #d1fae5;border-radius:8px;
+                 background:#fff;color:#374151;font-size:12px;cursor:pointer;">
+          Başlıkları Düzenle
+        </button>
+        <button class="bulk-action-btn" data-action="seo" type="button"
+          style="padding:6px 12px;border:0.5px solid #d1fae5;border-radius:8px;
+                 background:#fff;color:#374151;font-size:12px;cursor:pointer;">
+          SEO Oluştur
+        </button>
+        <button class="bulk-action-btn" data-action="tags" type="button"
+          style="padding:6px 12px;border:0.5px solid #d1fae5;border-radius:8px;
+                 background:#fff;color:#374151;font-size:12px;cursor:pointer;">
+          Etiketleri Düzenle
+        </button>
+        <button class="bulk-action-btn" data-action="translate" type="button"
+          style="padding:6px 12px;border:0.5px solid #d1fae5;border-radius:8px;
+                 background:#fff;color:#374151;font-size:12px;cursor:pointer;">
+          Ürünleri Çevir
+        </button>
+        <button class="bulk-action-btn" data-action="handle" type="button"
+          style="padding:6px 12px;border:0.5px solid #d1fae5;border-radius:8px;
+                 background:#fff;color:#374151;font-size:12px;cursor:pointer;">
+          Handle Oluştur
+        </button>
+        <button class="bulk-action-btn" data-action="delete" type="button"
+          style="padding:6px 12px;border:none;border-radius:8px;
+                 background:#fef2f2;color:#dc2626;font-size:12px;cursor:pointer;">
+          Sil
+        </button>
+      </div>
+    </div>
+
     <!-- canvas-wrap buraya taşınacak -->
     <div id="catalog-table-slot"
       style="flex:1;overflow:hidden;position:relative;display:flex;flex-direction:column;">
@@ -1091,6 +1129,7 @@
   };
 
   var gridData = emptyGridData();
+  var _selectedRowIndices = new Set();
   var activeFilter = null;
 
   function createCatalogGridData() {
@@ -4534,6 +4573,8 @@ async function runColumnTranslate() {
     }
     if (totalEl)    totalEl.textContent    = total.toLocaleString('tr-TR');
     if (filteredEl) filteredEl.textContent = total.toLocaleString('tr-TR');
+    var selectedEl = document.getElementById('footer-selected-count');
+    if (selectedEl) selectedEl.textContent = _selectedRowIndices.size;
   }
 
   (function wireCatalogToolbar() {
@@ -4635,8 +4676,8 @@ async function runColumnTranslate() {
     if (!body) return;
 
     // 1. Satır hover efekti — delegated events (flat div grid, row wrapper yok)
-    if (!body._rowHoverBound) {
-      body._rowHoverBound = true;
+    if (!body._rowHoverBoundV3) {
+      body._rowHoverBoundV3 = true;
       var hoveredRow = null;
 
       body.addEventListener('mouseover', function(e) {
@@ -4646,8 +4687,8 @@ async function runColumnTranslate() {
         if (!r || r === '0') return;
         if (r === hoveredRow) return;
 
-        // Önceki satırı temizle
-        if (hoveredRow !== null) {
+        // Önceki satırı temizle (seçili değilse)
+        if (hoveredRow !== null && !_selectedRowIndices.has(parseInt(hoveredRow, 10))) {
           body.querySelectorAll('.grid-cell[data-r="' + hoveredRow + '"]').forEach(function(c) {
             if (!c.classList.contains('selected') && !c._statusCell)
               c.style.background = c._origBg || '';
@@ -4655,25 +4696,27 @@ async function runColumnTranslate() {
         }
         hoveredRow = r;
 
-        // Yeni satırı vurgula
-        body.querySelectorAll('.grid-cell[data-r="' + r + '"]').forEach(function(c) {
-          if (!c.classList.contains('selected') && !c._statusCell) {
-            c._origBg = c.style.background || '';
-            c.style.background = '#f9fafb';
-          }
-        });
+        // Yeni satırı vurgula (seçili değilse)
+        if (!_selectedRowIndices.has(parseInt(r, 10))) {
+          body.querySelectorAll('.grid-cell[data-r="' + r + '"]').forEach(function(c) {
+            if (!c.classList.contains('selected') && !c._statusCell) {
+              c._origBg = c.style.background || '';
+              c.style.background = '#f9fafb';
+            }
+          });
+        }
       });
 
       body.addEventListener('mouseout', function(e) {
         var to = e.relatedTarget;
         if (to && to.closest && to.closest('#grid-body')) return;
-        if (hoveredRow !== null) {
+        if (hoveredRow !== null && !_selectedRowIndices.has(parseInt(hoveredRow, 10))) {
           body.querySelectorAll('.grid-cell[data-r="' + hoveredRow + '"]').forEach(function(c) {
             if (!c.classList.contains('selected') && !c._statusCell)
               c.style.background = c._origBg || '';
           });
-          hoveredRow = null;
         }
+        hoveredRow = null;
       });
     }
 
@@ -4687,7 +4730,7 @@ async function runColumnTranslate() {
       }
     }
 
-    if (statusColIdx < 0) return;
+    if (statusColIdx >= 0) {
 
     for (var r = 1; r < GRID_ROWS; r++) {
       var cellVal = gridData[r] && gridData[r][statusColIdx]
@@ -4732,7 +4775,78 @@ async function runColumnTranslate() {
         });
       }
     }
+    }
+
+    // 3. Checkbox seçim — her data satırının ilk hücresine
+    body.querySelectorAll('.grid-cell[data-c="0"]').forEach(function(cellEl) {
+      var rNum = parseInt(cellEl.dataset.r, 10);
+      if (!rNum || rNum <= 0) return;
+      if (cellEl._checkboxAdded) return;
+      cellEl._checkboxAdded = true;
+
+      var inp = cellEl.querySelector('input');
+      if (inp) inp.style.paddingLeft = '28px';
+
+      var cb = document.createElement('input');
+      cb.type = 'checkbox';
+      cb.style.cssText = 'position:absolute;left:6px;top:50%;transform:translateY(-50%);cursor:pointer;z-index:2;';
+      cb.checked = _selectedRowIndices.has(rNum);
+
+      (function(rowNum, checkEl) {
+        checkEl.addEventListener('click', function(e) {
+          e.stopPropagation();
+          toggleRowSelection(rowNum);
+          checkEl.checked = _selectedRowIndices.has(rowNum);
+          body.querySelectorAll('.grid-cell[data-r="' + rowNum + '"]').forEach(function(c) {
+            if (!c._statusCell)
+              c.style.background = _selectedRowIndices.has(rowNum) ? '#f0fdf4' : '';
+          });
+        });
+      })(rNum, cb);
+
+      cellEl.insertBefore(cb, cellEl.firstChild);
+    });
   }
+
+  // ── Alt Faz 3: Çoklu seçim ──────────────────────────────────────────────
+  function toggleRowSelection(rowIndex) {
+    if (_selectedRowIndices.has(rowIndex)) {
+      _selectedRowIndices.delete(rowIndex);
+    } else {
+      _selectedRowIndices.add(rowIndex);
+    }
+    updateBulkToolbar();
+    updateFooterCounts();
+  }
+
+  function updateBulkToolbar() {
+    var bar   = document.getElementById('bulk-action-bar');
+    var label = document.getElementById('bulk-selected-label');
+    if (!bar || !label) return;
+    var count = _selectedRowIndices.size;
+    if (count > 0) {
+      bar.style.display = 'flex';
+      label.textContent = count + ' ürün seçildi';
+    } else {
+      bar.style.display = 'none';
+    }
+  }
+
+  (function wireBulkActions() {
+    var bar = document.getElementById('bulk-action-bar');
+    if (!bar) return;
+    bar.querySelectorAll('.bulk-action-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var action = this.dataset.action;
+        if (action === 'delete') {
+          if (!confirm(_selectedRowIndices.size + ' ürünü silmek istediğinize emin misiniz?')) return;
+          alert('Silme işlemi mevcut sheet düzenleme sistemine bağlanacak.');
+        } else {
+          alert(this.textContent.trim() + ' işlemi ' + _selectedRowIndices.size + ' ürüne uygulanacak — AI paneli fazında bağlanacak.');
+        }
+      });
+    });
+  })();
 })();
 </script>
 
