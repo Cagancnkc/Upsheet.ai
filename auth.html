@@ -794,7 +794,7 @@ sb.auth.getSession().then(function({ data }) {
         redirect: redirect, integration: integration, timestamp: Date.now()
       }));
     }
-    var dest = 'dashboard.html';
+    var dest = 'app.html';
     if (redirect === 'automations') dest = 'app.html?open=integrations';
     if (redirect === 'app') dest = 'app.html';
     window.location.href = dest;
@@ -860,7 +860,7 @@ async function handleSubmit() {
   var _authParams   = new URLSearchParams(window.location.search);
   var _authRedirect = _authParams.get('redirect');
   var _authIntegration = _authParams.get('integration');
-  var _appDest = 'dashboard.html';
+  var _appDest = 'app.html';
   if (_authRedirect === 'automations') _appDest = 'app.html?open=integrations';
   if (_authRedirect === 'app') _appDest = 'app.html';
   if (_authRedirect) {
@@ -926,8 +926,8 @@ async function handleGoogleLogin() {
       provider: 'google',
       options: {
         redirectTo: (window.location.hostname === 'localhost')
-          ? 'http://localhost:3000/dashboard.html'
-          : 'https://mocksheets.com/dashboard.html',
+          ? 'http://localhost:3000/app.html'
+          : 'https://mocksheets.com/app.html',
         queryParams: { access_type: 'offline', prompt: 'consent' }
       }
     });
