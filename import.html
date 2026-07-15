@@ -1,0 +1,665 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <title>Yeni Katalog İçe Aktar — Mocksheets</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;550;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/3.19.0/tabler-icons.min.css" />
+  <link rel="icon" type="image/png" href="/images/brand/logo-128x128.png">
+  <script src="/js/xlsx.full.min.js"></script>
+
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Inter',-apple-system,sans-serif; background:#f8f7f5; color:#111827; line-height:1.5; }
+    html,body { height:100%; }
+
+    #app-import { display:flex; flex-direction:column; min-height:100vh; }
+    header.topbar { background:#fff; border-bottom:1px solid #e5e7eb; padding:12px 28px; display:flex; align-items:center; gap:16px; box-shadow:0 1px 2px rgba(17,24,39,.05); }
+    .brand { display:flex; align-items:center; gap:8px; font-weight:600; font-size:14px; }
+    .brand img { width:24px; height:24px; }
+    .brand-spacer { flex:1; }
+    .btn-back { text-decoration:none; display:flex; align-items:center; gap:6px; padding:6px 12px; border-radius:7px; border:1px solid #e5e7eb; background:#fff; font-size:13px; color:#111827; cursor:pointer; transition:all .15s; }
+    .btn-back:hover { background:#f3f4f6; border-color:#d1d5db; }
+
+    main.wizard-container { flex:1; display:flex; align-items:center; justify-content:center; padding:40px 20px; }
+    #wizard { width:100%; max-width:700px; }
+
+    /* Stepper */
+    .stepper { display:flex; justify-content:space-between; align-items:center; margin-bottom:40px; gap:12px; }
+    .stepper-dot { width:28px; height:28px; border-radius:50%; background:#f3f4f6; border:2px solid #e5e7eb; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:600; color:#8a8c86; transition:all .2s; }
+    .stepper-dot.active { background:#16a34a; border-color:#16a34a; color:#fff; }
+    .stepper-dot.done { background:#16a34a; border-color:#16a34a; color:#fff; }
+    .stepper-line { flex:1; height:2px; background:#e5e7eb; }
+    .stepper-line.done { background:#16a34a; }
+
+    /* Steps */
+    .step { display:none; animation:fadeIn .3s; }
+    .step.active { display:block; }
+    @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+
+    .step h1 { font-size:28px; font-weight:700; margin-bottom:12px; }
+    .step > p { font-size:15px; color:#5b5d58; margin-bottom:32px; }
+
+    /* Upload Step */
+    #dropzone { border:2px dashed #d1d5db; border-radius:16px; padding:40px; text-align:center; cursor:pointer; transition:all .2s; background:#fafaf8; }
+    #dropzone:hover { border-color:#16a34a; background:#f0fdf4; }
+    #dropzone.drag { border-color:#16a34a; background:#f0fdf4; }
+    .dropzone-icon { width:48px; height:48px; margin:0 auto 16px; opacity:.6; }
+    .dropzone-title { font-size:16px; font-weight:600; margin-bottom:8px; }
+    .dropzone-text { font-size:13px; color:#5b5d58; margin-bottom:20px; }
+    .dropzone-formats { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; }
+    .format-badge { background:#fff; border:1px solid #e5e7eb; border-radius:6px; padding:6px 12px; font-size:12px; font-weight:500; }
+
+    /* Analyzing Step */
+    .analyzing-list { display:flex; flex-direction:column; gap:12px; }
+    .analyzing-item { display:flex; align-items:center; gap:12px; padding:16px; background:#fff; border-radius:12px; border:1px solid #e5e7eb; }
+    .analyzing-check { width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:#f3f4f6; color:#8a8c86; font-size:12px; flex-shrink:0; }
+    .analyzing-item.done .analyzing-check { background:#16a34a; color:#fff; }
+    .analyzing-text { font-size:14px; font-weight:500; }
+
+    /* Result Step */
+    .stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:32px; }
+    .stat-card { background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:16px; }
+    .stat-number { font-size:24px; font-weight:700; color:#111827; }
+    .stat-label { font-size:12px; color:#5b5d58; margin-top:4px; text-transform:uppercase; letter-spacing:.5px; }
+
+    .scores-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    .score-card { background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:24px; text-align:center; }
+    .score-gauge { width:100px; height:100px; margin:0 auto 12px; position:relative; display:flex; align-items:center; justify-content:center; font-size:28px; font-weight:700; color:#16a34a; }
+    .score-label { font-size:12px; color:#5b5d58; text-transform:uppercase; }
+
+    /* Pipeline Step */
+    .suggestions-list { display:flex; flex-direction:column; gap:12px; }
+    .suggestion-card { background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:16px; display:flex; justify-content:space-between; align-items:center; }
+    .suggestion-left { flex:1; }
+    .suggestion-title { font-size:14px; font-weight:600; margin-bottom:4px; }
+    .suggestion-count { font-size:12px; color:#5b5d58; }
+    .suggestion-toggle { width:44px; height:24px; border-radius:12px; background:#e5e7eb; border:none; cursor:pointer; position:relative; transition:all .2s; }
+    .suggestion-toggle.active { background:#16a34a; }
+    .suggestion-toggle::after { content:''; position:absolute; width:20px; height:20px; background:#fff; border-radius:10px; top:2px; left:2px; transition:left .2s; }
+    .suggestion-toggle.active::after { left:22px; }
+
+    /* Builder Step */
+    .builder-list { display:flex; flex-direction:column; gap:8px; }
+    .builder-item { background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:12px 16px; display:flex; align-items:center; gap:12px; cursor:move; user-select:none; }
+    .builder-item.dragging { opacity:.5; }
+    .builder-drag-handle { width:20px; height:20px; color:#8a8c86; flex-shrink:0; }
+    .builder-label { font-size:14px; font-weight:500; flex:1; }
+    .builder-index { font-size:12px; color:#5b5d58; background:#f3f4f6; padding:2px 6px; border-radius:4px; }
+
+    /* Preview Step */
+    .preview-list { background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:20px; margin-bottom:24px; }
+    .preview-item { display:flex; justify-content:space-between; padding:12px 0; border-bottom:1px solid #f1f1ee; font-size:14px; }
+    .preview-item:last-child { border-bottom:none; }
+    .preview-item strong { color:#111827; }
+    .preview-summary { background:#f0fdf4; border:1px solid #dcfce7; border-radius:12px; padding:16px; margin-bottom:24px; }
+    .preview-summary p { font-size:13px; margin:4px 0; }
+
+    /* Processing Step */
+    .processing-list { display:flex; flex-direction:column; gap:16px; }
+    .processing-item { background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:16px; }
+    .processing-label { font-size:14px; font-weight:600; margin-bottom:8px; }
+    .progress-bar { width:100%; height:8px; background:#e5e7eb; border-radius:4px; overflow:hidden; }
+    .progress-fill { height:100%; background:#16a34a; border-radius:4px; width:0%; transition:width .1s linear; }
+    .progress-text { font-size:12px; color:#5b5d58; margin-top:6px; }
+
+    /* Complete Step */
+    .complete-icon { width:56px; height:56px; background:#f0fdf4; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 24px; color:#16a34a; font-size:32px; }
+    .complete-title { font-size:24px; font-weight:700; text-align:center; margin-bottom:8px; }
+    .complete-text { font-size:14px; color:#5b5d58; text-align:center; margin-bottom:32px; }
+
+    .complete-stats { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:32px; }
+    .complete-stat { background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:16px; text-align:center; }
+    .complete-stat-value { font-size:18px; font-weight:700; color:#111827; }
+    .complete-stat-label { font-size:12px; color:#5b5d58; margin-top:4px; }
+
+    .score-comparison { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:32px; }
+    .score-before-after { background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:16px; text-align:center; }
+    .score-before-after-label { font-size:12px; color:#5b5d58; margin-bottom:8px; }
+    .score-before { font-size:24px; font-weight:700; color:#666; }
+    .score-after { font-size:24px; font-weight:700; color:#16a34a; }
+    .score-arrow { font-size:12px; color:#16a34a; margin-top:4px; }
+
+    .export-buttons { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-bottom:20px; }
+    .export-btn { background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:12px; text-align:center; cursor:pointer; font-size:13px; font-weight:500; transition:all .2s; text-decoration:none; display:block; }
+    .export-btn:hover { border-color:#16a34a; color:#16a34a; }
+
+    /* Buttons */
+    .button-group { display:flex; gap:12px; justify-content:space-between; margin-top:32px; }
+    .btn { padding:10px 20px; border-radius:10px; border:none; font-size:14px; font-weight:550; cursor:pointer; transition:all .15s; }
+    .btn-secondary { background:#fff; border:1px solid #e5e7eb; color:#111827; }
+    .btn-secondary:hover { background:#f3f4f6; border-color:#d1d5db; }
+    .btn-primary { background:#111827; color:#fff; border:none; }
+    .btn-primary:hover { background:#2a2b28; }
+    .btn-primary:disabled { opacity:.5; cursor:not-allowed; }
+
+    #file-input { display:none; }
+
+    .error-message { background:#fee2e2; border:1px solid #fecaca; border-radius:12px; padding:16px; color:#dc2626; font-size:14px; margin-bottom:20px; }
+  </style>
+</head>
+<body>
+  <div id="app-import">
+    <header class="topbar">
+      <div class="brand">
+        <img src="/images/brand/logo-128x128.png" alt="mocksheets">
+        <span>mocksheets</span>
+      </div>
+      <div class="brand-spacer"></div>
+      <a href="app.html" class="btn-back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Dashboard'a Dön
+      </a>
+    </header>
+
+    <main class="wizard-container">
+      <div id="wizard">
+        <!-- Stepper -->
+        <div class="stepper" id="stepper"></div>
+
+        <div id="step-upload" class="step active">
+          <h1>Yeni Katalog İçe Aktar</h1>
+          <p>Shopify CSV dosyanızı yükleyin. Yapay zekâ katalogünüzü analiz etsin ve iyileştirme önerileri sunsun.</p>
+          <div id="dropzone" class="dropzone">
+            <svg class="dropzone-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>
+            <div class="dropzone-title">CSV Dosyanızı Sürükleyin</div>
+            <div class="dropzone-text">veya bilgisayarınızdan seçin</div>
+            <div class="dropzone-formats">
+              <span class="format-badge">CSV</span>
+              <span class="format-badge">Excel (.xlsx)</span>
+              <span class="format-badge">Shopify Export</span>
+            </div>
+            <input type="file" id="file-input" accept=".csv,.xlsx,.xls">
+          </div>
+          <div class="button-group">
+            <button class="btn btn-secondary" onclick="goBack()">İptal</button>
+          </div>
+        </div>
+
+        <div id="step-analyzing" class="step">
+          <h1>Katalog Analiz Ediliyor</h1>
+          <p>Lütfen bekleyin, dosyanız analiz ediliyor...</p>
+          <div class="analyzing-list" id="analyzing-list"></div>
+          <div class="button-group">
+            <button class="btn btn-secondary" onclick="goBack()">İptal</button>
+          </div>
+        </div>
+
+        <div id="step-result" class="step">
+          <h1>Analiz Sonuçları</h1>
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-number" id="stat-products">0</div>
+              <div class="stat-label">Ürün</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number" id="stat-vendors">0</div>
+              <div class="stat-label">Vendor</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number" id="stat-collections">0</div>
+              <div class="stat-label">Koleksiyon</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number" id="stat-issues">0</div>
+              <div class="stat-label">Sorun</div>
+            </div>
+          </div>
+          <div class="scores-row">
+            <div class="score-card">
+              <div class="score-label">Katalog Sağlığı</div>
+              <div class="score-gauge" id="health-score">89</div>
+            </div>
+            <div class="score-card">
+              <div class="score-label">Validasyon Puanı</div>
+              <div class="score-gauge" id="validation-score">91</div>
+            </div>
+          </div>
+          <div class="button-group">
+            <button class="btn btn-secondary" onclick="goStep('analyzing')">Geri</button>
+            <button class="btn btn-primary" onclick="goNext()">AI Önerilerini Gör →</button>
+          </div>
+        </div>
+
+        <div id="step-pipeline" class="step">
+          <h1>AI Pipeline</h1>
+          <p>Katalogunu iyileştirmek için yapılabilecek işlemleri seçin.</p>
+          <div class="suggestions-list" id="suggestions-list"></div>
+          <div class="button-group">
+            <button class="btn btn-secondary" onclick="goStep('result')">Geri</button>
+            <button class="btn btn-primary" onclick="goNext()">Pipeline Oluştur →</button>
+          </div>
+        </div>
+
+        <div id="step-builder" class="step">
+          <h1>Pipeline Sırası</h1>
+          <p>İşlemlerin sırasını sürükle-bırak ile değiştirebilirsiniz.</p>
+          <div class="builder-list" id="builder-list"></div>
+          <div class="button-group">
+            <button class="btn btn-secondary" onclick="goStep('pipeline')">Geri</button>
+            <button class="btn btn-primary" onclick="goNext()">Önizle →</button>
+          </div>
+        </div>
+
+        <div id="step-preview" class="step">
+          <h1>İşlem Önizlemesi</h1>
+          <p>Aşağıdaki değişiklikler uygulanacak:</p>
+          <div class="preview-summary">
+            <p><strong id="preview-count">5</strong> işlem çalışacak</p>
+            <p>Tahmini süre: <strong id="preview-time">2 dakika</strong></p>
+            <p>Tahmini kredi kullanımı: <strong id="preview-credits">34 kredi</strong></p>
+          </div>
+          <div class="preview-list" id="preview-list"></div>
+          <div class="button-group">
+            <button class="btn btn-secondary" onclick="goStep('builder')">Geri</button>
+            <button class="btn btn-primary" onclick="goNext()">İşlemi Başlat →</button>
+          </div>
+        </div>
+
+        <div id="step-processing" class="step">
+          <h1>Pipeline Çalışıyor</h1>
+          <p>Katalogunuz optimize ediliyor. Lütfen bekleyin...</p>
+          <div class="processing-list" id="processing-list"></div>
+          <div class="button-group">
+            <button class="btn btn-secondary" onclick="goBack()" disabled id="cancel-processing">İptal</button>
+          </div>
+        </div>
+
+        <div id="step-complete" class="step">
+          <div class="complete-icon">✓</div>
+          <h1 class="complete-title">Katalog Başarıyla Optimize Edildi</h1>
+          <p class="complete-text">Tüm işlemler başarıyla tamamlandı. Sonuçları aşağıda görebilirsiniz.</p>
+
+          <div class="complete-stats">
+            <div class="complete-stat">
+              <div class="complete-stat-value" id="complete-updated">421</div>
+              <div class="complete-stat-label">Başlık Güncellendi</div>
+            </div>
+            <div class="complete-stat">
+              <div class="complete-stat-value" id="complete-seo">238</div>
+              <div class="complete-stat-label">SEO Oluşturuldu</div>
+            </div>
+            <div class="complete-stat">
+              <div class="complete-stat-value" id="complete-desc">57</div>
+              <div class="complete-stat-label">Açıklama Yazıldı</div>
+            </div>
+            <div class="complete-stat">
+              <div class="complete-stat-value" id="complete-tags">18</div>
+              <div class="complete-stat-label">Etiket Düzenlendi</div>
+            </div>
+          </div>
+
+          <div class="score-comparison">
+            <div class="score-before-after">
+              <div class="score-before-after-label">Katalog Sağlığı</div>
+              <div class="score-before">89 <span class="score-arrow">→ 97</span></div>
+            </div>
+            <div class="score-before-after">
+              <div class="score-before-after-label">Validasyon Puanı</div>
+              <div class="score-before">91 <span class="score-arrow">→ 99</span></div>
+            </div>
+          </div>
+
+          <div class="export-buttons">
+            <a href="#" class="export-btn" onclick="exportCSV(event)">📥 CSV İndir</a>
+            <a href="#" class="export-btn" onclick="exportXLSX(event)">📥 Excel İndir</a>
+            <a href="#" class="export-btn" onclick="exportShopify(event)">📤 Shopify</a>
+          </div>
+
+          <div class="button-group">
+            <button class="btn btn-secondary" onclick="window.location.href='app.html'">Dashboard'a Dön</button>
+            <button class="btn btn-primary" onclick="window.location.href='import.html'">Yeni Pipeline</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // ─── State ─────────────────────────
+    const STEPS = ['upload','analyzing','result','pipeline','builder','preview','processing','complete'];
+    const SUGGESTIONS = [
+      { id:'title', name:'Başlıkları Optimize Et', count:421 },
+      { id:'seo', name:'SEO Oluştur', count:238 },
+      { id:'desc', name:'Açıklamaları Yaz', count:57 },
+      { id:'tags', name:'Etiketleri Düzenle', count:18 },
+      { id:'shopping', name:'Google Shopping', count:91 }
+    ];
+
+    let currentStep = 0;
+    let parsedData = null;
+    let analysisResult = null;
+    let selectedOps = new Set(SUGGESTIONS.map(s => s.id));
+    let pipelineOrder = [...SUGGESTIONS.map(s => s.id)];
+    let processedData = null;
+
+    // ─── Init ──────────────────────────
+    document.addEventListener('DOMContentLoaded', function() {
+      renderStepper();
+      wireDropzone();
+      wireFileInput();
+    });
+
+    function renderStepper() {
+      const stepper = document.getElementById('stepper');
+      stepper.innerHTML = '';
+      STEPS.forEach((step, idx) => {
+        if (idx > 0) {
+          const line = document.createElement('div');
+          line.className = 'stepper-line' + (idx <= currentStep ? ' done' : '');
+          stepper.appendChild(line);
+        }
+        const dot = document.createElement('div');
+        dot.className = 'stepper-dot' + (idx === currentStep ? ' active' : '') + (idx < currentStep ? ' done' : '');
+        dot.textContent = idx + 1;
+        stepper.appendChild(dot);
+      });
+    }
+
+    // ─── Dropzone ──────────────────────
+    function wireDropzone() {
+      const dropzone = document.getElementById('dropzone');
+      const fileInput = document.getElementById('file-input');
+
+      dropzone.addEventListener('click', () => fileInput.click());
+      dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('drag'); });
+      dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag'));
+      dropzone.addEventListener('drop', e => {
+        e.preventDefault();
+        dropzone.classList.remove('drag');
+        const files = e.dataTransfer.files;
+        if (files.length) handleFile(files[0]);
+      });
+    }
+
+    function wireFileInput() {
+      const fileInput = document.getElementById('file-input');
+      fileInput.addEventListener('change', () => {
+        if (fileInput.files.length) handleFile(fileInput.files[0]);
+      });
+    }
+
+    // ─── File Handling ─────────────────
+    function handleFile(file) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        try {
+          const data = new Uint8Array(e.target.result);
+          const workbook = XLSX.read(data, { type: 'array' });
+          const sheet = workbook.Sheets[workbook.SheetNames[0]];
+          const rows = XLSX.utils.sheet_to_json(sheet, { header:1, defval:'' });
+          parsedData = { headers: rows[0] || [], rows: rows.slice(1) };
+          goNext();
+          runAnalysisAnimation();
+        } catch(err) {
+          alert('Dosya okunamadı: ' + err.message);
+        }
+      };
+      reader.onerror = () => alert('Dosya okunurken hata oluştu');
+      reader.readAsArrayBuffer(file);
+    }
+
+    // ─── Analysis ──────────────────────
+    function runAnalysisAnimation() {
+      const steps = [
+        'Dosya okunuyor...',
+        'Kolonlar analiz ediliyor...',
+        'Shopify formatı doğrulanıyor...',
+        'Ürünler kontrol ediliyor...',
+        'AI önerileri hazırlanıyor...'
+      ];
+      const list = document.getElementById('analyzing-list');
+      list.innerHTML = '';
+      let idx = 0;
+
+      const interval = setInterval(() => {
+        const item = document.createElement('div');
+        item.className = 'analyzing-item';
+        item.innerHTML = `
+          <div class="analyzing-check">✓</div>
+          <div class="analyzing-text">${steps[idx]}</div>
+        `;
+        item.classList.add('done');
+        list.appendChild(item);
+        idx++;
+        if (idx >= steps.length) {
+          clearInterval(interval);
+          setTimeout(() => {
+            analysisResult = calculateStats(parsedData.rows);
+            renderResultStep();
+            goNext();
+          }, 600);
+        }
+      }, 600);
+    }
+
+    function calculateStats(rows) {
+      const productCount = rows.length;
+      const vendors = new Set();
+      const collections = new Set();
+      let issueCount = 0;
+
+      rows.forEach(row => {
+        if (!row[0] || !row[2] || !row[9]) issueCount++;
+        if (row[5]) vendors.add(row[5]);
+        if (row[12]) collections.add(row[12]);
+      });
+
+      const healthScore = Math.max(30, 100 - Math.ceil(issueCount / productCount * 30));
+      const validationScore = Math.max(40, 100 - Math.ceil(issueCount / productCount * 20));
+
+      return { productCount, vendors: vendors.size, collections: collections.size, issueCount, healthScore, validationScore };
+    }
+
+    function renderResultStep() {
+      document.getElementById('stat-products').textContent = analysisResult.productCount;
+      document.getElementById('stat-vendors').textContent = analysisResult.vendors;
+      document.getElementById('stat-collections').textContent = analysisResult.collections;
+      document.getElementById('stat-issues').textContent = analysisResult.issueCount;
+      document.getElementById('health-score').textContent = analysisResult.healthScore;
+      document.getElementById('validation-score').textContent = analysisResult.validationScore;
+    }
+
+    // ─── Pipeline ──────────────────────
+    function renderPipelineStep() {
+      const list = document.getElementById('suggestions-list');
+      list.innerHTML = '';
+      SUGGESTIONS.forEach(s => {
+        const card = document.createElement('div');
+        card.className = 'suggestion-card';
+        const toggle = document.createElement('button');
+        toggle.className = 'suggestion-toggle' + (selectedOps.has(s.id) ? ' active' : '');
+        toggle.onclick = e => {
+          e.preventDefault();
+          if (selectedOps.has(s.id)) {
+            selectedOps.delete(s.id);
+            toggle.classList.remove('active');
+          } else {
+            selectedOps.add(s.id);
+            toggle.classList.add('active');
+          }
+        };
+        card.innerHTML = `
+          <div class="suggestion-left">
+            <div class="suggestion-title">${s.name}</div>
+            <div class="suggestion-count">${s.count} ürün</div>
+          </div>
+        `;
+        card.appendChild(toggle);
+        list.appendChild(card);
+      });
+    }
+
+    function renderBuilderStep() {
+      const list = document.getElementById('builder-list');
+      list.innerHTML = '';
+      pipelineOrder.forEach((id, idx) => {
+        const s = SUGGESTIONS.find(x => x.id === id);
+        const item = document.createElement('div');
+        item.className = 'builder-item';
+        item.draggable = true;
+        item.dataset.id = id;
+        item.innerHTML = `
+          <div class="builder-drag-handle">⋮⋮</div>
+          <div class="builder-label">${s.name}</div>
+          <div class="builder-index">${idx + 1}</div>
+        `;
+        item.addEventListener('dragstart', e => e.dataTransfer.effectAllowed = 'move');
+        item.addEventListener('dragover', e => e.preventDefault());
+        item.addEventListener('drop', e => {
+          e.preventDefault();
+          const src = list.querySelector('[data-id="' + e.dataTransfer.getData('text') + '"]');
+          if (!src) return;
+          [src.dataset.id, item.dataset.id] = [item.dataset.id, src.dataset.id];
+          pipelineOrder = Array.from(list.querySelectorAll('[data-id]')).map(x => x.dataset.id);
+          renderBuilderStep();
+        });
+        item.addEventListener('dragstart', e => e.dataTransfer.setData('text', id));
+        list.appendChild(item);
+      });
+    }
+
+    function renderPreviewStep() {
+      const count = selectedOps.size;
+      const time = Math.ceil(count * 0.5) + ' dakika';
+      const credits = count * 7;
+      document.getElementById('preview-count').textContent = count;
+      document.getElementById('preview-time').textContent = time;
+      document.getElementById('preview-credits').textContent = credits;
+      const list = document.getElementById('preview-list');
+      list.innerHTML = '';
+      pipelineOrder.forEach(id => {
+        if (!selectedOps.has(id)) return;
+        const s = SUGGESTIONS.find(x => x.id === id);
+        const item = document.createElement('div');
+        item.className = 'preview-item';
+        item.innerHTML = `<strong>${s.name}</strong><span>${s.count} ürün</span>`;
+        list.appendChild(item);
+      });
+    }
+
+    function renderProcessingStep() {
+      const list = document.getElementById('processing-list');
+      list.innerHTML = '';
+      pipelineOrder.forEach(id => {
+        if (!selectedOps.has(id)) return;
+        const s = SUGGESTIONS.find(x => x.id === id);
+        const item = document.createElement('div');
+        item.className = 'processing-item';
+        item.innerHTML = `
+          <div class="processing-label">${s.name}</div>
+          <div class="progress-bar"><div class="progress-fill"></div></div>
+          <div class="progress-text">0 / ${s.count}</div>
+        `;
+        list.appendChild(item);
+      });
+    }
+
+    // ─── Processing Simulation ────────
+    function runPipeline() {
+      processedData = JSON.parse(JSON.stringify(parsedData.rows));
+      renderProcessingStep();
+      const items = document.querySelectorAll('.processing-item');
+      let itemIdx = 0;
+      const processNext = () => {
+        if (itemIdx >= items.length) {
+          goNext();
+          renderCompleteStep();
+          return;
+        }
+        const item = items[itemIdx];
+        const fill = item.querySelector('.progress-fill');
+        const text = item.querySelector('.progress-text');
+        const id = pipelineOrder[itemIdx];
+        const s = SUGGESTIONS.find(x => x.id === id);
+        let progress = 0;
+        const interval = setInterval(() => {
+          progress += Math.random() * 30 + 10;
+          if (progress >= 100) progress = 100;
+          fill.style.width = progress + '%';
+          text.textContent = Math.floor(progress / 100 * s.count) + ' / ' + s.count;
+          if (progress >= 100) {
+            clearInterval(interval);
+            itemIdx++;
+            setTimeout(processNext, 300);
+          }
+        }, 100);
+      };
+      processNext();
+    }
+
+    function renderCompleteStep() {
+      document.getElementById('complete-updated').textContent = Math.floor(analysisResult.productCount * 0.5);
+      document.getElementById('complete-seo').textContent = Math.floor(analysisResult.productCount * 0.35);
+      document.getElementById('complete-desc').textContent = analysisResult.issueCount;
+      document.getElementById('complete-tags').textContent = Math.floor(analysisResult.productCount * 0.03);
+    }
+
+    // ─── Export ────────────────────────
+    function exportCSV(e) {
+      e.preventDefault();
+      const headers = parsedData.headers;
+      const rows = processedData || parsedData.rows;
+      const csv = [headers, ...rows].map(row => row.map(v => '"' + String(v).replace(/"/g, '""') + '"').join(',')).join('\n');
+      downloadFile(csv, 'catalog.csv', 'text/csv');
+    }
+
+    function exportXLSX(e) {
+      e.preventDefault();
+      const ws = XLSX.utils.aoa_to_sheet([parsedData.headers, ...(processedData || parsedData.rows)]);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Catalog');
+      XLSX.writeFile(wb, 'catalog.xlsx');
+    }
+
+    function exportShopify(e) {
+      e.preventDefault();
+      const rows = processedData || parsedData.rows;
+      const csv = [parsedData.headers, ...rows].map(row => row.map(v => '"' + String(v).replace(/"/g, '""') + '"').join(',')).join('\n');
+      downloadFile(csv, 'shopify-catalog.csv', 'text/csv');
+    }
+
+    function downloadFile(content, filename, type) {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([content], { type }));
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    // ─── Navigation ────────────────────
+    function goToStep(name) {
+      const idx = STEPS.indexOf(name);
+      if (idx === -1) return;
+      currentStep = idx;
+      document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+      document.getElementById('step-' + name).classList.add('active');
+      renderStepper();
+
+      if (name === 'pipeline') renderPipelineStep();
+      if (name === 'builder') renderBuilderStep();
+      if (name === 'preview') renderPreviewStep();
+      if (name === 'processing') runPipeline();
+    }
+
+    function goStep(name) { goToStep(name); }
+
+    function goNext() {
+      const nextName = STEPS[currentStep + 1];
+      if (nextName) goToStep(nextName);
+    }
+
+    function goBack() {
+      if (currentStep === 0) {
+        window.location.href = 'app.html';
+      } else {
+        goToStep(STEPS[currentStep - 1]);
+      }
+    }
+  </script>
+</body>
+</html>
