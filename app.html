@@ -405,15 +405,7 @@
           <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
         </div>
         <div class="col-headers-wrap">
-          <div class="col-headers">
-            <div>A</div><div>B</div><div>C</div><div>D</div>
-            <div>E</div><div>F</div><div>G</div><div>H</div>
-            <div>I</div><div>J</div><div>K</div><div>L</div>
-            <div>M</div><div>N</div><div>O</div><div>P</div>
-            <div>Q</div><div>R</div><div>S</div><div>T</div>
-            <div>U</div><div>V</div><div>W</div><div>X</div>
-            <div>Y</div><div>Z</div>
-          </div>
+          <div class="col-headers" id="colHeaderBar"></div>
         </div>
         <div class="row-headers" id="row-headers"></div>
 
@@ -961,18 +953,52 @@
     return g;
   }
 
+  var SHOPIFY_CATALOG_COLUMNS = [
+    { key: 'handle',           label: 'Ürün Kodu (Handle)', icon: 'ti-hash',           width: 160 },
+    { key: 'title',            label: 'Ürün Adı',           icon: 'ti-shopping-bag',   width: 220 },
+    { key: 'vendor',           label: 'Marka',              icon: 'ti-building-store', width: 140 },
+    { key: 'product_type',     label: 'Ürün Türü',          icon: 'ti-category',       width: 140 },
+    { key: 'price',            label: 'Fiyat',              icon: 'ti-currency-lira',  width: 100 },
+    { key: 'seo_title',        label: 'SEO Başlığı',        icon: 'ti-search',         width: 200 },
+    { key: 'meta_description', label: 'Meta Açıklaması',    icon: 'ti-file-text',      width: 240 },
+    { key: 'tags',             label: 'Etiketler',          icon: 'ti-tags',           width: 180 },
+    { key: 'status',           label: 'Durum',              icon: 'ti-circle-check',   width: 100 },
+    { key: 'inventory',        label: 'Stok',               icon: 'ti-package',        width:  90 },
+    { key: 'variant',          label: 'Varyant',            icon: 'ti-list-details',   width: 140 },
+  ];
+
+  var CSV_COLUMN_MAPPING = {
+    'Handle':               'handle',
+    'Title':                'title',
+    'Vendor':               'vendor',
+    'Type':                 'product_type',
+    'Variant Price':        'price',
+    'SEO Title':            'seo_title',
+    'SEO Description':      'meta_description',
+    'Tags':                 'tags',
+    'Status':               'status',
+    'Variant Inventory Qty':'inventory',
+    'Variant SKU':          'variant',
+  };
+
   var gridData = emptyGridData();
   var activeFilter = null;
 
+  function createCatalogGridData() {
+    var d = emptyGridData();
+    SHOPIFY_CATALOG_COLUMNS.forEach(function(col, c) { d[0][c].v = col.label; });
+    return d;
+  }
+
   // ── H: Multiple sheets ────────────────────────────────────────────────────
   var sheetsData = [
-    { name: 'Stok',      color: 'var(--accent)', data: null },
-    { name: 'Tedarikçi', color: '#f59e0b',       data: null },
-    { name: 'Sipariş',   color: '#8b5cf6',       data: null },
+    { name: 'Ürünler',   color: 'var(--accent)', data: createCatalogGridData() },
+    { name: 'Stok',      color: '#f59e0b',       data: null },
+    { name: 'Siparişler',color: '#8b5cf6',       data: null },
     { name: 'Özet',      color: '#3b82f6',       data: null }
   ];
   var activeSheetIdx = 0;
-  sheetsData[0].data = gridData;
+  gridData = sheetsData[0].data;
 
   function switchSheet(idx) {
     if (idx === activeSheetIdx) return;
@@ -1162,6 +1188,21 @@
     }
     updateEmptyState();
     if (activeFilter) applyDomFilter(activeFilter);
+    renderColHeaders();
+  }
+
+  function renderColHeaders() {
+    var bar = document.getElementById('colHeaderBar');
+    if (!bar) return;
+    var html = '<div style="width:40px;min-width:40px"></div>';
+    for (var c = 0; c < GRID_COLS; c++) {
+      var letter = COL_LETTERS[c];
+      var headerVal = (gridData[0] && gridData[0][c]) ? gridData[0][c].v : '';
+      var matchedCol = SHOPIFY_CATALOG_COLUMNS.find(function(col) { return col.label === headerVal; });
+      var iconHtml = matchedCol ? '<i class="ti ' + matchedCol.icon + '" style="font-size:10px;margin-right:2px;opacity:.7"></i>' : '';
+      html += '<div>' + iconHtml + letter + '</div>';
+    }
+    bar.innerHTML = html;
   }
 
   function applyDomFilter(f) {
@@ -2798,6 +2839,18 @@
     if (automMoreMenu && automMoreMenu.style.display === 'block' && !automMoreMenu.contains(e.target)) automMoreMenu.style.display = 'none';
   });
 
+  // ── Shopify CSV mapping ──────────────────────────────────────────────────────
+  function mapCsvHeadersToCatalog(headers) {
+    return headers.map(function(h) {
+      var key = CSV_COLUMN_MAPPING[String(h).trim()];
+      if (key) {
+        var col = SHOPIFY_CATALOG_COLUMNS.find(function(c) { return c.key === key; });
+        return col ? col.label : h;
+      }
+      return h;
+    });
+  }
+
   // ── Grid data loader ──────────────────────────────────────────────────────
   function loadDataIntoGrid(rows) {
     pushHistory();
@@ -2841,6 +2894,7 @@
           return;
         }
         var rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+        if (rows.length > 0) { rows[0] = mapCsvHeadersToCatalog(rows[0]); }
         loadDataIntoGrid(rows);
         addRecentFile(file.name, rows);
         var cur = document.querySelector('.crumbs .current');
