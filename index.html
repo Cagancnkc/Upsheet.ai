@@ -14,6 +14,16 @@
 <script>
   (function(){var t=localStorage.getItem('theme')||'light';document.documentElement.setAttribute('data-theme',t);document.documentElement.classList.add(t);}());
 </script>
+
+<script>
+  (function(){
+    var token = localStorage.getItem('sb-access-token');
+    if (token) {
+      window.location.href = '/dashboard.html';
+    }
+  })();
+</script>
+
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Mocksheets — E-ticaret için AI Excel Asistanı | Stok, Sipariş, Kâr Analizi</title>
