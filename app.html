@@ -1100,6 +1100,12 @@
 
   // ── A: Grid data model ────────────────────────────────────────────────────
   var GRID_ROWS = 2000, GRID_COLS = 26;
+  var ROW_HEIGHT = 44;
+  var VS_BUFFER  = 8;
+
+  var _vsRenderedStart = -1;
+  var _vsRenderedEnd   = -1;
+  var _vsRafPending    = false;
 
   function emptyGridData() {
     var g = [];
@@ -1307,10 +1313,109 @@
   function renderRowHeaders() {
     var rh = document.getElementById('row-headers');
     if (!rh) return;
-    var html = '<div class="row-headers-inner" style="position:absolute;top:0;left:0;right:0;">';
-    for (var r = 1; r <= GRID_ROWS; r++) html += '<div>' + r + '</div>';
-    html += '</div>';
-    rh.innerHTML = html;
+    var inner = rh.querySelector('.row-headers-inner');
+    if (!inner) {
+      inner = document.createElement('div');
+      inner.className = 'row-headers-inner';
+      rh.innerHTML = '';
+      rh.appendChild(inner);
+    }
+    inner.style.cssText = 'position:relative;width:100%;';
+    inner.style.height = (GRID_ROWS * ROW_HEIGHT) + 'px';
+    var range = calcVsRange();
+    _renderRowHeaderRange(inner, range.start, range.end);
+  }
+
+  function _renderRowHeaderRange(inner, start, end) {
+    inner.innerHTML = '';
+    var frag = document.createDocumentFragment();
+    for (var r = start; r < end; r++) {
+      var d = document.createElement('div');
+      d.textContent = (r + 1);
+      d.style.position = 'absolute';
+      d.style.top = (r * ROW_HEIGHT) + 'px';
+      d.style.left = '0';
+      d.style.right = '0';
+      d.style.height = ROW_HEIGHT + 'px';
+      d.style.lineHeight = ROW_HEIGHT + 'px';
+      frag.appendChild(d);
+    }
+    inner.appendChild(frag);
+  }
+
+  function renderRowHeadersVisible(start, end) {
+    var rh = document.getElementById('row-headers');
+    if (!rh) return;
+    var inner = rh.querySelector('.row-headers-inner');
+    if (!inner) return;
+    _renderRowHeaderRange(inner, start, end);
+  }
+
+  // ── VS: Virtual scroll helpers ─────────────────────────────────────────────
+  function renderSingleRow(r, frag) {
+    for (var c = 0; c < GRID_COLS; c++) {
+      var cell = gridData[r][c];
+      var d = document.createElement('div');
+      d.className = 'grid-cell';
+      d.dataset.r = r;
+      d.dataset.c = c;
+      d.style.left = (96 * c) + 'px';
+      d.style.top = (ROW_HEIGHT * r) + 'px';
+      if (cell.bg) d.style.background = cell.bg;
+      var inp = document.createElement('input');
+      inp.type = 'text';
+      inp.className = 'grid-cell-input';
+      inp.value = formatCellValue(cell.v, cell.numFmt);
+      if (cell.bold) inp.style.fontWeight = '700';
+      if (cell.italic) inp.style.fontStyle = 'italic';
+      var td = [];
+      if (cell.underline) td.push('underline');
+      if (cell.strike) td.push('line-through');
+      if (td.length) inp.style.textDecoration = td.join(' ');
+      if (cell.align) inp.style.textAlign = cell.align;
+      if (cell.color) inp.style.color = cell.color;
+      if (cell.fontSize) inp.style.fontSize = cell.fontSize + 'px';
+      if (cell.fontFamily) inp.style.fontFamily = cell.fontFamily;
+      inp.addEventListener('focus', makeFocusHandler(r, c));
+      inp.addEventListener('input', makeInputHandler(r, c));
+      inp.addEventListener('keydown', makeKeyHandler(r, c));
+      d.appendChild(inp);
+      frag.appendChild(d);
+    }
+  }
+
+  function calcVsRange() {
+    var sc = document.getElementById('grid-scroll');
+    if (!sc) return { start: 0, end: Math.min(50, GRID_ROWS) };
+    var top = sc.scrollTop;
+    var h = sc.clientHeight || 600;
+    var first = Math.floor(top / ROW_HEIGHT);
+    var count = Math.ceil(h / ROW_HEIGHT);
+    return {
+      start: Math.max(0, first - VS_BUFFER),
+      end: Math.min(GRID_ROWS, first + count + VS_BUFFER)
+    };
+  }
+
+  function renderVisibleRows() {
+    var body = document.getElementById('grid-body');
+    if (!body) return;
+    var range = calcVsRange();
+
+    if (range.start === _vsRenderedStart && range.end === _vsRenderedEnd) return;
+    _vsRenderedStart = range.start;
+    _vsRenderedEnd = range.end;
+
+    body.innerHTML = '';
+    var frag = document.createDocumentFragment();
+    for (var r = range.start; r < range.end; r++) {
+      renderSingleRow(r, frag);
+    }
+    body.appendChild(frag);
+
+    if (typeof activeFilter !== 'undefined' && activeFilter) applyDomFilter(activeFilter);
+    applyRowStyleEnhancements();
+    renderRowHeadersVisible(range.start, range.end);
   }
 
   // ── A: Full grid render ───────────────────────────────────────────────────
@@ -1318,39 +1423,13 @@
     var body = document.getElementById('grid-body');
     if (!body) return;
     body.style.width  = (GRID_COLS * 96) + 'px';
-    body.style.height = (GRID_ROWS * 44) + 'px';
-    body.innerHTML = '';
-    for (var r = 0; r < GRID_ROWS; r++) {
-      for (var c = 0; c < GRID_COLS; c++) {
-        var cell = gridData[r][c];
-        var d = document.createElement('div');
-        d.className = 'grid-cell';
-        d.dataset.r = r; d.dataset.c = c;
-        d.style.left = (96 * c) + 'px';
-        d.style.top  = (44 * r) + 'px';
-        if (cell.bg) d.style.background = cell.bg;
-        var inp = document.createElement('input');
-        inp.type = 'text'; inp.className = 'grid-cell-input';
-        inp.value = formatCellValue(cell.v, cell.numFmt);
-        if (cell.bold)      inp.style.fontWeight = '700';
-        if (cell.italic)    inp.style.fontStyle  = 'italic';
-        var td = []; if (cell.underline) td.push('underline'); if (cell.strike) td.push('line-through');
-        if (td.length)      inp.style.textDecoration = td.join(' ');
-        if (cell.align)     inp.style.textAlign = cell.align;
-        if (cell.color)     inp.style.color = cell.color;
-        if (cell.fontSize)  inp.style.fontSize = cell.fontSize + 'px';
-        if (cell.fontFamily) inp.style.fontFamily = cell.fontFamily;
-        inp.addEventListener('focus', makeFocusHandler(r, c));
-        inp.addEventListener('input', makeInputHandler(r, c));
-        inp.addEventListener('keydown', makeKeyHandler(r, c));
-        d.appendChild(inp); body.appendChild(d);
-      }
-    }
+    body.style.height = (GRID_ROWS * ROW_HEIGHT) + 'px';
+    _vsRenderedStart = -1;
+    _vsRenderedEnd = -1;
+    renderVisibleRows();
     updateEmptyState();
-    if (activeFilter) applyDomFilter(activeFilter);
     renderColHeaders();
     updateFooterCounts();
-    applyRowStyleEnhancements();
   }
 
   function renderColHeaders() {
@@ -4072,6 +4151,27 @@ document.addEventListener('DOMContentLoaded', function() {
       sendCommand();
     });
   }
+
+  // VS: Virtual scroll initialization
+  (function initVirtualScroll() {
+    var sc = document.getElementById('grid-scroll');
+    if (!sc) return;
+
+    sc.addEventListener('scroll', function() {
+      if (_vsRafPending) return;
+      _vsRafPending = true;
+      requestAnimationFrame(function() {
+        renderVisibleRows();
+        _vsRafPending = false;
+      });
+    }, { passive: true });
+
+    window.addEventListener('resize', function() {
+      _vsRenderedStart = -1;
+      _vsRenderedEnd = -1;
+      renderVisibleRows();
+    });
+  })();
 });
 </script>
 
