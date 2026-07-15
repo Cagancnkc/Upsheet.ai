@@ -763,10 +763,13 @@
 
 /* ── Grid cells (rendered by JS) ── */
 .grid-body { position:absolute; left:0; top:0; right:0; bottom:0; pointer-events:all; }
-.grid-cell { position:absolute; width:96px; height:28px; display:flex; align-items:center; padding:0 6px; font-size:11.5px; color:var(--ink); overflow:hidden; white-space:nowrap; box-sizing:border-box; border-right:1px solid var(--line-2); border-bottom:1px solid var(--line-2); }
+.grid-cell { position:absolute; width:96px; height:44px; display:flex; align-items:center; padding:0 6px; font-size:11.5px; color:var(--ink); overflow:hidden; white-space:nowrap; box-sizing:border-box; border-right:1px solid var(--line-2); border-bottom:1px solid var(--line-2); }
 .grid-cell:hover:not(.selected) { background:rgba(0,0,0,0.03); }
 .grid-cell.selected { background:rgba(22,163,74,0.08) !important; box-shadow:inset 0 0 0 1.5px var(--accent); z-index:1; }
 .grid-cell-input { width:100%; height:100%; border:none; background:transparent; font-size:11.5px; color:var(--ink); padding:0 6px; outline:none; font-family:inherit; cursor:cell; box-sizing:border-box; }
+
+/* Alt Faz 2: row height override */
+.row-headers-inner > div { height:44px !important; line-height:44px; }
 
 /* ── Otomasyon Durum Paneli ──────────────────────────── */
 .auto-status-bar {
@@ -1264,7 +1267,7 @@
     var body = document.getElementById('grid-body');
     if (!body) return;
     body.style.width  = (GRID_COLS * 96) + 'px';
-    body.style.height = (GRID_ROWS * 28) + 'px';
+    body.style.height = (GRID_ROWS * 44) + 'px';
     body.innerHTML = '';
     for (var r = 0; r < GRID_ROWS; r++) {
       for (var c = 0; c < GRID_COLS; c++) {
@@ -1273,7 +1276,7 @@
         d.className = 'grid-cell';
         d.dataset.r = r; d.dataset.c = c;
         d.style.left = (96 * c) + 'px';
-        d.style.top  = (28 * r) + 'px';
+        d.style.top  = (44 * r) + 'px';
         if (cell.bg) d.style.background = cell.bg;
         var inp = document.createElement('input');
         inp.type = 'text'; inp.className = 'grid-cell-input';
@@ -1296,6 +1299,7 @@
     if (activeFilter) applyDomFilter(activeFilter);
     renderColHeaders();
     updateFooterCounts();
+    applyRowStyleEnhancements();
   }
 
   function renderColHeaders() {
@@ -4613,6 +4617,122 @@ async function runColumnTranslate() {
       });
     }
   })();
+
+  // ── Alt Faz 2: Satır stili geliştirmeleri ────────────────────────────────
+  function getStatusBadge(val) {
+    var map = {
+      'active':     { color: '#16a34a', bg: '#f0fdf4', label: 'Hazır'      },
+      'draft':      { color: '#6b7280', bg: '#f3f4f6', label: 'Taslak'     },
+      'incomplete': { color: '#d97706', bg: '#fef3c7', label: 'Eksikler Var' },
+      'error':      { color: '#dc2626', bg: '#fef2f2', label: 'Sorunlu'    },
+    };
+    var key = (val || '').toLowerCase().trim();
+    return map[key] || map['draft'];
+  }
+
+  function applyRowStyleEnhancements() {
+    var body = document.getElementById('grid-body');
+    if (!body) return;
+
+    // 1. Satır hover efekti — delegated events (flat div grid, row wrapper yok)
+    if (!body._rowHoverBound) {
+      body._rowHoverBound = true;
+      var hoveredRow = null;
+
+      body.addEventListener('mouseover', function(e) {
+        var cell = e.target.closest ? e.target.closest('.grid-cell') : null;
+        if (!cell) return;
+        var r = cell.dataset.r;
+        if (!r || r === '0') return;
+        if (r === hoveredRow) return;
+
+        // Önceki satırı temizle
+        if (hoveredRow !== null) {
+          body.querySelectorAll('.grid-cell[data-r="' + hoveredRow + '"]').forEach(function(c) {
+            if (!c.classList.contains('selected') && !c._statusCell)
+              c.style.background = c._origBg || '';
+          });
+        }
+        hoveredRow = r;
+
+        // Yeni satırı vurgula
+        body.querySelectorAll('.grid-cell[data-r="' + r + '"]').forEach(function(c) {
+          if (!c.classList.contains('selected') && !c._statusCell) {
+            c._origBg = c.style.background || '';
+            c.style.background = '#f9fafb';
+          }
+        });
+      });
+
+      body.addEventListener('mouseout', function(e) {
+        var to = e.relatedTarget;
+        if (to && to.closest && to.closest('#grid-body')) return;
+        if (hoveredRow !== null) {
+          body.querySelectorAll('.grid-cell[data-r="' + hoveredRow + '"]').forEach(function(c) {
+            if (!c.classList.contains('selected') && !c._statusCell)
+              c.style.background = c._origBg || '';
+          });
+          hoveredRow = null;
+        }
+      });
+    }
+
+    // 2. "Durum" kolonu badge — satır 0'dan kolon index'i bul
+    var statusColIdx = -1;
+    if (gridData[0]) {
+      for (var c = 0; c < GRID_COLS; c++) {
+        if (gridData[0][c] && gridData[0][c].v === 'Durum') {
+          statusColIdx = c; break;
+        }
+      }
+    }
+
+    if (statusColIdx < 0) return;
+
+    for (var r = 1; r < GRID_ROWS; r++) {
+      var cellVal = gridData[r] && gridData[r][statusColIdx]
+                    ? gridData[r][statusColIdx].v : '';
+      if (!cellVal) continue;
+
+      var cellEl = body.querySelector('.grid-cell[data-r="' + r + '"][data-c="' + statusColIdx + '"]');
+      if (!cellEl || cellEl._statusCell) continue;
+
+      cellEl._statusCell = true;
+      var badge = getStatusBadge(cellVal);
+
+      // Input'u şeffaflaştır, badge overlay ekle (pointer-events:none → input hâlâ tıklanabilir)
+      var inp = cellEl.querySelector('input');
+      if (inp) inp.style.opacity = '0';
+
+      var badgeEl = document.createElement('span');
+      badgeEl.className = 'status-badge';
+      badgeEl.textContent = badge.label;
+      badgeEl.style.cssText =
+        'position:absolute;inset:0;display:flex;align-items:center;padding:0 6px;' +
+        'pointer-events:none;border-radius:4px;font-size:10px;font-weight:600;' +
+        'color:' + badge.color + ';background:' + badge.bg + ';';
+      cellEl.appendChild(badgeEl);
+
+      // Düzenleme sırasında badge gizle, blur'da güncelle
+      if (inp) {
+        inp.addEventListener('focus', function() {
+          this.style.opacity = '1';
+          var b = this.parentNode.querySelector('.status-badge');
+          if (b) b.style.display = 'none';
+        });
+        inp.addEventListener('blur', function() {
+          var b = this.parentNode.querySelector('.status-badge');
+          if (!b) return;
+          var updated = getStatusBadge(this.value);
+          b.textContent = updated.label;
+          b.style.color = updated.color;
+          b.style.background = updated.bg;
+          b.style.display = '';
+          this.style.opacity = '0';
+        });
+      }
+    }
+  }
 })();
 </script>
 
