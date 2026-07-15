@@ -712,13 +712,25 @@
     </div>
   </div>
 
-  <!-- Sağ: AI panel — Faz 4'te doldurulacak -->
+  <!-- Sağ: AI panel — Alt Faz 4 -->
   <div id="catalog-ai-panel"
     style="border-left:0.5px solid var(--line);background:var(--surface);
-           overflow-y:auto;padding:20px;display:flex;align-items:flex-start;">
-    <p style="font-size:12px;color:var(--ink-4);margin:0;">
-      AI Katalog Asistanı — Alt Faz 4'te eklenecek
+           overflow-y:auto;padding:20px;display:flex;flex-direction:column;align-items:flex-start;">
+    <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 4px;">
+      ✨ AI Katalog Asistanı
     </p>
+    <p style="font-size:11px;color:#9ca3af;margin:0 0 20px;">
+      Hazır işlemlerden birini seçin
+    </p>
+
+    <div id="ai-preset-list" style="display:flex;flex-direction:column;gap:4px;margin-bottom:20px;width:100%;"></div>
+
+    <button id="optimize-all-btn" type="button"
+      style="width:100%;padding:12px;background:#16a34a;color:#fff;
+             border:none;border-radius:12px;font-size:13px;font-weight:600;
+             cursor:pointer;transition:background .15s ease;">
+      ✨ Tümünü AI ile Optimize Et
+    </button>
   </div>
 </div>
 
@@ -4042,6 +4054,19 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   if (typeof checkShopifyStatus === 'function') checkShopifyStatus();
   if (typeof loadFavoriteCommands === 'function') loadFavoriteCommands();
+
+  // Alt Faz 4: AI Katalog Paneli başlat
+  renderAiPresetList();
+
+  var _optimizeBtn = document.getElementById('optimize-all-btn');
+  if (_optimizeBtn) {
+    _optimizeBtn.addEventListener('mouseenter', function() { this.style.background = '#15803d'; });
+    _optimizeBtn.addEventListener('mouseleave', function() { this.style.background = '#16a34a'; });
+    _optimizeBtn.addEventListener('click', function() {
+      if (aiTextarea) aiTextarea.value = 'Kataloğu analiz et, tüm eksik SEO, açıklama, etiket ve başlık sorunlarını tespit edip düzelt';
+      sendCommand();
+    });
+  }
 });
 </script>
 
@@ -4847,6 +4872,49 @@ async function runColumnTranslate() {
       });
     });
   })();
+
+  // ── Alt Faz 4: AI Katalog Paneli ────────────────────────────────────────
+  var AI_CATALOG_PRESETS = [
+    { key: 'titles',      label: 'Başlıkları Optimize Et',       command: 'Seçili ürünlerin başlıklarını SEO uyumlu ve daha çekici hale getir' },
+    { key: 'description', label: 'Ürün Açıklaması Yaz',          command: 'Seçili ürünler için ikna edici, SEO uyumlu ürün açıklaması yaz' },
+    { key: 'seo',         label: 'SEO Oluştur',                  command: 'Seçili ürünler için SEO başlığı ve meta açıklaması oluştur' },
+    { key: 'tags',        label: 'Etiketleri Optimize Et',       command: 'Seçili ürünlerin etiketlerini standartlaştır ve eksikleri tamamla' },
+    { key: 'vendor',      label: 'Markaları Standartlaştır',     command: 'Marka isimlerindeki tutarsızlıkları düzelt (büyük/küçük harf, yazım)' },
+    { key: 'shopping',    label: 'Google Shopping İçin Düzenle', command: 'Ürün verilerini Google Shopping gereksinimlerine uygun hale getir' },
+    { key: 'translate',   label: 'Ürünleri Çevir',               command: 'Seçili ürünlerin başlık ve açıklamalarını İngilizceye çevir' },
+    { key: 'missing',     label: 'Eksikleri Bul',                command: 'Eksik SEO, açıklama veya görseli olan ürünleri bul ve listele' },
+    { key: 'duplicates',  label: 'Tekrar Edenleri Bul',          command: "Tekrar eden başlık veya SKU'ları bul" },
+  ];
+
+  function renderAiPresetList() {
+    var list = document.getElementById('ai-preset-list');
+    if (!list) return;
+    list.innerHTML = '';
+    AI_CATALOG_PRESETS.forEach(function(preset) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.style.cssText = 'width:100%;text-align:left;padding:10px 12px;' +
+        'border:0.5px solid #e5e7eb;border-radius:10px;background:#fff;' +
+        'color:#374151;font-size:12px;cursor:pointer;transition:border-color .15s ease,background .15s ease;';
+      btn.textContent = preset.label;
+      btn.addEventListener('mouseenter', function() {
+        this.style.borderColor = '#16a34a'; this.style.background = '#f0fdf4';
+      });
+      btn.addEventListener('mouseleave', function() {
+        this.style.borderColor = '#e5e7eb'; this.style.background = '#fff';
+      });
+      btn.addEventListener('click', function() { runAiPreset(preset); });
+      list.appendChild(btn);
+    });
+  }
+
+  function runAiPreset(preset) {
+    var selectionNote = (typeof _selectedRowIndices !== 'undefined' && _selectedRowIndices.size > 0)
+      ? ' (seçili ' + _selectedRowIndices.size + ' ürün için)'
+      : ' (tüm katalog için)';
+    if (aiTextarea) aiTextarea.value = preset.command + selectionNote;
+    sendCommand();
+  }
 })();
 </script>
 
