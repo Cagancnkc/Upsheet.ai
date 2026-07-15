@@ -2133,7 +2133,12 @@
                     streamEl.textContent += event.chunk;
                   } else if (event.type === 'result') {
                     if (event.reply) addMsg('ai', event.reply);
-                    applyGridAction(event);
+                    // Alt Faz 5: Önce modal göster (update_cells için)
+                    if (event.action === 'update_cells' && event.changes && event.changes.length) {
+                      showAiPreview(event);
+                    } else {
+                      applyGridAction(event);
+                    }
                     incrementCount();
                     document.getElementById('undo-last-ai-btn').style.display = 'flex';
                     _lastExecutedCommand = cmd;
@@ -4915,6 +4920,103 @@ async function runColumnTranslate() {
     if (aiTextarea) aiTextarea.value = preset.command + selectionNote;
     sendCommand();
   }
+
+  // ── Alt Faz 5: AI Sonuç Önizlemesi ──────────────────────────────────────
+  var _pendingAiChanges = [];
+
+  function showAiPreview(result) {
+    if (!result || !result.changes || !result.changes.length) {
+      applyGridAction(result);
+      return;
+    }
+
+    _pendingAiChanges = result.changes.map(function(ch, idx) {
+      var r = (ch.row || 1) - 1, c = colToIdx(ch.col || 'A');
+      var oldValue = (r >= 0 && r < GRID_ROWS && c >= 0 && c < GRID_COLS) ? gridData[r][c].v : '?';
+      return {
+        index: idx,
+        row: ch.row || 1,
+        col: ch.col || 'A',
+        oldValue: oldValue,
+        newValue: String(ch.value != null ? ch.value : ''),
+        decision: null,
+        change: ch
+      };
+    });
+
+    var countEl = document.getElementById('ai-preview-count');
+    if (countEl) countEl.textContent = _pendingAiChanges.length + ' değişiklik önerisi';
+
+    var list = document.getElementById('ai-preview-list');
+    if (!list) return;
+    list.innerHTML = '';
+
+    _pendingAiChanges.forEach(function(change) {
+      var item = document.createElement('div');
+      item.style.cssText = 'border:0.5px solid #e5e7eb;border-radius:12px;padding:12px;transition:opacity .2s ease;';
+      item.dataset.changeIndex = change.index;
+
+      item.innerHTML =
+        '<p style="font-size:11px;color:#9ca3af;margin:0 0 6px;">' + change.col + ' sütunu (satır ' + change.row + ')</p>' +
+        '<p style="font-size:12px;color:#dc2626;text-decoration:line-through;margin:0 0 4px;">' + (change.oldValue || '—') + '</p>' +
+        '<p style="font-size:12px;color:#16a34a;margin:0 0 10px;">' + (change.newValue || '—') + '</p>' +
+        '<div style="display:flex;gap:6px;">' +
+        '<button class="ai-change-reject" data-idx="' + change.index + '" type="button" style="flex:1;padding:6px;border:0.5px solid #e5e7eb;border-radius:8px;background:#fff;color:#374151;font-size:11px;cursor:pointer;">Reddet</button>' +
+        '<button class="ai-change-accept" data-idx="' + change.index + '" type="button" style="flex:1;padding:6px;border:none;border-radius:8px;background:#f0fdf4;color:#16a34a;font-size:11px;font-weight:600;cursor:pointer;">Kabul Et</button>' +
+        '</div>';
+
+      list.appendChild(item);
+    });
+
+    document.querySelectorAll('.ai-change-accept').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var idx = parseInt(this.dataset.idx, 10);
+        _pendingAiChanges.forEach(function(c) { if (c.index === idx) c.decision = 'accept'; });
+        this.closest('div[data-change-index]').style.opacity = '0.5';
+      });
+    });
+    document.querySelectorAll('.ai-change-reject').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var idx = parseInt(this.dataset.idx, 10);
+        _pendingAiChanges.forEach(function(c) { if (c.index === idx) c.decision = 'reject'; });
+        this.closest('div[data-change-index]').style.opacity = '0.5';
+      });
+    });
+
+    document.getElementById('ai-preview-modal').style.display = 'flex';
+  }
+
+  function applyAcceptedChanges() {
+    var accepted = _pendingAiChanges.filter(function(c) { return c.decision === 'accept'; });
+    if (!accepted.length) {
+      document.getElementById('ai-preview-modal').style.display = 'none';
+      _pendingAiChanges = [];
+      return;
+    }
+
+    accepted.forEach(function(change) {
+      var r = (change.row || 1) - 1, c = colToIdx(change.col || 'A');
+      if (r >= 0 && r < GRID_ROWS && c >= 0 && c < GRID_COLS) {
+        gridData[r][c].v = change.newValue;
+        var inp = document.querySelector('.grid-cell[data-r="' + r + '"][data-c="' + c + '"] .grid-cell-input');
+        if (inp) inp.value = change.newValue;
+      }
+    });
+
+    updateEmptyState(); renderGrid();
+    document.getElementById('ai-preview-modal').style.display = 'none';
+    _pendingAiChanges = [];
+  }
+
+  document.getElementById('ai-preview-accept-all').addEventListener('click', function() {
+    _pendingAiChanges.forEach(function(c) { c.decision = 'accept'; });
+    applyAcceptedChanges();
+  });
+
+  document.getElementById('ai-preview-reject-all').addEventListener('click', function() {
+    document.getElementById('ai-preview-modal').style.display = 'none';
+    _pendingAiChanges = [];
+  });
 })();
 </script>
 
@@ -4958,6 +5060,39 @@ async function runColumnTranslate() {
     </div>
 
     <p id="tr-status" style="font-size:12px;color:#6b7280;margin:10px 0 0;text-align:center;"></p>
+  </div>
+</div>
+
+<!-- ── Alt Faz 5: AI Önizleme Modal ── -->
+<div id="ai-preview-modal" style="display:none;position:fixed;inset:0;
+     background:rgba(17,24,39,.4);z-index:500;align-items:center;
+     justify-content:center;backdrop-filter:blur(2px);">
+  <div style="background:#fff;border-radius:20px;padding:24px;
+       width:480px;max-height:70vh;display:flex;flex-direction:column;
+       box-shadow:0 20px 48px rgba(17,24,39,.2);">
+
+    <p style="font-size:15px;font-weight:600;color:#111827;margin:0 0 4px;">
+      AI Önerisi
+    </p>
+    <p id="ai-preview-count" style="font-size:12px;color:#6b7280;margin:0 0 16px;"></p>
+
+    <div id="ai-preview-list" style="flex:1;overflow-y:auto;display:flex;
+         flex-direction:column;gap:12px;margin-bottom:16px;"></div>
+
+    <div style="display:flex;gap:8px;padding-top:12px;border-top:0.5px solid #e5e7eb;">
+      <button id="ai-preview-reject-all" type="button"
+        style="flex:1;padding:8px 16px;border:0.5px solid #e5e7eb;
+               border-radius:12px;background:#fff;color:#374151;
+               font-size:13px;font-weight:500;cursor:pointer;">
+        Tümünü Reddet
+      </button>
+      <button id="ai-preview-accept-all" type="button"
+        style="flex:1;padding:8px 16px;border:none;border-radius:12px;
+               background:#16a34a;color:#fff;font-size:13px;
+               font-weight:600;cursor:pointer;">
+        Tümünü Kabul Et
+      </button>
+    </div>
   </div>
 </div>
 
