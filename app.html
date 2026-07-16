@@ -589,6 +589,18 @@ function updateCatalogStats() {
   document.getElementById('bottom-quality-pct').textContent = stats.qualityScore + '%';
   document.getElementById('bottom-quality-missing').textContent = stats.missingValues + ' değer eksik';
   document.getElementById('bottom-ai-count').textContent = stats.aiSuggestions;
+
+  // Update tab counts
+  const counts = {
+    products: catalogData.products.length,
+    variants: catalogData.variants?.length || 0,
+    inventory: catalogData.inventory?.length || 0,
+    collections: catalogData.collections?.length || 0
+  };
+  Object.keys(counts).forEach(key => {
+    const el = document.getElementById(`tab-${key}-count`);
+    if (el) el.textContent = counts[key].toLocaleString('tr-TR');
+  });
 }
 
 function computeCatalogHealth(products) {
