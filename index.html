@@ -1709,6 +1709,8 @@ function toggleFaq(btn) {
     const tabs = document.querySelectorAll('.step-tab');
     const prompt = document.getElementById('step-prompt');
     const response = document.getElementById('step-response');
+    const demoEl = document.getElementById('demo');
+    if (!sheet || !prompt || !response || !demoEl || !tabs.length) return;
 
     const dataBase = [
       ['1','14.03.26','Nike Air Max 90','12400','Spor'],
@@ -1844,8 +1846,8 @@ function toggleFaq(btn) {
 
     /* auto-cycle */
     let auto = 1, paused = false;
-    document.getElementById('demo').addEventListener('mouseenter', ()=>paused=true);
-    document.getElementById('demo').addEventListener('mouseleave', ()=>paused=false);
+    demoEl.addEventListener('mouseenter', ()=>paused=true);
+    demoEl.addEventListener('mouseleave', ()=>paused=false);
     setInterval(()=>{
       if(paused) return;
       auto = auto >= 5 ? 1 : auto + 1;
