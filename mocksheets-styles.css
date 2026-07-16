@@ -543,13 +543,498 @@
   .shopify-layout {
     display: grid;
     grid-template-columns: 200px 1fr;
-    grid-template-rows: 52px auto auto 1fr auto auto;
+    grid-template-rows: 52px auto 1fr auto auto;
     height: 100vh;
     overflow: hidden;
     background: linear-gradient(135deg, #F6F6F4 0%, #FAFAF8 100%);
   }
   .shopify-layout.ai-panel-open {
     grid-template-columns: 200px 1fr 320px;
+  }
+
+  /* ============ STATS ROW (Card Layout) ============ */
+  .sf-stats-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 24px 12px;
+    background: #FFFFFF;
+    border-bottom: 1px solid rgba(232, 232, 227, 0.5);
+    overflow-x: auto;
+    grid-column: 2 / -1;
+    grid-row: 2;
+  }
+
+  .sf-stat-card {
+    flex: 1;
+    min-width: 120px;
+    background: #FFFFFF;
+    border: 1px solid #E8E8E3;
+    border-radius: 13px;
+    padding: 13px 16px;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    transition: all 0.2s ease;
+  }
+
+  .sf-stat-card:hover {
+    background: #FAFAF8;
+    border-color: #DCDCD6;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  }
+
+  .sf-stat-icon-box {
+    width: 34px;
+    height: 34px;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    flex-shrink: 0;
+    background: rgba(56, 141, 106, 0.1);
+  }
+
+  .sf-stat-value {
+    font-size: 16px;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--brand) 0%, var(--brand-ink) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .sf-stat-label {
+    color: #8A8C86;
+    font-size: 11px;
+    font-weight: 500;
+  }
+
+  .btn-view-analytics {
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: none;
+    background: #FFFFFF;
+    color: var(--brand);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  .btn-view-analytics:hover {
+    background: var(--brand-soft);
+  }
+
+  /* ============ MAIN CONTENT ROW (Table + AI Panel) ============ */
+  .sf-main-content-row {
+    display: flex;
+    gap: 16px;
+    padding: 0 24px;
+    grid-column: 2 / 3;
+    grid-row: 3;
+    min-height: 0;
+  }
+
+  /* ============ TABLE PANEL ============ */
+  .sf-table-panel {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    flex: 1;
+    background: #FFFFFF;
+    border: 1px solid #E8E8E3;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8), inset 0 -1px 0 rgba(0, 0, 0, 0.02);
+  }
+
+  .sf-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    border-bottom: 1px solid #EEF1EF;
+    flex-shrink: 0;
+    background: #FAFAF8;
+  }
+
+  .sf-search-wrap {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex: 1;
+    max-width: 320px;
+    background: #F5F7F5;
+    border: 1px solid #E7EBE8;
+    border-radius: 9px;
+    padding: 8px 12px;
+  }
+
+  .sf-search-wrap input {
+    border: none;
+    background: none;
+    font-size: 12.5px;
+    outline: none;
+    flex: 1;
+    font-family: inherit;
+    color: var(--ink);
+  }
+
+  .sf-search-wrap input::placeholder {
+    color: #8A8C86;
+  }
+
+  .sf-filter-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 28px;
+    padding: 0 11px;
+    background: transparent;
+    border: 1px solid #E7EBE8;
+    border-radius: 8px;
+    font-size: 12.5px;
+    font-weight: 500;
+    color: #3A423D;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .sf-filter-btn:hover {
+    background: #F5F7F5;
+    border-color: #DCDCD6;
+  }
+
+  .sf-table-scroll {
+    flex: 1;
+    overflow: auto;
+    min-height: 0;
+  }
+
+  /* ============ PRODUCT TABLE ============ */
+  .sf-product-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12.5px;
+    background: #FFFFFF;
+  }
+
+  .sf-product-table thead tr {
+    position: sticky;
+    top: 0;
+    background: #FBFCFB;
+    z-index: 10;
+  }
+
+  .sf-product-table th {
+    text-align: left;
+    padding: 10px 14px;
+    border-bottom: 1px solid #EEF1EF;
+    font-weight: 600;
+    color: #5C655E;
+    white-space: nowrap;
+    background: #FBFCFB;
+  }
+
+  .sf-product-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid #F1F3F1;
+    color: #2A2B28;
+  }
+
+  .sf-product-table tr:hover td {
+    background: #FAFBFA;
+  }
+
+  .sf-img-cell {
+    width: 34px;
+    height: 34px;
+    border-radius: 9px;
+    object-fit: cover;
+    display: block;
+    border: 1px solid #E7EBE8;
+  }
+
+  .sf-img-placeholder {
+    width: 34px;
+    height: 34px;
+    border-radius: 9px;
+    background: #EEF4F0;
+    border: 1px solid #D3D9D5;
+    display: block;
+  }
+
+  .sf-status-badge {
+    display: inline-block;
+    padding: 3px 9px;
+    border-radius: 6px;
+    font-size: 11.5px;
+    font-weight: 600;
+  }
+
+  .sf-status-active {
+    background: #EEF4F0;
+    color: #1F7A4D;
+  }
+
+  .sf-status-draft {
+    background: #F5F5F5;
+    color: #8B948E;
+  }
+
+  .sf-status-archived {
+    background: #FBF1F0;
+    color: #A85A4E;
+  }
+
+  .sf-sort-arrow {
+    color: #C4CAC6;
+    font-size: 10px;
+    margin-left: 4px;
+    opacity: 0.6;
+  }
+
+  .sf-empty-row {
+    text-align: center;
+    padding: 40px;
+    color: #8B948E;
+  }
+
+  /* ============ SHEET TABS ============ */
+  .sf-sheet-tabs {
+    display: flex;
+    align-items: center;
+    gap: 1px;
+    padding: 11px 16px;
+    border-top: 1px solid #EEF1EF;
+    flex-shrink: 0;
+    background: #FAFAF8;
+  }
+
+  .sf-sheet-tab {
+    padding: 7px 13px;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    color: #5C655E;
+    font-size: 12.5px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .sf-sheet-tab.active {
+    background: #EEF4F0;
+    color: #1F7A4D;
+    font-weight: 700;
+  }
+
+  .sf-sheet-tab:hover:not(.active) {
+    background: #F5F7F5;
+  }
+
+  .sf-sheet-count {
+    font-size: 11px;
+    color: #8A8C86;
+    font-weight: 500;
+  }
+
+  /* ============ BOTTOM STRIP ============ */
+  .sf-bottom-strip {
+    display: flex;
+    gap: 16px;
+    padding: 0 24px 20px;
+    grid-column: 2 / -1;
+    grid-row: 5;
+    flex-shrink: 0;
+  }
+
+  .sf-bottom-card {
+    flex: 1;
+    background: #FFFFFF;
+    border: 1px solid #E8E8E3;
+    border-radius: 13px;
+    padding: 14px 18px;
+    transition: all 0.2s ease;
+  }
+
+  .sf-bottom-card:hover {
+    border-color: #DCDCD6;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  }
+
+  /* ============ AI PANEL (Inside Main Content Row) ============ */
+  .sf-ai-panel {
+    display: none;
+    flex-direction: column;
+    width: 320px;
+    min-height: 0;
+    background: #FFFFFF;
+    border: 1px solid #E8E8E3;
+    border-radius: 14px;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .sf-ai-panel[style*="display: flex"] {
+    display: flex !important;
+  }
+
+  .sf-ai-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 18px 12px;
+    border-bottom: 1px solid #EEF1EF;
+    flex-shrink: 0;
+  }
+
+  .sf-ai-title {
+    font-weight: 700;
+    font-size: 14.5px;
+    color: var(--ink);
+  }
+
+  .sf-ai-close {
+    width: 24px;
+    height: 24px;
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #8A8C86;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .sf-ai-close:hover {
+    background: #F5F7F5;
+    color: var(--ink);
+  }
+
+  .sf-ai-tabs {
+    display: flex;
+    gap: 4px;
+    background: #F2F6F3;
+    border-radius: 9px;
+    padding: 3px;
+    margin: 0 16px 12px;
+    flex-shrink: 0;
+  }
+
+  .sf-ai-tab {
+    flex: 1;
+    text-align: center;
+    padding: 7px 0;
+    border-radius: 7px;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #8B948E;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .sf-ai-tab.active {
+    background: #FFFFFF;
+    color: var(--brand);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+  }
+
+  .sf-ai-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 14px 18px;
+    min-height: 0;
+  }
+
+  .sf-ai-section-label {
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    color: #8A8C86;
+    margin-bottom: 10px;
+  }
+
+  .sf-quick-action-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+    padding: 11px 12px;
+    border-radius: 11px;
+    border: 1px solid #EEF1EF;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .sf-quick-action-item:hover {
+    background: #FAFCFA;
+    border-color: #DCEADD;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  }
+
+  .sf-quick-action-label {
+    font-weight: 600;
+    font-size: 12.5px;
+    color: var(--ink);
+    line-height: 1.2;
+  }
+
+  .sf-quick-action-desc {
+    font-size: 11.5px;
+    color: #8B948E;
+    margin-top: 1px;
+    line-height: 1.3;
+  }
+
+  .sf-custom-action-input {
+    width: 100%;
+    padding: 9px 11px;
+    border: 1px solid #E7EBE8;
+    border-radius: 8px;
+    font-size: 12px;
+    font-family: inherit;
+    color: var(--ink);
+    background: #FFFFFF;
+    resize: vertical;
+    min-height: 60px;
+    margin-bottom: 10px;
+  }
+
+  .sf-custom-action-input::placeholder {
+    color: #8A8C86;
+  }
+
+  .sf-create-action-btn {
+    width: 100%;
+    padding: 9px;
+    border-radius: 9px;
+    background: linear-gradient(135deg, var(--brand) 0%, var(--brand-ink) 100%);
+    color: white;
+    font-size: 12.5px;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .sf-create-action-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(56, 141, 106, 0.2);
   }
 
   .sf-sidebar {

@@ -161,137 +161,81 @@
       </div>
     </header>
 
-    <!-- STATS BAR -->
-    <div class="sf-stats-bar">
-      <div class="sf-stat-item">
-        <div class="sf-stat-icon brand"><i class="ti ti-package"></i></div>
+    <!-- STATS ROW -->
+    <div class="sf-stats-row">
+      <div class="sf-stat-card">
+        <div class="sf-stat-icon-box">📦</div>
         <div>
-          <div class="sf-stat-value">8,742</div>
+          <div class="sf-stat-value" id="stat-products-value">0</div>
           <div class="sf-stat-label">Ürün</div>
         </div>
       </div>
-      <div style="width: 1px; height: 30px; background: var(--line);"></div>
-      <div class="sf-stat-item">
-        <div class="sf-stat-icon amber"><i class="ti ti-shield-check"></i></div>
+      <div class="sf-stat-card">
+        <div class="sf-stat-icon-box">◉</div>
         <div>
-          <div class="sf-stat-value">96%</div>
+          <div class="sf-stat-value" id="stat-quality-value">96%</div>
           <div class="sf-stat-label">Veri Kalitesi</div>
         </div>
       </div>
-      <div style="width: 1px; height: 30px; background: var(--line);"></div>
-      <div class="sf-stat-item">
-        <div class="sf-stat-icon rose"><i class="ti ti-alert-triangle"></i></div>
+      <div class="sf-stat-card">
+        <div class="sf-stat-icon-box">⚠️</div>
         <div>
-          <div class="sf-stat-value">312</div>
+          <div class="sf-stat-value" id="stat-missing-value">312</div>
           <div class="sf-stat-label">Eksik Değer</div>
         </div>
       </div>
-      <div style="width: 1px; height: 30px; background: var(--line);"></div>
-      <div class="sf-stat-item">
-        <div class="sf-stat-icon blue"><i class="ti ti-sparkles"></i></div>
+      <div class="sf-stat-card">
+        <div class="sf-stat-icon-box">✨</div>
         <div>
-          <div class="sf-stat-value">1,234</div>
+          <div class="sf-stat-value" id="stat-ai-value">1,234</div>
           <div class="sf-stat-label">AI Önerisi</div>
         </div>
       </div>
-      <div style="flex: 1;"></div>
-      <button class="btn btn-ghost" style="font-size: 12px;" onclick="showDataQualityModal()">
-        Detayları Gör →
-      </button>
+      <button class="btn-view-analytics" onclick="showDataQualityModal()">✨ Analizleri görüntüle</button>
     </div>
 
-    <!-- FILTER BAR -->
-    <div class="sf-filter-bar">
-      <input type="text" class="sf-search-input" placeholder="🔍 Ürünleri ara..." id="product-search" />
-      <button class="sf-filter-btn" onclick="toggleFilterDropdown(event, 'filter-dropdown')">Filtre</button>
-      <button class="sf-filter-btn" onclick="toggleFilterDropdown(event, 'sort-dropdown')">Sırala</button>
-      <button class="sf-filter-btn" onclick="toggleFilterDropdown(event, 'columns-dropdown')">Sütunları Gizle</button>
-      <button class="sf-filter-btn" onclick="toggleFilterDropdown(event, 'height-dropdown')">Satır Yüksekliği</button>
-      <button class="sf-filter-btn" onclick="toggleFreeze()">Dondur</button>
-      <div style="flex: 1;"></div>
-      <button class="sf-filter-btn" style="background: var(--brand-soft); color: var(--brand-ink); border-color: var(--brand-line);" onclick="toggleAIPanel()">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/></svg>
-        AI İşlemleri
-      </button>
-    </div>
-
-    <!-- GRID AREA -->
-    <div class="sf-grid-wrap">
-      <div class="sf-grid-table">
-        <div class="sheet">
-          <div class="sheet-corner">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+    <!-- TABLE PANEL & AI PANEL CONTAINER -->
+    <div class="sf-main-content-row">
+      <!-- TABLE PANEL -->
+      <div class="sf-table-panel">
+        <div class="sf-toolbar">
+          <div class="sf-search-wrap">
+            <span style="color: var(--ink-4); font-size: 12px;">🔍</span>
+            <input type="text" id="product-search" placeholder="Ürün ara…" />
           </div>
-          <div class="col-headers-wrap">
-            <div class="col-headers" id="colHeaderBar"></div>
-          </div>
-          <div class="row-headers" id="row-headers"></div>
-          <div id="grid-scroll">
-            <div class="sel-cell"></div>
-            <div class="grid-body" id="grid-body"></div>
-          </div>
+          <button class="sf-filter-btn" onclick="toggleFilterDropdown(event, 'filter-dropdown')">Filtre</button>
+          <button class="sf-filter-btn" onclick="toggleFilterDropdown(event, 'sort-dropdown')">Sırala</button>
+          <button class="sf-filter-btn" onclick="toggleFilterDropdown(event, 'columns-dropdown')">Sütunları Gizle</button>
+          <button class="sf-filter-btn" onclick="toggleFilterDropdown(event, 'height-dropdown')">Satır Yüksekliği</button>
+          <button class="sf-filter-btn" onclick="toggleFreeze()">Dondur</button>
+          <div style="flex: 1;"></div>
+          <button class="sf-filter-btn" style="background: var(--brand-soft); color: var(--brand-ink); border-color: var(--brand-line);" onclick="toggleAIPanel()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/></svg>
+            AI İşlemleri
+          </button>
         </div>
-      </div>
-    </div>
 
-    <!-- SHEET TABS -->
-    <div class="sf-sheet-tabs">
-      <button class="sf-sheet-tab active" onclick="switchShopifyView('products')">
-        Ürünler
-        <span class="sf-sheet-count">8,742</span>
-      </button>
-      <button class="sf-sheet-tab" onclick="switchShopifyView('variants')">
-        Varyantlar
-        <span class="sf-sheet-count">234</span>
-      </button>
-      <button class="sf-sheet-tab" onclick="switchShopifyView('inventory')">
-        Envanter
-        <span class="sf-sheet-count">8,742</span>
-      </button>
-      <button class="sf-sheet-tab" onclick="switchShopifyView('collections')">
-        Koleksiyonlar
-        <span class="sf-sheet-count">156</span>
-      </button>
-      <div style="flex: 1;"></div>
-      <button style="width: 28px; height: 28px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface-2); display: flex; align-items: center; justify-content: center; cursor: pointer;">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-      </button>
-    </div>
+        <div class="sf-table-scroll">
+          <table class="sf-product-table">
+            <thead id="sf-table-head"></thead>
+            <tbody id="sf-table-body"></tbody>
+          </table>
+        </div>
 
-    <!-- BOTTOM FOOTER -->
-    <div class="sf-bottom-footer">
-      <div class="sf-footer-section">
-        <div class="sf-footer-title">
-          <span style="font-size: 18px;">◉</span>
-          <span>Veri Kalitesi</span>
+        <div class="sf-sheet-tabs">
+          <button class="sf-sheet-tab active" onclick="switchShopifyView('products')">Ürünler <span class="sf-sheet-count" id="tab-products-count">0</span></button>
+          <button class="sf-sheet-tab" onclick="switchShopifyView('variants')">Varyantlar <span class="sf-sheet-count" id="tab-variants-count">0</span></button>
+          <button class="sf-sheet-tab" onclick="switchShopifyView('inventory')">Envanter <span class="sf-sheet-count" id="tab-inventory-count">0</span></button>
+          <button class="sf-sheet-tab" onclick="switchShopifyView('collections')">Koleksiyonlar <span class="sf-sheet-count" id="tab-collections-count">0</span></button>
+          <div style="flex: 1;"></div>
+          <button style="width: 28px; height: 28px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface-2); display: flex; align-items: center; justify-content: center; cursor: pointer;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </button>
         </div>
-        <div class="sf-footer-stat">96%</div>
-        <div class="sf-footer-desc">Müthiş</div>
-        <div class="sf-footer-desc">312 değer eksik</div>
-        <div class="sf-footer-link" onclick="showDataQualityModal()">Detayları Gör</div>
       </div>
-      <div class="sf-footer-section">
-        <div class="sf-footer-title">
-          <span style="font-size: 18px;">⚠️</span>
-          <span>Üst Sorunlar</span>
-        </div>
-        <div class="sf-footer-desc">📝 Eksik açıklamalar — 312</div>
-        <div class="sf-footer-desc">📝 Eksik alt metin — 142</div>
-        <div class="sf-footer-desc">📝 Yinelenen başlıklar — 98</div>
-      </div>
-      <div class="sf-footer-section">
-        <div class="sf-footer-title">
-          <span style="font-size: 18px;">✨</span>
-          <span>AI Önerileri</span>
-        </div>
-        <div class="sf-footer-desc">Uygulamaya Hazır</div>
-        <div class="sf-footer-stat" style="font-size: 18px;">1,234</div>
-        <button style="width: 100%; height: 28px; background: var(--brand); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 550; margin-top: 8px;" onclick="applyAllSuggestions()">Tümünü Uygula</button>
-      </div>
-    </div>
 
-  <!-- ============ AI ACTIONS PANEL (RIGHT) ============ -->
-  <div class="sf-ai-panel" style="display: none;">
+      <!-- AI ACTIONS PANEL (RIGHT) -->
+      <div class="sf-ai-panel" style="display: none;">
     <div class="sf-ai-header">
       <div class="sf-ai-title">AI İşlemleri</div>
       <div class="sf-ai-close" onclick="toggleAIPanel()">×</div>
@@ -353,7 +297,47 @@
         AI İşlemleri nasıl çalışır? ℹ️
       </div>
     </div>
-  </div>
+      </div>
+    </div>
+
+    <!-- BOTTOM STRIP -->
+    <div class="sf-bottom-strip">
+      <div class="sf-bottom-card">
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+          <span style="font-size: 18px;">◉</span>
+          <div>
+            <div style="font-weight: 700; font-size: 12.5px;">Veri Kalitesi</div>
+          </div>
+        </div>
+        <div style="font-size: 18px; font-weight: 700; margin-bottom: 2px;" id="bottom-quality-pct">96%</div>
+        <div style="font-size: 11px; color: var(--ink-3); margin-bottom: 8px;" id="bottom-quality-desc">Müthiş</div>
+        <div style="font-size: 11px; color: var(--ink-3);" id="bottom-quality-missing">312 değer eksik</div>
+      </div>
+      <div class="sf-bottom-card">
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+          <span style="font-size: 18px;">⚠️</span>
+          <div>
+            <div style="font-weight: 700; font-size: 12.5px;">Üst Sorunlar</div>
+          </div>
+        </div>
+        <div style="font-size: 11px; color: var(--ink-3); line-height: 1.6;">
+          <div>📝 Eksik açıklamalar — 312</div>
+          <div>📝 Eksik alt metin — 142</div>
+          <div>📝 Yinelenen başlıklar — 98</div>
+        </div>
+      </div>
+      <div class="sf-bottom-card">
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+          <span style="font-size: 18px;">✨</span>
+          <div>
+            <div style="font-weight: 700; font-size: 12.5px;">AI Önerileri</div>
+          </div>
+        </div>
+        <div style="font-size: 11px; color: var(--ink-3); margin-bottom: 8px;">Uygulamaya Hazır</div>
+        <div style="font-size: 18px; font-weight: 700; margin-bottom: 8px;" id="bottom-ai-count">1,234</div>
+        <button style="width: 100%; height: 28px; background: var(--brand); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 550;" onclick="applyAllSuggestions()">Tümünü Uygula</button>
+      </div>
+    </div>
 
 </div>
 
@@ -597,41 +581,14 @@ function updateUI() {
 
 function updateCatalogStats() {
   const stats = computeCatalogHealth(catalogData.products);
-  document.querySelector('.sf-stats-bar').innerHTML = `
-    <div class="sf-stat-item">
-      <div class="sf-stat-icon">📦</div>
-      <div>
-        <div class="sf-stat-value">${catalogData.products.length.toLocaleString('tr-TR')}</div>
-        <div class="sf-stat-label">Ürün</div>
-      </div>
-    </div>
-    <div style="width: 1px; height: 30px; background: var(--line);"></div>
-    <div class="sf-stat-item">
-      <div class="sf-stat-icon">◉</div>
-      <div>
-        <div class="sf-stat-value">${stats.qualityScore}%</div>
-        <div class="sf-stat-label">Veri Kalitesi</div>
-      </div>
-    </div>
-    <div style="width: 1px; height: 30px; background: var(--line);"></div>
-    <div class="sf-stat-item">
-      <div class="sf-stat-icon">⚠️</div>
-      <div>
-        <div class="sf-stat-value">${stats.missingValues}</div>
-        <div class="sf-stat-label">Eksik Değer</div>
-      </div>
-    </div>
-    <div style="width: 1px; height: 30px; background: var(--line);"></div>
-    <div class="sf-stat-item">
-      <div class="sf-stat-icon">✨</div>
-      <div>
-        <div class="sf-stat-value">${stats.aiSuggestions}</div>
-        <div class="sf-stat-label">AI Önerisi</div>
-      </div>
-    </div>
-    <div style="flex: 1;"></div>
-    <button class="btn btn-ghost" style="font-size: 12px;" onclick="showDataQualityModal()">Detayları Gör →</button>
-  `;
+  document.getElementById('stat-products-value').textContent = catalogData.products.length.toLocaleString('tr-TR');
+  document.getElementById('stat-quality-value').textContent = stats.qualityScore + '%';
+  document.getElementById('stat-missing-value').textContent = stats.missingValues;
+  document.getElementById('stat-ai-value').textContent = stats.aiSuggestions;
+
+  document.getElementById('bottom-quality-pct').textContent = stats.qualityScore + '%';
+  document.getElementById('bottom-quality-missing').textContent = stats.missingValues + ' değer eksik';
+  document.getElementById('bottom-ai-count').textContent = stats.aiSuggestions;
 }
 
 function computeCatalogHealth(products) {
@@ -681,31 +638,41 @@ function buildGrid() {
   const data = catalogData[currentView] || catalogData.products;
   const keys = COLUMN_KEYS[currentView] || COLUMN_KEYS.products;
 
-  const headerHTML = keys.map(k => {
-    const label = COLUMN_LABELS[k] || k;
-    return `<div class="cell header">${label}</div>`;
-  }).join('');
-  document.getElementById('colHeaderBar').innerHTML = headerHTML;
+  // Build thead
+  const thead = document.getElementById('sf-table-head');
+  thead.innerHTML = `<tr>
+    <th style="width:36px"><input type="checkbox" /></th>
+    ${keys.map(k => `<th>${COLUMN_LABELS[k] || k} <span class="sf-sort-arrow">▾</span></th>`).join('')}
+  </tr>`;
 
-  const rowsHTML = data.slice(0, 100).map((row, idx) => {
-    const cells = keys.map(key => {
-      let val = row[key] || '';
+  // Build tbody
+  const tbody = document.getElementById('sf-table-body');
+  if (!data.length) {
+    tbody.innerHTML = `<tr><td colspan="${keys.length+1}" class="sf-empty-row">Veri yok</td></tr>`;
+    return;
+  }
 
-      if (key === 'image' && val) {
-        return `<div class="cell"><img src="${val}" class="sf-img-cell" style="width:40px;height:40px;object-fit:cover;border-radius:4px;" /></div>`;
-      }
-      if (key === 'body_html' && val) {
-        val = val.replace(/<[^>]+>/g, '');
-      }
-      if (key === 'inventory_quantity' || key === 'line_items_count' || key === 'product_count') {
-        val = String(val);
-      }
-      return `<div class="cell">${escapeHtml(String(val))}</div>`;
-    }).join('');
-    return `<div class="row" style="display: contents;">${cells}</div>`;
-  }).join('');
+  tbody.innerHTML = data.slice(0, 100).map((row, i) => `
+    <tr data-row="${i}">
+      <td><input type="checkbox" /></td>
+      ${keys.map(key => {
+        let val = row[key] ?? '';
 
-  document.getElementById('grid-body').innerHTML = rowsHTML;
+        if (key === 'image' && val) {
+          return `<td><img src="${val}" class="sf-img-cell" /></td>`;
+        }
+        if (key === 'image' && !val) {
+          return `<td><div class="sf-img-placeholder"></div></td>`;
+        }
+        if (key === 'body_html') {
+          val = String(val).replace(/<[^>]+>/g, '').substring(0, 50);
+        }
+        if (key === 'status') {
+          return `<td><span class="sf-status-badge sf-status-${val}">${val}</span></td>`;
+        }
+        return `<td>${escapeHtml(String(val))}</td>`;
+      }).join('')}
+    </tr>`).join('');
 }
 
 function getShopifyHeaders(view) {
