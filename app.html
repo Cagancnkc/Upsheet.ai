@@ -467,6 +467,7 @@ let frozenColumn = false;
 let exportHistory = [];
 let syncHistory = [];
 let viewMode = 'table';
+let _pendingAiChanges = []; // [{ shopifyProductId, productTitle, field, oldValue, newValue, decision }]
 
 // ═══════════════════════════════════════════════════════════════════════
 // SHOPIFY CONNECT UI & DEMO DATA
@@ -1294,38 +1295,221 @@ function renderProductCard(p, index) {
 }
 
 async function runCanvasAI() {
-  toast('AI analiz başlatılıyor...', 'info');
-  saveToUndoStack();
+  await runShopifyAiAnalysis('all');
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// SHOPIFY AI ANALYSIS + PREVIEW MODAL
+// ═══════════════════════════════════════════════════════════════════════
+
+async function runShopifyAiAnalysis(analysisType) {
+  const linked = catalogData.products.filter(p => p.shopify_product_id);
+  if (linked.length === 0) {
+    toast('Analiz için önce Shopify\'dan ürün senkronize edin (Demo veri Shopify\'a bağlı değil)', 'info');
+    return;
+  }
+  toast('Shopify verisi Claude ile analiz ediliyor...', 'info');
+  const productIds = linked.map(p => p.shopify_product_id);
+
   try {
-    await runAIAction('clean_titles');
-    await new Promise(r => setTimeout(r, 500));
-    await runAIAction('generate_descriptions');
-    buildCatalogCanvas();
+    const res = await fetch(`${API_URL}/api/shopify/ai-analyze`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getAuthToken()}` },
+      body: JSON.stringify({ productIds, analysisType }),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || 'Analiz başarısız');
+    }
+    const data = await res.json();
+    if (!data.suggestions || data.suggestions.length === 0) {
+      toast('AI iyileştirme önerisi bulamadı', 'info');
+      return;
+    }
+    _pendingAiChanges = data.suggestions.map(s => {
+      const prod = catalogData.products.find(p => String(p.shopify_product_id) === String(s.product_id));
+      return {
+        shopifyProductId: s.product_id,
+        productTitle: prod?.title || `Ürün ${s.product_id}`,
+        field: s.field,
+        oldValue: s.old_value || '',
+        newValue: s.new_value || '',
+        decision: null,
+      };
+    });
+    showAiPreview();
   } catch (e) {
-    toast('AI analiz başarısız: ' + e.message, 'error');
+    toast('Analiz hatası: ' + e.message, 'error');
   }
 }
 
+function showAiPreview() {
+  const modal = document.getElementById('ai-preview-modal');
+  const body = document.getElementById('aip-body');
+  const count = document.getElementById('aip-count');
+  const applyBtn = document.getElementById('aip-apply-btn');
+
+  count.textContent = `${_pendingAiChanges.length} değişiklik`;
+  const acceptedCount = _pendingAiChanges.filter(c => c.decision === 'accept').length;
+  applyBtn.disabled = acceptedCount === 0;
+  applyBtn.innerHTML = acceptedCount > 0
+    ? `<i class="ti ti-upload"></i> ${acceptedCount} Değişikliği Uygula`
+    : `<i class="ti ti-upload"></i> Kabul Edilenleri Uygula`;
+
+  const fieldLabels = { title: 'Başlık', tags: 'Etiketler', seo_title: 'SEO Başlığı', seo_description: 'SEO Açıklaması' };
+
+  body.innerHTML = _pendingAiChanges.map((c, i) => {
+    const rowClass = c.decision === 'accept' ? 'aip-row accepted' : c.decision === 'reject' ? 'aip-row rejected' : 'aip-row';
+    return `
+      <div class="${rowClass}">
+        <div class="aip-row-head">
+          <div class="aip-product-title">${escapeHtml(c.productTitle)}</div>
+          <div class="aip-field-badge">${fieldLabels[c.field] || c.field}</div>
+        </div>
+        <div class="aip-diff">
+          <div class="aip-diff-old">${escapeHtml(c.oldValue) || '<em>boş</em>'}</div>
+          <div class="aip-diff-arrow"><i class="ti ti-arrow-right"></i></div>
+          <div class="aip-diff-new">${escapeHtml(c.newValue)}</div>
+        </div>
+        <div class="aip-actions">
+          <button class="aip-btn-reject ${c.decision === 'reject' ? 'active' : ''}" onclick="toggleChangeDecision(${i}, 'reject')">
+            <i class="ti ti-x"></i> Reddet
+          </button>
+          <button class="aip-btn-accept ${c.decision === 'accept' ? 'active' : ''}" onclick="toggleChangeDecision(${i}, 'accept')">
+            <i class="ti ti-check"></i> Kabul Et
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  modal.style.display = 'flex';
+}
+
+function toggleChangeDecision(idx, decision) {
+  if (!_pendingAiChanges[idx]) return;
+  _pendingAiChanges[idx].decision = _pendingAiChanges[idx].decision === decision ? null : decision;
+  showAiPreview();
+}
+
+function acceptAllChanges() {
+  _pendingAiChanges.forEach(c => { if (c.decision !== 'accept') c.decision = 'accept'; });
+  showAiPreview();
+}
+
+function closeAiPreview() {
+  document.getElementById('ai-preview-modal').style.display = 'none';
+  _pendingAiChanges = [];
+}
+
+function escapeHtml(s) {
+  if (s == null) return '';
+  return String(s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+async function applyAcceptedChanges() {
+  const accepted = _pendingAiChanges.filter(c => c.decision === 'accept');
+  if (accepted.length === 0) return;
+
+  // 1. Lokal catalogData'ya uygula
+  saveToUndoStack();
+  accepted.forEach(c => {
+    const p = catalogData.products.find(x => String(x.shopify_product_id) === String(c.shopifyProductId));
+    if (!p) return;
+    if (c.field === 'title') p.title = c.newValue;
+    else if (c.field === 'tags') p.tags = c.newValue;
+    else if (c.field === 'seo_title') p.seo_title = c.newValue;
+    else if (c.field === 'seo_description') p.seo_description = c.newValue;
+  });
+  updateUI();
+
+  // 2. AÇIK ONAY — canlı mağaza uyarısı
+  const ok = confirm(
+    `${accepted.length} değişiklik CANLI Shopify mağazanıza yazılacak.\n` +
+    `Bu işlem geri alınamaz.\n\nOnaylıyor musunuz?`
+  );
+  if (!ok) {
+    closeAiPreview();
+    toast('Değişiklikler sadece Mocksheets\'e uygulandı, Shopify\'a gönderilmedi', 'info');
+    return;
+  }
+
+  await pushChangesToShopify(accepted);
+  closeAiPreview();
+}
+
+async function pushChangesToShopify(accepted) {
+  try {
+    const res = await fetch(`${API_URL}/api/shopify/push`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getAuthToken()}` },
+      body: JSON.stringify({
+        confirmed: true,
+        changes: accepted.map(c => ({
+          product_id: c.shopifyProductId,
+          field: c.field,
+          new_value: c.newValue,
+        })),
+      }),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || err.message || 'Shopify gönderim başarısız');
+    }
+    const data = await res.json();
+    if (data.scope_missing) {
+      alert(
+        'Shopify bağlantınızın yazma izni (write_products) eksik.\n' +
+        'Uygulamalar panelinden Shopify\'ı yeniden bağlayın.'
+      );
+      return;
+    }
+    const errCount = data.errors?.length || 0;
+    toast(
+      `✓ ${data.pushed} ürün Shopify'a gönderildi` + (errCount > 0 ? ` (${errCount} hata)` : ''),
+      errCount > 0 ? 'info' : 'success'
+    );
+    addActivityLog(`Shopify push: ${data.pushed} ürün` + (errCount > 0 ? ` (${errCount} hata)` : ''));
+    syncHistory.push({ date: new Date().toLocaleString('tr-TR'), products: data.pushed, orders: 0 });
+    renderWorkspaceReports();
+  } catch (e) {
+    toast('Shopify gönderim hatası: ' + e.message, 'error');
+  }
+}
+
+// Legacy bulk push (canvas "Shopify'a Gönder" butonu) — now confirmation-gated
 async function pushToShopify(event) {
   const btn = event?.currentTarget;
+  const linked = catalogData.products.filter(p => p.shopify_product_id);
+  if (linked.length === 0) {
+    toast('Bu ürünler Shopify\'a bağlı değil (Demo veri)', 'info');
+    return;
+  }
+  const ok = confirm(
+    `${linked.length} ürün CANLI Shopify mağazanıza yazılacak.\n` +
+    `Bu işlem geri alınamaz.\n\nOnaylıyor musunuz?`
+  );
+  if (!ok) return;
+
   if (btn) { btn.disabled = true; btn.innerHTML = '<i class="ti ti-hourglass"></i> Gönderiliyor...'; }
 
   try {
     const res = await fetch(`${API_URL}/api/shopify/push`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${getAuthToken()}`
-      },
-      body: JSON.stringify({ products: catalogData.products })
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getAuthToken()}` },
+      body: JSON.stringify({ confirmed: true, products: linked }),
     });
-
     if (!res.ok) {
-      const err = await res.json();
+      const err = await res.json().catch(() => ({}));
       throw new Error(err.error || 'Push başarısız');
     }
-
     const data = await res.json();
+    if (data.scope_missing) {
+      alert('Shopify bağlantınızın yazma izni eksik. Uygulamalar panelinden yeniden bağlanın.');
+      return;
+    }
     toast(`✓ ${data.pushed} ürün Shopify'a gönderildi`, 'success');
     addActivityLog(`Shopify push: ${data.pushed} ürün`);
     syncHistory.push({ date: new Date().toLocaleString('tr-TR'), products: data.pushed, orders: 0 });
@@ -1421,6 +1605,33 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 </script>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     AI PREVIEW MODAL — Shopify AI suggestions review before commit
+     ═══════════════════════════════════════════════════════════════════ -->
+<div id="ai-preview-modal" class="aip-backdrop" style="display:none;">
+  <div class="aip-modal">
+    <div class="aip-header">
+      <div class="aip-title">
+        <i class="ti ti-sparkles"></i>
+        <span>AI Önerileri</span>
+        <span class="aip-count" id="aip-count">0 değişiklik</span>
+      </div>
+      <button class="aip-close" onclick="closeAiPreview()" title="Kapat"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="aip-body" id="aip-body"></div>
+    <div class="aip-footer">
+      <button class="aip-btn-ghost" onclick="acceptAllChanges()">
+        <i class="ti ti-check-all"></i> Tümünü Kabul Et
+      </button>
+      <div style="flex:1"></div>
+      <button class="aip-btn-ghost" onclick="closeAiPreview()">İptal</button>
+      <button class="aip-btn-primary" id="aip-apply-btn" onclick="applyAcceptedChanges()" disabled>
+        <i class="ti ti-upload"></i> Kabul Edilenleri Uygula
+      </button>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>

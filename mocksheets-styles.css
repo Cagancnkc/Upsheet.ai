@@ -3284,3 +3284,170 @@
     transition: background 0.2s ease;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   AI PREVIEW MODAL (.aip-*)
+   Shopify AI suggestions review before write-back
+   ═══════════════════════════════════════════════════════════════════ */
+.aip-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(4px);
+  z-index: 9999;
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+  animation: aip-fade-in 0.15s ease-out;
+}
+@keyframes aip-fade-in { from { opacity: 0; } to { opacity: 1; } }
+
+.aip-modal {
+  background: white;
+  border-radius: 14px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25);
+  width: 100%;
+  max-width: 780px;
+  max-height: 85vh;
+  display: flex; flex-direction: column;
+  overflow: hidden;
+  animation: aip-slide-up 0.2s ease-out;
+}
+@keyframes aip-slide-up { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+.aip-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid #e5e7eb;
+  background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+}
+.aip-title {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 16px; font-weight: 700; color: #065f46;
+}
+.aip-title i { font-size: 20px; color: #10b981; }
+.aip-count {
+  font-size: 12px; font-weight: 500; color: #059669;
+  background: white; padding: 3px 10px; border-radius: 999px;
+  border: 1px solid #a7f3d0;
+}
+.aip-close {
+  background: transparent; border: none; cursor: pointer;
+  width: 32px; height: 32px; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  color: #64748b; font-size: 18px;
+  transition: background 0.15s;
+}
+.aip-close:hover { background: rgba(0, 0, 0, 0.05); color: #1e293b; }
+
+.aip-body {
+  flex: 1; overflow-y: auto;
+  padding: 12px 20px;
+  background: #fafaf9;
+}
+
+.aip-row {
+  background: white;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 8px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.aip-row.accepted {
+  border-color: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+  background: #f0fdf4;
+}
+.aip-row.rejected {
+  border-color: #ef4444;
+  background: #fef2f2;
+  opacity: 0.7;
+}
+.aip-row-head {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 8px;
+}
+.aip-product-title {
+  font-size: 13px; font-weight: 600; color: #1e293b;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  max-width: 500px;
+}
+.aip-field-badge {
+  font-size: 10px; font-weight: 700;
+  padding: 3px 8px; border-radius: 4px;
+  background: #e0f2fe; color: #0369a1;
+  text-transform: uppercase; letter-spacing: 0.5px;
+}
+.aip-diff {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 10px;
+  font-size: 12.5px; line-height: 1.5;
+}
+.aip-diff-old {
+  flex: 1;
+  padding: 8px 10px;
+  background: #fef2f2; color: #991b1b;
+  border-radius: 6px;
+  text-decoration: line-through;
+  text-decoration-color: rgba(153, 27, 27, 0.4);
+  min-height: 20px;
+}
+.aip-diff-old em { color: #9ca3af; font-style: italic; }
+.aip-diff-arrow { color: #94a3b8; font-size: 14px; }
+.aip-diff-new {
+  flex: 1;
+  padding: 8px 10px;
+  background: #f0fdf4; color: #065f46;
+  border-radius: 6px;
+  font-weight: 500;
+  min-height: 20px;
+}
+.aip-actions {
+  display: flex; gap: 8px; justify-content: flex-end;
+}
+.aip-btn-accept, .aip-btn-reject {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 5px 12px;
+  font-size: 12px; font-weight: 600;
+  border-radius: 6px; cursor: pointer;
+  border: 1.5px solid;
+  transition: all 0.15s;
+}
+.aip-btn-accept {
+  background: white; color: #059669; border-color: #a7f3d0;
+}
+.aip-btn-accept:hover { background: #f0fdf4; border-color: #10b981; }
+.aip-btn-accept.active {
+  background: #10b981; color: white; border-color: #10b981;
+}
+.aip-btn-reject {
+  background: white; color: #dc2626; border-color: #fecaca;
+}
+.aip-btn-reject:hover { background: #fef2f2; border-color: #ef4444; }
+.aip-btn-reject.active {
+  background: #ef4444; color: white; border-color: #ef4444;
+}
+
+.aip-footer {
+  display: flex; align-items: center; gap: 8px;
+  padding: 14px 20px;
+  border-top: 1px solid #e5e7eb;
+  background: white;
+}
+.aip-btn-primary, .aip-btn-ghost {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 16px;
+  font-size: 13px; font-weight: 600;
+  border-radius: 8px; cursor: pointer;
+  border: 1px solid; transition: all 0.15s;
+}
+.aip-btn-primary {
+  background: #10b981; color: white; border-color: #10b981;
+}
+.aip-btn-primary:hover:not(:disabled) { background: #059669; border-color: #059669; }
+.aip-btn-primary:disabled {
+  background: #d1d5db; border-color: #d1d5db; cursor: not-allowed; opacity: 0.6;
+}
+.aip-btn-ghost {
+  background: white; color: #475569; border-color: #cbd5e1;
+}
+.aip-btn-ghost:hover { background: #f8fafc; border-color: #94a3b8; }
