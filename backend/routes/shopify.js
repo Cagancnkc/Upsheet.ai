@@ -247,6 +247,8 @@ router.get('/sync', requireAuth, async (req, res) => {
     for (const p of (pJson.products || [])) {
       for (const v of (p.variants || [])) {
         productRows.push({
+          shopify_product_id: p.id,
+          shopify_variant_id: v.id,
           handle: p.handle || '',
           title: p.title || '',
           body_html: p.body_html || '',
@@ -291,6 +293,79 @@ router.get('/sync', requireAuth, async (req, res) => {
   } catch (err) {
     console.error('[shopify sync]', err.message);
     res.status(502).json({ error: 'Shopify verisi alınamadı' });
+  }
+});
+
+// ─── POST /api/shopify/push ────────────────────────────────────────────────
+router.post('/push', requireAuth, async (req, res) => {
+  const { data: conn, error: connErr } = await getSupabase()
+    .from('shopify_connections')
+    .select('shop_domain, access_token')
+    .eq('user_id', req.user.id)
+    .single();
+
+  if (connErr || !conn) return res.status(404).json({ error: 'Shopify bağlantısı bulunamadı' });
+
+  const accessToken = decrypt(conn.access_token);
+  if (!accessToken) return res.status(500).json({ error: 'Token çözümlenemedi' });
+
+  const products = req.body.products || [];
+  const headers = { 'X-Shopify-Access-Token': accessToken };
+  const shop = conn.shop_domain;
+  let pushed = 0, skipped = 0, errors = [];
+
+  try {
+    for (const p of products) {
+      if (!p.shopify_product_id) { skipped++; continue; }
+
+      // Update product
+      const productUpdate = await fetch(`https://${shop}/admin/api/2024-01/products/${p.shopify_product_id}.json`, {
+        method: 'PUT',
+        headers: { ...headers, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          product: {
+            title: p.title,
+            body_html: p.body_html,
+            vendor: p.vendor,
+            product_type: p.product_type,
+            tags: p.tags,
+            status: p.status,
+          }
+        })
+      });
+
+      if (!productUpdate.ok) {
+        errors.push(`Product ${p.shopify_product_id}: ${productUpdate.statusText}`);
+        continue;
+      }
+
+      // Update variant price if exists
+      if (p.shopify_variant_id && p.price) {
+        await fetch(`https://${shop}/admin/api/2024-01/variants/${p.shopify_variant_id}.json`, {
+          method: 'PUT',
+          headers: { ...headers, 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            variant: {
+              price: p.price,
+              compare_at_price: p.compare_at_price || null,
+            }
+          })
+        });
+      }
+
+      pushed++;
+    }
+
+    // Update last_sync
+    await getSupabase()
+      .from('shopify_connections')
+      .update({ last_sync: new Date().toISOString() })
+      .eq('user_id', req.user.id);
+
+    res.json({ pushed, skipped, errors: errors.length > 0 ? errors : undefined });
+  } catch (err) {
+    console.error('[shopify push]', err.message);
+    res.status(502).json({ error: 'Shopify push başarısız' });
   }
 });
 

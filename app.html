@@ -196,6 +196,10 @@
           <button class="sf-sheet-tab" onclick="switchShopifyView('inventory')">Envanter <span class="sf-sheet-count" id="tab-inventory-count">0</span></button>
           <button class="sf-sheet-tab" onclick="switchShopifyView('collections')">Koleksiyonlar <span class="sf-sheet-count" id="tab-collections-count">0</span></button>
           <div style="flex: 1;"></div>
+          <div class="pc-view-btns">
+            <button class="pc-view-btn active" id="toggle-table" onclick="setViewMode('table')" title="Tablo Görünümü"><i class="ti ti-layout-rows"></i></button>
+            <button class="pc-view-btn" id="toggle-canvas" onclick="setViewMode('canvas')" title="Katalog Görünümü"><i class="ti ti-layout-grid"></i></button>
+          </div>
           <button style="width: 28px; height: 28px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface-2); display: flex; align-items: center; justify-content: center; cursor: pointer;">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           </button>
@@ -462,6 +466,7 @@ let rowHeight = 'normal';
 let frozenColumn = false;
 let exportHistory = [];
 let syncHistory = [];
+let viewMode = 'table';
 
 // ═══════════════════════════════════════════════════════════════════════
 // SHOPIFY CONNECT UI & DEMO DATA
@@ -755,6 +760,11 @@ const COLUMN_LABELS = {
 };
 
 function buildGrid() {
+  if (viewMode === 'canvas' && currentView === 'products') {
+    buildCatalogCanvas();
+    return;
+  }
+
   const data = catalogData[currentView] || catalogData.products;
   const keys = COLUMN_KEYS[currentView] || COLUMN_KEYS.products;
 
@@ -1224,6 +1234,107 @@ function renderWorkspaceReports() {
   document.getElementById('wsr-recent-activity').innerHTML = `
     <div class="wsr-card-title"><i class="ti ti-activity"></i> Son Aktiviteler</div>
     ${recent.length ? `<ul class="wsr-activity-list">${recent.map(l => `<li><span class="wsr-act-time">${l.time}</span><span class="wsr-act-text">${escapeHtml(l.action)}</span></li>`).join('')}</ul>` : '<div class="wsr-empty">Henüz aktivite yok.</div>'}`;
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// PRODUCT CATALOG CANVAS
+// ═══════════════════════════════════════════════════════════════════════
+
+function setViewMode(mode) {
+  viewMode = mode;
+  document.querySelectorAll('.pc-view-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(`toggle-${mode}`)?.classList.add('active');
+  buildGrid();
+}
+
+function buildCatalogCanvas() {
+  const products = catalogData.products || [];
+  const gridWrap = document.querySelector('.sf-grid-wrap');
+
+  if (!products.length) {
+    gridWrap.innerHTML = `<div class="pc-empty">Ürün verisi yok. Demo verileri yükleyin veya Shopify bağlayın.</div>`;
+    return;
+  }
+
+  gridWrap.innerHTML = `
+    <div class="pc-toolbar">
+      <span class="pc-toolbar-info">${products.length.toLocaleString('tr-TR')} ürün</span>
+      <div class="pc-toolbar-actions">
+        <button class="pc-ai-btn" onclick="runCanvasAI()"><i class="ti ti-sparkles"></i> AI Analiz Et</button>
+        <button class="pc-push-btn" onclick="pushToShopify(event)"><i class="ti ti-upload"></i> Shopify'a Gönder</button>
+      </div>
+    </div>
+    <div class="pc-grid">${products.map((p, i) => renderProductCard(p, i)).join('')}</div>`;
+}
+
+function renderProductCard(p, index) {
+  const imgSrc = p.image ? `<img src="${p.image}" alt="${escapeHtml(p.title)}" class="pc-card-img" />` : `<div class="pc-card-img-ph">📦</div>`;
+  const statusClass = p.status === 'active' ? 'pc-status-active' : p.status === 'draft' ? 'pc-status-draft' : 'pc-status-archived';
+  const stock = parseInt(p.inventory_quantity) || 0;
+  const stockClass = stock === 0 ? 'pc-stock-zero' : stock <= 5 ? 'pc-stock-low' : '';
+  const descText = (p.body_html || '').replace(/<[^>]+>/g, '').substring(0, 80);
+
+  return `
+    <div class="pc-card" data-index="${index}">
+      <div class="pc-card-image-wrap">${imgSrc}</div>
+      <div class="pc-card-body">
+        <div class="pc-card-badges">
+          <span class="pc-status ${statusClass}">${p.status || 'active'}</span>
+          ${p.inventory_quantity !== undefined ? `<span class="pc-stock ${stockClass}">${stock} stok</span>` : ''}
+        </div>
+        <div class="pc-card-title">${escapeHtml(p.title || '—')}</div>
+        <div class="pc-card-vendor">${escapeHtml(p.vendor || '')}</div>
+        <div class="pc-card-desc">${escapeHtml(descText)}${descText.length >= 80 ? '…' : ''}</div>
+        <div class="pc-card-price">
+          <span class="pc-price">${p.price ? p.price + ' ₺' : '—'}</span>
+          ${p.compare_at_price ? `<span class="pc-compare-price">${p.compare_at_price} ₺</span>` : ''}
+        </div>
+      </div>
+    </div>`;
+}
+
+async function runCanvasAI() {
+  toast('AI analiz başlatılıyor...', 'info');
+  saveToUndoStack();
+  try {
+    await runAIAction('clean_titles');
+    await new Promise(r => setTimeout(r, 500));
+    await runAIAction('generate_descriptions');
+    buildCatalogCanvas();
+  } catch (e) {
+    toast('AI analiz başarısız: ' + e.message, 'error');
+  }
+}
+
+async function pushToShopify(event) {
+  const btn = event?.currentTarget;
+  if (btn) { btn.disabled = true; btn.innerHTML = '<i class="ti ti-hourglass"></i> Gönderiliyor...'; }
+
+  try {
+    const res = await fetch(`${API_URL}/api/shopify/push`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${getAuthToken()}`
+      },
+      body: JSON.stringify({ products: catalogData.products })
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || 'Push başarısız');
+    }
+
+    const data = await res.json();
+    toast(`✓ ${data.pushed} ürün Shopify'a gönderildi`, 'success');
+    addActivityLog(`Shopify push: ${data.pushed} ürün`);
+    syncHistory.push({ date: new Date().toLocaleString('tr-TR'), products: data.pushed, orders: 0 });
+    renderWorkspaceReports();
+  } catch (e) {
+    toast('Push başarısız: ' + e.message, 'error');
+  } finally {
+    if (btn) { btn.disabled = false; btn.innerHTML = '<i class="ti ti-upload"></i> Shopify\'a Gönder'; }
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════════════
