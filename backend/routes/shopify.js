@@ -243,38 +243,50 @@ router.get('/sync', requireAuth, async (req, res) => {
     ]);
     const [pJson, oJson] = await Promise.all([pResp.json(), oResp.json()]);
 
-    const productHeaders = ['urun_adi', 'varyant', 'sku', 'fiyat', 'stok', 'durum', 'kategori', 'olusturma_tarihi'];
     const productRows = [];
     for (const p of (pJson.products || [])) {
       for (const v of (p.variants || [])) {
-        const stock = v.inventory_quantity ?? 0;
-        productRows.push([
-          p.title || '',
-          v.title || '',
-          v.sku || '',
-          v.price || '',
-          stock,
-          stock <= 5 ? 'Kritik' : 'Normal',
-          p.product_type || '',
-          (p.created_at || '').slice(0, 10),
-        ]);
+        productRows.push({
+          handle: p.handle || '',
+          title: p.title || '',
+          body_html: p.body_html || '',
+          vendor: p.vendor || '',
+          product_type: p.product_type || '',
+          tags: p.tags || '',
+          status: p.status || 'active',
+          sku: v.sku || '',
+          variant_title: v.title !== 'Default Title' ? v.title : '',
+          price: v.price || '',
+          compare_at_price: v.compare_at_price || '',
+          inventory_quantity: v.inventory_quantity ?? 0,
+          image: (p.images?.[0]?.src) || '',
+          created_at: (p.created_at || '').slice(0, 10),
+        });
       }
     }
 
-    const orderHeaders = ['siparis_no', 'musteri', 'tutar', 'durum', 'kargo_durumu', 'tarih', 'urun_sayisi'];
-    const orderRows = (oJson.orders || []).map(o => [
-      o.name || '',
-      (o.customer ? `${o.customer.first_name || ''} ${o.customer.last_name || ''}`.trim() : '') || o.email || '',
-      o.total_price || '',
-      o.financial_status || '',
-      o.fulfillment_status || 'unfulfilled',
-      (o.created_at || '').slice(0, 10),
-      (o.line_items || []).length,
-    ]);
+    const orderRows = (oJson.orders || []).map(o => ({
+      name: o.name || '',
+      customer: (o.customer ? `${o.customer.first_name || ''} ${o.customer.last_name || ''}`.trim() : '') || o.email || '',
+      total_price: o.total_price || '',
+      financial_status: o.financial_status || '',
+      fulfillment_status: o.fulfillment_status || 'unfulfilled',
+      created_at: (o.created_at || '').slice(0, 10),
+      line_items_count: (o.line_items || []).length,
+    }));
+
+    // Update last_sync in shopify_connections
+    await getSupabase()
+      .from('shopify_connections')
+      .update({ last_sync: new Date().toISOString() })
+      .eq('user_id', req.user.id);
 
     res.json({
-      products: { headers: productHeaders, rows: productRows },
-      orders:   { headers: orderHeaders,   rows: orderRows   },
+      products: productRows,
+      orders: orderRows,
+      variants: [],
+      collections: [],
+      inventory: [],
     });
   } catch (err) {
     console.error('[shopify sync]', err.message);

@@ -291,7 +291,7 @@
     </div>
 
   <!-- ============ AI ACTIONS PANEL (RIGHT) ============ -->
-  <div class="sf-ai-panel">
+  <div class="sf-ai-panel" style="display: none;">
     <div class="sf-ai-header">
       <div class="sf-ai-title">AI İşlemleri</div>
       <div class="sf-ai-close" onclick="toggleAIPanel()">×</div>
@@ -398,6 +398,58 @@ let rowHeight = 'normal';
 let frozenColumn = false;
 
 // ═══════════════════════════════════════════════════════════════════════
+// SHOPIFY CONNECT UI & DEMO DATA
+// ═══════════════════════════════════════════════════════════════════════
+
+function showConnectPanel() {
+  const gridWrap = document.querySelector('.sf-grid-wrap');
+  gridWrap.innerHTML = `
+    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 20px; padding: 40px; text-align: center; background: linear-gradient(135deg, rgba(56, 141, 106, 0.02) 0%, rgba(56, 141, 106, 0.05) 100%);">
+      <div style="font-size: 64px; opacity: 0.3;">🛍️</div>
+      <h2 style="font-size: 24px; font-weight: 600; margin: 0; color: var(--ink);">Shopify Hesabınızı Bağlayın</h2>
+      <p style="font-size: 14px; color: var(--ink-3); max-width: 400px; margin: 0;">Ürünlerinizi, siparişlerinizi ve envanterinizi doğrudan burada yönetin.</p>
+      <div style="display: flex; flex-direction: column; width: 100%; max-width: 340px; gap: 12px;">
+        <input id="shop-domain-input" type="text" placeholder="ornekmagazaniz.myshopify.com" style="width: 100%; padding: 12px 16px; border: 1px solid var(--line); border-radius: 8px; font-size: 14px; font-family: 'Inter', sans-serif;" />
+        <button onclick="connectShopify()" style="width: 100%; padding: 12px 16px; background: linear-gradient(135deg, var(--brand) 0%, var(--brand-ink) 100%); color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 550; cursor: pointer; transition: transform 0.2s;">
+          Shopify'a Bağlan →
+        </button>
+        <button onclick="loadDemoData()" style="width: 100%; padding: 12px 16px; background: var(--surface-2); color: var(--ink); border: 1px solid var(--line); border-radius: 8px; font-size: 14px; font-weight: 550; cursor: pointer; transition: background 0.2s;">
+          Demo Verilerle Dene
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+function connectShopify() {
+  const domain = document.getElementById('shop-domain-input')?.value.trim() || '';
+  if (!domain) {
+    toast('Mağaza adresinizi girin', 'error');
+    return;
+  }
+  const shop = domain.includes('.myshopify.com') ? domain : domain + '.myshopify.com';
+  window.location.href = `${API_URL}/api/shopify/auth?shop=${encodeURIComponent(shop)}`;
+}
+
+function loadDemoData() {
+  catalogData.products = [
+    { handle: 'kirmizi-gomlek', title: 'Kırmızı Gömlek', body_html: 'Yüksek kaliteli pamuklu gömlek. Rahat ve dayanıklı.', vendor: 'ABC Marka', product_type: 'Giyim', tags: 'gömlek, erkek', status: 'active', sku: 'KG-001', variant_title: 'M / Kırmızı', price: '299.90', compare_at_price: '399.90', inventory_quantity: 45, image: '', created_at: '2024-01-15' },
+    { handle: 'mavi-ust', title: 'Mavi Üst', body_html: 'Şık ve konforlu mavi üst. Yazlık koleksiyona uygun.', vendor: 'XYZ Tekstil', product_type: 'Giyim', tags: 'üst, kadın', status: 'active', sku: 'MU-002', variant_title: 'L / Mavi', price: '199.90', compare_at_price: '249.90', inventory_quantity: 23, image: '', created_at: '2024-01-10' },
+    { handle: 'siyah-pantolon', title: 'Siyah Pantolon', body_html: 'Ofis için ideal siyah pantolon. Kaliteli kumaş.', vendor: 'Mode Tekstil', product_type: 'Giyim', tags: 'pantolon, erkek', status: 'active', sku: 'SP-003', variant_title: '32 / Siyah', price: '449.90', compare_at_price: '599.90', inventory_quantity: 8, image: '', created_at: '2024-01-08' },
+    { handle: 'beyaz-sneaker', title: 'Beyaz Sneaker', body_html: 'Rahat ve stil spor ayakkabı. Tüm mevsime uygun.', vendor: 'SportWear', product_type: 'Ayakkabı', tags: 'ayakkabı, spor', status: 'active', sku: 'BS-004', variant_title: '42 / Beyaz', price: '599.90', compare_at_price: '799.90', inventory_quantity: 12, image: '', created_at: '2024-01-05' },
+    { handle: 'kadi-saksi-5lt', title: 'Kadı Saçi 5Lt', body_html: 'Doğal ve organik. Saç bakımı için en iyi seçim.', vendor: 'Doğal Ürünler', product_type: 'Sağlık', tags: 'saç, organik', status: 'active', sku: 'KS-005', variant_title: '5 Litre', price: '89.90', compare_at_price: '129.90', inventory_quantity: 156, image: '', created_at: '2024-01-02' },
+    { handle: 'pembe-kazak', title: 'Pembe Kazak', body_html: 'Sıcak ve yumuşak kazak. Kış ayları için mükemmel.', vendor: 'Knitwear Pro', product_type: 'Giyim', tags: 'kazak, kadın', status: 'active', sku: 'PK-006', variant_title: 'XL / Pembe', price: '349.90', compare_at_price: '449.90', inventory_quantity: 5, image: '', created_at: '2023-12-28' },
+    { handle: 'kahve-torbasi-250g', title: 'Kahve Torbası 250g', body_html: 'Premium Türk kahvesi. Sınıf 1 kalite.', vendor: 'Kahve Dünyası', product_type: 'Gıda', tags: 'kahve, içecek', status: 'active', sku: 'KT-007', variant_title: '250g', price: '45.90', compare_at_price: '59.90', inventory_quantity: 234, image: '', created_at: '2023-12-25' },
+    { handle: 'cocuk-ayakkabisi', title: 'Çocuk Ayakkabısı', body_html: 'Dayanıklı ve konforlu çocuk ayakkabısı. Hava geçirgen.', vendor: 'Kids Fashion', product_type: 'Ayakkabı', tags: 'ayakkabı, çocuk', status: 'active', sku: 'CA-008', variant_title: '30 / Renkli', price: '199.90', compare_at_price: '279.90', inventory_quantity: 67, image: '', created_at: '2023-12-22' },
+    { handle: 'el-kremi', title: 'El Kremi Tupu', body_html: 'Nemlendirici ve koruyucu el kremi. Hassas cilt için.', vendor: 'Cilt Bakım', product_type: 'Kozmetik', tags: 'krem, cilt', status: 'active', sku: 'EK-009', variant_title: '75ml', price: '24.90', compare_at_price: '34.90', inventory_quantity: 89, image: '', created_at: '2023-12-20' },
+    { handle: 'bavul-90l', title: 'Bavul 90L', body_html: 'Büyük seyahat bavulu. Hafif ve dayanıklı.', vendor: 'Travel Gear', product_type: 'Seyahat', tags: 'bavul, seyahat', status: 'active', sku: 'BV-010', variant_title: '90L / Siyah', price: '699.90', compare_at_price: '899.90', inventory_quantity: 3, image: '', created_at: '2023-12-18' },
+  ];
+  addActivityLog('Demo veriler yüklendi');
+  updateUI();
+  toast('Demo veriler yüklendi', 'info');
+}
+
+// ═══════════════════════════════════════════════════════════════════════
 // SHOPIFY SYNC & INITIALIZATION
 // ═══════════════════════════════════════════════════════════════════════
 
@@ -431,18 +483,35 @@ async function syncShopifyData() {
   }
 }
 
-function checkShopifyStatus() {
-  fetch(`${API_URL}/api/shopify/status`, {
-    headers: { 'Authorization': `Bearer ${getAuthToken()}` }
-  })
-  .then(r => r.json())
-  .then(d => {
+async function checkShopifyStatus() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('shopify') === 'connected') {
+    toast('Shopify bağlantısı kuruldu! Veriler yükleniyor...', 'success');
+    history.replaceState({}, '', window.location.pathname);
+  }
+
+  const token = getAuthToken();
+  if (!token) {
+    loadDemoData();
+    return;
+  }
+
+  try {
+    const r = await fetch(`${API_URL}/api/shopify/status`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    const d = await r.json();
     if (d.connected) {
       shopifyStore = d.shop_name;
       document.title = `Mocksheets — ${shopifyStore}`;
+      await syncShopifyData();
+    } else {
+      showConnectPanel();
     }
-  })
-  .catch(() => {});
+  } catch (err) {
+    console.error('Status check failed:', err);
+    loadDemoData();
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -518,7 +587,10 @@ function switchShopifyView(type) {
 // ═══════════════════════════════════════════════════════════════════════
 
 function updateUI() {
-  document.getElementById('products-count').textContent = catalogData.products.length.toLocaleString('tr-TR');
+  const productCount = catalogData.products.length;
+  document.getElementById('products-count').textContent = productCount.toLocaleString('tr-TR');
+  const badge = document.getElementById('product-count-badge');
+  if (badge) badge.textContent = productCount.toLocaleString('tr-TR') + ' ürün';
   updateCatalogStats();
   buildGrid();
 }
@@ -587,20 +659,48 @@ function computeCatalogHealth(products) {
 // GRID RENDERING
 // ═══════════════════════════════════════════════════════════════════════
 
+const COLUMN_KEYS = {
+  products: ['image', 'title', 'body_html', 'vendor', 'product_type', 'status', 'tags', 'sku', 'variant_title', 'price', 'compare_at_price', 'inventory_quantity', 'handle', 'created_at'],
+  orders: ['name', 'customer', 'total_price', 'financial_status', 'fulfillment_status', 'created_at', 'line_items_count'],
+  variants: ['sku', 'variant_title', 'price', 'compare_at_price', 'inventory_quantity'],
+  collections: ['title', 'handle', 'product_count', 'status'],
+  inventory: ['sku', 'title', 'inventory_quantity', 'handle'],
+};
+
+const COLUMN_LABELS = {
+  image: 'Görsel', title: 'Başlık', body_html: 'Açıklama', vendor: 'Marka',
+  product_type: 'Ürün Tipi', status: 'Durum', tags: 'Etiketler',
+  sku: 'SKU', variant_title: 'Varyant', price: 'Fiyat',
+  compare_at_price: 'Karş. Fiyat', inventory_quantity: 'Stok',
+  handle: 'Handle', created_at: 'Oluşturma', name: 'Sipariş No',
+  customer: 'Müşteri', total_price: 'Toplam', financial_status: 'Ödeme',
+  fulfillment_status: 'Kargo', line_items_count: 'Ürün Sayısı', product_count: 'Ürün'
+};
+
 function buildGrid() {
   const data = catalogData[currentView] || catalogData.products;
-  const headers = getShopifyHeaders(currentView);
+  const keys = COLUMN_KEYS[currentView] || COLUMN_KEYS.products;
 
-  const headerHTML = headers.map(h => `<div class="cell header">${h}</div>`).join('');
+  const headerHTML = keys.map(k => {
+    const label = COLUMN_LABELS[k] || k;
+    return `<div class="cell header">${label}</div>`;
+  }).join('');
   document.getElementById('colHeaderBar').innerHTML = headerHTML;
 
   const rowsHTML = data.slice(0, 100).map((row, idx) => {
-    const cells = headers.map(h => {
-      const val = row[h.toLowerCase().replace(/\s+/g, '_')] || '';
-      if (h === 'Image' && val) {
-        return `<div class="cell"><img src="${val}" class="sf-img-cell img" /></div>`;
+    const cells = keys.map(key => {
+      let val = row[key] || '';
+
+      if (key === 'image' && val) {
+        return `<div class="cell"><img src="${val}" class="sf-img-cell" style="width:40px;height:40px;object-fit:cover;border-radius:4px;" /></div>`;
       }
-      return `<div class="cell">${escapeHtml(val)}</div>`;
+      if (key === 'body_html' && val) {
+        val = val.replace(/<[^>]+>/g, '');
+      }
+      if (key === 'inventory_quantity' || key === 'line_items_count' || key === 'product_count') {
+        val = String(val);
+      }
+      return `<div class="cell">${escapeHtml(String(val))}</div>`;
     }).join('');
     return `<div class="row" style="display: contents;">${cells}</div>`;
   }).join('');
@@ -609,13 +709,8 @@ function buildGrid() {
 }
 
 function getShopifyHeaders(view) {
-  const headers = {
-    products: ['Image', 'Handle', 'Title', 'Vendor', 'Product Type', 'Price', 'Status'],
-    variants: ['SKU', 'Title', 'Price', 'Barcode', 'Inventory Qty'],
-    collections: ['Title', 'Handle', 'Product Count', 'Status'],
-    inventory: ['SKU', 'Title', 'Quantity', 'Warehouse']
-  };
-  return headers[view] || headers.products;
+  const keys = COLUMN_KEYS[view] || COLUMN_KEYS.products;
+  return keys.map(k => COLUMN_LABELS[k] || k);
 }
 
 function escapeHtml(text) {
@@ -887,8 +982,11 @@ function renderActivityPanel() {
 // ═══════════════════════════════════════════════════════════════════════
 
 function toggleAIPanel() {
-  document.querySelector('.sf-ai-panel').style.display =
-    document.querySelector('.sf-ai-panel').style.display === 'none' ? 'flex' : 'none';
+  const panel = document.querySelector('.sf-ai-panel');
+  const layout = document.querySelector('.shopify-layout');
+  const isHidden = panel.style.display === 'none' || !panel.style.display;
+  panel.style.display = isHidden ? 'flex' : 'none';
+  layout.classList.toggle('ai-panel-open', isHidden);
 }
 
 function startRenameCatalog() {
@@ -986,7 +1084,6 @@ document.addEventListener('DOMContentLoaded', function() {
   addDropdownStyles();
   initPanels();
   checkShopifyStatus();
-  syncShopifyData();
 
   // Close dropdowns on outside click
   document.addEventListener('click', (e) => {

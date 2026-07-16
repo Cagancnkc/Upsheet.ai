@@ -542,11 +542,14 @@
   /* ============ SHOPIFY LAYOUT ============ */
   .shopify-layout {
     display: grid;
-    grid-template-columns: 220px 1fr 320px;
+    grid-template-columns: 200px 1fr;
     grid-template-rows: 52px auto auto 1fr auto auto;
     height: 100vh;
     overflow: hidden;
     background: linear-gradient(135deg, #F6F6F4 0%, #FAFAF8 100%);
+  }
+  .shopify-layout.ai-panel-open {
+    grid-template-columns: 200px 1fr 320px;
   }
 
   .sf-sidebar {
@@ -570,7 +573,7 @@
   .sf-sidebar::-webkit-scrollbar-thumb:hover { background: rgba(138, 140, 134, 0.5); }
 
   .sf-topbar {
-    grid-column: 2 / 4;
+    grid-column: 2 / -1;
     grid-row: 1;
     display: grid;
     grid-template-columns: 1fr auto;
