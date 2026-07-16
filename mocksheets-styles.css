@@ -917,6 +917,31 @@
   .ssp-validation-summary { font-size: 14px; font-weight: 600; margin-bottom: 12px; color: #dc3545; }
   .ssp-success { color: #198754; font-size: 14px; font-weight: 600; text-align: center; padding: 24px; }
 
+  /* ============ WORKSPACE REPORTS ============ */
+  .wsr-wrapper { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; padding: 16px 24px 24px; background: #FAFAF8; }
+  .wsr-card { background: white; border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
+  .wsr-card-title { font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 14px; display: flex; align-items: center; gap: 6px; }
+  .wsr-stats-row { display: flex; gap: 12px; flex-wrap: wrap; }
+  .wsr-stat { flex: 1; min-width: 60px; text-align: center; }
+  .wsr-stat-val { font-size: 20px; font-weight: 700; color: var(--ink); line-height: 1.2; }
+  .wsr-stat-lbl { font-size: 10px; color: var(--ink-4); margin-top: 2px; }
+  .wsr-green { color: var(--brand) !important; }
+  .wsr-orange { color: #f59e0b !important; }
+  .wsr-gray { color: #9ca3af !important; }
+  .wsr-blue { color: #3b82f6 !important; }
+  .wsr-red { color: #ef4444 !important; }
+  .wsr-bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .wsr-bar-lbl { font-size: 11px; color: var(--ink-3); width: 60px; flex-shrink: 0; }
+  .wsr-bar-track { flex: 1; height: 6px; background: var(--line); border-radius: 3px; overflow: hidden; }
+  .wsr-bar-fill { height: 100%; border-radius: 3px; transition: width 0.3s; }
+  .wsr-bar-pct { font-size: 11px; font-weight: 600; color: var(--ink); width: 32px; text-align: right; flex-shrink: 0; }
+  .wsr-activity-list { list-style: none; padding: 0; margin: 0; }
+  .wsr-activity-list li { display: flex; gap: 8px; padding: 6px 0; border-bottom: 1px solid #f5f5f3; font-size: 12px; }
+  .wsr-activity-list li:last-child { border-bottom: none; }
+  .wsr-act-time { color: var(--ink-4); flex-shrink: 0; }
+  .wsr-act-text { color: var(--ink); }
+  .wsr-empty { font-size: 12px; color: var(--ink-4); text-align: center; padding: 16px 0; }
+
   /* ============ AI PANEL (Inside Main Content Row) ============ */
   .sf-ai-panel {
     display: none;
