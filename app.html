@@ -59,22 +59,22 @@
     <div class="sf-nav-section-title">
       VERİ
     </div>
-    <div class="sf-nav-item" onclick="switchShopifyView('products')">
+    <div class="sf-nav-item" onclick="sidebarSwitchView(this, 'products')">
       <i class="ti ti-package"></i>
       Ürünler
       <span class="sf-data-badge" id="products-count">8,742</span>
     </div>
-    <div class="sf-nav-item" onclick="switchShopifyView('collections')">
+    <div class="sf-nav-item" onclick="sidebarSwitchView(this, 'collections')">
       <i class="ti ti-folder"></i>
       Koleksiyonlar
       <span class="sf-data-badge">156</span>
     </div>
-    <div class="sf-nav-item" onclick="switchShopifyView('variants')">
+    <div class="sf-nav-item" onclick="sidebarSwitchView(this, 'variants')">
       <i class="ti ti-git-branch"></i>
       Varyantlar
       <span class="sf-data-badge">234</span>
     </div>
-    <div class="sf-nav-item" onclick="switchShopifyView('inventory')">
+    <div class="sf-nav-item" onclick="sidebarSwitchView(this, 'inventory')">
       <i class="ti ti-chart-bar"></i>
       Envanter
       <span class="sf-data-badge">8,742</span>
@@ -163,7 +163,7 @@
 
 
     <!-- TABLE PANEL & AI PANEL CONTAINER -->
-    <div class="sf-main-content-row">
+    <div class="sf-main-content-row" id="main-table-view">
       <!-- TABLE PANEL -->
       <div class="sf-table-panel">
         <div class="sf-toolbar">
@@ -268,6 +268,109 @@
       </div>
     </div>
 
+    <!-- SECTION PANELS -->
+    <div id="panel-activity" class="sf-section-panel" style="display:none;">
+      <div class="ssp-header">
+        <h2 class="ssp-title"><i class="ti ti-activity"></i> Aktivite</h2>
+        <p class="ssp-desc">Son 100 işlem kayıt altında tutulmaktadır.</p>
+      </div>
+      <div class="ssp-body" id="activity-content"><div class="ssp-empty">Henüz aktivite yok.</div></div>
+    </div>
+
+    <div id="panel-ai-tools" class="sf-section-panel" style="display:none;">
+      <div class="ssp-header">
+        <h2 class="ssp-title"><i class="ti ti-sparkles"></i> AI İşlemleri</h2>
+        <p class="ssp-desc">Katalog verilerinizi yapay zeka ile optimize edin.</p>
+      </div>
+      <div class="ssp-body">
+        <div class="ssp-grid">
+          <div class="ssp-action-card" onclick="runAIAction('clean_titles')"><div class="ssp-action-icon">🔤</div><div class="ssp-action-label">Başlıkları Temizle</div><div class="ssp-action-desc">Büyük harf ve emoji kaldır</div></div>
+          <div class="ssp-action-card" onclick="runAIAction('generate_descriptions')"><div class="ssp-action-icon">📝</div><div class="ssp-action-label">Açıklamalar Oluştur</div><div class="ssp-action-desc">AI ile ürün açıklamaları yaz</div></div>
+          <div class="ssp-action-card" onclick="runAIAction('generate_seo')"><div class="ssp-action-icon">🔍</div><div class="ssp-action-label">SEO Oluştur</div><div class="ssp-action-desc">Meta başlık ve açıklaması</div></div>
+          <div class="ssp-action-card" onclick="runAIAction('standardize_vendors')"><div class="ssp-action-icon">📋</div><div class="ssp-action-label">Vendor Standartlaştır</div><div class="ssp-action-desc">Benzer isimleri birleştir</div></div>
+          <div class="ssp-action-card" onclick="runAIAction('categorize_products')"><div class="ssp-action-icon">🏷️</div><div class="ssp-action-label">Kategorize Et</div><div class="ssp-action-desc">Ürün tipi ve etiketleri ayarla</div></div>
+          <div class="ssp-action-card" onclick="runAIAction('translate')"><div class="ssp-action-icon">🌐</div><div class="ssp-action-label">Çevir</div><div class="ssp-action-desc">Başlık ve açıklamaları çevir</div></div>
+          <div class="ssp-action-card" onclick="runAIAction('find_replace')"><div class="ssp-action-icon">🔄</div><div class="ssp-action-label">Bul ve Değiştir</div><div class="ssp-action-desc">Toplu bul ve değiştir</div></div>
+          <div class="ssp-action-card" onclick="runAIAction('fix_missing')"><div class="ssp-action-icon">✏️</div><div class="ssp-action-label">Eksikleri Düzelt</div><div class="ssp-action-desc">Boş hücreleri AI ile doldur</div></div>
+        </div>
+        <div style="margin-top:20px;">
+          <div class="ssp-section-label">Özel İşlem</div>
+          <textarea id="ssp-custom-input" class="ssp-custom-input" placeholder="Ne yapmak istiyorsun? Örn: Tüm fiyatları %20 artır..."></textarea>
+          <button class="ssp-primary-btn" onclick="runCustomActionFromPanel()">✨ Özel İşlem Oluştur</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="panel-templates" class="sf-section-panel" style="display:none;">
+      <div class="ssp-header">
+        <h2 class="ssp-title"><i class="ti ti-template"></i> Şablonlar</h2>
+        <p class="ssp-desc">Sık kullanılan işlemleri şablon olarak uygulayın.</p>
+      </div>
+      <div class="ssp-body">
+        <div class="ssp-grid">
+          <div class="ssp-template-card" onclick="applyTemplate('ecommerce')"><div class="ssp-template-badge">🛍️</div><div class="ssp-template-name">E-Ticaret Temel</div><div class="ssp-template-desc">Başlık temizleme + Açıklama + SEO</div><div class="ssp-template-count">3 işlem</div></div>
+          <div class="ssp-template-card" onclick="applyTemplate('fashion')"><div class="ssp-template-badge">👗</div><div class="ssp-template-name">Moda Koleksiyonu</div><div class="ssp-template-desc">Kategorizasyon + Vendor + Çeviri</div><div class="ssp-template-count">3 işlem</div></div>
+          <div class="ssp-template-card" onclick="applyTemplate('seo_boost')"><div class="ssp-template-badge">🔍</div><div class="ssp-template-name">SEO Güçlendirme</div><div class="ssp-template-desc">Meta başlık + Açıklama + Handle</div><div class="ssp-template-count">3 işlem</div></div>
+          <div class="ssp-template-card" onclick="applyTemplate('stock_cleanup')"><div class="ssp-template-badge">📦</div><div class="ssp-template-name">Stok Temizleme</div><div class="ssp-template-desc">Sıfır stokları taslak yap + Etiket</div><div class="ssp-template-count">2 işlem</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="panel-validation" class="sf-section-panel" style="display:none;">
+      <div class="ssp-header">
+        <h2 class="ssp-title"><i class="ti ti-shield-check"></i> Doğrulama Merkezi</h2>
+        <p class="ssp-desc">Veri kalitesi sorunlarını tespit edin ve düzeltin.</p>
+      </div>
+      <div class="ssp-body" id="validation-content"><div class="ssp-empty">Doğrulama için ürün yükleyin.</div></div>
+    </div>
+
+    <div id="panel-bulk" class="sf-section-panel" style="display:none;">
+      <div class="ssp-header">
+        <h2 class="ssp-title"><i class="ti ti-bolt"></i> Toplu İşlemler</h2>
+        <p class="ssp-desc">Birden fazla ürünü aynı anda güncelleyin.</p>
+      </div>
+      <div class="ssp-body">
+        <div class="ssp-form-group">
+          <label class="ssp-label">Fiyat Güncelle</label>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <select id="bulk-price-op" class="ssp-select"><option value="increase_pct">% Artır</option><option value="decrease_pct">% Azalt</option><option value="set_fixed">Sabit Fiyat</option></select>
+            <input id="bulk-price-val" type="number" class="ssp-input" placeholder="20" />
+            <button class="ssp-primary-btn" onclick="runBulkPriceUpdate()">Uygula</button>
+          </div>
+        </div>
+        <div class="ssp-form-group">
+          <label class="ssp-label">Durum Değiştir</label>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <select id="bulk-status-val" class="ssp-select"><option value="active">Aktif</option><option value="draft">Taslak</option><option value="archived">Arşivlendi</option></select>
+            <button class="ssp-primary-btn" onclick="runBulkStatusUpdate()">Uygula</button>
+          </div>
+        </div>
+        <div class="ssp-form-group">
+          <label class="ssp-label">Etiket Ekle</label>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <input id="bulk-tag-val" type="text" class="ssp-input" placeholder="yeni-etiket" />
+            <button class="ssp-primary-btn" onclick="runBulkTagAdd()">Ekle</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="panel-export-history" class="sf-section-panel" style="display:none;">
+      <div class="ssp-header">
+        <h2 class="ssp-title"><i class="ti ti-download"></i> İhraç Geçmişi</h2>
+        <p class="ssp-desc">Daha önce indirilen dosyalar listelenir.</p>
+      </div>
+      <div class="ssp-body" id="export-history-content"><div class="ssp-empty">Henüz ihraç geçmişi yok.</div></div>
+    </div>
+
+    <div id="panel-sync-history" class="sf-section-panel" style="display:none;">
+      <div class="ssp-header">
+        <h2 class="ssp-title"><i class="ti ti-refresh"></i> Senkronizasyon Geçmişi</h2>
+        <p class="ssp-desc">Shopify senkronizasyon kayıtları.</p>
+      </div>
+      <div class="ssp-body" id="sync-history-content"><div class="ssp-empty">Henüz senkronizasyon geçmişi yok.</div></div>
+    </div>
+
     <!-- BOTTOM STRIP -->
     <div class="sf-bottom-strip">
       <div class="sf-bottom-card">
@@ -348,6 +451,8 @@ let activityLog = [];
 let hiddenColumns = new Set();
 let rowHeight = 'normal';
 let frozenColumn = false;
+let exportHistory = [];
+let syncHistory = [];
 
 // ═══════════════════════════════════════════════════════════════════════
 // SHOPIFY CONNECT UI & DEMO DATA
@@ -420,6 +525,7 @@ async function syncShopifyData() {
 
     const data = await response.json();
     catalogData = data;
+    syncHistory.push({ date: new Date().toLocaleString('tr-TR'), products: (data.products||[]).length, orders: (data.orders||[]).length });
     addActivityLog('Shopify senkronizasyonu başarılı');
     updateUI();
 
@@ -504,27 +610,55 @@ function switchPanel(panelId) {
 }
 
 function setActiveSidebarItem(el, type) {
-  const allItems = document.querySelectorAll('.sf-nav-item');
-  allItems.forEach(i => i.classList.remove('active'));
-  if (el && el.classList) {
-    el.classList.add('active');
+  document.querySelectorAll('.sf-nav-item').forEach(i => i.classList.remove('active'));
+  if (el) el.classList.add('active');
+
+  const mainView = document.getElementById('main-table-view');
+  const allPanels = document.querySelectorAll('.sf-section-panel');
+
+  if (!type || type === 'workspace') {
+    if (mainView) mainView.style.display = '';
+    allPanels.forEach(p => p.style.display = 'none');
+    return;
   }
 
-  const panelMap = {
-    workspace: null,
-    activity: 'panel-activity',
-    'ai-tools': 'panel-ai-tools',
-    templates: 'panel-templates',
-    validation: 'panel-validation',
-    bulk: 'panel-bulk',
-    'export-history': 'panel-export-history',
-    'sync-history': 'panel-sync-history'
-  };
+  if (mainView) mainView.style.display = 'none';
+  allPanels.forEach(p => p.style.display = 'none');
+  const target = document.getElementById('panel-' + type);
+  if (target) {
+    target.style.display = '';
+    refreshPanel(type);
+  }
+}
 
-  switchPanel(panelMap[type] ? panelMap[type] : null);
+function sidebarSwitchView(el, viewType) {
+  document.querySelectorAll('.sf-nav-item').forEach(i => i.classList.remove('active'));
+  if (el) el.classList.add('active');
+  const mainView = document.getElementById('main-table-view');
+  const allPanels = document.querySelectorAll('.sf-section-panel');
+  if (mainView) mainView.style.display = '';
+  allPanels.forEach(p => p.style.display = 'none');
+  currentView = viewType;
+  buildGrid();
+}
+
+function refreshPanel(type) {
+  if (type === 'activity') {
+    document.getElementById('activity-content').innerHTML = renderActivityPanel();
+  } else if (type === 'validation') {
+    document.getElementById('validation-content').innerHTML = renderValidationPanel();
+  } else if (type === 'export-history') {
+    document.getElementById('export-history-content').innerHTML = renderExportHistory();
+  } else if (type === 'sync-history') {
+    document.getElementById('sync-history-content').innerHTML = renderSyncHistory();
+  }
 }
 
 function switchShopifyView(type) {
+  const mainView = document.getElementById('main-table-view');
+  const allPanels = document.querySelectorAll('.sf-section-panel');
+  if (mainView) mainView.style.display = '';
+  allPanels.forEach(p => p.style.display = 'none');
   currentView = type;
   const tabs = document.querySelectorAll('.sf-sheet-tab');
   tabs.forEach(t => t.classList.remove('active'));
@@ -549,16 +683,12 @@ function updateUI() {
 
 function updateCatalogStats() {
   const stats = computeCatalogHealth(catalogData.products);
-  document.getElementById('stat-products-value').textContent = catalogData.products.length.toLocaleString('tr-TR');
-  document.getElementById('stat-quality-value').textContent = stats.qualityScore + '%';
-  document.getElementById('stat-missing-value').textContent = stats.missingValues;
-  document.getElementById('stat-ai-value').textContent = stats.aiSuggestions;
-
-  document.getElementById('bottom-quality-pct').textContent = stats.qualityScore + '%';
-  document.getElementById('bottom-quality-missing').textContent = stats.missingValues + ' değer eksik';
-  document.getElementById('bottom-ai-count').textContent = stats.aiSuggestions;
-
-  // Update tab counts
+  const qPct = document.getElementById('bottom-quality-pct');
+  if (qPct) qPct.textContent = stats.qualityScore + '%';
+  const qMiss = document.getElementById('bottom-quality-missing');
+  if (qMiss) qMiss.textContent = stats.missingValues + ' değer eksik';
+  const aiCnt = document.getElementById('bottom-ai-count');
+  if (aiCnt) aiCnt.textContent = stats.aiSuggestions;
   const counts = {
     products: catalogData.products.length,
     variants: catalogData.variants?.length || 0,
@@ -758,6 +888,7 @@ function downloadSheet() {
   link.download = `${currentView}-${new Date().toISOString().split('T')[0]}.csv`;
   link.click();
 
+  exportHistory.push({ date: new Date().toLocaleString('tr-TR'), type: currentView + ' CSV', count: data.length });
   toast('İndirme başlatıldı', 'success');
   addActivityLog('Veri indirildi');
 }
@@ -808,6 +939,64 @@ function renderAIHistory() {
 
 function toggleAIHelp() {
   toast('AI İşlemleri, doğal dil komutlarını yapılandırılmış veri işlemlerine çevirir.', 'info');
+}
+
+function runBulkPriceUpdate() {
+  const op = document.getElementById('bulk-price-op').value;
+  const val = parseFloat(document.getElementById('bulk-price-val').value);
+  if (isNaN(val)) { toast('Geçerli bir değer girin', 'error'); return; }
+  saveToUndoStack();
+  catalogData.products = catalogData.products.map(p => {
+    let price = parseFloat(p.price) || 0;
+    if (op === 'increase_pct') price = price * (1 + val/100);
+    else if (op === 'decrease_pct') price = price * (1 - val/100);
+    else price = val;
+    return { ...p, price: price.toFixed(2) };
+  });
+  updateUI();
+  toast(`Fiyatlar güncellendi (${catalogData.products.length} ürün)`, 'success');
+  addActivityLog(`Toplu fiyat: ${op} ${val}`);
+}
+
+function runBulkStatusUpdate() {
+  const status = document.getElementById('bulk-status-val').value;
+  saveToUndoStack();
+  catalogData.products = catalogData.products.map(p => ({ ...p, status }));
+  updateUI();
+  toast(`Tüm ürünler "${status}" yapıldı`, 'success');
+  addActivityLog(`Toplu durum: ${status}`);
+}
+
+function runBulkTagAdd() {
+  const tag = document.getElementById('bulk-tag-val').value.trim();
+  if (!tag) { toast('Etiket girin', 'error'); return; }
+  saveToUndoStack();
+  catalogData.products = catalogData.products.map(p => {
+    const tags = p.tags ? p.tags.split(',').map(t => t.trim()) : [];
+    if (!tags.includes(tag)) tags.push(tag);
+    return { ...p, tags: tags.join(', ') };
+  });
+  updateUI();
+  toast(`"${tag}" etiketi eklendi`, 'success');
+  addActivityLog(`Toplu etiket: ${tag}`);
+}
+
+function applyTemplate(type) {
+  const templates = {
+    ecommerce: ['clean_titles','generate_descriptions','generate_seo'],
+    fashion: ['categorize_products','standardize_vendors','translate'],
+    seo_boost: ['generate_seo','clean_titles','generate_descriptions'],
+    stock_cleanup: ['fix_missing','standardize_vendors']
+  };
+  (templates[type]||[]).forEach((a,i) => setTimeout(() => runAIAction(a), i*500));
+  toast(`Şablon uygulanıyor: ${type}`, 'info');
+  addActivityLog(`Şablon: ${type}`);
+}
+
+function runCustomActionFromPanel() {
+  const text = document.getElementById('ssp-custom-input')?.value || '';
+  if (!text.trim()) { toast('Bir işlem açıklaması yazın', 'error'); return; }
+  runAIAction('custom: ' + text);
 }
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -924,6 +1113,34 @@ function renderActivityPanel() {
   </div>`;
 }
 
+function renderValidationPanel() {
+  const products = catalogData.products;
+  if (!products.length) return '<div class="ssp-empty">Veri yok</div>';
+  const issues = [];
+  products.forEach((p, i) => {
+    if (!p.title) issues.push({ row: i+1, product: p.handle||'?', issue: 'Başlık eksik' });
+    if (!p.body_html) issues.push({ row: i+1, product: p.title||'?', issue: 'Açıklama eksik' });
+    if (!p.vendor) issues.push({ row: i+1, product: p.title||'?', issue: 'Marka eksik' });
+    if (!p.image) issues.push({ row: i+1, product: p.title||'?', issue: 'Görsel eksik' });
+  });
+  if (!issues.length) return '<div class="ssp-success">✓ Tüm veriler eksiksiz!</div>';
+  return `<div class="ssp-validation-summary">${issues.length} sorun bulundu</div>
+    <table class="ssp-table"><thead><tr><th>#</th><th>Ürün</th><th>Sorun</th></tr></thead>
+    <tbody>${issues.slice(0,50).map(i => `<tr><td>${i.row}</td><td>${escapeHtml(i.product)}</td><td><span class="ssp-issue-badge">${i.issue}</span></td></tr>`).join('')}</tbody></table>`;
+}
+
+function renderExportHistory() {
+  if (!exportHistory.length) return '<div class="ssp-empty">Henüz ihraç geçmişi yok.</div>';
+  return `<table class="ssp-table"><thead><tr><th>Tarih</th><th>Tür</th><th>Kayıt</th><th>Durum</th></tr></thead>
+    <tbody>${exportHistory.map(e => `<tr><td>${e.date}</td><td>${e.type}</td><td>${e.count}</td><td><span class="ssp-badge-success">✓ Başarılı</span></td></tr>`).join('')}</tbody></table>`;
+}
+
+function renderSyncHistory() {
+  if (!syncHistory.length) return '<div class="ssp-empty">Henüz senkronizasyon geçmişi yok.</div>';
+  return `<table class="ssp-table"><thead><tr><th>Tarih</th><th>Ürün</th><th>Sipariş</th><th>Durum</th></tr></thead>
+    <tbody>${syncHistory.map(s => `<tr><td>${s.date}</td><td>${s.products}</td><td>${s.orders}</td><td><span class="ssp-badge-success">✓ Başarılı</span></td></tr>`).join('')}</tbody></table>`;
+}
+
 // ═══════════════════════════════════════════════════════════════════════
 // MISC
 // ═══════════════════════════════════════════════════════════════════════
@@ -954,49 +1171,6 @@ function getAuthToken() {
 // INIT & STYLES
 // ═══════════════════════════════════════════════════════════════════════
 
-function initPanels() {
-  const panelHTML = `
-    <div id="panel-activity" class="sf-section-panel" style="display: none; padding: 16px; overflow-y: auto;">
-      <h3 style="margin-bottom: 12px;">Aktivite</h3>
-      <div id="activity-content">${renderActivityPanel()}</div>
-    </div>
-    <div id="panel-ai-tools" class="sf-section-panel" style="display: none; padding: 16px; overflow-y: auto;">
-      <h3 style="margin-bottom: 12px;">AI İşlemleri</h3>
-      <p style="font-size: 12px; color: var(--ink-4);">Sağ panelde mevcut olan tüm AI işlemleri burada yer almaktadır.</p>
-    </div>
-    <div id="panel-templates" class="sf-section-panel" style="display: none; padding: 16px; overflow-y: auto;">
-      <h3 style="margin-bottom: 12px;">Şablonlar</h3>
-      <p style="font-size: 12px; color: var(--ink-4);">Sık kullanılan işlem şablonları burada saklanır.</p>
-    </div>
-    <div id="panel-validation" class="sf-section-panel" style="display: none; padding: 16px; overflow-y: auto;">
-      <h3 style="margin-bottom: 12px;">Doğrulama Merkezi</h3>
-      <p style="font-size: 12px; color: var(--ink-4);">Veri doğrulama kuralları ve hata raporları burada görüntülenir.</p>
-    </div>
-    <div id="panel-bulk" class="sf-section-panel" style="display: none; padding: 16px; overflow-y: auto;">
-      <h3 style="margin-bottom: 12px;">Toplu İşlemler</h3>
-      <p style="font-size: 12px; color: var(--ink-4);">Birden fazla ürünü aynı anda güncellemek için burayı kullanın.</p>
-    </div>
-    <div id="panel-export-history" class="sf-section-panel" style="display: none; padding: 16px; overflow-y: auto;">
-      <h3 style="margin-bottom: 12px;">İhraç Geçmişi</h3>
-      <p style="font-size: 12px; color: var(--ink-4);">Geçmiş ihraçlar burada listelenecektir.</p>
-    </div>
-    <div id="panel-sync-history" class="sf-section-panel" style="display: none; padding: 16px; overflow-y: auto;">
-      <h3 style="margin-bottom: 12px;">Senkronizasyon Geçmişi</h3>
-      <p style="font-size: 12px; color: var(--ink-4);">Shopify senkronizasyon geçmişi burada gösterilecektir.</p>
-    </div>
-  `;
-
-  const contentArea = document.querySelector('.sf-filter-bar').parentNode;
-  contentArea.insertAdjacentHTML('beforeend', panelHTML);
-
-  const mainArea = document.querySelector('.sf-grid-wrap');
-  mainArea.parentNode.insertBefore(document.createElement('div'), mainArea);
-  const wrapper = mainArea.previousElementSibling;
-  wrapper.className = 'sf-content-area';
-  wrapper.appendChild(mainArea);
-  wrapper.appendChild(document.querySelector('.sf-sheet-tabs'));
-  wrapper.appendChild(document.querySelector('.sf-bottom-footer'));
-}
 
 function addDropdownStyles() {
   const style = document.createElement('style');
@@ -1029,7 +1203,6 @@ function addDropdownStyles() {
 
 document.addEventListener('DOMContentLoaded', function() {
   addDropdownStyles();
-  initPanels();
   checkShopifyStatus();
 
   // Close dropdowns on outside click
