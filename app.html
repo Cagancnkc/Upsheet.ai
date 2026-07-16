@@ -83,19 +83,19 @@
     <div class="sf-nav-section-title">
       AI ARAÇLARI
     </div>
-    <div class="sf-nav-item">
+    <div class="sf-nav-item" onclick="setActiveSidebarItem(this, 'ai-tools')">
       <i class="ti ti-sparkles"></i>
       AI İşlemleri
     </div>
-    <div class="sf-nav-item">
+    <div class="sf-nav-item" onclick="setActiveSidebarItem(this, 'templates')">
       <i class="ti ti-template"></i>
       Şablonlar
     </div>
-    <div class="sf-nav-item">
+    <div class="sf-nav-item" onclick="setActiveSidebarItem(this, 'validation')">
       <i class="ti ti-shield-check"></i>
       Doğrulama Merkezi
     </div>
-    <div class="sf-nav-item">
+    <div class="sf-nav-item" onclick="setActiveSidebarItem(this, 'bulk')">
       <i class="ti ti-bolt"></i>
       Toplu İşlemler
     </div>
@@ -103,11 +103,11 @@
     <div class="sf-nav-section-title">
       DIŞA AKTAR
     </div>
-    <div class="sf-nav-item">
+    <div class="sf-nav-item" onclick="setActiveSidebarItem(this, 'export-history')">
       <i class="ti ti-download"></i>
       İhraç Geçmişi
     </div>
-    <div class="sf-nav-item">
+    <div class="sf-nav-item" onclick="setActiveSidebarItem(this, 'sync-history')">
       <i class="ti ti-refresh"></i>
       Senkronizasyon Geçmişi
     </div>
@@ -146,11 +146,11 @@
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 7v6h-6"/><path d="M3 17a9 9 0 0 1 15-6.7L21 13"/></svg>
         </button>
         <div style="width: 1px; height: 18px; background: var(--line); margin: 0 8px;"></div>
-        <button class="btn btn-ghost">
+        <button class="btn btn-ghost" onclick="shareSheet()">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><path d="M21 17H3v-2a6 6 0 0 1 6-6h6a6 6 0 0 1 6 6v2"/></svg>
           Paylaş
         </button>
-        <button class="btn btn-ghost">
+        <button class="btn btn-ghost" onclick="downloadSheet()">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           İndir
         </button>
@@ -195,7 +195,7 @@
         </div>
       </div>
       <div style="flex: 1;"></div>
-      <button class="btn btn-ghost" style="font-size: 12px;">
+      <button class="btn btn-ghost" style="font-size: 12px;" onclick="showDataQualityModal()">
         Detayları Gör →
       </button>
     </div>
@@ -203,13 +203,13 @@
     <!-- FILTER BAR -->
     <div class="sf-filter-bar">
       <input type="text" class="sf-search-input" placeholder="🔍 Ürünleri ara..." id="product-search" />
-      <button class="sf-filter-btn">Filtre</button>
-      <button class="sf-filter-btn">Sırala</button>
-      <button class="sf-filter-btn">Sütunları Gizle</button>
-      <button class="sf-filter-btn">Satır Yüksekliği</button>
-      <button class="sf-filter-btn">Dondur</button>
+      <button class="sf-filter-btn" onclick="toggleFilterDropdown(event, 'filter-dropdown')">Filtre</button>
+      <button class="sf-filter-btn" onclick="toggleFilterDropdown(event, 'sort-dropdown')">Sırala</button>
+      <button class="sf-filter-btn" onclick="toggleFilterDropdown(event, 'columns-dropdown')">Sütunları Gizle</button>
+      <button class="sf-filter-btn" onclick="toggleFilterDropdown(event, 'height-dropdown')">Satır Yüksekliği</button>
+      <button class="sf-filter-btn" onclick="toggleFreeze()">Dondur</button>
       <div style="flex: 1;"></div>
-      <button class="sf-filter-btn" style="background: var(--brand-soft); color: var(--brand-ink); border-color: var(--brand-line);">
+      <button class="sf-filter-btn" style="background: var(--brand-soft); color: var(--brand-ink); border-color: var(--brand-line);" onclick="toggleAIPanel()">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/></svg>
         AI İşlemleri
       </button>
@@ -268,7 +268,7 @@
         <div class="sf-footer-stat">96%</div>
         <div class="sf-footer-desc">Müthiş</div>
         <div class="sf-footer-desc">312 değer eksik</div>
-        <div class="sf-footer-link" onclick="alert('Detayları Gör')">Detayları Gör</div>
+        <div class="sf-footer-link" onclick="showDataQualityModal()">Detayları Gör</div>
       </div>
       <div class="sf-footer-section">
         <div class="sf-footer-title">
@@ -286,7 +286,7 @@
         </div>
         <div class="sf-footer-desc">Uygulamaya Hazır</div>
         <div class="sf-footer-stat" style="font-size: 18px;">1,234</div>
-        <button style="width: 100%; height: 28px; background: var(--brand); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 550; margin-top: 8px;">Tümünü Uygula</button>
+        <button style="width: 100%; height: 28px; background: var(--brand); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 550; margin-top: 8px;" onclick="applyAllSuggestions()">Tümünü Uygula</button>
       </div>
     </div>
 
@@ -298,8 +298,8 @@
     </div>
 
     <div class="sf-ai-tabs">
-      <div class="sf-ai-tab active">İşlemler</div>
-      <div class="sf-ai-tab">Geçmiş</div>
+      <div class="sf-ai-tab active" onclick="switchAIPanelTab(this, 'operations')">İşlemler</div>
+      <div class="sf-ai-tab" onclick="switchAIPanelTab(this, 'history')">Geçmiş</div>
     </div>
 
     <div class="sf-ai-content">
@@ -349,7 +349,7 @@
       <textarea class="sf-custom-action-input" placeholder="Ne yapmak istiyorsun? Örn: Tüm fiyatları %20 artır..."></textarea>
       <button class="sf-create-action-btn" onclick="runCustomAction()">✨ Özel İşlem Oluştur</button>
 
-      <div style="padding-top: 16px; border-top: 1px solid var(--line); margin-top: 16px; font-size: 11px; color: var(--ink-4); text-align: center; cursor: pointer;">
+      <div style="padding-top: 16px; border-top: 1px solid var(--line); margin-top: 16px; font-size: 11px; color: var(--ink-4); text-align: center; cursor: pointer;" onclick="toggleAIHelp()">
         AI İşlemleri nasıl çalışır? ℹ️
       </div>
     </div>
@@ -389,6 +389,13 @@ let catalogData = {
 let currentView = 'products';
 let selectedRows = new Set();
 let versionHistory = [];
+let undoStack = [];
+let redoStack = [];
+let aiHistory = [];
+let activityLog = [];
+let hiddenColumns = new Set();
+let rowHeight = 'normal';
+let frozenColumn = false;
 
 // ═══════════════════════════════════════════════════════════════════════
 // SHOPIFY SYNC & INITIALIZATION
@@ -396,7 +403,7 @@ let versionHistory = [];
 
 async function syncShopifyData() {
   try {
-    const btn = event.target.closest('.sf-sync-btn');
+    const btn = event && event.target ? event.target.closest('.sf-sync-btn') : null;
     if (btn) btn.textContent = '⏳ Senkronize ediliyor...';
 
     const response = await fetch(`${API_URL}/api/shopify/sync`, {
@@ -409,15 +416,18 @@ async function syncShopifyData() {
 
     const data = await response.json();
     catalogData = data;
+    addActivityLog('Shopify senkronizasyonu başarılı');
     updateUI();
 
-    if (btn) btn.textContent = '✓ Senkronize Edildi';
-    setTimeout(() => {
-      btn.textContent = '↻ Shopify\'a Senkronize Et';
-    }, 2000);
+    if (btn) {
+      btn.textContent = '✓ Senkronize Edildi';
+      setTimeout(() => {
+        btn.textContent = '↻ Shopify\'a Senkronize Et';
+      }, 2000);
+    }
   } catch (error) {
     console.error('Shopify sync error:', error);
-    toast('Shopify senkronizasyonu başarısız oldu');
+    toast('Shopify senkronizasyonu başarısız oldu', 'error');
   }
 }
 
@@ -436,8 +446,41 @@ function checkShopifyStatus() {
 }
 
 // ═══════════════════════════════════════════════════════════════════════
-// UI UTILITIES
+// TOAST NOTIFICATION SYSTEM
 // ═══════════════════════════════════════════════════════════════════════
+
+function toast(message, type = 'info') {
+  let container = document.getElementById('toast-container');
+  if (!container) {
+    container = document.createElement('div');
+    container.id = 'toast-container';
+    container.style.cssText = 'position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 8px;';
+    document.body.appendChild(container);
+  }
+
+  const toast = document.createElement('div');
+  const bgColor = type === 'error' ? '#ef4444' : type === 'success' ? '#22c55e' : '#3b82f6';
+  toast.style.cssText = `background: ${bgColor}; color: white; padding: 12px 16px; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); font-size: 13px; animation: slideIn 0.3s ease-out; max-width: 300px; word-break: break-word;`;
+  toast.textContent = message;
+  container.appendChild(toast);
+
+  setTimeout(() => {
+    toast.style.animation = 'slideOut 0.3s ease-out';
+    setTimeout(() => toast.remove(), 300);
+  }, 3000);
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// SIDEBAR & PANEL MANAGEMENT
+// ═══════════════════════════════════════════════════════════════════════
+
+function switchPanel(panelId) {
+  document.querySelectorAll('.sf-section-panel, .sf-content-area').forEach(p => {
+    p.style.display = 'none';
+  });
+  const target = panelId ? document.getElementById(panelId) : document.querySelector('.sf-content-area');
+  if (target) target.style.display = '';
+}
 
 function setActiveSidebarItem(el, type) {
   const allItems = document.querySelectorAll('.sf-nav-item');
@@ -445,15 +488,34 @@ function setActiveSidebarItem(el, type) {
   if (el && el.classList) {
     el.classList.add('active');
   }
+
+  const panelMap = {
+    workspace: null,
+    activity: 'panel-activity',
+    'ai-tools': 'panel-ai-tools',
+    templates: 'panel-templates',
+    validation: 'panel-validation',
+    bulk: 'panel-bulk',
+    'export-history': 'panel-export-history',
+    'sync-history': 'panel-sync-history'
+  };
+
+  switchPanel(panelMap[type] ? panelMap[type] : null);
 }
 
 function switchShopifyView(type) {
   currentView = type;
   const tabs = document.querySelectorAll('.sf-sheet-tab');
   tabs.forEach(t => t.classList.remove('active'));
-  event.target.closest('.sf-sheet-tab').classList.add('active');
+  const btn = event && event.target ? event.target.closest('.sf-sheet-tab') : null;
+  if (btn) btn.classList.add('active');
+  addActivityLog(`${type} görünümüne geçildi`);
   buildGrid();
 }
+
+// ═══════════════════════════════════════════════════════════════════════
+// UI UPDATES
+// ═══════════════════════════════════════════════════════════════════════
 
 function updateUI() {
   document.getElementById('products-count').textContent = catalogData.products.length.toLocaleString('tr-TR');
@@ -496,7 +558,7 @@ function updateCatalogStats() {
       </div>
     </div>
     <div style="flex: 1;"></div>
-    <button class="btn btn-ghost" style="font-size: 12px;">Detayları Gör →</button>
+    <button class="btn btn-ghost" style="font-size: 12px;" onclick="showDataQualityModal()">Detayları Gör →</button>
   `;
 }
 
@@ -512,7 +574,7 @@ function computeCatalogHealth(products) {
     });
   });
 
-  const qualityScore = Math.round(((totalFields - missingCount) / totalFields) * 100);
+  const qualityScore = Math.round(((totalFields - missingCount) / totalFields) * 100) || 0;
 
   return {
     qualityScore: qualityScore,
@@ -522,18 +584,16 @@ function computeCatalogHealth(products) {
 }
 
 // ═══════════════════════════════════════════════════════════════════════
-// GRID RENDERING (Shopify columns)
+// GRID RENDERING
 // ═══════════════════════════════════════════════════════════════════════
 
 function buildGrid() {
   const data = catalogData[currentView] || catalogData.products;
   const headers = getShopifyHeaders(currentView);
 
-  // Build header row
   const headerHTML = headers.map(h => `<div class="cell header">${h}</div>`).join('');
   document.getElementById('colHeaderBar').innerHTML = headerHTML;
 
-  // Build data rows
   const rowsHTML = data.slice(0, 100).map((row, idx) => {
     const cells = headers.map(h => {
       const val = row[h.toLowerCase().replace(/\s+/g, '_')] || '';
@@ -565,10 +625,155 @@ function escapeHtml(text) {
 }
 
 // ═══════════════════════════════════════════════════════════════════════
+// FILTER BAR ACTIONS
+// ═══════════════════════════════════════════════════════════════════════
+
+function toggleFilterDropdown(event, dropdownId) {
+  event.stopPropagation();
+  const allDropdowns = document.querySelectorAll('[id$="-dropdown"]');
+  allDropdowns.forEach(dd => dd.classList.remove('open'));
+
+  let dropdown = document.getElementById(dropdownId);
+  if (!dropdown) {
+    dropdown = document.createElement('div');
+    dropdown.id = dropdownId;
+    dropdown.className = 'sf-dropdown';
+
+    const btn = event.target;
+    btn.parentNode.insertBefore(dropdown, btn.nextSibling);
+
+    if (dropdownId === 'filter-dropdown') {
+      dropdown.innerHTML = '<div style="padding: 8px; font-size: 12px;">Kolon filtresi burada yer alacak</div>';
+    } else if (dropdownId === 'sort-dropdown') {
+      dropdown.innerHTML = `
+        <div style="padding: 8px; font-size: 12px;">
+          <div style="padding: 4px; cursor: pointer;">A → Z</div>
+          <div style="padding: 4px; cursor: pointer;">Z → A</div>
+          <div style="padding: 4px; cursor: pointer;">Fiyat ↑</div>
+          <div style="padding: 4px; cursor: pointer;">Fiyat ↓</div>
+        </div>
+      `;
+    } else if (dropdownId === 'columns-dropdown') {
+      dropdown.innerHTML = '<div style="padding: 8px; font-size: 12px;">Kolon seçimi burada yer alacak</div>';
+    } else if (dropdownId === 'height-dropdown') {
+      dropdown.innerHTML = `
+        <div style="padding: 8px; font-size: 12px;">
+          <div style="padding: 4px; cursor: pointer;" onclick="setRowHeight('short')">Kısa</div>
+          <div style="padding: 4px; cursor: pointer;" onclick="setRowHeight('normal')">Normal</div>
+          <div style="padding: 4px; cursor: pointer;" onclick="setRowHeight('tall')">Geniş</div>
+        </div>
+      `;
+    }
+  }
+
+  dropdown.classList.toggle('open');
+}
+
+function setRowHeight(height) {
+  rowHeight = height;
+  const gridWrap = document.querySelector('.sf-grid-wrap');
+  gridWrap.classList.remove('row-height-short', 'row-height-normal', 'row-height-tall');
+  gridWrap.classList.add('row-height-' + height);
+  toast(`Satır yüksekliği: ${height}`);
+}
+
+function toggleFreeze() {
+  frozenColumn = !frozenColumn;
+  document.querySelector('.sheet').classList.toggle('frozen-first-column');
+  toast(frozenColumn ? 'İlk kolon donduruldu' : 'Dondurma kaldırıldı');
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// TOPBAR ACTIONS
+// ═══════════════════════════════════════════════════════════════════════
+
+function shareSheet() {
+  const url = window.location.href;
+  navigator.clipboard.writeText(url).then(() => {
+    toast('Bağlantı kopyalandı!', 'success');
+    addActivityLog('Bağlantı paylaşıldı');
+  }).catch(() => {
+    toast('Kopyalama başarısız oldu', 'error');
+  });
+}
+
+function downloadSheet() {
+  const data = catalogData[currentView] || catalogData.products;
+  const headers = getShopifyHeaders(currentView);
+
+  let csv = headers.join(',') + '\n';
+  data.forEach(row => {
+    const values = headers.map(h => {
+      const val = row[h.toLowerCase().replace(/\s+/g, '_')] || '';
+      return `"${String(val).replace(/"/g, '""')}"`;
+    });
+    csv += values.join(',') + '\n';
+  });
+
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = `${currentView}-${new Date().toISOString().split('T')[0]}.csv`;
+  link.click();
+
+  toast('İndirme başlatıldı', 'success');
+  addActivityLog('Veri indirildi');
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// MODALS & PANELS
+// ═══════════════════════════════════════════════════════════════════════
+
+function showDataQualityModal() {
+  const stats = computeCatalogHealth(catalogData.products);
+  const msg = `Veri Kalitesi Raporu\n\nÜrün Sayısı: ${catalogData.products.length}\nVeri Kalitesi: ${stats.qualityScore}%\nEksik Değer: ${stats.missingValues}\nAI Önerisi: ${stats.aiSuggestions}`;
+  alert(msg);
+}
+
+function openSubscriptionModal() {
+  const msg = 'Aktif Plan: Pro Max\nKullanım: 78%\nSonraki Faturalama: 2026-08-16\n\nPlanı yükseltmek için destek ekibine başvurun.';
+  alert(msg);
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// AI PANEL
+// ═══════════════════════════════════════════════════════════════════════
+
+function switchAIPanelTab(el, tab) {
+  const tabs = document.querySelectorAll('.sf-ai-tab');
+  tabs.forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+
+  const content = document.querySelector('.sf-ai-content');
+  if (tab === 'history') {
+    content.innerHTML = renderAIHistory();
+  } else {
+    location.reload(); // Reload to show operations tab
+  }
+}
+
+function renderAIHistory() {
+  if (aiHistory.length === 0) {
+    return '<div style="padding: 16px; text-align: center; color: var(--ink-4); font-size: 13px;">Geçmiş boş</div>';
+  }
+  return `<div style="font-size: 12px;">
+    ${aiHistory.map((h, i) => `<div style="padding: 8px; border-bottom: 1px solid var(--line);">
+      <strong>${h.action}</strong><br/>
+      <small style="color: var(--ink-4);">${h.timestamp}</small>
+    </div>`).join('')}
+  </div>`;
+}
+
+function toggleAIHelp() {
+  toast('AI İşlemleri, doğal dil komutlarını yapılandırılmış veri işlemlerine çevirir.', 'info');
+}
+
+// ═══════════════════════════════════════════════════════════════════════
 // AI ACTIONS
 // ═══════════════════════════════════════════════════════════════════════
 
 async function runAIAction(actionType) {
+  saveToUndoStack();
   toast(`${actionType} işlemi çalıştırılıyor...`);
 
   try {
@@ -589,19 +794,21 @@ async function runAIAction(actionType) {
 
     const result = await response.json();
     applyAIChanges(result);
-    toast(`✓ ${actionType} tamamlandı`);
+    aiHistory.push({ action: actionType, timestamp: new Date().toLocaleTimeString('tr-TR') });
+    addActivityLog(`AI işlemi: ${actionType}`);
+    toast(`✓ ${actionType} tamamlandı`, 'success');
   } catch (error) {
-    toast(`✗ İşlem başarısız: ${error.message}`);
+    toast(`✗ İşlem başarısız: ${error.message}`, 'error');
   }
 }
 
 function runCustomAction() {
   const text = document.querySelector('.sf-custom-action-input').value;
   if (!text.trim()) {
-    alert('Bir işlem açıklaması yazın');
+    toast('Bir işlem açıklaması yazın', 'error');
     return;
   }
-  runAIAction('custom');
+  runAIAction('custom: ' + text);
 }
 
 function applyAIChanges(result) {
@@ -609,6 +816,70 @@ function applyAIChanges(result) {
     catalogData.products = result.products;
     updateUI();
   }
+}
+
+function applyAllSuggestions() {
+  toast('Tüm öneriler uygulanıyor...', 'info');
+  const suggestions = ['clean_titles', 'generate_descriptions', 'standardize_vendors'];
+  suggestions.forEach(s => {
+    setTimeout(() => runAIAction(s), 500);
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// UNDO / REDO
+// ═══════════════════════════════════════════════════════════════════════
+
+function saveToUndoStack() {
+  undoStack.push(JSON.parse(JSON.stringify(catalogData)));
+  if (undoStack.length > 20) undoStack.shift();
+  redoStack = [];
+}
+
+function undo() {
+  if (undoStack.length === 0) {
+    toast('Geri alınacak işlem yok', 'info');
+    return;
+  }
+  redoStack.push(JSON.parse(JSON.stringify(catalogData)));
+  catalogData = undoStack.pop();
+  updateUI();
+  toast('Geri alındı', 'success');
+  addActivityLog('İşlem geri alındı');
+}
+
+function redo() {
+  if (redoStack.length === 0) {
+    toast('Yinelenecek işlem yok', 'info');
+    return;
+  }
+  undoStack.push(JSON.parse(JSON.stringify(catalogData)));
+  catalogData = redoStack.pop();
+  updateUI();
+  toast('Yinelendi', 'success');
+  addActivityLog('İşlem yinelendi');
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// ACTIVITY LOG
+// ═══════════════════════════════════════════════════════════════════════
+
+function addActivityLog(action) {
+  const time = new Date().toLocaleTimeString('tr-TR');
+  activityLog.push({ action, time });
+  if (activityLog.length > 100) activityLog.shift();
+}
+
+function renderActivityPanel() {
+  if (activityLog.length === 0) {
+    return '<div style="padding: 16px; text-align: center; color: var(--ink-4);">Henüz aktivite yok</div>';
+  }
+  return `<div style="font-size: 12px;">
+    ${activityLog.slice().reverse().map(log => `<div style="padding: 8px; border-bottom: 1px solid var(--line);">
+      ${log.action}<br/>
+      <small style="color: var(--ink-4);">${log.time}</small>
+    </div>`).join('')}
+  </div>`;
 }
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -626,43 +897,113 @@ function startRenameCatalog() {
   const newName = prompt('Yeni adı girin:', current);
   if (newName && newName.trim()) {
     title.textContent = newName;
+    addActivityLog('Katalog adı değiştirildi');
   }
-}
-
-function toast(message) {
-  console.log(message);
-  // TODO: implement proper toast UI
-}
-
-function undo() {
-  toast('Geri alındı');
-}
-
-function redo() {
-  toast('Yinelendi');
 }
 
 function getAuthToken() {
   return localStorage.getItem('sb-access-token') || '';
 }
 
-function openSubscriptionModal() {
-  alert('Abonelik yönetimi paneli açılacak');
+// ═══════════════════════════════════════════════════════════════════════
+// INIT & STYLES
+// ═══════════════════════════════════════════════════════════════════════
+
+function initPanels() {
+  const panelHTML = `
+    <div id="panel-activity" class="sf-section-panel" style="display: none; padding: 16px; overflow-y: auto;">
+      <h3 style="margin-bottom: 12px;">Aktivite</h3>
+      <div id="activity-content">${renderActivityPanel()}</div>
+    </div>
+    <div id="panel-ai-tools" class="sf-section-panel" style="display: none; padding: 16px; overflow-y: auto;">
+      <h3 style="margin-bottom: 12px;">AI İşlemleri</h3>
+      <p style="font-size: 12px; color: var(--ink-4);">Sağ panelde mevcut olan tüm AI işlemleri burada yer almaktadır.</p>
+    </div>
+    <div id="panel-templates" class="sf-section-panel" style="display: none; padding: 16px; overflow-y: auto;">
+      <h3 style="margin-bottom: 12px;">Şablonlar</h3>
+      <p style="font-size: 12px; color: var(--ink-4);">Sık kullanılan işlem şablonları burada saklanır.</p>
+    </div>
+    <div id="panel-validation" class="sf-section-panel" style="display: none; padding: 16px; overflow-y: auto;">
+      <h3 style="margin-bottom: 12px;">Doğrulama Merkezi</h3>
+      <p style="font-size: 12px; color: var(--ink-4);">Veri doğrulama kuralları ve hata raporları burada görüntülenir.</p>
+    </div>
+    <div id="panel-bulk" class="sf-section-panel" style="display: none; padding: 16px; overflow-y: auto;">
+      <h3 style="margin-bottom: 12px;">Toplu İşlemler</h3>
+      <p style="font-size: 12px; color: var(--ink-4);">Birden fazla ürünü aynı anda güncellemek için burayı kullanın.</p>
+    </div>
+    <div id="panel-export-history" class="sf-section-panel" style="display: none; padding: 16px; overflow-y: auto;">
+      <h3 style="margin-bottom: 12px;">İhraç Geçmişi</h3>
+      <p style="font-size: 12px; color: var(--ink-4);">Geçmiş ihraçlar burada listelenecektir.</p>
+    </div>
+    <div id="panel-sync-history" class="sf-section-panel" style="display: none; padding: 16px; overflow-y: auto;">
+      <h3 style="margin-bottom: 12px;">Senkronizasyon Geçmişi</h3>
+      <p style="font-size: 12px; color: var(--ink-4);">Shopify senkronizasyon geçmişi burada gösterilecektir.</p>
+    </div>
+  `;
+
+  const contentArea = document.querySelector('.sf-filter-bar').parentNode;
+  contentArea.insertAdjacentHTML('beforeend', panelHTML);
+
+  const mainArea = document.querySelector('.sf-grid-wrap');
+  mainArea.parentNode.insertBefore(document.createElement('div'), mainArea);
+  const wrapper = mainArea.previousElementSibling;
+  wrapper.className = 'sf-content-area';
+  wrapper.appendChild(mainArea);
+  wrapper.appendChild(document.querySelector('.sf-sheet-tabs'));
+  wrapper.appendChild(document.querySelector('.sf-bottom-footer'));
 }
 
-// ═══════════════════════════════════════════════════════════════════════
-// INIT
-// ═══════════════════════════════════════════════════════════════════════
+function addDropdownStyles() {
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes slideOut {
+      from { opacity: 1; transform: translateY(0); }
+      to { opacity: 0; transform: translateY(10px); }
+    }
+    .sf-dropdown {
+      position: absolute; top: 100%; left: 0; background: white;
+      border: 1px solid var(--line); border-radius: 6px; min-width: 180px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: none; z-index: 100;
+    }
+    .sf-dropdown.open { display: block; }
+    .sf-dropdown > div > div {
+      padding: 8px 12px; cursor: pointer; transition: background 0.2s;
+    }
+    .sf-dropdown > div > div:hover { background: var(--surface-2); }
+    .sf-section-panel {
+      overflow-y: auto; padding: 16px; border-top: 1px solid var(--line);
+    }
+    .sf-section-panel h3 { margin-bottom: 16px; font-size: 16px; font-weight: 600; }
+  `;
+  document.head.appendChild(style);
+}
 
 document.addEventListener('DOMContentLoaded', function() {
+  addDropdownStyles();
+  initPanels();
   checkShopifyStatus();
   syncShopifyData();
 
+  // Close dropdowns on outside click
+  document.addEventListener('click', (e) => {
+    if (!e.target.classList.contains('sf-filter-btn')) {
+      document.querySelectorAll('[id$="-dropdown"]').forEach(dd => dd.classList.remove('open'));
+    }
+  });
+
   // Keyboard shortcuts
   document.addEventListener('keydown', (e) => {
-    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
       e.preventDefault();
-      // Command palette
+      undo();
+    }
+    if ((e.ctrlKey || e.metaKey) && (e.shiftKey && e.key === 'Z')) {
+      e.preventDefault();
+      redo();
     }
   });
 });
