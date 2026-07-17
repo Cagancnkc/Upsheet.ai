@@ -563,28 +563,111 @@ function switchShopifyView(type) {
 function renderDashboard() {
   const view = document.getElementById('dashboard-view');
   if (!view) return;
-  const count = catalogData.products?.length || 0;
-  const health = computeCatalogHealth(catalogData.products || []);
-  const lastSync = exportHistory?.[0]?.date ? new Date(exportHistory[0].date).toLocaleString('tr-TR') : 'Henüz yok';
+
+  const analysis = computeCatalogIssues();
+  const lastSync = exportHistory?.[0]?.date
+    ? new Date(exportHistory[0].date).toLocaleString('tr-TR') : 'Henüz yok';
+
+  if (analysis.totalProducts === 0) {
+    view.innerHTML = `
+      <div style="padding:24px">
+        <h2 style="font-size:20px;font-weight:600;margin-bottom:24px">Dashboard</h2>
+        <div style="text-align:center;padding:48px 24px;border:1px dashed #e5e7eb;border-radius:16px;">
+          <i class="ti ti-shopping-bag" style="font-size:28px;color:#9ca3af;"></i>
+          <p style="font-size:14px;font-weight:600;color:#111827;margin:12px 0 4px;">Henüz katalog verisi yok</p>
+          <p style="font-size:12px;color:#6b7280;margin:0 0 16px;">Shopify mağazanızı bağlayıp verinizi çekin</p>
+          <button onclick="setView('import')" type="button"
+            style="padding:8px 20px;background:#16a34a;color:#fff;border:none;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;">
+            İçe Aktar Sayfasına Git
+          </button>
+        </div>
+      </div>`;
+    return;
+  }
+
+  const categoryLabels = { seo: 'SEO', description: 'Açıklama', images: 'Görsel' };
+  const breakdownRows = Object.entries(analysis.categoryScores).map(([key, value]) => {
+    const barColor = value >= 80 ? '#16a34a' : value >= 60 ? '#d97706' : '#dc2626';
+    return `<div style="display:flex;align-items:center;gap:8px;">
+      <span style="font-size:11px;color:#6b7280;width:60px;flex-shrink:0;">${categoryLabels[key] || key}</span>
+      <div style="flex:1;height:4px;background:#e5e7eb;border-radius:99px;overflow:hidden;">
+        <div style="width:${value}%;height:100%;background:${barColor};border-radius:99px;"></div>
+      </div>
+      <span style="font-size:11px;color:#111827;font-weight:600;width:28px;text-align:right;">${value}%</span>
+    </div>`;
+  }).join('');
+
+  const topIssues = [...analysis.issues].sort((a, b) => b.count - a.count).slice(0, 4);
+  const suggestionsHTML = topIssues.length === 0
+    ? '<span style="font-size:12px;color:#16a34a;">Belirgin bir sorun tespit edilmedi ✓</span>'
+    : topIssues.map(i =>
+        `<span style="font-size:12px;color:#374151;">${i.count} üründe: ${i.label}</span>`
+      ).join('');
+
+  const statusText = analysis.totalIssueCount > 0
+    ? `${analysis.totalIssueCount} sorun bulundu, incelemeye hazır`
+    : 'Kataloğunuz sağlıklı görünüyor';
+
+  const fixDisabled = analysis.totalIssueCount === 0;
+
   view.innerHTML = `
     <div style="padding:24px">
       <h2 style="font-size:20px;font-weight:600;margin-bottom:24px">Dashboard</h2>
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
-        <div style="padding:16px;border:1px solid #e5e7eb;border-radius:8px">
+      <div style="display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:16px;margin-bottom:16px">
+
+        <div id="dash-card-health" style="padding:16px;border:1px solid #e5e7eb;border-left:3px solid #16a34a;border-radius:8px;transition:box-shadow .15s ease,transform .15s ease;">
+          <div style="font-size:12px;color:#6b7280;margin-bottom:8px">Katalog Sağlığı</div>
+          <div id="dash-health-score" style="font-size:28px;font-weight:700;color:#16a34a">${analysis.healthScore}%</div>
+          <div id="dash-health-breakdown-compact" style="display:flex;flex-direction:column;gap:6px;margin-top:12px">
+            ${breakdownRows}
+          </div>
+        </div>
+
+        <div id="dash-card-products" style="padding:16px;border:1px solid #e5e7eb;border-left:3px solid #6366f1;border-radius:8px;transition:box-shadow .15s ease,transform .15s ease;">
           <div style="font-size:12px;color:#6b7280;margin-bottom:8px">Toplam Ürün</div>
-          <div style="font-size:28px;font-weight:700;color:#16a34a">${count.toLocaleString('tr-TR')}</div>
+          <div id="dash-total-products" style="font-size:28px;font-weight:700;color:#6366f1">${analysis.totalProducts.toLocaleString('tr-TR')}</div>
+          <p style="font-size:11px;color:#9ca3af;margin:4px 0 0;">Aktif katalogda</p>
+          <div style="font-size:11px;color:#6b7280;margin-top:12px">Son senkronizasyon</div>
+          <div style="font-size:11px;font-weight:600;color:#111;margin-top:2px">${lastSync}</div>
         </div>
-        <div style="padding:16px;border:1px solid #e5e7eb;border-radius:8px">
-          <div style="font-size:12px;color:#6b7280;margin-bottom:8px">Sağlık Skoru</div>
-          <div style="font-size:28px;font-weight:700;color:#16a34a">${health.qualityScore}%</div>
+
+        <div id="dash-card-issues" style="padding:16px;border:1px solid #e5e7eb;border-left:3px solid #d97706;border-radius:8px;transition:box-shadow .15s ease,transform .15s ease;">
+          <div style="font-size:12px;color:#6b7280;margin-bottom:8px">Bulunan Sorun</div>
+          <div id="dash-issues-count" style="font-size:28px;font-weight:600;color:#d97706;margin:0">${analysis.totalIssueCount}</div>
+          <p style="font-size:11px;color:#9ca3af;margin:4px 0 0;">Toplam tespit edilen</p>
+          <div id="dash-ai-suggestions-compact" style="display:flex;flex-direction:column;gap:4px;margin-top:10px">
+            ${suggestionsHTML}
+          </div>
+          <button id="fix-all-issues-btn" type="button"
+            style="margin-top:12px;width:100%;padding:7px 0;background:#d97706;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:600;opacity:${fixDisabled ? '0.5' : '1'};cursor:${fixDisabled ? 'not-allowed' : 'pointer'}"
+            ${fixDisabled ? 'disabled' : ''}>
+            Tüm Sorunları Düzelt
+          </button>
         </div>
-        <div style="padding:16px;border:1px solid #e5e7eb;border-radius:8px">
-          <div style="font-size:12px;color:#6b7280;margin-bottom:8px">Son Senkronizasyon</div>
-          <div style="font-size:12px;font-weight:600;color:#111">${lastSync}</div>
-        </div>
+
       </div>
-    </div>
-  `;
+
+      <div style="padding:16px;border:1px solid #e5e7eb;border-radius:8px;">
+        <div style="font-size:13px;font-weight:600;color:#111827;">AI Katalog Asistanı</div>
+        <p id="ai-panel-status" style="font-size:11px;color:#9ca3af;margin:2px 0 0;">${statusText}</p>
+      </div>
+    </div>`;
+
+  const topbarScoreEl = document.getElementById('topbar-health-score');
+  if (topbarScoreEl) topbarScoreEl.textContent = analysis.healthScore;
+
+  ['dash-card-health', 'dash-card-products', 'dash-card-issues'].forEach(id => {
+    const card = document.getElementById(id);
+    if (!card) return;
+    card.addEventListener('mouseenter', function() {
+      this.style.boxShadow = '0 4px 12px rgba(17,24,39,.06)';
+      this.style.transform = 'translateY(-1px)';
+    });
+    card.addEventListener('mouseleave', function() {
+      this.style.boxShadow = 'none';
+      this.style.transform = 'translateY(0)';
+    });
+  });
 }
 
 function activateCatalogEditorLayout() {
@@ -631,22 +714,35 @@ function renderAiActionsPage() {
 function renderValidationCenter() {
   const view = document.getElementById('validation-view');
   if (!view) return;
-  const health = computeCatalogHealth(catalogData.products || []);
+  const analysis = computeCatalogIssues();
+
+  const issueRows = analysis.issues.map(issue => {
+    const color = issue.severity === 'danger' ? '#dc2626' : '#d97706';
+    return `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f3f4f6;">
+      <span style="font-size:13px;color:#374151;">${issue.label}</span>
+      <span style="font-size:12px;font-weight:600;color:${color};">${issue.count} ürün</span>
+    </div>`;
+  }).join('');
+
+  const bodyContent = analysis.totalProducts === 0
+    ? '<p style="font-size:12px;color:#6b7280;">Henüz katalog verisi yok.</p>'
+    : `<p style="font-size:12px;color:#6b7280;margin-bottom:16px;">
+         ${analysis.totalIssueCount} toplam sorun tespit edildi (${analysis.totalProducts} üründen).
+       </p>
+       ${issueRows.length > 0 ? issueRows : '<p style="font-size:12px;color:#16a34a;">Sorun tespit edilmedi ✓</p>'}`;
+
   view.innerHTML = `
     <div style="display:flex;align-items:center;gap:10px;padding:16px 24px;border-bottom:1px solid #e5e7eb">
       <h2 style="flex:1;font-size:15px;font-weight:600;margin:0">Katalog Kontrolü</h2>
       <div style="display:flex;align-items:center;gap:6px;padding:5px 12px;border:0.5px solid #e5e7eb;border-radius:999px">
         <span style="font-size:11px;color:#6b7280">Sağlık</span>
-        <span style="font-size:12px;font-weight:600;color:#16a34a">${health.qualityScore}</span>
+        <span style="font-size:12px;font-weight:600;color:#16a34a">${analysis.healthScore}%</span>
       </div>
       <button style="background:#16a34a;color:#fff;border:none;border-radius:10px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer">
         Derin AI Analizi Çalıştır
       </button>
     </div>
-    <div style="padding:24px;color:#6b7280;font-size:12px">
-      ${health.missingValues} eksik alan tespit edildi.
-    </div>
-  `;
+    <div style="padding:24px">${bodyContent}</div>`;
 }
 
 function renderImportPage() {
@@ -763,6 +859,53 @@ function computeCatalogHealth(products) {
     missingValues: missingCount,
     aiSuggestions: Math.floor(products.length * 0.15)
   };
+}
+
+function computeCatalogIssues() {
+  const products = catalogData.products || [];
+  const totalProducts = products.length;
+
+  if (totalProducts === 0) {
+    return { issues: [], totalIssueCount: 0, healthScore: 100, totalProducts: 0, categoryScores: {} };
+  }
+
+  const issues = [];
+  const categoryScores = {};
+
+  function pushIssue(label, count, severity, categoryKey) {
+    if (count > 0) issues.push({ label, count, severity });
+    if (categoryKey) {
+      categoryScores[categoryKey] = Math.round(((totalProducts - count) / totalProducts) * 100);
+    }
+  }
+
+  const missingDesc = products.filter(p => !p.body_html || p.body_html.trim().length < 20).length;
+  pushIssue('Kısa/Eksik Açıklama', missingDesc, 'warning', 'description');
+
+  const missingImage = products.filter(p => !p.image || p.image.trim() === '').length;
+  pushIssue('Eksik Görsel', missingImage, 'warning', 'images');
+
+  const missingTags = products.filter(p => !p.tags || p.tags.trim() === '').length;
+  pushIssue('Eksik Etiket', missingTags, 'warning', 'seo');
+
+  const missingPrice = products.filter(p => !p.price || p.price.toString().trim() === '').length;
+  pushIssue('Eksik Fiyat', missingPrice, 'danger', null);
+
+  const handles = products.map(p => p.handle).filter(Boolean);
+  const dupHandles = handles.length - new Set(handles).size;
+  pushIssue('Tekrarlanan Handle', dupHandles, 'danger', null);
+
+  const titles = products.map(p => p.title).filter(Boolean);
+  const dupTitles = titles.length - new Set(titles).size;
+  pushIssue('Tekrarlanan Başlık', dupTitles, 'warning', null);
+
+  const totalIssueCount = issues.reduce((sum, i) => sum + i.count, 0);
+  const categoryValues = Object.values(categoryScores);
+  const healthScore = categoryValues.length > 0
+    ? Math.round(categoryValues.reduce((a, b) => a + b, 0) / categoryValues.length)
+    : 100;
+
+  return { issues, totalIssueCount, healthScore, totalProducts, categoryScores };
 }
 
 // ═══════════════════════════════════════════════════════════════════════
