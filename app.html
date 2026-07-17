@@ -906,19 +906,80 @@ function openQuickEditPanel(product) {
 }
 
 function closeQuickEdit() {
+  const inputs = document.querySelectorAll('#quick-edit-fields input[data-field-key]');
+  let hasChanges = false;
+  inputs.forEach(input => {
+    const key = input.dataset.fieldKey;
+    if (_quickEditContext && String(_quickEditContext.product[key] ?? '') !== input.value) {
+      hasChanges = true;
+    }
+  });
+  if (hasChanges && !confirm('Kaydedilmemiş değişiklikleriniz var. Çıkmak istiyor musunuz?')) {
+    return;
+  }
   document.getElementById('quick-edit-modal').style.display = 'none';
   _quickEditContext = null;
 }
 
-function saveQuickEdit() {
+async function saveQuickEdit() {
   if (!_quickEditContext) return;
+
+  const saveBtn = document.getElementById('quick-edit-save');
+  if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = 'Kaydediliyor...'; }
+
   const inputs = document.querySelectorAll('#quick-edit-fields input[data-field-key]');
+  const changedFields = [];
   inputs.forEach(input => {
-    _quickEditContext.product[input.dataset.fieldKey] = input.value;
+    const key = input.dataset.fieldKey;
+    const oldVal = _quickEditContext.product[key] ?? '';
+    if (String(oldVal) !== input.value) {
+      changedFields.push({ key, oldVal, newVal: input.value });
+    }
   });
+
+  if (changedFields.length === 0) {
+    document.getElementById('quick-edit-modal').style.display = 'none';
+    _quickEditContext = null;
+    if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = 'Kaydet'; }
+    return;
+  }
+
+  // 1. Yerel bellekte güncelle (her durumda)
+  saveToUndoStack();
+  changedFields.forEach(f => { _quickEditContext.product[f.key] = f.newVal; });
+  _renderProductCards();
+
+  // 2. Shopify'a push edilebilecek alanları filtrele
+  const PUSHABLE = ['title', 'tags', 'vendor', 'product_type', 'seo_title', 'seo_description'];
+  const productId = _quickEditContext.product.shopify_product_id;
+
+  if (productId) {
+    const accepted = changedFields
+      .filter(f => PUSHABLE.includes(f.key))
+      .map(f => ({ shopifyProductId: productId, field: f.key, newValue: f.newVal }));
+
+    const skippedFields = changedFields.filter(f => !PUSHABLE.includes(f.key)).map(f => f.key);
+
+    if (accepted.length > 0) {
+      await pushChangesToShopify(accepted);
+    }
+
+    if (skippedFields.length > 0) {
+      toast(`${skippedFields.join(', ')} yalnızca yerel görünümde güncellendi (Shopify'da farklı format)`, 'info');
+    }
+  } else {
+    toast('Değişiklik yerel görünüme kaydedildi (Demo ürün — Shopify bağlı değil)', 'info');
+  }
+
+  if (saveBtn) {
+    saveBtn.textContent = '✓ Kaydedildi';
+    setTimeout(() => {
+      saveBtn.disabled = false;
+      saveBtn.textContent = 'Kaydet';
+    }, 1200);
+  }
   document.getElementById('quick-edit-modal').style.display = 'none';
   _quickEditContext = null;
-  _renderProductCards();
 }
 
 // ─── END PRODUCTS PAGE ────────────────────────────────────────────────────
@@ -2182,11 +2243,11 @@ if (_origSetView) {
     <p style="font-size:15px;font-weight:600;color:#111827;margin:0 0 16px;">Hızlı Düzenle</p>
     <div id="quick-edit-fields"></div>
     <div style="display:flex;gap:8px;margin-top:16px;">
-      <button type="button" onclick="closeQuickEdit()"
+      <button type="button" id="quick-edit-cancel" onclick="closeQuickEdit()"
         style="flex:1;padding:8px 16px;border:0.5px solid #e5e7eb;border-radius:12px;background:#fff;color:#374151;font-size:13px;cursor:pointer;">
         İptal
       </button>
-      <button type="button" onclick="saveQuickEdit()"
+      <button type="button" id="quick-edit-save" onclick="saveQuickEdit()"
         style="flex:1;padding:8px 16px;border:none;border-radius:12px;background:#16a34a;color:#fff;font-size:13px;font-weight:600;cursor:pointer;">
         Kaydet
       </button>
