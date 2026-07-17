@@ -40,11 +40,13 @@
 
   <!-- ============ SIDEBAR ============ -->
   <aside class="sf-sidebar">
-    <div class="ws-switcher">
-      <div class="ws-logo">CN</div>
-      <div class="ws-meta">
-        <span class="ws-name">cnkc.io</span>
-        <span class="ws-plan">Kişisel · Free</span>
+    <div style="padding:12px;margin:8px;border:0.5px solid #e5e7eb;border-radius:12px;display:flex;align-items:center;gap:8px;">
+      <div style="width:28px;height:28px;border-radius:8px;background:#f0fdf4;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <i class="ti ti-brand-shopify" style="font-size:14px;color:#16a34a;"></i>
+      </div>
+      <div style="min-width:0;">
+        <p id="sidebar-store-name" style="font-size:12px;font-weight:600;color:#111827;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">—</p>
+        <p style="font-size:10px;color:#9ca3af;margin:0;">Shopify Mağazası</p>
       </div>
     </div>
 
@@ -52,46 +54,33 @@
 
     <div class="sf-sidebar-spacer"></div>
 
-    <div class="sf-sidebar-plan-section">
-      <div class="sf-plan-title">Aktif Plan</div>
-      <div class="sf-plan-name">Pro Max</div>
-      <div class="sf-usage-bar">
-        <div class="sf-usage-bar-fill" style="width: 78%;"></div>
+    <div style="margin:12px;">
+      <div style="border-radius:12px;padding:14px;background:#f9fafb;border:0.5px solid #e5e7eb;">
+        <p style="font-size:11px;color:#6b7280;margin:0 0 4px;">Plan</p>
+        <p id="sidebar-plan-name" style="font-size:13px;font-weight:600;color:#111827;margin:0 0 8px;">—</p>
+        <div style="height:4px;background:#e5e7eb;border-radius:99px;overflow:hidden;margin-bottom:6px;">
+          <div id="sidebar-plan-bar" style="height:100%;background:#16a34a;border-radius:99px;width:0%;"></div>
+        </div>
+        <p id="sidebar-plan-usage" style="font-size:10px;color:#9ca3af;margin:0;"></p>
       </div>
-      <div class="sf-usage-text">Kullanım: %78</div>
-      <button class="sf-upgrade-btn" onclick="openSubscriptionModal()">Planı Yönet</button>
     </div>
   </aside>
 
   <!-- ============ TOPBAR ============ -->
   <!-- TOPBAR -->
-    <header class="sf-topbar">
-      <div class="sf-topbar-left">
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <div style="width: 24px; height: 24px; border-radius: 4px; background: var(--brand-soft); display: flex; align-items: center; justify-content: center; color: var(--brand);">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 L2 6 L2 22 Q2 24 4 24 L20 24 Q22 24 22 22 L22 6 L18 2 Z"/></svg>
-          </div>
-          <div class="sf-topbar-title" id="catalog-name" ondblclick="startRenameCatalog()">Summer Collection 2024</div>
-          <div class="sf-topbar-file-badge">Shopify CSV</div>
-          <div class="sf-topbar-file-badge" id="product-count-badge">8,742 ürün</div>
-        </div>
+    <header class="sf-topbar" style="display:flex;align-items:center;justify-content:space-between;padding:14px 24px;border-bottom:0.5px solid #e5e7eb;background:#fff;">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <img src="/images/brand/logo-128x128.png" alt="mocksheets" style="width:24px;height:24px;object-fit:contain;flex-shrink:0;">
+        <span style="font-size:15px;font-weight:600;color:#111827;">mocksheets<span style="color:#16a34a;">.</span></span>
       </div>
-      <div class="sf-topbar-right">
-        <button class="tb-btn" title="Geri al" onclick="undo()">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-15-6.7L3 13"/></svg>
+      <div style="display:flex;align-items:center;gap:16px;">
+        <button type="button" style="display:flex;align-items:center;gap:6px;padding:6px 12px;border:0.5px solid #e5e7eb;border-radius:10px;background:#fff;color:#374151;font-size:12px;cursor:pointer;">
+          <i class="ti ti-calendar" style="font-size:14px;"></i>Son 30 Gün
         </button>
-        <button class="tb-btn" title="Yinele" onclick="redo()">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 7v6h-6"/><path d="M3 17a9 9 0 0 1 15-6.7L21 13"/></svg>
+        <button type="button" style="width:32px;height:32px;border:0.5px solid #e5e7eb;border-radius:10px;background:#fff;color:#6b7280;cursor:pointer;display:flex;align-items:center;justify-content:center;">
+          <i class="ti ti-bell" style="font-size:15px;"></i>
         </button>
-        <div style="width: 1px; height: 18px; background: var(--line); margin: 0 8px;"></div>
-        <button class="btn btn-ghost" onclick="shareSheet()">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><path d="M21 17H3v-2a6 6 0 0 1 6-6h6a6 6 0 0 1 6 6v2"/></svg>
-          Paylaş
-        </button>
-        <button class="btn btn-ghost" onclick="downloadSheet()">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          İndir
-        </button>
+        <div id="header-avatar" style="width:32px;height:32px;border-radius:999px;background:#111827;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;">C</div>
         <button id="google-shopify-connect-btn" class="sf-shopify-connect-btn" onclick="showConnectPanel()" style="display:none;" title="Shopify hesabınızı bağlayın">
           <svg width="16" height="16" viewBox="0 0 109 124" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <path d="M74.7 23.5c0-.4-.4-.7-.7-.7-.4 0-6.9-.5-6.9-.5s-4.6-4.5-5.1-5c-.5-.5-1.5-.4-1.9-.3-.1 0-1 .3-2.5.8-1.5-4.3-4.1-8.2-8.7-8.2h-.4C47.2 7.9 45.6 7 44.2 7c-10.7 0-15.8 13.4-17.4 20.2-4.2 1.3-7.2 2.2-7.6 2.4-2.3.7-2.4.8-2.7 3-.2 1.6-6.4 49.4-6.4 49.4L58 92l30.5-6.6C88.5 85.4 74.7 23.9 74.7 23.5zM53.7 27.6l-8.2 2.5c0-3.5-.5-8.5-2.5-12.1 5.2 1 8.6 6.9 10.7 9.6zm-14.4-9c1.7 1.5 3.5 4 4.6 8.9L34 30.5c1-4.6 3-9.1 5.3-11.9zm-4-3.3c1 0 1.9.3 2.8.9-3.5 1.6-7.2 5.8-8.8 14L22 32.7c2.1-7.1 6.5-17.4 13.3-17.4z" fill="#95BF47"/>
@@ -99,10 +88,6 @@
             <path d="M45.5 47.3l-3.8 11.2s-3.3-1.8-7.4-1.8c-6 0-6.3 3.8-6.3 4.7 0 5.2 13.5 7.2 13.5 19.3 0 9.5-6 15.6-14.2 15.6-9.8 0-14.7-6.1-14.7-6.1l2.6-8.7s5.1 4.4 9.5 4.4c2.8 0 4-2.2 4-3.9 0-6.8-11.1-7.1-11.1-18.2 0-9.3 6.7-18.4 20.2-18.4 5 0 7.7 1.9 7.7 1.9z" fill="#fff"/>
           </svg>
           <span>Shopify Hesabımı Bağla</span>
-        </button>
-        <button class="sf-sync-btn" onclick="syncShopifyData()">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 4v6h6"/><path d="M23 20v-6h-6"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64"/><path d="M3.51 15A9 9 0 0 0 18.36 18.36"/></svg>
-          Shopify'a Senkronize Et
         </button>
       </div>
     </header>
@@ -222,10 +207,8 @@
     <div id="dashboard-view" style="display:none;"></div>
     <div id="catalog-editor-layout" style="display:none;"></div>
     <div id="collections-view" style="display:none;"></div>
-    <div id="ai-actions-view" style="display:none;"></div>
     <div id="validation-view" style="display:none;"></div>
-    <div id="import-view" style="display:none;"></div>
-    <div id="export-view" style="display:none;"></div>
+    <div id="sync-view" style="display:none;"></div>
     <div id="history-view" style="display:none;"></div>
     <div id="settings-view" style="display:none;"></div>
     <div id="products-view" style="display:none;padding:32px;max-width:1000px;margin:0 auto;"></div>
@@ -507,11 +490,9 @@ const SIDEBAR_ITEMS = [
   { view: 'catalog',       icon: 'ti-box',          label: 'Katalog' },
   { view: 'products',      icon: 'ti-tag',          label: 'Ürünler' },
   { view: 'collections',   icon: 'ti-category',     label: 'Koleksiyonlar' },
-  { view: 'ai-actions',    icon: 'ti-sparkles',     label: 'AI İşlemleri' },
   { view: 'catalog-check', icon: 'ti-shield-check', label: 'Katalog Kontrolü' },
-  { view: 'import',        icon: 'ti-download',     label: 'İçe Aktar' },
-  { view: 'export',        icon: 'ti-upload',       label: 'Dışa Aktar' },
-  { view: 'history',       icon: 'ti-history',      label: 'Geçmiş' },
+  { view: 'sync',          icon: 'ti-refresh',      label: 'Senkronizasyon' },
+  { view: 'history',       icon: 'ti-history',      label: 'Geçmiş İşlemler' },
   { view: 'settings',      icon: 'ti-settings',     label: 'Ayarlar' },
 ];
 
@@ -545,8 +526,8 @@ function renderSidebar() {
 }
 
 function hideAllViews() {
-  ['dashboard-view','catalog-editor-layout','products-view','collections-view','ai-actions-view',
-   'validation-view','import-view','export-view','history-view','settings-view']
+  ['dashboard-view','catalog-editor-layout','products-view','collections-view',
+   'validation-view','sync-view','history-view','settings-view']
   .forEach(id => {
     const el = document.getElementById(id);
     if (el) el.style.display = 'none';
@@ -566,10 +547,8 @@ function setView(view) {
     catalog:         function() { showView('catalog-editor-layout','grid'); activateCatalogEditorLayout(); },
     products:        function() { showView('products-view'); renderProductsPage(); },
     collections:     function() { showView('collections-view');      renderCollections(); },
-    'ai-actions':    function() { showView('ai-actions-view');       renderAiActionsPage(); },
     'catalog-check': function() { showView('validation-view');       renderValidationCenter(); },
-    import:          function() { showView('import-view');           renderImportPage(); },
-    export:          function() { showView('export-view');           renderExportPage(); },
+    sync:            function() { showView('sync-view');             renderSyncPage(); },
     history:         function() { showView('history-view');          loadAndRenderHistory(); },
     settings:        function() { showView('settings-view');         renderSettingsPage(); },
   };
@@ -648,42 +627,70 @@ function renderDashboard() {
   view.innerHTML = `
     <div style="padding:24px;box-sizing:border-box;width:100%;min-width:0;">
       <h2 style="font-size:20px;font-weight:600;margin-bottom:24px">Dashboard</h2>
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:16px">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:16px">
 
-        <div id="dash-card-health" style="padding:16px;border:1px solid #e5e7eb;border-left:3px solid #16a34a;border-radius:8px;transition:box-shadow .15s ease,transform .15s ease;">
-          <div style="font-size:12px;color:#6b7280;margin-bottom:8px">Katalog Sağlığı</div>
-          <div id="dash-health-score" style="font-size:28px;font-weight:700;color:#16a34a;display:flex;align-items:center;gap:6px;">
-            ${analysis.healthScore}%
-            <span id="dash-health-trend" style="font-size:11px;font-weight:400;color:#6b7280;"></span>
+        <div id="dash-card-health" style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:18px;transition:box-shadow .15s ease,transform .15s ease;">
+          <p style="font-size:12px;color:#6b7280;margin:0 0 8px;">Katalog Sağlığı</p>
+          <div style="display:flex;align-items:baseline;gap:4px;">
+            <span id="dash-health-score" style="font-size:26px;font-weight:700;color:#111827;">${analysis.healthScore}</span>
+            <span style="font-size:12px;color:#9ca3af;">/100</span>
+            <span id="dash-health-trend" style="font-size:11px;font-weight:400;color:#6b7280;margin-left:4px;"></span>
           </div>
-          <div id="dash-health-breakdown-compact" style="display:flex;flex-direction:column;gap:6px;margin-top:12px">
-            ${breakdownRows}
-          </div>
+          <p id="dash-health-badge" style="font-size:11px;margin:6px 0 0;"></p>
         </div>
 
-        <div id="dash-card-products" style="padding:16px;border:1px solid #e5e7eb;border-left:3px solid #6366f1;border-radius:8px;transition:box-shadow .15s ease,transform .15s ease;">
-          <div style="font-size:12px;color:#6b7280;margin-bottom:8px">Toplam Ürün</div>
-          <div id="dash-total-products" style="font-size:28px;font-weight:700;color:#6366f1">${analysis.totalProducts.toLocaleString('tr-TR')}</div>
-          <p style="font-size:11px;color:#9ca3af;margin:4px 0 0;">Aktif katalogda</p>
-          <div style="font-size:11px;color:#6b7280;margin-top:12px">Son senkronizasyon</div>
-          <div style="font-size:11px;font-weight:600;color:#111;margin-top:2px">${lastSync}</div>
+        <div id="dash-card-products" style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:18px;transition:box-shadow .15s ease,transform .15s ease;">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;">
+            <p style="font-size:12px;color:#6b7280;margin:0 0 8px;">Toplam Ürün</p>
+            <div style="width:28px;height:28px;border-radius:8px;background:#eef2ff;display:flex;align-items:center;justify-content:center;">
+              <i class="ti ti-shopping-bag" style="font-size:14px;color:#6366f1;"></i>
+            </div>
+          </div>
+          <span id="dash-total-products" style="font-size:26px;font-weight:700;color:#111827;">${analysis.totalProducts.toLocaleString('tr-TR')}</span>
+          <p style="font-size:11px;color:#9ca3af;margin:6px 0 0;">Son senkronizasyon: ${lastSync}</p>
         </div>
 
-        <div id="dash-card-issues" style="padding:16px;border:1px solid #e5e7eb;border-left:3px solid #d97706;border-radius:8px;transition:box-shadow .15s ease,transform .15s ease;">
-          <div style="font-size:12px;color:#6b7280;margin-bottom:8px">Bulunan Sorun</div>
-          <div id="dash-issues-count" style="font-size:28px;font-weight:600;color:#d97706;margin:0">${analysis.totalIssueCount}</div>
-          <p style="font-size:11px;color:#9ca3af;margin:4px 0 0;">Toplam tespit edilen</p>
-          <div id="dash-ai-suggestions-compact" style="display:flex;flex-direction:column;gap:4px;margin-top:10px">
-            ${suggestionsHTML}
+        <div id="dash-card-issues" style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:18px;transition:box-shadow .15s ease,transform .15s ease;">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;">
+            <p style="font-size:12px;color:#6b7280;margin:0 0 8px;">Bulunan Sorunlar</p>
+            <div style="width:28px;height:28px;border-radius:8px;background:#fef2f2;display:flex;align-items:center;justify-content:center;">
+              <i class="ti ti-alert-triangle" style="font-size:14px;color:#dc2626;"></i>
+            </div>
           </div>
+          <span id="dash-issues-count" style="font-size:26px;font-weight:700;color:#111827;">${analysis.totalIssueCount}</span>
           <button id="fix-all-issues-btn" type="button"
-            style="margin-top:12px;width:100%;padding:7px 0;background:#d97706;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:600;opacity:${fixDisabled ? '0.5' : '1'};cursor:${fixDisabled ? 'not-allowed' : 'pointer'}"
+            style="margin-top:12px;width:100%;padding:7px 0;background:#111827;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:600;opacity:${fixDisabled ? '0.5' : '1'};cursor:${fixDisabled ? 'not-allowed' : 'pointer'}"
             ${fixDisabled ? 'disabled' : ''}>
             Tüm Sorunları Düzelt
           </button>
         </div>
 
+        <div id="dash-card-ready" style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:18px;transition:box-shadow .15s ease,transform .15s ease;">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;">
+            <p style="font-size:12px;color:#6b7280;margin:0 0 8px;">Hazır Ürün Oranı</p>
+            <div style="width:28px;height:28px;border-radius:8px;background:#f0fdf4;display:flex;align-items:center;justify-content:center;">
+              <i class="ti ti-circle-check" style="font-size:14px;color:#16a34a;"></i>
+            </div>
+          </div>
+          <span id="dash-ready-ratio" style="font-size:26px;font-weight:700;color:#111827;">—</span>
+          <p id="dash-ready-sub" style="font-size:11px;color:#9ca3af;margin:6px 0 0;"></p>
+        </div>
+
       </div>
+
+      <div style="padding:16px;border:0.5px solid #e5e7eb;border-radius:14px;margin-bottom:12px;">
+        <p style="font-size:12px;font-weight:600;color:#374151;margin:0 0 10px;">Sağlık Detayı</p>
+        <div id="dash-health-breakdown-compact" style="display:flex;flex-direction:column;gap:6px;">
+          ${breakdownRows}
+        </div>
+      </div>
+
+      ${suggestionsHTML ? `<div style="padding:16px;border:0.5px solid #e5e7eb;border-radius:14px;margin-bottom:12px;">
+        <p style="font-size:12px;font-weight:600;color:#374151;margin:0 0 10px;">AI Önerileri</p>
+        <div id="dash-ai-suggestions-compact" style="display:flex;flex-direction:column;gap:4px;">
+          ${suggestionsHTML}
+        </div>
+      </div>` : ''}
 
       <div style="padding:16px;border:1px solid #e5e7eb;border-radius:8px;">
         <div style="font-size:13px;font-weight:600;color:#111827;">AI Katalog Asistanı</div>
@@ -724,7 +731,7 @@ function renderDashboard() {
   const topbarScoreEl = document.getElementById('topbar-health-score');
   if (topbarScoreEl) topbarScoreEl.textContent = analysis.healthScore;
 
-  ['dash-card-health', 'dash-card-products', 'dash-card-issues'].forEach(id => {
+  ['dash-card-health', 'dash-card-products', 'dash-card-issues', 'dash-card-ready'].forEach(id => {
     const card = document.getElementById(id);
     if (!card) return;
     card.addEventListener('mouseenter', function() {
@@ -736,6 +743,32 @@ function renderDashboard() {
       this.style.transform = 'translateY(0)';
     });
   });
+
+  // Sağlık badge
+  const badgeEl = document.getElementById('dash-health-badge');
+  if (badgeEl) {
+    const s = analysis.healthScore || 0;
+    if (s >= 80) { badgeEl.textContent = 'Çok İyi'; badgeEl.style.color = '#16a34a'; }
+    else if (s >= 60) { badgeEl.textContent = 'İyi'; badgeEl.style.color = '#d97706'; }
+    else { badgeEl.textContent = 'İyileştirme Gerekli'; badgeEl.style.color = '#dc2626'; }
+  }
+
+  // Hazır ürün oranı — catalogData.products status='active'
+  const readyEl = document.getElementById('dash-ready-ratio');
+  const readySubEl = document.getElementById('dash-ready-sub');
+  if (readyEl && catalogData && catalogData.products && catalogData.products.length > 0) {
+    const total = catalogData.products.length;
+    const readyCount = catalogData.products.filter(p => (p.status || '').toLowerCase() === 'active').length;
+    readyEl.textContent = Math.round((readyCount / total) * 100) + '%';
+    if (readySubEl) readySubEl.textContent = readyCount.toLocaleString('tr-TR') + ' / ' + total.toLocaleString('tr-TR') + ' ürün hazır';
+  }
+
+  // Sidebar mağaza adı — localStorage
+  const storeNameEl = document.getElementById('sidebar-store-name');
+  if (storeNameEl) {
+    const domain = localStorage.getItem('mocksheets_shop_domain');
+    if (domain) storeNameEl.textContent = domain.replace('.myshopify.com', '');
+  }
 
   const fixAllBtn = document.getElementById('fix-all-issues-btn');
   if (fixAllBtn && !fixAllBtn.disabled) {
@@ -1111,6 +1144,18 @@ function renderValidationCenter() {
     <div style="padding:24px">${bodyContent}</div>`;
   const scanEl = document.getElementById('validation-last-scan');
   if (scanEl) scanEl.textContent = 'Son tarama: az önce';
+
+  const aiSection = document.createElement('div');
+  aiSection.style.cssText = 'margin:0 24px 24px;padding-top:24px;border-top:0.5px solid #e5e7eb;';
+  aiSection.innerHTML = `
+    <p style="font-size:12px;font-weight:600;color:#374151;margin:0 0 10px;">Hazır AI İşlemleri</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;">
+      <button type="button" onclick="runShopifyAiAnalysis('all')" style="text-align:left;padding:14px;border:0.5px solid #e5e7eb;border-radius:10px;background:#fff;cursor:pointer;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><i class="ti ti-sparkles" style="font-size:14px;color:#16a34a;"></i><span style="font-size:12px;font-weight:600;color:#111827;">Tüm Sorunları AI ile Düzelt</span></div>
+        <p style="font-size:11px;color:#6b7280;margin:0;">Katalogda tespit edilen tüm eksiklikleri toplu AI önerileriyle çöz.</p>
+      </button>
+    </div>`;
+  view.appendChild(aiSection);
 }
 
 function renderImportPage() {
@@ -1145,6 +1190,38 @@ function renderExportPage() {
     <p style="font-size:16px;font-weight:600;color:#111827;margin:0 0 16px;">Dışa Aktar Geçmişi</p>
     ${renderExportHistory()}
   </div>`;
+}
+
+function renderSyncPage() {
+  const view = document.getElementById('sync-view');
+  if (!view) return;
+  const lastSync = localStorage.getItem('mocksheets_last_sync');
+  const lastSyncText = lastSync
+    ? new Date(lastSync).toLocaleDateString('tr-TR', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' })
+    : 'Henüz yok';
+  const productCount = (catalogData && catalogData.products) ? catalogData.products.length : 0;
+
+  view.innerHTML = `
+    <div style="padding:32px;max-width:800px;margin:0 auto;">
+      <p style="font-size:16px;font-weight:600;color:#111827;margin:0 0 4px;">Senkronizasyon</p>
+      <p style="font-size:12px;color:#6b7280;margin:0 0 24px;">Veri çekin veya kataloğunuzu dışa aktarın</p>
+
+      <p style="font-size:12px;font-weight:600;color:#374151;margin:0 0 10px;">İçe Aktar</p>
+      <div style="padding:16px;border:0.5px solid #e5e7eb;border-radius:12px;margin-bottom:24px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+          <div>
+            <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 4px;">Shopify Katalogu</p>
+            <p style="font-size:11px;color:#9ca3af;margin:0;">Son çekim: ${lastSyncText} · ${productCount.toLocaleString('tr-TR')} ürün</p>
+          </div>
+          <button type="button" onclick="syncShopifyData()" style="padding:8px 16px;background:#16a34a;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;">Şimdi Çek</button>
+        </div>
+      </div>
+
+      <p style="font-size:12px;font-weight:600;color:#374151;margin:0 0 10px;">Dışa Aktar</p>
+      <div style="padding:16px;border:0.5px solid #e5e7eb;border-radius:12px;">
+        ${renderExportHistory()}
+      </div>
+    </div>`;
 }
 
 function loadAndRenderHistory() {
