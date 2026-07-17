@@ -224,6 +224,7 @@
     <div id="export-view" style="display:none;"></div>
     <div id="history-view" style="display:none;"></div>
     <div id="settings-view" style="display:none;"></div>
+    <div id="products-view" style="display:none;padding:32px;max-width:1000px;margin:0 auto;"></div>
 
     <!-- BOTTOM STRIP -->
     <div class="sf-bottom-strip">
@@ -488,8 +489,7 @@ function renderSidebar() {
     btn.type = 'button';
     btn.className = 'sidebar-nav-item';
     btn.dataset.view = item.view;
-    const isActive = currentView === item.view ||
-      (currentView === 'products' && item.view === 'catalog');
+    const isActive = currentView === item.view;
     btn.style.cssText =
       'width:100%;display:flex;align-items:center;gap:8px;' +
       'padding:6px 10px;border:none;border-radius:10px;cursor:pointer;' +
@@ -510,7 +510,7 @@ function renderSidebar() {
 }
 
 function hideAllViews() {
-  ['dashboard-view','catalog-editor-layout','collections-view','ai-actions-view',
+  ['dashboard-view','catalog-editor-layout','products-view','collections-view','ai-actions-view',
    'validation-view','import-view','export-view','history-view','settings-view']
   .forEach(id => {
     const el = document.getElementById(id);
@@ -529,7 +529,7 @@ function setView(view) {
   const viewRenderers = {
     dashboard:       function() { showView('dashboard-view');        renderDashboard(); },
     catalog:         function() { showView('catalog-editor-layout','grid'); activateCatalogEditorLayout(); },
-    products:        function() { showView('catalog-editor-layout','grid'); activateCatalogEditorLayout(); },
+    products:        function() { showView('products-view'); renderProductsPage(); },
     collections:     function() { showView('collections-view');      renderCollections(); },
     'ai-actions':    function() { showView('ai-actions-view');       renderAiActionsPage(); },
     'catalog-check': function() { showView('validation-view');       renderValidationCenter(); },
@@ -669,6 +669,167 @@ function renderDashboard() {
     });
   });
 }
+
+// ─── PRODUCTS PAGE ────────────────────────────────────────────────────────
+
+const PRODUCTS_PAGE_SIZE = 30;
+let _productsPageOffset = 0;
+let _productsSearchQuery = '';
+let _quickEditContext = null;
+
+function getStatusBadgeVisual(statusValue) {
+  const map = {
+    active:     { bg: '#f0fdf4', color: '#16a34a', label: 'Hazır' },
+    draft:      { bg: '#f3f4f6', color: '#6b7280', label: 'Taslak' },
+    incomplete: { bg: '#fef3c7', color: '#d97706', label: 'Eksikler Var' },
+    error:      { bg: '#fef2f2', color: '#dc2626', label: 'Sorunlu' },
+  };
+  return map[(statusValue || '').toLowerCase()] || map.draft;
+}
+
+function renderProductsPage() {
+  const view = document.getElementById('products-view');
+  if (!view) return;
+
+  const products = catalogData.products || [];
+
+  // Başlık + arama satırı
+  view.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+      <div>
+        <p style="font-size:16px;font-weight:600;color:#111827;margin:0 0 4px;">Ürünler</p>
+        <p style="font-size:12px;color:#6b7280;margin:0;">Tek tek görüntüleyin ve hızlıca düzenleyin</p>
+      </div>
+      <div style="position:relative;">
+        <input id="products-search-input" type="text" placeholder="Ürün ara..."
+          style="padding:6px 12px 6px 30px;border:0.5px solid #e5e7eb;border-radius:10px;font-size:12px;width:200px;"
+          value="${_productsSearchQuery}" />
+        <i class="ti ti-search" style="position:absolute;left:9px;top:50%;transform:translateY(-50%);font-size:13px;color:#9ca3af;"></i>
+      </div>
+    </div>
+    <div id="products-card-grid" style="display:grid;grid-template-columns:repeat(auto-fill, minmax(180px, 1fr));gap:12px;"></div>`;
+
+  // Arama listener — oninput ataması, addEventListener tekrarından kaçınır
+  const searchInput = document.getElementById('products-search-input');
+  if (searchInput) {
+    searchInput.oninput = function() {
+      _productsSearchQuery = this.value;
+      _productsPageOffset = 0;
+      _renderProductCards();
+    };
+  }
+
+  _renderProductCards();
+}
+
+function _renderProductCards() {
+  const grid = document.getElementById('products-card-grid');
+  if (!grid) return;
+
+  let items = catalogData.products || [];
+
+  if (items.length === 0) {
+    grid.innerHTML = '<p style="font-size:12px;color:#9ca3af;grid-column:1/-1;">Katalog verisi bulunamadı</p>';
+    return;
+  }
+
+  if (_productsSearchQuery) {
+    const q = _productsSearchQuery.toLowerCase();
+    items = items.filter(p => (p.title || '').toLowerCase().includes(q));
+  }
+
+  const visibleProducts = items.slice(0, _productsPageOffset + PRODUCTS_PAGE_SIZE);
+
+  grid.innerHTML = '';
+
+  visibleProducts.forEach((product, i) => {
+    const card = document.createElement('div');
+    card.style.cssText = 'border:0.5px solid #e5e7eb;border-radius:12px;overflow:hidden;cursor:pointer;transition:border-color .15s ease;background:#fff;';
+    card.addEventListener('mouseenter', function() { this.style.borderColor = '#16a34a'; });
+    card.addEventListener('mouseleave', function() { this.style.borderColor = '#e5e7eb'; });
+
+    const imgUrl = product.image || '';
+    const badge = getStatusBadgeVisual(product.status);
+    const title = product.title || 'İsimsiz';
+    const price = product.price || '—';
+
+    const imgHtml = imgUrl
+      ? `<img src="${imgUrl}" style="width:100%;height:100px;object-fit:cover;"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+         <div style="display:none;height:100px;background:#f9fafb;align-items:center;justify-content:center;">
+           <i class="ti ti-photo" style="font-size:22px;color:#9ca3af;"></i></div>`
+      : `<div style="height:100px;background:#f9fafb;display:flex;align-items:center;justify-content:center;">
+           <i class="ti ti-photo" style="font-size:22px;color:#9ca3af;"></i></div>`;
+
+    card.innerHTML = imgHtml +
+      `<div style="padding:10px;">
+        <p style="font-size:12px;font-weight:500;color:#111827;margin:0 0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${title}</p>
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <span style="font-size:12px;color:#6b7280;">${price}</span>
+          <span style="font-size:10px;padding:2px 6px;border-radius:999px;background:${badge.bg};color:${badge.color};">${badge.label}</span>
+        </div>
+      </div>`;
+
+    card.addEventListener('click', function() { openQuickEditPanel(product); });
+    grid.appendChild(card);
+  });
+
+  if (items.length > visibleProducts.length) {
+    const loadMore = document.createElement('button');
+    loadMore.type = 'button';
+    loadMore.style.cssText = 'border:1px dashed #e5e7eb;border-radius:12px;background:transparent;color:#6b7280;font-size:11px;cursor:pointer;min-height:154px;';
+    loadMore.textContent = '+' + (items.length - visibleProducts.length) + ' ürün daha — Yükle';
+    loadMore.addEventListener('click', function() {
+      _productsPageOffset += PRODUCTS_PAGE_SIZE;
+      _renderProductCards();
+    });
+    grid.appendChild(loadMore);
+  }
+}
+
+function openQuickEditPanel(product) {
+  _quickEditContext = { product };
+  const fieldsEl = document.getElementById('quick-edit-fields');
+  if (!fieldsEl) return;
+  fieldsEl.innerHTML = '';
+
+  [
+    { key: 'title',  label: 'Ürün Adı' },
+    { key: 'price',  label: 'Fiyat' },
+    { key: 'status', label: 'Durum' },
+  ].forEach(field => {
+    const wrap = document.createElement('div');
+    wrap.style.cssText = 'margin-bottom:12px;';
+    wrap.innerHTML = `<label style="font-size:12px;color:#374151;display:block;margin-bottom:6px;">${field.label}</label>`;
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.value = product[field.key] || '';
+    input.dataset.fieldKey = field.key;
+    input.style.cssText = 'width:100%;padding:8px 12px;border:0.5px solid #e5e7eb;border-radius:10px;font-size:13px;box-sizing:border-box;';
+    wrap.appendChild(input);
+    fieldsEl.appendChild(wrap);
+  });
+
+  document.getElementById('quick-edit-modal').style.display = 'flex';
+}
+
+function closeQuickEdit() {
+  document.getElementById('quick-edit-modal').style.display = 'none';
+  _quickEditContext = null;
+}
+
+function saveQuickEdit() {
+  if (!_quickEditContext) return;
+  const inputs = document.querySelectorAll('#quick-edit-fields input[data-field-key]');
+  inputs.forEach(input => {
+    _quickEditContext.product[input.dataset.fieldKey] = input.value;
+  });
+  document.getElementById('quick-edit-modal').style.display = 'none';
+  _quickEditContext = null;
+  _renderProductCards();
+}
+
+// ─── END PRODUCTS PAGE ────────────────────────────────────────────────────
 
 function activateCatalogEditorLayout() {
   const view = document.getElementById('catalog-editor-layout');
@@ -1820,6 +1981,23 @@ document.addEventListener('DOMContentLoaded', function() {
       <button class="aip-btn-ghost" onclick="closeAiPreview()">İptal</button>
       <button class="aip-btn-primary" id="aip-apply-btn" onclick="applyAcceptedChanges()" disabled>
         <i class="ti ti-upload"></i> Kabul Edilenleri Uygula
+      </button>
+    </div>
+  </div>
+</div>
+
+<div id="quick-edit-modal" style="display:none;position:fixed;inset:0;background:rgba(17,24,39,.4);z-index:500;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:20px;padding:24px;width:360px;box-shadow:0 20px 48px rgba(17,24,39,.2);">
+    <p style="font-size:15px;font-weight:600;color:#111827;margin:0 0 16px;">Hızlı Düzenle</p>
+    <div id="quick-edit-fields"></div>
+    <div style="display:flex;gap:8px;margin-top:16px;">
+      <button type="button" onclick="closeQuickEdit()"
+        style="flex:1;padding:8px 16px;border:0.5px solid #e5e7eb;border-radius:12px;background:#fff;color:#374151;font-size:13px;cursor:pointer;">
+        İptal
+      </button>
+      <button type="button" onclick="saveQuickEdit()"
+        style="flex:1;padding:8px 16px;border:none;border-radius:12px;background:#16a34a;color:#fff;font-size:13px;font-weight:600;cursor:pointer;">
+        Kaydet
       </button>
     </div>
   </div>
