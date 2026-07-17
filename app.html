@@ -973,7 +973,8 @@ function renderSettingsPage() {
 
 function updateUI() {
   const productCount = catalogData.products.length;
-  document.getElementById('products-count').textContent = productCount.toLocaleString('tr-TR');
+  const _pcEl = document.getElementById('products-count');
+  if (_pcEl) _pcEl.textContent = productCount.toLocaleString('tr-TR');
   const badge = document.getElementById('product-count-badge');
   if (badge) badge.textContent = productCount.toLocaleString('tr-TR') + ' ürün';
   updateCatalogStats();
