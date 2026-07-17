@@ -1957,6 +1957,21 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 });
+
+// ─── DEBUG LOGGING (diagnostic) ───────────────────────────────────────────
+window.addEventListener('error', function(e) {
+  console.error('[APP HATASI]', e.message, 'Satır:', e.lineno, 'Dosya:', e.filename);
+});
+
+const _origSetView = typeof setView === 'function' ? setView : null;
+if (_origSetView) {
+  window.setView = function(view) {
+    console.log('[VIEW GEÇİŞİ]', view);
+    try { _origSetView(view); }
+    catch(err) { console.error('[VIEW HATASI]', view, err.message); }
+  };
+}
+// ─── END DEBUG LOGGING ────────────────────────────────────────────────────
 </script>
 
 <!-- ═══════════════════════════════════════════════════════════════════
