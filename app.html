@@ -32,6 +32,10 @@
 </script>
 </head>
 <body>
+<div id="auto-pull-banner" style="display:none;position:fixed;top:0;left:0;right:0;background:#f0fdf4;border-bottom:0.5px solid #d1fae5;padding:10px 20px;z-index:1000;align-items:center;gap:10px;justify-content:center;">
+  <div style="width:14px;height:14px;border:2px solid #d1fae5;border-top-color:#16a34a;border-radius:999px;animation:spin .6s linear infinite;"></div>
+  <span style="font-size:13px;color:#16a34a;">Shopify mağazanız bağlandı — ürünleriniz aktarılıyor...</span>
+</div>
 <div class="shopify-layout" data-screen-label="Mocksheets Shopify Catalog Manager">
 
   <!-- ============ SIDEBAR ============ -->
@@ -321,6 +325,22 @@ let viewMode = 'table';
 let _pendingAiChanges = []; // [{ shopifyProductId, productTitle, field, oldValue, newValue, decision }]
 let _catalogSearch = '';
 let _productsStatusFilter = '';
+let _autoPullTriggered = false;
+
+// ═══════════════════════════════════════════════════════════════════════
+// AUTO-PULL BANNER HELPERS
+// ═══════════════════════════════════════════════════════════════════════
+
+function showAutoPullBanner() {
+  const b = document.getElementById('auto-pull-banner');
+  if (b) b.style.display = 'flex';
+}
+function hideAutoPullBanner() {
+  const b = document.getElementById('auto-pull-banner');
+  if (!b) return;
+  b.innerHTML = '<span style="font-size:13px;color:#16a34a;">✓ Ürünleriniz başarıyla aktarıldı</span>';
+  setTimeout(function() { b.style.display = 'none'; }, 2500);
+}
 
 // ═══════════════════════════════════════════════════════════════════════
 // SHOPIFY CONNECT UI & DEMO DATA
@@ -397,6 +417,7 @@ async function syncShopifyData() {
     localStorage.setItem('mocksheets_last_sync', new Date().toISOString());
     addActivityLog('Shopify senkronizasyonu başarılı');
     updateUI();
+    if (typeof renderDashboard === 'function') renderDashboard();
 
     if (btn) {
       btn.textContent = '✓ Senkronize Edildi';
@@ -412,9 +433,13 @@ async function syncShopifyData() {
 
 async function checkShopifyStatus() {
   const params = new URLSearchParams(window.location.search);
+  const shouldAutoPull = params.get('autopull') === '1';
   if (params.get('shopify') === 'connected') {
     toast('Shopify bağlantısı kuruldu! Veriler yükleniyor...', 'success');
-    history.replaceState({}, '', window.location.pathname);
+    const cleanUrl = new URL(window.location.href);
+    cleanUrl.searchParams.delete('shopify');
+    cleanUrl.searchParams.delete('autopull');
+    history.replaceState({}, '', cleanUrl);
   }
 
   const token = getAuthToken();
@@ -431,7 +456,14 @@ async function checkShopifyStatus() {
     if (d.connected) {
       shopifyStore = d.shop_name;
       document.title = `Mocksheets — ${shopifyStore}`;
-      await syncShopifyData();
+      if (shouldAutoPull && !_autoPullTriggered) {
+        _autoPullTriggered = true;
+        showAutoPullBanner();
+        await syncShopifyData();
+        hideAutoPullBanner();
+      } else {
+        await syncShopifyData();
+      }
     } else {
       showConnectPanel();
     }

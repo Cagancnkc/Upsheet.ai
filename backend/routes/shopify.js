@@ -164,7 +164,7 @@ router.get('/callback', async (req, res) => {
       type: 'magiclink',
       email,
       options: {
-        redirectTo: `${frontend}/app.html?shopify=connected`,
+        redirectTo: `${frontend}/app.html?shopify=connected&autopull=1`,
       },
     });
 
