@@ -319,6 +319,8 @@ let exportHistory = [];
 let syncHistory = [];
 let viewMode = 'table';
 let _pendingAiChanges = []; // [{ shopifyProductId, productTitle, field, oldValue, newValue, decision }]
+let _catalogSearch = '';
+let _productsStatusFilter = '';
 
 // ═══════════════════════════════════════════════════════════════════════
 // SHOPIFY CONNECT UI & DEMO DATA
@@ -392,6 +394,7 @@ async function syncShopifyData() {
     const data = await response.json();
     catalogData = data;
     syncHistory.push({ date: new Date().toLocaleString('tr-TR'), products: (data.products||[]).length, orders: (data.orders||[]).length });
+    localStorage.setItem('mocksheets_last_sync', new Date().toISOString());
     addActivityLog('Shopify senkronizasyonu başarılı');
     updateUI();
 
@@ -617,7 +620,10 @@ function renderDashboard() {
 
         <div id="dash-card-health" style="padding:16px;border:1px solid #e5e7eb;border-left:3px solid #16a34a;border-radius:8px;transition:box-shadow .15s ease,transform .15s ease;">
           <div style="font-size:12px;color:#6b7280;margin-bottom:8px">Katalog Sağlığı</div>
-          <div id="dash-health-score" style="font-size:28px;font-weight:700;color:#16a34a">${analysis.healthScore}%</div>
+          <div id="dash-health-score" style="font-size:28px;font-weight:700;color:#16a34a;display:flex;align-items:center;gap:6px;">
+            ${analysis.healthScore}%
+            <span id="dash-health-trend" style="font-size:11px;font-weight:400;color:#6b7280;"></span>
+          </div>
           <div id="dash-health-breakdown-compact" style="display:flex;flex-direction:column;gap:6px;margin-top:12px">
             ${breakdownRows}
           </div>
@@ -651,7 +657,37 @@ function renderDashboard() {
         <div style="font-size:13px;font-weight:600;color:#111827;">AI Katalog Asistanı</div>
         <p id="ai-panel-status" style="font-size:11px;color:#9ca3af;margin:2px 0 0;">${statusText}</p>
       </div>
+
+      <div style="padding:16px;border:1px solid #e5e7eb;border-radius:8px;margin-top:12px;">
+        <div style="font-size:13px;font-weight:600;color:#111827;margin-bottom:8px;">Son İşlemler</div>
+        <div id="dash-recent-ops"></div>
+      </div>
     </div>`;
+
+  // Health trend
+  const prevScore = parseInt(localStorage.getItem('mocksheets_prev_health') || analysis.healthScore);
+  const delta = analysis.healthScore - prevScore;
+  localStorage.setItem('mocksheets_prev_health', String(analysis.healthScore));
+  const trendEl = document.getElementById('dash-health-trend');
+  if (trendEl && delta !== 0) {
+    trendEl.innerHTML = delta > 0
+      ? '<i class="ti ti-trending-up" style="color:#16a34a;font-size:12px;"></i> +' + delta
+      : '<i class="ti ti-trending-down" style="color:#dc2626;font-size:12px;"></i> ' + delta;
+  }
+  // Son işlemler — syncHistory local array kullan (backend endpoint yok)
+  const opsEl = document.getElementById('dash-recent-ops');
+  if (opsEl) {
+    const recent = syncHistory.slice(0, 3);
+    if (recent.length === 0) {
+      opsEl.innerHTML = '<p style="font-size:12px;color:#9ca3af;margin:0;">Henüz işlem yok</p>';
+    } else {
+      opsEl.innerHTML = recent.map(s =>
+        '<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #f3f4f6;">' +
+        '<span style="font-size:12px;color:#374151;">Shopify Sync — ' + s.products + ' ürün</span>' +
+        '<span style="font-size:11px;color:#9ca3af;">' + s.date + '</span></div>'
+      ).join('');
+    }
+  }
 
   const topbarScoreEl = document.getElementById('topbar-health-score');
   if (topbarScoreEl) topbarScoreEl.textContent = analysis.healthScore;
@@ -700,11 +736,21 @@ function renderProductsPage() {
         <p style="font-size:16px;font-weight:600;color:#111827;margin:0 0 4px;">Ürünler</p>
         <p style="font-size:12px;color:#6b7280;margin:0;">Tek tek görüntüleyin ve hızlıca düzenleyin</p>
       </div>
-      <div style="position:relative;">
-        <input id="products-search-input" type="text" placeholder="Ürün ara..."
-          style="padding:6px 12px 6px 30px;border:0.5px solid #e5e7eb;border-radius:10px;font-size:12px;width:200px;"
-          value="${_productsSearchQuery}" />
-        <i class="ti ti-search" style="position:absolute;left:9px;top:50%;transform:translateY(-50%);font-size:13px;color:#9ca3af;"></i>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <div style="position:relative;">
+          <input id="products-search-input" type="text" placeholder="Ürün ara..."
+            style="padding:6px 12px 6px 30px;border:0.5px solid #e5e7eb;border-radius:10px;font-size:12px;width:200px;"
+            value="${_productsSearchQuery}" />
+          <i class="ti ti-search" style="position:absolute;left:9px;top:50%;transform:translateY(-50%);font-size:13px;color:#9ca3af;"></i>
+        </div>
+        <select id="products-status-filter"
+          style="padding:6px 10px;border:0.5px solid #e5e7eb;border-radius:10px;font-size:12px;color:#374151;background:#fff;">
+          <option value="">Tüm Durumlar</option>
+          <option value="active">Hazır</option>
+          <option value="draft">Taslak</option>
+          <option value="incomplete">Eksikler Var</option>
+          <option value="error">Sorunlu</option>
+        </select>
       </div>
     </div>
     <div id="products-card-grid" style="display:grid;grid-template-columns:repeat(auto-fill, minmax(180px, 1fr));gap:12px;"></div>`;
@@ -714,6 +760,16 @@ function renderProductsPage() {
   if (searchInput) {
     searchInput.oninput = function() {
       _productsSearchQuery = this.value;
+      _productsPageOffset = 0;
+      _renderProductCards();
+    };
+  }
+
+  const statusFilter = document.getElementById('products-status-filter');
+  if (statusFilter) {
+    statusFilter.value = _productsStatusFilter;
+    statusFilter.onchange = function() {
+      _productsStatusFilter = this.value;
       _productsPageOffset = 0;
       _renderProductCards();
     };
@@ -736,6 +792,10 @@ function _renderProductCards() {
   if (_productsSearchQuery) {
     const q = _productsSearchQuery.toLowerCase();
     items = items.filter(p => (p.title || '').toLowerCase().includes(q));
+  }
+
+  if (_productsStatusFilter) {
+    items = items.filter(p => (p.status || '').toLowerCase() === _productsStatusFilter);
   }
 
   const visibleProducts = items.slice(0, _productsPageOffset + PRODUCTS_PAGE_SIZE);
@@ -836,6 +896,14 @@ function activateCatalogEditorLayout() {
   if (!view) return;
   view.innerHTML = document.getElementById('main-table-view')?.innerHTML || '';
   buildGrid();
+  const srchInput = document.getElementById('product-search');
+  if (srchInput) {
+    srchInput.oninput = function() {
+      _catalogSearch = this.value;
+      buildGrid();
+    };
+    srchInput.value = _catalogSearch;
+  }
 }
 
 function renderCollections() {
@@ -857,19 +925,42 @@ function renderCollections() {
   });
   html += `</tbody></table></div>`;
   view.innerHTML = html;
+  view.querySelectorAll('tbody tr').forEach(function(tr, i) {
+    const title = (collections[i] || {}).title;
+    if (!title) return;
+    tr.style.cursor = 'pointer';
+    tr.addEventListener('mouseenter', function() { this.style.background = '#f9fafb'; });
+    tr.addEventListener('mouseleave', function() { this.style.background = ''; });
+    tr.addEventListener('click', function() {
+      _catalogSearch = title;
+      setView('catalog');
+    });
+  });
 }
 
-function renderAiActionsPage() {
+async function renderAiActionsPage() {
   const view = document.getElementById('ai-actions-view');
   if (!view) return;
   const count = catalogData.products?.length || 0;
   view.innerHTML = `<div style="padding:24px">
     <h2 style="font-size:20px;font-weight:600;margin-bottom:16px">AI İşlemleri</h2>
-    <p style="color:#6b7280;margin-bottom:16px">${count.toLocaleString('tr-TR')} ürün için toplu analiz</p>
-    <button style="background:#16a34a;color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:12px;font-weight:600;cursor:pointer">
+    <p style="color:#6b7280;margin-bottom:8px">${count.toLocaleString('tr-TR')} ürün için toplu analiz</p>
+    <p id="ai-usage-info" style="font-size:11px;color:#9ca3af;margin-bottom:16px;"></p>
+    <button type="button" style="background:#16a34a;color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:12px;font-weight:600;cursor:pointer">
       Başlat
     </button>
   </div>`;
+  try {
+    const res = await fetch(API_URL + '/api/usage', {
+      headers: { 'Authorization': 'Bearer ' + getAuthToken() }
+    });
+    if (res.ok) {
+      const d = await res.json();
+      const el = document.getElementById('ai-usage-info');
+      if (el) el.textContent = 'Bugün: ' + (d.used?.today || 0) + ' / ' +
+        (d.limits?.ai_commands_per_day || '∞') + ' komut kullanıldı';
+    }
+  } catch(e) { /* silent — kullanıcı giriş yapmamışsa sessiz geç */ }
 }
 
 function renderValidationCenter() {
@@ -894,7 +985,10 @@ function renderValidationCenter() {
 
   view.innerHTML = `
     <div style="display:flex;align-items:center;gap:10px;padding:16px 24px;border-bottom:1px solid #e5e7eb">
-      <h2 style="flex:1;font-size:15px;font-weight:600;margin:0">Katalog Kontrolü</h2>
+      <div>
+        <h2 style="font-size:15px;font-weight:600;margin:0">Katalog Kontrolü</h2>
+        <span id="validation-last-scan" style="font-size:11px;color:#9ca3af;"></span>
+      </div>
       <div style="display:flex;align-items:center;gap:6px;padding:5px 12px;border:0.5px solid #e5e7eb;border-radius:999px">
         <span style="font-size:11px;color:#6b7280">Sağlık</span>
         <span style="font-size:12px;font-weight:600;color:#16a34a">${analysis.healthScore}%</span>
@@ -904,15 +998,31 @@ function renderValidationCenter() {
       </button>
     </div>
     <div style="padding:24px">${bodyContent}</div>`;
+  const scanEl = document.getElementById('validation-last-scan');
+  if (scanEl) scanEl.textContent = 'Son tarama: az önce';
 }
 
 function renderImportPage() {
   const view = document.getElementById('import-view');
   if (!view) return;
-  view.innerHTML = `<div style="padding:24px">
-    <h2 style="font-size:20px;font-weight:600;margin-bottom:16px">İçe Aktar</h2>
-    <div style="padding:24px;border:2px dashed #d1d5db;border-radius:8px;text-align:center;color:#6b7280">
-      <p style="margin:0;font-size:12px">Shopify'dan ürünleri içe aktar</p>
+  const lastSync = localStorage.getItem('mocksheets_last_sync');
+  const lastSyncText = lastSync
+    ? new Date(lastSync).toLocaleDateString('tr-TR', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' })
+    : 'Henüz yok';
+  const productCount = catalogData.products.length;
+  view.innerHTML = `<div style="padding:24px;max-width:600px;">
+    <p style="font-size:16px;font-weight:600;color:#111827;margin:0 0 20px;">İçe Aktar</p>
+    <div style="padding:16px;border:0.5px solid #e5e7eb;border-radius:12px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div>
+          <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 4px;">Shopify Katalogu</p>
+          <p style="font-size:11px;color:#9ca3af;margin:0;">Son çekim: ${lastSyncText} · ${productCount.toLocaleString('tr-TR')} ürün</p>
+        </div>
+        <button type="button" onclick="syncShopifyData()"
+          style="padding:6px 14px;background:#16a34a;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;">
+          Senkronize Et
+        </button>
+      </div>
     </div>
   </div>`;
 }
@@ -920,48 +1030,65 @@ function renderImportPage() {
 function renderExportPage() {
   const view = document.getElementById('export-view');
   if (!view) return;
-  const history = exportHistory || [];
-  if (history.length === 0) {
-    view.innerHTML = `<div style="padding:24px;text-align:center;color:#6b7280">Henüz dışa aktarım yok</div>`;
-    return;
-  }
-  let html = `<div style="padding:24px"><h2 style="font-size:20px;font-weight:600;margin-bottom:16px">Dışa Aktar Geçmişi</h2><table style="width:100%;border-collapse:collapse">
-    <thead style="background:#f9fafb"><tr>
-    <th style="padding:8px;text-align:left;border-bottom:1px solid #e5e7eb;font-size:12px;font-weight:600">Tarih</th>
-    <th style="padding:8px;text-align:left;border-bottom:1px solid #e5e7eb;font-size:12px;font-weight:600">Dosya</th>
-    </tr></thead><tbody>`;
-  history.forEach(h => {
-    const date = h.date ? new Date(h.date).toLocaleString('tr-TR') : 'N/A';
-    html += `<tr style="border-bottom:1px solid #e5e7eb"><td style="padding:8px;font-size:12px">${date}</td>
-    <td style="padding:8px;font-size:12px">${h.filename || 'export.csv'}</td></tr>`;
-  });
-  html += `</tbody></table></div>`;
-  view.innerHTML = html;
+  view.innerHTML = `<div style="padding:24px;max-width:700px;">
+    <p style="font-size:16px;font-weight:600;color:#111827;margin:0 0 16px;">Dışa Aktar Geçmişi</p>
+    ${renderExportHistory()}
+  </div>`;
 }
 
 function loadAndRenderHistory() {
   const view = document.getElementById('history-view');
   if (!view) return;
   const history = exportHistory || [];
-  view.innerHTML = `<div style="padding:24px">
-    <h2 style="font-size:20px;font-weight:600;margin-bottom:16px">Geçmiş</h2>
-    <p style="color:#6b7280;font-size:12px">${history.length} işlem kaydı</p>
-  </div>`;
+  if (history.length === 0) {
+    view.innerHTML = '<div style="padding:24px;text-align:center;color:#9ca3af;font-size:12px;">Henüz işlem kaydı yok</div>';
+    return;
+  }
+  const rows = history.map(function(h) {
+    const icon = getHistoryIcon(h.type);
+    return '<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #f3f4f6;">' +
+      '<i class="ti ' + icon + '" style="font-size:16px;color:#6b7280;flex-shrink:0;width:20px;text-align:center;"></i>' +
+      '<div style="flex:1"><p style="font-size:12px;color:#111827;margin:0;">' + (h.type || 'İşlem') + '</p>' +
+      '<p style="font-size:11px;color:#9ca3af;margin:2px 0 0;">' + (h.date || '') +
+      (h.count ? ' · ' + h.count + ' kayıt' : '') + '</p></div></div>';
+  }).join('');
+  view.innerHTML = '<div style="padding:24px;max-width:600px;"><p style="font-size:16px;font-weight:600;color:#111827;margin:0 0 16px;">Geçmiş</p>' + rows + '</div>';
+}
+
+function disconnectShopify() {
+  if (!confirm('Shopify bağlantısını kaldırmak istediğinizden emin misiniz?')) return;
+  shopifyStore = null;
+  catalogData = { products: [], variants: [], collections: [], inventory: [] };
+  syncHistory = [];
+  localStorage.removeItem('mocksheets_last_sync');
+  localStorage.removeItem('mocksheets_prev_health');
+  addActivityLog('Shopify bağlantısı kaldırıldı');
+  updateUI();
+  renderSettingsPage();
+  toast('Shopify bağlantısı kaldırıldı', 'info');
 }
 
 function renderSettingsPage() {
   const view = document.getElementById('settings-view');
   if (!view) return;
-  view.innerHTML = `<div style="padding:24px">
-    <h2 style="font-size:20px;font-weight:600;margin-bottom:24px">Ayarlar</h2>
-    <div style="max-width:600px">
-      <div style="padding:12px;border-bottom:1px solid #e5e7eb">
-        <div style="font-size:12px;font-weight:600;margin-bottom:4px">Shopify Bağlantısı</div>
-        <div style="font-size:12px;color:#6b7280">Bağlantılı mağaza</div>
+  const connected = !!shopifyStore;
+  const storeName = shopifyStore || 'Bağlı değil';
+  const actionBtn = connected
+    ? '<button type="button" onclick="disconnectShopify()" style="font-size:11px;color:#dc2626;background:#fff;border:1px solid #fca5a5;border-radius:8px;padding:4px 12px;cursor:pointer;">Kaldır</button>'
+    : '<button type="button" onclick="setView(\'import\')" style="font-size:11px;color:#16a34a;background:#fff;border:1px solid #86efac;border-radius:8px;padding:4px 12px;cursor:pointer;">Bağlan</button>';
+  view.innerHTML = `<div style="padding:24px;max-width:600px;">
+    <p style="font-size:16px;font-weight:600;color:#111827;margin:0 0 24px;">Ayarlar</p>
+    <div style="border:0.5px solid #e5e7eb;border-radius:12px;overflow:hidden;">
+      <div style="padding:14px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #f3f4f6;">
+        <div>
+          <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 2px;">Shopify Bağlantısı</p>
+          <p style="font-size:11px;color:${connected ? '#16a34a' : '#9ca3af'};margin:0;">${storeName}</p>
+        </div>
+        ${actionBtn}
       </div>
-      <div style="padding:12px;border-bottom:1px solid #e5e7eb">
-        <div style="font-size:12px;font-weight:600;margin-bottom:4px">Plan</div>
-        <div style="font-size:12px;color:#6b7280">Pro Max - Sınırsız</div>
+      <div style="padding:14px 16px;">
+        <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 2px;">Plan</p>
+        <p style="font-size:11px;color:#6b7280;margin:0;">Pro Max · Sınırsız</p>
       </div>
     </div>
   </div>`;
@@ -1101,6 +1228,13 @@ function buildGrid() {
   const data = catalogData[currentView] || catalogData.products;
   const keys = COLUMN_KEYS[currentView] || COLUMN_KEYS.products;
 
+  // Apply search filter
+  let filteredData = data;
+  if (_catalogSearch) {
+    const _csq = _catalogSearch.toLowerCase();
+    filteredData = data.filter(row => keys.some(k => String(row[k] || '').toLowerCase().includes(_csq)));
+  }
+
   // Build thead
   const thead = document.getElementById('sf-table-head');
   thead.innerHTML = `<tr>
@@ -1110,12 +1244,12 @@ function buildGrid() {
 
   // Build tbody
   const tbody = document.getElementById('sf-table-body');
-  if (!data.length) {
+  if (!filteredData.length) {
     tbody.innerHTML = `<tr><td colspan="${keys.length+1}" class="sf-empty-row">Veri yok</td></tr>`;
     return;
   }
 
-  tbody.innerHTML = data.slice(0, 100).map((row, i) => `
+  tbody.innerHTML = filteredData.slice(0, 100).map((row, i) => `
     <tr data-row="${i}">
       <td><input type="checkbox" /></td>
       ${keys.map(key => {
@@ -1480,6 +1614,15 @@ function renderValidationPanel() {
   return `<div class="ssp-validation-summary">${issues.length} sorun bulundu</div>
     <table class="ssp-table"><thead><tr><th>#</th><th>Ürün</th><th>Sorun</th></tr></thead>
     <tbody>${issues.slice(0,50).map(i => `<tr><td>${i.row}</td><td>${escapeHtml(i.product)}</td><td><span class="ssp-issue-badge">${i.issue}</span></td></tr>`).join('')}</tbody></table>`;
+}
+
+function getHistoryIcon(type) {
+  const t = (type || '').toLowerCase();
+  if (t.includes('shopify') || t.includes('push')) return 'ti-brand-shopify';
+  if (t.includes('ai')     || t.includes('analiz')) return 'ti-sparkles';
+  if (t.includes('import') || t.includes('sync'))   return 'ti-download';
+  if (t.includes('export') || t.includes('csv'))    return 'ti-upload';
+  return 'ti-circle-check';
 }
 
 function renderExportHistory() {
