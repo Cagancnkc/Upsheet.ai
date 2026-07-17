@@ -736,6 +736,24 @@ function renderDashboard() {
       this.style.transform = 'translateY(0)';
     });
   });
+
+  const fixAllBtn = document.getElementById('fix-all-issues-btn');
+  if (fixAllBtn && !fixAllBtn.disabled) {
+    fixAllBtn.addEventListener('click', async function() {
+      const btn = this;
+      const originalText = btn.textContent.trim();
+      btn.disabled = true;
+      btn.textContent = 'AI analiz ediyor...';
+      try {
+        await runShopifyAiAnalysis('all');
+      } catch(e) {
+        alert('Analiz başarısız: ' + e.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = originalText;
+      }
+    });
+  }
 }
 
 // ─── PRODUCTS PAGE ────────────────────────────────────────────────────────
@@ -2006,6 +2024,9 @@ async function applyAcceptedChanges() {
 
   await pushChangesToShopify(accepted);
   closeAiPreview();
+  if (typeof renderDashboard === 'function' && currentView === 'dashboard') {
+    renderDashboard();
+  }
 }
 
 async function pushChangesToShopify(accepted) {
