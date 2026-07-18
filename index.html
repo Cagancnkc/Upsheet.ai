@@ -1108,6 +1108,11 @@
   </div>
 </nav>
 
+<div style="display:flex;align-items:center;justify-content:center;gap:8px;padding:8px 16px;background:#f0fdf4;border-bottom:0.5px solid #d1fae5;">
+  <img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/shopify.svg" width="14" height="14" style="filter:invert(48%) sepia(98%) saturate(400%) hue-rotate(90deg);" alt="Shopify"/>
+  <span style="font-size:12px;font-weight:500;color:#16a34a;">Shopify için özel olarak geliştirildi</span>
+</div>
+
 <div id="scroll-bar"></div>
 
 <!-- HERO -->
@@ -1126,10 +1131,10 @@
     </p>
 
     <div class="hero-price-highlight">
-      <span class="hero-price-big">$1<span class="hero-price-unit">/ay</span></span>
+      <span class="hero-price-big" style="font-size:22px;">Ücretsiz deneyin</span>
       <div class="hero-price-sub">
-        <span>İlk 1 ay boyunca</span>
-        <span class="hero-price-after">· Sonrasında normal fiyatlandırma</span>
+        <span>Kredi kartı gerekmez</span>
+        <span class="hero-price-after">· İstediğin an iptal</span>
       </div>
     </div>
 
@@ -1253,7 +1258,7 @@
 
     <!-- Başlık -->
     <div style="text-align:center; margin-bottom:48px;">
-      <h2 style="font-size:clamp(28px,4vw,40px); font-weight:500; color:var(--ink,#111); margin:0 0 14px; line-height:1.2;" data-i18n-html="steps.title">Kataloğunuzdan sonuca.<br>Üç adımda.</h2>
+      <h2 style="font-size:clamp(28px,4vw,40px); font-weight:500; color:var(--ink,#111); margin:0 0 14px; line-height:1.2;" data-i18n-html="steps.title">Kataloğunuzdan karara.<br>Üç adımda.</h2>
       <p style="font-size:16px; color:var(--muted,#6b7280); margin:0 auto; max-width:460px; line-height:1.7;" data-i18n="steps.sub">Shopify'a bağla, AI analiz etsin, önerileri onayla — Mocksheets senkronize eder.</p>
     </div>
 
@@ -1403,6 +1408,48 @@
       </div>
 
     </div>
+
+    <!-- Bulk animation: 1000 ürün -->
+    <div style="margin-top:32px;padding:24px;border:0.5px solid #e5e7eb;border-radius:16px;background:#f9fafb;text-align:center;">
+      <p style="font-size:13px;color:#6b7280;margin:0 0 8px;">Tek komutla, toplu değişiklik</p>
+      <div style="display:flex;align-items:center;justify-content:center;gap:16px;">
+        <span id="bulk-anim-counter" style="font-size:36px;font-weight:700;color:#16a34a;">0</span>
+        <span style="font-size:14px;color:#374151;">ürün optimize edildi</span>
+      </div>
+      <div style="width:100%;max-width:320px;margin:16px auto 0;height:6px;background:#e5e7eb;border-radius:99px;overflow:hidden;">
+        <div id="bulk-anim-bar" style="width:0%;height:100%;background:#16a34a;border-radius:99px;transition:width 2s ease-out;"></div>
+      </div>
+    </div>
+    <script>
+    (function() {
+      const counterEl = document.getElementById('bulk-anim-counter');
+      const barEl = document.getElementById('bulk-anim-bar');
+      if (!counterEl || !barEl) return;
+      let hasAnimated = false;
+      function startBulkAnimation() {
+        if (hasAnimated) return;
+        hasAnimated = true;
+        barEl.style.width = '100%';
+        const target = 1000;
+        const duration = 2000;
+        const startTime = performance.now();
+        function tick(now) {
+          const elapsed = now - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+          const eased = 1 - Math.pow(1 - progress, 3);
+          counterEl.textContent = Math.round(eased * target).toLocaleString('tr-TR');
+          if (progress < 1) requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+      }
+      const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) startBulkAnimation();
+        });
+      }, { threshold: 0.5 });
+      observer.observe(counterEl.closest('div').parentElement);
+    })();
+    </script>
 
     <!-- Alt Sektör Kartları -->
     <div style="border-top:0.5px solid #e5e7eb; padding-top:28px; margin-top:4px;">

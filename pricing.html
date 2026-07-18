@@ -258,14 +258,14 @@ a{color:inherit}
           <div class="ms-row-idx">02</div>
           <div class="ms-row-meta">
             <div class="ms-row-name">Pro</div>
-            <div class="ms-row-tag">İlk 1 ay $1/ay · Kampanya bitmeden yakala.</div>
+            <div class="ms-row-tag">Bireysel kullanıcılar için.</div>
             <div class="ms-row-hook">Yapay zeka ile veri düzenlemeye başlamak isteyen bireysel kullanıcılar ve küçük işletmeler için.</div>
             <ul class="ms-row-feats" id="pro-features"></ul>
           </div>
           <div class="ms-row-price">
-            <div class="ms-price-big" id="pro-price-big"><span class="ms-price-cur">$</span><span id="pro-price-amount">1</span></div>
+            <div class="ms-price-big" id="pro-price-big"><span class="ms-price-cur">$</span><span id="pro-price-amount">15</span></div>
             <div class="ms-price-sub">
-              <span class="ms-price-after" id="proAfter">İlk 1 ay · sonra $15/ay</span>
+              <span class="ms-price-after" id="proAfter">Aylık, istediğin zaman iptal</span>
               <span class="pricing-yearly-note hidden" id="pro-yearly-note">
                 <strong id="pro-yearly-price">$144</strong>/yıl
                 <span class="yearly-monthly-equiv" id="pro-yearly-equiv">(aylık $12'ye denk)</span><br>
@@ -299,9 +299,9 @@ a{color:inherit}
             </ul>
           </div>
           <div class="ms-row-price">
-            <div class="ms-price-big" style="margin-top:10px"><span class="ms-price-cur">$</span><span id="promax-price-amount">1</span></div>
+            <div class="ms-price-big" style="margin-top:10px"><span class="ms-price-cur">$</span><span id="promax-price-amount">24</span></div>
             <div class="ms-price-sub" style="margin-top:4px">
-              <span class="ms-price-after" id="promax-price-after">İlk 1 ay · sonra $24/ay</span>
+              <span class="ms-price-after" id="promax-price-after">Aylık, istediğin zaman iptal</span>
               <span class="pricing-yearly-note hidden" id="promax-yearly-note">
                 <strong id="promax-yearly-price">$230</strong>/yıl
                 <span id="promax-yearly-equiv">(aylık $19'a denk)</span>
@@ -320,7 +320,7 @@ a{color:inherit}
           <div class="ms-row-idx">04</div>
           <div class="ms-row-meta">
             <div class="ms-row-name">Takım</div>
-            <div class="ms-row-tag">İlk 1 ay $1/ay · Birlikte çalışan ekipler ve şirketler için tasarlanmıştır.</div>
+            <div class="ms-row-tag">Birlikte çalışan ekipler ve şirketler için tasarlanmıştır.</div>
             <ul class="ms-row-feats">
               <li class="ms-row-feat"><span class="ms-feat-dash">—</span> Pro Max'teki tüm özellikler</li>
               <li class="ms-row-feat"><span class="ms-feat-dash">—</span> 5 kullanıcı dahildir</li>
@@ -332,9 +332,9 @@ a{color:inherit}
             </ul>
           </div>
           <div class="ms-row-price">
-            <div class="ms-price-big" style="margin-top:10px"><span class="ms-price-cur">$</span><span id="team-price-amount">1</span></div>
+            <div class="ms-price-big" style="margin-top:10px"><span class="ms-price-cur">$</span><span id="team-price-amount">69</span></div>
             <div class="ms-price-sub" style="margin-top:4px">
-              <span class="ms-price-after" id="team-price-after">İlk 1 ay · sonra $69/ay · 5 kullanıcı</span>
+              <span class="ms-price-after" id="team-price-after">Aylık · 5 kullanıcı</span>
               <span class="pricing-yearly-note hidden" id="team-yearly-note">
                 <strong id="team-yearly-price">$662</strong>/yıl
                 <span id="team-yearly-equiv">(aylık $55'e denk)</span>
@@ -352,7 +352,7 @@ a{color:inherit}
       </div>
 
       <div class="ms-footnote">
-        <span class="ms-foot-mono">KAMPANYA</span>
+        <span class="ms-foot-mono">FİYATLAR</span>
         <span>GDPR uyumlu · İstediğin zaman iptal</span>
       </div>
     </div>
@@ -462,8 +462,8 @@ function renderProCard() {
     if (yearlyPriceEl) yearlyPriceEl.textContent = '$' + _PRO.yearly;
     if (yearlyEquivEl) yearlyEquivEl.textContent = '(aylık $' + Math.round(_PRO.yearly / 12) + '\'ye denk)';
   } else {
-    if (amountEl) amountEl.textContent = 1;
-    if (afterEl) { afterEl.classList.remove('hidden'); afterEl.textContent = 'İlk 1 ay · sonra $' + _PRO.monthly + '/ay'; }
+    if (amountEl) amountEl.textContent = _PRO.monthly;
+    if (afterEl) { afterEl.classList.remove('hidden'); afterEl.textContent = 'Aylık, istediğin zaman iptal'; }
     if (yearlyNoteEl) yearlyNoteEl.classList.add('hidden');
   }
   if (ctaEl) ctaEl.href = '/auth?plan=pro';
@@ -484,8 +484,8 @@ function renderProMaxCard() {
     if (yearlyPriceEl) yearlyPriceEl.textContent = '$' + _PROMAX.yearly;
     if (yearlyEquivEl) yearlyEquivEl.textContent = '(aylık $' + Math.round(_PROMAX.yearly / 12) + '\'ye denk)';
   } else {
-    if (amountEl) amountEl.textContent = 1;
-    if (afterEl) { afterEl.classList.remove('hidden'); afterEl.textContent = 'İlk 1 ay · sonra $' + _PROMAX.monthly + '/ay'; }
+    if (amountEl) amountEl.textContent = _PROMAX.monthly;
+    if (afterEl) { afterEl.classList.remove('hidden'); afterEl.textContent = 'Aylık, istediğin zaman iptal'; }
     if (yearlyNoteEl) yearlyNoteEl.classList.add('hidden');
   }
   if (ctaEl) ctaEl.href = '/auth?plan=promax';
@@ -505,8 +505,8 @@ function renderTeamCard() {
     if (priceEl)  priceEl.textContent = '$' + _TEAM.yearly;
     if (equivEl)  equivEl.textContent = "(aylık $" + Math.round(_TEAM.yearly / 12) + "'ye denk)";
   } else {
-    if (amountEl) amountEl.textContent = 1;
-    if (afterEl)  { afterEl.classList.remove('hidden'); afterEl.textContent = 'İlk 1 ay · sonra $' + _TEAM.monthly + '/ay · 5 koltuk'; }
+    if (amountEl) amountEl.textContent = _TEAM.monthly;
+    if (afterEl)  { afterEl.classList.remove('hidden'); afterEl.textContent = 'Aylık · 5 kullanıcı'; }
     if (noteEl)   noteEl.classList.add('hidden');
   }
 }
