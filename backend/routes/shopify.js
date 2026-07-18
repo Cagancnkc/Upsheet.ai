@@ -580,4 +580,64 @@ router.delete('/disconnect', requireAuth, async (req, res) => {
   res.json({ disconnected: true });
 });
 
+// ─── GDPR / Compliance Webhooks ──────────────────────────────────────────────
+
+function verifyShopifyWebhook(req) {
+  const hmacHeader = req.headers['x-shopify-hmac-sha256'];
+  if (!hmacHeader) return false;
+  const generatedHash = crypto
+    .createHmac('sha256', process.env.SHOPIFY_CLIENT_SECRET)
+    .update(req.body)
+    .digest('base64');
+  return crypto.timingSafeEqual(Buffer.from(generatedHash), Buffer.from(hmacHeader));
+}
+
+// POST /api/shopify/webhooks/customers-data-request
+// Triggered when a customer requests a copy of their data
+router.post('/webhooks/customers-data-request', (req, res) => {
+  try {
+    if (!verifyShopifyWebhook(req)) return res.status(401).send('Unauthorized');
+    const payload = JSON.parse(req.body.toString());
+    console.log('[GDPR] customers/data_request:', payload.shop_domain, payload.customer?.id);
+    // Upsheet does not store customer-level personal data — only merchant-level
+    // product/order metadata. Nothing to export; acknowledge immediately.
+    res.status(200).send('OK');
+  } catch (e) {
+    console.error('[GDPR] customers-data-request error:', e);
+    res.status(500).send('Error');
+  }
+});
+
+// POST /api/shopify/webhooks/customers-redact
+// Triggered when a customer requests erasure of their data
+router.post('/webhooks/customers-redact', (req, res) => {
+  try {
+    if (!verifyShopifyWebhook(req)) return res.status(401).send('Unauthorized');
+    const payload = JSON.parse(req.body.toString());
+    console.log('[GDPR] customers/redact:', payload.shop_domain, payload.customer?.id);
+    // No customer-level personal data stored — acknowledge immediately.
+    res.status(200).send('OK');
+  } catch (e) {
+    console.error('[GDPR] customers-redact error:', e);
+    res.status(500).send('Error');
+  }
+});
+
+// POST /api/shopify/webhooks/shop-redact
+// Triggered 48 hours after a merchant uninstalls the app — erase all their data
+router.post('/webhooks/shop-redact', async (req, res) => {
+  try {
+    if (!verifyShopifyWebhook(req)) return res.status(401).send('Unauthorized');
+    const payload = JSON.parse(req.body.toString());
+    const shopDomain = payload.shop_domain;
+    console.log('[GDPR] shop/redact:', shopDomain);
+    const sb = getSupabase();
+    await sb.from('shopify_connections').delete().eq('shop_domain', shopDomain);
+    res.status(200).send('OK');
+  } catch (e) {
+    console.error('[GDPR] shop-redact error:', e);
+    res.status(500).send('Error');
+  }
+});
+
 module.exports = router;

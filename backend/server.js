@@ -156,6 +156,7 @@ app.use(cors({
   },
   credentials: true
 }));
+app.use('/api/shopify/webhooks', express.raw({ type: 'application/json' }));
 app.use(express.json({ limit: '2mb' }));
 
 const rateLimit = require('express-rate-limit');
