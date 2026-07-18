@@ -358,6 +358,34 @@ function connectShopify() {
   window.location.href = `${API_URL}/api/shopify/auth?shop=${encodeURIComponent(shop)}`;
 }
 
+function shopifyConnectModal() {
+  const existing = document.getElementById('shopify-connect-overlay');
+  if (existing) { existing.remove(); return; }
+  const overlay = document.createElement('div');
+  overlay.id = 'shopify-connect-overlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:9999;';
+  overlay.innerHTML = `
+    <div style="background:#fff;border-radius:16px;padding:40px;width:100%;max-width:400px;text-align:center;margin:16px;">
+      <div style="font-size:48px;margin-bottom:16px;">🛍️</div>
+      <h2 style="font-size:20px;font-weight:600;margin:0 0 8px;color:#111827;">Shopify Hesabınızı Bağlayın</h2>
+      <p style="font-size:14px;color:#6b7280;margin:0 0 24px;">Mağaza adresinizi girin</p>
+      <input id="shopify-modal-domain" type="text" placeholder="magazaniz.myshopify.com" style="width:100%;padding:12px 16px;border:1px solid #e5e7eb;border-radius:8px;font-size:14px;box-sizing:border-box;margin-bottom:12px;font-family:inherit;" />
+      <button onclick="connectShopifyFromModal()" style="width:100%;padding:12px 16px;background:#111827;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:8px;">Shopify'a Bağlan →</button>
+      <button onclick="document.getElementById('shopify-connect-overlay').remove()" style="width:100%;padding:12px 16px;background:#f9fafb;color:#374151;border:1px solid #e5e7eb;border-radius:8px;font-size:14px;cursor:pointer;">İptal</button>
+    </div>
+  `;
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.remove(); });
+  document.body.appendChild(overlay);
+  document.getElementById('shopify-modal-domain')?.focus();
+}
+
+function connectShopifyFromModal() {
+  const domain = document.getElementById('shopify-modal-domain')?.value.trim() || '';
+  if (!domain) { toast('Mağaza adresinizi girin', 'error'); return; }
+  const shop = domain.includes('.myshopify.com') ? domain : domain + '.myshopify.com';
+  window.location.href = `${API_URL}/api/shopify/auth?shop=${encodeURIComponent(shop)}`;
+}
+
 function loadDemoData() {
   catalogData.products = [
     { handle: 'kirmizi-gomlek', title: 'Kırmızı Gömlek', body_html: 'Yüksek kaliteli pamuklu gömlek. Rahat ve dayanıklı.', vendor: 'ABC Marka', product_type: 'Giyim', tags: 'gömlek, erkek', status: 'active', sku: 'KG-001', variant_title: 'M / Kırmızı', price: '299.90', compare_at_price: '399.90', inventory_quantity: 45, image: '', created_at: '2024-01-15' },
@@ -628,7 +656,7 @@ function renderDashboard() {
           <i class="ti ti-shopping-bag" style="font-size:28px;color:#9ca3af;"></i>
           <p style="font-size:14px;font-weight:600;color:#111827;margin:12px 0 4px;">Henüz katalog verisi yok</p>
           <p style="font-size:12px;color:#6b7280;margin:0 0 16px;">Shopify mağazanızı bağlayıp verinizi çekin</p>
-          <button type="button" id="dashboard-connect-shopify-btn" onclick="setView('catalog'); showConnectPanel();"
+          <button type="button" id="dashboard-connect-shopify-btn" onclick="shopifyConnectModal()"
             style="display:flex;align-items:center;gap:8px;padding:10px 24px;background:#111827;color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;margin:0 auto;">
             <img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/shopify.svg" width="16" height="16" style="filter:invert(100%);" alt="Shopify"/>
             Shopify Hesabını Bağla
