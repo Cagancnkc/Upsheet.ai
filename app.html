@@ -41,7 +41,7 @@
   <!-- ============ SIDEBAR ============ -->
   <aside class="sf-sidebar">
     <div style="padding:12px;margin:8px;border:0.5px solid #e5e7eb;border-radius:12px;display:flex;align-items:center;gap:8px;">
-      <div style="width:28px;height:28px;border-radius:8px;background:#f0fdf4;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+      <div id="sidebar-store-icon" style="width:28px;height:28px;border-radius:8px;background:#f0fdf4;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
         <i class="ti ti-brand-shopify" style="font-size:14px;color:#16a34a;"></i>
       </div>
       <div style="min-width:0;">
@@ -252,14 +252,6 @@
       </div>
     </div>
 
-    <!-- WORKSPACE REPORTS -->
-    <div id="workspace-reports" class="wsr-wrapper">
-      <div id="wsr-product-summary" class="wsr-card"></div>
-      <div id="wsr-field-coverage" class="wsr-card"></div>
-      <div id="wsr-price-analysis" class="wsr-card"></div>
-      <div id="wsr-inventory-status" class="wsr-card"></div>
-      <div id="wsr-recent-activity" class="wsr-card"></div>
-    </div>
 
 </div>
 
@@ -427,7 +419,7 @@ async function checkShopifyStatus() {
 
   const token = getAuthToken();
   if (!token) {
-    loadDemoData();
+    showConnectPanel(); // loadDemoData() devre dışı: demo data yeni Dashboard ile çakışıyordu
     return;
   }
 
@@ -439,6 +431,9 @@ async function checkShopifyStatus() {
     if (d.connected) {
       shopifyStore = d.shop_name;
       document.title = `Mocksheets — ${shopifyStore}`;
+      const storeNameEl = document.getElementById('sidebar-store-name');
+      if (storeNameEl) storeNameEl.textContent = d.shop_name || (d.shop_domain || '').replace('.myshopify.com', '');
+      if (d.shop_domain) localStorage.setItem('mocksheets_shop_domain', d.shop_domain);
       if (shouldAutoPull && !_autoPullTriggered) {
         _autoPullTriggered = true;
         showAutoPullBanner();
@@ -449,10 +444,12 @@ async function checkShopifyStatus() {
       }
     } else {
       showConnectPanel();
+      const storeNameEl = document.getElementById('sidebar-store-name');
+      if (storeNameEl) storeNameEl.textContent = 'Mağaza bağlı değil';
     }
   } catch (err) {
     console.error('Status check failed:', err);
-    loadDemoData();
+    showConnectPanel(); // loadDemoData() devre dışı
   }
 }
 
@@ -1452,7 +1449,6 @@ function updateUI() {
   const badge = document.getElementById('product-count-badge');
   if (badge) badge.textContent = productCount.toLocaleString('tr-TR') + ' ürün';
   updateCatalogStats();
-  renderWorkspaceReports();
   buildGrid();
 }
 
@@ -1984,81 +1980,6 @@ function renderSyncHistory() {
     <tbody>${syncHistory.map(s => `<tr><td>${s.date}</td><td>${s.products}</td><td>${s.orders}</td><td><span class="ssp-badge-success">✓ Başarılı</span></td></tr>`).join('')}</tbody></table>`;
 }
 
-function renderWorkspaceReports() {
-  const products = catalogData.products || [];
-
-  // 1. Ürün Özeti
-  const active = products.filter(p => p.status === 'active').length;
-  const draft = products.filter(p => p.status === 'draft').length;
-  const archived = products.filter(p => p.status === 'archived').length;
-  const vendors = new Set(products.map(p => p.vendor).filter(Boolean)).size;
-  document.getElementById('wsr-product-summary').innerHTML = `
-    <div class="wsr-card-title"><i class="ti ti-package"></i> Ürün Özeti</div>
-    <div class="wsr-stats-row">
-      <div class="wsr-stat"><div class="wsr-stat-val">${products.length.toLocaleString('tr-TR')}</div><div class="wsr-stat-lbl">Toplam</div></div>
-      <div class="wsr-stat"><div class="wsr-stat-val wsr-green">${active.toLocaleString('tr-TR')}</div><div class="wsr-stat-lbl">Aktif</div></div>
-      <div class="wsr-stat"><div class="wsr-stat-val wsr-orange">${draft.toLocaleString('tr-TR')}</div><div class="wsr-stat-lbl">Taslak</div></div>
-      <div class="wsr-stat"><div class="wsr-stat-val wsr-gray">${archived.toLocaleString('tr-TR')}</div><div class="wsr-stat-lbl">Arşiv</div></div>
-      <div class="wsr-stat"><div class="wsr-stat-val wsr-blue">${vendors.toLocaleString('tr-TR')}</div><div class="wsr-stat-lbl">Marka</div></div>
-    </div>`;
-
-  // 2. Alan Doluluk Oranı
-  const fields = [
-    { key: 'title', label: 'Başlık' },
-    { key: 'body_html', label: 'Açıklama' },
-    { key: 'vendor', label: 'Marka' },
-    { key: 'product_type', label: 'Kategori' },
-    { key: 'image', label: 'Görsel' },
-    { key: 'price', label: 'Fiyat' },
-  ];
-  const total = products.length || 1;
-  document.getElementById('wsr-field-coverage').innerHTML = `
-    <div class="wsr-card-title"><i class="ti ti-chart-bar"></i> Alan Doluluk Oranı</div>
-    ${fields.map(f => {
-      const filled = products.filter(p => p[f.key] && String(p[f.key]).trim() !== '').length;
-      const pct = Math.round(filled / total * 100);
-      const color = pct >= 90 ? 'var(--brand)' : pct >= 60 ? '#f59e0b' : '#ef4444';
-      return `<div class="wsr-bar-row">
-        <span class="wsr-bar-lbl">${f.label}</span>
-        <div class="wsr-bar-track"><div class="wsr-bar-fill" style="width:${pct}%;background:${color}"></div></div>
-        <span class="wsr-bar-pct">${pct}%</span>
-      </div>`;
-    }).join('')}`;
-
-  // 3. Fiyat Analizi
-  const prices = products.map(p => parseFloat(p.price)).filter(n => !isNaN(n) && n > 0);
-  const noPriceCount = products.length - prices.length;
-  const minP = prices.length ? Math.min(...prices).toFixed(2) : '–';
-  const maxP = prices.length ? Math.max(...prices).toFixed(2) : '–';
-  const avgP = prices.length ? (prices.reduce((a,b) => a+b, 0) / prices.length).toFixed(2) : '–';
-  document.getElementById('wsr-price-analysis').innerHTML = `
-    <div class="wsr-card-title"><i class="ti ti-currency-lira"></i> Fiyat Analizi</div>
-    <div class="wsr-stats-row">
-      <div class="wsr-stat"><div class="wsr-stat-val">${minP}</div><div class="wsr-stat-lbl">En Düşük</div></div>
-      <div class="wsr-stat"><div class="wsr-stat-val">${maxP}</div><div class="wsr-stat-lbl">En Yüksek</div></div>
-      <div class="wsr-stat"><div class="wsr-stat-val wsr-blue">${avgP}</div><div class="wsr-stat-lbl">Ortalama</div></div>
-      <div class="wsr-stat"><div class="wsr-stat-val ${noPriceCount > 0 ? 'wsr-red' : 'wsr-green'}">${noPriceCount}</div><div class="wsr-stat-lbl">Fiyatsız</div></div>
-    </div>`;
-
-  // 4. Stok Durumu
-  const zeroStock = products.filter(p => (parseInt(p.inventory_quantity) || 0) === 0).length;
-  const lowStock = products.filter(p => { const q = parseInt(p.inventory_quantity)||0; return q > 0 && q <= 5; }).length;
-  const inStock = products.filter(p => (parseInt(p.inventory_quantity)||0) > 5).length;
-  document.getElementById('wsr-inventory-status').innerHTML = `
-    <div class="wsr-card-title"><i class="ti ti-box"></i> Stok Durumu</div>
-    <div class="wsr-stats-row">
-      <div class="wsr-stat"><div class="wsr-stat-val wsr-green">${inStock.toLocaleString('tr-TR')}</div><div class="wsr-stat-lbl">Stokta</div></div>
-      <div class="wsr-stat"><div class="wsr-stat-val wsr-orange">${lowStock.toLocaleString('tr-TR')}</div><div class="wsr-stat-lbl">Az Stok (≤5)</div></div>
-      <div class="wsr-stat"><div class="wsr-stat-val wsr-red">${zeroStock.toLocaleString('tr-TR')}</div><div class="wsr-stat-lbl">Stok Yok</div></div>
-    </div>`;
-
-  // 5. Son Aktiviteler
-  const recent = [...(activityLog || [])].reverse().slice(0, 5);
-  document.getElementById('wsr-recent-activity').innerHTML = `
-    <div class="wsr-card-title"><i class="ti ti-activity"></i> Son Aktiviteler</div>
-    ${recent.length ? `<ul class="wsr-activity-list">${recent.map(l => `<li><span class="wsr-act-time">${l.time}</span><span class="wsr-act-text">${escapeHtml(l.action)}</span></li>`).join('')}</ul>` : '<div class="wsr-empty">Henüz aktivite yok.</div>'}`;
-}
-
 // ═══════════════════════════════════════════════════════════════════════
 // PRODUCT CATALOG CANVAS
 // ═══════════════════════════════════════════════════════════════════════
@@ -2298,7 +2219,6 @@ async function pushChangesToShopify(accepted) {
     );
     addActivityLog(`Shopify push: ${data.pushed} ürün` + (errCount > 0 ? ` (${errCount} hata)` : ''));
     syncHistory.push({ date: new Date().toLocaleString('tr-TR'), products: data.pushed, orders: 0 });
-    renderWorkspaceReports();
   } catch (e) {
     toast('Shopify gönderim hatası: ' + e.message, 'error');
   }
@@ -2338,7 +2258,6 @@ async function pushToShopify(event) {
     toast(`✓ ${data.pushed} ürün Shopify'a gönderildi`, 'success');
     addActivityLog(`Shopify push: ${data.pushed} ürün`);
     syncHistory.push({ date: new Date().toLocaleString('tr-TR'), products: data.pushed, orders: 0 });
-    renderWorkspaceReports();
   } catch (e) {
     toast('Push başarısız: ' + e.message, 'error');
   } finally {
