@@ -599,29 +599,6 @@ function renderDashboard() {
     return;
   }
 
-  const categoryLabels = { seo: 'SEO', description: 'Açıklama', images: 'Görsel' };
-  const breakdownRows = Object.entries(analysis.categoryScores).map(([key, value]) => {
-    const barColor = value >= 80 ? '#16a34a' : value >= 60 ? '#d97706' : '#dc2626';
-    return `<div style="display:flex;align-items:center;gap:8px;">
-      <span style="font-size:11px;color:#6b7280;width:60px;flex-shrink:0;">${categoryLabels[key] || key}</span>
-      <div style="flex:1;height:4px;background:#e5e7eb;border-radius:99px;overflow:hidden;">
-        <div style="width:${value}%;height:100%;background:${barColor};border-radius:99px;"></div>
-      </div>
-      <span style="font-size:11px;color:#111827;font-weight:600;width:28px;text-align:right;">${value}%</span>
-    </div>`;
-  }).join('');
-
-  const topIssues = [...analysis.issues].sort((a, b) => b.count - a.count).slice(0, 4);
-  const suggestionsHTML = topIssues.length === 0
-    ? '<span style="font-size:12px;color:#16a34a;">Belirgin bir sorun tespit edilmedi ✓</span>'
-    : topIssues.map(i =>
-        `<span style="font-size:12px;color:#374151;">${i.count} üründe: ${i.label}</span>`
-      ).join('');
-
-  const statusText = analysis.totalIssueCount > 0
-    ? `${analysis.totalIssueCount} sorun bulundu, incelemeye hazır`
-    : 'Kataloğunuz sağlıklı görünüyor';
-
   const fixDisabled = analysis.totalIssueCount === 0;
 
   view.innerHTML = `
@@ -658,11 +635,7 @@ function renderDashboard() {
             </div>
           </div>
           <span id="dash-issues-count" style="font-size:26px;font-weight:700;color:#111827;">${analysis.totalIssueCount}</span>
-          <button id="fix-all-issues-btn" type="button"
-            style="margin-top:12px;width:100%;padding:7px 0;background:#111827;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:600;opacity:${fixDisabled ? '0.5' : '1'};cursor:${fixDisabled ? 'not-allowed' : 'pointer'}"
-            ${fixDisabled ? 'disabled' : ''}>
-            Tüm Sorunları Düzelt
-          </button>
+          <p style="font-size:11px;color:#9ca3af;margin:6px 0 0;">${analysis.totalIssueCount === 0 ? 'Sorun bulunamadı' : 'AI Önerileri panelinden düzeltin'}</p>
         </div>
 
         <div id="dash-card-ready" style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:18px;transition:box-shadow .15s ease,transform .15s ease;">
@@ -678,28 +651,42 @@ function renderDashboard() {
 
       </div>
 
-      <div style="padding:16px;border:0.5px solid #e5e7eb;border-radius:14px;margin-bottom:12px;">
-        <p style="font-size:12px;font-weight:600;color:#374151;margin:0 0 10px;">Sağlık Detayı</p>
-        <div id="dash-health-breakdown-compact" style="display:flex;flex-direction:column;gap:6px;">
-          ${breakdownRows}
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-bottom:16px;">
+
+        <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:20px;">
+          <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 16px;">Katalog Sağlığı Detayı</p>
+          <div style="display:flex;gap:20px;align-items:center;flex-wrap:wrap;">
+            <div id="health-ring-container" style="flex-shrink:0;"></div>
+            <div id="dash-health-breakdown-full" style="flex:1;min-width:180px;display:flex;flex-direction:column;gap:8px;"></div>
+          </div>
         </div>
+
+        <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:20px;">
+          <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 14px;">AI Önerileri</p>
+          <div id="dash-ai-recommendations" style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px;"></div>
+          <button id="fix-all-issues-btn" type="button"
+            style="width:100%;padding:11px;background:#111827;color:#fff;border:none;border-radius:12px;font-size:13px;font-weight:600;opacity:${fixDisabled ? '0.5' : '1'};cursor:${fixDisabled ? 'not-allowed' : 'pointer'};"
+            ${fixDisabled ? 'disabled' : ''}>
+            Tüm Sorunları AI ile Düzelt
+          </button>
+        </div>
+
+        <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:20px;">
+          <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 14px;">Hızlı İşlemler</p>
+          <div id="dash-quick-actions" style="display:flex;flex-direction:column;gap:6px;"></div>
+        </div>
+
       </div>
 
-      ${suggestionsHTML ? `<div style="padding:16px;border:0.5px solid #e5e7eb;border-radius:14px;margin-bottom:12px;">
-        <p style="font-size:12px;font-weight:600;color:#374151;margin:0 0 10px;">AI Önerileri</p>
-        <div id="dash-ai-suggestions-compact" style="display:flex;flex-direction:column;gap:4px;">
-          ${suggestionsHTML}
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;">
+        <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:20px;">
+          <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 14px;">Katalog Sağlığı Trendi</p>
+          <div id="health-trend-chart"></div>
         </div>
-      </div>` : ''}
-
-      <div style="padding:16px;border:1px solid #e5e7eb;border-radius:8px;">
-        <div style="font-size:13px;font-weight:600;color:#111827;">AI Katalog Asistanı</div>
-        <p id="ai-panel-status" style="font-size:11px;color:#9ca3af;margin:2px 0 0;">${statusText}</p>
-      </div>
-
-      <div style="padding:16px;border:1px solid #e5e7eb;border-radius:8px;margin-top:12px;">
-        <div style="font-size:13px;font-weight:600;color:#111827;margin-bottom:8px;">Son İşlemler</div>
-        <div id="dash-recent-ops"></div>
+        <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:20px;">
+          <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 14px;">Son İşlemler</p>
+          <div id="dash-recent-operations-full" style="display:flex;flex-direction:column;gap:12px;"></div>
+        </div>
       </div>
     </div>`;
 
@@ -713,19 +700,14 @@ function renderDashboard() {
       ? '<i class="ti ti-trending-up" style="color:#16a34a;font-size:12px;"></i> +' + delta
       : '<i class="ti ti-trending-down" style="color:#dc2626;font-size:12px;"></i> ' + delta;
   }
-  // Son işlemler — syncHistory local array kullan (backend endpoint yok)
-  const opsEl = document.getElementById('dash-recent-ops');
-  if (opsEl) {
-    const recent = syncHistory.slice(0, 3);
-    if (recent.length === 0) {
-      opsEl.innerHTML = '<p style="font-size:12px;color:#9ca3af;margin:0;">Henüz işlem yok</p>';
-    } else {
-      opsEl.innerHTML = recent.map(s =>
-        '<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #f3f4f6;">' +
-        '<span style="font-size:12px;color:#374151;">Shopify Sync — ' + s.products + ' ürün</span>' +
-        '<span style="font-size:11px;color:#9ca3af;">' + s.date + '</span></div>'
-      ).join('');
-    }
+  renderHealthRing(analysis.healthScore || 0);
+  renderHealthBreakdownFull(analysis.categoryScores || {});
+  renderAiRecommendations(analysis.issues || []);
+  renderDashQuickActions();
+  renderDashRecentOperationsFull();
+  renderHealthTrendChart();
+  if (analysis.totalProducts > 0) {
+    saveTodayHealthSnapshot(analysis.healthScore, analysis.totalProducts);
   }
 
   const topbarScoreEl = document.getElementById('topbar-health-score');
@@ -786,6 +768,183 @@ function renderDashboard() {
         btn.textContent = originalText;
       }
     });
+  }
+}
+
+// ─── DASHBOARD HELPERS ───────────────────────────────────────────────────
+
+const CATEGORY_META = {
+  seo:         { label: 'SEO',              icon: 'ti-search' },
+  description: { label: 'Ürün Açıklamaları', icon: 'ti-file-text' },
+  images:      { label: 'Görseller',        icon: 'ti-photo' },
+};
+
+const ISSUE_TO_ACTION = {
+  'Kısa/Eksik Açıklama': 'generate_descriptions',
+  'Eksik Görsel':        null,
+  'Eksik Etiket':        'generate_seo',
+  'Eksik Fiyat':         'bulk_edit_prices',
+  'Tekrarlanan Handle':  null,
+  'Tekrarlanan Başlık':  'clean_titles',
+};
+
+const DASH_QUICK_PRESETS = [
+  { action: 'clean_titles',          label: 'Başlıkları Temizle' },
+  { action: 'generate_descriptions', label: 'Açıklama Oluştur' },
+  { action: 'generate_seo',          label: 'SEO Meta Alanlarını Doldur' },
+  { action: 'bulk_edit_prices',      label: 'Toplu Fiyat Güncelle' },
+  { action: 'fix_stock',             label: 'Stok Sorunlarını Düzelt' },
+];
+
+function renderHealthRing(score) {
+  const container = document.getElementById('health-ring-container');
+  if (!container) return;
+  const radius = 52;
+  const circumference = 2 * Math.PI * radius;
+  const offset = circumference - (score / 100) * circumference;
+  const color = score >= 80 ? '#16a34a' : score >= 60 ? '#d97706' : '#dc2626';
+  container.innerHTML =
+    '<svg width="128" height="128" viewBox="0 0 128 128">' +
+    '<circle cx="64" cy="64" r="' + radius + '" fill="none" stroke="#f3f4f6" stroke-width="10"/>' +
+    '<circle cx="64" cy="64" r="' + radius + '" fill="none" stroke="' + color + '" stroke-width="10" ' +
+    'stroke-dasharray="' + circumference + '" stroke-dashoffset="' + offset + '" ' +
+    'stroke-linecap="round" transform="rotate(-90 64 64)" style="transition:stroke-dashoffset .4s ease;"/>' +
+    '<text x="64" y="60" text-anchor="middle" font-size="24" font-weight="700" fill="#111827">' + score + '</text>' +
+    '<text x="64" y="78" text-anchor="middle" font-size="11" fill="#9ca3af">/100</text>' +
+    '</svg>';
+}
+
+function renderHealthBreakdownFull(categoryScores) {
+  const container = document.getElementById('dash-health-breakdown-full');
+  if (!container) return;
+  container.innerHTML = '';
+  Object.entries(categoryScores).forEach(([key, value]) => {
+    const meta = CATEGORY_META[key] || { label: key, icon: 'ti-circle' };
+    const barColor = value >= 80 ? '#16a34a' : value >= 60 ? '#d97706' : '#dc2626';
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:center;gap:8px;';
+    row.innerHTML =
+      '<i class="ti ' + meta.icon + '" style="font-size:13px;color:#9ca3af;width:16px;"></i>' +
+      '<span style="font-size:12px;color:#374151;width:110px;flex-shrink:0;">' + meta.label + '</span>' +
+      '<div style="flex:1;height:5px;background:#f3f4f6;border-radius:99px;overflow:hidden;">' +
+      '<div style="width:' + value + '%;height:100%;background:' + barColor + ';border-radius:99px;"></div></div>' +
+      '<span style="font-size:11px;font-weight:600;color:#111827;width:32px;text-align:right;">' + value + '%</span>';
+    container.appendChild(row);
+  });
+}
+
+function renderAiRecommendations(issues) {
+  const container = document.getElementById('dash-ai-recommendations');
+  if (!container) return;
+  const top = [...issues].sort((a, b) => b.count - a.count).slice(0, 4);
+
+  if (top.length === 0) {
+    container.innerHTML = '<p style="font-size:12px;color:#16a34a;margin:0;">Kataloğunuz sağlıklı görünüyor.</p>';
+    return;
+  }
+
+  container.innerHTML = '';
+  top.forEach(issue => {
+    const actionType = ISSUE_TO_ACTION[issue.label];
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:8px;';
+    row.innerHTML = '<span style="font-size:12px;color:#374151;">' + issue.count + ' üründe ' + issue.label + '</span>';
+
+    const fixBtn = document.createElement('button');
+    fixBtn.type = 'button';
+    fixBtn.textContent = actionType ? 'Düzelt' : 'Manuel';
+    fixBtn.disabled = !actionType;
+    fixBtn.style.cssText = 'padding:4px 10px;border:0.5px solid #e5e7eb;border-radius:8px;background:#fff;color:' +
+      (actionType ? '#374151' : '#9ca3af') + ';font-size:11px;cursor:' + (actionType ? 'pointer' : 'not-allowed') + ';flex-shrink:0;';
+    if (actionType) {
+      fixBtn.addEventListener('click', function() {
+        if (typeof runAIAction === 'function') runAIAction(actionType);
+      });
+    }
+    row.appendChild(fixBtn);
+    container.appendChild(row);
+  });
+}
+
+function renderDashQuickActions() {
+  const container = document.getElementById('dash-quick-actions');
+  if (!container) return;
+  container.innerHTML = '';
+  DASH_QUICK_PRESETS.forEach(preset => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.style.cssText = 'width:100%;text-align:left;padding:8px 10px;border:none;border-radius:8px;' +
+      'background:transparent;color:#374151;font-size:12px;cursor:pointer;transition:background .15s ease;';
+    btn.textContent = preset.label;
+    btn.addEventListener('mouseenter', function() { this.style.background = '#f9fafb'; });
+    btn.addEventListener('mouseleave', function() { this.style.background = 'transparent'; });
+    btn.addEventListener('click', function() {
+      if (typeof runAIAction === 'function') runAIAction(preset.action);
+    });
+    container.appendChild(btn);
+  });
+}
+
+function renderDashRecentOperationsFull() {
+  const container = document.getElementById('dash-recent-operations-full');
+  if (!container) return;
+  const items = (typeof syncHistory !== 'undefined' && Array.isArray(syncHistory)) ? syncHistory.slice(0, 5) : [];
+  if (items.length === 0) {
+    container.innerHTML = '<p style="font-size:12px;color:#9ca3af;margin:0;">Henüz işlem yok.</p>';
+    return;
+  }
+  container.innerHTML = items.map(op => {
+    const label = 'Shopify Sync — ' + (op.products || 0) + ' ürün';
+    return '<div style="display:flex;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:0.5px solid #f3f4f6;">' +
+      '<span style="font-size:12px;color:#374151;">' + label + '</span>' +
+      '<span style="font-size:11px;color:#9ca3af;">' + (op.date || '—') + '</span></div>';
+  }).join('');
+}
+
+async function saveTodayHealthSnapshot(score, totalProducts) {
+  try {
+    await fetch(API_URL + '/api/integrations/health-snapshot', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + getAuthToken() },
+      body: JSON.stringify({ score, totalProducts }),
+    });
+  } catch (e) { console.warn('Snapshot kaydedilemedi:', e); }
+}
+
+async function renderHealthTrendChart() {
+  const container = document.getElementById('health-trend-chart');
+  if (!container) return;
+  try {
+    const res = await fetch(API_URL + '/api/integrations/health-history', {
+      headers: { 'Authorization': 'Bearer ' + getAuthToken() },
+    });
+    if (!res.ok) throw new Error('fetch failed');
+    const data = await res.json();
+    const history = data.history || [];
+
+    if (history.length < 2) {
+      container.innerHTML = '<p style="font-size:12px;color:#9ca3af;padding:24px 0;text-align:center;margin:0;">' +
+        'Trend verisi birikiyor — birkaç gün sonra grafik burada görünecek.</p>';
+      return;
+    }
+
+    const width = 480, height = 140, padding = 20;
+    const scores = history.map(h => h.score);
+    const maxScore = Math.max(...scores, 100);
+    const minScore = Math.max(0, Math.min(...scores) - 10);
+    const range = (maxScore - minScore) || 1;
+    const points = history.map((h, i) => {
+      const x = padding + (i / (history.length - 1)) * (width - padding * 2);
+      const y = height - padding - ((h.score - minScore) / range) * (height - padding * 2);
+      return x + ',' + y;
+    }).join(' ');
+
+    container.innerHTML =
+      '<svg width="100%" height="' + height + '" viewBox="0 0 ' + width + ' ' + height + '" preserveAspectRatio="none">' +
+      '<polyline points="' + points + '" fill="none" stroke="#16a34a" stroke-width="2"/>' +
+      '</svg>';
+  } catch (e) {
+    container.innerHTML = '<p style="font-size:12px;color:#9ca3af;margin:0;">Trend verisi yüklenemedi.</p>';
   }
 }
 
