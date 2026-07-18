@@ -1,26 +1,34 @@
 # Mocksheets
 
-> Operasyon yöneticileri ve e-ticaret ekipleri için
-> Türkçe AI tablo asistanı.
+> Shopify mağazaları için AI destekli katalog yönetim platformu —
+> SEO otomasyonu, toplu ürün açıklaması, katalog sağlık skoru.
+> Excel/CSV/PDF veri işleme de desteklenir.
 
 ## Ürün
 
-Mocksheets, Excel/CSV/PDF verilerini doğal dil komutlarıyla
-analiz eden bir web uygulamasıdır. Kullanıcılar Türkçe veya
-İngilizce komut yazarak:
+Mocksheets, Shopify satıcıları ve e-ticaret operasyon ekipleri için
+tasarlanmış tarayıcı tabanlı bir AI katalog yönetim platformudur.
+Ana yetenekler:
 
-- Veri sıralama, filtreleme ve gruplama yapabilir
-- Formül yazmadan hesaplama yapabilir
-- 200+ uygulama ile entegrasyon kurabilir
-- Otomasyonlar oluşturabilir
-- AI Agents ile tekrarlayan işleri otomatize edebilir
+- AI SEO Otomasyonu: Yüzlerce ürünün SEO başlığı, meta açıklama
+  ve alt text'ini toplu AI ile üretme ve onaylama
+- Toplu Ürün Açıklaması: Katalogdaki her ürün için benzersiz,
+  ikna edici açıklamalar AI ile
+- Katalog Sağlık Skoru: SEO + açıklama + görsel + etiket kalitesini
+  tek 0-100 puanda birleştiren dashboard
+- Validation Center: Duplicate/eksik veri tespiti ve düzeltme
+- Bulk Operations: Yüzlerce ürünü tek tabloda görüp toplu düzenleme
+- Excel/CSV/PDF veri analizi: Doğal dil komutlarıyla sıralama,
+  filtreleme, hesaplama, tablo çıkarma
+- 200+ uygulama entegrasyonu ve otomasyon zincirleri
 
 ## Hedef Kitle
 
-- Operasyon yöneticileri
-- E-ticaret ekipleri (Shopify, Trendyol, Hepsiburada)
-- Finans ve muhasebe ekipleri
-- İnsan kaynakları departmanları
+- Shopify satıcıları (küçük ve orta ölçekli mağazalar)
+- E-ticaret operasyon ekipleri (Shopify + Trendyol + Hepsiburada)
+- Katalog yöneticileri, ürün yöneticileri
+- Finans, muhasebe ve insan kaynakları departmanları
+  (Excel/CSV veri işleme için)
 
 ## Fiyatlandırma
 
@@ -31,8 +39,8 @@ analiz eden bir web uygulamasıdır. Kullanıcılar Türkçe veya
 
 ## Entegrasyonlar
 
-Google Sheets, Shopify, Slack, Gmail, HubSpot, Stripe,
-Notion, Airtable, Trello, Asana, Jira, GitHub ve
+Shopify (öncelikli), Google Sheets, Slack, Gmail, HubSpot,
+Stripe, Notion, Airtable, Trello, Asana, Jira, GitHub ve
 190+ uygulama daha.
 
 ## Teknik Altyapı
@@ -49,11 +57,16 @@ Notion, Airtable, Trello, Asana, Jira, GitHub ve
 - Ana Sayfa (Türkçe): https://mocksheets.com/
 - Ana Sayfa (İngilizce): https://mocksheets.com/en
 - Uygulama (giriş gerektirir): https://mocksheets.com/app
+- Fiyatlar: https://mocksheets.com/pricing
+- Shopify SEO Otomasyonu: https://mocksheets.com/shopify-seo-otomasyonu
+- Toplu Ürün Açıklaması: https://mocksheets.com/shopify-toplu-urun-aciklamasi
+- Katalog Sağlık Skoru: https://mocksheets.com/shopify-katalog-saglik-skoru
+- Shopify Stok Otomasyonu: https://mocksheets.com/shopify-stok-otomasyonu
+- E-ticaret Operasyon: https://mocksheets.com/e-ticaret-operasyon-yonetimi
+- Mocksheets vs Smart SEO: https://mocksheets.com/mocksheets-vs-smart-seo
+- Mocksheets vs Yoast SEO: https://mocksheets.com/mocksheets-vs-yoast-seo-shopify
 - Entegrasyonlar: https://mocksheets.com/automations
 - Mock Data Generator: https://mocksheets.com/mock-data-generator
-- Fake Data Generator: https://mocksheets.com/fake-data-generator
-- CSV Generator: https://mocksheets.com/csv-generator
-- Test Data Generator: https://mocksheets.com/test-data-generator
 - Blog: https://mocksheets.com/blog
 - Destek: destek@mocksheets.com
 
@@ -65,8 +78,14 @@ C: Tüm veriler Supabase (PostgreSQL) üzerinde şifreli saklanır. GDPR ve KVKK
 S: Kredi kartı olmadan başlayabilir miyim?
 C: Evet. Ücretsiz plan için kart gerekmez. Google hesabıyla 30 saniyede başlanır.
 
+S: Shopify entegrasyonu nasıl çalışır?
+C: Shopify mağazası OAuth ile doğrudan bağlanır. Ürün, varyant, stok, sipariş ve müşteri verileri otomatik aktarılır; onayladığınız değişiklikler Shopify'a geri yazılır.
+
+S: SEO değişiklikleri onay adımı olmadan Shopify'a mı yazılır?
+C: Hayır. Her AI önerisi "kabul et / atla / düzenle" adımından geçer. Onaylamadığınız hiçbir değişiklik mağazanıza yazılmaz.
+
+S: Yoast/Smart SEO gibi SEO eklentileri yerine geçer mi?
+C: Kısmen. Toplu AI içerik üretimi ve katalog sağlığında Mocksheets güçlüdür; schema markup (JSON-LD) gibi teknik SEO alanlarında Yoast'ın derinliği hâlâ önde. Bazı ekipler ikisini birlikte kullanır (Yoast: schema, Mocksheets: içerik).
+
 S: Hangi dosya formatları destekleniyor?
 C: .xlsx, .xls, .csv ve PDF (OCR ile tablo çıkarma). Dışa aktarma: Excel, CSV, JSON.
-
-S: Shopify entegrasyonu nasıl çalışır?
-C: Shopify mağazası doğrudan bağlanır. Sipariş, ürün ve müşteri verileri otomatik aktarılır.
