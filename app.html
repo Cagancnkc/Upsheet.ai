@@ -348,42 +348,32 @@ function showConnectPanel() {
   `;
 }
 
+function normalizeShopifyDomain(input) {
+  let clean = input.trim().toLowerCase()
+    .replace(/^https?:\/\//, '')
+    .replace(/\/+$/, '');
+  if (clean.endsWith('.myshopify.com')) return clean;
+  if (clean.includes('.') && !clean.endsWith('.myshopify.com')) return null;
+  return clean + '.myshopify.com';
+}
+
+function openShopifyConnectModal() {
+  document.getElementById('shopify-connect-modal').style.display = 'flex';
+  document.getElementById('shopify-domain-input').value = '';
+  document.getElementById('shopify-domain-error').style.display = 'none';
+  document.getElementById('shopify-domain-input').focus();
+}
+
 function connectShopify() {
   const domain = document.getElementById('shop-domain-input')?.value.trim() || '';
-  if (!domain) {
-    toast('Mağaza adresinizi girin', 'error');
-    return;
-  }
-  const shop = domain.includes('.myshopify.com') ? domain : domain + '.myshopify.com';
+  if (!domain) { toast('Mağaza adresinizi girin', 'error'); return; }
+  const shop = normalizeShopifyDomain(domain);
+  if (!shop) { toast('Özel alan adı yerine Shopify mağaza adınızı girin (örn. magazam)', 'error'); return; }
   window.location.href = `${API_URL}/api/shopify/auth?shop=${encodeURIComponent(shop)}`;
 }
 
 function shopifyConnectModal() {
-  const existing = document.getElementById('shopify-connect-overlay');
-  if (existing) { existing.remove(); return; }
-  const overlay = document.createElement('div');
-  overlay.id = 'shopify-connect-overlay';
-  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:9999;';
-  overlay.innerHTML = `
-    <div style="background:#fff;border-radius:16px;padding:40px;width:100%;max-width:400px;text-align:center;margin:16px;">
-      <div style="font-size:48px;margin-bottom:16px;">🛍️</div>
-      <h2 style="font-size:20px;font-weight:600;margin:0 0 8px;color:#111827;">Shopify Hesabınızı Bağlayın</h2>
-      <p style="font-size:14px;color:#6b7280;margin:0 0 24px;">Mağaza adresinizi girin</p>
-      <input id="shopify-modal-domain" type="text" placeholder="magazaniz.myshopify.com" style="width:100%;padding:12px 16px;border:1px solid #e5e7eb;border-radius:8px;font-size:14px;box-sizing:border-box;margin-bottom:12px;font-family:inherit;" />
-      <button onclick="connectShopifyFromModal()" style="width:100%;padding:12px 16px;background:#111827;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:8px;">Shopify'a Bağlan →</button>
-      <button onclick="document.getElementById('shopify-connect-overlay').remove()" style="width:100%;padding:12px 16px;background:#f9fafb;color:#374151;border:1px solid #e5e7eb;border-radius:8px;font-size:14px;cursor:pointer;">İptal</button>
-    </div>
-  `;
-  overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.remove(); });
-  document.body.appendChild(overlay);
-  document.getElementById('shopify-modal-domain')?.focus();
-}
-
-function connectShopifyFromModal() {
-  const domain = document.getElementById('shopify-modal-domain')?.value.trim() || '';
-  if (!domain) { toast('Mağaza adresinizi girin', 'error'); return; }
-  const shop = domain.includes('.myshopify.com') ? domain : domain + '.myshopify.com';
-  window.location.href = `${API_URL}/api/shopify/auth?shop=${encodeURIComponent(shop)}`;
+  openShopifyConnectModal();
 }
 
 function loadDemoData() {
@@ -2504,6 +2494,63 @@ if (_origSetView) {
     </div>
   </div>
 </div>
+
+<!-- Shopify Connect Modal -->
+<div id="shopify-connect-modal" style="display:none;position:fixed;inset:0;background:rgba(17,24,39,.4);z-index:600;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:20px;padding:28px;width:400px;box-shadow:0 20px 48px rgba(17,24,39,.2);">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+      <img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/shopify.svg" width="24" height="24" style="filter:invert(48%) sepia(98%) saturate(400%) hue-rotate(90deg);"/>
+      <p style="font-size:16px;font-weight:600;color:#111827;margin:0;">Shopify Mağazanızı Bağlayın</p>
+    </div>
+    <p style="font-size:13px;color:#6b7280;margin:0 0 16px;">Mağaza adınızı girin — sadece <code>myshopify.com</code>'dan önceki kısmı yeterli.</p>
+    <div style="display:flex;align-items:center;border:0.5px solid #e5e7eb;border-radius:12px;overflow:hidden;margin-bottom:8px;">
+      <input id="shopify-domain-input" type="text" placeholder="magazaniz"
+        style="flex:1;padding:12px 14px;border:none;outline:none;font-size:14px;color:#111827;"/>
+      <span style="padding:12px 14px;background:#f9fafb;color:#9ca3af;font-size:13px;border-left:0.5px solid #e5e7eb;">.myshopify.com</span>
+    </div>
+    <p id="shopify-domain-error" style="font-size:12px;color:#dc2626;margin:0 0 16px;display:none;"></p>
+    <div style="display:flex;gap:8px;">
+      <button id="shopify-modal-cancel" type="button"
+        style="flex:1;padding:10px;border:0.5px solid #e5e7eb;border-radius:12px;background:#fff;color:#374151;font-size:13px;cursor:pointer;">
+        İptal
+      </button>
+      <button id="shopify-modal-connect" type="button"
+        style="flex:1;padding:10px;border:none;border-radius:12px;background:#111827;color:#fff;font-size:13px;font-weight:600;cursor:pointer;">
+        Bağlan →
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  document.getElementById('shopify-modal-cancel').addEventListener('click', function() {
+    document.getElementById('shopify-connect-modal').style.display = 'none';
+  });
+
+  document.getElementById('shopify-modal-connect').addEventListener('click', function() {
+    const rawInput = document.getElementById('shopify-domain-input').value;
+    const errorEl = document.getElementById('shopify-domain-error');
+    if (!rawInput.trim()) {
+      errorEl.textContent = 'Lütfen mağaza adınızı girin.';
+      errorEl.style.display = 'block';
+      return;
+    }
+    const domain = normalizeShopifyDomain(rawInput);
+    if (!domain) {
+      errorEl.textContent = 'Özel alan adı (örn. magazam.com) yerine sadece Shopify mağaza adınızı girin (örn. magazam).';
+      errorEl.style.display = 'block';
+      return;
+    }
+    errorEl.style.display = 'none';
+    window.location.href = API_URL + '/api/shopify/auth?shop=' + encodeURIComponent(domain) + '&redirect=' + encodeURIComponent(window.location.href);
+  });
+
+  document.getElementById('shopify-domain-input').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') document.getElementById('shopify-modal-connect').click();
+  });
+})();
+</script>
 
 </body>
 </html>
