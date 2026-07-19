@@ -10,15 +10,15 @@
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="Stok takibi, sipariş raporu, kâr marjı analizi — elle yapmayı bırakın. Aylık $0'dan başlayan planlar, istediğiniz zaman iptal edin.">
+<meta name="description" content="Shopify kataloğunuzu AI ile optimize edin. Aylık ₺0'dan başlayan planlar, istediğiniz zaman iptal edin.">
 <link rel="canonical" href="https://mocksheets.com/pricing">
-<meta property="og:title" content="Fiyatlandırma — Mocksheets | E-ticaret İçin AI Excel Asistanı">
-<meta property="og:description" content="Stok takibi, sipariş raporu, kâr marjı analizi — elle yapmayı bırakın. Aylık $0'dan başlayan planlar, istediğiniz zaman iptal edin.">
+<meta property="og:title" content="Fiyatlandırma — Mocksheets | Shopify İçin AI Katalog Asistanı">
+<meta property="og:description" content="Shopify kataloğunuzu AI ile optimize edin. Aylık ₺0'dan başlayan planlar, istediğiniz zaman iptal edin.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://mocksheets.com/pricing">
 <meta property="og:image" content="https://mocksheets.com/images/brand/logo-128x128.png">
 <link rel="icon" type="image/png" href="/images/brand/logo-128x128.png">
-<title>Fiyatlandırma — Mocksheets | E-ticaret İçin AI Excel Asistanı</title>
+<title>Fiyatlandırma — Mocksheets | Shopify İçin AI Katalog Asistanı</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&family=Geist+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
@@ -34,11 +34,6 @@ a{color:inherit}
 .pricing-hero{text-align:center;margin-bottom:40px}
 .pricing-hero h1{font-size:clamp(36px,5vw,64px);line-height:1.05;letter-spacing:-.03em;font-weight:700;margin:0 0 14px}
 .pricing-hero p{font-size:17px;color:var(--muted);max-width:600px;margin:0 auto 24px;line-height:1.6}
-.hero-toggle{display:inline-flex;padding:3px;background:#fff;border-radius:99px;border:1px solid var(--line)}
-.hero-toggle button{border:0;background:transparent;padding:10px 20px;border-radius:99px;font-family:inherit;font-size:14px;color:var(--muted);cursor:pointer;font-weight:500;display:inline-flex;align-items:center;gap:8px}
-.hero-toggle button.active{background:var(--ink);color:#fff}
-.save-pill{background:var(--brand-soft);color:var(--brand-dark);font-size:11px;font-weight:700;padding:3px 8px;border-radius:99px;font-family:'Geist Mono',monospace}
-.hero-toggle button.active .save-pill{background:rgba(255,255,255,.15);color:#a7f3d0}
 
 /* ROI Calculator */
 .roi-calc{background:#fff;border:1.5px solid var(--line);border-radius:20px;padding:36px;margin:40px 0 60px;max-width:900px;margin-left:auto;margin-right:auto}
@@ -57,75 +52,43 @@ a{color:inherit}
 .roi-result .roi-net b{color:#fff}
 @media(max-width:640px){.roi-grid,.roi-result{grid-template-columns:1fr}}
 
-  /* Reused from git 8e37ac8 — .ms-pricing-a stack */
-  .ms-pricing-a {
-    --ms-bg: #ffffff; --ms-ink: #0a0612; --ms-muted: #6b6478;
-    --ms-line: #ece9f2; --ms-purple: #16a34a; --ms-purple-soft: #dcfce7;
-    background: var(--ms-bg); color: var(--ms-ink);
-    font-family: 'Geist', system-ui, -apple-system, sans-serif;
-    font-feature-settings: 'ss01','cv11'; -webkit-font-smoothing: antialiased;
-    padding: 48px 0 40px; border-radius:20px; border:1.5px solid var(--line);
-  }
-  .ms-pricing-a *, .ms-pricing-a *::before, .ms-pricing-a *::after { box-sizing: border-box; }
-  .ms-pricing-a .ms-inner { max-width: 1180px; margin: 0 auto; padding: 0 40px; }
-  .ms-pricing-a .ms-hero { border-bottom: 1px solid var(--ms-line); padding-bottom: 24px; }
-  .ms-pricing-a .ms-eyebrow { display: inline-flex; align-items: center; gap: 10px; font-family: 'Geist Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.08em; color: var(--ms-muted); text-transform: uppercase; }
-  .ms-pricing-a .ms-eyebrow-dot { width: 7px; height: 7px; border-radius: 99px; background: var(--ms-purple); }
-  .ms-pricing-a .ms-eyebrow-mono { color: var(--ms-purple); font-weight: 600; }
-  .ms-pricing-a .ms-title { font-size: clamp(32px, 4vw, 56px); line-height: 1.02; letter-spacing: -0.035em; margin: 16px 0 0; font-weight: 500; color: var(--ms-ink); text-wrap: balance; }
-  .ms-pricing-a .ms-title-italic { font-family: 'Instrument Serif', serif; font-style: italic; font-weight: 400; color: var(--ms-purple); }
-  .ms-pricing-a .ms-hero-bottom { margin-top: 24px; display: grid; grid-template-columns: 1.4fr 1fr; gap: 40px; align-items: end; }
-  .ms-pricing-a .ms-lede { margin: 0; font-size: 16px; line-height: 1.5; color: var(--ms-muted); max-width: 520px; }
-  .ms-pricing-a .ms-toggle-wrap { justify-self: end; text-align: right; }
-  .ms-pricing-a .ms-toggle-label { font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: 0.1em; color: var(--ms-muted); text-transform: uppercase; margin-bottom: 8px; }
-  .ms-pricing-a .ms-toggle { display: inline-flex; padding: 3px; background: #fff; border-radius: 99px; border: 1px solid var(--ms-line); }
-  .ms-pricing-a .ms-toggle button { border: 0; background: transparent; padding: 8px 16px; border-radius: 99px; font-family: inherit; font-size: 13px; color: var(--ms-muted); cursor: pointer; font-weight: 500; display: inline-flex; align-items: center; gap: 6px; }
-  .ms-pricing-a .ms-toggle button.ms-active { background: var(--ms-ink); color: #fff; }
-  .ms-pricing-a .ms-save-tag { color: var(--ms-purple); font-family: 'Geist Mono', monospace; font-size: 10px; }
-  .ms-pricing-a .ms-toggle button.ms-active .ms-save-tag { color: #a7f3d0; }
-  .ms-pricing-a .ms-plans { margin-top: 8px; }
-  .ms-pricing-a .ms-row { display: grid; grid-template-columns: 60px 1.4fr 220px 200px; align-items: start; gap: 32px; padding: 32px 0; border-bottom: 1px solid var(--ms-line); }
-  .ms-pricing-a .ms-row-idx { font-family: 'Instrument Serif', serif; font-style: italic; font-size: 42px; color: var(--ms-purple); line-height: 1; margin-top: 4px; }
-  .ms-pricing-a .ms-row-name { font-size: 30px; font-weight: 500; letter-spacing: -0.025em; display: flex; align-items: center; gap: 14px; }
-  .ms-pricing-a .ms-row-tag { margin-top: 6px; color: var(--ms-muted); font-size: 14px; }
-  .ms-pricing-a .ms-row-hook{ margin-top:4px; color:var(--ms-purple); font-size:13px; font-weight:600; }
-  .ms-pricing-a .ms-row-feats { margin: 16px 0 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; }
-  .ms-pricing-a .ms-row-feat { font-size: 14px; color: var(--ms-ink); display: flex; gap: 8px; }
-  .ms-pricing-a .ms-feat-dash { color: var(--ms-purple); font-family: 'Geist Mono', monospace; }
-  .ms-pricing-a .ms-row-price { text-align: left; }
-  .ms-pricing-a .ms-price-big { font-size: 76px; line-height: 0.9; font-weight: 500; letter-spacing: -0.05em; color: var(--ms-ink); font-feature-settings: 'tnum'; }
-  .ms-pricing-a .ms-price-cur { font-size: 28px; vertical-align: top; color: var(--ms-purple); font-weight: 500; }
-  .ms-pricing-a .ms-price-sub { margin-top: 10px; display: flex; flex-direction: column; gap: 2px; }
-  .ms-pricing-a .ms-price-after { font-size: 13px; color: var(--ms-muted); }
-  .ms-pricing-a .ms-row-cta { display: flex; align-items: flex-start; justify-content: flex-end; }
-  .ms-pricing-a .ms-cta { font-family: inherit; font-size: 14px; font-weight: 500; padding: 13px 22px; border-radius: 99px; cursor: pointer; border: 1px solid var(--ms-ink); background: transparent; color: var(--ms-ink); display: inline-flex; align-items: center; gap: 10px; transition: all .15s ease; white-space: nowrap; text-decoration: none; }
-  .ms-pricing-a .ms-cta:hover { transform: translateY(-1px); }
-  .ms-pricing-a .ms-cta.ms-filled { background: var(--ms-ink); border-color: var(--ms-ink); color: #fff; }
-  .ms-pricing-a .ms-cta-arrow { font-size: 16px; margin-top: -1px; }
-  .ms-pricing-a .ms-cta-gicon { width: 16px; height: 16px; display: inline-block; }
-  .ms-pricing-a .ms-footnote { margin-top: 28px; display: flex; align-items: center; gap: 16px; color: var(--ms-muted); font-size: 13px; }
-  .ms-pricing-a .ms-foot-mono { font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: 0.1em; background: var(--ms-purple); color: #fff; padding: 4px 8px; border-radius: 3px; text-transform: uppercase; font-weight: 600; }
-  .pricing-yearly-note{ font-size:13px; color:var(--ms-muted); margin-top:8px; line-height:1.6; }
-  .pricing-yearly-note strong{ font-size:18px; color:var(--ms-ink); }
-  .yearly-monthly-equiv{ color:#9ca3af; font-size:12px; }
-  .pricing-yearly-note small{ color:#9ca3af; font-size:11px; }
-  .hidden{ display:none !important; }
-  .ms-row.team-featured{ position:relative; }
-  .team-featured-badge{ display:inline-block; background:linear-gradient(135deg,#16a34a,#15803d); color:#fff; font-size:11px; font-weight:700; padding:4px 12px; border-radius:99px; letter-spacing:.05em; margin-bottom:10px; }
-  @media (max-width: 980px) {
-    .ms-pricing-a { padding: 32px 0 24px; }
-    .ms-pricing-a .ms-inner { padding: 0 20px; }
-    .ms-pricing-a .ms-hero-bottom { grid-template-columns: 1fr; gap: 18px; }
-    .ms-pricing-a .ms-toggle-wrap { justify-self: start; text-align: left; }
-    .ms-pricing-a .ms-row { grid-template-columns: 36px 1fr; grid-template-areas: "idx name" ". tag" ". feats" ". price" ". cta"; gap: 14px; padding: 28px 0; }
-    .ms-pricing-a .ms-row-idx { grid-area: idx; font-size: 28px; }
-    .ms-pricing-a .ms-row-name { grid-area: name; font-size: 24px; flex-wrap: wrap; }
-    .ms-pricing-a .ms-row-tag { grid-area: tag; }
-    .ms-pricing-a .ms-row-feats { grid-area: feats; }
-    .ms-pricing-a .ms-row-price { grid-area: price; }
-    .ms-pricing-a .ms-row-cta { grid-area: cta; justify-content: flex-start; }
-    .ms-pricing-a .ms-price-big { font-size: 60px; }
-  }
+/* Pricing Cards */
+.pricing-toggle-wrap{text-align:center;margin-bottom:32px}
+.pricing-toggle{display:inline-flex;padding:3px;background:#fff;border-radius:99px;border:1px solid var(--line)}
+.pricing-toggle button{border:0;background:transparent;padding:10px 20px;border-radius:99px;font-family:inherit;font-size:14px;color:var(--muted);cursor:pointer;font-weight:500;display:inline-flex;align-items:center;gap:8px;transition:all .15s}
+.pricing-toggle button.active{background:#111827;color:#fff}
+.save-pill{background:var(--brand-soft);color:var(--brand-dark);font-size:11px;font-weight:700;padding:3px 8px;border-radius:99px;font-family:'Geist Mono',monospace}
+.pricing-toggle button.active .save-pill{background:rgba(255,255,255,.15);color:#a7f3d0}
+
+.plan-card{border-radius:20px;padding:32px;display:flex;flex-direction:column;gap:20px}
+.plan-card.light{background:#fff;border:1.5px solid var(--line)}
+.plan-card.dark{background:#111827;border:1.5px solid #1f2937;color:#f9fafb}
+.plan-badge{display:inline-block;background:linear-gradient(135deg,var(--brand),var(--brand-dark));color:#fff;font-size:11px;font-weight:700;padding:5px 14px;border-radius:99px;letter-spacing:.06em;width:fit-content}
+.plan-name{font-size:24px;font-weight:700;letter-spacing:-.02em}
+.plan-card.dark .plan-name{color:#f9fafb}
+.plan-desc{font-size:14px;color:var(--muted);line-height:1.5}
+.plan-card.dark .plan-desc{color:#9ca3af}
+.plan-price-row{display:flex;align-items:baseline;gap:4px}
+.plan-price-big{font-size:56px;font-weight:700;line-height:1;letter-spacing:-.04em}
+.plan-card.light .plan-price-big{color:var(--ink)}
+.plan-card.dark .plan-price-big{color:#f9fafb}
+.plan-price-unit{font-size:15px;color:var(--muted);font-weight:500}
+.plan-card.dark .plan-price-unit{color:#9ca3af}
+.plan-feats{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px}
+.plan-feat{display:flex;align-items:flex-start;gap:8px;font-size:14px;line-height:1.4}
+.plan-card.light .plan-feat{color:var(--ink)}
+.plan-card.dark .plan-feat{color:#d1d5db}
+.plan-feat-icon{color:var(--brand);font-weight:700;flex-shrink:0;margin-top:1px}
+.plan-card.dark .plan-feat-icon{color:#4ade80}
+.plan-cta{display:flex;align-items:center;justify-content:center;gap:8px;padding:14px 24px;border-radius:99px;font-family:inherit;font-size:15px;font-weight:600;cursor:pointer;text-decoration:none;transition:all .15s;border:0;margin-top:auto}
+.plan-cta.outline{background:transparent;border:1.5px solid var(--line);color:var(--ink)}
+.plan-cta.outline:hover{border-color:var(--ink)}
+.plan-cta.green{background:var(--brand);color:#fff}
+.plan-cta.green:hover{background:var(--brand-dark);transform:translateY(-1px)}
+.plan-cta.white{background:#fff;color:#111827}
+.plan-cta.white:hover{background:#f3f4f6;transform:translateY(-1px)}
+.plan-divider{height:1px;background:var(--line);margin:4px 0}
+.plan-card.dark .plan-divider{background:#1f2937}
 
 /* Comparison table */
 .pricing-compare{margin:80px auto 60px;max-width:1000px}
@@ -135,7 +98,7 @@ a{color:inherit}
 .compare-table th{background:#FAFAFA;font-weight:700;color:var(--ink);font-size:13px}
 .compare-table th:first-child,.compare-table td:first-child{text-align:left;font-weight:600;color:var(--muted)}
 .compare-table tr:last-child td{border-bottom:0}
-.compare-table .col-highlight{background:var(--brand-soft)}
+.compare-table .col-highlight{background:#f0fdf4}
 .compare-check{color:var(--brand);font-weight:700}
 .compare-dash{color:#cbd5e1}
 @media(max-width:640px){.compare-table{font-size:12px}.compare-table th,.compare-table td{padding:10px 8px}}
@@ -178,15 +141,15 @@ a{color:inherit}
       "name": "Kredi kartı olmadan başlayabilir miyim?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Evet. Başlangıç planı tamamen ücretsiz ve süresizdir. Kredi kartı bilgisi istemeden hemen kullanmaya başlayabilirsiniz."
+        "text": "Evet. Ücretsiz plan tamamen ücretsiz ve süresizdir. Kredi kartı bilgisi istemeden hemen kullanmaya başlayabilirsiniz."
       }
     },
     {
       "@type": "Question",
-      "name": "$1 ilk ay teklifi nasıl çalışır?",
+      "name": "Shopify mağazamı nasıl bağlarım?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Pro, Pro Max ve Takım planları için ilk ay yalnızca $1 ödersiniz. Sonraki aylarda normal ücret ($15/ay Pro, $24/ay Pro Max, $69/ay Takım) uygulanır. İstediğiniz zaman tek tıkla iptal edebilirsiniz — sorusuz."
+        "text": "Pro veya Ultra planına geçtikten sonra ayarlar ekranından Shopify mağazanızı tek tıkla bağlayabilirsiniz. OAuth ile güvenli bağlantı kurulur, şifrenizi paylaşmanıza gerek yoktur."
       }
     },
     {
@@ -199,10 +162,18 @@ a{color:inherit}
     },
     {
       "@type": "Question",
-      "name": "Türkçe komutlar destekleniyor mu?",
+      "name": "Yıllık planın farkı nedir?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Evet, Mocksheets Türkçe-öncelikli tasarlandı. KDV, SGK, maaş, aylık rapor gibi Türk muhasebe ve operasyon terimleri doğal olarak destekleniyor."
+        "text": "Yıllık planla Pro için ₺119/ay, Ultra için ₺319/ay ödersiniz — aylık plana göre %20 daha uygun. Yıllık ödeme tek seferlik yapılır ve peşin fiyatlandırma avantajı sunar."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Ultra planı Pro'dan nasıl farklı?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Ultra planında sınırsız katalog boyutu, öncelikli AI işlem hızı, yeni özelliklere erken erişim ve öncelikli canlı destek bulunur. Pro, 10.000 ürüne kadar katalog ve standart AI hızı sunar."
       }
     }
   ]
@@ -221,181 +192,107 @@ a{color:inherit}
 <div class="pricing-wrap">
 
   <section class="pricing-hero">
-    <h1>Excel'de saatler harcamayı bırakın.</h1>
-    <p>E-ticaret operasyonunuz için AI kopilot. İlk ay $1 — istediğiniz zaman iptal.</p>
+    <h1>Shopify kataloğunuzu AI ile optimize edin.</h1>
+    <p>Ürün başlıklarından SEO'ya, toplu düzenlemeden katalog sağlığına — hepsi otomatik. ₺149/ay'dan başlıyor.</p>
   </section>
 
   <section class="roi-calc" aria-label="ROI Hesaplayıcı">
     <h2>Aylık ne kadar kazanırsınız?</h2>
     <div class="roi-grid">
-      <label>Haftalık Excel süreniz: <output id="roi-hours-val">10</output> saat
-        <input type="range" id="roi-hours" min="1" max="40" value="10" aria-label="Haftalık Excel süresi">
+      <label>Haftalık katalog yönetim süreniz: <output id="roi-hours-val">10</output> saat
+        <input type="range" id="roi-hours" min="1" max="40" value="10" aria-label="Haftalık katalog yönetim süresi">
       </label>
       <label>Rolünüz
         <select id="roi-role" aria-label="Rol seçimi">
-          <option value="15">Küçük işletme sahibi ($15/saat)</option>
-          <option value="25" selected>Operasyon yöneticisi ($25/saat)</option>
-          <option value="40">Ajans / danışman ($40/saat)</option>
+          <option value="250">Küçük işletme sahibi (₺250/saat)</option>
+          <option value="400" selected>Operasyon yöneticisi (₺400/saat)</option>
+          <option value="600">Ajans / danışman (₺600/saat)</option>
         </select>
       </label>
     </div>
     <div class="roi-result">
       <div><span>Aylık kazanılan zaman</span><b id="roi-time">28 saat</b></div>
-      <div><span>Aylık $ değeri</span><b id="roi-value">$700</b></div>
-      <div class="roi-net"><span>Mocksheets Pro sonrası net kazanç</span><b id="roi-net">$685/ay</b></div>
+      <div><span>Aylık ₺ değeri</span><b id="roi-value">₺11.200</b></div>
+      <div class="roi-net"><span>Mocksheets Pro sonrası net kazanç</span><b id="roi-net">₺11.051/ay</b></div>
     </div>
   </section>
 
-  <section class="ms-pricing-a" id="pricing" aria-label="Fiyatlandırma planları">
-    <div class="ms-inner">
-      <div class="ms-hero">
-        <div class="ms-eyebrow">
-          <span class="ms-eyebrow-dot"></span>
-          <span>Bu hafta katılan ekipler için —</span>
-          <span class="ms-eyebrow-mono">HAZİRAN'26 KAMPANYASI</span>
-        </div>
-        <h2 class="ms-title">
-          Bir öğle yemeği fiyatına,<br/>
-          <span class="ms-title-italic">bir operasyon uzmanı verimi.</span>
-        </h2>
-        <div class="ms-hero-bottom">
-          <p class="ms-lede">Ücretsiz planla başla, ihtiyacın olduğunda yükselt. Sözleşme yok, gizli ücret yok. İstediğin zaman iptal et.</p>
-          <div class="ms-toggle-wrap">
-            <div class="ms-toggle-label">Faturalama</div>
-            <div class="ms-toggle" role="tablist" aria-label="Faturalama dönemi">
-              <button id="ms-btn-monthly" class="ms-active" role="tab" aria-selected="true" onclick="setPricingPeriod('monthly')">Aylık</button>
-              <button id="ms-btn-yearly" role="tab" aria-selected="false" onclick="setPricingPeriod('yearly')">Yıllık <span class="ms-save-tag">-20%</span></button>
-            </div>
-          </div>
-        </div>
-      </div>
+  <section id="pricing" aria-label="Fiyatlandırma planları" style="max-width:1100px;margin:0 auto;padding:0 0 80px">
 
-      <div class="ms-plans">
-
-        <article class="ms-row">
-          <div class="ms-row-idx">01</div>
-          <div class="ms-row-meta">
-            <div class="ms-row-name">Başlangıç</div>
-            <div class="ms-row-tag">Mocksheets'i keşfetmek isteyenler için. Kart gerekmez.</div>
-            <ul class="ms-row-feats">
-              <li class="ms-row-feat"><span class="ms-feat-dash">—</span> Günde 5 AI komutu</li>
-              <li class="ms-row-feat"><span class="ms-feat-dash">—</span> Google Sheets senkronizasyonu</li>
-              <li class="ms-row-feat"><span class="ms-feat-dash">—</span> TR arayüz + destek</li>
-            </ul>
-          </div>
-          <div class="ms-row-price">
-            <div class="ms-price-big"><span class="ms-price-cur">$</span>0</div>
-            <div class="ms-price-sub">
-              <span class="ms-price-after">Sonsuza kadar ücretsiz</span>
-            </div>
-          </div>
-          <div class="ms-row-cta">
-            <a href="/auth" class="ms-cta">Ücretsiz Kayıt Ol</a>
-          </div>
-        </article>
-
-        <article class="ms-row" id="pro-card">
-          <div class="ms-row-idx">02</div>
-          <div class="ms-row-meta">
-            <div class="ms-row-name">Pro</div>
-            <div class="ms-row-tag">Bireysel kullanıcılar için.</div>
-            <div class="ms-row-hook">Yapay zeka ile veri düzenlemeye başlamak isteyen bireysel kullanıcılar ve küçük işletmeler için.</div>
-            <ul class="ms-row-feats" id="pro-features"></ul>
-          </div>
-          <div class="ms-row-price">
-            <div class="ms-price-big" id="pro-price-big"><span class="ms-price-cur">$</span><span id="pro-price-amount">15</span></div>
-            <div class="ms-price-sub">
-              <span class="ms-price-after" id="proAfter">Aylık, istediğin zaman iptal</span>
-              <span class="pricing-yearly-note hidden" id="pro-yearly-note">
-                <strong id="pro-yearly-price">$144</strong>/yıl
-                <span class="yearly-monthly-equiv" id="pro-yearly-equiv">(aylık $12'ye denk)</span><br>
-                <small>Kampanya yıllık planlarda geçerli değildir.</small>
-              </span>
-            </div>
-          </div>
-          <div class="ms-row-cta" style="flex-direction:column;align-items:flex-end;gap:10px;">
-            <a id="proCheckoutBtn" href="/auth?plan=pro" target="_blank" class="ms-cta ms-filled">
-              Pro ile Başla
-              <span class="ms-cta-arrow">→</span>
-            </a>
-          </div>
-        </article>
-
-        <article class="ms-row team-featured" id="promax-card">
-          <div class="ms-row-idx">03</div>
-          <div class="ms-row-meta">
-            <div class="team-featured-badge">⭐ En Popüler</div>
-            <div class="ms-row-name">Pro Max</div>
-            <div class="ms-row-tag">Yoğun veri işleyen profesyoneller ve operasyon ekipleri için en iyi seçim.</div>
-            <ul class="ms-row-feats">
-              <li class="ms-row-feat"><span class="ms-feat-dash">—</span> Sınırsız AI işlemi</li>
-              <li class="ms-row-feat"><span class="ms-feat-dash">—</span> Sınırsız dosya işleme</li>
-              <li class="ms-row-feat"><span class="ms-feat-dash">—</span> Büyük Excel dosyası desteği</li>
-              <li class="ms-row-feat"><span class="ms-feat-dash">—</span> Gelişmiş veri dönüştürme</li>
-              <li class="ms-row-feat"><span class="ms-feat-dash">—</span> Gelişmiş veri temizleme</li>
-              <li class="ms-row-feat"><span class="ms-feat-dash">—</span> Öncelikli işlem sırası</li>
-              <li class="ms-row-feat"><span class="ms-feat-dash">—</span> Öncelikli destek</li>
-              <li class="ms-row-feat"><span class="ms-feat-dash">—</span> Yeni özelliklere erken erişim</li>
-            </ul>
-          </div>
-          <div class="ms-row-price">
-            <div class="ms-price-big" style="margin-top:10px"><span class="ms-price-cur">$</span><span id="promax-price-amount">24</span></div>
-            <div class="ms-price-sub" style="margin-top:4px">
-              <span class="ms-price-after" id="promax-price-after">Aylık, istediğin zaman iptal</span>
-              <span class="pricing-yearly-note hidden" id="promax-yearly-note">
-                <strong id="promax-yearly-price">$230</strong>/yıl
-                <span id="promax-yearly-equiv">(aylık $19'a denk)</span>
-              </span>
-            </div>
-          </div>
-          <div class="ms-row-cta">
-            <a id="promaxCheckoutBtn" href="/auth?plan=promax" target="_blank" class="ms-cta ms-filled">
-              Pro Max'a Geç
-              <span class="ms-cta-arrow">→</span>
-            </a>
-          </div>
-        </article>
-
-        <article class="ms-row" id="team-card" style="opacity:0.9">
-          <div class="ms-row-idx">04</div>
-          <div class="ms-row-meta">
-            <div class="ms-row-name">Takım</div>
-            <div class="ms-row-tag">Birlikte çalışan ekipler ve şirketler için tasarlanmıştır.</div>
-            <ul class="ms-row-feats">
-              <li class="ms-row-feat"><span class="ms-feat-dash">—</span> Pro Max'teki tüm özellikler</li>
-              <li class="ms-row-feat"><span class="ms-feat-dash">—</span> 5 kullanıcı dahildir</li>
-              <li class="ms-row-feat"><span class="ms-feat-dash">—</span> Ortak çalışma alanı</li>
-              <li class="ms-row-feat"><span class="ms-feat-dash">—</span> Takım yönetimi</li>
-              <li class="ms-row-feat"><span class="ms-feat-dash">—</span> Rol ve yetkilendirme</li>
-              <li class="ms-row-feat"><span class="ms-feat-dash">—</span> Merkezi faturalandırma</li>
-              <li class="ms-row-feat"><span class="ms-feat-dash">—</span> Öncelikli kurumsal destek</li>
-            </ul>
-          </div>
-          <div class="ms-row-price">
-            <div class="ms-price-big" style="margin-top:10px"><span class="ms-price-cur">$</span><span id="team-price-amount">69</span></div>
-            <div class="ms-price-sub" style="margin-top:4px">
-              <span class="ms-price-after" id="team-price-after">Aylık · 5 kullanıcı</span>
-              <span class="pricing-yearly-note hidden" id="team-yearly-note">
-                <strong id="team-yearly-price">$662</strong>/yıl
-                <span id="team-yearly-equiv">(aylık $55'e denk)</span>
-              </span>
-            </div>
-          </div>
-          <div class="ms-row-cta">
-            <a id="teamCheckoutBtn" href="/auth?plan=biz" target="_blank" class="ms-cta">
-              Takımla Başla
-              <span class="ms-cta-arrow">→</span>
-            </a>
-          </div>
-        </article>
-
-      </div>
-
-      <div class="ms-footnote">
-        <span class="ms-foot-mono">FİYATLAR</span>
-        <span>GDPR uyumlu · İstediğin zaman iptal</span>
+    <div class="pricing-toggle-wrap">
+      <div class="pricing-toggle" role="tablist" aria-label="Faturalama dönemi">
+        <button id="billing-monthly-btn" class="active" role="tab" aria-selected="true" onclick="setPricingPeriod('monthly')">Aylık</button>
+        <button id="billing-yearly-btn" role="tab" aria-selected="false" onclick="setPricingPeriod('yearly')">Yıllık <span class="save-pill">-20%</span></button>
       </div>
     </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px">
+
+      <!-- Ücretsiz -->
+      <div class="plan-card light">
+        <div>
+          <div class="plan-name">Ücretsiz</div>
+          <div class="plan-desc" style="margin-top:6px">Katalog araçlarını keşfetmek isteyenler için. Kart gerekmez.</div>
+        </div>
+        <div class="plan-price-row">
+          <span class="plan-price-big">₺0</span>
+          <span class="plan-price-unit">/ay</span>
+        </div>
+        <div class="plan-divider"></div>
+        <ul class="plan-feats">
+          <li class="plan-feat"><span class="plan-feat-icon">✓</span> 50 ürün kataloğu analizi</li>
+          <li class="plan-feat"><span class="plan-feat-icon">✓</span> Temel katalog sağlığı skoru</li>
+          <li class="plan-feat"><span class="plan-feat-icon">✓</span> E-posta desteği</li>
+        </ul>
+        <a href="/auth" class="plan-cta outline">Ücretsiz Başla</a>
+      </div>
+
+      <!-- Pro -->
+      <div class="plan-card dark">
+        <div>
+          <div class="plan-badge">EN ÇOK TERCİH EDİLEN</div>
+          <div class="plan-name" style="margin-top:12px">Pro</div>
+          <div class="plan-desc" style="margin-top:6px">Büyüyen Shopify mağazaları için tam AI katalog optimizasyonu.</div>
+        </div>
+        <div class="plan-price-row">
+          <span class="plan-price-big" id="price-pro">₺149</span>
+          <span class="plan-price-unit">/ay</span>
+        </div>
+        <div class="plan-divider"></div>
+        <ul class="plan-feats">
+          <li class="plan-feat"><span class="plan-feat-icon">✓</span> 10.000 ürün kataloğu</li>
+          <li class="plan-feat"><span class="plan-feat-icon">✓</span> AI başlık &amp; açıklama optimizasyonu</li>
+          <li class="plan-feat"><span class="plan-feat-icon">✓</span> Toplu AI düzenleme (Bulk Ops)</li>
+          <li class="plan-feat"><span class="plan-feat-icon">✓</span> Tam katalog sağlığı skoru</li>
+          <li class="plan-feat"><span class="plan-feat-icon">✓</span> Shopify senkronizasyonu &amp; geri yazma</li>
+          <li class="plan-feat"><span class="plan-feat-icon">✓</span> Öncelikli e-posta desteği</li>
+        </ul>
+        <a href="/auth?plan=pro" class="plan-cta green">Pro ile Başla →</a>
+      </div>
+
+      <!-- Ultra -->
+      <div class="plan-card light">
+        <div>
+          <div class="plan-name">Ultra</div>
+          <div class="plan-desc" style="margin-top:6px">Büyük kataloglar ve ajanslar için sınırsız güç.</div>
+        </div>
+        <div class="plan-price-row">
+          <span class="plan-price-big" id="price-ultra">₺399</span>
+          <span class="plan-price-unit">/ay</span>
+        </div>
+        <div class="plan-divider"></div>
+        <ul class="plan-feats">
+          <li class="plan-feat"><span class="plan-feat-icon">✓</span> Sınırsız katalog boyutu</li>
+          <li class="plan-feat"><span class="plan-feat-icon">✓</span> Öncelikli AI işlem hızı</li>
+          <li class="plan-feat"><span class="plan-feat-icon">✓</span> Yeni özelliklere erken erişim</li>
+          <li class="plan-feat"><span class="plan-feat-icon">✓</span> Öncelikli canlı destek</li>
+        </ul>
+        <a href="/auth?plan=ultra" class="plan-cta outline">Ultra'ya Geç →</a>
+      </div>
+
+    </div>
+
+    <p style="text-align:center;font-size:13px;color:var(--muted);margin-top:20px">GDPR uyumlu · Sözleşme yok · İstediğin zaman iptal</p>
   </section>
 
   <section class="pricing-compare" aria-label="Plan karşılaştırması">
@@ -405,23 +302,21 @@ a{color:inherit}
       <thead>
         <tr>
           <th>Özellik</th>
-          <th>Başlangıç</th>
-          <th>Pro</th>
-          <th class="col-highlight">Pro Max</th>
-          <th>Takım</th>
+          <th>Ücretsiz</th>
+          <th class="col-highlight">Pro</th>
+          <th>Ultra</th>
         </tr>
       </thead>
       <tbody>
-        <tr><td>Aylık AI işlemi</td><td>5/gün</td><td>100</td><td class="col-highlight">Sınırsız</td><td>Sınırsız</td></tr>
-        <tr><td>Dosya işleme</td><td>Sınırlı</td><td>Standart</td><td class="col-highlight">Sınırsız</td><td>Sınırsız</td></tr>
-        <tr><td>Büyük Excel dosyası desteği</td><td><span class="compare-dash">—</span></td><td><span class="compare-dash">—</span></td><td class="col-highlight"><span class="compare-check">✓</span></td><td><span class="compare-check">✓</span></td></tr>
-        <tr><td>Veri dönüştürme</td><td>Temel</td><td>Var</td><td class="col-highlight">Gelişmiş</td><td>Gelişmiş</td></tr>
-        <tr><td>Veri temizleme</td><td>Temel</td><td>Akıllı</td><td class="col-highlight">Gelişmiş</td><td>Gelişmiş</td></tr>
-        <tr><td>İşlem hızı</td><td>Standart</td><td>Standart</td><td class="col-highlight">Öncelikli</td><td>Öncelikli</td></tr>
-        <tr><td>Kullanıcı sayısı</td><td>1</td><td>1</td><td class="col-highlight">1</td><td>5</td></tr>
-        <tr><td>Ortak çalışma alanı</td><td><span class="compare-dash">—</span></td><td><span class="compare-dash">—</span></td><td class="col-highlight"><span class="compare-dash">—</span></td><td><span class="compare-check">✓</span></td></tr>
-        <tr><td>Takım yönetimi & yetkilendirme</td><td><span class="compare-dash">—</span></td><td><span class="compare-dash">—</span></td><td class="col-highlight"><span class="compare-dash">—</span></td><td><span class="compare-check">✓</span></td></tr>
-        <tr><td>Destek</td><td>Topluluk</td><td>E-posta</td><td class="col-highlight">Öncelikli</td><td>Kurumsal</td></tr>
+        <tr><td>Aylık katalog analizi</td><td>50 ürün</td><td class="col-highlight">Sınırsız</td><td>Sınırsız</td></tr>
+        <tr><td>AI başlık/açıklama opt.</td><td><span class="compare-dash">—</span></td><td class="col-highlight"><span class="compare-check">✓</span></td><td><span class="compare-check">✓</span></td></tr>
+        <tr><td>Toplu AI düzenleme</td><td><span class="compare-dash">—</span></td><td class="col-highlight"><span class="compare-check">✓</span></td><td><span class="compare-check">✓</span></td></tr>
+        <tr><td>Katalog sağlığı skoru</td><td>Temel</td><td class="col-highlight">Tam</td><td>Tam</td></tr>
+        <tr><td>Shopify senkronizasyon</td><td><span class="compare-dash">—</span></td><td class="col-highlight"><span class="compare-check">✓</span></td><td><span class="compare-check">✓</span></td></tr>
+        <tr><td>Shopify'a geri yazma</td><td><span class="compare-dash">—</span></td><td class="col-highlight"><span class="compare-check">✓</span></td><td><span class="compare-check">✓</span></td></tr>
+        <tr><td>Katalog boyutu</td><td>50 ürün</td><td class="col-highlight">10.000 ürün</td><td>Sınırsız</td></tr>
+        <tr><td>AI işlem hızı</td><td>Standart</td><td class="col-highlight">Standart</td><td>Öncelikli</td></tr>
+        <tr><td>Destek</td><td>E-posta</td><td class="col-highlight">Öncelikli e-posta</td><td>Öncelikli canlı</td></tr>
       </tbody>
     </table>
     </div>
@@ -436,19 +331,23 @@ a{color:inherit}
     <h2>Sık sorulan sorular</h2>
     <details>
       <summary>Kredi kartı olmadan başlayabilir miyim?</summary>
-      <p>Evet. Başlangıç planı tamamen ücretsiz ve süresizdir. Kredi kartı bilgisi istemeden hemen kullanmaya başlayabilirsiniz.</p>
+      <p>Evet. Ücretsiz plan tamamen ücretsiz ve süresizdir. Kredi kartı bilgisi istemeden hemen kullanmaya başlayabilirsiniz.</p>
     </details>
     <details>
-      <summary>$1 ilk ay teklifi nasıl çalışır?</summary>
-      <p>Pro, Pro Max ve Takım planları için ilk ay yalnızca $1 ödersiniz. Sonraki aylarda normal ücret ($15/ay Pro, $24/ay Pro Max, $69/ay Takım) uygulanır. İstediğiniz zaman tek tıkla iptal edebilirsiniz — sorusuz.</p>
+      <summary>Shopify mağazamı nasıl bağlarım?</summary>
+      <p>Pro veya Ultra planına geçtikten sonra ayarlar ekranından Shopify mağazanızı tek tıkla bağlayabilirsiniz. OAuth ile güvenli bağlantı kurulur, şifrenizi paylaşmanıza gerek yoktur.</p>
+    </details>
+    <details>
+      <summary>Yıllık planın farkı nedir?</summary>
+      <p>Yıllık planla Pro için ₺119/ay, Ultra için ₺319/ay ödersiniz — aylık plana göre %20 daha uygun. Yıllık ödeme tek seferlik yapılır. İstediğiniz zaman iptal edebilirsiniz.</p>
     </details>
     <details>
       <summary>Verilerim nerede saklanıyor?</summary>
       <p>Tüm verileriniz AB bölgesindeki Supabase altyapısında şifreli olarak saklanır. GDPR tam uyumlu — verileriniz size aittir ve istediğiniz zaman silebilir veya dışa aktarabilirsiniz.</p>
     </details>
     <details>
-      <summary>Türkçe komutlar destekleniyor mu?</summary>
-      <p>Evet, Mocksheets Türkçe-öncelikli tasarlandı. KDV, SGK, maaş, aylık rapor gibi Türk muhasebe ve operasyon terimleri doğal olarak destekleniyor.</p>
+      <summary>Ultra planı Pro'dan nasıl farklı?</summary>
+      <p>Ultra planında sınırsız katalog boyutu, öncelikli AI işlem hızı, yeni özelliklere erken erişim ve öncelikli canlı destek bulunur. Pro, 10.000 ürüne kadar katalog ve standart AI hızı sunar.</p>
     </details>
   </section>
 
@@ -465,108 +364,23 @@ a{color:inherit}
 
 <script>
 var _billingPeriod = 'monthly';
-var _PRO = {
-  monthly: 15,
-  yearly: 144,
-  features: [
-    'Aylık 100 AI işlemi',
-    'Excel/CSV/PDF desteği',
-    'Yapay zeka ile veri dönüştürme',
-    'Doğal dil ile veri düzenleme',
-    'Akıllı veri temizleme',
-    'Standart işlem hızı',
-    'E-posta desteği'
-  ]
-};
-var _PROMAX = { monthly: 24, yearly: 230 };
-var _TEAM   = { monthly: 69, yearly: 662 };
-
-function renderProCard() {
-  var yearly = _billingPeriod === 'yearly';
-  var featEl = document.getElementById('pro-features');
-  if (featEl) {
-    featEl.innerHTML = _PRO.features.map(function(f) {
-      return '<li class="ms-row-feat"><span class="ms-feat-dash">—</span> ' + f + '</li>';
-    }).join('');
-  }
-  var amountEl = document.getElementById('pro-price-amount');
-  var afterEl = document.getElementById('proAfter');
-  var yearlyNoteEl = document.getElementById('pro-yearly-note');
-  var yearlyPriceEl = document.getElementById('pro-yearly-price');
-  var yearlyEquivEl = document.getElementById('pro-yearly-equiv');
-  var ctaEl = document.getElementById('proCheckoutBtn');
-  if (yearly) {
-    if (amountEl) amountEl.textContent = _PRO.yearly;
-    if (afterEl) afterEl.classList.add('hidden');
-    if (yearlyNoteEl) yearlyNoteEl.classList.remove('hidden');
-    if (yearlyPriceEl) yearlyPriceEl.textContent = '$' + _PRO.yearly;
-    if (yearlyEquivEl) yearlyEquivEl.textContent = '(aylık $' + Math.round(_PRO.yearly / 12) + '\'ye denk)';
-  } else {
-    if (amountEl) amountEl.textContent = _PRO.monthly;
-    if (afterEl) { afterEl.classList.remove('hidden'); afterEl.textContent = 'Aylık, istediğin zaman iptal'; }
-    if (yearlyNoteEl) yearlyNoteEl.classList.add('hidden');
-  }
-  if (ctaEl) ctaEl.href = '/auth?plan=pro';
-}
-
-function renderProMaxCard() {
-  var yearly = _billingPeriod === 'yearly';
-  var amountEl = document.getElementById('promax-price-amount');
-  var afterEl = document.getElementById('promax-price-after');
-  var yearlyNoteEl = document.getElementById('promax-yearly-note');
-  var yearlyPriceEl = document.getElementById('promax-yearly-price');
-  var yearlyEquivEl = document.getElementById('promax-yearly-equiv');
-  var ctaEl = document.getElementById('promaxCheckoutBtn');
-  if (yearly) {
-    if (amountEl) amountEl.textContent = _PROMAX.yearly;
-    if (afterEl) afterEl.classList.add('hidden');
-    if (yearlyNoteEl) yearlyNoteEl.classList.remove('hidden');
-    if (yearlyPriceEl) yearlyPriceEl.textContent = '$' + _PROMAX.yearly;
-    if (yearlyEquivEl) yearlyEquivEl.textContent = '(aylık $' + Math.round(_PROMAX.yearly / 12) + '\'ye denk)';
-  } else {
-    if (amountEl) amountEl.textContent = _PROMAX.monthly;
-    if (afterEl) { afterEl.classList.remove('hidden'); afterEl.textContent = 'Aylık, istediğin zaman iptal'; }
-    if (yearlyNoteEl) yearlyNoteEl.classList.add('hidden');
-  }
-  if (ctaEl) ctaEl.href = '/auth?plan=promax';
-}
-
-function renderTeamCard() {
-  var yearly = _billingPeriod === 'yearly';
-  var amountEl = document.getElementById('team-price-amount');
-  var afterEl  = document.getElementById('team-price-after');
-  var noteEl   = document.getElementById('team-yearly-note');
-  var priceEl  = document.getElementById('team-yearly-price');
-  var equivEl  = document.getElementById('team-yearly-equiv');
-  if (yearly) {
-    if (amountEl) amountEl.textContent = _TEAM.yearly;
-    if (afterEl)  afterEl.classList.add('hidden');
-    if (noteEl)   noteEl.classList.remove('hidden');
-    if (priceEl)  priceEl.textContent = '$' + _TEAM.yearly;
-    if (equivEl)  equivEl.textContent = "(aylık $" + Math.round(_TEAM.yearly / 12) + "'ye denk)";
-  } else {
-    if (amountEl) amountEl.textContent = _TEAM.monthly;
-    if (afterEl)  { afterEl.classList.remove('hidden'); afterEl.textContent = 'Aylık · 5 kullanıcı'; }
-    if (noteEl)   noteEl.classList.add('hidden');
-  }
-}
+var MONTHLY = { pro: 149, ultra: 399 };
+var YEARLY  = { pro: 119, ultra: 319 };
 
 function setPricingPeriod(p) {
   _billingPeriod = p;
   var yearly = p === 'yearly';
-  document.getElementById('ms-btn-monthly').classList.toggle('ms-active', !yearly);
-  document.getElementById('ms-btn-yearly').classList.toggle('ms-active', yearly);
-  document.getElementById('ms-btn-monthly').setAttribute('aria-selected', String(!yearly));
-  document.getElementById('ms-btn-yearly').setAttribute('aria-selected', String(yearly));
-  var sl = window._stripeLinks || {};
-  var per = yearly ? 'yearly' : 'monthly';
-  var proBtn = document.getElementById('proCheckoutBtn');
-  var promaxBtn = document.getElementById('promaxCheckoutBtn');
-  if (proBtn && sl.pro && sl.pro[per]) proBtn.href = sl.pro[per];
-  if (promaxBtn && sl.promax && sl.promax[per]) promaxBtn.href = sl.promax[per];
-  renderProCard();
-  renderProMaxCard();
-  renderTeamCard();
+  var prices = yearly ? YEARLY : MONTHLY;
+
+  var monthlyBtn = document.getElementById('billing-monthly-btn');
+  var yearlyBtn  = document.getElementById('billing-yearly-btn');
+  monthlyBtn.classList.toggle('active', !yearly);
+  yearlyBtn.classList.toggle('active', yearly);
+  monthlyBtn.setAttribute('aria-selected', String(!yearly));
+  yearlyBtn.setAttribute('aria-selected', String(yearly));
+
+  document.getElementById('price-pro').textContent   = '₺' + prices.pro;
+  document.getElementById('price-ultra').textContent = '₺' + prices.ultra;
 }
 
 /* ROI Calculator */
@@ -576,43 +390,18 @@ function updateROI() {
   var weeklyTimeSaved = hours * 0.65;
   var monthlyTimeSaved = weeklyTimeSaved * 4.33;
   var monthlyValue = monthlyTimeSaved * hourlyRate;
-  var netGain = monthlyValue - 15;
+  var netGain = monthlyValue - 149;
   document.getElementById('roi-hours-val').textContent = hours;
   document.getElementById('roi-time').textContent = Math.round(monthlyTimeSaved) + ' saat';
-  document.getElementById('roi-value').textContent = '$' + Math.round(monthlyValue);
-  document.getElementById('roi-net').textContent = '$' + Math.round(netGain) + '/ay';
+  document.getElementById('roi-value').textContent = '₺' + Math.round(monthlyValue).toLocaleString('tr-TR');
+  document.getElementById('roi-net').textContent = '₺' + Math.round(netGain).toLocaleString('tr-TR') + '/ay';
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-  renderProCard();
-  renderProMaxCard();
-  renderTeamCard();
   document.getElementById('roi-hours').addEventListener('input', updateROI);
   document.getElementById('roi-role').addEventListener('change', updateROI);
   updateROI();
 });
-</script>
-
-<script>
-(function() {
-  var apiBase = window.location.hostname === 'localhost'
-    ? 'http://localhost:3001'
-    : 'https://upsheet-ai.onrender.com';
-  fetch(apiBase + '/api/stripe/links')
-    .then(function(r) { return r.ok ? r.json() : null; })
-    .then(function(data) {
-      if (!data) return;
-      window._stripeLinks = data;
-      var isYearly = document.getElementById('ms-btn-yearly')
-        && document.getElementById('ms-btn-yearly').getAttribute('aria-selected') === 'true';
-      var per = isYearly ? 'yearly' : 'monthly';
-      var proBtn = document.getElementById('proCheckoutBtn');
-      var promaxBtn = document.getElementById('promaxCheckoutBtn');
-      if (proBtn && data.pro && data.pro[per]) proBtn.href = data.pro[per];
-      if (promaxBtn && data.promax && data.promax[per]) promaxBtn.href = data.promax[per];
-    })
-    .catch(function() {});
-}());
 </script>
 </body>
 </html>
