@@ -684,13 +684,14 @@ function renderDashboard() {
 
         <div id="dash-card-issues" style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:18px;transition:box-shadow .15s ease,transform .15s ease;">
           <div style="display:flex;align-items:flex-start;justify-content:space-between;">
-            <p style="font-size:12px;color:#6b7280;margin:0 0 8px;">Bulunan Sorunlar</p>
+            <p style="font-size:12px;color:#6b7280;margin:0 0 8px;">Görünürlük Riski Taşıyan Ürün</p>
             <div style="width:28px;height:28px;border-radius:8px;background:#fef2f2;display:flex;align-items:center;justify-content:center;">
               <i class="ti ti-alert-triangle" style="font-size:14px;color:#dc2626;"></i>
             </div>
           </div>
           <span id="dash-issues-count" style="font-size:26px;font-weight:700;color:#111827;">${analysis.totalIssueCount}</span>
           <p style="font-size:11px;color:#9ca3af;margin:6px 0 0;">${analysis.totalIssueCount === 0 ? 'Sorun bulunamadı' : 'AI Önerileri panelinden düzeltin'}</p>
+          ${analysis.totalIssueCount > 0 ? '<p style="font-size:10px;color:#dc2626;margin:4px 0 0;">Bu ürünler eksik veri nedeniyle arama sonuçlarında geride kalabilir</p>' : ''}
         </div>
 
         <div id="dash-card-ready" style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:18px;transition:box-shadow .15s ease,transform .15s ease;">
@@ -1026,11 +1027,22 @@ function renderAiRecommendations(issues) {
   }
 
   container.innerHTML = '';
+  const lossPhrases = {
+    'Eksik SEO': 'ürün arama sonuçlarında görünmüyor olabilir',
+    'Kısa/Eksik Açıklama': 'ürün müşteriyi ikna edemiyor olabilir',
+    'Eksik Görsel': 'ürün güven kaybettiriyor olabilir',
+    'Eksik Etiket': 'ürün filtrelerde kayboluyor olabilir',
+    'Tekrarlanan Başlık': 'ürün SEO cezasına maruz kalabilir',
+    'Eksik Fiyat': 'ürün satın alınamıyor olabilir',
+    'Tekrarlanan Handle': 'ürün sayfası çakışması yaşanabilir',
+  };
   top.forEach(issue => {
     const actionType = ISSUE_TO_ACTION[issue.label];
     const row = document.createElement('div');
     row.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:8px;';
-    row.innerHTML = '<span style="font-size:12px;color:#374151;">' + issue.count + ' üründe ' + issue.label + '</span>';
+    row.innerHTML = '<span style="font-size:12px;color:#374151;">' +
+      '<strong style="color:#dc2626;">' + issue.count + ' ürün</strong> ' +
+      (lossPhrases[issue.label] || issue.label) + '</span>';
 
     const fixBtn = document.createElement('button');
     fixBtn.type = 'button';
@@ -1464,7 +1476,7 @@ function renderValidationCenter() {
   const bodyContent = analysis.totalProducts === 0
     ? '<p style="font-size:12px;color:#6b7280;">Henüz katalog verisi yok.</p>'
     : `<p style="font-size:12px;color:#6b7280;margin-bottom:16px;">
-         ${analysis.totalIssueCount} toplam sorun tespit edildi (${analysis.totalProducts} üründen).
+         ${analysis.totalIssueCount} kaçırılan fırsat tespit edildi (${analysis.totalProducts} ürün tarandı).
        </p>
        ${issueRows.length > 0 ? issueRows : '<p style="font-size:12px;color:#16a34a;">Sorun tespit edilmedi ✓</p>'}`;
 
