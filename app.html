@@ -679,7 +679,8 @@ function renderDashboard() {
             </div>
           </div>
           <span id="dash-total-products" style="font-size:26px;font-weight:700;color:#111827;">${analysis.totalProducts.toLocaleString('tr-TR')}</span>
-          <p style="font-size:11px;color:#9ca3af;margin:6px 0 0;">Son senkronizasyon: ${lastSync}</p>
+          <p style="font-size:10px;color:#9ca3af;margin:4px 0 0;">AI tarafından takip ediliyor</p>
+          <p style="font-size:11px;color:#9ca3af;margin:2px 0 0;">Son senkronizasyon: ${lastSync}</p>
         </div>
 
         <div id="dash-card-issues" style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:18px;transition:box-shadow .15s ease,transform .15s ease;">
@@ -807,9 +808,9 @@ function renderDashboard() {
   const badgeEl = document.getElementById('dash-health-badge');
   if (badgeEl) {
     const s = analysis.healthScore || 0;
-    if (s >= 80) { badgeEl.textContent = 'Çok İyi'; badgeEl.style.color = '#16a34a'; }
-    else if (s >= 60) { badgeEl.textContent = 'İyi'; badgeEl.style.color = '#d97706'; }
-    else { badgeEl.textContent = 'İyileştirme Gerekli'; badgeEl.style.color = '#dc2626'; }
+    if (s >= 80) { badgeEl.textContent = 'Mükemmel Durumda'; badgeEl.style.color = '#16a34a'; }
+    else if (s >= 60) { badgeEl.textContent = 'İyi Yolda'; badgeEl.style.color = '#d97706'; }
+    else { badgeEl.textContent = 'Büyük Potansiyel Var'; badgeEl.style.color = '#d97706'; }
   }
 
   // Hazır ürün oranı — catalogData.products status='active'
@@ -1012,6 +1013,14 @@ function renderHealthBreakdownFull(categoryScores) {
       '<div style="flex:1;height:5px;background:#f3f4f6;border-radius:99px;overflow:hidden;">' +
       '<div style="width:' + value + '%;height:100%;background:' + barColor + ';border-radius:99px;"></div></div>' +
       '<span style="font-size:11px;font-weight:600;color:#111827;width:32px;text-align:right;">' + value + '%</span>';
+    if (value < 60) {
+      const improveLink = document.createElement('button');
+      improveLink.type = 'button';
+      improveLink.textContent = 'Geliştir →';
+      improveLink.style.cssText = 'font-size:10px;color:#16a34a;background:transparent;border:none;cursor:pointer;margin-left:6px;';
+      improveLink.addEventListener('click', function() { setView('catalog-check'); });
+      row.appendChild(improveLink);
+    }
     container.appendChild(row);
   });
 }
