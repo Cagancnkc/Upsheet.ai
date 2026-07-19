@@ -543,9 +543,6 @@ function toast(message, type = 'info') {
 
 const SIDEBAR_ITEMS = [
   { view: 'dashboard',     icon: 'ti-home',         label: 'Dashboard' },
-  { view: 'catalog',       icon: 'ti-box',          label: 'Katalog' },
-  { view: 'products',      icon: 'ti-tag',          label: 'Ürünler' },
-  { view: 'collections',   icon: 'ti-category',     label: 'Koleksiyonlar' },
   { view: 'catalog-check', icon: 'ti-shield-check', label: 'Katalog Kontrolü' },
   { view: 'sync',          icon: 'ti-refresh',      label: 'Senkronizasyon' },
   { view: 'history',       icon: 'ti-history',      label: 'Geçmiş İşlemler' },
@@ -600,9 +597,6 @@ function setView(view) {
   hideAllViews();
   const viewRenderers = {
     dashboard:       function() { showView('dashboard-view');        renderDashboard(); },
-    catalog:         function() { showView('catalog-editor-layout','grid'); activateCatalogEditorLayout(); },
-    products:        function() { showView('products-view'); renderProductsPage(); },
-    collections:     function() { showView('collections-view');      renderCollections(); },
     'catalog-check': function() { showView('validation-view');       renderValidationCenter(); },
     sync:            function() { showView('sync-view');             renderSyncPage(); },
     history:         function() { showView('history-view');          loadAndRenderHistory(); },
@@ -745,6 +739,23 @@ function renderDashboard() {
           <div id="dash-recent-operations-full" style="display:flex;flex-direction:column;gap:12px;"></div>
         </div>
       </div>
+
+      <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:20px;margin-top:16px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+          <p style="font-size:13px;font-weight:600;color:#111827;margin:0;">Ürünler</p>
+          <button id="open-full-catalog-btn" type="button"
+            style="padding:6px 14px;border:0.5px solid #e5e7eb;border-radius:10px;background:#fff;color:#374151;font-size:11px;font-weight:600;cursor:pointer;">
+            Tam Düzenleyiciyi Aç →
+          </button>
+        </div>
+        <div id="dash-products-mini-grid" style="display:grid;grid-template-columns:repeat(auto-fill, minmax(140px, 1fr));gap:10px;"></div>
+      </div>
+
+      <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:20px;margin-top:16px;">
+        <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 12px;">Kategoriler</p>
+        <div id="dash-collections-mini" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+      </div>
+
     </div>`;
 
   // Health trend
@@ -766,6 +777,10 @@ function renderDashboard() {
   if (analysis.totalProducts > 0) {
     saveTodayHealthSnapshot(analysis.healthScore, analysis.totalProducts);
   }
+  renderDashProductsMini();
+  renderDashCollectionsMini();
+  document.getElementById('open-full-catalog-btn')
+    ?.addEventListener('click', openFullCatalogEditor);
 
   const topbarScoreEl = document.getElementById('topbar-health-score');
   if (topbarScoreEl) topbarScoreEl.textContent = analysis.healthScore;
@@ -826,6 +841,112 @@ function renderDashboard() {
       }
     });
   }
+}
+
+// ─── CATALOG EDITOR — DASHBOARD'DAN AÇILIR ───────────────────────────────
+
+function openFullCatalogEditor() {
+  hideAllViews();
+  showView('catalog-editor-layout', 'grid');
+  activateCatalogEditorLayout();
+  currentView = 'catalog';
+  renderSidebar();
+  ensureBackToDashboardButton();
+}
+
+function ensureBackToDashboardButton() {
+  if (document.getElementById('back-to-dashboard-btn')) return;
+  const toolbar = document.querySelector('.sf-toolbar');
+  if (!toolbar) return;
+  const backBtn = document.createElement('button');
+  backBtn.id = 'back-to-dashboard-btn';
+  backBtn.type = 'button';
+  backBtn.style.cssText = 'display:flex;align-items:center;gap:6px;padding:6px 12px;' +
+    'border:0.5px solid #e5e7eb;border-radius:8px;background:#fff;color:#6b7280;font-size:12px;cursor:pointer;margin-right:8px;';
+  backBtn.innerHTML = '<i class="ti ti-arrow-left" style="font-size:13px;"></i> Dashboard\'a Dön';
+  backBtn.addEventListener('click', function() { setView('dashboard'); });
+  toolbar.insertBefore(backBtn, toolbar.firstChild);
+}
+
+function renderDashProductsMini() {
+  const grid = document.getElementById('dash-products-mini-grid');
+  if (!grid) return;
+
+  const products = (catalogData && catalogData.products) ? catalogData.products : [];
+  if (products.length === 0) {
+    grid.innerHTML = '<p style="font-size:12px;color:#9ca3af;grid-column:1/-1;">' +
+      'Henüz ürün verisi yok — Senkronizasyon sayfasından Shopify\'ı bağlayın.</p>';
+    return;
+  }
+
+  const slice = products.slice(0, 8);
+  grid.innerHTML = '';
+
+  slice.forEach(function(p) {
+    const imgUrl = (p.images && p.images[0]) ? p.images[0].src : '';
+    const badge = getStatusBadgeVisual(p.status || '');
+
+    const card = document.createElement('div');
+    card.style.cssText = 'border:0.5px solid #e5e7eb;border-radius:10px;overflow:hidden;cursor:pointer;';
+
+    const imgHtml = imgUrl
+      ? '<img src="' + imgUrl + '" style="width:100%;height:64px;object-fit:cover;" ' +
+        'onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\';">' +
+        '<div style="display:none;height:64px;background:#f9fafb;align-items:center;justify-content:center;">' +
+        '<i class="ti ti-photo" style="font-size:16px;color:#9ca3af;"></i></div>'
+      : '<div style="height:64px;background:#f9fafb;display:flex;align-items:center;justify-content:center;">' +
+        '<i class="ti ti-photo" style="font-size:16px;color:#9ca3af;"></i></div>';
+
+    card.innerHTML = imgHtml +
+      '<div style="padding:8px;">' +
+      '<p style="font-size:11px;font-weight:500;color:#111827;margin:0 0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' +
+      (p.title || 'İsimsiz') + '</p>' +
+      '<span style="font-size:9px;padding:1px 6px;border-radius:999px;background:' + badge.bg + ';color:' + badge.color + ';">' +
+      badge.label + '</span></div>';
+
+    card.addEventListener('click', function() { openFullCatalogEditor(); });
+    grid.appendChild(card);
+  });
+
+  if (products.length > 8) {
+    const moreBtn = document.createElement('button');
+    moreBtn.type = 'button';
+    moreBtn.style.cssText = 'border:1px dashed #e5e7eb;border-radius:10px;background:transparent;' +
+      'color:#6b7280;font-size:11px;cursor:pointer;min-height:96px;';
+    moreBtn.textContent = '+' + (products.length - 8) + ' daha';
+    moreBtn.addEventListener('click', function() { openFullCatalogEditor(); });
+    grid.appendChild(moreBtn);
+  }
+}
+
+function renderDashCollectionsMini() {
+  const container = document.getElementById('dash-collections-mini');
+  if (!container) return;
+
+  const collections = (catalogData && catalogData.collections) ? catalogData.collections : [];
+  if (collections.length === 0) {
+    container.innerHTML = '<p style="font-size:12px;color:#9ca3af;">Henüz koleksiyon verisi yok.</p>';
+    return;
+  }
+
+  container.innerHTML = '';
+  collections.slice(0, 8).forEach(function(c) {
+    const chip = document.createElement('button');
+    chip.type = 'button';
+    chip.style.cssText = 'padding:6px 12px;border:0.5px solid #e5e7eb;border-radius:999px;' +
+      'background:#f9fafb;color:#374151;font-size:11px;cursor:pointer;';
+    chip.textContent = (c.title || 'İsimsiz') + ' (' + (c.product_count || 0) + ')';
+    chip.addEventListener('click', function() {
+      openFullCatalogEditor();
+      setTimeout(function() {
+        _catalogSearch = c.title || '';
+        buildGrid();
+        const srchInput = document.getElementById('product-search');
+        if (srchInput) srchInput.value = _catalogSearch;
+      }, 100);
+    });
+    container.appendChild(chip);
+  });
 }
 
 // ─── DASHBOARD HELPERS ───────────────────────────────────────────────────
