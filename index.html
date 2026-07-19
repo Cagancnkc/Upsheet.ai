@@ -77,7 +77,7 @@
         "name": "Başlangıç",
         "price": "0",
         "priceCurrency": "USD",
-        "description": "Günde 5 AI komutu, Google Sheets senkronizasyonu"
+        "description": "Günde 5 AI komutu, Shopify katalog senkronizasyonu"
       },
       {
         "@type": "Offer",
@@ -252,7 +252,7 @@
       "name": "E-ticaret mağazam için kullanabilir miyim?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Evet. Shopify, WooCommerce, Trendyol, Hepsiburada ve diğer platformlardan aldığınız CSV dosyalarını yükleyip analiz edebilirsiniz."
+        "text": "Evet. Shopify mağazanızı OAuth ile bağlayarak ürün kataloğunuzu doğrudan analiz edebilirsiniz. Trendyol ve Hepsiburada entegrasyonları da desteklenir."
       }
     },
     {
@@ -1339,24 +1339,20 @@
         </div>
         <div style="display:flex; flex-wrap:wrap; gap:7px; margin-top:auto;">
 
-          <!-- Excel pill -->
+          <!-- Trendyol pill -->
           <span style="display:inline-flex; align-items:center; gap:6px; padding:5px 11px; background:#f9fafb; border:0.5px solid #e5e7eb; border-radius:20px; font-size:11px; color:#374151;">
             <svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" fill="none" stroke="#217346" stroke-width="1.5" stroke-linejoin="round"/>
-              <polyline points="14,2 14,8 20,8" fill="none" stroke="#217346" stroke-width="1.5" stroke-linejoin="round"/>
-              <line x1="8" y1="13" x2="16" y2="13" stroke="#217346" stroke-width="1.5" stroke-linecap="round"/>
-              <line x1="8" y1="17" x2="16" y2="17" stroke="#217346" stroke-width="1.5" stroke-linecap="round"/>
+              <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" fill="none" stroke="#f27a1a" stroke-width="1.5" stroke-linejoin="round"/>
             </svg>
-            Excel
+            Trendyol
           </span>
 
-          <!-- CSV pill -->
+          <!-- Hepsiburada pill -->
           <span style="display:inline-flex; align-items:center; gap:6px; padding:5px 11px; background:#f9fafb; border:0.5px solid #e5e7eb; border-radius:20px; font-size:11px; color:#374151;">
             <svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" fill="none" stroke="#6b7280" stroke-width="1.5" stroke-linejoin="round"/>
-              <polyline points="14,2 14,8 20,8" fill="none" stroke="#6b7280" stroke-width="1.5" stroke-linejoin="round"/>
+              <rect x="3" y="3" width="18" height="18" rx="2" fill="none" stroke="#ff6000" stroke-width="1.5"/>
             </svg>
-            CSV
+            Hepsiburada
           </span>
 
           <!-- PDF pill -->
@@ -1655,7 +1651,7 @@
           Trendyol ve Shopify verimi birlikte analiz edebilir miyim?
           <span class="faq-icon">+</span>
         </button>
-        <div class="faq-a">Evet. Farklı kanallardan gelen CSV/Excel dosyalarınızı tek katalogda birleştirip, 'Trendyol'da en çok satan ama Shopify'da az satan ürünleri bul' gibi AI aksiyonları verebilirsiniz.</div>
+        <div class="faq-a">Evet. Shopify, Trendyol ve Hepsiburada kataloglarınızı tek platformda birleştirip, 'Trendyol'da en çok satan ama Shopify'da az satan ürünleri bul' gibi AI aksiyonları verebilirsiniz.</div>
       </div>
 
       <div class="faq-item">
@@ -1663,7 +1659,7 @@
           Reklam harcamamla gelirimi karşılaştırabilir miyim?
           <span class="faq-icon">+</span>
         </button>
-        <div class="faq-a">Evet. Meta Ads veya Google Ads'ten indirdiğiniz CSV raporu ile satış verinizi eşleştirip ürün bazlı ROAS hesaplayabilirsiniz.</div>
+        <div class="faq-a">Evet. Meta Ads veya Google Ads raporlarınızı katalog verinizle eşleştirip ürün bazlı ROAS hesaplayabilirsiniz.</div>
       </div>
 
     </div>
@@ -2169,39 +2165,39 @@ function renderDemoTable() {
 /* ── Feature 5: Persona Commands ───────────────────────────── */
 var PERSONA_DATA = {
   kobiowner: {
-    label: 'KOBİ Sahiplerinin Yaptıkları',
+    label: 'Mağaza Sahiplerinin Yaptıkları',
     cards: [
-      { icon:'💰', title:'Aylık Ciro Raporu',   cmd:'Aylık satışları şirkete göre özetle',    desc:'Tüm satış verilerini otomatik özetler, grafik oluşturur.' },
-      { icon:'📦', title:'Stok Takibi',          cmd:'Stok 10\'un altındakileri listele',       desc:'Kritik stok seviyelerini anında tespit eder.' },
-      { icon:'👥', title:'Müşteri Analizi',      cmd:'En çok ciro yapan ilk 5 müşteriyi bul',  desc:'Hangi müşterinin değerli olduğunu gösterir.' },
-      { icon:'📊', title:'KDV Hesaplama',        cmd:'Fiyatlara %20 KDV ekle',                 desc:'Tüm kataloğa saniyeler içinde KDV uygular.' },
+      { icon:'🔍', title:'SEO Eksikleri',        cmd:'Eksik SEO title\'ı olan ürünleri bul',    desc:'Katalogdaki SEO boşluklarını anında tespit eder.' },
+      { icon:'📦', title:'Stok Takibi',          cmd:'Stok 10\'un altındaki ürünleri listele',  desc:'Kritik stok seviyelerini anında tespit eder.' },
+      { icon:'✍️', title:'Açıklama Optimizasyonu', cmd:'Kısa açıklamaları 150 kelimeye tamamla', desc:'Zayıf ürün açıklamalarını AI ile güçlendirir.' },
+      { icon:'📊', title:'Katalog Sağlığı',      cmd:'Katalog sağlık skorunu hesapla',          desc:'Tüm katalog için 0-100 sağlık puanı üretir.' },
     ]
   },
-  accountant: {
-    label: 'Mali Müşavirlerin Yaptıkları',
+  catalogmanager: {
+    label: 'Katalog Yöneticilerinin Yaptıkları',
     cards: [
-      { icon:'🧾', title:'Bordro Hesaplama',     cmd:'SGK kesintilerini hesapla, net maaşı bul', desc:'2026 parametrelerine göre otomatik hesaplar.' },
-      { icon:'📑', title:'PDF Fatura → Katalog', cmd:'Bu PDF faturayı kataloğa çevir',         desc:'OCR ile PDF\'ten veri çıkarır, kataloğa aktarır.' },
-      { icon:'⚠️', title:'Geciken Ödemeler',     cmd:'Vadesi geçmiş faturaları kırmızıya boya', desc:'Tüm vadeleri kontrol eder, gecikenleri işaretler.' },
-      { icon:'📈', title:'Dönem Karşılaştırma',  cmd:'Bu ayı geçen ayla karşılaştır',           desc:'İki dönem arasında otomatik fark analizi yapar.' },
+      { icon:'🏷️', title:'Başlık Optimizasyonu', cmd:'Zayıf başlıkları AI ile yeniden yaz',     desc:'SEO uyumlu, ikna edici başlıklar üretir.' },
+      { icon:'🔄', title:'Duplicate Temizleme',  cmd:'Tekrarlayan ürün kayıtlarını birleştir',  desc:'Duplicate handle ve SKU\'ları tespit eder.' },
+      { icon:'🌐', title:'Çok Dilli İçerik',     cmd:'Ürün açıklamalarını İngilizce\'ye çevir', desc:'Toplu çeviri ile uluslararası katalog.' },
+      { icon:'📈', title:'Kategori Analizi',     cmd:'Kategoriye göre katalog sorunlarını grupla', desc:'Sorunları koleksiyon bazında önceliklendirir.' },
     ]
   },
   opsmanager: {
     label: 'Ops Yöneticilerinin Yaptıkları',
     cards: [
-      { icon:'📋', title:'Haftalık Rapor',       cmd:'Bu haftanın KPI özetini çıkar',            desc:'Tüm metrikler tek AI aksiyonuyla haftalık rapora dönüşür.' },
-      { icon:'🔄', title:'Tekrar Temizleme',     cmd:'Tekrarlayan girişleri birleştir',           desc:'Duplicate kayıtları tespit edip siler veya birleştirir.' },
-      { icon:'⚡', title:'Otomatik Sıralama',    cmd:'Önceliğe göre sırala, acilleri üste al',   desc:'Dinamik öncelik sıralaması tek AI aksiyonuyla.' },
-      { icon:'🎯', title:'Hedef Takibi',         cmd:'Hedef altındaki departmanları işaretle',   desc:'Her departmanın hedefe göre durumunu gösterir.' },
+      { icon:'📋', title:'Toplu SEO',            cmd:'Tüm koleksiyondaki meta description\'ları doldur', desc:'Yüzlerce ürün için toplu SEO üretimi.' },
+      { icon:'🔄', title:'Veri Standardizasyonu', cmd:'Vendor isimlerini standartlaştır',         desc:'Marka ve tedarikçi isimlerini tutarlı hale getirir.' },
+      { icon:'⚡', title:'Onaylı Senkronizasyon', cmd:'Onaylanan önerileri Shopify\'a yaz',      desc:'Validation Center\'dan onaylı değişiklikleri senkronize eder.' },
+      { icon:'🎯', title:'Kanal Karşılaştırma',  cmd:'Trendyol\'da çok satan Shopify\'da az satan ürünleri bul', desc:'Çok kanallı katalog analizi.' },
     ]
   },
   startup: {
-    label: 'Operasyon Ekiplerinin Yaptıkları',
+    label: 'Büyüyen Mağazaların Yaptıkları',
     cards: [
-      { icon:'📉', title:'Churn Analizi',        cmd:'30 gün aktif olmayan kullanıcıları listele', desc:'Kayıp riski taşıyan kullanıcıları anında bulur.' },
-      { icon:'💳', title:'MRR Hesaplama',        cmd:'Aylık tekrarlayan geliri hesapla',           desc:'Abonelik verilerinden otomatik MRR çıkarır.' },
-      { icon:'🚀', title:'Cohort Hazırlama',     cmd:'Kayıt ayına göre kullanıcıları grupla',      desc:'Cohort analizi için veriyi gruplara ayırır.' },
-      { icon:'📧', title:'Outreach Listesi',     cmd:'Son 7 günde kayıt olan lead\'leri filtrele', desc:'Sıcak lead\'leri filtreler, outreach\'e hazırlar.' },
+      { icon:'🌍', title:'Uluslararası Katalog', cmd:'Tüm ürün açıklamalarını İngilizce\'ye çevir', desc:'Çok dilli katalog genişlemesi için toplu çeviri.' },
+      { icon:'📊', title:'Katalog Analizi',      cmd:'Son 30 günde eklenen ürünlerin SEO skorunu hesapla', desc:'Yeni ürünlerin veri kalitesini ölçer.' },
+      { icon:'🏷️', title:'Etiket Optimizasyonu', cmd:'Boş etiketli ürünleri bul ve doldur',         desc:'Eksik tag alanlarını AI ile tamamlar.' },
+      { icon:'📧', title:'Toplu Güncelleme',     cmd:'Seçili koleksiyondaki tüm SEO title\'ları optimize et', desc:'Koleksiyon bazında toplu SEO optimizasyonu.' },
     ]
   }
 };

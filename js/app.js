@@ -900,7 +900,7 @@ function handleFile(e) {
       if (fileNameEl) fileNameEl.textContent = file.name;
       const fileNameInputEl = document.getElementById('fileNameInput');
       if (fileNameInputEl) fileNameInputEl.value = file.name;
-      document.title = 'ExcelAI — ' + file.name;
+      document.title = 'Mocksheets — ' + file.name;
       addRecentFile(file.name);
       renderSheetTabs();
 
@@ -1016,7 +1016,7 @@ function newFile() {
   activeSheet = 'Sheet1';
   document.getElementById('fileName').textContent = name;
   document.getElementById('fileNameInput').value = name;
-  document.title = 'ExcelAI — ' + name;
+  document.title = 'Mocksheets — ' + name;
   addRecentFile(name);
   renderSheetTabs();
   buildGrid();
@@ -1078,7 +1078,7 @@ function finishRename() {
   disp.textContent = val;
   inp.style.display = 'none';
   disp.style.display = '';
-  document.title = 'ExcelAI — ' + val;
+  document.title = 'Mocksheets — ' + val;
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -1664,7 +1664,7 @@ function applyAIChanges(result) {
   );
   if (_isSystemData) {
     console.error('[applyAIChanges] Sistem verisi algılandı — dosya yüklenmemiş!');
-    if (typeof showToast === 'function') showToast('⚠️ Lütfen önce bir Excel dosyası yükleyin', 'error');
+    if (typeof showToast === 'function') showToast('⚠️ Lütfen önce bir katalog dosyası yükleyin', 'error');
     return;
   }
 
@@ -3563,7 +3563,7 @@ document.addEventListener('keydown', function(e) {
 // ── IndexedDB helpers ─────────────────────────────────────────
 function openIDB() {
   return new Promise(function(resolve, reject) {
-    var req = indexedDB.open('ExcelAI', 1);
+    var req = indexedDB.open('Mocksheets', 1);
     req.onupgradeneeded = function(e) {
       var db = e.target.result;
       if (!db.objectStoreNames.contains('files')) {
@@ -3774,7 +3774,7 @@ async function loadFileById(fileId) {
       currentFileId = fileId;
       document.getElementById('fileName').textContent        = cached.name;
       document.getElementById('fileNameInput').value         = cached.name;
-      document.title = 'ExcelAI — ' + cached.name;
+      document.title = 'Mocksheets — ' + cached.name;
       buildGrid();
       renderSheetTabs();
       // Highlight active sidebar item
@@ -3809,7 +3809,7 @@ async function loadFileById(fileId) {
     currentFileId = fileId;
     document.getElementById('fileName').textContent  = recRes.data.name;
     document.getElementById('fileNameInput').value   = recRes.data.name;
-    document.title = 'ExcelAI — ' + recRes.data.name;
+    document.title = 'Mocksheets — ' + recRes.data.name;
     buildGrid();
     renderSheetTabs();
 
