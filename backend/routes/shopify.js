@@ -481,6 +481,18 @@ router.post('/push', requireAuth, async (req, res) => {
 router.post('/ai-analyze', checkLimit, async (req, res) => {
   const { productIds, analysisType } = req.body || {};
 
+  const bulkLimit = req.plan?.max_bulk_size ?? null;
+  if (bulkLimit !== null && Array.isArray(productIds) && productIds.length > bulkLimit) {
+    const planName = req.usage?.plan === 'free' ? 'Ücretsiz' : (req.usage?.plan || 'Mevcut');
+    return res.status(402).json({
+      error: 'Plan limiti aşıldı',
+      message: `${planName} planınız tek seferde en fazla ${bulkLimit} ürün analiz edebilir.`,
+      currentPlan: req.usage?.plan,
+      limit: bulkLimit,
+      upgradeUrl: '/pricing',
+    });
+  }
+
   const { data: conn, error: connErr } = await getSupabase()
     .from('shopify_connections')
     .select('shop_domain, access_token')

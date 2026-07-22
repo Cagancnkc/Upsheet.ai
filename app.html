@@ -2391,6 +2391,12 @@ async function runShopifyAiAnalysis(analysisType) {
     });
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
+      if (res.status === 402 || res.status === 429) {
+        const msg = err.message || err.error || 'Limit doldu';
+        const goUpgrade = confirm(msg + '\n\nPlanınızı yükseltmek ister misiniz?');
+        if (goUpgrade) window.location.href = err.upgradeUrl || '/pricing';
+        return;
+      }
       throw new Error(err.error || 'Analiz başarısız');
     }
     const data = await res.json();
@@ -2409,6 +2415,7 @@ async function runShopifyAiAnalysis(analysisType) {
         decision: null,
       };
     });
+    loadUserPlan();
     showAiPreview();
   } catch (e) {
     toast('Analiz hatası: ' + e.message, 'error');
