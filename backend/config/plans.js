@@ -9,7 +9,7 @@ const PLANS = {
     max_rows: 10000,
     max_file_size_mb: 2,
     max_sheets: 1,
-    max_bulk_size: 10,
+    max_bulk_size: 5,
     integrations: true,
     auto_report: false,
     competitor_analysis: false,
