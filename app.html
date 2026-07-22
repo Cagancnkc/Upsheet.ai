@@ -405,9 +405,7 @@ async function syncShopifyData() {
     if (btn) btn.textContent = '⏳ Senkronize ediliyor...';
 
     const response = await fetch(`${API_URL}/api/shopify/sync`, {
-      headers: {
-        'Authorization': `Bearer ${getAuthToken()}`
-      }
+      headers: { ...authHeaders() }
     });
 
     if (!response.ok) throw new Error('Sync failed');
@@ -451,8 +449,13 @@ async function checkShopifyStatus() {
 
   try {
     const r = await fetch(`${API_URL}/api/shopify/status`, {
-      headers: { 'Authorization': `Bearer ${token}` }
+      headers: { ...authHeaders() }
     });
+    if (!r.ok) {
+      console.warn('[checkShopifyStatus] HTTP', r.status);
+      showConnectPanel();
+      return;
+    }
     const d = await r.json();
     if (d.connected) {
       shopifyStore = d.shop_name;
@@ -484,7 +487,7 @@ async function loadUserPlan() {
   if (!token) return;
   try {
     const res = await fetch(API_URL + '/api/usage', {
-      headers: { 'Authorization': 'Bearer ' + token }
+      headers: { ...authHeaders() }
     });
     if (!res.ok) return;
     const data = await res.json();
@@ -1221,7 +1224,7 @@ async function saveTodayHealthSnapshot(score, totalProducts) {
   try {
     await fetch(API_URL + '/api/integrations/health-snapshot', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + getAuthToken() },
+      headers: { 'Content-Type': 'application/json', ...authHeaders() },
       body: JSON.stringify({ score, totalProducts }),
     });
   } catch (e) { console.warn('Snapshot kaydedilemedi:', e); }
@@ -1234,7 +1237,7 @@ async function renderHealthTrendChart() {
   if (!token) return;
   try {
     const res = await fetch(API_URL + '/api/integrations/health-history', {
-      headers: { 'Authorization': 'Bearer ' + token },
+      headers: { ...authHeaders() },
     });
     if (res.status === 401) {
       container.innerHTML = '<p style="font-size:12px;color:#9ca3af;padding:24px 0;text-align:center;margin:0;">' +
@@ -1578,7 +1581,7 @@ async function renderAiActionsPage() {
   </div>`;
   try {
     const res = await fetch(API_URL + '/api/usage', {
-      headers: { 'Authorization': 'Bearer ' + getAuthToken() }
+      headers: { ...authHeaders() }
     });
     if (res.ok) {
       const d = await res.json();
@@ -2168,7 +2171,7 @@ async function runAIAction(actionType) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${getAuthToken()}`
+        ...authHeaders()
       },
       body: JSON.stringify({
         action: actionType,
@@ -2383,7 +2386,7 @@ async function runShopifyAiAnalysis(analysisType) {
   try {
     const res = await fetch(`${API_URL}/api/shopify/ai-analyze`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getAuthToken()}` },
+      headers: { 'Content-Type': 'application/json', ...authHeaders() },
       body: JSON.stringify({ productIds, analysisType }),
     });
     if (!res.ok) {
@@ -2516,7 +2519,7 @@ async function pushChangesToShopify(accepted) {
   try {
     const res = await fetch(`${API_URL}/api/shopify/push`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getAuthToken()}` },
+      headers: { 'Content-Type': 'application/json', ...authHeaders() },
       body: JSON.stringify({
         confirmed: true,
         changes: accepted.map(c => ({
@@ -2569,7 +2572,7 @@ async function pushToShopify(event) {
   try {
     const res = await fetch(`${API_URL}/api/shopify/push`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getAuthToken()}` },
+      headers: { 'Content-Type': 'application/json', ...authHeaders() },
       body: JSON.stringify({ confirmed: true, products: linked }),
     });
     if (!res.ok) {
@@ -2627,6 +2630,12 @@ function getAuthToken() {
     }
     return null;
   } catch { return null; }
+}
+
+function authHeaders() {
+  const token = getAuthToken();
+  if (!token) return {};
+  return { 'Authorization': 'Bearer ' + token };
 }
 
 function isGoogleUser() {
