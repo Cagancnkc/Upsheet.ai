@@ -5,9 +5,9 @@ const TRANSLATIONS = {
     'nav.login': 'Giriş Yap',
     'nav.start': 'Ücretsiz Kayıt Ol',
 
-    'hero.badge': 'Shopify için Yapay Zeka E-Ticaret Platformu',
-    'hero.title': 'Shopify Kataloğunuzu<br><em><span class="accent">AI ile Yönetin, Optimize Edin.</span></em>',
-    'hero.desc': 'Ürün başlıklarınızı, SEO alanlarınızı ve açıklamalarınızı AI analiz eder, önerileri getirir. <b style="color:var(--ink)">Siz onaylarsınız — Mocksheets Shopify\'a yazar.</b>',
+    'hero.badge': 'Shopify için AI Ürün Asistanı',
+    'hero.title': 'Tek Seferde Yüzlerce Ürününüzü Düzenleyin<br><em><span class="accent">Eksik Açıklama, SEO, Başlık — Hepsini Birden.</span></em>',
+    'hero.desc': 'Eksik açıklamaları tamamlayın, başlıkları düzeltin, SEO\'yu iyileştirin — tek tek değil, hepsini birden. <b style="color:var(--ink)">AI önerir, siz onaylarsınız, Shopify\'a otomatik yazılır.</b>',
     'hero.cta1': 'Ücretsiz Kayıt Ol',
     'hero.cta2': 'Canlı Gör →',
 
