@@ -509,16 +509,23 @@ router.post('/ai-analyze', requireAuth, async (req, res) => {
       return res.json({ suggestions: [], analyzedCount: 0 });
     }
 
-    const productSummaries = products.map((p) => ({
-      id: p.id,
-      title: p.title,
-      body_html: (p.body_html || '').slice(0, 300),
-      vendor: p.vendor,
-      product_type: p.product_type,
-      tags: p.tags,
-      seo_title: p.metafields_global_title_tag || '',
-      seo_description: p.metafields_global_description_tag || '',
-    }));
+    const productSummaries = products.map((p) => {
+      const variant = p.variants?.[0] || {};
+      return {
+        id: p.id,
+        title: p.title,
+        body_html: (p.body_html || '').replace(/<[^>]+>/g, '').slice(0, 200),
+        vendor: p.vendor,
+        product_type: p.product_type,
+        tags: p.tags,
+        seo_title: p.metafields_global_title_tag || '',
+        seo_description: p.metafields_global_description_tag || '',
+        price: variant.price || '',
+        compare_at_price: variant.compare_at_price || '',
+        inventory_quantity: variant.inventory_quantity ?? '',
+        variant_count: p.variants?.length || 1,
+      };
+    });
 
     const analysisPrompts = {
       seo: 'Her ürün için SEO başlığı (60 karakter altı) ve meta açıklaması (155 karakter altı) öner.',
@@ -528,39 +535,74 @@ router.post('/ai-analyze', requireAuth, async (req, res) => {
       all: 'Her ürün için başlık, SEO başlığı, meta açıklama ve etiket önerileri sun.',
     };
 
-    const systemPrompt = `Sen bir e-ticaret SEO ve katalog uzmanısın. Verilen Shopify ürünleri için ${
-      analysisPrompts[analysisType] || analysisPrompts.all
+    const systemPrompt = `Sen bir e-ticaret SEO ve katalog uzmanısın. Türkiye pazarına yönelik Shopify mağazaları için katalog kalitesini artırıyorsun.
+
+GÖREV: ${analysisPrompts[analysisType] || analysisPrompts.all}
+
+SEO KURALLARI (KESİNLİKLE UYGULANACAK):
+- seo_title: EN FAZLA 60 karakter. Marka adı + ana keyword + farklılaştırıcı özellik.
+- seo_description: EN FAZLA 155 karakter. Faydayı vurgula, call-to-action ekle.
+- title: Marka + Model + Özellik formatı. 70 karakter altı.
+- tags: Küçük harf, Türkçe keyword'ler, virgülle ayır. Kategori + renk + malzeme + kullanım.
+
+ÖRNEK ÇIKTI:
+[
+  {"product_id": 9876543210, "field": "seo_title", "old_value": "Mavi Kazak", "new_value": "Erkek Mavi Yün Kazak | Kışlık | MarkaAdı"},
+  {"product_id": 9876543210, "field": "seo_description", "old_value": "", "new_value": "Premium yün karışımlı erkek kazak. Soğuk günlerde konfor sağlar. Ücretsiz kargo ve kolay iade."},
+  {"product_id": 9876543210, "field": "tags", "old_value": "kazak", "new_value": "kazak, erkek, yün, kışlık, mavi, premium"}
+]
+
+ÇIKTI KURALLARI:
+- SADECE JSON dizisi döndür, başka hiçbir metin ekleme
+- Her öneri için old_value VE new_value zorunlu
+- Değişmeyecek alanlar için öneri oluşturma
+- field değeri KESİNLİKLE şunlardan biri: title, seo_title, seo_description, tags`;
+
+    const BATCH_SIZE = 10;
+    const batches = [];
+    for (let i = 0; i < productSummaries.length; i += BATCH_SIZE) {
+      batches.push(productSummaries.slice(i, i + BATCH_SIZE));
     }
-SADECE aşağıdaki JSON dizisi formatında cevap ver, başka hiçbir metin ekleme:
-[{"product_id": 123, "field": "title", "old_value": "eski değer", "new_value": "yeni değer"}]
 
-field değeri KESİNLİKLE şunlardan biri olmalı: title, seo_title, seo_description, tags`;
+    const batchResults = await Promise.all(
+      batches.map((batch) =>
+        getAnthropic().messages.create({
+          model: 'claude-sonnet-4-6',
+          max_tokens: 2000,
+          temperature: 0,
+          system: [{ type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } }],
+          messages: [
+            { role: 'user', content: `Bu ürünleri analiz et:\n\n${JSON.stringify(batch)}` },
+          ],
+        })
+      )
+    );
 
-    const message = await getAnthropic().messages.create({
-      model: 'claude-sonnet-4-6',
-      max_tokens: 4000,
-      system: systemPrompt,
-      messages: [
-        { role: 'user', content: `Bu ürünleri analiz et:\n\n${JSON.stringify(productSummaries)}` },
-      ],
-    });
-
-    const responseText = message.content[0]?.text || '';
-    let suggestions;
-    try {
-      const jsonMatch = responseText.match(/\[[\s\S]*\]/);
-      suggestions = JSON.parse(jsonMatch ? jsonMatch[0] : responseText);
-    } catch (parseErr) {
-      return res.status(500).json({
-        error: 'AI cevabı işlenemedi',
-        raw: responseText.slice(0, 500),
-      });
+    const allSuggestionsRaw = [];
+    for (const msg of batchResults) {
+      const text = msg.content[0]?.text || '';
+      try {
+        const match = text.match(/\[[\s\S]*\]/);
+        const parsed = JSON.parse(match ? match[0] : text);
+        if (Array.isArray(parsed)) allSuggestionsRaw.push(...parsed);
+      } catch {
+        console.warn('[shopify ai-analyze] batch parse hatası:', text.slice(0, 200));
+      }
     }
 
-    // sanitize: sadece izin verilen field'lar
     const ALLOWED = new Set(['title', 'seo_title', 'seo_description', 'tags']);
-    suggestions = (Array.isArray(suggestions) ? suggestions : [])
-      .filter((s) => s && s.product_id && ALLOWED.has(s.field));
+    const CHAR_LIMITS = { seo_title: 60, seo_description: 155, title: 70 };
+
+    const suggestions = allSuggestionsRaw
+      .filter((s) => s && s.product_id && ALLOWED.has(s.field))
+      .filter((s) => s.new_value && s.new_value !== s.old_value)
+      .map((s) => {
+        const limit = CHAR_LIMITS[s.field];
+        if (limit && typeof s.new_value === 'string' && s.new_value.length > limit) {
+          s.new_value = s.new_value.slice(0, limit).trimEnd();
+        }
+        return s;
+      });
 
     res.json({ suggestions, analyzedCount: products.length });
   } catch (e) {
