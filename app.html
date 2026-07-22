@@ -669,15 +669,15 @@ function renderDashboard() {
       </div>
 
       <div style="position:relative;margin-bottom:24px;">
-        <div id="dash-prompt-card" style="background:#111827;border-radius:20px;padding:4px;box-shadow:0 8px 32px rgba(17,24,39,.18);transition:box-shadow .2s ease;">
-          <div style="background:#1f2937;border-radius:16px;padding:16px 18px;display:flex;align-items:flex-end;gap:12px;">
+        <div id="dash-prompt-card" style="background:#fff;border-radius:20px;padding:4px;box-shadow:0 4px 16px rgba(0,0,0,.08);border:0.5px solid #e5e7eb;transition:box-shadow .2s ease;">
+          <div style="background:#f9fafb;border-radius:16px;padding:16px 18px;display:flex;align-items:flex-end;gap:12px;">
             <div style="width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,#16a34a,#059669);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
               <i class="ti ti-sparkles" style="font-size:16px;color:#fff;"></i>
             </div>
             <textarea id="dash-prompt-input" rows="1" placeholder="Kataloğunuzla ilgili ne yapmak istersiniz?"
-              style="flex:1;background:transparent;border:none;outline:none;resize:none;color:#f9fafb;font-size:14px;line-height:22px;font-family:inherit;max-height:120px;overflow-y:hidden;padding:5px 0;"></textarea>
+              style="flex:1;background:transparent;border:none;outline:none;resize:none;color:#111827;font-size:14px;line-height:22px;font-family:inherit;max-height:120px;overflow-y:hidden;padding:5px 0;"></textarea>
             <button id="dash-prompt-send" type="button"
-              style="width:36px;height:36px;border-radius:12px;border:none;background:#16a34a;color:#fff;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:background .15s ease,transform .1s ease;">
+              style="width:36px;height:36px;border-radius:12px;border:none;background:#111827;color:#fff;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:background .15s ease,transform .1s ease;">
               <i class="ti ti-arrow-up" style="font-size:16px;"></i>
             </button>
           </div>
@@ -1129,10 +1129,10 @@ function wireDashPromptBar() {
   });
 
   input.addEventListener('focus', function() {
-    card.style.boxShadow = '0 8px 32px rgba(22,163,74,.25)';
+    card.style.boxShadow = '0 4px 20px rgba(0,0,0,.14)';
   });
   input.addEventListener('blur', function() {
-    card.style.boxShadow = '0 8px 32px rgba(17,24,39,.18)';
+    card.style.boxShadow = '0 4px 16px rgba(0,0,0,.08)';
   });
 
   input.addEventListener('keydown', function(e) {
@@ -1141,27 +1141,27 @@ function wireDashPromptBar() {
 
   sendBtn.addEventListener('click', submitDashPrompt);
   sendBtn.addEventListener('mouseenter', function() {
-    this.style.background = '#15803d'; this.style.transform = 'scale(1.05)';
+    this.style.background = '#374151'; this.style.transform = 'scale(1.05)';
   });
   sendBtn.addEventListener('mouseleave', function() {
-    this.style.background = '#16a34a'; this.style.transform = 'scale(1)';
+    this.style.background = '#111827'; this.style.transform = 'scale(1)';
   });
 
   if (chipsEl) {
     DASH_QUICK_PRESETS.slice(0, 4).forEach(function(preset) {
       const chip = document.createElement('button');
       chip.type = 'button';
-      chip.style.cssText = 'padding:6px 12px;border:0.5px solid rgba(255,255,255,.12);border-radius:999px;' +
-        'background:rgba(255,255,255,.04);color:#d1d5db;font-size:11px;cursor:pointer;' +
+      chip.style.cssText = 'padding:6px 12px;border:0.5px solid #e5e7eb;border-radius:999px;' +
+        'background:#fff;color:#374151;font-size:11px;cursor:pointer;' +
         'transition:background .15s ease,border-color .15s ease;';
       chip.textContent = preset.label;
       chip.addEventListener('mouseenter', function() {
-        this.style.background = 'rgba(22,163,74,.15)';
-        this.style.borderColor = 'rgba(22,163,74,.4)';
+        this.style.background = '#f0fdf4';
+        this.style.borderColor = '#86efac';
       });
       chip.addEventListener('mouseleave', function() {
-        this.style.background = 'rgba(255,255,255,.04)';
-        this.style.borderColor = 'rgba(255,255,255,.12)';
+        this.style.background = '#fff';
+        this.style.borderColor = '#e5e7eb';
       });
       chip.addEventListener('click', function() { runPromptBarAction(preset.action, preset.label); });
       chipsEl.appendChild(chip);
