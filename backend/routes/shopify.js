@@ -5,6 +5,7 @@ const crypto = require('crypto');
 const Anthropic = require('@anthropic-ai/sdk');
 const { createClient } = require('@supabase/supabase-js');
 const { encrypt, decrypt } = require('../services/encryption');
+const { checkLimit, incrementUsage } = require('../middleware/limits');
 
 let _anthropic = null;
 function getAnthropic() {
@@ -477,7 +478,7 @@ router.post('/push', requireAuth, async (req, res) => {
 });
 
 // ─── POST /api/shopify/ai-analyze ────────────────────────────────────────────
-router.post('/ai-analyze', requireAuth, async (req, res) => {
+router.post('/ai-analyze', checkLimit, async (req, res) => {
   const { productIds, analysisType } = req.body || {};
 
   const { data: conn, error: connErr } = await getSupabase()
@@ -604,6 +605,7 @@ SEO KURALLARI (KESİNLİKLE UYGULANACAK):
         return s;
       });
 
+    await incrementUsage(req.user.id);
     res.json({ suggestions, analyzedCount: products.length });
   } catch (e) {
     console.error('[shopify ai-analyze]', e.message);
@@ -640,7 +642,7 @@ router.post('/webhooks/customers-data-request', (req, res) => {
   try {
     if (!verifyShopifyWebhook(req)) return res.status(401).send('Unauthorized');
     const payload = JSON.parse(req.body.toString());
-    console.log('[GDPR] customers/data_request:', payload.shop_domain, payload.customer?.id);
+    console.log('[GDPR] customers/data_request:', payload.shop_domain);
     // Upsheet does not store customer-level personal data — only merchant-level
     // product/order metadata. Nothing to export; acknowledge immediately.
     res.status(200).send('OK');
@@ -656,7 +658,7 @@ router.post('/webhooks/customers-redact', (req, res) => {
   try {
     if (!verifyShopifyWebhook(req)) return res.status(401).send('Unauthorized');
     const payload = JSON.parse(req.body.toString());
-    console.log('[GDPR] customers/redact:', payload.shop_domain, payload.customer?.id);
+    console.log('[GDPR] customers/redact:', payload.shop_domain);
     // No customer-level personal data stored — acknowledge immediately.
     res.status(200).send('OK');
   } catch (e) {

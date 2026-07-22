@@ -13,16 +13,10 @@ function _getSb() {
 
 async function requireAuth(req, res, next) {
   const token = req.headers.authorization?.replace('Bearer ', '');
-  if (!token) {
-    console.warn('[requireAuth] Token eksik — header:', req.headers.authorization);
-    return res.status(401).json({ error: 'Giriş gerekli' });
-  }
+  if (!token) return res.status(401).json({ error: 'Giriş gerekli' });
   const sb = _getSb();
   const { data: { user }, error } = await sb.auth.getUser(token);
-  if (error || !user) {
-    console.warn('[requireAuth] Token geçersiz —', error?.message || 'user null');
-    return res.status(401).json({ error: 'Geçersiz token' });
-  }
+  if (error || !user) return res.status(401).json({ error: 'Geçersiz token' });
   req.user = user;
   next();
 }

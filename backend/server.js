@@ -670,16 +670,8 @@ app.post('/api/chat', checkLimit, async (req, res) => {
   }
 });
 
-app.post('/api/improve-prompt', async (req, res) => {
+app.post('/api/improve-prompt', checkLimit, async (req, res) => {
   try {
-    const auth = req.headers.authorization;
-    if (!auth || !auth.startsWith('Bearer '))
-      return res.status(401).json({ error: 'Unauthorized' });
-    const token = auth.split(' ')[1];
-    const sb = getSbForAuth();
-    const { data: { user }, error: authErr } = await sb.auth.getUser(token);
-    if (authErr || !user) return res.status(401).json({ error: 'Geçersiz oturum.' });
-
     const { command, sheetHeaders } = req.body;
     if (!command || !command.trim())
       return res.status(400).json({ error: 'Komut boş olamaz' });
