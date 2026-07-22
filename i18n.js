@@ -5,7 +5,7 @@ const TRANSLATIONS = {
     'nav.login': 'Giriş Yap',
     'nav.start': 'Ücretsiz Kayıt Ol',
 
-    'hero.badge': 'Shopify için AI Katalog Platformu',
+    'hero.badge': 'Shopify için Yapay Zeka E-Ticaret Platformu',
     'hero.title': 'Shopify Kataloğunuzu<br><em><span class="accent">AI ile Yönetin, Optimize Edin.</span></em>',
     'hero.desc': 'Ürün başlıklarınızı, SEO alanlarınızı ve açıklamalarınızı AI analiz eder, önerileri getirir. <b style="color:var(--ink)">Siz onaylarsınız — Mocksheets Shopify\'a yazar.</b>',
     'hero.cta1': 'Ücretsiz Kayıt Ol',
