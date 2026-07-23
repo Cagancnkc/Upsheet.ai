@@ -72,6 +72,24 @@ const PLANS = {
     support: 'priority',
     color: '#059669',
     badge: '🏢'
+  },
+  ultra: {
+    name: 'Ultra',
+    displayName: 'Ultra',
+    ai_commands_per_month: Infinity,
+    ai_commands_per_day: Infinity,
+    max_rows: 100000,
+    max_file_size_mb: 50,
+    max_sheets: 100,
+    max_bulk_size: null,
+    integrations: true,
+    auto_report: true,
+    competitor_analysis: true,
+    accounting_formulas: true,
+    export_formats: ['csv', 'xlsx', 'json', 'pdf'],
+    support: 'priority',
+    color: '#7C3AED',
+    badge: '🚀'
   }
 };
 

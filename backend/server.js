@@ -157,6 +157,7 @@ app.use(cors({
   credentials: true
 }));
 app.use('/api/shopify/webhooks', express.raw({ type: 'application/json' }));
+app.use('/api/billing/webhook', express.raw({ type: 'application/json' }));
 app.use(express.json({ limit: '2mb' }));
 
 const rateLimit = require('express-rate-limit');
@@ -506,6 +507,8 @@ app.get('/api/integrations/:integration/connect', async (req, res, next) => {
 app.use('/api/integrations', checkLimit, integrationsRouter);
 app.use('/api/automations', automationsRouter);
 app.use('/api/stripe', stripeRouter);
+const billingRouter = require('./routes/billing');
+app.use('/api/billing', billingRouter);
 app.use('/api/subscription', subscriptionRouter);
 const contactRouter = require('./routes/contact');
 app.use('/api/contact', contactRouter);

@@ -51,27 +51,60 @@ function getCurrentUser() {
   } catch { return null; }
 }
 
+// ── Auth token yardımcısı ─────────────────────────
+function _getAuthToken() {
+  try {
+    const key = Object.keys(localStorage).find(k => k.startsWith('sb-') && k.endsWith('-auth-token'));
+    if (!key) return null;
+    return JSON.parse(localStorage.getItem(key))?.access_token || null;
+  } catch { return null; }
+}
+
 // ── Ana checkout fonksiyonu ──────────────────────
 async function startCheckout(plan, period) {
   const safePeriod = period || 'monthly';
+  const user = getCurrentUser();
+
+  if (!user) {
+    localStorage.setItem('pending_checkout', JSON.stringify({
+      plan, period: safePeriod, timestamp: Date.now()
+    }));
+    window.location.href = 'auth.html?redirect=checkout&plan=' +
+      plan + '&period=' + safePeriod;
+    return;
+  }
+
+  // Polar checkout (birincil yol)
+  try {
+    const token = _getAuthToken();
+    if (token) {
+      const res = await fetch(_PAY_API + '/api/billing/checkout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        },
+        body: JSON.stringify({ plan }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.checkoutUrl) {
+          window.location.href = data.checkoutUrl;
+          return;
+        }
+      }
+    }
+  } catch (e) {
+    console.warn('[Polar checkout] hata, Stripe fallback devrede:', e);
+  }
+
+  // Fallback: Stripe
   await loadStripeLinks();
   const link = STRIPE_LINKS[plan]?.[safePeriod];
   const info = PLAN_INFO[plan]?.[safePeriod];
 
   if (!link) {
     showCheckoutError('Ödeme linki henüz yapılandırılmadı. Lütfen daha sonra tekrar deneyin.');
-    return;
-  }
-
-  const user = getCurrentUser();
-
-  if (!user) {
-    localStorage.setItem('pending_checkout', JSON.stringify({
-      plan, period: safePeriod, link,
-      timestamp: Date.now()
-    }));
-    window.location.href = 'auth.html?redirect=checkout&plan=' +
-      plan + '&period=' + safePeriod;
     return;
   }
 
