@@ -26,8 +26,8 @@ async function authenticate(req, res) {
 }
 
 const POLAR_PRODUCT_IDS = {
-  pro:   process.env.POLAR_PRODUCT_ID_PRO,
-  ultra: process.env.POLAR_PRODUCT_ID_ULTRA,
+  pro:         { monthly: process.env.POLAR_PRODUCT_ID_PRO_MONTHLY,  yearly: process.env.POLAR_PRODUCT_ID_PRO_YEARLY  },
+  ultra:       { monthly: process.env.POLAR_PRODUCT_ID_ULTRA_MONTHLY, yearly: process.env.POLAR_PRODUCT_ID_ULTRA_YEARLY },
 };
 
 // POST /api/billing/checkout
@@ -36,8 +36,9 @@ router.post('/checkout', async (req, res) => {
     const user = await authenticate(req, res);
     if (!user) return;
 
-    const { plan } = req.body;
-    const productId = POLAR_PRODUCT_IDS[plan];
+    const { plan, period } = req.body;
+    const safePeriod = (period === 'yearly') ? 'yearly' : 'monthly';
+    const productId = POLAR_PRODUCT_IDS[plan]?.[safePeriod];
 
     if (!productId) {
       return res.status(400).json({ error: 'Geçersiz plan veya ürün ID tanımlı değil' });
@@ -50,6 +51,7 @@ router.post('/checkout', async (req, res) => {
       metadata: {
         mocksheets_user_id: user.id,
         plan,
+        period: safePeriod,
       },
     });
 

@@ -84,7 +84,7 @@ async function startCheckout(plan, period) {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ' + token
         },
-        body: JSON.stringify({ plan }),
+        body: JSON.stringify({ plan, period: safePeriod }),
       });
       if (res.ok) {
         const data = await res.json();
