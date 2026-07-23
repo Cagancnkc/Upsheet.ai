@@ -48,7 +48,8 @@
   "mainEntity":[
     {"@type":"Question","name":"Shopify'ın kendi CSV export/import yöntemiyle farkı ne?","acceptedAnswer":{"@type":"Answer","text":"Shopify'ın CSV yöntemi elle düzenleme gerektirir — dosyayı indirip, değerleri kendiniz düzeltip, geri yüklemeniz gerekir. Mocksheets bu tespit ve düzeltme önerisini otomatik yapar; her öneriyi eski/yeni karşılaştırmalı olarak görebilirsiniz."}},
     {"@type":"Question","name":"Yanlışlıkla yanlış bir handle'ı değiştirir mi?","acceptedAnswer":{"@type":"Answer","text":"Hayır — hiçbir değişiklik sizin onayınız olmadan Shopify'a yazılmaz, her öneriyi eski/yeni handle karşılaştırmalı görürsünüz. Beğenmediğinizi atlamak veya düzenlemek mümkündür."}},
-    {"@type":"Question","name":"SKU duplicate'lerini de buluyor mu?","acceptedAnswer":{"@type":"Answer","text":"Evet, Katalog Kontrolü SKU ve başlık tekrarlarını da tespit eder. Handle duplicate tespitinin yanı sıra aynı SKU'ya sahip birden fazla ürünü de listeler."}}
+    {"@type":"Question","name":"SKU duplicate'lerini de buluyor mu?","acceptedAnswer":{"@type":"Answer","text":"Evet, Katalog Kontrolü SKU ve başlık tekrarlarını da tespit eder. Handle duplicate tespitinin yanı sıra aynı SKU'ya sahip birden fazla ürünü de listeler."}},
+    {"@type":"Question","name":"Ürün başlığını değiştirince URL'i de otomatik günceller mi?","acceptedAnswer":{"@type":"Answer","text":"Shopify'ın kendisi bunu otomatik yapmıyor — ürün başlığını güncellediğinizde handle (URL kısmı) eski değerinde kalır. Mocksheets bu tutarsızlığı tespit edip size bir düzeltme önerisi sunar, ama son kararı siz verirsiniz."}}
   ]
 }
 </script>
@@ -112,6 +113,7 @@
         <p>Yüzlerce ürünü aynı anda yüklerken veya kopyalarken, her ürünün handle'ı (URL kısmı) ve SEO meta başlığı bir öncekiyle karışabiliyor. Sonuç: her ürünün URL'sinde <b>"-copy"</b> gibi eklerin kaldığı, meta başlığın yanlış ürüne ait göründüğü bir katalog.</p>
         <p>Bunu manuel bulmak, yüzlerce ürünü tek tek kontrol etmek anlamına geliyor. Aynı handle'a sahip iki ürün Shopify'da aynı URL'e işaret eder — bu hem SEO çakışması hem de kafa karıştırıcı bir alışveriş deneyimi demek.</p>
         <p>Mocksheets Katalog Kontrolü, handle ve başlık tekrarlarını otomatik bulur, AI doğru/benzersiz handle önerisi sunar.</p>
+        <p>Ayrıca, ürün adını değiştirdiğinizde Shopify handle'ı (URL'i) otomatik güncellemiyor — bu değişikliği elle yapmazsanız, eski ve yeni başlık arasında bir tutarsızlık oluşabiliyor. Mocksheets bu tür uyumsuzlukları da tespit ediyor.</p>
       </div>
       <div class="problem-aside">
         <h4>Duplicate Handle'ın Zararları</h4>
@@ -167,6 +169,7 @@
       <details class="faq-item"><summary>Shopify'ın kendi CSV export/import yöntemiyle farkı ne?</summary><div class="faq-a">Shopify'ın CSV yöntemi elle düzenleme gerektirir — dosyayı indirip, değerleri kendiniz düzeltip, geri yüklemeniz gerekir. Yüzlerce satır içinden duplicate'leri elle bulmak ciddi zaman alır. Mocksheets bu tespit ve düzeltme önerisini otomatik yapar; her öneriyi eski/yeni handle karşılaştırmalı olarak görürsünüz.</div></details>
       <details class="faq-item"><summary>Yanlışlıkla yanlış bir handle'ı değiştirir mi?</summary><div class="faq-a">Hayır — hiçbir değişiklik sizin onayınız olmadan Shopify'a yazılmaz. Her öneri "kabul et / atla / düzenle" seçenekleriyle önünüze gelir. Beğenmediğiniz öneriyi kolayca değiştirebilir ya da atlayabilirsiniz.</div></details>
       <details class="faq-item"><summary>SKU duplicate'lerini de buluyor mu?</summary><div class="faq-a">Evet, Katalog Kontrolü SKU ve başlık tekrarlarını da tespit eder. Handle duplicate tespitinin yanı sıra aynı SKU'ya sahip birden fazla ürünü de listeler — toplu yükleme hatalarını tek yerden görürsünüz.</div></details>
+      <details class="faq-item"><summary>Ürün başlığını değiştirince URL'i de otomatik günceller mi?</summary><div class="faq-a">Shopify'ın kendisi bunu otomatik yapmıyor — ürün başlığını güncellediğinizde handle (URL kısmı) eski değerinde kalır. Mocksheets bu tutarsızlığı tespit edip size bir düzeltme önerisi sunar, ama son kararı siz verirsiniz (URL değişikliği eski linkleri etkileyebilir, dikkatli olunması gereken bir işlem).</div></details>
     </div>
   </div>
 </section>
