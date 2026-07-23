@@ -1764,8 +1764,88 @@ function renderSettingsPage() {
         <p style="font-size:11px;color:#6b7280;margin:0;">Pro Max · Sınırsız</p>
       </div>
     </div>
+
+    <div style="margin-top:32px;padding-top:24px;border-top:0.5px solid #e5e7eb;">
+      <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 4px;">AI Görünürlük Takibi</p>
+      <p style="font-size:12px;color:#6b7280;margin:0 0 16px;">ChatGPT/Perplexity'ye sorduğunuz sonuçları buraya kaydedin</p>
+
+      <div style="display:grid;grid-template-columns:1fr 140px;gap:8px;margin-bottom:8px;">
+        <input id="visibility-query-input" type="text"
+          placeholder="Sorduğunuz soru (örn: en iyi Shopify SEO uygulaması)"
+          style="padding:8px 12px;border:0.5px solid #e5e7eb;border-radius:10px;font-size:13px;"/>
+        <select id="visibility-platform-select"
+          style="padding:8px 12px;border:0.5px solid #e5e7eb;border-radius:10px;font-size:13px;">
+          <option value="chatgpt">ChatGPT</option>
+          <option value="perplexity">Perplexity</option>
+          <option value="claude">Claude</option>
+          <option value="gemini">Gemini</option>
+        </select>
+      </div>
+
+      <div style="display:flex;gap:8px;margin-bottom:16px;">
+        <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:#374151;">
+          <input id="visibility-mentioned-checkbox" type="checkbox"/> Mocksheets geçti mi?
+        </label>
+        <input id="visibility-note-input" type="text" placeholder="Not (opsiyonel, örn: 3. sırada)"
+          style="flex:1;padding:6px 10px;border:0.5px solid #e5e7eb;border-radius:8px;font-size:12px;"/>
+        <button id="visibility-save-btn" type="button"
+          style="padding:6px 16px;background:#16a34a;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;">
+          Kaydet
+        </button>
+      </div>
+
+      <div id="visibility-checks-list" style="display:flex;flex-direction:column;gap:8px;"></div>
+    </div>
   </div>`;
+  loadVisibilityChecks();
 }
+
+async function loadVisibilityChecks() {
+  const container = document.getElementById('visibility-checks-list');
+  if (!container) return;
+  try {
+    const res = await fetch(API_URL + '/api/integrations/ai-visibility-checks', { headers: authHeaders() });
+    const data = await res.json();
+    if (!data.checks || data.checks.length === 0) {
+      container.innerHTML = '<p style="font-size:12px;color:#9ca3af;">Henüz kayıt yok</p>';
+      return;
+    }
+    container.innerHTML = data.checks.map(c => {
+      const date = new Date(c.checked_at).toLocaleDateString('tr-TR');
+      const badge = c.mocksheets_mentioned
+        ? '<span style="font-size:10px;padding:2px 8px;border-radius:999px;background:#dcfce7;color:#16a34a;">✓ Geçti</span>'
+        : '<span style="font-size:10px;padding:2px 8px;border-radius:999px;background:#fef2f2;color:#dc2626;">✗ Geçmedi</span>';
+      return '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border:0.5px solid #e5e7eb;border-radius:10px;">' +
+        '<div><p style="font-size:12px;color:#111827;margin:0 0 2px;">' + c.query_text + '</p>' +
+        '<p style="font-size:10px;color:#9ca3af;margin:0;">' + c.platform + ' — ' + date +
+        (c.position_note ? ' — ' + c.position_note : '') + '</p></div>' + badge + '</div>';
+    }).join('');
+  } catch (e) {
+    container.innerHTML = '<p style="font-size:12px;color:#dc2626;">Yüklenemedi</p>';
+  }
+}
+
+document.addEventListener('click', async function(e) {
+  if (e.target.id !== 'visibility-save-btn') return;
+  const query = document.getElementById('visibility-query-input')?.value.trim();
+  if (!query) return;
+  const platform = document.getElementById('visibility-platform-select')?.value;
+  const mentioned = document.getElementById('visibility-mentioned-checkbox')?.checked;
+  const note = document.getElementById('visibility-note-input')?.value.trim();
+  try {
+    await fetch(API_URL + '/api/integrations/ai-visibility-check', {
+      method: 'POST',
+      headers: { ...authHeaders(), 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query_text: query, platform, mocksheets_mentioned: mentioned, position_note: note }),
+    });
+    document.getElementById('visibility-query-input').value = '';
+    document.getElementById('visibility-note-input').value = '';
+    document.getElementById('visibility-mentioned-checkbox').checked = false;
+    loadVisibilityChecks();
+  } catch (e) {
+    alert('Kaydedilemedi: ' + e.message);
+  }
+});
 
 // ═══════════════════════════════════════════════════════════════════════
 // UI UPDATES

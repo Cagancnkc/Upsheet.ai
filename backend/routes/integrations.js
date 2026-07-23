@@ -2290,4 +2290,31 @@ router.get('/health-history', requireAuth, async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+router.post('/ai-visibility-check', requireAuth, async (req, res) => {
+  try {
+    const { query_text, platform, mocksheets_mentioned, position_note } = req.body;
+    const sb = _getSb();
+    const { data, error } = await sb
+      .from('ai_visibility_checks')
+      .insert({ user_id: req.user.id, query_text, platform, mocksheets_mentioned, position_note })
+      .select().single();
+    if (error) throw error;
+    res.json(data);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+router.get('/ai-visibility-checks', requireAuth, async (req, res) => {
+  try {
+    const sb = _getSb();
+    const { data, error } = await sb
+      .from('ai_visibility_checks')
+      .select('*')
+      .eq('user_id', req.user.id)
+      .order('checked_at', { ascending: false })
+      .limit(50);
+    if (error) throw error;
+    res.json({ checks: data || [] });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
 module.exports = router;
