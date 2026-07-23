@@ -2,7 +2,6 @@
 const express = require('express');
 const router = express.Router();
 const { createClient } = require('@supabase/supabase-js');
-const { getPolar } = require('../services/polar');
 const { validateEvent, WebhookVerificationError } = require('@polar-sh/sdk/webhooks');
 
 function getSb() {
@@ -25,9 +24,9 @@ async function authenticate(req, res) {
   return user;
 }
 
-const POLAR_PRODUCT_IDS = {
-  pro:         { monthly: process.env.POLAR_PRODUCT_ID_PRO_MONTHLY,  yearly: process.env.POLAR_PRODUCT_ID_PRO_YEARLY  },
-  ultra:       { monthly: process.env.POLAR_PRODUCT_ID_ULTRA_MONTHLY, yearly: process.env.POLAR_PRODUCT_ID_ULTRA_YEARLY },
+const POLAR_CHECKOUT_LINKS = {
+  pro:   { monthly: process.env.POLAR_PRODUCT_ID_PRO_MONTHLY,   yearly: process.env.POLAR_PRODUCT_ID_PRO_YEARLY   },
+  ultra: { monthly: process.env.POLAR_PRODUCT_ID_ULTRA_MONTHLY, yearly: process.env.POLAR_PRODUCT_ID_ULTRA_YEARLY },
 };
 
 // POST /api/billing/checkout
@@ -38,24 +37,13 @@ router.post('/checkout', async (req, res) => {
 
     const { plan, period } = req.body;
     const safePeriod = (period === 'yearly') ? 'yearly' : 'monthly';
-    const productId = POLAR_PRODUCT_IDS[plan]?.[safePeriod];
+    const checkoutUrl = POLAR_CHECKOUT_LINKS[plan]?.[safePeriod];
 
-    if (!productId) {
-      return res.status(400).json({ error: 'Geçersiz plan veya ürün ID tanımlı değil' });
+    if (!checkoutUrl) {
+      return res.status(400).json({ error: 'Geçersiz plan veya checkout linki tanımlı değil' });
     }
 
-    const checkout = await getPolar().checkouts.create({
-      products: [{ productId }],
-      customerEmail: user.email,
-      successUrl: 'https://www.mocksheets.com/app?polar_checkout=success',
-      metadata: {
-        mocksheets_user_id: user.id,
-        plan,
-        period: safePeriod,
-      },
-    });
-
-    res.json({ checkoutUrl: checkout.url });
+    res.json({ checkoutUrl });
   } catch (e) {
     console.error('[Polar checkout] hata:', e);
     res.status(500).json({ error: e.message });
