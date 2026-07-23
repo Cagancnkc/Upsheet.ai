@@ -560,16 +560,17 @@ SEO KURALLARI (KESİNLİKLE UYGULANACAK):
 
 ÖRNEK ÇIKTI:
 [
-  {"product_id": 9876543210, "field": "seo_title", "old_value": "Mavi Kazak", "new_value": "Erkek Mavi Yün Kazak | Kışlık | MarkaAdı"},
-  {"product_id": 9876543210, "field": "seo_description", "old_value": "", "new_value": "Premium yün karışımlı erkek kazak. Soğuk günlerde konfor sağlar. Ücretsiz kargo ve kolay iade."},
-  {"product_id": 9876543210, "field": "tags", "old_value": "kazak", "new_value": "kazak, erkek, yün, kışlık, mavi, premium"}
+  {"product_id": 9876543210, "field": "seo_title", "old_value": "Mavi Kazak", "new_value": "Erkek Mavi Yün Kazak | Kışlık | MarkaAdı", "reason": "Başlık 10 karakterdi, SEO için 40-60 karakter önerilir"},
+  {"product_id": 9876543210, "field": "seo_description", "old_value": "", "new_value": "Premium yün karışımlı erkek kazak. Soğuk günlerde konfor sağlar. Ücretsiz kargo ve kolay iade.", "reason": "Meta açıklama eksikti, tıklama oranını artırmak için oluşturuldu"},
+  {"product_id": 9876543210, "field": "tags", "old_value": "kazak", "new_value": "kazak, erkek, yün, kışlık, mavi, premium", "reason": "Tek etiket vardı, arama görünürlüğü için genişletildi"}
 ]
 
 ÇIKTI KURALLARI:
 - SADECE JSON dizisi döndür, başka hiçbir metin ekleme
 - Her öneri için old_value VE new_value zorunlu
 - Değişmeyecek alanlar için öneri oluşturma
-- field değeri KESİNLİKLE şunlardan biri: title, seo_title, seo_description, tags`;
+- field değeri KESİNLİKLE şunlardan biri: title, seo_title, seo_description, tags
+- reason alanı zorunlu: DEĞİŞİKLİĞİN NEDENİNİ 10-15 kelimeyle, kullanıcıya hitap eden basit bir dille açıkla. Teknik jargon kullanma. Örnek: "Başlık 15 karakterdi, SEO için 40-60 karakter arası önerilir"`;
 
     const BATCH_SIZE = 10;
     const batches = [];

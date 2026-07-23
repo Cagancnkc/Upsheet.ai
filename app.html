@@ -2492,6 +2492,7 @@ async function runShopifyAiAnalysis(analysisType) {
         field: s.field,
         oldValue: s.old_value || '',
         newValue: s.new_value || '',
+        reason: s.reason || '',
         decision: null,
       };
     });
@@ -2570,6 +2571,9 @@ function showAiPreview() {
           <div class="aip-diff-arrow"><i class="ti ti-arrow-down"></i></div>
           <div class="aip-diff-new">${newHtml}</div>
         </div>
+        ${c.reason
+          ? `<div style="display:flex;align-items:flex-start;gap:6px;padding:8px 10px;background:#eff6ff;border-radius:8px;margin:0 0 10px;"><i class="ti ti-info-circle" style="font-size:13px;color:#3b82f6;margin-top:1px;flex-shrink:0;"></i><span style="font-size:11px;color:#1e40af;line-height:1.5;">${escapeHtml(c.reason)}</span></div>`
+          : ''}
         <div class="aip-actions">
           <button class="aip-btn-reject ${c.decision === 'reject' ? 'active' : ''}" onclick="toggleChangeDecision(${i}, 'reject')">
             <i class="ti ti-x"></i> Reddet
