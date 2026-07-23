@@ -305,6 +305,14 @@ let exportHistory = [];
 let syncHistory = [];
 let viewMode = 'table';
 let _pendingAiChanges = []; // [{ shopifyProductId, productTitle, field, oldValue, newValue, decision }]
+const SEO_CHAR_LIMITS = {
+  seo_title: { max: 60, warn: 50, label: 'SEO Başlığı' },
+  seo_description: { max: 160, warn: 145, label: 'Meta Açıklama' },
+  title: { max: 70, warn: 60, label: 'Ürün Başlığı' },
+};
+function getCharLimitInfo(field) {
+  return SEO_CHAR_LIMITS[field] || null;
+}
 let _catalogSearch = '';
 let _productsStatusFilter = '';
 let _autoPullTriggered = false;
@@ -2582,6 +2590,20 @@ function showAiPreview() {
       const c = item.change;
       const i = item.originalIdx;
       const rowClass = c.decision === 'accept' ? 'aip-row accepted' : c.decision === 'reject' ? 'aip-row rejected' : 'aip-row';
+      const limitInfo = getCharLimitInfo(c.field);
+      const newValueLen = (c.newValue || '').length;
+      let charCounterHtml = '';
+      if (limitInfo) {
+        const isOver = newValueLen > limitInfo.max;
+        const isNear = newValueLen > limitInfo.warn && !isOver;
+        const clr = isOver ? '#dc2626' : (isNear ? '#d97706' : '#9ca3af');
+        charCounterHtml =
+          '<div style="display:flex;align-items:center;margin:4px 0 8px;">' +
+          '<span style="font-size:10px;color:' + clr + ';">' +
+          newValueLen + ' / ' + limitInfo.max + ' karakter' +
+          (isOver ? ' \u2014 Google\'da kesilebilir' : '') +
+          '</span></div>';
+      }
       const diff = computeWordDiff(c.oldValue || '', c.newValue || '');
       const oldHtml = c.oldValue ? renderWordDiff(diff.oldOps) : '<em style="color:#9ca3af;font-style:italic;">boş</em>';
       const newHtml = renderWordDiff(diff.newOps);
@@ -2596,6 +2618,7 @@ function showAiPreview() {
             <div class="aip-diff-arrow"><i class="ti ti-arrow-down"></i></div>
             <div class="aip-diff-new">${newHtml}</div>
           </div>
+          ${charCounterHtml}
           ${c.reason
             ? `<div style="display:flex;align-items:flex-start;gap:6px;padding:8px 10px;background:#eff6ff;border-radius:8px;margin:0 0 10px;"><i class="ti ti-info-circle" style="font-size:13px;color:#3b82f6;margin-top:1px;flex-shrink:0;"></i><span style="font-size:11px;color:#1e40af;line-height:1.5;">${escapeHtml(c.reason)}</span></div>`
             : ''}
@@ -2634,17 +2657,49 @@ function showAiPreview() {
       }
 
       fieldContainer.style.display = 'block';
+      const editLimitInfo = getCharLimitInfo(change.field);
       fieldContainer.innerHTML =
         '<textarea id="ai-edit-textarea-' + idx + '" rows="3" ' +
         'style="width:100%;padding:8px 10px;border:1.5px solid #10b981;' +
         'border-radius:8px;font-size:12px;font-family:inherit;resize:vertical;' +
         'box-sizing:border-box;outline:none;">' + escapeHtml(change.newValue || '') + '</textarea>' +
+        (editLimitInfo ? '<div id="ai-edit-char-counter-' + idx + '" style="font-size:10px;color:#9ca3af;margin:4px 0 6px;"></div>' : '') +
         '<button class="ai-edit-confirm" data-idx="' + idx + '" type="button" ' +
         'style="margin-top:6px;width:100%;padding:6px;background:#10b981;color:#fff;' +
         'border:none;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;">' +
         'Bu Haliyle Kabul Et</button>';
 
-      document.getElementById('ai-edit-textarea-' + idx).focus();
+      const editTextarea = document.getElementById('ai-edit-textarea-' + idx);
+      const charCounterEl = editLimitInfo ? document.getElementById('ai-edit-char-counter-' + idx) : null;
+      const confirmBtn = fieldContainer.querySelector('.ai-edit-confirm');
+
+      function updateEditCharCounter() {
+        if (!editLimitInfo || !charCounterEl) return;
+        const len = editTextarea.value.length;
+        const isOver = len > editLimitInfo.max;
+        const isNear = len > editLimitInfo.warn && !isOver;
+        const color = isOver ? '#dc2626' : (isNear ? '#d97706' : '#9ca3af');
+        charCounterEl.style.color = color;
+        charCounterEl.textContent = len + ' / ' + editLimitInfo.max + ' karakter' +
+          (isOver ? ' \u2014 Google\'da kesilebilir' : isNear ? ' \u2014 limite yaklaşıyor' : '');
+        if (confirmBtn) {
+          if (isOver) {
+            confirmBtn.style.background = '#fef3c7';
+            confirmBtn.style.color = '#d97706';
+            confirmBtn.textContent = 'Yine de Kabul Et (limit aşıldı)';
+          } else {
+            confirmBtn.style.background = '#10b981';
+            confirmBtn.style.color = '#fff';
+            confirmBtn.textContent = 'Bu Haliyle Kabul Et';
+          }
+        }
+      }
+
+      if (editTextarea) {
+        editTextarea.addEventListener('input', updateEditCharCounter);
+        updateEditCharCounter();
+        editTextarea.focus();
+      }
 
       fieldContainer.querySelector('.ai-edit-confirm').addEventListener('click', function() {
         confirmEditedChange(idx);
