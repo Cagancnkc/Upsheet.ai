@@ -2553,42 +2553,71 @@ function showAiPreview() {
     ? `<i class="ti ti-upload"></i> ${acceptedCount} Değişikliği Uygula`
     : `<i class="ti ti-upload"></i> Kabul Edilenleri Uygula`;
 
+  const CATEGORY_LABELS = {
+    title: 'Başlık Değişiklikleri',
+    seo_title: 'SEO Başlığı Değişiklikleri',
+    seo_description: 'Meta Açıklama Değişiklikleri',
+    tags: 'Etiket Değişiklikleri',
+  };
   const fieldLabels = { title: 'Başlık', tags: 'Etiketler', seo_title: 'SEO Başlığı', seo_description: 'SEO Açıklaması' };
 
-  body.innerHTML = _pendingAiChanges.map((c, i) => {
-    const rowClass = c.decision === 'accept' ? 'aip-row accepted' : c.decision === 'reject' ? 'aip-row rejected' : 'aip-row';
-    const diff = computeWordDiff(c.oldValue || '', c.newValue || '');
-    const oldHtml = c.oldValue ? renderWordDiff(diff.oldOps) : '<em style="color:#9ca3af;font-style:italic;">boş</em>';
-    const newHtml = renderWordDiff(diff.newOps);
-    return `
-      <div class="${rowClass}">
-        <div class="aip-row-head">
-          <div class="aip-product-title">${escapeHtml(c.productTitle)}</div>
-          <div class="aip-field-badge">${fieldLabels[c.field] || c.field}</div>
+  const groups = {};
+  _pendingAiChanges.forEach(function(change, idx) {
+    const key = change.field || 'diger';
+    if (!groups[key]) groups[key] = [];
+    groups[key].push({ change: change, originalIdx: idx });
+  });
+
+  let html = '';
+  Object.entries(groups).forEach(function([categoryKey, groupItems]) {
+    html += '<div style="margin-bottom:20px;" data-category-group="' + categoryKey + '">';
+    html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;padding-bottom:6px;border-bottom:0.5px solid #f3f4f6;">';
+    html += '<span style="font-size:12px;font-weight:600;color:#374151;">' + (CATEGORY_LABELS[categoryKey] || categoryKey) + ' (' + groupItems.length + ')</span>';
+    html += '<div style="display:flex;gap:6px;">';
+    html += '<button class="group-reject-all" data-category="' + categoryKey + '" type="button" style="padding:3px 10px;border:0.5px solid #e5e7eb;border-radius:6px;background:#fff;color:#6b7280;font-size:10px;cursor:pointer;">Tümünü Reddet</button>';
+    html += '<button class="group-accept-all" data-category="' + categoryKey + '" type="button" style="padding:3px 10px;border:none;border-radius:6px;background:#f0fdf4;color:#16a34a;font-size:10px;font-weight:600;cursor:pointer;">Tümünü Kabul Et</button>';
+    html += '</div></div>';
+
+    groupItems.forEach(function(item) {
+      const c = item.change;
+      const i = item.originalIdx;
+      const rowClass = c.decision === 'accept' ? 'aip-row accepted' : c.decision === 'reject' ? 'aip-row rejected' : 'aip-row';
+      const diff = computeWordDiff(c.oldValue || '', c.newValue || '');
+      const oldHtml = c.oldValue ? renderWordDiff(diff.oldOps) : '<em style="color:#9ca3af;font-style:italic;">boş</em>';
+      const newHtml = renderWordDiff(diff.newOps);
+      html += `
+        <div class="${rowClass}" data-change-index="${i}">
+          <div class="aip-row-head">
+            <div class="aip-product-title">${escapeHtml(c.productTitle)}</div>
+            <div class="aip-field-badge">${fieldLabels[c.field] || c.field}</div>
+          </div>
+          <div class="aip-diff">
+            <div class="aip-diff-old">${oldHtml}</div>
+            <div class="aip-diff-arrow"><i class="ti ti-arrow-down"></i></div>
+            <div class="aip-diff-new">${newHtml}</div>
+          </div>
+          ${c.reason
+            ? `<div style="display:flex;align-items:flex-start;gap:6px;padding:8px 10px;background:#eff6ff;border-radius:8px;margin:0 0 10px;"><i class="ti ti-info-circle" style="font-size:13px;color:#3b82f6;margin-top:1px;flex-shrink:0;"></i><span style="font-size:11px;color:#1e40af;line-height:1.5;">${escapeHtml(c.reason)}</span></div>`
+            : ''}
+          <div class="aip-actions">
+            <button class="aip-btn-reject ${c.decision === 'reject' ? 'active' : ''}" onclick="toggleChangeDecision(${i}, 'reject')">
+              <i class="ti ti-x"></i> Reddet
+            </button>
+            <button class="aip-btn-edit" data-idx="${i}" type="button">
+              <i class="ti ti-pencil"></i> Düzenle
+            </button>
+            <button class="aip-btn-accept ${c.decision === 'accept' ? 'active' : ''}" onclick="toggleChangeDecision(${i}, 'accept')">
+              <i class="ti ti-check"></i> Kabul Et
+            </button>
+          </div>
+          <div id="ai-edit-field-${i}" style="display:none;margin-top:8px;"></div>
         </div>
-        <div class="aip-diff">
-          <div class="aip-diff-old">${oldHtml}</div>
-          <div class="aip-diff-arrow"><i class="ti ti-arrow-down"></i></div>
-          <div class="aip-diff-new">${newHtml}</div>
-        </div>
-        ${c.reason
-          ? `<div style="display:flex;align-items:flex-start;gap:6px;padding:8px 10px;background:#eff6ff;border-radius:8px;margin:0 0 10px;"><i class="ti ti-info-circle" style="font-size:13px;color:#3b82f6;margin-top:1px;flex-shrink:0;"></i><span style="font-size:11px;color:#1e40af;line-height:1.5;">${escapeHtml(c.reason)}</span></div>`
-          : ''}
-        <div class="aip-actions">
-          <button class="aip-btn-reject ${c.decision === 'reject' ? 'active' : ''}" onclick="toggleChangeDecision(${i}, 'reject')">
-            <i class="ti ti-x"></i> Reddet
-          </button>
-          <button class="aip-btn-edit" data-idx="${i}" type="button">
-            <i class="ti ti-pencil"></i> Düzenle
-          </button>
-          <button class="aip-btn-accept ${c.decision === 'accept' ? 'active' : ''}" onclick="toggleChangeDecision(${i}, 'accept')">
-            <i class="ti ti-check"></i> Kabul Et
-          </button>
-        </div>
-        <div id="ai-edit-field-${i}" style="display:none;margin-top:8px;"></div>
-      </div>
-    `;
-  }).join('');
+      `;
+    });
+    html += '</div>';
+  });
+
+  body.innerHTML = html;
 
   document.querySelectorAll('.aip-btn-edit').forEach(function(btn) {
     btn.addEventListener('click', function() {
@@ -2620,6 +2649,26 @@ function showAiPreview() {
       fieldContainer.querySelector('.ai-edit-confirm').addEventListener('click', function() {
         confirmEditedChange(idx);
       });
+    });
+  });
+
+  document.querySelectorAll('.group-accept-all').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      const category = this.dataset.category;
+      _pendingAiChanges.forEach(function(change) {
+        if ((change.field || 'diger') === category) change.decision = 'accept';
+      });
+      showAiPreview();
+    });
+  });
+
+  document.querySelectorAll('.group-reject-all').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      const category = this.dataset.category;
+      _pendingAiChanges.forEach(function(change) {
+        if ((change.field || 'diger') === category) change.decision = 'reject';
+      });
+      showAiPreview();
     });
   });
 
