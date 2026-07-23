@@ -2502,6 +2502,43 @@ async function runShopifyAiAnalysis(analysisType) {
   }
 }
 
+function computeWordDiff(oldText, newText) {
+  const oldWords = (oldText || '').split(/(\s+)/);
+  const newWords = (newText || '').split(/(\s+)/);
+  const m = oldWords.length, n = newWords.length;
+  const dp = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(0));
+  for (let i = 1; i <= m; i++) {
+    for (let j = 1; j <= n; j++) {
+      if (oldWords[i-1] === newWords[j-1]) dp[i][j] = dp[i-1][j-1] + 1;
+      else dp[i][j] = Math.max(dp[i-1][j], dp[i][j-1]);
+    }
+  }
+  const oldOps = [], newOps = [];
+  let i = m, j = n;
+  while (i > 0 || j > 0) {
+    if (i > 0 && j > 0 && oldWords[i-1] === newWords[j-1]) {
+      oldOps.unshift({ text: oldWords[i-1], type: 'same' });
+      newOps.unshift({ text: newWords[j-1], type: 'same' });
+      i--; j--;
+    } else if (j > 0 && (i === 0 || dp[i][j-1] >= dp[i-1][j])) {
+      newOps.unshift({ text: newWords[j-1], type: 'added' });
+      j--;
+    } else {
+      oldOps.unshift({ text: oldWords[i-1], type: 'removed' });
+      i--;
+    }
+  }
+  return { oldOps, newOps };
+}
+
+function renderWordDiff(ops) {
+  return ops.map(op => {
+    if (op.type === 'same') return '<span>' + escapeHtml(op.text) + '</span>';
+    if (op.type === 'removed') return '<span style="background:#fef2f2;color:#dc2626;text-decoration:line-through;padding:1px 2px;border-radius:3px;">' + escapeHtml(op.text) + '</span>';
+    return '<span style="background:#f0fdf4;color:#16a34a;font-weight:600;padding:1px 2px;border-radius:3px;">' + escapeHtml(op.text) + '</span>';
+  }).join('');
+}
+
 function showAiPreview() {
   const modal = document.getElementById('ai-preview-modal');
   const body = document.getElementById('aip-body');
@@ -2519,6 +2556,9 @@ function showAiPreview() {
 
   body.innerHTML = _pendingAiChanges.map((c, i) => {
     const rowClass = c.decision === 'accept' ? 'aip-row accepted' : c.decision === 'reject' ? 'aip-row rejected' : 'aip-row';
+    const diff = computeWordDiff(c.oldValue || '', c.newValue || '');
+    const oldHtml = c.oldValue ? renderWordDiff(diff.oldOps) : '<em style="color:#9ca3af;font-style:italic;">boş</em>';
+    const newHtml = renderWordDiff(diff.newOps);
     return `
       <div class="${rowClass}">
         <div class="aip-row-head">
@@ -2526,9 +2566,9 @@ function showAiPreview() {
           <div class="aip-field-badge">${fieldLabels[c.field] || c.field}</div>
         </div>
         <div class="aip-diff">
-          <div class="aip-diff-old">${escapeHtml(c.oldValue) || '<em>boş</em>'}</div>
-          <div class="aip-diff-arrow"><i class="ti ti-arrow-right"></i></div>
-          <div class="aip-diff-new">${escapeHtml(c.newValue)}</div>
+          <div class="aip-diff-old">${oldHtml}</div>
+          <div class="aip-diff-arrow"><i class="ti ti-arrow-down"></i></div>
+          <div class="aip-diff-new">${newHtml}</div>
         </div>
         <div class="aip-actions">
           <button class="aip-btn-reject ${c.decision === 'reject' ? 'active' : ''}" onclick="toggleChangeDecision(${i}, 'reject')">

@@ -3424,27 +3424,24 @@
   text-transform: uppercase; letter-spacing: 0.5px;
 }
 .aip-diff {
-  display: flex; align-items: center; gap: 10px;
+  display: flex; flex-direction: column; gap: 6px;
   margin-bottom: 10px;
-  font-size: 12.5px; line-height: 1.5;
+  font-size: 12.5px; line-height: 1.7;
 }
 .aip-diff-old {
-  flex: 1;
   padding: 8px 10px;
-  background: #fef2f2; color: #991b1b;
+  background: #fef9f9; color: #374151;
   border-radius: 6px;
-  text-decoration: line-through;
-  text-decoration-color: rgba(153, 27, 27, 0.4);
+  max-height: 120px; overflow-y: auto;
   min-height: 20px;
 }
 .aip-diff-old em { color: #9ca3af; font-style: italic; }
-.aip-diff-arrow { color: #94a3b8; font-size: 14px; }
+.aip-diff-arrow { color: #94a3b8; font-size: 13px; text-align: center; }
 .aip-diff-new {
-  flex: 1;
   padding: 8px 10px;
-  background: #f0fdf4; color: #065f46;
+  background: #f9fefa; color: #374151;
   border-radius: 6px;
-  font-weight: 500;
+  max-height: 120px; overflow-y: auto;
   min-height: 20px;
 }
 .aip-actions {
