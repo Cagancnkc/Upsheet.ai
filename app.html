@@ -2574,13 +2574,50 @@ function showAiPreview() {
           <button class="aip-btn-reject ${c.decision === 'reject' ? 'active' : ''}" onclick="toggleChangeDecision(${i}, 'reject')">
             <i class="ti ti-x"></i> Reddet
           </button>
+          <button class="aip-btn-edit" data-idx="${i}" type="button">
+            <i class="ti ti-pencil"></i> Düzenle
+          </button>
           <button class="aip-btn-accept ${c.decision === 'accept' ? 'active' : ''}" onclick="toggleChangeDecision(${i}, 'accept')">
             <i class="ti ti-check"></i> Kabul Et
           </button>
         </div>
+        <div id="ai-edit-field-${i}" style="display:none;margin-top:8px;"></div>
       </div>
     `;
   }).join('');
+
+  document.querySelectorAll('.aip-btn-edit').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      const idx = parseInt(this.dataset.idx);
+      const change = _pendingAiChanges[idx];
+      const fieldContainer = document.getElementById('ai-edit-field-' + idx);
+      if (!fieldContainer) return;
+
+      const isOpen = fieldContainer.style.display === 'block';
+      if (isOpen) {
+        fieldContainer.style.display = 'none';
+        fieldContainer.innerHTML = '';
+        return;
+      }
+
+      fieldContainer.style.display = 'block';
+      fieldContainer.innerHTML =
+        '<textarea id="ai-edit-textarea-' + idx + '" rows="3" ' +
+        'style="width:100%;padding:8px 10px;border:1.5px solid #10b981;' +
+        'border-radius:8px;font-size:12px;font-family:inherit;resize:vertical;' +
+        'box-sizing:border-box;outline:none;">' + escapeHtml(change.newValue || '') + '</textarea>' +
+        '<button class="ai-edit-confirm" data-idx="' + idx + '" type="button" ' +
+        'style="margin-top:6px;width:100%;padding:6px;background:#10b981;color:#fff;' +
+        'border:none;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;">' +
+        'Bu Haliyle Kabul Et</button>';
+
+      document.getElementById('ai-edit-textarea-' + idx).focus();
+
+      fieldContainer.querySelector('.ai-edit-confirm').addEventListener('click', function() {
+        confirmEditedChange(idx);
+      });
+    });
+  });
 
   modal.style.display = 'flex';
 }
@@ -2606,6 +2643,23 @@ function escapeHtml(s) {
   return String(s)
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+function confirmEditedChange(idx) {
+  const textarea = document.getElementById('ai-edit-textarea-' + idx);
+  if (!textarea) return;
+
+  const editedValue = textarea.value.trim();
+  if (!editedValue) {
+    alert('Boş bırakamazsınız.');
+    return;
+  }
+
+  _pendingAiChanges[idx].newValue = editedValue;
+  _pendingAiChanges[idx].decision = 'accept';
+  _pendingAiChanges[idx].wasManuallyEdited = true;
+
+  showAiPreview();
 }
 
 async function applyAcceptedChanges() {
@@ -2653,6 +2707,7 @@ async function pushChangesToShopify(accepted) {
           product_id: c.shopifyProductId,
           field: c.field,
           new_value: c.newValue,
+          manually_edited: c.wasManuallyEdited || false,
         })),
       }),
     });
