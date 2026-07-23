@@ -511,3 +511,24 @@ body.dark .action-chip-card:hover {
 body.dark #rightPanel {
   border-color: var(--line);
 }
+
+/* ══════════════════════════════════════════
+   MOBILE (≤768px) — collapse 3-col to 1-col
+══════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .app-shell {
+    grid-template-columns: 1fr !important;
+  }
+  .app-shell.right-collapsed {
+    grid-template-columns: 1fr !important;
+  }
+  #rightPanel {
+    display: none !important;
+  }
+  .qs-grid {
+    grid-template-columns: 1fr;
+  }
+  .action-chip-grid {
+    grid-template-columns: 1fr;
+  }
+}

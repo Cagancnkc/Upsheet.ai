@@ -67,7 +67,7 @@
       grid-template-columns: 1.05fr 1fr;
       min-height: 100vh;
     }
-    @media (max-width: 980px) {
+    @media (max-width: 768px) {
       .auth-layout { grid-template-columns: 1fr; }
       .auth-right  { display: none !important; }
     }
@@ -84,6 +84,9 @@
     }
     @media (max-width: 600px) {
       .auth-left { padding: 32px 20px; }
+      input[type="email"],
+      input[type="password"],
+      input[type="text"] { font-size: 16px !important; }
     }
 
     .auth-left-inner {
