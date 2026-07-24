@@ -510,7 +510,6 @@ app.get('/api/integrations/producthunt-reviews/public', async (req, res) => {
     const sb = _createSbClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
     const { data, error } = await sb.from('producthunt_reviews')
       .select('id, author_name, author_avatar_url, content, content_tr, votes_count, ph_created_at')
-      .eq('is_visible', true)
       .order('votes_count', { ascending: false })
       .limit(6);
     if (error) throw error;

@@ -98,7 +98,7 @@ async function fetchProductHuntComments() {
       votes_count: c.votesCount || 0,
       ph_created_at: c.createdAt,
       fetched_at: new Date().toISOString(),
-      // is_visible'a dokunmuyoruz — mevcut onay durumu korunur
+      is_visible: true,
     }, {
       onConflict: 'id',
       ignoreDuplicates: false,
