@@ -1208,13 +1208,16 @@ async function runPromptBarAction(action, label) {
     await runAIAction(action);
     if (statusEl) statusEl.innerHTML =
       '<i class="ti ti-check" style="color:#16a34a;font-size:14px;"></i><span>Tamamlandı</span>';
+    toast('✓ ' + label + ' tamamlandı', 'success');
     if (typeof renderDashboard === 'function') renderDashboard();
   } catch(e) {
     const msg = e.status === 402
       ? (e.message || 'Günlük komut hakkınızı doldurdunuz.')
-      : 'Hata: ' + e.message;
+      : (e.message || 'İşlem başarısız');
+    const iconCls = e.status === 402 ? 'ti-clock' : 'ti-x';
+    const iconClr = e.status === 402 ? '#d97706' : '#dc2626';
     if (statusEl) statusEl.innerHTML =
-      '<i class="ti ti-clock" style="color:#d97706;font-size:14px;"></i><span>' + msg + '</span>';
+      '<i class="ti ' + iconCls + '" style="color:' + iconClr + ';font-size:14px;"></i><span>' + msg + '</span>';
   } finally {
     if (sendBtn) sendBtn.disabled = false;
     setTimeout(function() { if (statusEl) statusEl.style.display = 'none'; }, 2500);
@@ -2315,46 +2318,34 @@ function runCustomActionFromPanel() {
 
 async function runAIAction(actionType) {
   saveToUndoStack();
-  toast(`${actionType} işlemi çalıştırılıyor...`);
-
-  try {
-    const response = await fetch(`${API_URL}/api/ai`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...authHeaders()
-      },
-      body: JSON.stringify({
-        action: actionType,
-        data: catalogData.products,
-        context: currentView
-      })
-    });
-
-    if (!response.ok) {
-      const err = await response.json().catch(() => ({}));
-      const e = new Error(err.error || 'AI action failed');
-      e.status = response.status;
-      throw e;
-    }
-
-    const result = await response.json();
-    applyAIChanges(result);
-    aiHistory.push({ action: actionType, timestamp: new Date().toLocaleTimeString('tr-TR') });
-    addActivityLog(`AI işlemi: ${actionType}`);
-    toast(`✓ ${actionType} tamamlandı`, 'success');
-  } catch (error) {
-    toast(`✗ İşlem başarısız: ${error.message}`, 'error');
+  const response = await fetch(`${API_URL}/api/ai`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...authHeaders() },
+    body: JSON.stringify({ action: actionType, data: catalogData.products, context: currentView })
+  });
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}));
+    const e = new Error(err.error || 'Sunucu bağlantısı kurulamadı, tekrar deneyin');
+    e.status = response.status;
+    throw e;
   }
+  const result = await response.json();
+  applyAIChanges(result);
+  aiHistory.push({ action: actionType, timestamp: new Date().toLocaleTimeString('tr-TR') });
+  addActivityLog(`AI işlemi: ${actionType}`);
 }
 
 function runCustomAction() {
-  const text = document.querySelector('.sf-custom-action-input').value;
-  if (!text.trim()) {
+  const input = document.querySelector('.sf-custom-action-input');
+  const text = input ? input.value.trim() : '';
+  if (!text) {
     toast('Bir işlem açıklaması yazın', 'error');
     return;
   }
-  runAIAction('custom: ' + text);
+  toast('İşleniyor…');
+  runAIAction('custom: ' + text)
+    .then(() => toast('✓ İşlem tamamlandı', 'success'))
+    .catch(e => toast('✗ İşlem başarısız: ' + e.message, 'error'));
 }
 
 function applyAIChanges(result) {

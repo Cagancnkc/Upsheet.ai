@@ -858,16 +858,21 @@ app.post('/api/ai', checkLimit, async (req, res) => {
       standardize_vendors:   'Benzer vendor isimlerini standartlaştır',
       categorize_products:   'product_type ve tags alanlarını doldurup kategorize et',
     };
-    const instruction = actionMap[action] || action;
+    const rawAction = action.startsWith('custom: ') ? action.slice(8) : action;
+    const instruction = actionMap[rawAction] || rawAction;
     const msg = await client.messages.create({
       model: 'claude-haiku-4-5-20251001',
-      max_tokens: 2000,
+      max_tokens: 4000,
+      system: 'Sen bir Shopify katalog yönetim asistanısın. Verilen JSON ürün listesini işleyip güncellenmiş JSON array olarak döndür. Markdown, açıklama veya başka metin yazmadan yalnızca geçerli JSON array döndür.',
       messages: [{ role: 'user', content:
-        `Şu Shopify ürün listesi üzerinde: "${instruction}"\nVeriyi JSON dizisi olarak döndür, tüm alanları koru, ilgili alanları güncelle.\n\n${JSON.stringify(data.slice(0, 50), null, 2)}`
+        `Görev: ${instruction}\n\nÜrünler:\n${JSON.stringify(data.slice(0, 50), null, 2)}`
       }],
     });
     let products = data;
-    try { products = JSON.parse(msg.content[0].text.match(/\[[\s\S]*\]/)?.[0] || '[]') || data; } catch {}
+    try {
+      const parsed = JSON.parse(msg.content[0].text.match(/\[[\s\S]*\]/)?.[0] || '[]');
+      if (Array.isArray(parsed) && parsed.length > 0) products = parsed;
+    } catch {}
     await incrementUsage(req.user.id);
     res.json({ products });
   } catch (e) {
