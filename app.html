@@ -1804,8 +1804,15 @@ function renderSettingsPage() {
 
       <div id="visibility-checks-list" style="display:flex;flex-direction:column;gap:8px;"></div>
     </div>
+
+    <div style="margin-top:32px;padding-top:24px;border-top:0.5px solid #e5e7eb;">
+      <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 4px;">Product Hunt Yorumları</p>
+      <p style="font-size:12px;color:#6b7280;margin:0 0 16px;">Sitede gösterilecek yorumları seçin</p>
+      <div id="ph-reviews-admin-list" style="display:flex;flex-direction:column;gap:8px;"></div>
+    </div>
   </div>`;
   loadVisibilityChecks();
+  loadPhReviewsAdmin();
 }
 
 async function loadVisibilityChecks() {
@@ -1830,6 +1837,50 @@ async function loadVisibilityChecks() {
     }).join('');
   } catch (e) {
     container.innerHTML = '<p style="font-size:12px;color:#dc2626;">Yüklenemedi</p>';
+  }
+}
+
+async function loadPhReviewsAdmin() {
+  const container = document.getElementById('ph-reviews-admin-list');
+  if (!container) return;
+  try {
+    const res = await fetch(API_URL + '/api/integrations/producthunt-reviews/all', { headers: authHeaders() });
+    const data = await res.json();
+    if (!data.reviews || data.reviews.length === 0) {
+      container.innerHTML = '<p style="font-size:12px;color:#9ca3af;">Henüz yorum çekilmedi. Cron job her gün 06:00\'da çalışır.</p>';
+      return;
+    }
+    container.innerHTML = data.reviews.map(r => {
+      const date = r.ph_created_at ? new Date(r.ph_created_at).toLocaleDateString('tr-TR') : '';
+      const checked = r.is_visible ? 'checked' : '';
+      const bgColor = r.is_visible ? '#f0fdf4' : '#f9fafb';
+      const short = r.content.length > 100 ? r.content.slice(0, 100) + '…' : r.content;
+      return `<div style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:0.5px solid #e5e7eb;border-radius:10px;background:${bgColor};">
+        <input type="checkbox" data-ph-id="${r.id}" ${checked}
+          style="margin-top:3px;cursor:pointer;accent-color:#16a34a;" onchange="togglePhReview(this)"/>
+        <div style="flex:1;min-width:0;">
+          <p style="font-size:12px;color:#111827;margin:0 0 2px;font-weight:500;">${r.author_name}</p>
+          <p style="font-size:11px;color:#374151;margin:0 0 2px;line-height:1.5;">${short}</p>
+          <p style="font-size:10px;color:#9ca3af;margin:0;">${date} · ${r.votes_count} oy</p>
+        </div>
+      </div>`;
+    }).join('');
+  } catch (e) {
+    container.innerHTML = '<p style="font-size:12px;color:#dc2626;">Yüklenemedi: ' + e.message + '</p>';
+  }
+}
+
+async function togglePhReview(checkbox) {
+  const id = checkbox.dataset.phId;
+  try {
+    await fetch(API_URL + '/api/integrations/producthunt-reviews/' + encodeURIComponent(id) + '/toggle-visible', {
+      method: 'POST',
+      headers: authHeaders(),
+    });
+    loadPhReviewsAdmin();
+  } catch (e) {
+    alert('Güncellenemedi: ' + e.message);
+    checkbox.checked = !checkbox.checked;
   }
 }
 

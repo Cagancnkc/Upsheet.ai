@@ -2317,4 +2317,46 @@ router.get('/ai-visibility-checks', requireAuth, async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+// ── Product Hunt Reviews ──────────────────────────────────────────────────
+
+// Tüm yorumlar (onay bekleyenler dahil) — sadece admin/owner erişir
+router.get('/producthunt-reviews/all', requireAuth, async (req, res) => {
+  try {
+    const sb = _getSb();
+    const { data, error } = await sb.from('producthunt_reviews')
+      .select('*')
+      .order('fetched_at', { ascending: false });
+    if (error) throw error;
+    res.json({ reviews: data || [] });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// Onay toggle — is_visible'ı tersine çevirir
+router.post('/producthunt-reviews/:id/toggle-visible', requireAuth, async (req, res) => {
+  try {
+    const sb = _getSb();
+    const { data: current, error: selErr } = await sb.from('producthunt_reviews')
+      .select('is_visible').eq('id', req.params.id).single();
+    if (selErr) throw selErr;
+    const { error: updErr } = await sb.from('producthunt_reviews')
+      .update({ is_visible: !current.is_visible }).eq('id', req.params.id);
+    if (updErr) throw updErr;
+    res.json({ ok: true, is_visible: !current.is_visible });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// Sadece onaylı yorumlar — herkese açık (site testimonial widget için)
+router.get('/producthunt-reviews/public', async (req, res) => {
+  try {
+    const sb = _getSb();
+    const { data, error } = await sb.from('producthunt_reviews')
+      .select('id, author_name, author_avatar_url, content, votes_count, ph_created_at')
+      .eq('is_visible', true)
+      .order('votes_count', { ascending: false })
+      .limit(6);
+    if (error) throw error;
+    res.json({ reviews: data || [] });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
 module.exports = router;

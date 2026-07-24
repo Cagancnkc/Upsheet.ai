@@ -1572,6 +1572,39 @@
   </div>
 </section>
 
+<!-- PRODUCT HUNT TESTIMONIALS — sadece onaylı yorum varsa görünür -->
+<section id="ph-testimonials-section" style="padding:80px 0 40px;background:var(--paper);display:none;">
+  <div class="wrap" style="max-width:1000px;">
+    <h2 style="font-size:clamp(22px,3.5vw,34px);font-weight:800;letter-spacing:-.02em;margin:0 0 8px;text-align:center;">
+      Kullanıcılarımız Ne Diyor
+    </h2>
+    <p style="text-align:center;color:var(--muted,#6B7280);margin:0 0 40px;">Product Hunt üzerinden gelen gerçek yorumlar.</p>
+    <div id="ph-testimonials-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;"></div>
+  </div>
+</section>
+<script>
+(async function() {
+  try {
+    const API = 'https://upsheet-ai.onrender.com';
+    const res = await fetch(API + '/api/integrations/producthunt-reviews/public');
+    if (!res.ok) return;
+    const data = await res.json();
+    if (!data.reviews || data.reviews.length === 0) return;
+    document.getElementById('ph-testimonials-section').style.display = 'block';
+    document.getElementById('ph-testimonials-grid').innerHTML = data.reviews.map(function(r) {
+      var avatar = r.author_avatar_url
+        ? '<img src="' + r.author_avatar_url + '" width="24" height="24" style="border-radius:999px;object-fit:cover;" loading="lazy" alt="' + r.author_name + '"/>'
+        : '<div style="width:24px;height:24px;border-radius:999px;background:#e5e7eb;"></div>';
+      return '<div style="border:0.5px solid #e5e7eb;border-radius:16px;padding:20px;background:#fff;">' +
+        '<p style="font-size:13px;color:#374151;line-height:1.6;margin:0 0 14px;">\u201c' + r.content + '\u201d</p>' +
+        '<div style="display:flex;align-items:center;gap:8px;">' + avatar +
+        '<span style="font-size:12px;font-weight:600;color:#111827;">' + r.author_name + '</span>' +
+        '</div></div>';
+    }).join('');
+  } catch(e) { /* yorum yoksa section gizli kalır */ }
+})();
+</script>
+
 <!-- FAQ ACCORDION -->
 <section id="faq" style="padding:80px 0 40px;background:var(--paper)">
   <div class="wrap" style="max-width:720px">

@@ -947,6 +947,19 @@ app.listen(PORT, '0.0.0.0', () => {
     console.log('[emailTriggers] 5 cron job başlatıldı');
   } catch (e) { console.error('[emailTriggers] Init error:', e.message); }
 
+  // Product Hunt yorum senkronizasyonu — her gün 06:00
+  try {
+    const cron4 = require('node-cron');
+    const { fetchProductHuntComments } = require('./services/productHuntSync');
+    cron4.schedule('0 6 * * *', async () => {
+      try {
+        const count = await fetchProductHuntComments();
+        console.log('[ProductHunt Sync]', count, 'yorum senkronize edildi');
+      } catch (e) { console.error('[ProductHunt Sync] hata:', e.message); }
+    }, { timezone: 'Europe/Istanbul' });
+    console.log('[ProductHunt Sync] cron job başlatıldı');
+  } catch (e) { console.error('[ProductHunt Sync] Init error:', e.message); }
+
   // Render free tier'ı uyanık tut: her 14 dakikada self-ping
   const SELF_URL = process.env.RENDER_EXTERNAL_URL || `http://localhost:${PORT}`;
   const _pingMod = SELF_URL.startsWith('https') ? require('https') : require('http');
