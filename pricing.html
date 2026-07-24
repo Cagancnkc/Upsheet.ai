@@ -280,7 +280,7 @@ a{color:inherit}
           <li class="plan-feat"><span class="plan-feat-icon">✓</span> Shopify senkronizasyonu &amp; geri yazma</li>
           <li class="plan-feat"><span class="plan-feat-icon">✓</span> Öncelikli e-posta desteği</li>
         </ul>
-        <a href="/auth?plan=pro" class="plan-cta green">Pro ile Başla →</a>
+        <a id="cta-pro" href="/auth?plan=pro&period=monthly" class="plan-cta green">Pro ile Başla →</a>
       </div>
 
       <!-- Ultra -->
@@ -302,7 +302,7 @@ a{color:inherit}
           <li class="plan-feat"><span class="plan-feat-icon">✓</span> Yeni özelliklere erken erişim</li>
           <li class="plan-feat"><span class="plan-feat-icon">✓</span> Öncelikli canlı destek</li>
         </ul>
-        <a href="/auth?plan=ultra" class="plan-cta outline">Ultra'ya Geç →</a>
+        <a id="cta-ultra" href="/auth?plan=ultra&period=monthly" class="plan-cta outline">Ultra'ya Geç →</a>
       </div>
 
     </div>
@@ -410,6 +410,10 @@ function setPricingPeriod(p) {
 
   document.getElementById('price-pro').textContent   = '₺' + prices.pro;
   document.getElementById('price-ultra').textContent = '₺' + prices.ultra;
+
+  var period = yearly ? 'yearly' : 'monthly';
+  document.getElementById('cta-pro').href   = '/auth?plan=pro&period='   + period;
+  document.getElementById('cta-ultra').href = '/auth?plan=ultra&period=' + period;
 }
 
 /* ROI Calculator */
