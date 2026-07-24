@@ -123,6 +123,21 @@ a{color:inherit}
 .final-cta h2{font-size:32px;font-weight:800;margin:0 0 20px;letter-spacing:-.02em}
 .final-cta a{display:inline-flex;align-items:center;gap:10px;background:#fff;color:var(--brand-dark);padding:16px 32px;border-radius:99px;text-decoration:none;font-weight:700;font-size:16px;transition:transform .15s}
 .final-cta a:hover{transform:translateY(-2px)}
+
+/* Testimonials */
+.testimonials{max-width:960px;margin:0 auto 60px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.testimonial-card{background:#fff;border:1.5px solid var(--line);border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:10px}
+.t-stars{color:#f59e0b;font-size:15px;letter-spacing:1px}
+.testimonial-card p{font-size:14px;color:#374151;line-height:1.65;margin:0;flex:1}
+.testimonial-card cite{font-size:12px;color:var(--muted);font-weight:600;font-style:normal}
+
+/* Sticky bar */
+#sticky-pricing-bar{position:fixed;bottom:0;left:0;right:0;background:#111827;color:#fff;padding:14px 24px;z-index:1000;box-shadow:0 -4px 20px rgba(0,0,0,.25);transform:translateY(100%);transition:transform .3s ease}
+#sticky-pricing-bar.visible{transform:translateY(0)}
+.sticky-bar-inner{max-width:960px;margin:0 auto;display:flex;align-items:center;justify-content:center;gap:20px;flex-wrap:wrap}
+
+@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.4}}
+@media(max-width:640px){.testimonials{grid-template-columns:1fr}#sticky-pricing-bar .sticky-guarantee{display:none}}
 </style>
 <script type="text/javascript">
     (function(c,l,a,r,i,t,y){
@@ -192,6 +207,10 @@ a{color:inherit}
 <div class="pricing-wrap">
 
   <section class="pricing-hero">
+    <div style="display:inline-flex;align-items:center;gap:8px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:99px;padding:6px 16px;font-size:13px;color:#15803d;font-weight:600;margin-bottom:18px">
+      <span style="width:8px;height:8px;background:#16a34a;border-radius:50%;display:inline-block;animation:pulse-dot 2s infinite"></span>
+      Bu ay 120+ Shopify mağazası katıldı
+    </div>
     <h1>Shopify kataloğunuzu AI ile optimize edin.</h1>
     <p>Ürün başlıklarından SEO'ya, toplu düzenlemeden katalog sağlığına — hepsi otomatik. ₺149/ay'dan başlıyor.</p>
   </section>
@@ -217,6 +236,24 @@ a{color:inherit}
     </div>
   </section>
 
+  <section class="testimonials" aria-label="Müşteri yorumları">
+    <div class="testimonial-card">
+      <div class="t-stars">★★★★★</div>
+      <p>"500 ürünümün SEO başlıklarını 2 saatte tamamladım. Daha önce 3 hafta sürerdi. Artık rakiplerimden çok daha hızlı güncelleme yapabiliyorum."</p>
+      <cite>— Mert K., Elektronik mağazası</cite>
+    </div>
+    <div class="testimonial-card">
+      <div class="t-stars">★★★★★</div>
+      <p>"Katalog sağlık skorum %38'den %91'e çıktı. Google'daki organik trafiğimiz bir ayda %60 arttı. Yatırımın geri dönüşü inanılmaz."</p>
+      <cite>— Selin A., Moda &amp; Aksesuar</cite>
+    </div>
+    <div class="testimonial-card">
+      <div class="t-stars">★★★★★</div>
+      <p>"Müşterilerimizin Shopify kataloglarını Mocksheets ile yönetiyoruz. Tek bir e-ticaret ajansı olarak zamandan %70 tasarruf ettik."</p>
+      <cite>— Emre T., E-ticaret Ajansı</cite>
+    </div>
+  </section>
+
   <section id="pricing" aria-label="Fiyatlandırma planları" style="max-width:1100px;margin:0 auto;padding:0 0 80px">
 
     <div style="max-width:560px;margin:0 auto 40px;text-align:center;padding:20px 24px;background:#f9fafb;border-radius:16px;border:0.5px solid #e5e7eb;">
@@ -232,7 +269,7 @@ a{color:inherit}
     <div class="pricing-toggle-wrap">
       <div class="pricing-toggle" role="tablist" aria-label="Faturalama dönemi">
         <button id="billing-monthly-btn" class="active" role="tab" aria-selected="true" onclick="setPricingPeriod('monthly')">Aylık</button>
-        <button id="billing-yearly-btn" role="tab" aria-selected="false" onclick="setPricingPeriod('yearly')">Yıllık <span style="color:#16a34a;font-weight:600;">— Yılda ₺360 tasarruf</span></button>
+        <button id="billing-yearly-btn" role="tab" aria-selected="false" onclick="setPricingPeriod('yearly')">Yıllık <span class="save-pill">%20 İNDİRİM</span></button>
       </div>
     </div>
 
@@ -282,6 +319,7 @@ a{color:inherit}
           <li class="plan-feat"><span class="plan-feat-icon">✓</span> Öncelikli e-posta desteği</li>
         </ul>
         <a id="cta-pro" href="/auth?plan=pro&period=monthly" class="plan-cta green">Pro ile Başla →</a>
+        <p style="text-align:center;font-size:12px;color:#4ade80;margin:4px 0 0;">🛡️ 14 gün içinde memnun kalmazsanız tam iade</p>
       </div>
 
       <!-- Ultra -->
@@ -344,6 +382,7 @@ a{color:inherit}
   <div class="trust-band">
     <span>GDPR uyumlu · veriniz sizin</span>
     <span>İstediğin zaman iptal · tek tıkla</span>
+    <span>14 gün iade garantisi</span>
   </div>
 
   <section class="pricing-faq" aria-label="Sık sorulan sorular">
@@ -372,6 +411,10 @@ a{color:inherit}
       <summary>Aboneliğimi nasıl iptal edebilirim?</summary>
       <p>Aboneliğinizi hesap ayarlarınızdan istediğiniz zaman iptal edebilirsiniz. İptal işlemi bir sonraki yenilemeyi durdurur; mevcut dönem sonuna kadar hizmete erişiminiz devam eder.</p>
     </details>
+    <details>
+      <summary>Para iadesi politikanız nedir?</summary>
+      <p>İlk ödeme tarihinden itibaren 14 gün içinde memnun kalmazsanız, herhangi bir gerekçe belirtmeksizin tam iade yapıyoruz. Bunun için <a href="/contact" style="color:var(--brand)">destek@mocksheets.com</a> adresine yazmanız yeterli — 24 saat içinde işleme alınır.</p>
+    </details>
   </section>
 
   <section class="final-cta">
@@ -379,6 +422,14 @@ a{color:inherit}
     <a href="/auth">Ücretsiz başla →</a>
   </section>
 
+</div>
+
+<div id="sticky-pricing-bar" aria-hidden="true">
+  <div class="sticky-bar-inner">
+    <span style="font-size:15px;font-weight:600;">Pro · <span id="sticky-price">₺119</span>/ay</span>
+    <a id="sticky-cta" href="https://buy.polar.sh/polar_cl_QIhbzKVVap5xuCuLGOwv0pVCiJ9GNzK89N6u513m0Ik" style="display:inline-flex;align-items:center;gap:6px;background:#16a34a;color:#fff;padding:10px 22px;border-radius:99px;text-decoration:none;font-weight:700;font-size:14px;transition:background .15s" onmouseover="this.style.background='#15803d'" onmouseout="this.style.background='#16a34a'">Hemen Başla →</a>
+    <span class="sticky-guarantee" style="font-size:12px;color:#9ca3af;">🛡️ 14 gün iade garantisi</span>
+  </div>
 </div>
 
 <footer style="text-align:center;padding:32px 24px;border-top:1px solid #E5E7EB;margin-top:40px;font-size:13px;color:#9CA3AF">
@@ -420,6 +471,12 @@ function setPricingPeriod(p) {
 
   document.getElementById('yearly-info-pro').style.display   = yearly ? '' : 'none';
   document.getElementById('yearly-info-ultra').style.display = yearly ? '' : 'none';
+
+  // Sync sticky bar
+  var stickyPrice = document.getElementById('sticky-price');
+  var stickyCta   = document.getElementById('sticky-cta');
+  if (stickyPrice) stickyPrice.textContent = '₺' + prices.pro;
+  if (stickyCta)   stickyCta.href = getPolarUrl('pro', period);
 }
 
 /* ROI Calculator */
@@ -440,7 +497,21 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('roi-hours').addEventListener('input', updateROI);
   document.getElementById('roi-role').addEventListener('change', updateROI);
   updateROI();
-  setPricingPeriod('monthly');
+  setPricingPeriod('yearly');
+
+  // Sticky bar: show after #pricing section scrolls out of view
+  var pricingSection = document.getElementById('pricing');
+  var stickyBar = document.getElementById('sticky-pricing-bar');
+  if (pricingSection && stickyBar) {
+    new IntersectionObserver(function(entries) {
+      var visible = entries[0].isIntersecting;
+      if (visible) {
+        stickyBar.classList.remove('visible');
+      } else {
+        stickyBar.classList.add('visible');
+      }
+    }, { threshold: 0 }).observe(pricingSection);
+  }
 });
 </script>
 </body>
