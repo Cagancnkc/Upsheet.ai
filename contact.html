@@ -163,10 +163,22 @@ body{background:#F7F7F5}
   </div>
 </div>
 
+<div id="contact-toast" style="display:none;position:fixed;bottom:24px;right:24px;padding:14px 20px;border-radius:12px;font-size:13px;font-weight:600;box-shadow:0 8px 24px rgba(17,24,39,.15);z-index:1000;max-width:320px"></div>
+
 <script>
 var _contactApiBase = window.location.hostname === 'localhost'
   ? 'http://localhost:3001'
   : '';
+
+function showContactToast(success, message) {
+  var toast = document.getElementById('contact-toast');
+  toast.style.background = success ? '#f0fdf4' : '#fef2f2';
+  toast.style.color = success ? '#16a34a' : '#dc2626';
+  toast.style.border = '1px solid ' + (success ? '#bbf7d0' : '#fecaca');
+  toast.textContent = message;
+  toast.style.display = 'block';
+  setTimeout(function() { toast.style.display = 'none'; }, 4000);
+}
 
 async function submitContactForm() {
   var name = document.getElementById('contact-name').value.trim();
@@ -175,13 +187,13 @@ async function submitContactForm() {
   var message = document.getElementById('contact-message').value.trim();
 
   if (!name || !email || !message) {
-    alert('Lütfen ad, e-posta ve mesaj alanlarını doldurun.');
+    showContactToast(false, 'Lütfen ad, e-posta ve mesaj alanlarını doldurun.');
     return;
   }
 
   var re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!re.test(email)) {
-    alert('Geçerli bir e-posta adresi girin.');
+    showContactToast(false, 'Geçerli bir e-posta adresi girin.');
     return;
   }
 
@@ -206,12 +218,12 @@ async function submitContactForm() {
         '<p style="color:#6B7280">En kısa sürede size dönüş yapacağız.</p>' +
         '</div>';
     } else {
-      alert('Hata: ' + (data.error || 'Bir sorun oluştu.'));
+      showContactToast(false, data.error || 'Mesaj gönderilemedi, lütfen tekrar deneyin.');
       btn.textContent = origText;
       btn.disabled = false;
     }
   } catch (err) {
-    alert('Sunucuya bağlanılamadı. Lütfen tekrar deneyin.');
+    showContactToast(false, 'Bağlantı hatası, lütfen tekrar deneyin.');
     btn.textContent = origText;
     btn.disabled = false;
   }

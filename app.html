@@ -605,6 +605,11 @@ function showView(id, displayType) {
 }
 
 function setView(view) {
+  const catLayout = document.getElementById('catalog-editor-layout');
+  const mainTable = document.getElementById('main-table-view');
+  if (mainTable && catLayout && mainTable.parentNode === catLayout) {
+    catLayout.parentNode.insertBefore(mainTable, catLayout);
+  }
   currentView = view;
   hideAllViews();
   const viewRenderers = {
@@ -613,6 +618,7 @@ function setView(view) {
     sync:            function() { showView('sync-view');             renderSyncPage(); },
     history:         function() { showView('history-view');          loadAndRenderHistory(); },
     settings:        function() { showView('settings-view');         renderSettingsPage(); },
+    'import':        function() { showView('dashboard-view'); renderDashboard(); setTimeout(openShopifyConnectModal, 50); },
   };
   (viewRenderers[view] || viewRenderers.dashboard)();
   renderSidebar();
@@ -1204,8 +1210,11 @@ async function runPromptBarAction(action, label) {
       '<i class="ti ti-check" style="color:#16a34a;font-size:14px;"></i><span>Tamamlandı</span>';
     if (typeof renderDashboard === 'function') renderDashboard();
   } catch(e) {
+    const msg = e.status === 402
+      ? (e.message || 'Günlük komut hakkınızı doldurdunuz.')
+      : 'Hata: ' + e.message;
     if (statusEl) statusEl.innerHTML =
-      '<i class="ti ti-alert-triangle" style="color:#dc2626;font-size:14px;"></i><span>Hata: ' + e.message + '</span>';
+      '<i class="ti ti-clock" style="color:#d97706;font-size:14px;"></i><span>' + msg + '</span>';
   } finally {
     if (sendBtn) sendBtn.disabled = false;
     setTimeout(function() { if (statusEl) statusEl.style.display = 'none'; }, 2500);
@@ -1530,8 +1539,11 @@ async function saveQuickEdit() {
 
 function activateCatalogEditorLayout() {
   const view = document.getElementById('catalog-editor-layout');
-  if (!view) return;
-  view.innerHTML = document.getElementById('main-table-view')?.innerHTML || '';
+  const mainTable = document.getElementById('main-table-view');
+  if (!view || !mainTable) return;
+  view.innerHTML = '';
+  view.appendChild(mainTable);
+  mainTable.style.display = '';
   buildGrid();
   const srchInput = document.getElementById('product-search');
   if (srchInput) {
@@ -2319,7 +2331,12 @@ async function runAIAction(actionType) {
       })
     });
 
-    if (!response.ok) throw new Error('AI action failed');
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      const e = new Error(err.error || 'AI action failed');
+      e.status = response.status;
+      throw e;
+    }
 
     const result = await response.json();
     applyAIChanges(result);

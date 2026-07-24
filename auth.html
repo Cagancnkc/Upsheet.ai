@@ -947,10 +947,11 @@ function translateError(msg) {
   if (!msg) return 'Bir hata oluştu, lütfen tekrar deneyin';
   if (msg.includes('Invalid login credentials'))     return 'Hatalı e-posta veya şifre';
   if (msg.includes('Email not confirmed'))           return 'E-postanızı doğrulayın. Gelen kutunuzu kontrol edin.';
-  if (msg.includes('User already registered'))       return 'Bu e-posta zaten kayıtlı. Giriş yapmayı deneyin.';
+  if (msg.includes('User already registered') || msg.includes('Email already registered')) return 'Bu e-posta zaten kayıtlı. Giriş yapmayı deneyin.';
   if (msg.includes('Unable to validate email'))      return 'Geçersiz e-posta adresi';
+  if (msg.includes('signup_disabled'))               return 'Kayıt şu an kapalı. Lütfen daha sonra tekrar deneyin.';
   if (msg.includes('Too many requests') || msg.includes('rate limit')) return 'Çok fazla deneme. Lütfen bekleyin.';
-  return 'İşlem başarısız: ' + msg;
+  return 'Bir hata oluştu, lütfen tekrar deneyin.';
 }
 
 // ── SheetPreview animation ─────────────────────────────────────

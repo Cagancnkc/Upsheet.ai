@@ -832,6 +832,50 @@ app.post('/api/batch-ai', checkLimit, async (req, res) => {
   }
 });
 
+app.post('/api/ai', checkLimit, async (req, res) => {
+  try {
+    const { action, data } = req.body;
+    if (!Array.isArray(data)) return res.status(400).json({ error: 'data array gerekli' });
+
+    const dayKey = new Date().toISOString().slice(0, 10);
+    const sb = getSbForAuth();
+    const { data: pbUsage } = await sb.from('prompt_bar_usage')
+      .select('command_count').eq('user_id', req.user.id).eq('day_key', dayKey).maybeSingle();
+    const pbCount = pbUsage?.command_count || 0;
+    const pbMax = req.plan?.maxPromptBarPerDay ?? Infinity;
+    if (pbMax !== Infinity && pbCount >= pbMax) {
+      return res.status(402).json({ error: 'Günlük komut hakkınızı doldurdunuz. Yarın tekrar deneyebilirsiniz.', code: 'PROMPT_BAR_LIMIT' });
+    }
+    await sb.from('prompt_bar_usage').upsert(
+      { user_id: req.user.id, day_key: dayKey, command_count: pbCount + 1 },
+      { onConflict: 'user_id,day_key' }
+    );
+
+    const actionMap = {
+      clean_titles:          'Ürün başlıklarındaki gereksiz büyük harfleri ve emojileri temizle',
+      generate_descriptions: 'Her ürün için kısa Türkçe açıklama yaz (body_html alanına)',
+      generate_seo:          'Her ürün için seo_title (max 60 karakter) ve seo_description (max 155 karakter) yaz',
+      standardize_vendors:   'Benzer vendor isimlerini standartlaştır',
+      categorize_products:   'product_type ve tags alanlarını doldurup kategorize et',
+    };
+    const instruction = actionMap[action] || action;
+    const msg = await client.messages.create({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 2000,
+      messages: [{ role: 'user', content:
+        `Şu Shopify ürün listesi üzerinde: "${instruction}"\nVeriyi JSON dizisi olarak döndür, tüm alanları koru, ilgili alanları güncelle.\n\n${JSON.stringify(data.slice(0, 50), null, 2)}`
+      }],
+    });
+    let products = data;
+    try { products = JSON.parse(msg.content[0].text.match(/\[[\s\S]*\]/)?.[0] || '[]') || data; } catch {}
+    await incrementUsage(req.user.id);
+    res.json({ products });
+  } catch (e) {
+    console.error('/api/ai hatası:', e.message);
+    res.status(500).json({ error: 'Sunucu hatası' });
+  }
+});
+
 app.use((err, _req, res, _next) => {
   console.error(err);
   res.status(500).json({ error: 'Sunucu hatası. Lütfen tekrar deneyin.' });
