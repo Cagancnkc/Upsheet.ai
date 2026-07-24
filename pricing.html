@@ -270,6 +270,7 @@ a{color:inherit}
           <span class="plan-price-big" id="price-pro">₺149</span>
           <span class="plan-price-unit">/ay</span>
         </div>
+        <div id="yearly-info-pro" style="display:none;font-size:12px;color:#a7f3d0;margin-top:-12px">Yıllık toplam <strong style="color:#4ade80">₺1.428</strong> · Aylık plana göre <strong style="color:#4ade80">₺360 tasarruf</strong></div>
         <div class="plan-divider"></div>
         <ul class="plan-feats">
           <li class="plan-feat"><span class="plan-feat-icon">✓</span> <strong>Sınırsız</strong> ürün kataloğu</li>
@@ -293,6 +294,7 @@ a{color:inherit}
           <span class="plan-price-big" id="price-ultra">₺399</span>
           <span class="plan-price-unit">/ay</span>
         </div>
+        <div id="yearly-info-ultra" style="display:none;font-size:12px;color:#6b7280;margin-top:-12px">Yıllık toplam <strong style="color:#16a34a">₺3.828</strong> · Aylık plana göre <strong style="color:#16a34a">₺960 tasarruf</strong></div>
         <p style="font-size:11px;color:#9ca3af;margin:8px 0 16px;">Büyük kataloglar ve ajanslar için</p>
         <div class="plan-divider"></div>
         <ul class="plan-feats">
@@ -423,6 +425,9 @@ function setPricingPeriod(p) {
 
   document.getElementById('cta-pro').href   = getPolarUrl('pro',   period);
   document.getElementById('cta-ultra').href = getPolarUrl('ultra', period);
+
+  document.getElementById('yearly-info-pro').style.display   = yearly ? '' : 'none';
+  document.getElementById('yearly-info-ultra').style.display = yearly ? '' : 'none';
 }
 
 /* ROI Calculator */
