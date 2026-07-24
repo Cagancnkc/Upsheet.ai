@@ -2345,18 +2345,4 @@ router.post('/producthunt-reviews/:id/toggle-visible', requireAuth, async (req, 
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// Sadece onaylı yorumlar — herkese açık (site testimonial widget için)
-router.get('/producthunt-reviews/public', async (req, res) => {
-  try {
-    const sb = _getSb();
-    const { data, error } = await sb.from('producthunt_reviews')
-      .select('id, author_name, author_avatar_url, content, content_tr, votes_count, ph_created_at')
-      .eq('is_visible', true)
-      .order('votes_count', { ascending: false })
-      .limit(6);
-    if (error) throw error;
-    res.json({ reviews: data || [] });
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
 module.exports = router;
