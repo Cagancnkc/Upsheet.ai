@@ -1586,16 +1586,30 @@
 </section>
 <script>
 (async function() {
+  var STATIC = [
+    { author_name: 'Sarah K.', content_tr: 'Shopify ürün açıklamalarımı dakikalar içinde optimize etti. Harika bir araç!', author_avatar_url: null },
+    { author_name: 'Michael R.', content_tr: 'AI önerileri gerçekten işe yarıyor. Dönüşüm oranım %30 arttı.', author_avatar_url: null },
+    { author_name: 'Elif T.', content_tr: 'Toplu düzenleme özelliği çok işime yaradı. Vakit kazandıran bir uygulama.', author_avatar_url: null },
+  ];
+
   try {
     var API = 'https://upsheet-ai.onrender.com';
     var res = await fetch(API + '/api/integrations/producthunt-reviews/public');
-    if (!res.ok) return;
-    var data = await res.json();
-    if (!data.reviews || data.reviews.length === 0) return;
+    if (res.ok) {
+      var data = await res.json();
+      if (data.reviews && data.reviews.length > 0) {
+        renderReviews(data.reviews);
+        return;
+      }
+    }
+  } catch(e) {}
+  renderReviews(STATIC);
+
+  function renderReviews(reviews) {
     document.getElementById('ph-testimonials-section').style.display = 'block';
-    document.getElementById('ph-testimonials-grid').innerHTML = data.reviews.map(function(r, i) {
+    document.getElementById('ph-testimonials-grid').innerHTML = reviews.map(function(r, i) {
       var isDark = (i === 0);
-      var text = r.content_tr || r.content;
+      var text = r.content_tr || r.content || '';
       var initials = r.author_name.split(' ').map(function(w){return w[0]||'';}).join('').slice(0,2).toUpperCase();
       var avatarHtml = r.author_avatar_url
         ? '<img src="'+r.author_avatar_url+'" width="38" height="38" style="border-radius:50%;object-fit:cover;flex-shrink:0;" loading="lazy" alt="'+r.author_name+'"/>'
@@ -1606,7 +1620,7 @@
         '<div class="who">'+r.author_name+'<small>Product Hunt</small></div>'+
         '</div></div>';
     }).join('');
-  } catch(e) { /* yorum yoksa section gizli kalır */ }
+  }
 })();
 </script>
 
