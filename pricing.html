@@ -396,10 +396,20 @@ var _billingPeriod = 'monthly';
 var MONTHLY = { pro: 149, ultra: 399 };
 var YEARLY  = { pro: 119, ultra: 319 };
 
+var POLAR_IDS = {
+  pro:   { monthly: '2a80e38a-3a44-4f56-855d-b1e2570f9782', yearly: 'b2206a9e-f650-435f-b4ed-12eb31bdf4c5' },
+  ultra: { monthly: 'a817522b-3270-4340-bc1e-7d75b393da82', yearly: 'ab30e296-b3bc-4f7e-bad1-9c3306733651' }
+};
+
+function getPolarUrl(plan, period) {
+  return 'https://polar.sh/checkout/' + POLAR_IDS[plan][period];
+}
+
 function setPricingPeriod(p) {
   _billingPeriod = p;
   var yearly = p === 'yearly';
   var prices = yearly ? YEARLY : MONTHLY;
+  var period = yearly ? 'yearly' : 'monthly';
 
   var monthlyBtn = document.getElementById('billing-monthly-btn');
   var yearlyBtn  = document.getElementById('billing-yearly-btn');
@@ -411,9 +421,8 @@ function setPricingPeriod(p) {
   document.getElementById('price-pro').textContent   = '₺' + prices.pro;
   document.getElementById('price-ultra').textContent = '₺' + prices.ultra;
 
-  var period = yearly ? 'yearly' : 'monthly';
-  document.getElementById('cta-pro').href   = '/auth?plan=pro&period='   + period;
-  document.getElementById('cta-ultra').href = '/auth?plan=ultra&period=' + period;
+  document.getElementById('cta-pro').href   = getPolarUrl('pro',   period);
+  document.getElementById('cta-ultra').href = getPolarUrl('ultra', period);
 }
 
 /* ROI Calculator */

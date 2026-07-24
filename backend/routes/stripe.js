@@ -14,12 +14,8 @@ function getStripe() {
 const PLANS = {
   pro: {
     weekly:  { priceId: process.env.STRIPE_PRICE_PRO_WEEKLY,  name: 'Pro Haftalık',  amount: 14900, currency: 'try' },
-    monthly: { priceId: process.env.STRIPE_PRICE_PRO_MONTHLY, name: 'Pro Aylık',     amount: 14900, currency: 'try' },
-    yearly:  { priceId: process.env.STRIPE_PRICE_PRO_YEARLY,  name: 'Pro Yıllık',    amount: 11900, currency: 'try' }
-  },
-  ultra: {
-    monthly: { priceId: process.env.STRIPE_PRICE_ULTRA_MONTHLY, name: 'Ultra Aylık', amount: 39900, currency: 'try' },
-    yearly:  { priceId: process.env.STRIPE_PRICE_ULTRA_YEARLY,  name: 'Ultra Yıllık', amount: 31900, currency: 'try' }
+    monthly: { priceId: process.env.STRIPE_PRICE_PRO_MONTHLY, name: 'Pro Aylık',     amount: 49900, currency: 'try' },
+    yearly:  { priceId: process.env.STRIPE_PRICE_PRO_YEARLY,  name: 'Pro Yıllık',    amount: 29900, currency: 'try' }
   },
   business: {
     weekly:  { priceId: process.env.STRIPE_PRICE_BIZ_WEEKLY,  name: 'İş Haftalık',   amount: 34900, currency: 'try' },
