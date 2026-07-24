@@ -396,13 +396,13 @@ var _billingPeriod = 'monthly';
 var MONTHLY = { pro: 149, ultra: 399 };
 var YEARLY  = { pro: 119, ultra: 319 };
 
-var POLAR_IDS = {
-  pro:   { monthly: '2a80e38a-3a44-4f56-855d-b1e2570f9782', yearly: 'b2206a9e-f650-435f-b4ed-12eb31bdf4c5' },
-  ultra: { monthly: 'a817522b-3270-4340-bc1e-7d75b393da82', yearly: 'ab30e296-b3bc-4f7e-bad1-9c3306733651' }
+var POLAR_URLS = {
+  pro:   { monthly: 'https://buy.polar.sh/polar_cl_nVa6wF1jLlNzwSBNJ9n0DbfdsK260yFFi2ME34ePJ1W', yearly: 'https://buy.polar.sh/polar_cl_QIhbzKVVap5xuCuLGOwv0pVCiJ9GNzK89N6u513m0Ik' },
+  ultra: { monthly: 'https://buy.polar.sh/polar_cl_UcqugjkfYNI4dXxjHU34Dq5tCk5s94akWbAXK4ZvnfO', yearly: 'https://buy.polar.sh/polar_cl_Rb0bIam8OOnsyo0VgTElLPz23IJfIjZlNEuc72xIIQX' }
 };
 
 function getPolarUrl(plan, period) {
-  return 'https://polar.sh/checkout/' + POLAR_IDS[plan][period];
+  return POLAR_URLS[plan][period];
 }
 
 function setPricingPeriod(p) {
