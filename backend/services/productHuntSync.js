@@ -1,9 +1,23 @@
 'use strict';
 const fetch = require('node-fetch');
 const { createClient } = require('@supabase/supabase-js');
+const Anthropic = require('@anthropic-ai/sdk');
 
 function getSb() {
   return createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
+}
+
+async function translateToTurkish(text) {
+  const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+  const msg = await client.messages.create({
+    model: 'claude-haiku-4-5-20251001',
+    max_tokens: 500,
+    messages: [{
+      role: 'user',
+      content: 'Translate this Product Hunt review to natural Turkish. Return ONLY the translated text, no quotes, no explanation:\n\n' + text,
+    }],
+  });
+  return msg.content[0].text.trim();
 }
 
 async function fetchProductHuntComments() {
@@ -53,15 +67,34 @@ async function fetchProductHuntComments() {
   const comments = data.data?.post?.comments?.edges || [];
   const sb = getSb();
 
+  // Mevcut kayıtların çeviri durumunu kontrol et — zaten çevrilmişleri tekrar çevirme
+  const ids = comments.map(e => e.node.id).filter(Boolean);
+  const { data: existing } = ids.length
+    ? await sb.from('producthunt_reviews').select('id, content_tr').in('id', ids)
+    : { data: [] };
+  const existingMap = new Map((existing || []).map(r => [r.id, r.content_tr]));
+
   for (const edge of comments) {
     const c = edge.node;
-    if (!c.body || c.body.trim().length < 10) continue; // çok kısa yorumları atla
+    if (!c.body || c.body.trim().length < 10) continue;
+
+    const alreadyTranslated = existingMap.get(c.id);
+    let content_tr = alreadyTranslated || null;
+    if (!content_tr) {
+      try {
+        content_tr = await translateToTurkish(c.body);
+      } catch (e) {
+        console.error('[ProductHunt Sync] çeviri hatası:', e.message);
+        content_tr = c.body; // çeviri başarısızsa orijinali kullan
+      }
+    }
 
     await sb.from('producthunt_reviews').upsert({
       id: c.id,
       author_name: c.user?.name || 'Anonim',
       author_avatar_url: c.user?.profileImage || null,
       content: c.body,
+      content_tr,
       votes_count: c.votesCount || 0,
       ph_created_at: c.createdAt,
       fetched_at: new Date().toISOString(),

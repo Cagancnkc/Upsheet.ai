@@ -1573,32 +1573,37 @@
 </section>
 
 <!-- PRODUCT HUNT TESTIMONIALS — sadece onaylı yorum varsa görünür -->
-<section id="ph-testimonials-section" style="padding:80px 0 40px;background:var(--paper);display:none;">
-  <div class="wrap" style="max-width:1000px;">
-    <h2 style="font-size:clamp(22px,3.5vw,34px);font-weight:800;letter-spacing:-.02em;margin:0 0 8px;text-align:center;">
-      Kullanıcılarımız Ne Diyor
+<section id="ph-testimonials-section" style="padding:80px 0 60px;background:var(--paper);display:none;">
+  <div class="wrap" style="max-width:1060px;">
+    <div style="display:flex;justify-content:center;margin-bottom:20px;">
+      <span class="eyebrow"><span class="dot"></span>Product Hunt Yorumları</span>
+    </div>
+    <h2 style="font-size:clamp(32px,4.5vw,56px);font-weight:600;letter-spacing:-.035em;line-height:1;margin:0 0 48px;text-align:center;">
+      Kullanıcılarımız<br><em style="font-family:'Instrument Serif',serif;font-style:italic;font-weight:400;color:var(--violet,#16a34a);">ne diyor</em>
     </h2>
-    <p style="text-align:center;color:var(--muted,#6B7280);margin:0 0 40px;">Product Hunt üzerinden gelen gerçek yorumlar.</p>
-    <div id="ph-testimonials-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;"></div>
+    <div class="testi" id="ph-testimonials-grid"></div>
   </div>
 </section>
 <script>
 (async function() {
   try {
-    const API = 'https://upsheet-ai.onrender.com';
-    const res = await fetch(API + '/api/integrations/producthunt-reviews/public');
+    var API = 'https://upsheet-ai.onrender.com';
+    var res = await fetch(API + '/api/integrations/producthunt-reviews/public');
     if (!res.ok) return;
-    const data = await res.json();
+    var data = await res.json();
     if (!data.reviews || data.reviews.length === 0) return;
     document.getElementById('ph-testimonials-section').style.display = 'block';
-    document.getElementById('ph-testimonials-grid').innerHTML = data.reviews.map(function(r) {
-      var avatar = r.author_avatar_url
-        ? '<img src="' + r.author_avatar_url + '" width="24" height="24" style="border-radius:999px;object-fit:cover;" loading="lazy" alt="' + r.author_name + '"/>'
-        : '<div style="width:24px;height:24px;border-radius:999px;background:#e5e7eb;"></div>';
-      return '<div style="border:0.5px solid #e5e7eb;border-radius:16px;padding:20px;background:#fff;">' +
-        '<p style="font-size:13px;color:#374151;line-height:1.6;margin:0 0 14px;">\u201c' + r.content + '\u201d</p>' +
-        '<div style="display:flex;align-items:center;gap:8px;">' + avatar +
-        '<span style="font-size:12px;font-weight:600;color:#111827;">' + r.author_name + '</span>' +
+    document.getElementById('ph-testimonials-grid').innerHTML = data.reviews.map(function(r, i) {
+      var isDark = (i === 0);
+      var text = r.content_tr || r.content;
+      var initials = r.author_name.split(' ').map(function(w){return w[0]||'';}).join('').slice(0,2).toUpperCase();
+      var avatarHtml = r.author_avatar_url
+        ? '<img src="'+r.author_avatar_url+'" width="38" height="38" style="border-radius:50%;object-fit:cover;flex-shrink:0;" loading="lazy" alt="'+r.author_name+'"/>'
+        : '<div class="avatar">'+initials+'</div>';
+      return '<div class="quote'+(isDark?' dark':'')+'">'+
+        '<div class="quote-text">\u201c'+text+'\u201d</div>'+
+        '<div class="quote-who">'+avatarHtml+
+        '<div class="who">'+r.author_name+'<small>Product Hunt</small></div>'+
         '</div></div>';
     }).join('');
   } catch(e) { /* yorum yoksa section gizli kalır */ }
