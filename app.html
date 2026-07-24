@@ -81,10 +81,10 @@
         <span style="font-size:15px;font-weight:600;color:#111827;">mocksheets<span style="color:#16a34a;">.</span></span>
       </div>
       <div style="display:flex;align-items:center;gap:16px;">
-        <button type="button" style="display:flex;align-items:center;gap:6px;padding:6px 12px;border:0.5px solid #e5e7eb;border-radius:10px;background:#fff;color:#374151;font-size:12px;cursor:pointer;">
+        <button type="button" onclick="toggleDateRangeDropdown(event)" style="display:flex;align-items:center;gap:6px;padding:6px 12px;border:0.5px solid #e5e7eb;border-radius:10px;background:#fff;color:#374151;font-size:12px;cursor:pointer;">
           <i class="ti ti-calendar" style="font-size:14px;"></i>Son 30 Gün
         </button>
-        <button type="button" style="width:32px;height:32px;border:0.5px solid #e5e7eb;border-radius:10px;background:#fff;color:#6b7280;cursor:pointer;display:flex;align-items:center;justify-content:center;">
+        <button type="button" onclick="showNotifications(event)" style="width:32px;height:32px;border:0.5px solid #e5e7eb;border-radius:10px;background:#fff;color:#6b7280;cursor:pointer;display:flex;align-items:center;justify-content:center;">
           <i class="ti ti-bell" style="font-size:15px;"></i>
         </button>
         <div id="header-avatar" style="width:32px;height:32px;border-radius:999px;background:#111827;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;">C</div>
@@ -138,7 +138,7 @@
             <button class="pc-view-btn active" id="toggle-table" onclick="setViewMode('table')" title="Tablo Görünümü"><i class="ti ti-layout-rows"></i></button>
             <button class="pc-view-btn" id="toggle-canvas" onclick="setViewMode('canvas')" title="Katalog Görünümü"><i class="ti ti-layout-grid"></i></button>
           </div>
-          <button style="width: 28px; height: 28px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface-2); display: flex; align-items: center; justify-content: center; cursor: pointer;">
+          <button onclick="promptAddCustomColumn()" title="Özel sütun ekle" style="width: 28px; height: 28px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface-2); display: flex; align-items: center; justify-content: center; cursor: pointer;">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           </button>
         </div>
@@ -3186,6 +3186,66 @@ if (_origSetView) {
     if (e.key === 'Enter') document.getElementById('shopify-modal-connect').click();
   });
 })();
+
+// ── Tarih aralığı dropdown (topbar) ─────────────────────────────────────
+var _selectedDateRange = 'Son 30 Gün';
+function toggleDateRangeDropdown(event) {
+  event.stopPropagation();
+  const existing = document.getElementById('date-range-dropdown');
+  if (existing) { existing.remove(); return; }
+  const dd = document.createElement('div');
+  dd.id = 'date-range-dropdown';
+  dd.className = 'sf-dropdown open';
+  dd.style.cssText = 'position:absolute;top:52px;right:120px;z-index:200;min-width:160px;';
+  const options = ['Son 7 Gün','Son 30 Gün','Son 90 Gün','Tüm Zamanlar'];
+  dd.innerHTML = options.map(o =>
+    `<div style="padding:8px 14px;font-size:13px;cursor:pointer;${o===_selectedDateRange?'font-weight:600;color:#16a34a;':''}" onclick="setDateRange('${o}')">${o}</div>`
+  ).join('');
+  document.querySelector('.sf-topbar').style.position = 'relative';
+  document.querySelector('.sf-topbar').appendChild(dd);
+  document.addEventListener('click', function() { dd.remove(); }, { once: true });
+}
+function setDateRange(label) {
+  _selectedDateRange = label;
+  const btn = document.querySelector('.sf-topbar button[onclick*="DateRange"]');
+  if (btn) btn.innerHTML = `<i class="ti ti-calendar" style="font-size:14px;"></i>${label}`;
+  document.getElementById('date-range-dropdown')?.remove();
+}
+
+// ── Bildirimler dropdown (topbar) ────────────────────────────────────────
+function showNotifications(event) {
+  event.stopPropagation();
+  const existing = document.getElementById('notif-dropdown');
+  if (existing) { existing.remove(); return; }
+  const dd = document.createElement('div');
+  dd.id = 'notif-dropdown';
+  dd.className = 'sf-dropdown open';
+  dd.style.cssText = 'position:absolute;top:52px;right:60px;z-index:200;min-width:240px;max-height:280px;overflow-y:auto;';
+  const logs = (window.activityLog || []).slice(0, 8);
+  if (logs.length === 0) {
+    dd.innerHTML = '<div style="padding:16px;font-size:13px;color:#6b7280;text-align:center;">Yeni bildirim yok</div>';
+  } else {
+    dd.innerHTML = '<div style="padding:8px 14px;font-size:11px;font-weight:600;color:#9ca3af;border-bottom:1px solid #f3f4f6;text-transform:uppercase;letter-spacing:.05em;">Son Aktivite</div>' +
+      logs.map(l => `<div style="padding:8px 14px;font-size:12px;color:#374151;border-bottom:1px solid #f9fafb;">${l}</div>`).join('');
+  }
+  document.querySelector('.sf-topbar').style.position = 'relative';
+  document.querySelector('.sf-topbar').appendChild(dd);
+  document.addEventListener('click', function() { dd.remove(); }, { once: true });
+}
+
+// ── Özel sütun ekle (sheet tabs) ─────────────────────────────────────────
+function promptAddCustomColumn() {
+  const name = window.prompt('Yeni sütun adı:');
+  if (!name || !name.trim()) return;
+  const key = 'custom_' + name.trim().toLowerCase().replace(/\s+/g, '_');
+  if (!window._customColumns) window._customColumns = [];
+  if (window._customColumns.find(function(c) { return c.key === key; })) {
+    toast('Bu sütun zaten mevcut'); return;
+  }
+  window._customColumns.push({ key: key, label: name.trim() });
+  if (typeof buildGrid === 'function') buildGrid();
+  toast('"' + name.trim() + '" sütunu eklendi');
+}
 </script>
 
 </body>
