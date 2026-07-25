@@ -157,6 +157,22 @@
     </div>
 
     <div class="sf-ai-content">
+      <div style="margin-bottom:14px;">
+        <div id="sf-ai-prompt-card" style="background:#fff;border-radius:12px;padding:3px;box-shadow:0 2px 8px rgba(0,0,0,.06);border:0.5px solid #e5e7eb;">
+          <div style="background:#f9fafb;border-radius:9px;padding:8px 12px;display:flex;align-items:center;gap:8px;">
+            <div style="width:24px;height:24px;border-radius:7px;background:linear-gradient(135deg,#16a34a,#059669);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <i class="ti ti-sparkles" style="font-size:12px;color:#fff;"></i>
+            </div>
+            <input id="sf-ai-prompt-input" type="text" placeholder="Ne yapmak istiyorsun?"
+              style="flex:1;background:transparent;border:none;outline:none;color:#111827;font-size:12.5px;font-family:inherit;"
+              onkeydown="if(event.key==='Enter'){runPanelPrompt();}">
+            <button type="button" onclick="runPanelPrompt()"
+              style="width:26px;height:26px;border-radius:8px;border:none;background:#111827;color:#fff;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
+              <i class="ti ti-arrow-up" style="font-size:13px;"></i>
+            </button>
+          </div>
+        </div>
+      </div>
       <div class="sf-ai-section-label">Hızlı İşlemler</div>
 
       <div class="sf-quick-action-item" onclick="runAIAction('clean_titles')">
@@ -198,10 +214,6 @@
         <div class="sf-quick-action-label">✏️ Eksik Değerleri Düzelt</div>
         <div class="sf-quick-action-desc">Boş hücreleri AI ile doldur</div>
       </div>
-
-      <div class="sf-ai-section-label">Özel İşlem</div>
-      <textarea class="sf-custom-action-input" placeholder="Ne yapmak istiyorsun? Örn: Tüm fiyatları %20 artır..."></textarea>
-      <button class="sf-create-action-btn" onclick="runCustomAction()">✨ Özel İşlem Oluştur</button>
 
       <div style="padding-top: 16px; border-top: 1px solid var(--line); margin-top: 16px; font-size: 11px; color: var(--ink-4); text-align: center; cursor: pointer;" onclick="toggleAIHelp()">
         AI İşlemleri nasıl çalışır? ℹ️
@@ -686,16 +698,16 @@ function renderDashboard() {
       </div>
 
       <div style="position:relative;margin-bottom:24px;">
-        <div id="dash-prompt-card" style="background:#fff;border-radius:20px;padding:4px;box-shadow:0 4px 16px rgba(0,0,0,.08);border:0.5px solid #e5e7eb;transition:box-shadow .2s ease;">
-          <div style="background:#f9fafb;border-radius:16px;padding:16px 18px;display:flex;align-items:flex-end;gap:12px;">
-            <div style="width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,#16a34a,#059669);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-              <i class="ti ti-sparkles" style="font-size:16px;color:#fff;"></i>
+        <div id="dash-prompt-card" style="background:#fff;border-radius:14px;padding:3px;box-shadow:0 4px 16px rgba(0,0,0,.08);border:0.5px solid #e5e7eb;transition:box-shadow .2s ease;">
+          <div style="background:#f9fafb;border-radius:11px;padding:10px 14px;display:flex;align-items:flex-end;gap:10px;">
+            <div style="width:26px;height:26px;border-radius:7px;background:linear-gradient(135deg,#16a34a,#059669);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <i class="ti ti-sparkles" style="font-size:13px;color:#fff;"></i>
             </div>
             <textarea id="dash-prompt-input" rows="1" placeholder="Kataloğunuzla ilgili ne yapmak istersiniz?"
-              style="flex:1;background:transparent;border:none;outline:none;resize:none;color:#111827;font-size:14px;line-height:22px;font-family:inherit;max-height:120px;overflow-y:hidden;padding:5px 0;"></textarea>
+              style="flex:1;background:transparent;border:none;outline:none;resize:none;color:#111827;font-size:13px;line-height:20px;font-family:inherit;max-height:100px;overflow-y:hidden;padding:4px 0;"></textarea>
             <button id="dash-prompt-send" type="button"
-              style="width:36px;height:36px;border-radius:12px;border:none;background:#111827;color:#fff;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:background .15s ease,transform .1s ease;">
-              <i class="ti ti-arrow-up" style="font-size:16px;"></i>
+              style="width:28px;height:28px;border-radius:9px;border:none;background:#111827;color:#fff;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:background .15s ease,transform .1s ease;">
+              <i class="ti ti-arrow-up" style="font-size:14px;"></i>
             </button>
           </div>
           <div id="dash-prompt-chips" style="display:flex;gap:8px;padding:10px 18px 6px;flex-wrap:wrap;"></div>
@@ -2347,6 +2359,17 @@ async function runAIAction(actionType) {
   applyAIChanges(result);
   aiHistory.push({ action: actionType, timestamp: new Date().toLocaleTimeString('tr-TR') });
   addActivityLog(`AI işlemi: ${actionType}`);
+}
+
+function runPanelPrompt() {
+  const input = document.getElementById('sf-ai-prompt-input');
+  const text = input ? input.value.trim() : '';
+  if (!text) { toast('Bir işlem açıklaması yazın', 'error'); return; }
+  input.value = '';
+  toast('İşleniyor…');
+  runAIAction('custom: ' + text)
+    .then(() => toast('✓ İşlem tamamlandı', 'success'))
+    .catch(e => toast('✗ İşlem başarısız: ' + e.message, 'error'));
 }
 
 function runCustomAction() {
