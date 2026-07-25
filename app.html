@@ -697,23 +697,6 @@ function renderDashboard() {
         <span style="font-size:12px;color:#6b7280;">Verileriniz şifreli saklanıyor, Shopify onaylı bağlantı kullanılıyor</span>
       </div>
 
-      <div style="position:relative;margin-bottom:24px;">
-        <div id="dash-prompt-card" style="background:#fff;border-radius:14px;padding:3px;box-shadow:0 4px 16px rgba(0,0,0,.08);border:0.5px solid #e5e7eb;transition:box-shadow .2s ease;">
-          <div style="background:#f9fafb;border-radius:11px;padding:10px 14px;display:flex;align-items:flex-end;gap:10px;">
-            <div style="width:26px;height:26px;border-radius:7px;background:linear-gradient(135deg,#16a34a,#059669);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-              <i class="ti ti-sparkles" style="font-size:13px;color:#fff;"></i>
-            </div>
-            <textarea id="dash-prompt-input" rows="1" placeholder="Kataloğunuzla ilgili ne yapmak istersiniz?"
-              style="flex:1;background:transparent;border:none;outline:none;resize:none;color:#111827;font-size:13px;line-height:20px;font-family:inherit;max-height:100px;overflow-y:hidden;padding:4px 0;"></textarea>
-            <button id="dash-prompt-send" type="button"
-              style="width:28px;height:28px;border-radius:9px;border:none;background:#111827;color:#fff;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:background .15s ease,transform .1s ease;">
-              <i class="ti ti-arrow-up" style="font-size:14px;"></i>
-            </button>
-          </div>
-          <div id="dash-prompt-chips" style="display:flex;gap:8px;padding:10px 18px 6px;flex-wrap:wrap;"></div>
-        </div>
-        <div id="dash-prompt-status" style="display:none;align-items:center;gap:8px;padding:10px 18px;font-size:12px;color:#6b7280;"></div>
-      </div>
 
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:16px">
 
@@ -834,7 +817,7 @@ function renderDashboard() {
   renderHealthBreakdownFull(analysis.categoryScores || {});
   renderAiRecommendations(analysis.issues || []);
   renderDashQuickActions();
-  wireDashPromptBar();
+
   renderDashRecentOperationsFull();
   renderHealthTrendChart();
   if (analysis.totalProducts > 0) {
@@ -1145,96 +1128,6 @@ function renderDashQuickActions() {
   });
 }
 
-function wireDashPromptBar() {
-  const input = document.getElementById('dash-prompt-input');
-  const card = document.getElementById('dash-prompt-card');
-  const sendBtn = document.getElementById('dash-prompt-send');
-  const chipsEl = document.getElementById('dash-prompt-chips');
-  if (!input || !card || !sendBtn) return;
-
-  input.addEventListener('input', function() {
-    this.style.height = 'auto';
-    this.style.height = Math.min(this.scrollHeight, 120) + 'px';
-  });
-
-  input.addEventListener('focus', function() {
-    card.style.boxShadow = '0 4px 20px rgba(0,0,0,.14)';
-  });
-  input.addEventListener('blur', function() {
-    card.style.boxShadow = '0 4px 16px rgba(0,0,0,.08)';
-  });
-
-  input.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submitDashPrompt(); }
-  });
-
-  sendBtn.addEventListener('click', submitDashPrompt);
-  sendBtn.addEventListener('mouseenter', function() {
-    this.style.background = '#374151'; this.style.transform = 'scale(1.05)';
-  });
-  sendBtn.addEventListener('mouseleave', function() {
-    this.style.background = '#111827'; this.style.transform = 'scale(1)';
-  });
-
-  if (chipsEl) {
-    DASH_QUICK_PRESETS.slice(0, 4).forEach(function(preset) {
-      const chip = document.createElement('button');
-      chip.type = 'button';
-      chip.style.cssText = 'padding:6px 12px;border:0.5px solid #e5e7eb;border-radius:999px;' +
-        'background:#fff;color:#374151;font-size:11px;cursor:pointer;' +
-        'transition:background .15s ease,border-color .15s ease;';
-      chip.textContent = preset.label;
-      chip.addEventListener('mouseenter', function() {
-        this.style.background = '#f0fdf4';
-        this.style.borderColor = '#86efac';
-      });
-      chip.addEventListener('mouseleave', function() {
-        this.style.background = '#fff';
-        this.style.borderColor = '#e5e7eb';
-      });
-      chip.addEventListener('click', function() { runPromptBarAction(preset.action, preset.label); });
-      chipsEl.appendChild(chip);
-    });
-  }
-}
-
-async function submitDashPrompt() {
-  const input = document.getElementById('dash-prompt-input');
-  const text = (input && input.value.trim()) || '';
-  if (!text) return;
-  await runPromptBarAction('custom: ' + text, text);
-  if (input) { input.value = ''; input.style.height = 'auto'; }
-}
-
-async function runPromptBarAction(action, label) {
-  const sendBtn = document.getElementById('dash-prompt-send');
-  const statusEl = document.getElementById('dash-prompt-status');
-  if (sendBtn) sendBtn.disabled = true;
-  if (statusEl) {
-    statusEl.style.display = 'flex';
-    statusEl.innerHTML =
-      '<div style="width:12px;height:12px;border:2px solid #e5e7eb;border-top-color:#16a34a;' +
-      'border-radius:999px;animation:spin .6s linear infinite;"></div><span>İşleniyor: ' + label + '\u2026</span>';
-  }
-  try {
-    await runAIAction(action);
-    if (statusEl) statusEl.innerHTML =
-      '<i class="ti ti-check" style="color:#16a34a;font-size:14px;"></i><span>Tamamlandı</span>';
-    toast('✓ ' + label + ' tamamlandı', 'success');
-    if (typeof renderDashboard === 'function') renderDashboard();
-  } catch(e) {
-    const msg = e.status === 402
-      ? (e.message || 'Günlük komut hakkınızı doldurdunuz.')
-      : (e.message || 'İşlem başarısız');
-    const iconCls = e.status === 402 ? 'ti-clock' : 'ti-x';
-    const iconClr = e.status === 402 ? '#d97706' : '#dc2626';
-    if (statusEl) statusEl.innerHTML =
-      '<i class="ti ' + iconCls + '" style="color:' + iconClr + ';font-size:14px;"></i><span>' + msg + '</span>';
-  } finally {
-    if (sendBtn) sendBtn.disabled = false;
-    setTimeout(function() { if (statusEl) statusEl.style.display = 'none'; }, 2500);
-  }
-}
 
 function renderDashRecentOperationsFull() {
   const container = document.getElementById('dash-recent-operations-full');
