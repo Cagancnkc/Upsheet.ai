@@ -162,8 +162,10 @@ function getRagContext(ragContext) {
 }
 
 // Kullanıcı promptu — her çağrıda değişir → cache'lenmez
-function getUserPrompt(userMessage, sheetData) {
-  const preview = buildSheetPreview(sheetData);
+function getUserPrompt(userMessage, sheetData, ragProductContext) {
+  const preview = ragProductContext
+    ? `Katalog RAG (en alakalı ${ragProductContext.split('\n').length} ürün):\n${ragProductContext}`
+    : buildSheetPreview(sheetData);
   return `DATA PREVIEW:\n${preview}\n\nKULLANICI KOMUTU: "${userMessage}"\n\nSADECE JSON döndür.`;
 }
 
@@ -353,7 +355,7 @@ async function processExcelCommand(userCommand, sheetContext, history = [], user
   };
 }
 
-async function streamExcelCommand(userCommand, sheetContext, history = [], userId = null, onChunk) {
+async function streamExcelCommand(userCommand, sheetContext, history = [], userId = null, onChunk, ragProductContext = null) {
   console.log('[Pipeline] Stream komut:', userCommand?.slice(0, 80));
   const t0 = Date.now();
 
@@ -391,7 +393,7 @@ async function streamExcelCommand(userCommand, sheetContext, history = [], userI
             },
             {
               type: 'text',
-              text: getUserPrompt(userCommand, sheetContext || '')
+              text: getUserPrompt(userCommand, sheetContext || '', ragProductContext)
             }
           ]
         }

@@ -4,6 +4,8 @@ const express = require('express');
 const cors    = require('cors');
 const fetch   = require('node-fetch');
 const { processExcelCommand, streamExcelCommand } = require('./rag/pipeline');
+const { indexProductsForRAG, INDEX_THRESHOLD } = require('./services/productIndexer');
+const { createEmbedding } = require('./rag/embeddings');
 const tokenManager = require('./services/tokenManager');
 const { createClient: _createSbClient } = require('@supabase/supabase-js');
 const { upsertContact, sendEvent, sendScenarioEmail } = require('./services/loops');
@@ -591,14 +593,49 @@ app.post('/api/chat', checkLimit, async (req, res) => {
     if (message.length > 2000)
       return res.status(400).json({ error: 'Komut çok uzun (max 2000 karakter)' });
 
-    let sheetArr = sheetContext || sheetData || [];
-    if (sheetArr.length > 200) sheetArr = sheetArr.slice(0, 200);
+    const fullSheet = sheetContext || sheetData || [];
+    let sheetArr = fullSheet.length > 200 ? fullSheet.slice(0, 200) : fullSheet;
+
+    if (req.user?.id && fullSheet.length > INDEX_THRESHOLD + 1) {
+      setImmediate(() => {
+        indexProductsForRAG(req.user.id, fullSheet)
+          .then(r => { if (r.indexed > 0) console.log(`[RAG] ${r.indexed} ürün indekslendi`); })
+          .catch(e => console.error('[RAG] İndeksleme hatası:', e.message));
+      });
+    }
 
     const destructiveKw = ['sil', 'kaldır', 'temizle', 'boşalt', 'çıkar'];
     const isDestructive = destructiveKw.some(kw => message.toLowerCase().includes(kw));
     if (isDestructive && !confirmed) {
       const nonEmptyRows = sheetArr.filter(row => Array.isArray(row) && row.some(c => c !== '' && c !== null && c !== undefined)).length;
       return res.json({ requiresConfirmation: true, estimatedAffectedRows: nonEmptyRows, previewMessage: `Bu işlem veri içeren ~${nonEmptyRows} satırı etkileyebilir.` });
+    }
+
+    let ragProductContext = null;
+    if (req.user?.id) {
+      try {
+        const sb = getSbForAuth();
+        const { count } = await sb
+          .from('product_embeddings')
+          .select('*', { count: 'exact', head: true })
+          .eq('user_id', req.user.id);
+        if (count && count >= INDEX_THRESHOLD) {
+          const queryEmb = await createEmbedding(message.trim());
+          const { data: matches } = await sb.rpc('match_products', {
+            query_embedding: queryEmb,
+            match_user_id: req.user.id,
+            match_count: 30,
+          });
+          if (matches?.length) {
+            ragProductContext = matches.map(m =>
+              `[Satır ${m.product_row_index + 1}] ${m.content_summary}`
+            ).join('\n');
+            console.log(`[RAG] ${matches.length} ürün retrieval yapıldı`);
+          }
+        }
+      } catch (e) {
+        console.error('[RAG] Retrieval hatası:', e.message);
+      }
     }
 
     res.setHeader('Access-Control-Allow-Origin', req.headers.origin || 'https://www.mocksheets.com');
@@ -609,7 +646,7 @@ app.post('/api/chat', checkLimit, async (req, res) => {
 
     const result = await streamExcelCommand(message.trim(), sheetArr, history || [], req.user?.id, (chunk) => {
       res.write(`data: ${JSON.stringify({ type: 'text', chunk })}\n\n`);
-    });
+    }, ragProductContext);
 
     await incrementUsage(req.user.id);
 
