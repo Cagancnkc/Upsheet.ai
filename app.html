@@ -430,6 +430,17 @@ function loadDemoData() {
   addActivityLog('Demo veriler yüklendi');
   updateUI();
   toast('Demo veriler yüklendi', 'info');
+
+  hideAllViews();
+  const mainView = document.getElementById('main-table-view');
+  if (mainView) mainView.style.display = '';
+
+  const panel = document.querySelector('.sf-ai-panel');
+  const layout = document.querySelector('.shopify-layout');
+  if (panel && (panel.style.display === 'none' || !panel.style.display)) {
+    panel.style.display = 'flex';
+    if (layout) layout.classList.add('ai-panel-open');
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -702,7 +713,7 @@ function renderDashboard() {
             Shopify Hesabını Bağla
           </button>
           -->
-          <button type="button" onclick="loadDemoData();renderDashboard();"
+          <button type="button" onclick="loadDemoData();"
             style="font-size:11px;color:#9ca3af;background:transparent;border:none;cursor:pointer;margin-top:8px;text-decoration:underline;">
             Demo görünümünü aç
           </button>
