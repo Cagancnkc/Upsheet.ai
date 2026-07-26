@@ -16,6 +16,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;550;600;700&family=JetBrains+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Caprasimo&family=Figtree:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/3.19.0/tabler-icons.min.css" />
 <link rel="stylesheet" href="https://unpkg.com/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css" />
 <link rel="stylesheet" href="mocksheets-styles.css" />
@@ -30,6 +31,86 @@
         y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
     })(window, document, "clarity", "script", "xa2q453j9l");
 </script>
+<style>
+.ai-chat-page {
+  --bg: #ffffff; --text: #201e1d; --muted: #6b645c; --line: #e4ded6;
+  --accent: #c67139; --accent-100: #fbeadd; --accent-200: #f3d3bb; --accent-400: #dfa477;
+  --sage-100: #f0fae1; --sage-200: #e1eecc; --sage-400: #aebf92;
+  --sage-600: #728157; --sage-800: #3d472b; --send: #201e1d;
+  --font-heading: "Caprasimo", system-ui, sans-serif;
+  --font-body: "Figtree", system-ui, sans-serif;
+  font-family: var(--font-body); color: var(--text);
+  min-height: 100%; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 44px;
+  padding: 64px 24px; position: relative; background: var(--bg);
+}
+.ai-chat-page * { box-sizing: border-box; }
+.ai-chat-page .acp-logo { position: absolute; top: 28px; left: 32px; height: 42px; width: auto; mix-blend-mode: multiply; }
+.ai-chat-page .acp-intro { text-align: center; display: flex; flex-direction: column; gap: 10px; align-items: center; }
+.ai-chat-page .acp-kicker {
+  background: var(--sage-100); color: var(--sage-800);
+  border-radius: 999px; padding: 5px 12px;
+  font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+}
+.ai-chat-page .acp-intro h1 { font-family: var(--font-heading); font-size: 46px; line-height: 1.05; margin: 0; font-weight: 400; }
+.ai-chat-page .acp-intro p { margin: 0; font-size: 16px; color: var(--muted); max-width: 460px; }
+.ai-chat-page .acp-stack { width: min(780px, 100%); display: flex; flex-direction: column; gap: 18px; }
+.ai-chat-page .acp-bar { background: var(--bg); border-radius: 34px; padding: 6px; box-shadow: 0 12px 32px rgba(46,43,37,.22); }
+.ai-chat-page .acp-bar-inner {
+  border: 1.5px solid var(--accent-200); border-radius: 30px;
+  padding: 20px 22px 14px; display: flex; flex-direction: column; gap: 14px;
+}
+.ai-chat-page .acp-files { display: flex; flex-wrap: wrap; gap: 8px; }
+.ai-chat-page .acp-file {
+  display: flex; align-items: center; gap: 9px;
+  background: var(--sage-100); border-radius: 999px; padding: 7px 8px 7px 14px;
+}
+.ai-chat-page .acp-file b { font-size: 13px; font-weight: 600; color: var(--sage-800); }
+.ai-chat-page .acp-file span { font-size: 12px; color: var(--sage-600); }
+.ai-chat-page .acp-file button {
+  width: 22px; height: 22px; border: 0; cursor: pointer; border-radius: 999px;
+  background: var(--sage-200); color: var(--sage-800); font-size: 13px;
+  display: grid; place-items: center;
+}
+.ai-chat-page .acp-file button:hover { background: var(--sage-400); }
+.ai-chat-page textarea {
+  width: 100%; resize: none; border: 0; outline: none; background: transparent;
+  font-family: var(--font-body); font-size: 19px; line-height: 1.55;
+  color: var(--text); min-height: 62px; padding: 0;
+}
+.ai-chat-page textarea::placeholder { color: #a29a90; }
+.ai-chat-page .acp-tools { display: flex; align-items: center; gap: 10px; }
+.ai-chat-page .acp-opt {
+  display: flex; align-items: center; gap: 8px; height: 40px; padding: 0 16px;
+  border-radius: 999px; cursor: pointer; font-family: var(--font-body);
+  font-size: 14px; font-weight: 600;
+  border: 1.5px solid var(--line); background: transparent; color: var(--text);
+}
+.ai-chat-page .acp-opt:hover { background: var(--accent-100); border-color: var(--accent-400); }
+.ai-chat-page .acp-opt.on { background: var(--sage-200); border-color: var(--sage-400); color: var(--sage-800); }
+.ai-chat-page .acp-icon-btn {
+  width: 40px; height: 40px; border-radius: 999px; border: 1.5px solid var(--line);
+  background: transparent; cursor: pointer; color: var(--muted); display: grid; place-items: center;
+}
+.ai-chat-page .acp-icon-btn:hover { background: var(--accent-100); border-color: var(--accent-400); color: var(--accent); }
+.ai-chat-page .acp-spacer { flex: 1; }
+.ai-chat-page .acp-count { font-size: 12px; color: #9b938a; font-variant-numeric: tabular-nums; }
+.ai-chat-page .acp-send {
+  width: 48px; height: 48px; border-radius: 999px; border: 0; cursor: pointer;
+  display: grid; place-items: center; background: var(--send); color: #fff;
+  box-shadow: 0 3px 10px rgba(46,43,37,.16); transition: transform 140ms ease;
+}
+.ai-chat-page .acp-send:hover { transform: scale(1.06); }
+.ai-chat-page .acp-send:active { transform: scale(.94); }
+.ai-chat-page .acp-send:disabled { background: #b8ab97; cursor: default; transform: none; }
+.ai-chat-page .acp-chips { display: flex; flex-wrap: wrap; gap: 9px; justify-content: center; }
+.ai-chat-page .acp-chip {
+  border: 1.5px solid var(--accent-200); background: var(--bg); border-radius: 999px;
+  padding: 9px 16px; font-family: var(--font-body); font-size: 13.5px; font-weight: 600;
+  color: var(--text); cursor: pointer;
+}
+.ai-chat-page .acp-chip:hover { background: var(--accent-100); border-color: var(--accent-400); }
+</style>
 </head>
 <body>
 <div id="auto-pull-banner" style="display:none;position:fixed;top:0;left:0;right:0;background:#f0fdf4;border-bottom:0.5px solid #d1fae5;padding:10px 20px;z-index:1000;align-items:center;gap:10px;justify-content:center;">
@@ -152,6 +233,7 @@
     <div id="history-view" style="display:none;"></div>
     <div id="settings-view" style="display:none;"></div>
     <div id="products-view" style="display:none;padding:32px;max-width:1000px;margin:0 auto;"></div>
+    <div id="ai-chat-view" style="display:none;height:100%;overflow:auto;"></div>
 
     <!-- BOTTOM STRIP -->
     <div class="sf-bottom-strip">
@@ -497,6 +579,7 @@ function toast(message, type = 'info') {
 
 const SIDEBAR_ITEMS = [
   { view: 'dashboard',     icon: 'ti-home',         label: 'Dashboard' },
+  { view: 'ai-chat',       icon: 'ti-message-2',    label: 'AI Chat' },
   { view: 'catalog-check', icon: 'ti-shield-check', label: 'Katalog Kontrolü' },
   { view: 'sync',          icon: 'ti-refresh',      label: 'Senkronizasyon' },
   { view: 'history',       icon: 'ti-history',      label: 'Geçmiş İşlemler' },
@@ -534,7 +617,7 @@ function renderSidebar() {
 
 function hideAllViews() {
   ['dashboard-view','catalog-editor-layout','products-view','collections-view',
-   'validation-view','sync-view','history-view','settings-view']
+   'validation-view','sync-view','history-view','settings-view','ai-chat-view']
   .forEach(id => {
     const el = document.getElementById(id);
     if (el) el.style.display = 'none';
@@ -556,6 +639,7 @@ function setView(view) {
   hideAllViews();
   const viewRenderers = {
     dashboard:       function() { showView('dashboard-view');        renderDashboard(); },
+    'ai-chat':       function() { showView('ai-chat-view');          renderAIChatPage(); },
     'catalog-check': function() { showView('validation-view');       renderValidationCenter(); },
     sync:            function() { showView('sync-view');             renderSyncPage(); },
     history:         function() { showView('history-view');          loadAndRenderHistory(); },
@@ -564,6 +648,76 @@ function setView(view) {
   };
   (viewRenderers[view] || viewRenderers.dashboard)();
   renderSidebar();
+}
+
+function renderAIChatPage() {
+  const view = document.getElementById('ai-chat-view');
+  if (!view || view.dataset.rendered) return;
+  view.dataset.rendered = '1';
+  view.innerHTML = `
+    <div class="ai-chat-page">
+      <img class="acp-logo" src="/images/brand/logo-128x128.png" alt="mocksheets">
+
+      <div class="acp-intro">
+        <span class="acp-kicker">Mocksheets</span>
+        <h1>Tablolarını konuşarak yönet</h1>
+        <p>Mağaza verini bağla, ne istediğini yaz — ürün, stok ve sipariş tabloların saniyeler içinde hazırlansın.</p>
+      </div>
+
+      <div class="acp-stack">
+        <div class="acp-bar">
+          <div class="acp-bar-inner">
+            <div class="acp-files" id="acp-files"></div>
+
+            <textarea id="acp-pb" rows="2" placeholder="Örn: geçen ayın siparişlerinden ürün bazlı satış tablosu çıkar…"></textarea>
+
+            <div class="acp-tools">
+              <button class="acp-icon-btn" type="button" aria-label="Dosya ekle">
+                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+              </button>
+
+              <button class="acp-opt" type="button" onclick="this.classList.toggle('on')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+                Derin araştırma
+              </button>
+
+              <button class="acp-opt" type="button" onclick="this.classList.toggle('on')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h12l-1 12H7L6 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+                Shopify hesabımı bağla
+              </button>
+
+              <div class="acp-spacer"></div>
+              <span class="acp-count" id="acp-count"></span>
+
+              <button class="acp-send" id="acp-send" type="button" aria-label="Gönder" disabled>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="acp-chips">
+          <button class="acp-chip" type="button">Ürün açıklamalarını SEO'ya göre yaz</button>
+          <button class="acp-chip" type="button">Stok tablosunu Shopify'a hazırla</button>
+          <button class="acp-chip" type="button">Sipariş verilerini özet rapora çevir</button>
+          <button class="acp-chip" type="button">Fiyat listesini toplu güncelle</button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  const ta = view.querySelector('#acp-pb');
+  const send = view.querySelector('#acp-send');
+  const count = view.querySelector('#acp-count');
+  const sync = () => {
+    const n = ta.value.trim().length;
+    send.disabled = n === 0;
+    count.textContent = ta.value.length ? ta.value.length + ' / 4000' : '';
+  };
+  ta.addEventListener('input', sync);
+  ta.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send.click(); } });
+  send.addEventListener('click', () => { if (!send.disabled) { ta.value = ''; sync(); } });
+  view.querySelectorAll('.acp-chip').forEach(c => c.addEventListener('click', () => { ta.value = c.textContent.trim(); sync(); ta.focus(); }));
 }
 
 function switchShopifyView(type) {
