@@ -431,9 +431,7 @@ function loadDemoData() {
   updateUI();
   toast('Demo veriler yüklendi', 'info');
 
-  hideAllViews();
-  const mainView = document.getElementById('main-table-view');
-  if (mainView) mainView.style.display = '';
+  openFullCatalogEditor();
 
   const panel = document.querySelector('.sf-ai-panel');
   const layout = document.querySelector('.shopify-layout');
