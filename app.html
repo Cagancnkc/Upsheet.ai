@@ -116,10 +116,6 @@
           <button class="sf-filter-btn" onclick="toggleFilterDropdown(event, 'height-dropdown')">Satır Yüksekliği</button>
           <button class="sf-filter-btn" onclick="toggleFreeze()">Dondur</button>
           <div style="flex: 1;"></div>
-          <button class="sf-filter-btn" style="background: var(--brand-soft); color: var(--brand-ink); border-color: var(--brand-line);" onclick="toggleAIPanel()">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/></svg>
-            AI İşlemleri
-          </button>
         </div>
 
         <div class="sf-table-scroll">
@@ -145,98 +141,6 @@
         </div>
       </div>
 
-      <!-- AI ACTIONS PANEL (RIGHT) -->
-      <div class="sf-ai-panel" style="display: none;">
-    <div class="sf-ai-header">
-      <div class="sf-ai-title">AI İşlemleri</div>
-      <div class="sf-ai-close" onclick="toggleAIPanel()">×</div>
-    </div>
-
-    <div class="sf-ai-tabs">
-      <div class="sf-ai-tab active" onclick="switchAIPanelTab(this, 'operations')">İşlemler</div>
-      <div class="sf-ai-tab" onclick="switchAIPanelTab(this, 'history')">Geçmiş</div>
-    </div>
-
-    <div class="sf-ai-content">
-      <div style="margin-bottom:14px;">
-        <div id="sf-ai-prompt-card" style="background:#fff;border-radius:12px;padding:3px;box-shadow:0 2px 8px rgba(0,0,0,.06);border:0.5px solid #e5e7eb;">
-          <div style="background:#f9fafb;border-radius:9px;padding:8px 12px;display:flex;align-items:center;gap:8px;">
-            <div style="width:24px;height:24px;border-radius:7px;background:linear-gradient(135deg,#16a34a,#059669);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-              <i class="ti ti-sparkles" style="font-size:12px;color:#fff;"></i>
-            </div>
-            <input id="sf-ai-prompt-input" type="text" placeholder="Ne yapmak istiyorsun?"
-              style="flex:1;background:transparent;border:none;outline:none;color:#111827;font-size:12.5px;font-family:inherit;"
-              onkeydown="if(event.key==='Enter'){runPanelPrompt();}">
-            <button type="button" onclick="runPanelPrompt()"
-              style="width:26px;height:26px;border-radius:8px;border:none;background:#111827;color:#fff;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
-              <i class="ti ti-arrow-up" style="font-size:13px;"></i>
-            </button>
-          </div>
-        </div>
-      </div>
-      <div class="sf-ai-section-label">Hızlı İşlemler</div>
-
-      <div class="sf-quick-action-item" onclick="runAIAction('clean_titles')">
-        <div class="sf-quick-action-label">🔤 Ürün Başlıklarını Temizle</div>
-        <div class="sf-quick-action-desc">Büyük harf, emoji'leri kaldır</div>
-      </div>
-
-      <div class="sf-quick-action-item" onclick="runAIAction('generate_descriptions')">
-        <div class="sf-quick-action-label">📝 Açıklamalar Oluştur</div>
-        <div class="sf-quick-action-desc">AI ile ürün açıklamaları yaz</div>
-      </div>
-
-      <div class="sf-quick-action-item" onclick="runAIAction('generate_seo')">
-        <div class="sf-quick-action-label">🔍 SEO Oluştur</div>
-        <div class="sf-quick-action-desc">Meta başlık ve açıklaması</div>
-      </div>
-
-      <div class="sf-quick-action-item" onclick="runAIAction('standardize_vendors')">
-        <div class="sf-quick-action-label">📋 Vendor Standartlaştır</div>
-        <div class="sf-quick-action-desc">Benzer vendor isimlerini birleştir</div>
-      </div>
-
-      <div class="sf-quick-action-item" onclick="runAIAction('categorize_products')">
-        <div class="sf-quick-action-label">🏷️ Ürünleri Kategorize Et</div>
-        <div class="sf-quick-action-desc">Ürün tipi ve etiketleri ayarla</div>
-      </div>
-
-      <div class="sf-quick-action-item" onclick="runAIAction('translate')">
-        <div class="sf-quick-action-label">🌐 Çevir</div>
-        <div class="sf-quick-action-desc">Başlıkları ve açıklamaları çevir</div>
-      </div>
-
-      <div class="sf-quick-action-item" onclick="runAIAction('find_replace')">
-        <div class="sf-quick-action-label">🔄 Bul ve Değiştir</div>
-        <div class="sf-quick-action-desc">Toplu bul ve değiştir işlemi</div>
-      </div>
-
-      <div class="sf-quick-action-item" onclick="runAIAction('fix_missing')">
-        <div class="sf-quick-action-label">✏️ Eksik Değerleri Düzelt</div>
-        <div class="sf-quick-action-desc">Boş hücreleri AI ile doldur</div>
-      </div>
-
-      <div style="padding-top: 16px; border-top: 1px solid var(--line); margin-top: 16px; font-size: 11px; color: var(--ink-4); text-align: center; cursor: pointer;" onclick="toggleAIHelp()">
-        AI İşlemleri nasıl çalışır? ℹ️
-      </div>
-    </div>
-    <div style="flex-shrink:0;padding:10px 16px 14px;border-top:0.5px solid #e5e7eb;background:#fff;">
-      <div style="background:#fff;border-radius:12px;padding:3px;box-shadow:0 2px 8px rgba(0,0,0,.06);border:0.5px solid #e5e7eb;">
-        <div style="background:#f9fafb;border-radius:9px;padding:8px 12px;display:flex;align-items:center;gap:8px;">
-          <div style="width:24px;height:24px;border-radius:7px;background:linear-gradient(135deg,#16a34a,#059669);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-            <i class="ti ti-sparkles" style="font-size:12px;color:#fff;"></i>
-          </div>
-          <input id="sf-quick-prompt-input" type="text" placeholder="Özel işlem yaz..."
-            style="flex:1;background:transparent;border:none;outline:none;color:#111827;font-size:12.5px;font-family:inherit;"
-            onkeydown="if(event.key==='Enter'){runQuickPrompt();}">
-          <button type="button" onclick="runQuickPrompt()"
-            style="width:26px;height:26px;border-radius:8px;border:none;background:#111827;color:#fff;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
-            <i class="ti ti-arrow-up" style="font-size:13px;"></i>
-          </button>
-        </div>
-      </div>
-    </div>
-      </div>
     </div>
 
     <!-- VIEW CONTAINERS -->
@@ -432,13 +336,6 @@ function loadDemoData() {
   toast('Demo veriler yüklendi', 'info');
 
   openFullCatalogEditor();
-
-  const panel = document.querySelector('.sf-ai-panel');
-  const layout = document.querySelector('.shopify-layout');
-  if (panel && (panel.style.display === 'none' || !panel.style.display)) {
-    panel.style.display = 'flex';
-    if (layout) layout.classList.add('ai-panel-open');
-  }
 }
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -2920,13 +2817,6 @@ async function pushToShopify(event) {
 // MISC
 // ═══════════════════════════════════════════════════════════════════════
 
-function toggleAIPanel() {
-  const panel = document.querySelector('.sf-ai-panel');
-  const layout = document.querySelector('.shopify-layout');
-  const isHidden = panel.style.display === 'none' || !panel.style.display;
-  panel.style.display = isHidden ? 'flex' : 'none';
-  layout.classList.toggle('ai-panel-open', isHidden);
-}
 
 function startRenameCatalog() {
   const title = document.getElementById('catalog-name');
