@@ -110,6 +110,66 @@
   color: var(--text); cursor: pointer;
 }
 .ai-chat-page .acp-chip:hover { background: var(--accent-100); border-color: var(--accent-400); }
+
+/* Adaptive chat layout — after first message */
+.ai-chat-page .acp-messages { display: none; }
+.ai-chat-page.has-messages {
+  justify-content: flex-start; gap: 0;
+  padding: 24px 24px 20px;
+  min-height: 100vh; height: 100vh;
+}
+.ai-chat-page.has-messages .acp-logo,
+.ai-chat-page.has-messages .acp-intro,
+.ai-chat-page.has-messages .acp-chips { display: none; }
+.ai-chat-page.has-messages .acp-stack {
+  width: min(880px, 100%); margin-top: auto; gap: 12px; flex: 0 0 auto;
+}
+.ai-chat-page.has-messages .acp-bar-inner {
+  padding: 12px 16px 8px; gap: 8px;
+}
+.ai-chat-page.has-messages textarea {
+  min-height: 42px; font-size: 16px;
+}
+.ai-chat-page.has-messages .acp-messages {
+  display: flex; flex-direction: column; gap: 18px;
+  width: min(780px, 100%); margin: 0 auto;
+  flex: 1 1 auto; overflow-y: auto; padding: 8px 4px 16px;
+  scroll-behavior: smooth;
+}
+.ai-chat-page .acp-msg {
+  max-width: 82%; padding: 12px 16px; border-radius: 18px;
+  font-size: 15px; line-height: 1.55; word-wrap: break-word;
+  white-space: pre-wrap; animation: acp-fade 240ms ease;
+}
+.ai-chat-page .acp-msg.user {
+  align-self: flex-end; background: var(--accent-100); color: var(--text);
+  border-bottom-right-radius: 6px;
+}
+.ai-chat-page .acp-msg.assistant {
+  align-self: flex-start; background: #f4f1ec; color: var(--text);
+  border-bottom-left-radius: 6px;
+}
+.ai-chat-page .acp-msg.error {
+  align-self: flex-start; background: #fef2f2; color: #991b1b;
+  border-bottom-left-radius: 6px;
+}
+.ai-chat-page .acp-msg.pending {
+  align-self: flex-start; background: #f4f1ec; color: var(--muted);
+  border-bottom-left-radius: 6px; animation: acp-pulse 1.4s ease-in-out infinite;
+}
+@keyframes acp-fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes acp-pulse { 0%,100% { opacity: 0.55; } 50% { opacity: 1; } }
+.ai-chat-page .acp-msg code {
+  background: rgba(0,0,0,.06); padding: 2px 6px; border-radius: 4px;
+  font-family: "SF Mono", Consolas, monospace; font-size: 13px;
+}
+.ai-chat-page .acp-msg pre {
+  background: rgba(0,0,0,.06); padding: 10px 12px; border-radius: 8px;
+  overflow-x: auto; margin: 8px 0;
+}
+.ai-chat-page .acp-msg pre code { background: transparent; padding: 0; }
+.ai-chat-page, .ai-chat-page .acp-stack, .ai-chat-page .acp-bar-inner,
+.ai-chat-page textarea { transition: all 240ms ease; }
 </style>
 </head>
 <body>
@@ -664,6 +724,8 @@ function renderAIChatPage() {
         <p>Mağaza verini bağla, ne istediğini yaz — ürün, stok ve sipariş tabloların saniyeler içinde hazırlansın.</p>
       </div>
 
+      <div class="acp-messages" id="acp-messages"></div>
+
       <div class="acp-stack">
         <div class="acp-bar">
           <div class="acp-bar-inner">
@@ -681,8 +743,8 @@ function renderAIChatPage() {
                 Derin araştırma
               </button>
 
-              <button class="acp-opt" type="button" onclick="this.classList.toggle('on')">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h12l-1 12H7L6 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+              <button class="acp-opt acp-shopify-btn" type="button" onclick="openShopifyConnectModal()">
+                <svg width="16" height="16" viewBox="0 0 256 292" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid"><path d="M223.774 57.34c-.201-1.46-1.48-2.268-2.537-2.357-1.055-.088-23.383-1.743-23.383-1.743s-15.507-15.395-17.209-17.099c-1.703-1.703-5.029-1.185-6.32-.805-.19.056-3.388 1.043-8.678 2.68-5.18-14.906-14.322-28.604-30.405-28.604-.444 0-.901.018-1.358.044C129.31 3.407 123.644.779 118.75.779c-37.465 0-55.364 46.835-60.976 70.635-14.558 4.511-24.9 7.718-26.221 8.133-8.126 2.549-8.383 2.805-9.45 10.462C21.3 95.806.038 260.235.038 260.235l165.678 31.042 89.77-19.42S223.973 58.8 223.774 57.34zM156.49 40.848l-14.019 4.339c.005-.988.01-1.96.01-3.023 0-9.264-1.286-16.723-3.349-22.636 8.287 1.04 13.806 10.469 17.358 21.32zm-27.638-19.483c2.304 5.773 3.802 14.058 3.802 25.238 0 .572-.005 1.095-.01 1.624-9.117 2.824-19.024 5.89-28.953 8.966 5.575-21.516 16.025-31.908 25.161-35.828zm-11.131-10.537c1.617 0 3.246.549 4.805 1.622-12.007 5.65-24.877 19.88-30.312 48.297l-22.886 7.088C75.694 46.16 90.81 10.828 117.72 10.828z" fill="#95BF46"/><path d="M221.237 54.983c-1.055-.088-23.383-1.743-23.383-1.743s-15.507-15.395-17.209-17.099c-.637-.634-1.496-.959-2.394-1.099l-12.527 256.233 89.762-19.418S223.972 58.8 223.774 57.34c-.201-1.46-1.48-2.268-2.537-2.357" fill="#5E8E3E"/><path d="M135.242 104.585l-11.069 32.926s-9.698-5.176-21.586-5.176c-17.428 0-18.305 10.937-18.305 13.693 0 15.038 39.2 20.8 39.2 56.024 0 27.713-17.577 45.558-41.277 45.558-28.44 0-42.984-17.7-42.984-17.7l7.615-25.16s14.95 12.835 27.565 12.835c8.243 0 11.596-6.49 11.596-11.232 0-19.616-32.16-20.491-32.16-52.724 0-27.129 19.472-53.382 58.778-53.382 15.145 0 22.627 4.338 22.627 4.338" fill="#FFF"/></svg>
                 Shopify hesabımı bağla
               </button>
 
@@ -706,17 +768,72 @@ function renderAIChatPage() {
     </div>
   `;
 
+  const root = view.querySelector('.ai-chat-page');
   const ta = view.querySelector('#acp-pb');
   const send = view.querySelector('#acp-send');
   const count = view.querySelector('#acp-count');
+  const messages = view.querySelector('#acp-messages');
+  const history = [];
+  let busy = false;
+
   const sync = () => {
     const n = ta.value.trim().length;
-    send.disabled = n === 0;
+    send.disabled = n === 0 || busy;
     count.textContent = ta.value.length ? ta.value.length + ' / 4000' : '';
   };
+
+  const escapeHtml = (s) => String(s).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+  const appendBubble = (role, text, extraClass = '') => {
+    const el = document.createElement('div');
+    el.className = 'acp-msg ' + role + (extraClass ? ' ' + extraClass : '');
+    el.innerHTML = escapeHtml(text || '');
+    messages.appendChild(el);
+    messages.scrollTop = messages.scrollHeight;
+    return el;
+  };
+
+  const sendMessage = async () => {
+    if (busy) return;
+    const msg = ta.value.trim();
+    if (!msg) return;
+
+    if (!root.classList.contains('has-messages')) root.classList.add('has-messages');
+
+    appendBubble('user', msg);
+    history.push({ role: 'user', content: msg });
+    ta.value = '';
+    busy = true;
+    sync();
+
+    const pending = appendBubble('assistant', 'Yazıyor…', 'pending');
+
+    try {
+      const res = await fetch(`${API_URL}/api/chat/message`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...authHeaders() },
+        body: JSON.stringify({ message: msg, history: history.slice(0, -1) })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || 'Cevap alınamadı');
+      const reply = data.reply || 'Üzgünüm, cevap üretemedim.';
+      pending.classList.remove('pending');
+      pending.innerHTML = escapeHtml(reply);
+      history.push({ role: 'assistant', content: reply });
+    } catch (err) {
+      pending.classList.remove('pending');
+      pending.classList.add('error');
+      pending.innerHTML = escapeHtml('⚠️ ' + (err.message || 'Bağlantı hatası. Lütfen tekrar deneyin.'));
+    } finally {
+      busy = false;
+      sync();
+      messages.scrollTop = messages.scrollHeight;
+      ta.focus();
+    }
+  };
+
   ta.addEventListener('input', sync);
-  ta.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send.click(); } });
-  send.addEventListener('click', () => { if (!send.disabled) { ta.value = ''; sync(); } });
+  ta.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } });
+  send.addEventListener('click', () => { if (!send.disabled) sendMessage(); });
   view.querySelectorAll('.acp-chip').forEach(c => c.addEventListener('click', () => { ta.value = c.textContent.trim(); sync(); ta.focus(); }));
 }
 

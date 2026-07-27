@@ -541,6 +541,8 @@ const shopifyRouter = require('./routes/shopify');
 app.use('/api/shopify', shopifyRouter);
 const translateRouter = require('./routes/translate');
 app.use('/api/translate', translateRouter);
+const chatRouter = require('./routes/chat');
+app.use('/api/chat', chatRouter);
 app.post('/api/loops/contact', async (req, res) => {
   const { email, userGroup } = req.body;
   if (!email || !process.env.LOOPS_API_KEY) return res.json({ ok: false });
