@@ -170,6 +170,56 @@
 .ai-chat-page .acp-msg pre code { background: transparent; padding: 0; }
 .ai-chat-page, .ai-chat-page .acp-stack, .ai-chat-page .acp-bar-inner,
 .ai-chat-page textarea { transition: all 240ms ease; }
+
+/* Session sidebar — only visible after first message */
+.ai-chat-page .acp-sidebar { display: none; }
+.ai-chat-page.has-messages .acp-sidebar {
+  display: flex; flex-direction: column;
+  position: absolute; top: 0; left: 0; bottom: 0;
+  width: 248px; padding: 20px 12px 16px; gap: 10px;
+  background: #faf7f2; border-right: 1px solid var(--line);
+  overflow: hidden;
+}
+.ai-chat-page.has-messages .acp-messages,
+.ai-chat-page.has-messages .acp-stack {
+  margin-left: 260px; margin-right: 12px;
+}
+.ai-chat-page .acp-new-btn {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  height: 40px; border-radius: 12px; border: 1.5px solid var(--accent-200);
+  background: #fff; color: var(--text); font-family: var(--font-body);
+  font-size: 14px; font-weight: 600; cursor: pointer; flex: 0 0 auto;
+}
+.ai-chat-page .acp-new-btn:hover { background: var(--accent-100); border-color: var(--accent-400); }
+.ai-chat-page .acp-session-label {
+  font-size: 11px; font-weight: 700; letter-spacing: .06em;
+  text-transform: uppercase; color: var(--muted); padding: 4px 8px 2px;
+}
+.ai-chat-page .acp-session-list {
+  display: flex; flex-direction: column; gap: 2px;
+  overflow-y: auto; flex: 1 1 auto; padding-right: 4px;
+}
+.ai-chat-page .acp-session-item {
+  display: flex; align-items: center; gap: 6px; padding: 8px 10px;
+  border-radius: 10px; cursor: pointer; font-size: 13.5px; color: var(--text);
+  border: 1px solid transparent; background: transparent;
+}
+.ai-chat-page .acp-session-item:hover { background: #fff; border-color: var(--line); }
+.ai-chat-page .acp-session-item.active { background: var(--accent-100); border-color: var(--accent-200); }
+.ai-chat-page .acp-session-title {
+  flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis;
+  white-space: nowrap; font-weight: 500;
+}
+.ai-chat-page .acp-session-del {
+  width: 24px; height: 24px; border: 0; border-radius: 6px; cursor: pointer;
+  background: transparent; color: var(--muted); display: none; place-items: center;
+  font-size: 14px; line-height: 1;
+}
+.ai-chat-page .acp-session-item:hover .acp-session-del { display: grid; }
+.ai-chat-page .acp-session-del:hover { background: #fee2e2; color: #991b1b; }
+.ai-chat-page .acp-session-empty {
+  padding: 12px 10px; font-size: 12.5px; color: var(--muted); text-align: center;
+}
 </style>
 </head>
 <body>
@@ -716,6 +766,17 @@ function renderAIChatPage() {
   view.dataset.rendered = '1';
   view.innerHTML = `
     <div class="ai-chat-page">
+      <aside class="acp-sidebar" id="acp-sidebar">
+        <button class="acp-new-btn" id="acp-new-btn" type="button">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+          Yeni sohbet
+        </button>
+        <div class="acp-session-label">Sohbetler</div>
+        <div class="acp-session-list" id="acp-session-list">
+          <div class="acp-session-empty">Henüz sohbet yok</div>
+        </div>
+      </aside>
+
       <img class="acp-logo" src="/images/brand/logo-128x128.png" alt="mocksheets">
 
       <div class="acp-intro">
@@ -773,8 +834,11 @@ function renderAIChatPage() {
   const send = view.querySelector('#acp-send');
   const count = view.querySelector('#acp-count');
   const messages = view.querySelector('#acp-messages');
-  const history = [];
+  const sessionListEl = view.querySelector('#acp-session-list');
+  const newBtn = view.querySelector('#acp-new-btn');
   let busy = false;
+  let currentSessionId = localStorage.getItem('chat_session_id') || null;
+  let sessions = [];
 
   const sync = () => {
     const n = ta.value.trim().length;
@@ -783,6 +847,7 @@ function renderAIChatPage() {
   };
 
   const escapeHtml = (s) => String(s).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+
   const appendBubble = (role, text, extraClass = '') => {
     const el = document.createElement('div');
     el.className = 'acp-msg ' + role + (extraClass ? ' ' + extraClass : '');
@@ -792,33 +857,113 @@ function renderAIChatPage() {
     return el;
   };
 
+  const renderSessionList = () => {
+    if (!sessions.length) {
+      sessionListEl.innerHTML = '<div class="acp-session-empty">Henüz sohbet yok</div>';
+      return;
+    }
+    sessionListEl.innerHTML = sessions.map(s => `
+      <div class="acp-session-item ${s.id === currentSessionId ? 'active' : ''}" data-id="${s.id}">
+        <span class="acp-session-title">${escapeHtml(s.title || 'Yeni Sohbet')}</span>
+        <button class="acp-session-del" data-del="${s.id}" title="Sohbeti sil" type="button">✕</button>
+      </div>
+    `).join('');
+  };
+
+  const loadSessions = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/chat/sessions`, { headers: { ...authHeaders() } });
+      if (!res.ok) return;
+      const data = await res.json();
+      sessions = Array.isArray(data.sessions) ? data.sessions : [];
+      renderSessionList();
+    } catch (e) { /* silent */ }
+  };
+
+  const setActiveMode = (on) => {
+    if (on) root.classList.add('has-messages');
+    else root.classList.remove('has-messages');
+  };
+
+  const resetToIntro = () => {
+    currentSessionId = null;
+    localStorage.removeItem('chat_session_id');
+    messages.innerHTML = '';
+    setActiveMode(false);
+    renderSessionList();
+  };
+
+  const loadMessages = async (sessionId) => {
+    try {
+      const res = await fetch(`${API_URL}/api/chat/sessions/${sessionId}/messages`, { headers: { ...authHeaders() } });
+      if (!res.ok) return;
+      const data = await res.json();
+      const list = Array.isArray(data.messages) ? data.messages : [];
+      messages.innerHTML = '';
+      list.forEach(m => appendBubble(m.role, m.content));
+      if (list.length) setActiveMode(true);
+      currentSessionId = sessionId;
+      localStorage.setItem('chat_session_id', sessionId);
+      renderSessionList();
+    } catch (e) { /* silent */ }
+  };
+
+  const deleteSession = async (id) => {
+    if (!confirm('Bu sohbet silinsin mi?')) return;
+    try {
+      await fetch(`${API_URL}/api/chat/sessions/${id}`, { method: 'DELETE', headers: { ...authHeaders() } });
+      sessions = sessions.filter(s => s.id !== id);
+      if (id === currentSessionId) resetToIntro();
+      else renderSessionList();
+    } catch (e) { /* silent */ }
+  };
+
+  sessionListEl.addEventListener('click', (e) => {
+    const delBtn = e.target.closest('[data-del]');
+    if (delBtn) {
+      e.stopPropagation();
+      deleteSession(delBtn.dataset.del);
+      return;
+    }
+    const item = e.target.closest('.acp-session-item');
+    if (item && item.dataset.id && item.dataset.id !== currentSessionId) {
+      loadMessages(item.dataset.id);
+    }
+  });
+
+  newBtn.addEventListener('click', resetToIntro);
+
   const sendMessage = async () => {
     if (busy) return;
     const msg = ta.value.trim();
     if (!msg) return;
 
-    if (!root.classList.contains('has-messages')) root.classList.add('has-messages');
-
+    setActiveMode(true);
     appendBubble('user', msg);
-    history.push({ role: 'user', content: msg });
     ta.value = '';
     busy = true;
     sync();
 
     const pending = appendBubble('assistant', 'Yazıyor…', 'pending');
+    const isFirst = !currentSessionId;
 
     try {
       const res = await fetch(`${API_URL}/api/chat/message`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', ...authHeaders() },
-        body: JSON.stringify({ message: msg, history: history.slice(0, -1) })
+        body: JSON.stringify({ message: msg, sessionId: currentSessionId })
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error || 'Cevap alınamadı');
       const reply = data.reply || 'Üzgünüm, cevap üretemedim.';
       pending.classList.remove('pending');
       pending.innerHTML = escapeHtml(reply);
-      history.push({ role: 'assistant', content: reply });
+
+      if (data.sessionId) {
+        currentSessionId = data.sessionId;
+        localStorage.setItem('chat_session_id', data.sessionId);
+        if (isFirst) loadSessions();
+      }
     } catch (err) {
       pending.classList.remove('pending');
       pending.classList.add('error');
@@ -835,6 +980,9 @@ function renderAIChatPage() {
   ta.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } });
   send.addEventListener('click', () => { if (!send.disabled) sendMessage(); });
   view.querySelectorAll('.acp-chip').forEach(c => c.addEventListener('click', () => { ta.value = c.textContent.trim(); sync(); ta.focus(); }));
+
+  loadSessions();
+  if (currentSessionId) loadMessages(currentSessionId);
 }
 
 function switchShopifyView(type) {
