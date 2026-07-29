@@ -565,7 +565,7 @@ async function syncShopifyData() {
     if (btn) btn.textContent = '⏳ Senkronize ediliyor...';
 
     const response = await fetch(`${API_URL}/api/shopify/sync`, {
-      headers: { ...authHeaders() }
+      headers: { ...(await authHeaders()) }
     });
 
     if (!response.ok) throw new Error('Sync failed');
@@ -611,8 +611,12 @@ async function checkShopifyStatus() {
 
   try {
     const r = await fetch(`${API_URL}/api/shopify/status`, {
-      headers: { ...authHeaders() }
+      headers: { ...(await authHeaders()) }
     });
+    if (r.status === 401) {
+      console.warn('[checkShopifyStatus] 401 — auth henüz hazır değil, skip');
+      return;
+    }
     if (!r.ok) {
       console.warn('[checkShopifyStatus] HTTP', r.status);
       showConnectPanel();
@@ -654,8 +658,12 @@ async function loadUserPlan() {
   if (!token) return;
   try {
     const res = await fetch(API_URL + '/api/usage', {
-      headers: { ...authHeaders() }
+      headers: { ...(await authHeaders()) }
     });
+    if (res.status === 401) {
+      console.warn('[loadUserPlan] 401 — auth henüz hazır değil, skip');
+      return;
+    }
     if (!res.ok) return;
     const data = await res.json();
 
@@ -898,7 +906,7 @@ function renderAIChatPage() {
 
   const loadSessions = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/chat/sessions`, { headers: { ...authHeaders() } });
+      const res = await fetch(`${API_URL}/api/chat/sessions`, { headers: { ...(await authHeaders()) } });
       if (!res.ok) return;
       const data = await res.json();
       sessions = Array.isArray(data.sessions) ? data.sessions : [];
@@ -921,7 +929,7 @@ function renderAIChatPage() {
 
   const loadMessages = async (sessionId) => {
     try {
-      const res = await fetch(`${API_URL}/api/chat/sessions/${sessionId}/messages`, { headers: { ...authHeaders() } });
+      const res = await fetch(`${API_URL}/api/chat/sessions/${sessionId}/messages`, { headers: { ...(await authHeaders()) } });
       if (!res.ok) return;
       const data = await res.json();
       const list = Array.isArray(data.messages) ? data.messages : [];
@@ -937,7 +945,7 @@ function renderAIChatPage() {
   const deleteSession = async (id) => {
     if (!confirm('Bu sohbet silinsin mi?')) return;
     try {
-      await fetch(`${API_URL}/api/chat/sessions/${id}`, { method: 'DELETE', headers: { ...authHeaders() } });
+      await fetch(`${API_URL}/api/chat/sessions/${id}`, { method: 'DELETE', headers: { ...(await authHeaders()) } });
       sessions = sessions.filter(s => s.id !== id);
       if (id === currentSessionId) resetToIntro();
       else renderSessionList();
@@ -980,7 +988,7 @@ function renderAIChatPage() {
     try {
       const res = await fetch(`${API_URL}/api/chat/message`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', ...authHeaders() },
+        headers: { 'Content-Type': 'application/json', ...(await authHeaders()) },
         body: JSON.stringify({ message: msg, sessionId: currentSessionId })
       });
       const data = await res.json().catch(() => ({}));
@@ -1528,7 +1536,7 @@ async function saveTodayHealthSnapshot(score, totalProducts) {
   try {
     await fetch(API_URL + '/api/integrations/health-snapshot', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', ...authHeaders() },
+      headers: { 'Content-Type': 'application/json', ...(await authHeaders()) },
       body: JSON.stringify({ score, totalProducts }),
     });
   } catch (e) { console.warn('Snapshot kaydedilemedi:', e); }
@@ -1541,7 +1549,7 @@ async function renderHealthTrendChart() {
   if (!token) return;
   try {
     const res = await fetch(API_URL + '/api/integrations/health-history', {
-      headers: { ...authHeaders() },
+      headers: { ...(await authHeaders()) },
     });
     if (res.status === 401) {
       container.innerHTML = '<p style="font-size:12px;color:#9ca3af;padding:24px 0;text-align:center;margin:0;">' +
@@ -1888,7 +1896,7 @@ async function renderAiActionsPage() {
   </div>`;
   try {
     const res = await fetch(API_URL + '/api/usage', {
-      headers: { ...authHeaders() }
+      headers: { ...(await authHeaders()) }
     });
     if (res.ok) {
       const d = await res.json();
@@ -2040,7 +2048,7 @@ async function disconnectShopify() {
   try {
     const res = await fetch(API_URL + '/api/shopify/disconnect', {
       method: 'DELETE',
-      headers: authHeaders()
+      headers: await authHeaders()
     });
     if (!res.ok) {
       const d = await res.json().catch(() => ({}));
@@ -2132,7 +2140,7 @@ async function loadVisibilityChecks() {
   const container = document.getElementById('visibility-checks-list');
   if (!container) return;
   try {
-    const res = await fetch(API_URL + '/api/integrations/ai-visibility-checks', { headers: authHeaders() });
+    const res = await fetch(API_URL + '/api/integrations/ai-visibility-checks', { headers: await authHeaders() });
     const data = await res.json();
     if (!data.checks || data.checks.length === 0) {
       container.innerHTML = '<p style="font-size:12px;color:#9ca3af;">Henüz kayıt yok</p>';
@@ -2157,7 +2165,7 @@ async function loadPhReviewsAdmin() {
   const container = document.getElementById('ph-reviews-admin-list');
   if (!container) return;
   try {
-    const res = await fetch(API_URL + '/api/integrations/producthunt-reviews/all', { headers: authHeaders() });
+    const res = await fetch(API_URL + '/api/integrations/producthunt-reviews/all', { headers: await authHeaders() });
     const data = await res.json();
     if (!data.reviews || data.reviews.length === 0) {
       container.innerHTML = '<p style="font-size:12px;color:#9ca3af;">Henüz yorum çekilmedi. Cron job her gün 06:00\'da çalışır.</p>';
@@ -2188,7 +2196,7 @@ async function togglePhReview(checkbox) {
   try {
     await fetch(API_URL + '/api/integrations/producthunt-reviews/' + encodeURIComponent(id) + '/toggle-visible', {
       method: 'POST',
-      headers: authHeaders(),
+      headers: await authHeaders(),
     });
     loadPhReviewsAdmin();
   } catch (e) {
@@ -2207,7 +2215,7 @@ document.addEventListener('click', async function(e) {
   try {
     await fetch(API_URL + '/api/integrations/ai-visibility-check', {
       method: 'POST',
-      headers: { ...authHeaders(), 'Content-Type': 'application/json' },
+      headers: { ...(await authHeaders()), 'Content-Type': 'application/json' },
       body: JSON.stringify({ query_text: query, platform, mocksheets_mentioned: mentioned, position_note: note }),
     });
     document.getElementById('visibility-query-input').value = '';
@@ -2618,7 +2626,7 @@ async function runAIAction(actionType) {
   saveToUndoStack();
   const response = await fetch(`${API_URL}/api/ai`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...authHeaders() },
+    headers: { 'Content-Type': 'application/json', ...(await authHeaders()) },
     body: JSON.stringify({ action: actionType, data: catalogData.products, context: currentView })
   });
   if (!response.ok) {
@@ -2852,7 +2860,7 @@ async function runShopifyAiAnalysis(analysisType) {
   try {
     const res = await fetch(`${API_URL}/api/shopify/ai-analyze`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', ...authHeaders() },
+      headers: { 'Content-Type': 'application/json', ...(await authHeaders()) },
       body: JSON.stringify({ productIds, analysisType }),
     });
     if (!res.ok) {
@@ -3186,7 +3194,7 @@ async function pushChangesToShopify(accepted) {
   try {
     const res = await fetch(`${API_URL}/api/shopify/push`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', ...authHeaders() },
+      headers: { 'Content-Type': 'application/json', ...(await authHeaders()) },
       body: JSON.stringify({
         confirmed: true,
         changes: accepted.map(c => ({
@@ -3240,7 +3248,7 @@ async function pushToShopify(event) {
   try {
     const res = await fetch(`${API_URL}/api/shopify/push`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', ...authHeaders() },
+      headers: { 'Content-Type': 'application/json', ...(await authHeaders()) },
       body: JSON.stringify({ confirmed: true, products: linked }),
     });
     if (!res.ok) {
@@ -3277,6 +3285,28 @@ function startRenameCatalog() {
   }
 }
 
+const sbClient = window.supabase.createClient(
+  'https://ogizbfzoywylljvnidak.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9naXpiZnpveXd5bGxqdm5pZGFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwNzUxMjcsImV4cCI6MjA4ODY1MTEyN30.Vxu4ffDrG1nHR02vEbMeFKFHqUNYfVA9vBMyQmZj41k'
+);
+
+let _authReadyPromise = null;
+function waitForAuthReady() {
+  if (_authReadyPromise) return _authReadyPromise;
+  _authReadyPromise = new Promise((resolve) => {
+    const { data: { subscription } } = sbClient.auth.onAuthStateChange((event, session) => {
+      if (event === 'INITIAL_SESSION' || event === 'SIGNED_IN' || event === 'SIGNED_OUT') {
+        subscription?.unsubscribe();
+        resolve(session);
+      }
+    });
+    setTimeout(() => {
+      sbClient.auth.getSession().then(({ data }) => resolve(data.session));
+    }, 3000);
+  });
+  return _authReadyPromise;
+}
+
 function getAuthToken() {
   try {
     const sbKey = Object.keys(localStorage).find(k => k.startsWith('sb-') && k.endsWith('-auth-token'));
@@ -3293,7 +3323,8 @@ function getAuthToken() {
   } catch { return null; }
 }
 
-function authHeaders() {
+async function authHeaders() {
+  await waitForAuthReady();
   const token = getAuthToken();
   if (!token) return {};
   return { 'Authorization': 'Bearer ' + token };
