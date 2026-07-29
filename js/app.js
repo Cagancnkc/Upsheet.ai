@@ -1394,12 +1394,6 @@ function useChip(el) {
   sendChat();
 }
 
-function useChipCmd(text) {
-  const inp = document.getElementById('chatInput');
-  if (inp) { inp.value = text; inp.focus(); }
-  sendChatMessage();
-}
-
 function handleChatFile(input) {
   const files = Array.from(input.files);
   if (!files.length) return;
@@ -3480,16 +3474,6 @@ document.addEventListener('keydown', function(e) {
   var tag  = document.activeElement ? document.activeElement.tagName : '';
   var inInput = (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT');
 
-  // Ctrl+Enter → send chat (when chat input active)
-  if (ctrl && e.key === 'Enter') {
-    var ci = document.getElementById('chatInput');
-    if (ci && document.activeElement === ci && !ci.disabled) {
-      e.preventDefault();
-      // sendChatMessage kullan — isProcessing guard zaten çift çağrıyı önler
-      if (typeof sendChatMessage === 'function') sendChatMessage();
-    }
-  }
-
   // Ctrl+Shift+Z → redo
   if (ctrl && e.shiftKey && e.key === 'Z') {
     e.preventDefault();
@@ -4081,12 +4065,6 @@ function autoResizeChatInput(el) {
   el.style.height = Math.min(el.scrollHeight, 120) + 'px';
 }
 
-function handleChatKeydown(event) {
-  if (event.key === 'Enter' && !event.shiftKey && !event.ctrlKey && !event.metaKey) {
-    event.preventDefault();
-    sendChatMessage();
-  }
-}
 
 function handleChatAttachment(input) {
   const files = Array.from(input.files);
@@ -4118,127 +4096,6 @@ function removeAttachmentChip(filename) {
     `.attachment-chip[data-filename="${filename}"]`
   );
   if (chip) chip.remove();
-}
-
-// ── MAIN SEND FUNCTION ─────────────────────────────
-
-async function sendChatMessage() {
-  if (isProcessing) { console.log('[Guard] sendChatMessage engellendi — işlem devam ediyor'); return; }
-  const input = document.getElementById('chat-input');
-  const sendBtn = document.getElementById('chat-send');
-  if (!input) return;
-
-  const message = input.value.trim();
-  if (!message) return;
-  isProcessing = true;
-
-  input.value = '';
-  sendBtn.disabled = true;
-  sendBtn.textContent = '…';
-
-  addMessage(message, 'user');
-  chatHistory.push({ role: 'user', content: message });
-  showTyping();
-  showProgress();
-
-  try {
-    // Sunucu zaten sadece 5 satır preview alıyor — tüm sheet'i göndermek gereksiz bant genişliği
-    const _rawSheet = sheets[activeSheet] || [];
-    const sheetContext = _rawSheet.length > 7
-      ? [_rawSheet[0], ..._rawSheet.slice(1, 6)]
-      : _rawSheet;
-
-    const token = getAuthToken();
-    console.warn('[CALL #' + (++CALL_COUNTER) + '] sendChatMessage → fetch /api/chat', new Error().stack.split('\n')[2]?.trim());
-    const _ctrl = new AbortController();
-    const _tid = setTimeout(() => _ctrl.abort(), 60000);
-    const response = await fetch(API_URL + '/api/chat', {
-      method: 'POST',
-      signal: _ctrl.signal,
-      headers: {
-        'Content-Type': 'application/json',
-        ...(token ? { 'Authorization': 'Bearer ' + token } : {})
-      },
-      body: JSON.stringify({ message, sheetContext, sheetName: activeSheet, history: chatHistory.slice(-8) })
-    });
-    clearTimeout(_tid);
-
-    if (response.status === 401) {
-      hideTyping(); hideProgress();
-      addMessage('❌ Oturum süreniz dolmuş. Giriş sayfasına yönlendiriliyorsunuz...', 'ai');
-      setTimeout(() => { window.location.href = 'auth.html'; }, 2500);
-      isProcessing = false; sendBtn.disabled = false; sendBtn.textContent = '↑';
-      return;
-    }
-
-    if (response.status === 429) {
-      const errorData = await response.json();
-      hideTyping(); hideProgress();
-      showLimitModal(errorData);
-      return;
-    }
-
-    if (response.status === 403) {
-      const errorData = await response.json();
-      hideTyping(); hideProgress();
-      if (errorData.code === 'FEATURE_NOT_AVAILABLE') {
-        handleLockedFeature(errorData.feature);
-      }
-      return;
-    }
-
-    if (!response.ok) throw new Error('Server error: ' + response.status);
-
-    const data = await response.json();
-
-    if (data.usage) {
-      userUsage = { ...userUsage, used: { today: data.usage.commands_used_today, this_month: data.usage.commands_used_month }, limits: { ...userUsage?.limits, ai_commands_per_month: data.usage.monthly_limit, ai_commands_per_day: data.usage.daily_limit } };
-      updateUsageUI();
-    }
-
-    hideTyping();
-    hideProgress();
-
-    if (data.reply) {
-      addMessage(data.reply, 'ai');
-      chatHistory.push({ role: 'assistant', content: data.reply });
-      saveChatHistory();
-    }
-
-    if (data.action && data.action !== 'message') {
-      if (typeof applyAIChanges === 'function') {
-        applyAIChanges(data);
-        // AI değişikliklerini localStorage + Supabase'e kaydet
-        clearTimeout(_saveTimer);
-        _saveTimer = setTimeout(saveData, 2000);
-        if (typeof scheduleAutoSave === 'function') scheduleAutoSave();
-      }
-      try {
-        const _wh = JSON.parse(localStorage.getItem('int_webhook') || '{}');
-        if (_wh.url && (_wh.trigger === 'ai_action' || _wh.trigger === 'all')) {
-          const _payload = { source: 'Mocksheet', event: 'ai_action', timestamp: new Date().toISOString(), data: { action: data.action, reply: data.reply, changes_count: (data.changes || []).length, sheet: activeSheet || 'Sheet1', rows: (sheets[activeSheet] || []).length } };
-          fetch(API_URL + '/api/integrations/webhook/send', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url: _wh.url, event: 'ai_action', data: _payload }) }).catch(() => { fetch(_wh.url, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(_payload) }); });
-        }
-      } catch(_e) { console.warn('Webhook trigger failed:', _e); }
-    }
-
-  } catch (error) {
-    console.error('Chat error:', error);
-    hideTyping();
-    hideProgress();
-    if (error.name === 'AbortError') {
-      showToast('İstek zaman aşımına uğradı. Tekrar deneyin.', 'error');
-      addMessage('⏱ Backend yanıt vermedi (45s). Sunucu uyandırılıyor olabilir — biraz bekleyip tekrar deneyin.', 'ai');
-    } else {
-      showToast('Bağlantı hatası. Lütfen tekrar deneyin.', 'error');
-      addMessage('❌ Bir hata oluştu. Lütfen tekrar deneyin.', 'ai');
-    }
-  } finally {
-    isProcessing = false;
-    sendBtn.disabled = false;
-    sendBtn.textContent = '↑';
-    chatAttachments = [];
-  }
 }
 
 // ── Chat Bar ──────────────────────────────────────────
