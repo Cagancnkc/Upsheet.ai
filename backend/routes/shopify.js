@@ -6,6 +6,25 @@ const Anthropic = require('@anthropic-ai/sdk');
 const { createClient } = require('@supabase/supabase-js');
 const { encrypt, decrypt } = require('../services/encryption');
 const { checkLimit, incrementUsage } = require('../middleware/limits');
+const { indexProductsForRAG, INDEX_THRESHOLD } = require('../services/productIndexer');
+
+async function fetchAllPages(url, headers, maxPages = 20) {
+  const results = [];
+  let nextUrl = url;
+  let page = 0;
+  while (nextUrl && page < maxPages) {
+    const res = await fetch(nextUrl, { headers });
+    if (!res.ok) break;
+    const data = await res.json();
+    const key = Object.keys(data)[0];
+    results.push(...(data[key] || []));
+    const link = res.headers.get('link') || res.headers.get('Link');
+    const nextMatch = link && link.match(/<([^>]+)>;\s*rel="next"/);
+    nextUrl = nextMatch ? nextMatch[1] : null;
+    page++;
+  }
+  return results;
+}
 
 let _anthropic = null;
 function getAnthropic() {
@@ -245,14 +264,14 @@ router.get('/sync', requireAuth, async (req, res) => {
   const shop = conn.shop_domain;
 
   try {
-    const [pResp, oResp] = await Promise.all([
-      fetch(`https://${shop}/admin/api/2024-01/products.json?limit=250`, { headers }),
-      fetch(`https://${shop}/admin/api/2024-01/orders.json?limit=250&status=any`, { headers }),
+    const [productsAll, ordersAll] = await Promise.all([
+      fetchAllPages(`https://${shop}/admin/api/2024-01/products.json?limit=250`, headers),
+      fetchAllPages(`https://${shop}/admin/api/2024-01/orders.json?limit=250&status=any`, headers),
     ]);
-    const [pJson, oJson] = await Promise.all([pResp.json(), oResp.json()]);
+    console.log(`[shopify/sync] fetched ${productsAll.length} products, ${ordersAll.length} orders for user ${req.user.id}`);
 
     const productRows = [];
-    for (const p of (pJson.products || [])) {
+    for (const p of productsAll) {
       for (const v of (p.variants || [])) {
         productRows.push({
           shopify_product_id: p.id,
@@ -275,7 +294,7 @@ router.get('/sync', requireAuth, async (req, res) => {
       }
     }
 
-    const orderRows = (oJson.orders || []).map(o => ({
+    const orderRows = ordersAll.map(o => ({
       name: o.name || '',
       customer: (o.customer ? `${o.customer.first_name || ''} ${o.customer.last_name || ''}`.trim() : '') || o.email || '',
       total_price: o.total_price || '',
@@ -284,6 +303,17 @@ router.get('/sync', requireAuth, async (req, res) => {
       created_at: (o.created_at || '').slice(0, 10),
       line_items_count: (o.line_items || []).length,
     }));
+
+    // RAG indexleme — arka planda, hata swallowla ama LOGLA (sessiz başarısızlık yok)
+    if (productsAll.length >= INDEX_THRESHOLD) {
+      const sheetRows = [
+        ['id', 'title', 'vendor', 'product_type', 'tags', 'description'],
+        ...productsAll.map(p => [p.id, p.title, p.vendor, p.product_type, (p.tags || ''), (p.body_html || '').slice(0, 500)]),
+      ];
+      indexProductsForRAG(req.user.id, sheetRows)
+        .then(r => console.log(`[shopify/sync] RAG indexed: ${r?.indexed || 0} products for user ${req.user.id}`))
+        .catch(err => console.error(`[shopify/sync] RAG indexing FAILED for user ${req.user.id}:`, err.message));
+    }
 
     // Update last_sync in shopify_connections
     await getSupabase()
@@ -623,6 +653,25 @@ SEO KURALLARI (KESİNLİKLE UYGULANACAK):
   } catch (e) {
     console.error('[shopify ai-analyze]', e.message);
     res.status(500).json({ error: e.message });
+  }
+});
+
+// ─── GET /api/shopify/rag-status ─────────────────────────────────────────────
+router.get('/rag-status', requireAuth, async (req, res) => {
+  try {
+    const { count, error } = await getSupabase()
+      .from('product_embeddings')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', req.user.id);
+    if (error) throw error;
+    res.json({
+      indexed: count || 0,
+      ready: (count || 0) > 0,
+      threshold: INDEX_THRESHOLD,
+    });
+  } catch (err) {
+    console.error('[shopify/rag-status]', err.message);
+    res.status(500).json({ error: err.message });
   }
 });
 
