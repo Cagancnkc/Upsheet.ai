@@ -220,6 +220,31 @@
 .ai-chat-page .acp-session-empty {
   padding: 12px 10px; font-size: 12.5px; color: var(--muted); text-align: center;
 }
+
+/* Mobile — AI Chat drawer + overflow guard */
+@media (max-width: 768px) {
+  .ai-chat-page { padding: 24px 12px 96px; gap: 24px; }
+  .ai-chat-page .acp-logo { top: 16px; left: 16px; height: 32px; }
+  .ai-chat-page.has-messages .acp-sidebar {
+    position: fixed; top: 0; left: 0; bottom: 0; width: 82vw;
+    max-width: 300px; z-index: 40;
+    transform: translateX(-100%); transition: transform .24s ease;
+    box-shadow: 2px 0 24px rgba(0,0,0,.12);
+  }
+  .ai-chat-page.has-messages.sidebar-open .acp-sidebar { transform: translateX(0); }
+  .ai-chat-page.has-messages .acp-messages,
+  .ai-chat-page.has-messages .acp-stack {
+    margin-left: 0 !important; margin-right: 0 !important;
+  }
+  .ai-chat-page .acp-menu-btn {
+    display: none; position: fixed; top: 16px; left: 16px; z-index: 41;
+    width: 40px; height: 40px; border-radius: 10px;
+    border: 1px solid var(--line); background: #fff; cursor: pointer;
+    align-items: center; justify-content: center; font-size: 18px;
+  }
+  .ai-chat-page.has-messages .acp-menu-btn { display: flex; }
+  .ai-chat-page .acp-msg { max-width: 92%; font-size: 14px; }
+}
 </style>
 </head>
 <body>
@@ -766,6 +791,7 @@ function renderAIChatPage() {
   view.dataset.rendered = '1';
   view.innerHTML = `
     <div class="ai-chat-page">
+      <button class="acp-menu-btn" id="acp-menu-btn" type="button" aria-label="Menü">☰</button>
       <aside class="acp-sidebar" id="acp-sidebar">
         <button class="acp-new-btn" id="acp-new-btn" type="button">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
@@ -928,10 +954,14 @@ function renderAIChatPage() {
     const item = e.target.closest('.acp-session-item');
     if (item && item.dataset.id && item.dataset.id !== currentSessionId) {
       loadMessages(item.dataset.id);
+      root.classList.remove('sidebar-open');
     }
   });
 
-  newBtn.addEventListener('click', resetToIntro);
+  const menuBtn = view.querySelector('#acp-menu-btn');
+  if (menuBtn) menuBtn.addEventListener('click', () => root.classList.toggle('sidebar-open'));
+
+  newBtn.addEventListener('click', () => { resetToIntro(); root.classList.remove('sidebar-open'); });
 
   const sendMessage = async () => {
     if (busy) return;

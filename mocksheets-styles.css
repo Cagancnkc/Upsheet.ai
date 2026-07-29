@@ -3498,3 +3498,35 @@
   background: white; color: #475569; border-color: #cbd5e1;
 }
 .aip-btn-ghost:hover { background: #f8fafc; border-color: #94a3b8; }
+
+/* ============ MOBILE (≤768px) — horizontal overflow guard ============ */
+html, body { overflow-x: hidden; max-width: 100%; }
+
+@media (max-width: 768px) {
+  .shopify-layout,
+  .shopify-layout.ai-panel-open {
+    grid-template-columns: 1fr !important;
+    grid-template-rows: 52px auto 1fr auto !important;
+    height: auto;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  .sf-sidebar { display: none !important; }
+  .sf-topbar,
+  .sf-main-content-row,
+  .sf-stats-row {
+    grid-column: 1 / -1 !important;
+  }
+  .sf-topbar { padding: 0 12px !important; }
+  .sf-main-content-row { padding: 0 12px !important; gap: 8px !important; }
+  .sf-stats-row { padding: 12px 12px 8px !important; gap: 8px; }
+
+  .sf-table-panel { min-width: 0; }
+  .sf-table-scroll { overflow-x: auto; }
+  .sf-toolbar { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+}
+
+@media (max-width: 480px) {
+  .sf-topbar { height: auto !important; padding: 8px 12px !important; flex-wrap: wrap; }
+  .sf-stat-card { min-width: 140px; }
+}
