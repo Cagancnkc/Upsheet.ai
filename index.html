@@ -1284,74 +1284,65 @@
       </span>
     </div>
 
-    <!-- Live mini demo -->
+    <!-- Live mini demo — AI Görünürlük (GEO) -->
     <div class="hero-grid">
       <div class="terminal" aria-hidden="true">
         <div class="term-bar">
           <div class="d d1"></div><div class="d d2"></div><div class="d d3"></div>
-          <span class="label">mocksheets · shopify katalog analizi</span>
+          <span class="label">mocksheets · ai görünürlük analizi</span>
         </div>
-        <div class="term-line"><span class="term-prompt">›</span><span id="typed-line">Eksik SEO'su olan ürünleri bul ve öneri oluş<span class="term-cursor"></span></span></div>
-        <div class="term-line"><span class="term-comment">// 247 ürün tarandı · SEO + başlık + açıklama · 1,1 s</span></div>
-        <div class="term-line"><span class="term-ok">✓</span><span>247 ürün tarandı</span></div>
-        <div class="term-line"><span class="term-ok">✓</span><span>38 üründe <span style="background:#fecaca;color:var(--ink);padding:1px 6px;border-radius:4px">eksik SEO alanı</span> tespit edildi</span></div>
-        <div class="term-line"><span class="term-ok">✓</span><span>Katalog sağlık skoru: <b style="color:#fff">72 / 100</b></span></div>
+        <div class="term-line"><span class="term-prompt">›</span><span id="typed-line">Ürünlerim ChatGPT'de görünüyor mu<span class="term-cursor"></span></span></div>
+        <div class="term-line"><span class="term-comment">// 247 ürün · ChatGPT + Perplexity + Gemini · 0,9 s</span></div>
+        <div class="term-line"><span class="term-ok">✓</span><span>247 ürün AI görünürlüğü için tarandı</span></div>
+        <div class="term-line"><span class="term-ok">✓</span><span>62 üründe <span style="background:#fecaca;color:var(--ink);padding:1px 6px;border-radius:4px">yetersiz AI içeriği</span> tespit edildi</span></div>
+        <div class="term-line"><span class="term-ok">✓</span><span>AI Görünürlük Skoru: <b style="color:#fff">48 / 100</b></span></div>
       </div>
 
       <div class="grid-card">
         <div class="gc-head">
-          <div class="gc-title"><span class="swatch"></span> shopify-katalog-analiz.xlsx</div>
+          <div class="gc-title"><span class="swatch"></span> ai-visibility-preview</div>
           <span class="gc-tag">live</span>
         </div>
-        <div class="sheet">
-          <div class="row">
-            <div class="cell head idx"></div>
-            <div class="cell head">Ürün</div>
-            <div class="cell head num">SEO Durumu</div>
-            <div class="cell head num">Açıklama</div>
-            <div class="cell head num">Sorun</div>
+
+        <!-- ChatGPT cevap kartı -->
+        <div style="border:1px solid #e5e7eb;border-radius:14px;padding:14px;margin-bottom:12px;background:#fafafa;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+            <img src="https://cdn.simpleicons.org/openai/111827" alt="ChatGPT" style="width:16px;height:16px;">
+            <span style="font-size:12px;font-weight:600;color:#111827;">ChatGPT</span>
+            <span style="font-size:10px;color:#9ca3af;margin-left:auto;">"kablosuz kulaklık öner"</span>
           </div>
-          <div class="row">
-            <div class="cell idx">1</div>
-            <div class="cell">Kablosuz Kulaklık Pro</div>
-            <div class="cell num hl">⚠️ Eksik title_tag</div>
-            <div class="cell num">40 kelime</div>
-            <div class="cell num hl">SEO title yok</div>
+          <div style="font-size:12px;color:#374151;line-height:1.6;">
+            İşte önerdiğim modeller:
+            <div style="margin-top:8px;padding:8px 10px;background:#fff;border:1px solid #e5e7eb;border-radius:8px;display:flex;align-items:center;gap:8px;">
+              <span style="width:6px;height:6px;background:#16a34a;border-radius:99px;"></span>
+              <b style="color:#111827;">Kablosuz Kulaklık Pro</b>
+              <span style="font-size:10px;color:#16a34a;margin-left:auto;font-weight:600;">✓ önerildi</span>
+            </div>
+            <div style="margin-top:6px;padding:8px 10px;background:#fff;border:1px dashed #fca5a5;border-radius:8px;display:flex;align-items:center;gap:8px;opacity:.7;">
+              <span style="width:6px;height:6px;background:#dc2626;border-radius:99px;"></span>
+              <span style="color:#6b7280;">USB-C Kablo 2m</span>
+              <span style="font-size:10px;color:#dc2626;margin-left:auto;font-weight:600;">✗ görünmüyor</span>
+            </div>
           </div>
-          <div class="row">
-            <div class="cell idx">2</div>
-            <div class="cell">Akıllı Saat X1</div>
-            <div class="cell num">✓ Tam</div>
-            <div class="cell num">180 kelime</div>
-            <div class="cell num">—</div>
+        </div>
+
+        <!-- Perplexity cevap kartı -->
+        <div style="border:1px solid #e5e7eb;border-radius:14px;padding:14px;background:#fafafa;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+            <img src="https://cdn.simpleicons.org/perplexity/111827" alt="Perplexity" style="width:16px;height:16px;">
+            <span style="font-size:12px;font-weight:600;color:#111827;">Perplexity</span>
+            <span style="font-size:10px;color:#9ca3af;margin-left:auto;">"en iyi akıllı saat"</span>
           </div>
-          <div class="row">
-            <div class="cell idx">3</div>
-            <div class="cell">Telefon Kılıfı Premium</div>
-            <div class="cell num hl">⚠️ Kısa description</div>
-            <div class="cell num">12 kelime</div>
-            <div class="cell num hl">Açıklama zayıf</div>
+          <div style="font-size:12px;color:#374151;line-height:1.6;">
+            <div style="padding:8px 10px;background:#fff;border:1px solid #e5e7eb;border-radius:8px;display:flex;align-items:center;gap:8px;">
+              <span style="width:6px;height:6px;background:#16a34a;border-radius:99px;"></span>
+              <b style="color:#111827;">Akıllı Saat X1</b>
+              <span style="font-size:10px;color:#16a34a;margin-left:auto;font-weight:600;">✓ 1. sırada</span>
+            </div>
           </div>
-          <div class="row">
-            <div class="cell idx">4</div>
-            <div class="cell">USB-C Kablo 2m</div>
-            <div class="cell num hl">✗ Boş meta</div>
-            <div class="cell num">0 kelime</div>
-            <div class="cell num hl">SEO + açıklama yok</div>
-          </div>
-          <div class="row">
-            <div class="cell idx">5</div>
-            <div class="cell">Powerbank 20000mAh</div>
-            <div class="cell num">✓ Tam</div>
-            <div class="cell num">220 kelime</div>
-            <div class="cell num">—</div>
-          </div>
-          <div class="row">
-            <div class="cell idx">…</div>
-            <div class="cell" style="color:var(--mute)">242 ürün daha</div>
-            <div class="cell num" style="color:var(--mute)">—</div>
-            <div class="cell num" style="color:var(--mute)">—</div>
-            <div class="cell num" style="color:var(--mute)">—</div>
+          <div style="margin-top:10px;padding-top:10px;border-top:1px dashed #e5e7eb;display:flex;align-items:center;justify-content:space-between;">
+            <span style="font-size:10px;color:#6b7280;">AI Görünürlük Skoru</span>
+            <span style="font-size:14px;font-weight:700;color:#16a34a;">92<span style="font-size:10px;color:#9ca3af;font-weight:500;">/100</span></span>
           </div>
         </div>
       </div>
@@ -1902,15 +1893,15 @@ function toggleFaq(btn) {
   /* ---- Hero typing ---- */
   (function(){
     const lines = [
-      "Eksik SEO'su olan ürünleri bul ve öneri oluştur",
-      "Zayıf ürün başlıklarını AI ile yeniden yaz",
-      "Kısa açıklamaları 150 kelimeye tamamla",
-      "Katalog sağlık skorunu hesapla",
-      "Boş meta description'ları AI ile doldur",
-      "SEO title'ları 60 karaktere optimize et",
-      "Tüm koleksiyondaki başlıklara anahtar kelime ekle",
-      "Onaylanan önerileri Shopify'a senkronize et",
-      "Kategoriye göre katalog sorunlarını grupla"
+      "Ürünlerim ChatGPT'de görünüyor mu",
+      "AI görünürlük skorunu hesapla",
+      "Perplexity için ürün açıklamalarını zenginleştir",
+      "AI asistanların önerdiği ürünleri listele",
+      "Zayıf AI içeriği olan ürünleri bul",
+      "ChatGPT'nin anlayacağı meta açıklamalar üret",
+      "Ürün kategorilerini AI için netleştir",
+      "AI görünürlüğü düşük ürünleri Shopify'da güncelle",
+      "Onaylanan AI önerilerini toplu uygula"
     ];
     const el = document.getElementById('typed-line');
     if(!el) return;
