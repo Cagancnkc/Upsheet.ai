@@ -1251,6 +1251,24 @@ function renderDashboard() {
         <div id="dash-collections-mini" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
       </div>
 
+      <div id="geo-visibility-card" style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:20px;margin-top:16px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <i class="ti ti-robot" style="font-size:16px;color:#16a34a;"></i>
+            <p style="font-size:13px;font-weight:600;color:#111827;margin:0;">AI Görünürlük Skoru</p>
+          </div>
+          <span id="geo-score-badge" style="font-size:20px;font-weight:700;color:#111827;">—</span>
+        </div>
+        <p style="font-size:11px;color:#9ca3af;margin:0 0 14px;">
+          Ürünlerinizin ChatGPT/Perplexity gibi AI alışveriş asistanları tarafından ne kadar anlaşılır olduğunu ölçer
+        </p>
+        <div id="geo-breakdown" style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;"></div>
+        <button id="geo-fix-btn" type="button"
+          style="width:100%;padding:9px;background:#111827;color:#fff;border:none;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;">
+          ✨ AI İçin Optimize Et
+        </button>
+      </div>
+
     </div>`;
 
   // Health trend
@@ -1266,6 +1284,7 @@ function renderDashboard() {
   renderHealthRing(analysis.healthScore || 0);
   renderHealthBreakdownFull(analysis.categoryScores || {});
   renderAiRecommendations(analysis.issues || []);
+  renderGeoSection(analysis);
   renderDashQuickActions();
 
   renderDashRecentOperationsFull();
@@ -1337,6 +1356,21 @@ function renderDashboard() {
       }
     });
   }
+
+  document.getElementById('geo-fix-btn')?.addEventListener('click', async function() {
+    const btn = this;
+    const originalText = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = 'AI analiz ediyor...';
+    try {
+      await runShopifyAiAnalysis('geo');
+    } catch(e) {
+      alert('Analiz başarısız: ' + e.message);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = originalText;
+    }
+  });
 }
 
 // ─── CATALOG EDITOR — DASHBOARD'DAN AÇILIR ───────────────────────────────
@@ -1448,9 +1482,13 @@ function renderDashCollectionsMini() {
 // ─── DASHBOARD HELPERS ───────────────────────────────────────────────────
 
 const CATEGORY_META = {
-  seo:         { label: 'SEO',              icon: 'ti-search' },
-  description: { label: 'Ürün Açıklamaları', icon: 'ti-file-text' },
-  images:      { label: 'Görseller',        icon: 'ti-photo' },
+  seo:         { label: 'SEO',                  icon: 'ti-search' },
+  description: { label: 'Ürün Açıklamaları',    icon: 'ti-file-text' },
+  images:      { label: 'Görseller',            icon: 'ti-photo' },
+  tags:        { label: 'Etiketler',            icon: 'ti-tags' },
+  schema:      { label: 'Yapılandırılmış Veri', icon: 'ti-code' },
+  geo_depth:   { label: 'AI İçerik Derinliği', icon: 'ti-sparkles' },
+  geo_clarity: { label: 'Kategori Netliği',     icon: 'ti-category' },
 };
 
 const ISSUE_TO_ACTION = {
@@ -1513,6 +1551,34 @@ function renderHealthBreakdownFull(categoryScores) {
     }
     container.appendChild(row);
   });
+}
+
+function renderGeoSection(analysis) {
+  const badge = document.getElementById('geo-score-badge');
+  if (badge) {
+    badge.textContent = analysis.geoScore;
+    badge.style.color = analysis.geoScore >= 80 ? '#16a34a' : analysis.geoScore >= 60 ? '#d97706' : '#dc2626';
+  }
+  const breakdown = document.getElementById('geo-breakdown');
+  if (breakdown) {
+    breakdown.innerHTML = '';
+    ['geo_depth', 'geo_clarity', 'schema'].forEach(key => {
+      const value = analysis.categoryScores[key];
+      if (value === undefined) return;
+      const meta = CATEGORY_META[key];
+      if (!meta) return;
+      const barColor = value >= 80 ? '#16a34a' : value >= 60 ? '#d97706' : '#dc2626';
+      const row = document.createElement('div');
+      row.style.cssText = 'display:flex;align-items:center;gap:8px;';
+      row.innerHTML =
+        '<i class="ti ' + meta.icon + '" style="font-size:12px;color:#9ca3af;width:14px;"></i>' +
+        '<span style="font-size:11px;color:#374151;width:110px;flex-shrink:0;">' + meta.label + '</span>' +
+        '<div style="flex:1;height:4px;background:#f3f4f6;border-radius:99px;overflow:hidden;">' +
+        '<div style="width:' + value + '%;height:100%;background:' + barColor + ';border-radius:99px;"></div></div>' +
+        '<span style="font-size:10px;font-weight:600;color:#111827;width:28px;text-align:right;">' + value + '%</span>';
+      breakdown.appendChild(row);
+    });
+  }
 }
 
 function renderAiRecommendations(issues) {
@@ -2383,13 +2449,24 @@ function computeCatalogIssues() {
   const dupTitles = titles.length - new Set(titles).size;
   pushIssue('Tekrarlanan Başlık', dupTitles, 'warning', null);
 
+  const geoDepthRisk = products.filter(p => (p.body_html || '').trim().length < 100).length;
+  pushIssue('AI İçin Yetersiz Detay', geoDepthRisk, 'warning', 'geo_depth');
+
+  const geoClarityRisk = products.filter(p => !p.product_type || p.product_type.trim() === '').length;
+  pushIssue('Ürün Kategorisi Belirsiz', geoClarityRisk, 'warning', 'geo_clarity');
+
   const totalIssueCount = issues.reduce((sum, i) => sum + i.count, 0);
   const categoryValues = Object.values(categoryScores);
   const healthScore = categoryValues.length > 0
     ? Math.round(categoryValues.reduce((a, b) => a + b, 0) / categoryValues.length)
     : 100;
 
-  return { issues, totalIssueCount, healthScore, totalProducts, categoryScores };
+  const geoRelatedKeys = ['geo_depth', 'geo_clarity', 'schema'];
+  const geoScores = geoRelatedKeys.map(k => categoryScores[k]).filter(v => v !== undefined);
+  const geoScore = geoScores.length > 0
+    ? Math.round(geoScores.reduce((a, b) => a + b, 0) / geoScores.length)
+    : 100;
+  return { issues, totalIssueCount, healthScore, totalProducts, categoryScores, geoScore };
 }
 
 // ═══════════════════════════════════════════════════════════════════════

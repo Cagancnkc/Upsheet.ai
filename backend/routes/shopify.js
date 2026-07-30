@@ -616,6 +616,7 @@ router.post('/ai-analyze', checkLimit, async (req, res) => {
       descriptions: 'Her ürün için ikna edici, 2-3 cümlelik açıklama öner (field: body_html DEĞİL, seo_description olarak kullanılamayacaksa title veya tags olarak kalabilir — SADECE aşağıdaki field değerlerini kullan).',
       tags: 'Her ürünün etiketlerini standartlaştır, eksikleri tamamla (virgülle ayrılmış).',
       all: 'Her ürün için başlık, SEO başlığı, meta açıklama ve etiket önerileri sun.',
+      geo: 'Her ürün için, AI alışveriş asistanlarının (ChatGPT, Perplexity) kolayca anlayabileceği şekilde seo_description alanını zenginleştir. "Bu ürün kimin için uygun", "nasıl kullanılır", "hangi malzeme/özellik" gibi sorulara açıkça cevap veren, en az 100 karakterlik detaylı bir meta açıklama öner.',
     };
 
     const systemPrompt = `Sen bir e-ticaret SEO ve katalog uzmanısın. Türkiye pazarına yönelik Shopify mağazaları için katalog kalitesini artırıyorsun.
