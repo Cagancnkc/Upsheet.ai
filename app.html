@@ -192,6 +192,19 @@
   overflow-x: auto; margin: 8px 0;
 }
 .ai-chat-page .acp-msg pre code { background: transparent; padding: 0; }
+.ai-chat-page .acp-msg-actions {
+  margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap;
+}
+.ai-chat-page .acp-push-shopify {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 12px; background: #95BF47; color: #fff;
+  border: none; border-radius: 8px; cursor: pointer;
+  font-size: 12px; font-weight: 600; font-family: var(--font-body);
+  transition: background .18s ease;
+}
+.ai-chat-page .acp-push-shopify:hover { background: #7fa63c; }
+.ai-chat-page .acp-push-shopify:disabled { opacity: .6; cursor: not-allowed; }
+.ai-chat-page .acp-push-shopify svg { flex: 0 0 auto; }
 .ai-chat-page, .ai-chat-page .acp-stack, .ai-chat-page .acp-bar-inner,
 .ai-chat-page textarea { transition: all 240ms ease; }
 
@@ -913,10 +926,31 @@ function renderAIChatPage() {
 
   const escapeHtml = (s) => String(s).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 
-  const appendBubble = (role, text, extraClass = '') => {
+  const shopifySvgHtml = '<svg width="14" height="14" viewBox="0 0 256 292" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill="#fff" d="M223.774 57.34c-.201-1.46-1.48-2.268-2.537-2.357-1.055-.088-23.383-1.743-23.383-1.743s-15.507-15.395-17.209-17.099c-1.703-1.703-5.029-1.185-6.32-.805-.19.056-3.388 1.043-8.678 2.68-5.18-14.906-14.322-28.604-30.405-28.604-.444 0-.901.018-1.358.044C129.31 3.407 123.644.685 118.75.685c-37.46 0-55.348 46.835-60.956 70.635-14.548 4.503-24.883 7.71-26.202 8.124-8.123 2.548-8.38 2.805-9.448 10.462C21.34 95.71.203 259.406.203 259.406l165.024 30.94 89.442-19.34S223.973 58.803 223.774 57.34zM145.669 79.32l-14.4 4.457c.006-1.005.011-1.994.011-3.075 0-9.415-1.306-17-3.4-23.008 8.418 1.056 14.028 10.626 17.789 21.626zm-28.712-19.712c2.34 5.865 3.86 14.28 3.86 25.634 0 .58-.006 1.11-.011 1.65-9.373 2.902-19.557 6.05-29.762 9.208 5.732-22.115 16.474-32.795 25.913-36.492zm-11.564-10.939c1.672 0 3.357.567 4.968 1.673-12.404 5.834-25.7 20.535-31.316 49.9l-23.52 7.284C61.897 83.049 76.973 48.669 105.393 48.669z"/><path fill="#fff" d="M221.237 54.983c-1.055-.088-23.383-1.743-23.383-1.743s-15.507-15.395-17.209-17.099c-.637-.634-1.496-.959-2.394-1.099l-12.527 256.233 89.442-19.34S223.972 58.803 223.774 57.34c-.201-1.46-1.48-2.268-2.537-2.357"/><path fill="#95BF47" d="M147.183 108.09l-11.09 32.928s-9.582-5.13-21.312-5.13c-17.187 0-18.056 10.72-18.056 13.418 0 14.735 38.68 20.376 38.68 55.13 0 27.335-17.34 44.938-40.667 44.938-27.99 0-42.35-17.55-42.35-17.55l7.55-24.83s14.694 12.615 27.111 12.615c8.11 0 11.404-6.36 11.404-11.005 0-19.22-31.72-20.096-31.72-51.879 0-26.75 19.263-52.688 58.056-52.688 14.907 0 22.396 4.053 22.396 4.053z"/></svg>';
+
+  const appendBubble = (role, text, extraClass = '', opts = {}) => {
     const el = document.createElement('div');
     el.className = 'acp-msg ' + role + (extraClass ? ' ' + extraClass : '');
-    el.innerHTML = escapeHtml(text || '');
+    const body = document.createElement('div');
+    body.className = 'acp-msg-body';
+    body.innerHTML = escapeHtml(text || '');
+    el.appendChild(body);
+    el._body = body;
+    el._addPushAction = (replyText) => {
+      if (el.querySelector('.acp-msg-actions')) return;
+      const bar = document.createElement('div');
+      bar.className = 'acp-msg-actions';
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'acp-push-shopify';
+      btn.innerHTML = shopifySvgHtml + '<span>Shopify\'a Aktar</span>';
+      btn.addEventListener('click', () => openChatPushToShopifyModal(replyText));
+      bar.appendChild(btn);
+      el.appendChild(bar);
+    };
+    if (role === 'assistant' && opts.withActions && !extraClass.includes('pending')) {
+      el._addPushAction(text || '');
+    }
     messages.appendChild(el);
     messages.scrollTop = messages.scrollHeight;
     return el;
@@ -965,7 +999,7 @@ function renderAIChatPage() {
       const data = await res.json();
       const list = Array.isArray(data.messages) ? data.messages : [];
       messages.innerHTML = '';
-      list.forEach(m => appendBubble(m.role, m.content));
+      list.forEach(m => appendBubble(m.role, m.content, '', { withActions: m.role === 'assistant' }));
       if (list.length) setActiveMode(true);
       currentSessionId = sessionId;
       localStorage.setItem('chat_session_id', sessionId);
@@ -1023,7 +1057,8 @@ function renderAIChatPage() {
       if (!res.ok) throw new Error(data.error || 'Cevap alınamadı');
       const reply = data.reply || 'Üzgünüm, cevap üretemedim.';
       pending.classList.remove('pending');
-      pending.innerHTML = escapeHtml(reply);
+      pending._body.innerHTML = escapeHtml(reply);
+      if (typeof pending._addPushAction === 'function') pending._addPushAction(reply);
 
       if (data.sessionId) {
         currentSessionId = data.sessionId;
@@ -1033,7 +1068,7 @@ function renderAIChatPage() {
     } catch (err) {
       pending.classList.remove('pending');
       pending.classList.add('error');
-      pending.innerHTML = escapeHtml('⚠️ ' + (err.message || 'Bağlantı hatası. Lütfen tekrar deneyin.'));
+      pending._body.innerHTML = escapeHtml('⚠️ ' + (err.message || 'Bağlantı hatası. Lütfen tekrar deneyin.'));
     } finally {
       busy = false;
       sync();
@@ -3500,6 +3535,176 @@ if (_origSetView) {
     </div>
   </div>
 </div>
+
+<!-- Chat Push-to-Shopify Modal -->
+<div id="chat-push-modal" style="display:none;position:fixed;inset:0;background:rgba(17,24,39,.45);z-index:650;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#fff;border-radius:20px;padding:24px;width:520px;max-width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 48px rgba(17,24,39,.2);">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+      <div style="width:26px;height:26px;background:#95BF47;border-radius:7px;display:flex;align-items:center;justify-content:center;">
+        <svg width="16" height="16" viewBox="0 0 256 292" xmlns="http://www.w3.org/2000/svg"><path fill="#fff" d="M223.774 57.34c-.201-1.46-1.48-2.268-2.537-2.357-1.055-.088-23.383-1.743-23.383-1.743s-15.507-15.395-17.209-17.099c-1.703-1.703-5.029-1.185-6.32-.805-.19.056-3.388 1.043-8.678 2.68-5.18-14.906-14.322-28.604-30.405-28.604-.444 0-.901.018-1.358.044C129.31 3.407 123.644.685 118.75.685c-37.46 0-55.348 46.835-60.956 70.635-14.548 4.503-24.883 7.71-26.202 8.124-8.123 2.548-8.38 2.805-9.448 10.462C21.34 95.71.203 259.406.203 259.406l165.024 30.94 89.442-19.34S223.973 58.803 223.774 57.34z"/></svg>
+      </div>
+      <p style="font-size:16px;font-weight:600;color:#111827;margin:0;">Shopify'a Aktar</p>
+    </div>
+    <p style="font-size:13px;color:#6b7280;margin:0 0 14px;">Ürün seçin, hangi alana yazılacağını seçin ve değeri onaylayın.</p>
+
+    <label style="display:block;font-size:12px;font-weight:600;color:#374151;margin:8px 0 6px;">Ürün</label>
+    <input id="chat-push-search" type="text" placeholder="Ürün ara..." autocomplete="off"
+      style="width:100%;padding:10px 12px;border:0.5px solid #e5e7eb;border-radius:10px;font-size:13px;outline:none;box-sizing:border-box;margin-bottom:6px;"/>
+    <select id="chat-push-product" size="6"
+      style="width:100%;padding:6px;border:0.5px solid #e5e7eb;border-radius:10px;font-size:13px;outline:none;background:#fff;box-sizing:border-box;">
+    </select>
+    <p id="chat-push-product-hint" style="font-size:11.5px;color:#9ca3af;margin:4px 2px 12px;"></p>
+
+    <label style="display:block;font-size:12px;font-weight:600;color:#374151;margin:0 0 6px;">Hedef Alan</label>
+    <select id="chat-push-field"
+      style="width:100%;padding:10px 12px;border:0.5px solid #e5e7eb;border-radius:10px;font-size:13px;outline:none;background:#fff;box-sizing:border-box;margin-bottom:12px;">
+      <option value="body_html">Açıklama (body_html)</option>
+      <option value="title">Ürün Adı (title)</option>
+      <option value="tags">Etiketler (tags)</option>
+      <option value="vendor">Marka (vendor)</option>
+      <option value="product_type">Ürün Tipi (product_type)</option>
+      <option value="seo_title">SEO Başlık</option>
+      <option value="seo_description">SEO Açıklama</option>
+    </select>
+
+    <label style="display:block;font-size:12px;font-weight:600;color:#374151;margin:0 0 6px;">Değer</label>
+    <textarea id="chat-push-value" rows="6"
+      style="width:100%;padding:10px 12px;border:0.5px solid #e5e7eb;border-radius:10px;font-size:13px;outline:none;font-family:inherit;resize:vertical;box-sizing:border-box;"></textarea>
+
+    <p id="chat-push-error" style="font-size:12px;color:#dc2626;margin:8px 2px 0;display:none;"></p>
+
+    <div style="display:flex;gap:8px;margin-top:16px;">
+      <button id="chat-push-cancel" type="button"
+        style="flex:1;padding:11px;border:0.5px solid #e5e7eb;border-radius:12px;background:#fff;color:#374151;font-size:13px;cursor:pointer;font-weight:500;">
+        İptal
+      </button>
+      <button id="chat-push-submit" type="button"
+        style="flex:1.4;padding:11px;border:none;border-radius:12px;background:#95BF47;color:#fff;font-size:13px;font-weight:600;cursor:pointer;">
+        Shopify'a Yaz
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  const modal = document.getElementById('chat-push-modal');
+  if (!modal) return;
+  let allProducts = [];
+  let currentReply = '';
+
+  function renderList(filter) {
+    const sel = document.getElementById('chat-push-product');
+    const hint = document.getElementById('chat-push-product-hint');
+    const q = (filter || '').trim().toLowerCase();
+    const seen = new Set();
+    const unique = [];
+    for (const p of allProducts) {
+      const id = p.shopify_product_id;
+      if (!id || seen.has(id)) continue;
+      seen.add(id);
+      unique.push(p);
+    }
+    const filtered = q
+      ? unique.filter(p => (p.title || '').toLowerCase().includes(q) || (p.vendor || '').toLowerCase().includes(q))
+      : unique;
+    const shown = filtered.slice(0, 200);
+    sel.innerHTML = shown.map(p => {
+      const label = (p.title || '(başlıksız)') + (p.vendor ? ' — ' + p.vendor : '');
+      return `<option value="${p.shopify_product_id}">${label.replace(/[<>&"']/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&#39;'}[c]))}</option>`;
+    }).join('');
+    if (shown.length && !sel.value) sel.value = shown[0].shopify_product_id;
+    hint.textContent = filtered.length === 0
+      ? 'Eşleşen ürün yok.'
+      : `${shown.length} / ${filtered.length} ürün gösteriliyor${unique.length !== filtered.length ? ` (toplam ${unique.length})` : ''}`;
+  }
+
+  document.getElementById('chat-push-search').addEventListener('input', (e) => renderList(e.target.value));
+  document.getElementById('chat-push-cancel').addEventListener('click', () => { modal.style.display = 'none'; });
+
+  document.getElementById('chat-push-submit').addEventListener('click', async () => {
+    const err = document.getElementById('chat-push-error');
+    const productId = document.getElementById('chat-push-product').value;
+    const field = document.getElementById('chat-push-field').value;
+    const value = document.getElementById('chat-push-value').value;
+    err.style.display = 'none';
+    if (!productId) { err.textContent = 'Lütfen bir ürün seçin.'; err.style.display = 'block'; return; }
+    if (!field) { err.textContent = 'Lütfen bir alan seçin.'; err.style.display = 'block'; return; }
+    if (!value || !value.trim()) { err.textContent = 'Değer boş olamaz.'; err.style.display = 'block'; return; }
+
+    const ok = confirm(`Bu değer CANLI Shopify mağazanızdaki ürünün "${field}" alanına yazılacak.\nGeri alınamaz. Devam edilsin mi?`);
+    if (!ok) return;
+
+    const btn = document.getElementById('chat-push-submit');
+    btn.disabled = true; btn.textContent = 'Gönderiliyor...';
+    try {
+      await pushChangesToShopify([{
+        shopifyProductId: productId,
+        field,
+        newValue: value,
+        wasManuallyEdited: true
+      }]);
+      modal.style.display = 'none';
+    } finally {
+      btn.disabled = false; btn.textContent = 'Shopify\'a Yaz';
+    }
+  });
+
+  window.openChatPushToShopifyModal = async function(replyText) {
+    currentReply = replyText || '';
+
+    // 1) Shopify bağlı mı? — status kontrolü
+    let connected = false;
+    try {
+      const r = await fetch(`${API_URL}/api/shopify/status`, { headers: { ...(await authHeaders()) } });
+      if (r.ok) {
+        const d = await r.json();
+        connected = !!d.connected;
+      }
+    } catch (_) { /* silent */ }
+
+    if (!connected) {
+      if (typeof toast === 'function') toast('Önce Shopify hesabınızı bağlayın', 'info');
+      if (typeof openShopifyConnectModal === 'function') openShopifyConnectModal();
+      return;
+    }
+
+    // 2) Ürün listesi kaynağı: catalogData.products > /sync fallback
+    allProducts = (typeof catalogData !== 'undefined' && Array.isArray(catalogData.products))
+      ? catalogData.products.filter(p => p.shopify_product_id)
+      : [];
+
+    if (allProducts.length === 0) {
+      if (typeof toast === 'function') toast('Ürünler yükleniyor...', 'info');
+      try {
+        const r = await fetch(`${API_URL}/api/shopify/sync`, { headers: { ...(await authHeaders()) } });
+        if (r.ok) {
+          const data = await r.json();
+          if (typeof catalogData !== 'undefined') catalogData = data;
+          allProducts = (data.products || []).filter(p => p.shopify_product_id);
+        }
+      } catch (e) {
+        if (typeof toast === 'function') toast('Ürün listesi alınamadı: ' + e.message, 'error');
+        return;
+      }
+    }
+
+    if (allProducts.length === 0) {
+      if (typeof toast === 'function') toast('Mağazanızda ürün bulunamadı', 'info');
+      return;
+    }
+
+    // 3) Modal doldur
+    document.getElementById('chat-push-search').value = '';
+    document.getElementById('chat-push-field').value = 'body_html';
+    document.getElementById('chat-push-value').value = currentReply;
+    document.getElementById('chat-push-error').style.display = 'none';
+    renderList('');
+    modal.style.display = 'flex';
+    setTimeout(() => document.getElementById('chat-push-search').focus(), 40);
+  };
+})();
+</script>
 
 <!-- Shopify Connect Modal -->
 <div id="shopify-connect-modal" style="display:none;position:fixed;inset:0;background:rgba(17,24,39,.4);z-index:600;align-items:center;justify-content:center;">
