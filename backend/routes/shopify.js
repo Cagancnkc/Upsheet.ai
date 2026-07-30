@@ -40,6 +40,14 @@ function getSupabase() {
   return _supabase;
 }
 
+async function getQualityGuidelines() {
+  const { data } = await getSupabase()
+    .from('quality_guidelines')
+    .select('field_type, rule_text, good_example, bad_example')
+    .order('display_order');
+  return data || [];
+}
+
 // CSRF state nonces — file-scope Map, tek instance için yeterli
 const pendingStates = new Map();
 
@@ -594,6 +602,14 @@ router.post('/ai-analyze', checkLimit, async (req, res) => {
       };
     });
 
+    const guidelines = await getQualityGuidelines();
+    const guidelinesText = guidelines.length > 0
+      ? '\n\nKALİTE KÜTÜPHANESİ (BU KURALLARA KESİNLİKLE UY):\n' +
+        guidelines.map(g =>
+          `- [${g.field_type}] ${g.rule_text}\n  ✓ İYİ: "${g.good_example}"\n  ✗ KÖTÜ: "${g.bad_example}"`
+        ).join('\n\n')
+      : '';
+
     const analysisPrompts = {
       seo: 'Her ürün için SEO başlığı (60 karakter altı) ve meta açıklaması (155 karakter altı) öner.',
       titles: 'Her ürün başlığını daha çekici ve SEO uyumlu hale getir.',
@@ -624,7 +640,7 @@ SEO KURALLARI (KESİNLİKLE UYGULANACAK):
 - Her öneri için old_value VE new_value zorunlu
 - Değişmeyecek alanlar için öneri oluşturma
 - field değeri KESİNLİKLE şunlardan biri: title, seo_title, seo_description, tags
-- reason alanı zorunlu: DEĞİŞİKLİĞİN NEDENİNİ 10-15 kelimeyle, kullanıcıya hitap eden basit bir dille açıkla. Teknik jargon kullanma. Örnek: "Başlık 15 karakterdi, SEO için 40-60 karakter arası önerilir"`;
+- reason alanı zorunlu: DEĞİŞİKLİĞİN NEDENİNİ 10-15 kelimeyle, kullanıcıya hitap eden basit bir dille açıkla. Teknik jargon kullanma. Örnek: "Başlık 15 karakterdi, SEO için 40-60 karakter arası önerilir"${guidelinesText}`;
 
     const BATCH_SIZE = 10;
     const batches = [];
@@ -768,6 +784,29 @@ router.post('/webhooks/shop-redact', async (req, res) => {
     console.error('[GDPR] shop-redact error:', e);
     res.status(500).send('Error');
   }
+});
+
+// ─── GET /api/shopify/quality-guidelines ─────────────────────────────────────
+router.get('/quality-guidelines', requireAuth, async (req, res) => {
+  const { data, error } = await getSupabase()
+    .from('quality_guidelines')
+    .select('*')
+    .order('display_order');
+  if (error) return res.status(500).json({ error: error.message });
+  res.json({ guidelines: data || [] });
+});
+
+// ─── POST /api/shopify/quality-guidelines ────────────────────────────────────
+router.post('/quality-guidelines', requireAuth, async (req, res) => {
+  const { field_type, rule_text, good_example, bad_example } = req.body;
+  if (!field_type || !rule_text) return res.status(400).json({ error: 'field_type ve rule_text zorunlu' });
+  const { data, error } = await getSupabase()
+    .from('quality_guidelines')
+    .insert({ field_type, rule_text, good_example, bad_example })
+    .select()
+    .single();
+  if (error) return res.status(500).json({ error: error.message });
+  res.json(data);
 });
 
 module.exports = router;
