@@ -370,13 +370,17 @@ router.post('/push', requireAuth, async (req, res) => {
       // Ürün bazında grupla (title/tags/vendor/product_type tek istekte birleşir)
       const grouped = {};
       const seoOps = [];
+      const variantGrouped = {};
       for (const c of changes) {
         if (!c.product_id || !c.field) continue;
-        if (['title', 'tags', 'vendor', 'product_type'].includes(c.field)) {
+        if (['title', 'body_html', 'tags', 'vendor', 'product_type', 'status'].includes(c.field)) {
           if (!grouped[c.product_id]) grouped[c.product_id] = {};
           grouped[c.product_id][c.field] = c.new_value;
         } else if (c.field === 'seo_title' || c.field === 'seo_description') {
           seoOps.push(c);
+        } else if (['price', 'compare_at_price'].includes(c.field) && c.variant_id) {
+          if (!variantGrouped[c.variant_id]) variantGrouped[c.variant_id] = {};
+          variantGrouped[c.variant_id][c.field] = c.new_value;
         } else {
           skipped++;
         }
@@ -425,6 +429,26 @@ router.post('/push', requireAuth, async (req, res) => {
           }
         } catch (err) {
           errors.push({ productId: c.product_id, field: c.field, error: err.message });
+        }
+        await sleep(300);
+      }
+
+      for (const variantId of Object.keys(variantGrouped)) {
+        try {
+          const r = await fetch(`${apiBase}/variants/${variantId}.json`, {
+            method: 'PUT',
+            headers,
+            body: JSON.stringify({ variant: { id: Number(variantId), ...variantGrouped[variantId] } }),
+          });
+          if (r.ok) {
+            pushed++;
+          } else {
+            if (r.status === 403) scopeMissing = true;
+            const body = await r.text().catch(() => '');
+            errors.push({ variantId, status: r.status, error: body.slice(0, 200) });
+          }
+        } catch (err) {
+          errors.push({ variantId, error: err.message });
         }
         await sleep(300);
       }

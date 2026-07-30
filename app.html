@@ -3265,6 +3265,7 @@ async function pushChangesToShopify(accepted) {
           field: c.field,
           new_value: c.newValue,
           manually_edited: c.wasManuallyEdited || false,
+          ...(c.variantId ? { variant_id: c.variantId } : {}),
         })),
       }),
     });
@@ -3536,52 +3537,137 @@ if (_origSetView) {
   </div>
 </div>
 
-<!-- Chat Push-to-Shopify Modal -->
-<div id="chat-push-modal" style="display:none;position:fixed;inset:0;background:rgba(17,24,39,.45);z-index:650;align-items:center;justify-content:center;padding:20px;">
-  <div style="background:#fff;border-radius:20px;padding:24px;width:520px;max-width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 48px rgba(17,24,39,.2);">
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
-      <div style="width:26px;height:26px;background:#95BF47;border-radius:7px;display:flex;align-items:center;justify-content:center;">
-        <svg width="16" height="16" viewBox="0 0 256 292" xmlns="http://www.w3.org/2000/svg"><path fill="#fff" d="M223.774 57.34c-.201-1.46-1.48-2.268-2.537-2.357-1.055-.088-23.383-1.743-23.383-1.743s-15.507-15.395-17.209-17.099c-1.703-1.703-5.029-1.185-6.32-.805-.19.056-3.388 1.043-8.678 2.68-5.18-14.906-14.322-28.604-30.405-28.604-.444 0-.901.018-1.358.044C129.31 3.407 123.644.685 118.75.685c-37.46 0-55.348 46.835-60.956 70.635-14.548 4.503-24.883 7.71-26.202 8.124-8.123 2.548-8.38 2.805-9.448 10.462C21.34 95.71.203 259.406.203 259.406l165.024 30.94 89.442-19.34S223.973 58.803 223.774 57.34z"/></svg>
+<!-- Chat Push-to-Shopify Modal — Tam Ürün Editörü -->
+<div id="chat-push-modal" style="display:none;position:fixed;inset:0;background:rgba(17,24,39,.45);z-index:650;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto;">
+  <div style="background:#fff;border-radius:20px;width:600px;max-width:100%;margin:auto;box-shadow:0 20px 48px rgba(17,24,39,.2);">
+    <!-- Header -->
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 24px 0;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="width:28px;height:28px;background:#95BF47;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="17" height="17" viewBox="0 0 256 292" xmlns="http://www.w3.org/2000/svg"><path fill="#fff" d="M223.774 57.34c-.201-1.46-1.48-2.268-2.537-2.357-1.055-.088-23.383-1.743-23.383-1.743s-15.507-15.395-17.209-17.099c-1.703-1.703-5.029-1.185-6.32-.805-.19.056-3.388 1.043-8.678 2.68-5.18-14.906-14.322-28.604-30.405-28.604-.444 0-.901.018-1.358.044C129.31 3.407 123.644.685 118.75.685c-37.46 0-55.348 46.835-60.956 70.635-14.548 4.503-24.883 7.71-26.202 8.124-8.123 2.548-8.38 2.805-9.448 10.462C21.34 95.71.203 259.406.203 259.406l165.024 30.94 89.442-19.34S223.973 58.803 223.774 57.34z"/></svg>
+        </div>
+        <div>
+          <p style="font-size:15px;font-weight:700;color:#111827;margin:0;">Shopify'a Aktar</p>
+          <p style="font-size:12px;color:#6b7280;margin:2px 0 0;">Ürün seçin ve alanları düzenleyerek Shopify'a gönderin</p>
+        </div>
       </div>
-      <p style="font-size:16px;font-weight:600;color:#111827;margin:0;">Shopify'a Aktar</p>
+      <button id="chat-push-close" type="button" style="width:30px;height:30px;border:none;background:#f3f4f6;border-radius:8px;cursor:pointer;font-size:16px;color:#6b7280;display:flex;align-items:center;justify-content:center;">✕</button>
     </div>
-    <p style="font-size:13px;color:#6b7280;margin:0 0 14px;">Ürün seçin, hangi alana yazılacağını seçin ve değeri onaylayın.</p>
 
-    <label style="display:block;font-size:12px;font-weight:600;color:#374151;margin:8px 0 6px;">Ürün</label>
-    <input id="chat-push-search" type="text" placeholder="Ürün ara..." autocomplete="off"
-      style="width:100%;padding:10px 12px;border:0.5px solid #e5e7eb;border-radius:10px;font-size:13px;outline:none;box-sizing:border-box;margin-bottom:6px;"/>
-    <select id="chat-push-product" size="6"
-      style="width:100%;padding:6px;border:0.5px solid #e5e7eb;border-radius:10px;font-size:13px;outline:none;background:#fff;box-sizing:border-box;">
-    </select>
-    <p id="chat-push-product-hint" style="font-size:11.5px;color:#9ca3af;margin:4px 2px 12px;"></p>
+    <div style="padding:16px 24px 24px;">
+      <!-- AI Cevabı Referans Paneli -->
+      <div id="cpf-ai-ref" style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;margin-bottom:16px;">
+        <button id="cpf-ai-toggle" type="button" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:none;border:none;cursor:pointer;font-size:12px;font-weight:600;color:#166534;">
+          <span>AI Cevabı (referans)</span>
+          <span id="cpf-ai-chevron" style="font-size:10px;transition:transform .2s;">▼</span>
+        </button>
+        <div id="cpf-ai-body" style="display:none;padding:0 14px 12px;">
+          <pre id="cpf-ai-text" style="margin:0;font-size:12px;color:#374151;white-space:pre-wrap;word-break:break-word;font-family:inherit;max-height:120px;overflow-y:auto;line-height:1.5;"></pre>
+        </div>
+      </div>
 
-    <label style="display:block;font-size:12px;font-weight:600;color:#374151;margin:0 0 6px;">Hedef Alan</label>
-    <select id="chat-push-field"
-      style="width:100%;padding:10px 12px;border:0.5px solid #e5e7eb;border-radius:10px;font-size:13px;outline:none;background:#fff;box-sizing:border-box;margin-bottom:12px;">
-      <option value="body_html">Açıklama (body_html)</option>
-      <option value="title">Ürün Adı (title)</option>
-      <option value="tags">Etiketler (tags)</option>
-      <option value="vendor">Marka (vendor)</option>
-      <option value="product_type">Ürün Tipi (product_type)</option>
-      <option value="seo_title">SEO Başlık</option>
-      <option value="seo_description">SEO Açıklama</option>
-    </select>
+      <!-- Ürün Seçimi -->
+      <div style="margin-bottom:16px;">
+        <label style="display:block;font-size:12px;font-weight:600;color:#374151;margin-bottom:6px;">Ürün</label>
+        <input id="chat-push-search" type="text" placeholder="Ürün adı veya marka ara..." autocomplete="off"
+          style="width:100%;padding:9px 12px;border:1px solid #e5e7eb;border-radius:10px;font-size:13px;outline:none;box-sizing:border-box;margin-bottom:6px;"/>
+        <select id="chat-push-product" size="5"
+          style="width:100%;padding:4px;border:1px solid #e5e7eb;border-radius:10px;font-size:13px;outline:none;background:#fff;box-sizing:border-box;">
+        </select>
+        <p id="chat-push-product-hint" style="font-size:11px;color:#9ca3af;margin:4px 2px 0;"></p>
+      </div>
 
-    <label style="display:block;font-size:12px;font-weight:600;color:#374151;margin:0 0 6px;">Değer</label>
-    <textarea id="chat-push-value" rows="6"
-      style="width:100%;padding:10px 12px;border:0.5px solid #e5e7eb;border-radius:10px;font-size:13px;outline:none;font-family:inherit;resize:vertical;box-sizing:border-box;"></textarea>
+      <!-- Alan Editörü (ürün seçilince görünür) -->
+      <div id="cpf-editor" style="display:none;">
+        <div style="border-top:1px solid #f3f4f6;padding-top:14px;">
 
-    <p id="chat-push-error" style="font-size:12px;color:#dc2626;margin:8px 2px 0;display:none;"></p>
+          <!-- Temel Bilgiler -->
+          <p style="font-size:11px;font-weight:700;color:#95BF47;text-transform:uppercase;letter-spacing:.6px;margin:0 0 10px;">Temel Bilgiler</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+            <div>
+              <label style="display:block;font-size:11.5px;font-weight:600;color:#6b7280;margin-bottom:4px;">Ürün Adı (title)</label>
+              <input id="cpf-title" type="text" placeholder="Ürün adı..."
+                style="width:100%;padding:8px 10px;border:1px solid #e5e7eb;border-radius:8px;font-size:13px;outline:none;box-sizing:border-box;"/>
+            </div>
+            <div>
+              <label style="display:block;font-size:11.5px;font-weight:600;color:#6b7280;margin-bottom:4px;">Marka (vendor)</label>
+              <input id="cpf-vendor" type="text" placeholder="Marka adı..."
+                style="width:100%;padding:8px 10px;border:1px solid #e5e7eb;border-radius:8px;font-size:13px;outline:none;box-sizing:border-box;"/>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+            <div>
+              <label style="display:block;font-size:11.5px;font-weight:600;color:#6b7280;margin-bottom:4px;">Ürün Tipi (product_type)</label>
+              <input id="cpf-type" type="text" placeholder="Ürün tipi..."
+                style="width:100%;padding:8px 10px;border:1px solid #e5e7eb;border-radius:8px;font-size:13px;outline:none;box-sizing:border-box;"/>
+            </div>
+            <div>
+              <label style="display:block;font-size:11.5px;font-weight:600;color:#6b7280;margin-bottom:4px;">Durum (status)</label>
+              <select id="cpf-status" style="width:100%;padding:8px 10px;border:1px solid #e5e7eb;border-radius:8px;font-size:13px;outline:none;background:#fff;box-sizing:border-box;">
+                <option value="active">Aktif</option>
+                <option value="draft">Taslak</option>
+                <option value="archived">Arşivlenmiş</option>
+              </select>
+            </div>
+          </div>
+          <div style="margin-bottom:10px;">
+            <label style="display:block;font-size:11.5px;font-weight:600;color:#6b7280;margin-bottom:4px;">Etiketler (tags)</label>
+            <input id="cpf-tags" type="text" placeholder="etiket1, etiket2, etiket3..."
+              style="width:100%;padding:8px 10px;border:1px solid #e5e7eb;border-radius:8px;font-size:13px;outline:none;box-sizing:border-box;"/>
+          </div>
+          <div style="margin-bottom:16px;">
+            <label style="display:block;font-size:11.5px;font-weight:600;color:#6b7280;margin-bottom:4px;">Açıklama (body_html)</label>
+            <textarea id="cpf-body" rows="4" placeholder="Ürün açıklaması..."
+              style="width:100%;padding:8px 10px;border:1px solid #e5e7eb;border-radius:8px;font-size:13px;outline:none;font-family:inherit;resize:vertical;box-sizing:border-box;"></textarea>
+          </div>
 
-    <div style="display:flex;gap:8px;margin-top:16px;">
-      <button id="chat-push-cancel" type="button"
-        style="flex:1;padding:11px;border:0.5px solid #e5e7eb;border-radius:12px;background:#fff;color:#374151;font-size:13px;cursor:pointer;font-weight:500;">
-        İptal
-      </button>
-      <button id="chat-push-submit" type="button"
-        style="flex:1.4;padding:11px;border:none;border-radius:12px;background:#95BF47;color:#fff;font-size:13px;font-weight:600;cursor:pointer;">
-        Shopify'a Yaz
-      </button>
+          <!-- SEO -->
+          <p style="font-size:11px;font-weight:700;color:#95BF47;text-transform:uppercase;letter-spacing:.6px;margin:0 0 10px;">SEO</p>
+          <div style="margin-bottom:10px;">
+            <label style="display:block;font-size:11.5px;font-weight:600;color:#6b7280;margin-bottom:4px;">SEO Başlık (seo_title)</label>
+            <input id="cpf-seo-title" type="text" placeholder="Arama motoru başlığı..."
+              style="width:100%;padding:8px 10px;border:1px solid #e5e7eb;border-radius:8px;font-size:13px;outline:none;box-sizing:border-box;"/>
+          </div>
+          <div style="margin-bottom:16px;">
+            <label style="display:block;font-size:11.5px;font-weight:600;color:#6b7280;margin-bottom:4px;">SEO Açıklama (seo_description)</label>
+            <textarea id="cpf-seo-desc" rows="2" placeholder="Arama motoru açıklaması..."
+              style="width:100%;padding:8px 10px;border:1px solid #e5e7eb;border-radius:8px;font-size:13px;outline:none;font-family:inherit;resize:vertical;box-sizing:border-box;"></textarea>
+          </div>
+
+          <!-- Fiyatlandırma -->
+          <p style="font-size:11px;font-weight:700;color:#95BF47;text-transform:uppercase;letter-spacing:.6px;margin:0 0 10px;">Fiyatlandırma</p>
+          <div style="margin-bottom:10px;">
+            <label style="display:block;font-size:11.5px;font-weight:600;color:#6b7280;margin-bottom:4px;">Varyant</label>
+            <select id="cpf-variant" style="width:100%;padding:8px 10px;border:1px solid #e5e7eb;border-radius:8px;font-size:13px;outline:none;background:#fff;box-sizing:border-box;"></select>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:4px;">
+            <div>
+              <label style="display:block;font-size:11.5px;font-weight:600;color:#6b7280;margin-bottom:4px;">Fiyat (price)</label>
+              <input id="cpf-price" type="number" min="0" step="0.01" placeholder="0.00"
+                style="width:100%;padding:8px 10px;border:1px solid #e5e7eb;border-radius:8px;font-size:13px;outline:none;box-sizing:border-box;"/>
+            </div>
+            <div>
+              <label style="display:block;font-size:11.5px;font-weight:600;color:#6b7280;margin-bottom:4px;">Karşılaştırma Fiyatı</label>
+              <input id="cpf-compare" type="number" min="0" step="0.01" placeholder="0.00"
+                style="width:100%;padding:8px 10px;border:1px solid #e5e7eb;border-radius:8px;font-size:13px;outline:none;box-sizing:border-box;"/>
+            </div>
+          </div>
+          <p style="font-size:11px;color:#9ca3af;margin:4px 0 0;">Boş bırakılan alanlar Shopify'a gönderilmez.</p>
+        </div>
+      </div>
+
+      <p id="chat-push-error" style="font-size:12px;color:#dc2626;margin:10px 0 0;display:none;"></p>
+
+      <div style="display:flex;gap:8px;margin-top:16px;">
+        <button id="chat-push-cancel" type="button"
+          style="flex:1;padding:11px;border:1px solid #e5e7eb;border-radius:12px;background:#fff;color:#374151;font-size:13px;cursor:pointer;font-weight:500;">
+          İptal
+        </button>
+        <button id="chat-push-submit" type="button"
+          style="flex:1.6;padding:11px;border:none;border-radius:12px;background:#95BF47;color:#fff;font-size:13px;font-weight:600;cursor:pointer;">
+          Shopify'a Gönder
+        </button>
+      </div>
     </div>
   </div>
 </div>
@@ -3592,6 +3678,22 @@ if (_origSetView) {
   if (!modal) return;
   let allProducts = [];
   let currentReply = '';
+
+  // AI referans paneli toggle
+  const aiToggle = document.getElementById('cpf-ai-toggle');
+  const aiBody = document.getElementById('cpf-ai-body');
+  const aiChevron = document.getElementById('cpf-ai-chevron');
+  if (aiToggle) {
+    aiToggle.addEventListener('click', () => {
+      const open = aiBody.style.display !== 'none';
+      aiBody.style.display = open ? 'none' : 'block';
+      aiChevron.style.transform = open ? '' : 'rotate(180deg)';
+    });
+  }
+
+  function escHtml(s) {
+    return String(s || '').replace(/[<>&"']/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&#39;'}[c]));
+  }
 
   function renderList(filter) {
     const sel = document.getElementById('chat-push-product');
@@ -3611,57 +3713,119 @@ if (_origSetView) {
     const shown = filtered.slice(0, 200);
     sel.innerHTML = shown.map(p => {
       const label = (p.title || '(başlıksız)') + (p.vendor ? ' — ' + p.vendor : '');
-      return `<option value="${p.shopify_product_id}">${label.replace(/[<>&"']/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&#39;'}[c]))}</option>`;
+      return `<option value="${p.shopify_product_id}">${escHtml(label)}</option>`;
     }).join('');
-    if (shown.length && !sel.value) sel.value = shown[0].shopify_product_id;
+    if (shown.length) {
+      if (!sel.value) sel.value = shown[0].shopify_product_id;
+      populateProductFields(sel.value);
+    }
     hint.textContent = filtered.length === 0
       ? 'Eşleşen ürün yok.'
-      : `${shown.length} / ${filtered.length} ürün gösteriliyor${unique.length !== filtered.length ? ` (toplam ${unique.length})` : ''}`;
+      : `${shown.length} / ${filtered.length} ürün${unique.length !== filtered.length ? ` (toplam ${unique.length})` : ''}`;
+  }
+
+  function populateProductFields(productId) {
+    const editor = document.getElementById('cpf-editor');
+    if (!productId) { editor.style.display = 'none'; return; }
+    const rows = allProducts.filter(p => p.shopify_product_id === productId);
+    const p = rows[0];
+    if (!p) { editor.style.display = 'none'; return; }
+
+    document.getElementById('cpf-title').value = p.title || '';
+    document.getElementById('cpf-body').value = p.body_html || '';
+    document.getElementById('cpf-vendor').value = p.vendor || '';
+    document.getElementById('cpf-type').value = p.product_type || '';
+    document.getElementById('cpf-tags').value = p.tags || '';
+    document.getElementById('cpf-status').value = p.status || 'active';
+    document.getElementById('cpf-seo-title').value = '';
+    document.getElementById('cpf-seo-desc').value = '';
+
+    const variants = rows.filter(r => r.shopify_variant_id);
+    const variantSel = document.getElementById('cpf-variant');
+    variantSel.innerHTML = variants.map(v => {
+      const label = (v.sku ? `SKU: ${v.sku}` : '') + (v.variant_title && v.variant_title !== 'Default Title' ? ` — ${v.variant_title}` : ' — Varsayılan') + (v.price ? ` (₺${v.price})` : '');
+      return `<option value="${escHtml(v.shopify_variant_id)}" data-price="${escHtml(v.price||'')}" data-compare="${escHtml(v.compare_at_price||'')}">${escHtml(label.trim())}</option>`;
+    }).join('');
+    if (variants[0]) {
+      document.getElementById('cpf-price').value = variants[0].price || '';
+      document.getElementById('cpf-compare').value = variants[0].compare_at_price || '';
+    }
+
+    editor.style.display = 'block';
   }
 
   document.getElementById('chat-push-search').addEventListener('input', (e) => renderList(e.target.value));
-  document.getElementById('chat-push-cancel').addEventListener('click', () => { modal.style.display = 'none'; });
+  document.getElementById('chat-push-product').addEventListener('change', (e) => populateProductFields(e.target.value));
+
+  document.getElementById('cpf-variant').addEventListener('change', function() {
+    const opt = this.options[this.selectedIndex];
+    if (opt) {
+      document.getElementById('cpf-price').value = opt.dataset.price || '';
+      document.getElementById('cpf-compare').value = opt.dataset.compare || '';
+    }
+  });
+
+  function closeModal() { modal.style.display = 'none'; }
+  document.getElementById('chat-push-close').addEventListener('click', closeModal);
+  document.getElementById('chat-push-cancel').addEventListener('click', closeModal);
+  modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
 
   document.getElementById('chat-push-submit').addEventListener('click', async () => {
-    const err = document.getElementById('chat-push-error');
+    const errEl = document.getElementById('chat-push-error');
     const productId = document.getElementById('chat-push-product').value;
-    const field = document.getElementById('chat-push-field').value;
-    const value = document.getElementById('chat-push-value').value;
-    err.style.display = 'none';
-    if (!productId) { err.textContent = 'Lütfen bir ürün seçin.'; err.style.display = 'block'; return; }
-    if (!field) { err.textContent = 'Lütfen bir alan seçin.'; err.style.display = 'block'; return; }
-    if (!value || !value.trim()) { err.textContent = 'Değer boş olamaz.'; err.style.display = 'block'; return; }
+    errEl.style.display = 'none';
+    if (!productId) { errEl.textContent = 'Lütfen bir ürün seçin.'; errEl.style.display = 'block'; return; }
 
-    const ok = confirm(`Bu değer CANLI Shopify mağazanızdaki ürünün "${field}" alanına yazılacak.\nGeri alınamaz. Devam edilsin mi?`);
+    const changes = [];
+    const textFields = [
+      ['title', 'cpf-title'], ['body_html', 'cpf-body'],
+      ['vendor', 'cpf-vendor'], ['product_type', 'cpf-type'],
+      ['tags', 'cpf-tags'], ['status', 'cpf-status'],
+      ['seo_title', 'cpf-seo-title'], ['seo_description', 'cpf-seo-desc'],
+    ];
+    for (const [field, id] of textFields) {
+      const v = (document.getElementById(id)?.value || '').trim();
+      if (v) changes.push({ shopifyProductId: productId, field, newValue: v, wasManuallyEdited: true });
+    }
+    const variantSel = document.getElementById('cpf-variant');
+    const variantId = variantSel?.value;
+    const price = (document.getElementById('cpf-price')?.value || '').trim();
+    const compare = (document.getElementById('cpf-compare')?.value || '').trim();
+    if (variantId && price) changes.push({ shopifyProductId: productId, field: 'price', newValue: price, variantId, wasManuallyEdited: true });
+    if (variantId && compare) changes.push({ shopifyProductId: productId, field: 'compare_at_price', newValue: compare, variantId, wasManuallyEdited: true });
+
+    if (changes.length === 0) {
+      errEl.textContent = 'Gönderilecek alan bulunamadı. En az bir alanı doldurun.';
+      errEl.style.display = 'block';
+      return;
+    }
+
+    const fieldNames = changes.map(c => c.field).join(', ');
+    const ok = confirm(`CANLI Shopify mağazanızda ${changes.length} alan güncellenecek:\n${fieldNames}\n\nGeri alınamaz. Devam edilsin mi?`);
     if (!ok) return;
 
     const btn = document.getElementById('chat-push-submit');
     btn.disabled = true; btn.textContent = 'Gönderiliyor...';
     try {
-      await pushChangesToShopify([{
-        shopifyProductId: productId,
-        field,
-        newValue: value,
-        wasManuallyEdited: true
-      }]);
-      modal.style.display = 'none';
+      await pushChangesToShopify(changes);
+      closeModal();
     } finally {
-      btn.disabled = false; btn.textContent = 'Shopify\'a Yaz';
+      btn.disabled = false; btn.textContent = 'Shopify\'a Gönder';
     }
   });
 
   window.openChatPushToShopifyModal = async function(replyText) {
     currentReply = replyText || '';
+    document.getElementById('cpf-ai-text').textContent = currentReply;
+    aiBody.style.display = 'none';
+    aiChevron.style.transform = '';
 
-    // 1) Shopify bağlı mı? — status kontrolü
+    // Shopify bağlı mı?
     let connected = false;
     try {
       const r = await fetch(`${API_URL}/api/shopify/status`, { headers: { ...(await authHeaders()) } });
-      if (r.ok) {
-        const d = await r.json();
-        connected = !!d.connected;
-      }
-    } catch (_) { /* silent */ }
+      if (r.ok) { const d = await r.json(); connected = !!d.connected; }
+    } catch (_) {}
 
     if (!connected) {
       if (typeof toast === 'function') toast('Önce Shopify hesabınızı bağlayın', 'info');
@@ -3669,7 +3833,7 @@ if (_origSetView) {
       return;
     }
 
-    // 2) Ürün listesi kaynağı: catalogData.products > /sync fallback
+    // Ürün listesi
     allProducts = (typeof catalogData !== 'undefined' && Array.isArray(catalogData.products))
       ? catalogData.products.filter(p => p.shopify_product_id)
       : [];
@@ -3694,11 +3858,9 @@ if (_origSetView) {
       return;
     }
 
-    // 3) Modal doldur
     document.getElementById('chat-push-search').value = '';
-    document.getElementById('chat-push-field').value = 'body_html';
-    document.getElementById('chat-push-value').value = currentReply;
     document.getElementById('chat-push-error').style.display = 'none';
+    document.getElementById('cpf-editor').style.display = 'none';
     renderList('');
     modal.style.display = 'flex';
     setTimeout(() => document.getElementById('chat-push-search').focus(), 40);
