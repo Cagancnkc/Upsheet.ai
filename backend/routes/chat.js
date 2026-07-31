@@ -156,15 +156,16 @@ router.post('/message', checkLimit, async (req, res) => {
     }
 
     // RAG (Shopify)
-    let ragExamples = [];
+    let ragResult = { examples: [], confidence: 0 };
     if (useEmbeddingContext) {
       try {
-        ragExamples = retrieveShopifyExamples(trimmed, 3);
+        ragResult = retrieveShopifyExamples(trimmed, 5);
       } catch (e) {
         console.warn('[chat] Shopify retrieval skipped:', e.message);
       }
     }
-    const ragBlock = buildRagBlock(ragExamples);
+    const ragUsed = ragResult.confidence >= 0.3 && ragResult.examples.length > 0;
+    const ragBlock = ragUsed ? buildRagBlock(ragResult.examples) : '';
 
     // Persist edilmiş history varsa DB'den al, yoksa istemciden
     let historyMessages = [];
@@ -230,6 +231,10 @@ router.post('/message', checkLimit, async (req, res) => {
     res.json({
       reply,
       sessionId,
+      ragUsed,
+      ragConfidence: ragResult.confidence,
+      ragTopCategory: ragUsed ? (ragResult.examples[0]?.category || null) : null,
+      ragQuery: ragUsed ? trimmed : null,
       usage: {
         input_tokens: response.usage.input_tokens,
         output_tokens: response.usage.output_tokens,

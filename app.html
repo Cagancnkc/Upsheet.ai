@@ -205,6 +205,11 @@
 .ai-chat-page .acp-push-shopify:hover { background: #7fa63c; }
 .ai-chat-page .acp-push-shopify:disabled { opacity: .6; cursor: not-allowed; }
 .ai-chat-page .acp-push-shopify svg { flex: 0 0 auto; }
+.ai-chat-page .acp-feedback-bar { display: flex; align-items: center; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+.ai-chat-page .acp-feedback-label { font-size: 11px; color: #6b7280; }
+.ai-chat-page .acp-feedback-btn { background: none; border: 1px solid #e5e7eb; border-radius: 6px; padding: 2px 8px; cursor: pointer; font-size: 14px; line-height: 1.6; transition: background .15s ease; }
+.ai-chat-page .acp-feedback-btn:hover { background: #f3f4f6; }
+.ai-chat-page .acp-feedback-sent { font-size: 11px; color: #6b7280; }
 .ai-chat-page, .ai-chat-page .acp-stack, .ai-chat-page .acp-bar-inner,
 .ai-chat-page textarea { transition: all 240ms ease; }
 
@@ -948,6 +953,32 @@ function renderAIChatPage() {
       bar.appendChild(btn);
       el.appendChild(bar);
     };
+    el._addFeedback = (feedbackData) => {
+      if (el.querySelector('.acp-feedback-bar')) return;
+      const fbar = document.createElement('div');
+      fbar.className = 'acp-feedback-bar';
+      const lbl = document.createElement('span');
+      lbl.className = 'acp-feedback-label';
+      lbl.textContent = 'Bu cevap yardımcı oldu mu?';
+      const up = document.createElement('button');
+      up.type = 'button'; up.className = 'acp-feedback-btn'; up.dataset.rating = '1'; up.title = 'Evet'; up.textContent = '👍';
+      const dn = document.createElement('button');
+      dn.type = 'button'; dn.className = 'acp-feedback-btn'; dn.dataset.rating = '-1'; dn.title = 'Hayır'; dn.textContent = '👎';
+      [up, dn].forEach(btn => btn.addEventListener('click', async () => {
+        const rating = parseInt(btn.dataset.rating, 10);
+        fbar.innerHTML = '<span class="acp-feedback-sent">Teşekkürler, öğrendik. ✓</span>';
+        try {
+          await fetch(`${API_URL}/api/chat/rag-feedback`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', ...(await authHeaders()) },
+            body: JSON.stringify({ query: feedbackData.query || '', matchedExamples: feedbackData.matchedExamples || [], topCategory: feedbackData.topCategory || null, rating })
+          });
+        } catch { /* silent */ }
+      }));
+      fbar.appendChild(lbl); fbar.appendChild(up); fbar.appendChild(dn);
+      const actBar = el.querySelector('.acp-msg-actions');
+      if (actBar) actBar.after(fbar); else el.appendChild(fbar);
+    };
     if (role === 'assistant' && opts.withActions && !extraClass.includes('pending')) {
       el._addPushAction(text || '');
     }
@@ -1059,6 +1090,9 @@ function renderAIChatPage() {
       pending.classList.remove('pending');
       pending._body.innerHTML = escapeHtml(reply);
       if (typeof pending._addPushAction === 'function') pending._addPushAction(reply);
+      if (data.ragUsed && typeof pending._addFeedback === 'function') {
+        pending._addFeedback({ query: data.ragQuery || msg, matchedExamples: [], topCategory: data.ragTopCategory });
+      }
 
       if (data.sessionId) {
         currentSessionId = data.sessionId;

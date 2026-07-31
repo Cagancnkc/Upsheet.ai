@@ -1,8 +1,10 @@
 'use strict';
 
-// Shopify chat retrieval — in-memory BM25 + kategori boost.
-// Vektör aramaya gerek yok; dataset küçük (~90 giriş), boot anında hazır.
+// Shopify chat retrieval — in-memory BM25 + Türkçe hafif stemmer + kategori boost.
+// Returns { examples: [...], confidence: number } — çağıran confidence'a göre karar verir.
 
+const fs = require('fs');
+const path = require('path');
 const dataset = require('./shopifyDataset');
 
 const STOPWORDS = new Set([
@@ -11,7 +13,52 @@ const STOPWORDS = new Set([
   'the','a','an','is','are','how','what','why','to','of','in','on','for'
 ]);
 
-const CATEGORY_BOOST = {
+// Türkçe hafif suffix stemmer — en uzundan kısaya denenir, kök ≥3 harf kalmalı
+const TR_SUFFIXES = [
+  'larımızdan','lerimizden','larınızdan','lerinizden',
+  'larımızda','lerimizde','larınızda','lerinizde',
+  'larımıza','lerimize','larınıza','lerinize',
+  'larımızı','lerimizi','larınızı','lerinizi',
+  'larımız','lerimiz','larınız','leriniz',
+  'larından','lerinden','larına','lerine',
+  'larında','lerinde',
+  'ların','lerin','lardan','lerden','larda','lerde',
+  'ları','leri','lara','lere','lar','ler',
+  'ımızdan','imizden','umuzdan','ümüzden',
+  'ımızda','imizde','umuzda','ümüzde',
+  'ımıza','imize','umuza','ümüze',
+  'ımızı','imizi','umuzu','ümüzü',
+  'ımız','imiz','umuz','ümüz',
+  'ından','inden','undan','ünden',
+  'ında','inde','unda','ünde',
+  'ına','ine','una','üne',
+  'ını','ini','unu','ünü',
+  'mış','miş','muş','müş',
+  'dan','den','tan','ten',
+  'nın','nin','nun','nün',
+  'da','de','ta','te',
+  'sı','si','su','sü',
+  'dı','di','du','dü',
+  'tı','ti','tu','tü',
+  'ın','in','un','ün',
+  'ım','im','um','üm',
+  'ı','i','u','ü',
+  'a','e',
+];
+
+function stem(word) {
+  if (word.length < 5) return word;
+  for (const suf of TR_SUFFIXES) {
+    if (word.endsWith(suf) && word.length - suf.length >= 3) {
+      return word.slice(0, word.length - suf.length);
+    }
+  }
+  return word;
+}
+
+// categoryBoost.json varsa oku (autoTune tarafından yazılır), yoksa default kullan
+let CATEGORY_BOOST = {
+  mocksheets_feature: 1.20,
   seo: 1.15,
   kdv: 1.15,
   pricing: 1.10,
@@ -19,13 +66,20 @@ const CATEGORY_BOOST = {
   discount: 1.08,
   inventory: 1.05,
 };
+try {
+  const boostPath = path.join(__dirname, 'categoryBoost.json');
+  if (fs.existsSync(boostPath)) {
+    CATEGORY_BOOST = { ...CATEGORY_BOOST, ...JSON.parse(fs.readFileSync(boostPath, 'utf8')) };
+  }
+} catch { /* use defaults */ }
 
 function tokenize(text) {
   return String(text || '')
     .toLowerCase()
     .replace(/[^\p{L}\p{N}\s]/gu, ' ')
     .split(/\s+/)
-    .filter(t => t.length > 1 && !STOPWORDS.has(t));
+    .filter(t => t.length > 1 && !STOPWORDS.has(t))
+    .map(stem);
 }
 
 // BM25 hazırlığı — boot anında bir kez hesaplanır
@@ -64,9 +118,9 @@ function bm25Score(queryTokens, doc) {
   return score;
 }
 
-function retrieveShopifyExamples(query, k = 3) {
+function retrieveShopifyExamples(query, k = 5) {
   const queryTokens = tokenize(query);
-  if (queryTokens.length === 0) return [];
+  if (queryTokens.length === 0) return { examples: [], confidence: 0 };
 
   const scored = docs.map(d => {
     const raw = bm25Score(queryTokens, d);
@@ -75,10 +129,10 @@ function retrieveShopifyExamples(query, k = 3) {
   });
 
   const maxScore = scored.reduce((m, s) => Math.max(m, s.score), 0);
-  if (maxScore <= 0) return [];
+  if (maxScore <= 0) return { examples: [], confidence: 0 };
 
-  return scored
-    .filter(s => s.score >= maxScore * 0.35)
+  const examples = scored
+    .filter(s => s.score >= maxScore * 0.22)
     .sort((a, b) => b.score - a.score)
     .slice(0, k)
     .map(s => ({
@@ -87,6 +141,8 @@ function retrieveShopifyExamples(query, k = 3) {
       category: s.entry.category,
       score: Number(s.score.toFixed(3))
     }));
+
+  return { examples, confidence: Number(maxScore.toFixed(3)) };
 }
 
 module.exports = { retrieveShopifyExamples };
