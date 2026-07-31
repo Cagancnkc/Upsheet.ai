@@ -984,7 +984,7 @@ function downloadFile() {
   try {
     const _wh = JSON.parse(localStorage.getItem('int_webhook') || '{}');
     if (_wh.url && (_wh.trigger === 'export' || _wh.trigger === 'all')) {
-      fetch(API_URL + '/api/integrations/webhook/send', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url: _wh.url, event: 'export', data: { filename: finalName, rows: (sheets[activeSheet] || []).length, format: 'xlsx', timestamp: new Date().toISOString() } }) }).catch(() => {});
+      fetch(API_URL + '/api/integrations/webhook/send', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url: _wh.url, event: 'export', data: { filename: finalName, rows: (sheets[activeSheet] || []).length, format: 'xlsx', timestamp: new Date().toISOString() } }) }).catch(e => console.warn('[webhook] send failed:', e.message));
     }
   } catch(_e) {}
 }

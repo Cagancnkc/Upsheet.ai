@@ -17,6 +17,12 @@ function getSupabase() {
   return createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
 }
 
+function escHtml(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[c]));
+}
+
 function getTransporter() {
   return nodemailer.createTransport({
     service: 'gmail',
@@ -67,11 +73,11 @@ router.post('/', limiter, async (req, res) => {
         subject: `[Mocksheets İletişim] ${subject || 'Mesaj'} — ${name.trim()}`,
         html: `
           <h3>Yeni iletişim mesajı</h3>
-          <p><strong>İsim:</strong> ${name.trim()}</p>
-          <p><strong>E-posta:</strong> ${email}</p>
-          <p><strong>Konu:</strong> ${subject || '-'}</p>
+          <p><strong>İsim:</strong> ${escHtml(name.trim())}</p>
+          <p><strong>E-posta:</strong> ${escHtml(email)}</p>
+          <p><strong>Konu:</strong> ${escHtml(subject || '-')}</p>
           <p><strong>Mesaj:</strong></p>
-          <p style="white-space:pre-wrap;background:#f9fafb;padding:12px;border-radius:6px">${message.trim()}</p>
+          <p style="white-space:pre-wrap;background:#f9fafb;padding:12px;border-radius:6px">${escHtml(message.trim())}</p>
           <hr>
           <small>${new Date().toLocaleString('tr-TR')}</small>
         `
@@ -82,7 +88,7 @@ router.post('/', limiter, async (req, res) => {
         to: email,
         subject: 'Mesajınızı aldık — Mocksheets',
         html: `
-          <p>Merhaba ${name.trim()},</p>
+          <p>Merhaba ${escHtml(name.trim())},</p>
           <p>Mesajınız bize ulaştı. En kısa sürede dönüş yapacağız.</p>
           <br>
           <p>— Mocksheets Ekibi</p>
