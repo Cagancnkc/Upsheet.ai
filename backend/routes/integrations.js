@@ -2254,7 +2254,7 @@ router.delete('/favorite-commands/:id', requireAuth, async (req, res) => {
 
 router.post('/health-snapshot', requireAuth, async (req, res) => {
   try {
-    const { score, totalProducts } = req.body;
+    const { score, totalProducts, issueCount } = req.body;
     if (typeof score !== 'number') return res.status(400).json({ error: 'score required' });
     const sb = _getSb();
     const todayStart = new Date(); todayStart.setHours(0, 0, 0, 0);
@@ -2264,15 +2264,31 @@ router.post('/health-snapshot', requireAuth, async (req, res) => {
       .eq('user_id', req.user.id)
       .gte('recorded_at', todayStart.toISOString())
       .maybeSingle();
+    const payload = {
+      score,
+      total_products: totalProducts,
+      ...(typeof issueCount === 'number' ? { total_issue_count: issueCount } : {}),
+    };
     if (existing) {
-      await sb.from('health_score_snapshots')
-        .update({ score, total_products: totalProducts })
-        .eq('id', existing.id);
+      await sb.from('health_score_snapshots').update(payload).eq('id', existing.id);
     } else {
-      await sb.from('health_score_snapshots')
-        .insert({ user_id: req.user.id, score, total_products: totalProducts });
+      await sb.from('health_score_snapshots').insert({ user_id: req.user.id, ...payload });
     }
     res.json({ ok: true });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+router.get('/previous-scan', requireAuth, async (req, res) => {
+  try {
+    const sb = _getSb();
+    const { data, error } = await sb
+      .from('health_score_snapshots')
+      .select('score, total_issue_count, recorded_at')
+      .eq('user_id', req.user.id)
+      .order('recorded_at', { ascending: false })
+      .range(1, 1);
+    if (error) throw error;
+    res.json(data?.[0] || {});
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 

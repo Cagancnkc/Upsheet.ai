@@ -1324,7 +1324,7 @@ function renderDashboard() {
   renderDashRecentOperationsFull();
   renderHealthTrendChart();
   if (analysis.totalProducts > 0) {
-    saveTodayHealthSnapshot(analysis.healthScore, analysis.totalProducts);
+    saveTodayHealthSnapshot(analysis.healthScore, analysis.totalProducts, analysis.totalIssueCount);
   }
   renderDashProductsMini();
   renderDashCollectionsMini();
@@ -1695,12 +1695,12 @@ function renderDashRecentOperationsFull() {
   }).join('');
 }
 
-async function saveTodayHealthSnapshot(score, totalProducts) {
+async function saveTodayHealthSnapshot(score, totalProducts, issueCount) {
   try {
     await fetch(API_URL + '/api/integrations/health-snapshot', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', ...(await authHeaders()) },
-      body: JSON.stringify({ score, totalProducts }),
+      body: JSON.stringify({ score, totalProducts, issueCount }),
     });
   } catch (e) { console.warn('Snapshot kaydedilemedi:', e); }
 }
@@ -2070,55 +2070,200 @@ async function renderAiActionsPage() {
   } catch(e) { /* silent — kullanıcı giriş yapmamışsa sessiz geç */ }
 }
 
-function renderValidationCenter() {
+async function renderValidationCenter() {
   const view = document.getElementById('validation-view');
   if (!view) return;
   const analysis = computeCatalogIssues();
+  const issues = analysis.issues;
 
-  const issueRows = analysis.issues.map(issue => {
-    const color = issue.severity === 'danger' ? '#dc2626' : '#d97706';
-    return `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f3f4f6;">
-      <span style="font-size:13px;color:#374151;">${issue.label}</span>
-      <span style="font-size:12px;font-weight:600;color:${color};">${issue.count} ürün</span>
-    </div>`;
-  }).join('');
+  // Fetch previous scan for delta badge (best-effort)
+  let prevIssueCount = null;
+  try {
+    const r = await fetch(API_URL + '/api/integrations/previous-scan', {
+      headers: await authHeaders()
+    });
+    if (r.ok) {
+      const d = await r.json();
+      if (d.total_issue_count != null) prevIssueCount = d.total_issue_count;
+    }
+  } catch (_) {}
 
-  const bodyContent = analysis.totalProducts === 0
-    ? '<p style="font-size:12px;color:#6b7280;">Henüz katalog verisi yok.</p>'
-    : `<p style="font-size:12px;color:#6b7280;margin-bottom:16px;">
-         ${analysis.totalIssueCount} kaçırılan fırsat tespit edildi (${analysis.totalProducts} ürün tarandı).
-       </p>
-       ${issueRows.length > 0 ? issueRows : '<p style="font-size:12px;color:#16a34a;">Sorun tespit edilmedi ✓</p>'}`;
+  let deltaBadge = '';
+  if (prevIssueCount != null) {
+    const diff = analysis.totalIssueCount - prevIssueCount;
+    if (diff < 0) {
+      deltaBadge = `<span style="font-size:11px;font-weight:600;color:#16a34a;background:#f0fdf4;border:0.5px solid #bbf7d0;border-radius:999px;padding:3px 9px;">↓ ${Math.abs(diff)} sorun azaldı</span>`;
+    } else if (diff > 0) {
+      deltaBadge = `<span style="font-size:11px;font-weight:600;color:#dc2626;background:#fef2f2;border:0.5px solid #fecaca;border-radius:999px;padding:3px 9px;">↑ ${diff} sorun arttı</span>`;
+    } else {
+      deltaBadge = `<span style="font-size:11px;font-weight:600;color:#6b7280;background:#f9fafb;border:0.5px solid #e5e7eb;border-radius:999px;padding:3px 9px;">= Değişiklik yok</span>`;
+    }
+  }
 
   view.innerHTML = `
-    <div style="display:flex;align-items:center;gap:10px;padding:16px 24px;border-bottom:1px solid #e5e7eb">
-      <div>
-        <h2 style="font-size:15px;font-weight:600;margin:0">Katalog Kontrolü</h2>
+    <div style="display:flex;align-items:center;gap:10px;padding:16px 24px;border-bottom:1px solid #e5e7eb;flex-wrap:wrap;">
+      <div style="flex:1;">
+        <h2 style="font-size:15px;font-weight:600;margin:0;">Katalog Kontrolü</h2>
         <span id="validation-last-scan" style="font-size:11px;color:#9ca3af;"></span>
       </div>
-      <div style="display:flex;align-items:center;gap:6px;padding:5px 12px;border:0.5px solid #e5e7eb;border-radius:999px">
-        <span style="font-size:11px;color:#6b7280">Sağlık</span>
-        <span style="font-size:12px;font-weight:600;color:#16a34a">${analysis.healthScore}%</span>
+      ${deltaBadge}
+      <div style="display:flex;align-items:center;gap:6px;padding:5px 12px;border:0.5px solid #e5e7eb;border-radius:999px;">
+        <span style="font-size:11px;color:#6b7280;">Sağlık</span>
+        <span style="font-size:12px;font-weight:600;color:#16a34a;">${analysis.healthScore}%</span>
       </div>
-      <button style="background:#16a34a;color:#fff;border:none;border-radius:10px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer">
-        Derin AI Analizi Çalıştır
-      </button>
     </div>
-    <div style="padding:24px">${bodyContent}</div>`;
-  const scanEl = document.getElementById('validation-last-scan');
-  if (scanEl) scanEl.textContent = 'Son tarama: az önce';
+    <div id="catalog-issues-list" style="padding:24px;"></div>`;
 
-  const aiSection = document.createElement('div');
-  aiSection.style.cssText = 'margin:0 24px 24px;padding-top:24px;border-top:0.5px solid #e5e7eb;';
-  aiSection.innerHTML = `
-    <p style="font-size:12px;font-weight:600;color:#374151;margin:0 0 10px;">Hazır AI İşlemleri</p>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;">
-      <button type="button" onclick="runShopifyAiAnalysis('all')" style="text-align:left;padding:14px;border:0.5px solid #e5e7eb;border-radius:10px;background:#fff;cursor:pointer;">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><i class="ti ti-sparkles" style="font-size:14px;color:#16a34a;"></i><span style="font-size:12px;font-weight:600;color:#111827;">Tüm Sorunları AI ile Düzelt</span></div>
-        <p style="font-size:11px;color:#6b7280;margin:0;">Katalogda tespit edilen tüm eksiklikleri toplu AI önerileriyle çöz.</p>
-      </button>
-    </div>`;
-  view.appendChild(aiSection);
+  document.getElementById('validation-last-scan').textContent = 'Son tarama: az önce';
+
+  const listEl = document.getElementById('catalog-issues-list');
+
+  if (analysis.totalProducts === 0) {
+    listEl.innerHTML = '<p style="font-size:12px;color:#6b7280;">Henüz katalog verisi yok.</p>';
+    return;
+  }
+
+  if (issues.length === 0) {
+    listEl.innerHTML = '<p style="font-size:12px;color:#16a34a;">Sorun tespit edilmedi ✓</p>';
+    return;
+  }
+
+  const summary = document.createElement('p');
+  summary.style.cssText = 'font-size:12px;color:#6b7280;margin:0 0 16px;';
+  summary.textContent = `${analysis.totalIssueCount} kaçırılan fırsat tespit edildi (${analysis.totalProducts} ürün tarandı).`;
+  listEl.appendChild(summary);
+
+  issues.forEach((issue, issueIdx) => {
+    const color = issue.severity === 'danger' ? '#dc2626' : '#d97706';
+    const row = document.createElement('div');
+    row.style.cssText = 'border-bottom:1px solid #f3f4f6;';
+
+    const header = document.createElement('div');
+    header.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:10px 0;cursor:pointer;user-select:none;';
+    header.innerHTML = `
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span class="chevron" style="font-size:10px;color:#9ca3af;display:inline-block;transition:transform 0.15s;">▶</span>
+        <span style="font-size:13px;color:#374151;">${issue.label}</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-size:12px;font-weight:600;color:${color};">${issue.count} ürün</span>
+        <button class="fix-all-btn" style="font-size:11px;padding:4px 10px;background:#16a34a;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:600;">Tümünü Düzelt</button>
+      </div>`;
+    row.appendChild(header);
+
+    const panel = document.createElement('div');
+    panel.style.cssText = 'display:none;padding:0 0 12px 20px;';
+    row.appendChild(panel);
+
+    header.addEventListener('click', (e) => {
+      if (e.target.closest('.fix-all-btn') || e.target.closest('.fix-sel-btn')) return;
+      const isOpen = panel.style.display !== 'none';
+      const chevron = header.querySelector('.chevron');
+      if (isOpen) {
+        panel.style.display = 'none';
+        chevron.style.transform = '';
+      } else {
+        panel.style.display = 'block';
+        chevron.style.transform = 'rotate(90deg)';
+        if (!panel.dataset.loaded) {
+          renderIssueProductList(panel, issue, issueIdx);
+          panel.dataset.loaded = '1';
+        }
+      }
+    });
+
+    header.querySelector('.fix-all-btn').addEventListener('click', (e) => {
+      e.stopPropagation();
+      runIssueFix(issue, null);
+    });
+
+    listEl.appendChild(row);
+  });
+}
+
+function renderIssueProductList(container, issue, issueIdx) {
+  const indices = issue.affectedIndices || [];
+  const displayIndices = indices.slice(0, 20);
+  const products = displayIndices.map(i => catalogData.products[i]).filter(Boolean);
+
+  if (products.length === 0) {
+    container.innerHTML = '<p style="font-size:11px;color:#6b7280;margin:0;">Etkilenen ürün bulunamadı.</p>';
+    return;
+  }
+
+  const list = document.createElement('div');
+  list.style.cssText = 'display:flex;flex-direction:column;gap:6px;margin-top:6px;';
+
+  const selBtn = document.createElement('button');
+  selBtn.className = 'fix-sel-btn';
+  selBtn.disabled = true;
+  selBtn.style.cssText = 'margin-top:8px;font-size:11px;padding:4px 10px;background:#2563eb;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:600;opacity:0.4;';
+  selBtn.textContent = 'Seçilenleri Düzelt';
+
+  displayIndices.forEach((prodIdx, i) => {
+    const prod = products[i];
+    if (!prod) return;
+    const item = document.createElement('label');
+    item.style.cssText = 'display:flex;align-items:center;gap:8px;cursor:pointer;';
+    const cb = document.createElement('input');
+    cb.type = 'checkbox';
+    cb.dataset.productIdx = prodIdx;
+    const title = document.createElement('span');
+    title.style.cssText = 'font-size:12px;color:#374151;';
+    title.textContent = prod.title || `Ürün ${prod.shopify_product_id || i + 1}`;
+    item.appendChild(cb);
+    item.appendChild(title);
+    list.appendChild(item);
+
+    cb.addEventListener('change', () => {
+      const checked = list.querySelectorAll('input[type=checkbox]:checked');
+      selBtn.disabled = checked.length === 0;
+      selBtn.style.opacity = checked.length > 0 ? '1' : '0.4';
+    });
+  });
+
+  selBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const checked = list.querySelectorAll('input[type=checkbox]:checked');
+    const selectedIndices = Array.from(checked).map(cb => parseInt(cb.dataset.productIdx, 10));
+    runIssueFix(issue, selectedIndices);
+  });
+
+  container.appendChild(list);
+
+  if (indices.length > 20) {
+    const note = document.createElement('p');
+    note.style.cssText = 'font-size:11px;color:#9ca3af;margin:4px 0 0;';
+    note.textContent = `+${indices.length - 20} ürün daha (ilk 20 gösteriliyor)`;
+    container.appendChild(note);
+  }
+
+  container.appendChild(selBtn);
+}
+
+async function runIssueFix(issue, selectedProductIndices) {
+  const PRESET_MAP = {
+    'Eksik SEO': 'seo',
+    'Kısa/Eksik Açıklama': 'description',
+    'AI İçin Yetersiz Detay': 'geo',
+    'Tekrarlanan Başlık': 'titles',
+  };
+  const type = PRESET_MAP[issue.label];
+  if (!type) {
+    toast('Bu sorun için otomatik düzeltme mevcut değil', 'info');
+    return;
+  }
+  let productIdSubset = null;
+  if (selectedProductIndices !== null) {
+    productIdSubset = selectedProductIndices
+      .map(i => catalogData.products[i]?.shopify_product_id)
+      .filter(Boolean);
+    if (productIdSubset.length === 0) {
+      toast('Seçili ürün bulunamadı', 'info');
+      return;
+    }
+  }
+  await runShopifyAiAnalysis(type, productIdSubset);
 }
 
 function renderImportPage() {
@@ -2456,38 +2601,47 @@ function computeCatalogIssues() {
   const issues = [];
   const categoryScores = {};
 
-  function pushIssue(label, count, severity, categoryKey) {
-    if (count > 0) issues.push({ label, count, severity });
+  function pushIssue(label, affectedIndices, severity, categoryKey) {
+    const count = affectedIndices.length;
+    if (count > 0) issues.push({ label, count, severity, affectedIndices });
     if (categoryKey) {
       categoryScores[categoryKey] = Math.round(((totalProducts - count) / totalProducts) * 100);
     }
   }
 
-  const missingDesc = products.filter(p => !p.body_html || p.body_html.trim().length < 20).length;
-  pushIssue('Kısa/Eksik Açıklama', missingDesc, 'warning', 'description');
+  function collectIndices(predicate) {
+    const out = [];
+    for (let i = 0; i < products.length; i++) if (predicate(products[i], i)) out.push(i);
+    return out;
+  }
 
-  const missingImage = products.filter(p => !p.image || p.image.trim() === '').length;
-  pushIssue('Eksik Görsel', missingImage, 'warning', 'images');
+  function duplicateIndices(getter) {
+    const counts = {};
+    for (const p of products) {
+      const v = getter(p);
+      if (!v) continue;
+      counts[v] = (counts[v] || 0) + 1;
+    }
+    const out = [];
+    for (let i = 0; i < products.length; i++) {
+      const v = getter(products[i]);
+      if (v && counts[v] > 1) out.push(i);
+    }
+    return out;
+  }
 
-  const missingTags = products.filter(p => !p.tags || p.tags.trim() === '').length;
-  pushIssue('Eksik Etiket', missingTags, 'warning', 'seo');
+  pushIssue('Kısa/Eksik Açıklama', collectIndices(p => !p.body_html || p.body_html.trim().length < 20), 'warning', 'description');
+  pushIssue('Eksik Görsel', collectIndices(p => !p.image || p.image.trim() === ''), 'warning', 'images');
+  pushIssue('Eksik Etiket', collectIndices(p => !p.tags || p.tags.trim() === ''), 'warning', 'seo');
+  pushIssue('Eksik Fiyat', collectIndices(p => !p.price || p.price.toString().trim() === ''), 'danger', null);
+  pushIssue('Tekrarlanan Handle', duplicateIndices(p => p.handle), 'danger', null);
+  pushIssue('Tekrarlanan Başlık', duplicateIndices(p => p.title), 'warning', null);
+  pushIssue('AI İçin Yetersiz Detay', collectIndices(p => (p.body_html || '').trim().length < 100), 'warning', 'geo_depth');
+  pushIssue('Ürün Kategorisi Belirsiz', collectIndices(p => !p.product_type || p.product_type.trim() === ''), 'warning', 'geo_clarity');
+  pushIssue('Eksik SEO', collectIndices(p => (!p.seo_title || !p.seo_title.trim()) && (!p.seo_description || !p.seo_description.trim())), 'warning', null);
 
-  const missingPrice = products.filter(p => !p.price || p.price.toString().trim() === '').length;
-  pushIssue('Eksik Fiyat', missingPrice, 'danger', null);
-
-  const handles = products.map(p => p.handle).filter(Boolean);
-  const dupHandles = handles.length - new Set(handles).size;
-  pushIssue('Tekrarlanan Handle', dupHandles, 'danger', null);
-
-  const titles = products.map(p => p.title).filter(Boolean);
-  const dupTitles = titles.length - new Set(titles).size;
-  pushIssue('Tekrarlanan Başlık', dupTitles, 'warning', null);
-
-  const geoDepthRisk = products.filter(p => (p.body_html || '').trim().length < 100).length;
-  pushIssue('AI İçin Yetersiz Detay', geoDepthRisk, 'warning', 'geo_depth');
-
-  const geoClarityRisk = products.filter(p => !p.product_type || p.product_type.trim() === '').length;
-  pushIssue('Ürün Kategorisi Belirsiz', geoClarityRisk, 'warning', 'geo_clarity');
+  const SEVERITY_WEIGHT = { danger: 3, warning: 2 };
+  issues.sort((a, b) => (SEVERITY_WEIGHT[b.severity] * b.count) - (SEVERITY_WEIGHT[a.severity] * a.count));
 
   const totalIssueCount = issues.reduce((sum, i) => sum + i.count, 0);
   const categoryValues = Object.values(categoryScores);
@@ -3022,14 +3176,16 @@ async function runCanvasAI() {
 // SHOPIFY AI ANALYSIS + PREVIEW MODAL
 // ═══════════════════════════════════════════════════════════════════════
 
-async function runShopifyAiAnalysis(analysisType) {
+async function runShopifyAiAnalysis(analysisType, productIdSubset = null) {
   const linked = catalogData.products.filter(p => p.shopify_product_id);
   if (linked.length === 0) {
     toast('Analiz için önce Shopify\'dan ürün senkronize edin (Demo veri Shopify\'a bağlı değil)', 'info');
     return;
   }
   toast('Shopify verisi Claude ile analiz ediliyor...', 'info');
-  const productIds = linked.map(p => p.shopify_product_id);
+  const productIds = productIdSubset
+    ? linked.filter(p => productIdSubset.includes(p.shopify_product_id)).map(p => p.shopify_product_id)
+    : linked.map(p => p.shopify_product_id);
 
   try {
     const res = await fetch(`${API_URL}/api/shopify/ai-analyze`, {
