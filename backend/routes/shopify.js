@@ -584,8 +584,31 @@ router.post('/ai-analyze', checkLimit, async (req, res) => {
       return res.json({ suggestions: [], analyzedCount: 0 });
     }
 
+    // SEO metafield'ları ayrı çağrıyla al — Shopify REST products.json'da
+    // metafields_global_title_tag/description_tag 2021'de kaldırıldı.
+    const seoByProduct = new Map();
+    await Promise.all(
+      products.map(async (p) => {
+        try {
+          const mfRes = await fetch(
+            `${apiBase}/products/${p.id}/metafields.json?namespace=global`,
+            { headers: shopifyHeaders }
+          );
+          if (!mfRes.ok) return;
+          const { metafields = [] } = await mfRes.json();
+          seoByProduct.set(p.id, {
+            title: metafields.find(m => m.key === 'title_tag')?.value || '',
+            description: metafields.find(m => m.key === 'description_tag')?.value || '',
+          });
+        } catch (err) {
+          console.warn(`[shopify ai-analyze] metafield fetch (${p.id}):`, err.message);
+        }
+      })
+    );
+
     const productSummaries = products.map((p) => {
       const variant = p.variants?.[0] || {};
+      const seo = seoByProduct.get(p.id) || { title: '', description: '' };
       return {
         id: p.id,
         title: p.title,
@@ -593,8 +616,8 @@ router.post('/ai-analyze', checkLimit, async (req, res) => {
         vendor: p.vendor,
         product_type: p.product_type,
         tags: p.tags,
-        seo_title: p.metafields_global_title_tag || '',
-        seo_description: p.metafields_global_description_tag || '',
+        seo_title: seo.title,
+        seo_description: seo.description,
         price: variant.price || '',
         compare_at_price: variant.compare_at_price || '',
         inventory_quantity: variant.inventory_quantity ?? '',
