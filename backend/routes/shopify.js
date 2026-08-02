@@ -7,6 +7,7 @@ const { createClient } = require('@supabase/supabase-js');
 const { encrypt, decrypt } = require('../services/encryption');
 const { checkLimit, incrementUsage } = require('../middleware/limits');
 const { indexProductsForRAG, INDEX_THRESHOLD } = require('../services/productIndexer');
+const { createNotification } = require('../services/notificationGenerator');
 
 async function fetchAllPages(url, headers, maxPages = 20) {
   const results = [];
@@ -332,6 +333,9 @@ router.get('/sync', requireAuth, async (req, res) => {
       .update({ last_sync: new Date().toISOString() })
       .eq('user_id', req.user.id);
 
+    createNotification(req.user.id, 'Katalog senkronize edildi',
+      `${productRows.length} ürün güncellendi`, 'sync', getSupabase()).catch(() => {});
+
     res.json({
       products: productRows,
       orders: orderRows,
@@ -530,6 +534,9 @@ router.post('/push', requireAuth, async (req, res) => {
       completed_at: new Date().toISOString(),
     }).catch(() => {});
 
+    if (pushed > 0) createNotification(req.user.id, "Değişiklikler Shopify'a aktarıldı",
+      `${pushed} ürün güncellendi`, 'sync', getSupabase()).catch(() => {});
+
     res.json({
       pushed,
       skipped,
@@ -714,6 +721,9 @@ SEO KURALLARI (KESİNLİKLE UYGULANACAK):
         }
         return s;
       });
+
+    createNotification(req.user.id, 'AI analizi tamamlandı',
+      `${suggestions.length} öneri hazır`, 'ai_complete', getSupabase()).catch(() => {});
 
     await incrementUsage(req.user.id);
     res.json({ suggestions, analyzedCount: products.length });
@@ -906,6 +916,33 @@ Kurallar:
     });
   } catch (e) {
     console.error('[shopify/chat] hata:', e);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+router.get('/notifications', requireAuth, async (req, res) => {
+  try {
+    const sb = getSupabase();
+    const { data } = await sb.from('notifications')
+      .select('*').eq('user_id', req.user.id)
+      .order('created_at', { ascending: false }).limit(20);
+    const { count: unreadCount } = await sb.from('notifications')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', req.user.id).eq('is_read', false);
+    res.json({ notifications: data || [], unreadCount: unreadCount || 0 });
+  } catch (e) {
+    console.error('[shopify/notifications]', e.message);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+router.post('/notifications/mark-read', requireAuth, async (req, res) => {
+  try {
+    await getSupabase().from('notifications')
+      .update({ is_read: true }).eq('user_id', req.user.id).eq('is_read', false);
+    res.json({ ok: true });
+  } catch (e) {
+    console.error('[shopify/notifications/mark-read]', e.message);
     res.status(500).json({ error: e.message });
   }
 });
