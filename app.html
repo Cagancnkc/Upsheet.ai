@@ -759,7 +759,13 @@ async function loadUserPlan() {
 
     if (planNameEl) planNameEl.textContent = data.plan_name || 'Ücretsiz';
 
-    if (data.limits?.ai_commands_per_month !== null) {
+    if (data.plan === 'free') {
+      const used  = data.used?.today ?? 0;
+      const limit = data.limits?.ai_commands_per_day ?? 5;
+      const pct   = Math.min(100, Math.round((used / limit) * 100));
+      if (planBar)   planBar.style.width = pct + '%';
+      if (planUsage) planUsage.textContent = `${used} / ${limit} komut (bugün)`;
+    } else if (data.limits?.ai_commands_per_month !== null) {
       const used  = data.used?.this_month ?? 0;
       const limit = data.limits.ai_commands_per_month;
       const pct   = Math.min(100, Math.round((used / limit) * 100));
@@ -2622,48 +2628,10 @@ async function renderSettingsPage() {
         </div>
         ${actionBtn}
       </div>
-      <div style="padding:14px 16px;">
+      <div style="padding:14px 16px;" id="settings-plan-row">
         <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 2px;">Plan</p>
-        <p style="font-size:11px;color:#6b7280;margin:0;">Pro Max · Sınırsız</p>
+        <p style="font-size:11px;color:#6b7280;margin:0;">Yükleniyor…</p>
       </div>
-    </div>
-
-    <div style="margin-top:32px;padding-top:24px;border-top:0.5px solid #e5e7eb;">
-      <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 4px;">AI Görünürlük Takibi</p>
-      <p style="font-size:12px;color:#6b7280;margin:0 0 16px;">ChatGPT/Perplexity'ye sorduğunuz sonuçları buraya kaydedin</p>
-
-      <div style="display:grid;grid-template-columns:1fr 140px;gap:8px;margin-bottom:8px;">
-        <input id="visibility-query-input" type="text"
-          placeholder="Sorduğunuz soru (örn: en iyi Shopify SEO uygulaması)"
-          style="padding:8px 12px;border:0.5px solid #e5e7eb;border-radius:10px;font-size:13px;"/>
-        <select id="visibility-platform-select"
-          style="padding:8px 12px;border:0.5px solid #e5e7eb;border-radius:10px;font-size:13px;">
-          <option value="chatgpt">ChatGPT</option>
-          <option value="perplexity">Perplexity</option>
-          <option value="claude">Claude</option>
-          <option value="gemini">Gemini</option>
-        </select>
-      </div>
-
-      <div style="display:flex;gap:8px;margin-bottom:16px;">
-        <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:#374151;">
-          <input id="visibility-mentioned-checkbox" type="checkbox"/> Mocksheets geçti mi?
-        </label>
-        <input id="visibility-note-input" type="text" placeholder="Not (opsiyonel, örn: 3. sırada)"
-          style="flex:1;padding:6px 10px;border:0.5px solid #e5e7eb;border-radius:8px;font-size:12px;"/>
-        <button id="visibility-save-btn" type="button"
-          style="padding:6px 16px;background:#16a34a;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;">
-          Kaydet
-        </button>
-      </div>
-
-      <div id="visibility-checks-list" style="display:flex;flex-direction:column;gap:8px;"></div>
-    </div>
-
-    <div style="margin-top:32px;padding-top:24px;border-top:0.5px solid #e5e7eb;">
-      <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 4px;">Product Hunt Yorumları</p>
-      <p style="font-size:12px;color:#6b7280;margin:0 0 16px;">Sitede gösterilecek yorumları seçin</p>
-      <div id="ph-reviews-admin-list" style="display:flex;flex-direction:column;gap:8px;"></div>
     </div>
 
     <div id="profile-info-box" style="margin-top:32px;padding-top:24px;border-top:0.5px solid #e5e7eb;"></div>
@@ -2697,10 +2665,34 @@ async function renderSettingsPage() {
 
   document.getElementById('open-delete-modal-btn').addEventListener('click', () => openDeleteAccountModal());
 
-  loadVisibilityChecks();
-  loadPhReviewsAdmin();
   await renderProfileInfo();
   await renderSubscriptionSection();
+
+  // Plan satırını gerçek veriye göre doldur
+  try {
+    const res = await fetch(API_URL + '/api/usage', { headers: await authHeaders() });
+    if (res.ok) {
+      const d = await res.json();
+      const planRow = document.getElementById('settings-plan-row');
+      if (planRow) {
+        let usageText;
+        if (d.plan === 'free') {
+          const used  = d.used?.today ?? 0;
+          const limit = d.limits?.ai_commands_per_day ?? 5;
+          usageText = `Günlük ${limit} komut · Bugün ${used} kullandınız`;
+        } else if (d.limits?.ai_commands_per_month !== null) {
+          const used  = d.used?.this_month ?? 0;
+          const limit = d.limits?.ai_commands_per_month;
+          usageText = `Aylık ${limit} komut · Bu ay ${used} kullandınız`;
+        } else {
+          usageText = 'Sınırsız kullanım';
+        }
+        planRow.innerHTML = `
+          <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 2px;">Plan</p>
+          <p style="font-size:11px;color:#6b7280;margin:0;">${d.plan_name || 'Ücretsiz'} · ${usageText}</p>`;
+      }
+    }
+  } catch(_) {}
 }
 
 async function renderProfileInfo() {
