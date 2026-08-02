@@ -63,7 +63,10 @@ async function requireAuth(req, res, next) {
   const token = req.headers.authorization?.replace('Bearer ', '');
   if (!token) return res.status(401).json({ error: 'Giriş gerekli' });
   const { data: { user }, error } = await getSupabase().auth.getUser(token);
-  if (error || !user) return res.status(401).json({ error: 'Geçersiz token' });
+  if (error || !user) {
+    console.warn('[requireAuth:shopify] Token reddedildi:', error?.message || 'kullanıcı bulunamadı');
+    return res.status(401).json({ error: 'Geçersiz token' });
+  }
   req.user = user;
   next();
 }

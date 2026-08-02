@@ -16,7 +16,10 @@ async function requireAuth(req, res, next) {
   if (!token) return res.status(401).json({ error: 'Giriş gerekli' });
   const sb = _getSb();
   const { data: { user }, error } = await sb.auth.getUser(token);
-  if (error || !user) return res.status(401).json({ error: 'Geçersiz token' });
+  if (error || !user) {
+    console.warn('[requireAuth:integrations] Token reddedildi:', error?.message || 'kullanıcı bulunamadı');
+    return res.status(401).json({ error: 'Geçersiz token' });
+  }
   req.user = user;
   next();
 }

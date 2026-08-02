@@ -502,6 +502,19 @@ const API_URL = window.location.hostname === 'localhost'
   ? 'http://localhost:3001'
   : 'https://upsheet-ai.onrender.com';
 
+// OAuth hata parametrelerini URL'den temizle (server_error vs.)
+(function() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('error')) {
+    console.warn('[oauth-error] Geçmiş bir OAuth hatası tespit edildi:', params.get('error_description'));
+    const cleanUrl = new URL(window.location);
+    cleanUrl.searchParams.delete('error');
+    cleanUrl.searchParams.delete('error_code');
+    cleanUrl.searchParams.delete('error_description');
+    window.history.replaceState({}, '', cleanUrl);
+  }
+})();
+
 // ═══════════════════════════════════════════════════════════════════════
 // STATE
 // ═══════════════════════════════════════════════════════════════════════
@@ -4100,6 +4113,21 @@ async function authHeaders() {
   if (!token) return {};
   return { 'Authorization': 'Bearer ' + token };
 }
+
+// GEÇİCİ DEBUG: Session ve backend token doğrulamasını test et
+setTimeout(async () => {
+  const { data: { session }, error } = await sbClient.auth.getSession();
+  console.log('[session-debug] session var mı:', !!session);
+  console.log('[session-debug] access_token ilk 20 karakter:', session?.access_token?.slice(0, 20));
+  console.log('[session-debug] token süresi doldu mu:', session ? new Date(session.expires_at * 1000) < new Date() : 'session yok');
+  console.log('[session-debug] getSession hatası:', error);
+  if (session) {
+    const testRes = await fetch(API_URL + '/api/usage', {
+      headers: { Authorization: 'Bearer ' + session.access_token }
+    });
+    console.log('[session-debug] /api/usage gerçek test sonucu:', testRes.status);
+  }
+}, 3000);
 
 function isGoogleUser() {
   const token = getAuthToken();

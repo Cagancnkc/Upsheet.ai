@@ -15,7 +15,10 @@ async function requireAuth(req, res, next) {
 
   const sb = getSupabase();
   const { data: { user }, error } = await sb.auth.getUser(token);
-  if (error || !user) return res.status(401).json({ error: 'Geçersiz token' });
+  if (error || !user) {
+    console.warn('[requireAuth:automations] Token reddedildi:', error?.message || 'kullanıcı bulunamadı');
+    return res.status(401).json({ error: 'Geçersiz token' });
+  }
 
   req.user = user;
   req.supabase = sb;

@@ -87,6 +87,7 @@ async function checkLimit(req, res, next) {
 
   const { data: { user }, error } = await supabase.auth.getUser(token);
   if (error || !user) {
+    console.warn('[checkLimit] Token reddedildi:', error?.message || 'kullanıcı bulunamadı');
     return res.status(401).json({
       error: 'Geçersiz token',
       code: 'INVALID_TOKEN'
