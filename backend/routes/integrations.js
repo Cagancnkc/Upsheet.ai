@@ -2370,4 +2370,37 @@ router.post('/producthunt-reviews/:id/toggle-visible', requireAuth, async (req, 
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+// GET /api/integrations/export-my-data — KVKK veri dışa aktarımı
+router.get('/export-my-data', requireAuth, async (req, res) => {
+  try {
+    const sb = _getSb();
+    const userId = req.user.id;
+
+    const [usage, connections, snapshots, feedback] = await Promise.all([
+      sb.from('user_usage').select('*').eq('user_id', userId).maybeSingle(),
+      sb.from('shopify_connections').select('*').eq('user_id', userId),
+      sb.from('health_score_snapshots').select('*').eq('user_id', userId).order('created_at', { ascending: false }).limit(100),
+      sb.from('shopify_rag_feedback').select('*').eq('user_id', userId).order('created_at', { ascending: false }).limit(500),
+    ]);
+
+    const payload = {
+      exported_at: new Date().toISOString(),
+      user_id: userId,
+      data: {
+        user_usage: usage.data ?? null,
+        shopify_connections: connections.data ?? [],
+        health_score_snapshots: snapshots.data ?? [],
+        shopify_rag_feedback: feedback.data ?? [],
+      },
+    };
+
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Content-Disposition', 'attachment; filename=verilerim.json');
+    res.json(payload);
+  } catch (e) {
+    console.error('[integrations/export-my-data] Hata:', e);
+    res.status(500).json({ error: e.message });
+  }
+});
+
 module.exports = router;

@@ -8,6 +8,45 @@ function getSb() {
   return createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
 }
 
+const POLAR_API = 'https://api.polar.sh';
+
+async function cancelSubscriptionInternal(userId, sb, immediate = false) {
+  const { data: usage } = await sb
+    .from('user_usage')
+    .select('polar_subscription_id')
+    .eq('user_id', userId)
+    .single();
+
+  const subId = usage?.polar_subscription_id;
+  if (!subId) return { skipped: true };
+
+  const headers = {
+    'Authorization': `Bearer ${process.env.POLAR_ACCESS_TOKEN}`,
+    'Content-Type': 'application/json',
+  };
+
+  let cancelPeriodEnd = null;
+
+  if (immediate) {
+    await fetch(`${POLAR_API}/v1/subscriptions/${subId}`, { method: 'DELETE', headers });
+  } else {
+    const resp = await fetch(`${POLAR_API}/v1/subscriptions/${subId}`, {
+      method: 'PATCH',
+      headers,
+      body: JSON.stringify({ cancel_at_period_end: true }),
+    });
+    const data = await resp.json();
+    cancelPeriodEnd = data?.current_period_end ?? null;
+  }
+
+  await sb.from('user_usage').update({
+    cancel_at_period_end: true,
+    cancel_period_end: cancelPeriodEnd,
+  }).eq('user_id', userId);
+
+  return { success: true, cancel_period_end: cancelPeriodEnd };
+}
+
 async function authenticate(req, res) {
   const auth = req.headers.authorization;
   if (!auth || !auth.startsWith('Bearer ')) {
@@ -100,4 +139,75 @@ router.post('/webhook', async (req, res) => {
   }
 });
 
+// GET /api/billing/subscription-status
+router.get('/subscription-status', async (req, res) => {
+  try {
+    const user = await authenticate(req, res);
+    if (!user) return;
+    const sb = getSb();
+    const { data } = await sb
+      .from('user_usage')
+      .select('plan, cancel_at_period_end, cancel_period_end')
+      .eq('user_id', user.id)
+      .single();
+    res.json({
+      plan: data?.plan ?? 'free',
+      cancel_at_period_end: data?.cancel_at_period_end ?? false,
+      cancel_period_end: data?.cancel_period_end ?? null,
+    });
+  } catch (e) {
+    console.error('[billing/subscription-status] hata:', e);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// POST /api/billing/cancel-subscription
+router.post('/cancel-subscription', async (req, res) => {
+  try {
+    const user = await authenticate(req, res);
+    if (!user) return;
+    const result = await cancelSubscriptionInternal(user.id, getSb(), false);
+    res.json(result);
+  } catch (e) {
+    console.error('[billing/cancel-subscription] hata:', e);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// POST /api/billing/uncancel-subscription
+router.post('/uncancel-subscription', async (req, res) => {
+  try {
+    const user = await authenticate(req, res);
+    if (!user) return;
+    const sb = getSb();
+    const { data: usage } = await sb
+      .from('user_usage')
+      .select('polar_subscription_id')
+      .eq('user_id', user.id)
+      .single();
+    const subId = usage?.polar_subscription_id;
+    if (!subId) return res.status(400).json({ error: 'Aktif abonelik bulunamadı.' });
+
+    await fetch(`${POLAR_API}/v1/subscriptions/${subId}`, {
+      method: 'PATCH',
+      headers: {
+        'Authorization': `Bearer ${process.env.POLAR_ACCESS_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ cancel_at_period_end: false }),
+    });
+
+    await sb.from('user_usage').update({
+      cancel_at_period_end: false,
+      cancel_period_end: null,
+    }).eq('user_id', user.id);
+
+    res.json({ success: true });
+  } catch (e) {
+    console.error('[billing/uncancel-subscription] hata:', e);
+    res.status(500).json({ error: e.message });
+  }
+});
+
 module.exports = router;
+module.exports.cancelSubscriptionInternal = cancelSubscriptionInternal;

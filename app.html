@@ -2378,7 +2378,7 @@ async function disconnectShopify() {
   toast('Shopify bağlantısı kaldırıldı', 'info');
 }
 
-function renderSettingsPage() {
+async function renderSettingsPage() {
   const view = document.getElementById('settings-view');
   if (!view) return;
   const connected = !!shopifyStore;
@@ -2439,9 +2439,222 @@ function renderSettingsPage() {
       <p style="font-size:12px;color:#6b7280;margin:0 0 16px;">Sitede gösterilecek yorumları seçin</p>
       <div id="ph-reviews-admin-list" style="display:flex;flex-direction:column;gap:8px;"></div>
     </div>
+
+    <div id="profile-info-box" style="margin-top:32px;padding-top:24px;border-top:0.5px solid #e5e7eb;"></div>
+
+    <div id="subscription-section" style="margin-top:32px;padding-top:24px;border-top:0.5px solid #e5e7eb;"></div>
+
+    <div style="margin-top:32px;padding-top:24px;border-top:0.5px solid #e5e7eb;">
+      <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 4px;">Verilerimi İndir (KVKK)</p>
+      <p style="font-size:12px;color:#6b7280;margin:0 0 12px;">Hesabınıza ait tüm verileri JSON olarak indirin.</p>
+      <button id="export-my-data-btn" type="button" style="padding:7px 16px;background:#f3f4f6;color:#374151;border:0.5px solid #e5e7eb;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;">Verilerimi İndir</button>
+    </div>
+
+    <div style="margin-top:32px;padding:16px;border:1px solid #fca5a5;border-radius:12px;">
+      <p style="font-size:13px;font-weight:600;color:#dc2626;margin:0 0 4px;">Tehlikeli Bölge</p>
+      <p style="font-size:12px;color:#6b7280;margin:0 0 12px;">Hesabınızı kalıcı olarak silmek tüm verilerinizi siler ve geri alınamaz.</p>
+      <button id="open-delete-modal-btn" type="button" style="padding:7px 16px;background:#dc2626;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;">Hesabı Sil</button>
+    </div>
   </div>`;
+
+  document.getElementById('export-my-data-btn').addEventListener('click', async () => {
+    try {
+      const resp = await fetch(API_URL + '/api/integrations/export-my-data', { headers: await authHeaders() });
+      if (!resp.ok) throw new Error('İndirme başarısız');
+      const blob = await resp.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'verilerim.json'; a.click();
+      URL.revokeObjectURL(url);
+    } catch (e) { toast('Veri indirilemedi: ' + e.message, 'error'); }
+  });
+
+  document.getElementById('open-delete-modal-btn').addEventListener('click', () => openDeleteAccountModal());
+
   loadVisibilityChecks();
   loadPhReviewsAdmin();
+  await renderProfileInfo();
+  await renderSubscriptionSection();
+}
+
+async function renderProfileInfo() {
+  const box = document.getElementById('profile-info-box');
+  if (!box) return;
+  try {
+    const { data: { user } } = await sbClient.auth.getUser();
+    if (!user) return;
+    const joinDate = new Intl.DateTimeFormat('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(user.created_at));
+    box.innerHTML = `
+      <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 8px;">Profil Bilgisi</p>
+      <div style="border:0.5px solid #e5e7eb;border-radius:10px;padding:12px 14px;background:#f9fafb;">
+        <p style="font-size:12px;color:#374151;margin:0 0 4px;"><span style="color:#9ca3af;margin-right:6px;">E-posta</span>${user.email}</p>
+        <p style="font-size:12px;color:#374151;margin:0;"><span style="color:#9ca3af;margin-right:6px;">Katılım</span>${joinDate}</p>
+      </div>`;
+  } catch (e) {
+    box.innerHTML = '';
+  }
+}
+
+async function renderSubscriptionSection() {
+  const box = document.getElementById('subscription-section');
+  if (!box) return;
+  try {
+    const [usageResp, statusResp] = await Promise.all([
+      fetch(API_URL + '/api/usage', { headers: await authHeaders() }),
+      fetch(API_URL + '/api/billing/subscription-status', { headers: await authHeaders() }),
+    ]);
+    const usage = usageResp.ok ? await usageResp.json() : null;
+    const status = statusResp.ok ? await statusResp.json() : null;
+
+    const planName = usage?.plan_name ?? status?.plan ?? 'free';
+    const isFree = planName === 'free';
+    const cancelPending = status?.cancel_at_period_end === true;
+    const periodEnd = status?.cancel_period_end
+      ? new Intl.DateTimeFormat('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(status.cancel_period_end))
+      : null;
+
+    let statusBadge = '';
+    let actionBtn = '';
+
+    if (cancelPending && periodEnd) {
+      statusBadge = `<span style="display:inline-block;margin-left:8px;padding:2px 8px;background:#fef9c3;color:#854d0e;border-radius:20px;font-size:11px;font-weight:600;">İptal bekliyor — ${periodEnd}</span>`;
+      actionBtn = `<button id="uncancel-sub-btn" type="button" style="padding:7px 16px;background:#fff;color:#374151;border:0.5px solid #d1d5db;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;">İptali Geri Al</button>`;
+    } else if (!isFree) {
+      actionBtn = `<button id="cancel-sub-btn" type="button" style="padding:7px 16px;background:#fff;color:#dc2626;border:0.5px solid #fca5a5;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;">Aboneliği İptal Et</button>`;
+    } else {
+      actionBtn = `<button type="button" disabled style="padding:7px 16px;background:#f3f4f6;color:#9ca3af;border:0.5px solid #e5e7eb;border-radius:8px;font-size:12px;font-weight:600;cursor:not-allowed;">Aboneliği İptal Et</button>`;
+    }
+
+    box.innerHTML = `
+      <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 8px;">Abonelik${statusBadge}</p>
+      <div style="border:0.5px solid #e5e7eb;border-radius:10px;padding:12px 14px;background:#f9fafb;display:flex;align-items:center;justify-content:space-between;">
+        <div>
+          <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 2px;">${planName.charAt(0).toUpperCase() + planName.slice(1)}</p>
+          <p style="font-size:11px;color:#6b7280;margin:0;">${usage?.used?.this_month ?? 0} / ${usage?.limits?.ai_commands_per_month ?? '∞'} AI komutu bu ay</p>
+        </div>
+        ${actionBtn}
+      </div>`;
+
+    const cancelBtn = document.getElementById('cancel-sub-btn');
+    if (cancelBtn) cancelBtn.addEventListener('click', () => openCancelSubscriptionModal());
+
+    const uncancelBtn = document.getElementById('uncancel-sub-btn');
+    if (uncancelBtn) uncancelBtn.addEventListener('click', async () => {
+      uncancelBtn.disabled = true;
+      uncancelBtn.textContent = 'Geri alınıyor...';
+      try {
+        const r = await fetch(API_URL + '/api/billing/uncancel-subscription', { method: 'POST', headers: await authHeaders() });
+        if (!r.ok) throw new Error((await r.json()).error);
+        toast('Abonelik iptali geri alındı.', 'success');
+        await renderSubscriptionSection();
+      } catch (e) {
+        toast('Hata: ' + e.message, 'error');
+        uncancelBtn.disabled = false;
+        uncancelBtn.textContent = 'İptali Geri Al';
+      }
+    });
+  } catch (e) {
+    box.innerHTML = '';
+  }
+}
+
+function openCancelSubscriptionModal() {
+  if (!document.getElementById('cancel-subscription-modal')) {
+    const modal = document.createElement('div');
+    modal.id = 'cancel-subscription-modal';
+    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;z-index:9999;';
+    modal.innerHTML = `
+      <div style="background:#fff;border-radius:16px;padding:28px;max-width:420px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.15);">
+        <p style="font-size:15px;font-weight:700;color:#111827;margin:0 0 8px;">Aboneliği İptal Et</p>
+        <p style="font-size:13px;color:#6b7280;margin:0 0 16px;">İptal nedeninizi seçin (isteğe bağlı):</p>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px;">
+          ${['Çok pahalı','Yeterince kullanmıyorum','Başka bir araç kullanıyorum','İhtiyacım olan özellik yok','Diğer'].map((r, i) => `
+          <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:#374151;cursor:pointer;">
+            <input type="radio" name="cancel-reason" value="${i}" style="accent-color:#6b7280;"> ${r}
+          </label>`).join('')}
+        </div>
+        <div style="display:flex;gap:10px;justify-content:flex-end;">
+          <button id="cancel-modal-close" type="button" style="padding:8px 18px;background:#f3f4f6;color:#374151;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">Vazgeç</button>
+          <button id="cancel-modal-confirm" type="button" style="padding:8px 18px;background:#dc2626;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">İptali Onayla</button>
+        </div>
+      </div>`;
+    document.body.appendChild(modal);
+
+    document.getElementById('cancel-modal-close').addEventListener('click', () => modal.remove());
+    modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+    document.getElementById('cancel-modal-confirm').addEventListener('click', async () => {
+      const btn = document.getElementById('cancel-modal-confirm');
+      btn.disabled = true; btn.textContent = 'İptal ediliyor...';
+      try {
+        const r = await fetch(API_URL + '/api/billing/cancel-subscription', { method: 'POST', headers: await authHeaders() });
+        if (!r.ok) throw new Error((await r.json()).error);
+        modal.remove();
+        toast('Abonelik iptal edildi. Dönem sonuna kadar devam eder.', 'info');
+        await renderSubscriptionSection();
+      } catch (e) {
+        toast('Hata: ' + e.message, 'error');
+        btn.disabled = false; btn.textContent = 'İptali Onayla';
+      }
+    });
+  }
+  document.getElementById('cancel-subscription-modal').style.display = 'flex';
+}
+
+function openDeleteAccountModal() {
+  if (!document.getElementById('delete-account-modal')) {
+    const modal = document.createElement('div');
+    modal.id = 'delete-account-modal';
+    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;z-index:9999;';
+    modal.innerHTML = `
+      <div style="background:#fff;border-radius:16px;padding:28px;max-width:420px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.15);">
+        <p style="font-size:15px;font-weight:700;color:#dc2626;margin:0 0 8px;">Hesabı Sil</p>
+        <p style="font-size:13px;color:#6b7280;margin:0 0 16px;">Bu işlem geri alınamaz. Tüm verileriniz silinecektir.</p>
+        <p style="font-size:13px;color:#374151;margin:0 0 8px;">Onaylamak için <strong>SİL</strong> yazın:</p>
+        <input id="delete-confirm-input" type="text" placeholder="SİL"
+          style="width:100%;padding:8px 12px;border:1px solid #e5e7eb;border-radius:8px;font-size:13px;margin-bottom:16px;box-sizing:border-box;"/>
+        <div style="display:flex;gap:10px;justify-content:flex-end;">
+          <button id="delete-modal-close" type="button" style="padding:8px 18px;background:#f3f4f6;color:#374151;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">Vazgeç</button>
+          <button id="delete-modal-confirm" type="button" disabled
+            style="padding:8px 18px;background:#9ca3af;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:not-allowed;">Hesabı Kalıcı Olarak Sil</button>
+        </div>
+      </div>`;
+    document.body.appendChild(modal);
+
+    document.getElementById('delete-modal-close').addEventListener('click', () => modal.remove());
+    modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+
+    document.getElementById('delete-confirm-input').addEventListener('keyup', () => {
+      const val = document.getElementById('delete-confirm-input').value;
+      const btn = document.getElementById('delete-modal-confirm');
+      if (val === 'SİL') {
+        btn.disabled = false;
+        btn.style.background = '#dc2626';
+        btn.style.cursor = 'pointer';
+      } else {
+        btn.disabled = true;
+        btn.style.background = '#9ca3af';
+        btn.style.cursor = 'not-allowed';
+      }
+    });
+
+    document.getElementById('delete-modal-confirm').addEventListener('click', async () => {
+      const btn = document.getElementById('delete-modal-confirm');
+      btn.disabled = true; btn.textContent = 'Siliniyor...';
+      try {
+        const r = await fetch(API_URL + '/api/auth/delete-account', {
+          method: 'DELETE',
+          headers: await authHeaders(),
+        });
+        if (!r.ok) throw new Error((await r.json()).error);
+        await sbClient.auth.signOut();
+        window.location.href = '/auth.html';
+      } catch (e) {
+        toast('Hata: ' + e.message, 'error');
+        btn.disabled = false; btn.textContent = 'Hesabı Kalıcı Olarak Sil';
+      }
+    });
+  }
+  document.getElementById('delete-account-modal').style.display = 'flex';
 }
 
 async function loadVisibilityChecks() {

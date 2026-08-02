@@ -521,6 +521,8 @@ app.use('/api/automations', automationsRouter);
 app.use('/api/stripe', stripeRouter);
 const billingRouter = require('./routes/billing');
 app.use('/api/billing', billingRouter);
+const authRouter = require('./routes/auth');
+app.use('/api/auth', authRouter);
 app.use('/api/subscription', subscriptionRouter);
 const contactRouter = require('./routes/contact');
 app.use('/api/contact', contactRouter);
