@@ -4108,8 +4108,8 @@ function getAuthToken() {
 }
 
 async function authHeaders() {
-  await waitForAuthReady();
-  const token = getAuthToken();
+  const { data: { session } } = await sbClient.auth.getSession();
+  const token = session?.access_token;
   if (!token) return {};
   return { 'Authorization': 'Bearer ' + token };
 }

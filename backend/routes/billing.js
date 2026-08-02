@@ -57,6 +57,7 @@ async function authenticate(req, res) {
   const sb = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
   const { data: { user }, error } = await sb.auth.getUser(token);
   if (error || !user) {
+    console.warn('[authenticate:billing] Token reddedildi:', error?.message || 'kullanıcı bulunamadı');
     res.status(401).json({ error: 'Geçersiz oturum.' });
     return null;
   }
