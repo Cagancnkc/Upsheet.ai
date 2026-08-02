@@ -317,6 +317,83 @@
   }
   .ai-chat-page .acp-msg { max-width: 92%; font-size: 14px; }
 }
+
+/* ── Shopify AI Chat Panel ──────────────────────────────────────── */
+.sf-chat-panel {
+  position: fixed; right: 0; top: 0; bottom: 0;
+  width: 400px; background: #fff; border-left: 1px solid #e5e7eb;
+  display: flex; flex-direction: column; z-index: 900;
+  transition: transform 0.3s ease; box-shadow: -4px 0 20px rgba(0,0,0,0.08);
+}
+.sf-chat-panel--closed { transform: translateX(100%); }
+.sf-chat-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px; border-bottom: 1px solid #e5e7eb; flex-shrink: 0;
+}
+.sf-chat-header > span { font-size: 14px; font-weight: 600; color: #111827; }
+.sf-chat-close-btn {
+  background: none; border: none; font-size: 20px; color: #6b7280;
+  cursor: pointer; line-height: 1; padding: 2px 6px; border-radius: 4px;
+}
+.sf-chat-close-btn:hover { background: #f3f4f6; }
+.sf-chat-messages {
+  flex: 1; overflow-y: auto; padding: 16px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.sf-chat-msg {
+  border-radius: 12px; padding: 10px 14px;
+  font-size: 13px; line-height: 1.5; max-width: 90%; word-break: break-word;
+}
+.sf-chat-msg.user { background: #111827; color: #fff; align-self: flex-end; }
+.sf-chat-msg.assistant { background: #f3f4f6; color: #111827; align-self: flex-start; }
+.sf-chat-msg.error { background: #fef2f2; color: #dc2626; align-self: flex-start; }
+.sf-chat-diff {
+  background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px;
+  padding: 10px 12px; margin-top: 8px; font-size: 12px;
+}
+.sf-chat-diff-row {
+  margin-bottom: 8px; padding-bottom: 8px;
+  border-bottom: 1px solid #f3f4f6;
+}
+.sf-chat-diff-row:last-of-type { margin-bottom: 4px; padding-bottom: 0; border-bottom: none; }
+.sf-chat-diff-label { font-weight: 600; color: #374151; margin-bottom: 3px; font-size: 11px; }
+.sf-chat-diff-old { color: #dc2626; text-decoration: line-through; word-break: break-word; }
+.sf-chat-diff-new { color: #16a34a; font-weight: 500; word-break: break-word; }
+.sf-chat-apply-btn {
+  background: #111827; color: #fff; border: none; border-radius: 6px;
+  padding: 7px 14px; cursor: pointer; font-size: 12px; font-weight: 500;
+  margin-top: 10px; width: 100%;
+}
+.sf-chat-apply-btn:hover:not(:disabled) { background: #1f2937; }
+.sf-chat-apply-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+.sf-chat-input-row {
+  padding: 12px 14px; border-top: 1px solid #e5e7eb;
+  display: flex; gap: 8px; align-items: flex-end; flex-shrink: 0;
+}
+.sf-chat-input-row textarea {
+  flex: 1; border: 1px solid #e5e7eb; border-radius: 8px;
+  padding: 8px 10px; font-size: 13px; resize: none; outline: none;
+  font-family: inherit; line-height: 1.4; max-height: 120px; overflow-y: auto;
+}
+.sf-chat-input-row textarea:focus { border-color: #111827; }
+.sf-chat-send-btn {
+  background: #111827; color: #fff; border: none; border-radius: 8px;
+  padding: 0 14px; cursor: pointer; font-size: 13px; font-weight: 500;
+  flex-shrink: 0; height: 36px;
+}
+.sf-chat-send-btn:hover { background: #1f2937; }
+.sf-chat-toggle-btn {
+  background: #111827; color: #fff; border: none; border-radius: 6px;
+  padding: 5px 12px; cursor: pointer; font-size: 12px; font-weight: 500;
+  display: flex; align-items: center; gap: 5px;
+}
+.sf-chat-toggle-btn:hover { background: #1f2937; }
+.sf-chat-empty {
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; flex: 1; text-align: center;
+  color: #9ca3af; padding: 24px;
+}
+.sf-chat-empty p { font-size: 13px; line-height: 1.6; margin-top: 10px; }
 </style>
 </head>
 <body>
@@ -404,6 +481,9 @@
           <button class="sf-filter-btn" onclick="toggleFilterDropdown(event, 'height-dropdown')">Satır Yüksekliği</button>
           <button class="sf-filter-btn" onclick="toggleFreeze()">Dondur</button>
           <div style="flex: 1;"></div>
+          <button class="sf-chat-toggle-btn" onclick="toggleShopifyChat()" title="AI Ürün Asistanı">
+            <i class="ti ti-message-circle"></i> AI Asistan
+          </button>
         </div>
 
         <div class="sf-table-scroll">
@@ -429,6 +509,28 @@
         </div>
       </div>
 
+    </div>
+
+    <!-- SHOPIFY AI CHAT PANEL -->
+    <div id="shopify-chat-panel" class="sf-chat-panel sf-chat-panel--closed">
+      <div class="sf-chat-header">
+        <span><i class="ti ti-message-circle" style="margin-right:5px;"></i>AI Ürün Asistanı</span>
+        <button class="sf-chat-close-btn" onclick="toggleShopifyChat()" title="Kapat">×</button>
+      </div>
+      <div class="sf-chat-messages" id="sf-chat-messages">
+        <div class="sf-chat-empty" id="sf-chat-empty">
+          <i class="ti ti-robot" style="font-size:36px;color:#d1d5db;"></i>
+          <p>Ürünleriniz hakkında soru sorun veya <strong>doğal dil</strong> ile düzenleme isteyin.<br><br>
+          Örnek:<br>
+          <em>"Tüm taslak ürünleri aktif yap"</em><br>
+          <em>"iPhone başlığını 'Apple iPhone 15 Pro' olarak değiştir"</em><br>
+          <em>"Stokta kaç ürün var?"</em></p>
+        </div>
+      </div>
+      <div class="sf-chat-input-row">
+        <textarea id="sf-chat-input" placeholder="Ürünler hakkında bir şey sorun veya düzenleme isteyin…" rows="2"></textarea>
+        <button class="sf-chat-send-btn" onclick="sfChatSend()">Gönder</button>
+      </div>
     </div>
 
     <!-- VIEW CONTAINERS -->
@@ -4172,6 +4274,142 @@ function addDropdownStyles() {
   document.head.appendChild(style);
 }
 
+// ─── Shopify AI Chat Panel ─────────────────────────────────────────────────
+let _sfChatHistory = [];
+let _sfChatBusy = false;
+
+function toggleShopifyChat() {
+  const panel = document.getElementById('shopify-chat-panel');
+  if (panel) panel.classList.toggle('sf-chat-panel--closed');
+}
+
+function _sfChatAppendMsg(role, text) {
+  const empty = document.getElementById('sf-chat-empty');
+  if (empty) empty.style.display = 'none';
+  const msgs = document.getElementById('sf-chat-messages');
+  const el = document.createElement('div');
+  el.className = 'sf-chat-msg ' + role;
+  if (text) el.textContent = text;
+  msgs.appendChild(el);
+  msgs.scrollTop = msgs.scrollHeight;
+  return el;
+}
+
+async function sfChatSend() {
+  if (_sfChatBusy) return;
+  const input = document.getElementById('sf-chat-input');
+  const text = (input?.value || '').trim();
+  if (!text) return;
+
+  _sfChatBusy = true;
+  input.value = '';
+
+  _sfChatAppendMsg('user', text);
+  _sfChatHistory.push({ role: 'user', content: text });
+
+  const pending = _sfChatAppendMsg('assistant', 'Düşünüyor…');
+
+  try {
+    const products = (catalogData.products || []).slice(0, 30).map(p => ({
+      product_id: p.shopify_product_id,
+      variant_id: p.shopify_variant_id,
+      title: p.title,
+      body_html: (p.body_html || '').slice(0, 400),
+      vendor: p.vendor,
+      product_type: p.product_type,
+      tags: p.tags,
+      status: p.status,
+      price: p.price,
+      compare_at_price: p.compare_at_price,
+      sku: p.sku,
+    }));
+
+    const res = await fetch(`${API_URL}/api/shopify/chat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...(await authHeaders()) },
+      body: JSON.stringify({
+        message: text,
+        products,
+        history: _sfChatHistory.slice(-10),
+      }),
+    });
+
+    if (!res.ok) throw new Error('Yanıt alınamadı (' + res.status + ')');
+    const data = await res.json();
+    _sfChatHistory.push({ role: 'assistant', content: data.reply });
+
+    pending.textContent = '';
+    const replyEl = document.createElement('div');
+    replyEl.textContent = data.reply;
+    pending.appendChild(replyEl);
+
+    if (data.type === 'changes' && data.changes?.length) {
+      const FIELD_LABELS = {
+        title: 'Başlık', body_html: 'Açıklama', tags: 'Etiketler',
+        vendor: 'Marka', product_type: 'Ürün Tipi', status: 'Durum',
+        price: 'Fiyat', compare_at_price: 'Karş. Fiyat',
+        seo_title: 'SEO Başlık', seo_description: 'SEO Açıklama',
+      };
+
+      const diffEl = document.createElement('div');
+      diffEl.className = 'sf-chat-diff';
+
+      data.changes.forEach(ch => {
+        const row = document.createElement('div');
+        row.className = 'sf-chat-diff-row';
+        row.innerHTML = `<div class="sf-chat-diff-label">${escapeHtml(ch.product_title || '')} · ${FIELD_LABELS[ch.field] || ch.field}</div>
+          <div class="sf-chat-diff-old">${escapeHtml(String(ch.old_value ?? '(boş)'))}</div>
+          <div class="sf-chat-diff-new">→ ${escapeHtml(String(ch.new_value ?? ''))}</div>`;
+        diffEl.appendChild(row);
+      });
+
+      const applyBtn = document.createElement('button');
+      applyBtn.className = 'sf-chat-apply-btn';
+      applyBtn.textContent = `${data.changes.length} değişikliği Shopify'a Uygula`;
+      applyBtn.onclick = async () => {
+        applyBtn.disabled = true;
+        applyBtn.textContent = 'Uygulanıyor…';
+        try {
+          const pushRes = await fetch(`${API_URL}/api/shopify/push`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', ...(await authHeaders()) },
+            body: JSON.stringify({
+              confirmed: true,
+              changes: data.changes.map(c => ({
+                product_id: c.product_id,
+                field: c.field,
+                new_value: c.new_value,
+                ...(c.variant_id ? { variant_id: c.variant_id } : {}),
+              })),
+            }),
+          });
+          const pushData = await pushRes.json();
+          if (pushData.scope_missing) {
+            applyBtn.textContent = '⚠️ Yazma izni eksik';
+            _sfChatAppendMsg('assistant', 'Shopify bağlantınızda yazma izni (write_products) eksik. Uygulamalar panelinden yeniden bağlanın.');
+          } else {
+            applyBtn.textContent = `✅ ${pushData.pushed} değişiklik uygulandı`;
+            const errTxt = pushData.errors?.length ? ` (${pushData.errors.length} hata)` : '';
+            _sfChatAppendMsg('assistant', `${pushData.pushed} değişiklik Shopify'a gönderildi.${errTxt}`);
+          }
+        } catch (err) {
+          applyBtn.disabled = false;
+          applyBtn.textContent = '⚠️ Hata — tekrar dene';
+          _sfChatAppendMsg('assistant', 'Uygulama sırasında hata: ' + err.message);
+        }
+      };
+      diffEl.appendChild(applyBtn);
+      pending.appendChild(diffEl);
+    }
+  } catch (e) {
+    pending.textContent = '⚠️ ' + e.message;
+    pending.className = 'sf-chat-msg error';
+  } finally {
+    _sfChatBusy = false;
+  }
+}
+// ─── END Shopify AI Chat Panel ─────────────────────────────────────────────
+
 document.addEventListener('DOMContentLoaded', function() {
   addDropdownStyles();
   showGoogleShopifyConnectIfNeeded();
@@ -4189,6 +4427,11 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!e.target.classList.contains('sf-filter-btn')) {
       document.querySelectorAll('[id$="-dropdown"]').forEach(dd => dd.classList.remove('open'));
     }
+  });
+
+  // Shopify chat panel — Enter to send
+  document.getElementById('sf-chat-input')?.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sfChatSend(); }
   });
 
   // Keyboard shortcuts

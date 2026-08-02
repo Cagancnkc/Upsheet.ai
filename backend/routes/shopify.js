@@ -836,4 +836,78 @@ router.post('/quality-guidelines', requireAuth, async (req, res) => {
   res.json(data);
 });
 
+// ─── POST /api/shopify/chat ──────────────────────────────────────────────────
+router.post('/chat', requireAuth, async (req, res) => {
+  try {
+    const { message, products = [], history = [] } = req.body;
+    if (!message?.trim()) return res.status(400).json({ error: 'Mesaj gerekli' });
+
+    const systemPrompt = `Sen bir Shopify ürün yöneticisi yapay zeka asistansın. Kullanıcının ürün kataloğu hakkında sorularını yanıtlar, düzenleme talepleri için yapılandırılmış değişiklik listesi üretirsin.
+
+Eğer kullanıcı bir veya daha fazla ürünü DEĞİŞTİRMEK istiyorsa yanıtını MUTLAKA şu JSON formatında ver:
+{
+  "reply": "Türkçe açıklama — neyi değiştireceğini kısaca anlat",
+  "type": "changes",
+  "changes": [
+    {
+      "product_id": <sayı — ürünün shopify product_id'si>,
+      "variant_id": <sayı veya null — sadece fiyat/variant alanları için>,
+      "product_title": "<ürün adı — kullanıcıya göstermek için>",
+      "field": "title" | "body_html" | "tags" | "vendor" | "product_type" | "status" | "price" | "compare_at_price" | "seo_title" | "seo_description",
+      "old_value": "<mevcut değer — katalogdan al>",
+      "new_value": "<yeni değer>"
+    }
+  ]
+}
+
+Eğer sadece bilgi veriyorsan, soru yanıtlıyorsan veya değişiklik gerekmiyorsa:
+{
+  "reply": "Türkçe yanıt",
+  "type": "message"
+}
+
+Kurallar:
+- Yanıtın her zaman geçerli JSON olsun — başka hiçbir şey yazma
+- Türkçe konuş
+- Yalnızca kullanıcının gönderdiği katalog verilerindeki ürünleri kullan; ürün uydurmadan
+- Birden fazla ürün etkileniyorsa tüm değişiklikleri tek "changes" dizisinde topla
+- status değerleri: "active", "draft", "archived"`;
+
+    const productCtx = products.length > 0
+      ? '\n\nMEVCUT ÜRÜN KATALOĞU:\n' + JSON.stringify(products, null, 2)
+      : '\n\n(Henüz ürün yüklenmemiş veya Shopify bağlı değil)';
+
+    const messages = [
+      ...history.slice(-10).map(h => ({ role: h.role, content: h.content })),
+      { role: 'user', content: message + productCtx },
+    ];
+
+    const aiRes = await getAnthropic().messages.create({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 2048,
+      system: systemPrompt,
+      messages,
+    });
+
+    const raw = aiRes.content[0]?.text || '{"reply":"Yanıt alınamadı","type":"message"}';
+
+    let parsed;
+    try {
+      const match = raw.match(/\{[\s\S]*\}/);
+      parsed = JSON.parse(match ? match[0] : raw);
+    } catch {
+      parsed = { reply: raw, type: 'message' };
+    }
+
+    res.json({
+      reply: parsed.reply || '',
+      type: parsed.type || 'message',
+      changes: Array.isArray(parsed.changes) ? parsed.changes : [],
+    });
+  } catch (e) {
+    console.error('[shopify/chat] hata:', e);
+    res.status(500).json({ error: e.message });
+  }
+});
+
 module.exports = router;
