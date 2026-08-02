@@ -2486,10 +2486,17 @@ async function renderProfileInfo() {
     const joinDate = new Intl.DateTimeFormat('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(user.created_at));
     box.innerHTML = `
       <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 8px;">Profil Bilgisi</p>
-      <div style="border:0.5px solid #e5e7eb;border-radius:10px;padding:12px 14px;background:#f9fafb;">
-        <p style="font-size:12px;color:#374151;margin:0 0 4px;"><span style="color:#9ca3af;margin-right:6px;">E-posta</span>${user.email}</p>
-        <p style="font-size:12px;color:#374151;margin:0;"><span style="color:#9ca3af;margin-right:6px;">Katılım</span>${joinDate}</p>
+      <div style="border:0.5px solid #e5e7eb;border-radius:10px;padding:12px 14px;background:#f9fafb;display:flex;align-items:center;justify-content:space-between;">
+        <div>
+          <p style="font-size:12px;color:#374151;margin:0 0 4px;"><span style="color:#9ca3af;margin-right:6px;">E-posta</span>${user.email}</p>
+          <p style="font-size:12px;color:#374151;margin:0;"><span style="color:#9ca3af;margin-right:6px;">Katılım</span>${joinDate}</p>
+        </div>
+        <button id="signout-btn" type="button" style="padding:7px 16px;background:#fff;color:#374151;border:0.5px solid #d1d5db;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;">Çıkış Yap</button>
       </div>`;
+    document.getElementById('signout-btn').addEventListener('click', async () => {
+      await sbClient.auth.signOut();
+      window.location.href = '/auth.html';
+    });
   } catch (e) {
     box.innerHTML = '';
   }
@@ -2554,7 +2561,14 @@ async function renderSubscriptionSection() {
       }
     });
   } catch (e) {
-    box.innerHTML = '';
+    box.innerHTML = `
+      <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 8px;">Abonelik</p>
+      <div style="border:0.5px solid #e5e7eb;border-radius:10px;padding:12px 14px;background:#f9fafb;display:flex;align-items:center;justify-content:space-between;">
+        <p style="font-size:12px;color:#9ca3af;margin:0;">Abonelik bilgisi yüklenemedi.</p>
+        <button id="cancel-sub-btn" type="button" style="padding:7px 16px;background:#fff;color:#dc2626;border:0.5px solid #fca5a5;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;">Aboneliği İptal Et</button>
+      </div>`;
+    const cancelBtn = document.getElementById('cancel-sub-btn');
+    if (cancelBtn) cancelBtn.addEventListener('click', () => openCancelSubscriptionModal());
   }
 }
 
