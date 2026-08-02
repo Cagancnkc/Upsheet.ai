@@ -1,9 +1,12 @@
 'use strict';
 const express = require('express');
 const Anthropic = require('@anthropic-ai/sdk');
+const multer = require('multer');
 const { createClient } = require('@supabase/supabase-js');
 const { checkLimit, incrementUsage } = require('../middleware/limits');
 const { retrieveShopifyExamples } = require('../rag/shopifyRetrieval');
+
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 15 * 1024 * 1024, files: 5 } });
 
 const router = express.Router();
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
@@ -35,6 +38,24 @@ const SYSTEM_PROMPT = `Sen Mocksheets AI Copilot'sun — Türkçe konuşan, Shop
 - Kısa cevaplar için düz metin, uzunlar için markdown başlık/liste.
 - Emoji minimum — sadece durum işaretleri için (✓, ⚠️, ❌).
 - Türkçe karakterleri doğru kullan (ç, ğ, ı, ö, ş, ü).`;
+
+const DEEP_SYSTEM_PROMPT = `${SYSTEM_PROMPT}
+
+## DERİN ARAŞTIRMA MODU
+Bu modda çok daha kapsamlı, analitik bir yaklaşım benimse:
+- Soruyu en az 3 farklı perspektiften incele (maliyet/verimlilik/risk gibi).
+- Varsayımları açıkça belirt ve sorgula.
+- Somut rakamlar, oranlar veya benchmarklar ile destekle.
+- Adım adım düşünce zinciri göster — ara sonuçları da paylaş.
+- Olası tuzakları ve alternatifleri mutlaka belirt.
+- Bilmediğin veya emin olmadığın kısımları net olarak işaretle.`;
+
+const SKILL_PROMPTS = {
+  formula: `\n\n## AKTİF SKILL: Formül Üreteci\nExcel ve Google Sheets formülleri konusunda uzmanlaş. Her formülü adım adım açıkla, alternatif yaklaşımlar öner, IFERROR/IF/VLOOKUP/INDEX-MATCH gibi hata yönetimi dahil et. Varsa örnek veri ile nasıl çalıştığını göster.`,
+  analysis: `\n\n## AKTİF SKILL: Veri Analizi\nVeri analizi uzmanı olarak istatistiksel kavramlar (ortalama, medyan, standart sapma, korelasyon), trend analizi, pivot tablo tasarımı, grafik seçimi ve KPI hesaplamalarında derinlemesine rehberlik et. Formülü ve yorumunu birlikte ver.`,
+  ecommerce: `\n\n## AKTİF SKILL: E-ticaret Uzmanı\nShopify, WooCommerce, Trendyol, Hepsiburada gibi platformlarda ürün listeleme, toplu fiyat güncelleme, envanter optimizasyonu, kargo entegrasyonu, dönüşüm oranı iyileştirme ve satış analizi konularında uygulamalı rehberlik sun.`,
+  content: `\n\n## AKTİF SKILL: İçerik Yazarı\nÜrün açıklamaları, e-posta kampanyaları, sosyal medya paylaşımları, SEO başlıkları ve meta açıklamalar yaz. Türkçe doğal, ikna edici dil kullan; marka tonu ile uyumlu ol. İstenirse A/B test için iki versiyon üret.`,
+};
 
 function buildRagBlock(examples) {
   if (!examples || examples.length === 0) return '';
@@ -120,16 +141,20 @@ router.delete('/sessions/:id', checkLimit, async (req, res) => {
 
 // === Message send ===
 
-router.post('/message', checkLimit, async (req, res) => {
+router.post('/message', checkLimit, upload.array('files', 5), async (req, res) => {
   const t0 = Date.now();
   try {
-    const { message, history = [], sessionId: incomingSessionId = null, useEmbeddingContext = true } = req.body || {};
+    const body = req.body || {};
+    const { message = '', history = [], sessionId: incomingSessionId = null, useEmbeddingContext = true } = body;
+    const mode = body.mode === 'deep' ? 'deep' : 'normal';
+    const skill = ['formula', 'analysis', 'ecommerce', 'content'].includes(body.skill) ? body.skill : null;
+    const links = (body.links ? [].concat(body.links) : []).slice(0, 5).filter(l => typeof l === 'string');
+    const files = req.files || [];
 
-    if (!message || typeof message !== 'string' || !message.trim()) {
+    const trimmed = String(message).trim().slice(0, 4000);
+    if (!trimmed && files.length === 0 && links.length === 0) {
       return res.status(400).json({ error: 'Mesaj boş olamaz', code: 'EMPTY_MESSAGE' });
     }
-
-    const trimmed = message.trim().slice(0, 4000);
     const userId = req.user?.id || null;
 
     // Session hazırlığı
@@ -185,19 +210,33 @@ router.post('/message', checkLimit, async (req, res) => {
         .map(h => ({ role: h.role, content: h.content.slice(0, 2000) }));
     }
 
-    const userContent = ragBlock
-      ? [
-          { type: 'text', text: ragBlock, cache_control: { type: 'ephemeral' } },
-          { type: 'text', text: trimmed }
-        ]
-      : [{ type: 'text', text: trimmed }];
+    const userContent = [];
+    if (ragBlock) userContent.push({ type: 'text', text: ragBlock, cache_control: { type: 'ephemeral' } });
+    if (trimmed) userContent.push({ type: 'text', text: trimmed });
+    if (links.length > 0) {
+      userContent.push({ type: 'text', text: `Kullanıcı şu bağlantıları paylaştı:\n${links.join('\n')}\n(Bu URL'leri analiz et ve mesajla ilgili bağlamda değerlendir.)` });
+    }
+    const SUPPORTED_IMAGES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    for (const file of files) {
+      if (SUPPORTED_IMAGES.includes(file.mimetype)) {
+        userContent.push({ type: 'image', source: { type: 'base64', media_type: file.mimetype, data: file.buffer.toString('base64') } });
+      } else {
+        userContent.push({ type: 'text', text: `[Dosya: ${file.originalname}]\n${file.buffer.toString('utf-8').slice(0, 8000)}` });
+      }
+    }
+    if (userContent.length === 0) userContent.push({ type: 'text', text: '(Mesaj yok)' });
+
+    let sysPrompt = mode === 'deep' ? DEEP_SYSTEM_PROMPT : SYSTEM_PROMPT;
+    if (skill) sysPrompt += SKILL_PROMPTS[skill];
+    const maxTokens = mode === 'deep' ? 4096 : 1024;
+    const temperature = mode === 'deep' ? 0.2 : 0.4;
 
     const response = await anthropic.messages.create({
       model: 'claude-sonnet-4-6',
-      max_tokens: 1024,
-      temperature: 0.4,
+      max_tokens: maxTokens,
+      temperature,
       system: [
-        { type: 'text', text: SYSTEM_PROMPT, cache_control: { type: 'ephemeral' } }
+        { type: 'text', text: sysPrompt, cache_control: { type: 'ephemeral' } }
       ],
       messages: [
         ...historyMessages,
@@ -226,7 +265,7 @@ router.post('/message', checkLimit, async (req, res) => {
     }
 
     const ms = Date.now() - t0;
-    console.log(`[chat] ${ms}ms | in=${response.usage.input_tokens} out=${response.usage.output_tokens} cache_read=${response.usage.cache_read_input_tokens || 0}`);
+    console.log(`[chat] ${ms}ms | mode=${mode} skill=${skill || '-'} files=${files.length} | in=${response.usage.input_tokens} out=${response.usage.output_tokens} cache_read=${response.usage.cache_read_input_tokens || 0}`);
 
     res.json({
       reply,
