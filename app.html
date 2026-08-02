@@ -2857,7 +2857,21 @@ async function renderSubscriptionSection() {
       <div style="border:0.5px solid #e5e7eb;border-radius:10px;padding:12px 14px;background:#f9fafb;display:flex;align-items:center;justify-content:space-between;">
         <div>
           <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 2px;">${planName.charAt(0).toUpperCase() + planName.slice(1)}</p>
-          <p style="font-size:11px;color:#6b7280;margin:0;">${usage?.used?.this_month ?? 0} / ${usage?.limits?.ai_commands_per_month ?? '∞'} AI komutu bu ay</p>
+          <p style="font-size:11px;color:#6b7280;margin:0;">${(() => {
+            const usedCount  = isFree ? (usage?.used?.today ?? 0) : (usage?.used?.this_month ?? 0);
+            const limitCount = isFree ? (usage?.limits?.ai_commands_per_day ?? 5) : (usage?.limits?.ai_commands_per_month ?? '\u221e');
+            const period     = isFree ? 'bug\u00fcn' : 'bu ay';
+            let resetLabel   = '';
+            if (isFree) {
+              const now      = new Date();
+              const midnight = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1));
+              const diffMs   = midnight - now;
+              const h = Math.floor(diffMs / 3600000);
+              const m = Math.floor((diffMs % 3600000) / 60000);
+              resetLabel = ' \u00b7 ' + (h > 0 ? h + ' sa ' : '') + m + ' dk sonra yenilenir';
+            }
+            return usedCount + ' / ' + limitCount + ' AI komutu ' + period + resetLabel;
+          })()}</p>
         </div>
         ${actionBtn}
       </div>`;
