@@ -765,7 +765,7 @@ async function syncShopifyData() {
 
     const data = await response.json();
     catalogData = data;
-    syncHistory.push({ date: new Date().toLocaleString('tr-TR'), products: (data.products||[]).length, orders: (data.orders||[]).length });
+    syncHistory.push({ date: new Date().toLocaleString('tr-TR'), ts: Date.now(), products: (data.products||[]).length, orders: (data.orders||[]).length });
     localStorage.setItem('mocksheets_last_sync', new Date().toISOString());
     addActivityLog('Shopify senkronizasyonu başarılı');
     updateUI();
@@ -2468,6 +2468,22 @@ async function renderValidationCenter() {
     return;
   }
 
+  const dangerCount  = issues.filter(i => i.severity === 'danger').length;
+  const warningCount = issues.filter(i => i.severity === 'warning').length;
+  const okCount      = Math.max(0, analysis.totalProducts - analysis.totalIssueCount);
+  const strip = document.createElement('div');
+  strip.style.cssText = 'display:flex;gap:20px;padding:14px 0;margin-bottom:16px;border-bottom:0.5px solid #f3f4f6;';
+  strip.innerHTML = `
+    <div><p style="font-size:10px;color:#9ca3af;margin:0 0 2px;">Taranan Ürün</p>
+      <p style="font-size:16px;font-weight:700;color:#111827;margin:0;">${analysis.totalProducts.toLocaleString('tr-TR')}</p></div>
+    <div><p style="font-size:10px;color:#9ca3af;margin:0 0 2px;">Kritik Sorun</p>
+      <p style="font-size:16px;font-weight:700;color:#dc2626;margin:0;">${dangerCount}</p></div>
+    <div><p style="font-size:10px;color:#9ca3af;margin:0 0 2px;">Uyarı Seviyesi</p>
+      <p style="font-size:16px;font-weight:700;color:#d97706;margin:0;">${warningCount}</p></div>
+    <div><p style="font-size:10px;color:#9ca3af;margin:0 0 2px;">Sorunsuz Ürün</p>
+      <p style="font-size:16px;font-weight:700;color:#16a34a;margin:0;">${okCount.toLocaleString('tr-TR')}</p></div>`;
+  listEl.appendChild(strip);
+
   const summary = document.createElement('p');
   summary.style.cssText = 'font-size:12px;color:#6b7280;margin:0 0 16px;';
   summary.textContent = `${analysis.totalIssueCount} kaçırılan fırsat tespit edildi (${analysis.totalProducts} ürün tarandı).`;
@@ -2640,6 +2656,33 @@ function renderExportPage() {
   </div>`;
 }
 
+async function renderSyncStatusPanel() {
+  const panel = document.getElementById('sync-status-panel');
+  if (!panel) return;
+  try {
+    const res = await fetch(API_URL + '/api/shopify/status', { headers: await authHeaders() });
+    const data = await res.json();
+    if (!data.connected) {
+      panel.innerHTML = '<p style="font-size:12px;color:#9ca3af;margin:0;">Henüz bir mağaza bağlı değil</p>';
+      return;
+    }
+    const lastSync = data.last_sync
+      ? new Date(data.last_sync).toLocaleString('tr-TR')
+      : 'Henüz senkronize edilmedi';
+    const productCount = (catalogData && catalogData.products) ? catalogData.products.length : 0;
+    panel.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div>
+          <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 2px;">${data.shop_name || data.shop_domain || 'Mağaza'} bağlı</p>
+          <p style="font-size:11px;color:#6b7280;margin:0;">Son senkronizasyon: ${lastSync} · ${productCount.toLocaleString('tr-TR')} ürün</p>
+        </div>
+        <span style="font-size:10px;padding:3px 10px;border-radius:999px;background:#dcfce7;color:#16a34a;">● Aktif</span>
+      </div>`;
+  } catch {
+    panel.innerHTML = '<p style="font-size:12px;color:#9ca3af;margin:0;">Durum yüklenemedi</p>';
+  }
+}
+
 function renderSyncPage() {
   const view = document.getElementById('sync-view');
   if (!view) return;
@@ -2653,6 +2696,8 @@ function renderSyncPage() {
     <div style="padding:32px;max-width:800px;margin:0 auto;">
       <p style="font-size:16px;font-weight:600;color:#111827;margin:0 0 4px;">Senkronizasyon</p>
       <p style="font-size:12px;color:#6b7280;margin:0 0 24px;">Veri çekin veya kataloğunuzu dışa aktarın</p>
+
+      <div id="sync-status-panel" style="background:#f9fafb;border-radius:14px;padding:16px 20px;margin-bottom:20px;"></div>
 
       <p style="font-size:12px;font-weight:600;color:#374151;margin:0 0 10px;">İçe Aktar</p>
       <div style="padding:16px;border:0.5px solid #e5e7eb;border-radius:12px;margin-bottom:24px;">
@@ -2670,25 +2715,54 @@ function renderSyncPage() {
         ${renderExportHistory()}
       </div>
     </div>`;
+
+  renderSyncStatusPanel();
 }
 
 function loadAndRenderHistory() {
   const view = document.getElementById('history-view');
   if (!view) return;
-  const history = exportHistory || [];
-  if (history.length === 0) {
+
+  const combined = [
+    ...(exportHistory || []).map(h => ({ ts: h.ts || 0, label: h.type || 'Dışa Aktarım', sub: h.count ? h.count + ' kayıt' : '', type: h.type || '' })),
+    ...(syncHistory   || []).map(h => ({ ts: h.ts || 0, label: 'Senkronizasyon', sub: (h.products || 0) + ' ürün', type: 'sync' })),
+  ].sort((a, b) => b.ts - a.ts);
+
+  if (!combined.length) {
     view.innerHTML = '<div style="padding:24px;text-align:center;color:#9ca3af;font-size:12px;">Henüz işlem kaydı yok</div>';
     return;
   }
-  const rows = history.map(function(h) {
-    const icon = getHistoryIcon(h.type);
-    return '<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #f3f4f6;">' +
-      '<i class="ti ' + icon + '" style="font-size:16px;color:#6b7280;flex-shrink:0;width:20px;text-align:center;"></i>' +
-      '<div style="flex:1"><p style="font-size:12px;color:#111827;margin:0;">' + (h.type || 'İşlem') + '</p>' +
-      '<p style="font-size:11px;color:#9ca3af;margin:2px 0 0;">' + (h.date || '') +
-      (h.count ? ' · ' + h.count + ' kayıt' : '') + '</p></div></div>';
-  }).join('');
-  view.innerHTML = '<div style="padding:24px;max-width:600px;"><p style="font-size:16px;font-weight:600;color:#111827;margin:0 0 16px;">Geçmiş</p>' + rows + '</div>';
+
+  const now   = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+  const week  = today - 7 * 86400000;
+  const groups = { today: [], week: [], older: [] };
+  combined.forEach(item => {
+    if (item.ts >= today)     groups.today.push(item);
+    else if (item.ts >= week) groups.week.push(item);
+    else                      groups.older.push(item);
+  });
+
+  const renderGroup = (label, items) => {
+    if (!items.length) return '';
+    const rows = items.map(item => {
+      const time = item.ts ? new Date(item.ts).toLocaleTimeString('tr-TR', { hour:'2-digit', minute:'2-digit' }) : '';
+      return `<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:0.5px solid #f9fafb;">
+        <i class="ti ${getHistoryIcon(item.type)}" style="font-size:14px;color:#16a34a;flex-shrink:0;width:18px;text-align:center;"></i>
+        <div style="flex:1;"><p style="font-size:12px;color:#111827;margin:0;">${item.label}</p>
+          ${item.sub ? `<p style="font-size:11px;color:#9ca3af;margin:2px 0 0;">${item.sub}</p>` : ''}</div>
+        ${time ? `<span style="font-size:10px;color:#9ca3af;">${time}</span>` : ''}
+      </div>`;
+    }).join('');
+    return `<p style="font-size:10px;font-weight:600;color:#9ca3af;text-transform:uppercase;letter-spacing:.04em;margin:16px 0 4px;">${label}</p>${rows}`;
+  };
+
+  view.innerHTML = `<div style="padding:24px;max-width:600px;">
+    <p style="font-size:16px;font-weight:600;color:#111827;margin:0 0 16px;">Geçmiş</p>
+    ${renderGroup('Bugün', groups.today)}
+    ${renderGroup('Bu Hafta', groups.week)}
+    ${renderGroup('Daha Eski', groups.older)}
+  </div>`;
 }
 
 async function disconnectShopify() {
@@ -3402,7 +3476,7 @@ function downloadSheet() {
   link.download = `${currentView}-${new Date().toISOString().split('T')[0]}.csv`;
   link.click();
 
-  exportHistory.push({ date: new Date().toLocaleString('tr-TR'), type: currentView + ' CSV', count: data.length });
+  exportHistory.push({ date: new Date().toLocaleString('tr-TR'), ts: Date.now(), type: currentView + ' CSV', count: data.length });
   toast('İndirme başlatıldı', 'success');
   addActivityLog('Veri indirildi');
 }
@@ -4121,7 +4195,7 @@ async function pushChangesToShopify(accepted) {
       errCount > 0 ? 'info' : 'success'
     );
     addActivityLog(`Shopify push: ${data.pushed} ürün` + (errCount > 0 ? ` (${errCount} hata)` : ''));
-    syncHistory.push({ date: new Date().toLocaleString('tr-TR'), products: data.pushed, orders: 0 });
+    syncHistory.push({ date: new Date().toLocaleString('tr-TR'), ts: Date.now(), products: data.pushed, orders: 0 });
   } catch (e) {
     toast('Shopify gönderim hatası: ' + e.message, 'error');
   }
@@ -4160,7 +4234,7 @@ async function pushToShopify(event) {
     }
     toast(`✓ ${data.pushed} ürün Shopify'a gönderildi`, 'success');
     addActivityLog(`Shopify push: ${data.pushed} ürün`);
-    syncHistory.push({ date: new Date().toLocaleString('tr-TR'), products: data.pushed, orders: 0 });
+    syncHistory.push({ date: new Date().toLocaleString('tr-TR'), ts: Date.now(), products: data.pushed, orders: 0 });
   } catch (e) {
     toast('Push başarısız: ' + e.message, 'error');
   } finally {
