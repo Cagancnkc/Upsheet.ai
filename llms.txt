@@ -1,92 +1,107 @@
 # Mocksheets
 
-> Shopify mağazaları için yapay zekâ destekli katalog operasyon platformu —
-> SEO otomasyonu, toplu ürün açıklaması, katalog sağlık skoru.
+> AI-powered Shopify catalog management platform.
+> Analyze, optimize, and sync product titles, SEO meta, and descriptions in bulk — with human approval before every Shopify write.
 
-## Ürün
+## What is Mocksheets?
 
-Mocksheets, Shopify satıcıları ve e-ticaret operasyon ekipleri için
-tasarlanmış tarayıcı tabanlı bir AI katalog yönetim platformudur.
-Ana yetenekler:
+Mocksheets is a browser-based AI catalog operations tool built for Shopify merchants and e-commerce teams. Users import their Shopify product catalog, run AI-powered analyses and optimizations, review changes in a spreadsheet-like interface, and push only approved edits back to Shopify via OAuth.
 
-- AI SEO Otomasyonu: Yüzlerce ürünün SEO başlığı, meta açıklama
-  ve alt text'ini toplu AI ile üretme ve onaylama
-- Toplu Ürün Açıklaması: Katalogdaki her ürün için benzersiz,
-  ikna edici açıklamalar AI ile
-- Katalog Sağlık Skoru: SEO + açıklama + görsel + etiket kalitesini
-  tek 0-100 puanda birleştiren dashboard
-- Validation Center: Duplicate/eksik veri tespiti ve düzeltme
-- Toplu Ürün Yönetimi: Yüzlerce ürünü tek tabloda görüp toplu düzenleme
-- Ürün Verisi Yönetimi: Doğal dil komutlarıyla katalog analizi ve optimizasyon
-- 200+ uygulama entegrasyonu ve otomasyon zincirleri
+The platform uses Anthropic Claude with a RAG (retrieval-augmented generation) pipeline trained on Turkish and English e-commerce command examples.
 
-## Hedef Kitle
+## Core Features
 
-- Shopify satıcıları (küçük ve orta ölçekli mağazalar)
-- E-ticaret operasyon ekipleri (Shopify + Trendyol + Hepsiburada)
-- Katalog yöneticileri, ürün yöneticileri
+- **AI SEO Optimization** — Bulk-generate SEO titles, meta descriptions, and alt text for hundreds of products using AI
+- **Bulk Product Description** — Create unique, conversion-focused descriptions for your entire catalog
+- **Catalog Health Score** — 0–100 dashboard combining SEO + description + image + tag quality
+- **Validation Center** — Detect and fix duplicates, missing data, inconsistent vendor names
+- **Approval-First Sync** — Every AI suggestion goes through accept / skip / edit before writing to Shopify; unauthorized writes are blocked server-side
+- **Change History** — Full before/after log; revert any change in one click
+- **Shopify OAuth Integration** — read_products + write_products scopes; order/customer data read but not stored
 
-## Fiyatlandırma
+## Who is it for?
 
-- Başlangıç: Ücretsiz (günde 5 komut)
-- Pro: $15/ay (günde 60 komut, 10 otomasyon)
-- Pro Max: $21/ay (sınırsız, AI Agents dahil)
-- Takım: $59/ay (5 koltuk)
+- Shopify merchants (small to medium stores)
+- E-commerce operations teams managing large catalogs
+- Catalog managers and product managers
+- Turkish e-commerce sellers (Shopify, Trendyol, Hepsiburada)
 
-## Entegrasyonlar
+## Pricing
 
-Shopify (öncelikli), Slack, Gmail, HubSpot, Stripe, Notion, Airtable,
-Trello, Asana, Jira, GitHub ve 190+ uygulama daha.
+| Plan | Price | AI Commands | Catalog Size |
+|------|-------|-------------|--------------|
+| Free | $0/mo | 5/day, 20/mo | Up to 5 products |
+| Pro | $15/mo | 30/day, 200/mo | Unlimited |
+| Pro Max | $21/mo | Unlimited | Unlimited |
+| Business | Contact | Unlimited | Unlimited |
 
-## Teknik Altyapı
+No credit card required for Free plan. Cancel anytime.
 
-- Frontend: Vanilla JS (static HTML/CSS/JS)
-- Backend: Node.js / Express
-- Veritabanı: Supabase (PostgreSQL)
-- AI: Anthropic Claude (RAG pipeline ile)
-- Hosting: Vercel (frontend), Render (backend)
-- GDPR ve KVKK uyumlu
+## Technology Stack
 
-## Önemli URL'ler
+- Frontend: Vanilla JS, static HTML/CSS (Vercel)
+- Backend: Node.js / Express (Render)
+- Database: Supabase (PostgreSQL + pgvector)
+- AI: Anthropic Claude 3 (prompt caching + RAG pipeline)
+- Auth: Supabase JWT / Google OAuth
+- Payments: Stripe
+- Compliance: GDPR + KVKK compliant
 
-- Ana Sayfa (Türkçe): https://mocksheets.com/
-- Ana Sayfa (İngilizce): https://mocksheets.com/en
-- Uygulama (giriş gerektirir): https://mocksheets.com/app
-- Fiyatlar: https://mocksheets.com/pricing
-- Shopify SEO Otomasyonu: https://mocksheets.com/shopify-seo-otomasyonu
-- Toplu Ürün Açıklaması: https://mocksheets.com/shopify-toplu-urun-aciklamasi
-- Katalog Sağlık Skoru: https://mocksheets.com/shopify-katalog-saglik-skoru
-- Mocksheets vs Smart SEO: https://mocksheets.com/mocksheets-vs-smart-seo
-- Mocksheets vs Yoast SEO: https://mocksheets.com/mocksheets-vs-yoast-seo-shopify
-- Entegrasyonlar: https://mocksheets.com/automations
+## Privacy & Security
+
+- Shopify OAuth with minimal required scopes (read_products, write_products)
+- No order or customer data stored
+- Access tokens encrypted at rest
+- Disconnect your store at any time from settings
+
+## Key URLs
+
+- Homepage (EN): https://mocksheets.com/en
+- Homepage (TR): https://mocksheets.com/
+- App (auth required): https://mocksheets.com/app
+- Pricing: https://mocksheets.com/pricing
 - Blog: https://mocksheets.com/blog
-- Destek: destek@mocksheets.com
+- Shopify SEO Automation: https://mocksheets.com/shopify-seo-otomasyonu
+- Bulk Product Description: https://mocksheets.com/shopify-toplu-urun-aciklamasi
+- Catalog Health Score: https://mocksheets.com/shopify-katalog-saglik-skoru
+- Mocksheets vs Matrixify: https://mocksheets.com/mocksheets-vs-matrixify
+- Mocksheets vs Smart SEO: https://mocksheets.com/mocksheets-vs-smart-seo
+- Support: destek@mocksheets.com
 
-## Sıkça Sorulan Sorular
+## Frequently Asked Questions
 
-S: Verilerim güvende mi?
-C: Tüm veriler Supabase (PostgreSQL) üzerinde şifreli saklanır. GDPR ve KVKK uyumlu.
+**Q: Does Mocksheets change my store without my approval?**
+A: No. Every change is previewed in the Validation Center. Only changes you explicitly approve are written to Shopify. Unapproved writes are blocked at the server level.
 
-S: Kredi kartı olmadan başlayabilir miyim?
-C: Evet. Ücretsiz plan için kart gerekmez. Google hesabıyla 30 saniyede başlanır.
+**Q: Can I start without a credit card?**
+A: Yes. The Free plan requires no card. Sign in with Google in 30 seconds and get 5 free AI commands per day.
 
-S: Shopify entegrasyonu nasıl çalışır?
-C: Shopify mağazası OAuth ile doğrudan bağlanır. Ürün, varyant, stok, sipariş ve müşteri verileri otomatik aktarılır; onayladığınız değişiklikler Shopify'a geri yazılır.
+**Q: How does the Shopify connection work?**
+A: OAuth with read_products and write_products scopes. Order/customer data is read for context but never stored. The access token is encrypted; disconnect anytime.
 
-S: SEO değişiklikleri onay adımı olmadan Shopify'a mı yazılır?
-C: Hayır. Her AI önerisi "kabul et / atla / düzenle" adımından geçer. Onaylamadığınız hiçbir değişiklik mağazanıza yazılmaz.
+**Q: Can I undo AI changes?**
+A: Yes. Every applied change has an old/new value recorded. Revert to the original with one click from Change History.
 
-S: Yoast/Smart SEO gibi SEO eklentileri yerine geçer mi?
-C: Kısmen. Toplu AI içerik üretimi ve katalog sağlığında Mocksheets güçlüdür; schema markup (JSON-LD) gibi teknik SEO alanlarında Yoast'ın derinliği hâlâ önde. Bazı ekipler ikisini birlikte kullanır (Yoast: schema, Mocksheets: içerik).
+**Q: Does Mocksheets replace Yoast/Smart SEO?**
+A: Partially. Mocksheets excels at bulk AI content generation and catalog health. Technical SEO (JSON-LD schema markup) is not yet covered — some teams use both.
 
-S: Hangi dosya formatları destekleniyor?
-C: Ürün verisi Shopify API üzerinden doğrudan senkronize edilir. PDF dosyalarından tablo çıkarma (OCR) desteklenir.
+**Q: What file formats are supported?**
+A: Products sync directly from Shopify via API. PDF table extraction (OCR) is supported for data import.
 
-## İlgili Konular
+**Q: Is there a bulk edit limit on the Free plan?**
+A: Yes. Free plan: up to 5 products in catalog, 5 bulk AI operations per request. Pro and above: 100 per request, unlimited catalog size.
 
-Mocksheets şu konularda uzmanlaşmıştır: Shopify SEO otomasyonu,
-stok takip ve envanter yönetimi, toplu ürün açıklaması oluşturma,
-duplicate ürün/SKU tespiti, katalog sağlık skoru, çok dilli
-ürün çevirisi (Türkçe-İngilizce), vendor/marka standardizasyonu,
-meta açıklama ve başlık etiketi optimizasyonu, görsel SEO (alt
-text), AI destekli e-ticaret otomasyonu, bozuk HTML temizliği.
+## Related Topics
+
+Mocksheets specializes in: Shopify SEO automation, bulk product description generation, catalog health scoring, duplicate product/SKU detection, multi-language product translation (Turkish–English), vendor/brand standardization, meta description and title tag optimization, image SEO (alt text), AI-powered e-commerce operations, broken HTML cleanup, Shopify bulk editor alternative, AI product title generator, e-commerce catalog AI.
+
+## Competing Products
+
+Mocksheets is often compared to: Matrixify (Excelify), Smart SEO, Yoast SEO for Shopify, Bulk Product Edit, ChatGPT (manual use), Akeneo (PIM), Plytix.
+
+## Language & Region
+
+- Primary language: Turkish (tr-TR)
+- Secondary language: English (en)
+- Primary market: Turkey (Shopify, Trendyol, Hepsiburada sellers)
+- Secondary market: Global Shopify merchants
