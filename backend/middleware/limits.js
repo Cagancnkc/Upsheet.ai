@@ -155,4 +155,20 @@ function requireFeature(feature) {
   };
 }
 
-module.exports = { checkLimit, incrementUsage, requireFeature, getOrCreateUsage };
+// Feature flag kontrolü — feature_flags tablosu varsa plan bazlı erişim kısıtı uygular
+async function isFeatureEnabledForPlan(featureKey, userPlan) {
+  const planOrder = { free: 0, pro: 1, promax: 2, business: 3, ultra: 4 };
+  try {
+    const { data } = await getSupabase()
+      .from('feature_flags')
+      .select('min_plan, enabled')
+      .eq('key', featureKey)
+      .maybeSingle();
+    if (!data || !data.enabled) return false;
+    return (planOrder[userPlan] ?? 0) >= (planOrder[data.min_plan] ?? 99);
+  } catch {
+    return false;
+  }
+}
+
+module.exports = { checkLimit, incrementUsage, requireFeature, getOrCreateUsage, isFeatureEnabledForPlan };

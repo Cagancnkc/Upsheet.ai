@@ -260,7 +260,7 @@ router.get('/data', requireAuth, async (req, res) => {
 });
 
 // ─── GET /api/shopify/sync ────────────────────────────────────────────────────
-router.get('/sync', requireAuth, async (req, res) => {
+router.get('/sync', requireAuth, checkLimit, async (req, res) => {
   const { data: conn, error: connErr } = await getSupabase()
     .from('shopify_connections')
     .select('shop_domain, access_token')
@@ -274,6 +274,29 @@ router.get('/sync', requireAuth, async (req, res) => {
 
   const headers = { 'X-Shopify-Access-Token': accessToken };
   const shop = conn.shop_domain;
+
+  // Catalog size limit check — fetch count before pulling all pages
+  const maxCatalog = req.plan?.max_catalog_size ?? null;
+  if (maxCatalog !== null) {
+    try {
+      const countRes = await fetch(`https://${shop}/admin/api/2024-01/products/count.json`, { headers });
+      if (countRes.ok) {
+        const { count } = await countRes.json();
+        if (count > maxCatalog) {
+          return res.status(402).json({
+            error: `Planınız en fazla ${maxCatalog} ürün katalog boyutunu destekler. Mağazanızda ${count} ürün var.`,
+            code: 'CATALOG_LIMIT_EXCEEDED',
+            limit: maxCatalog,
+            count,
+            plan: req.usage?.plan,
+            upgrade_url: '/pricing'
+          });
+        }
+      }
+    } catch (countErr) {
+      console.warn('[shopify/sync] ürün sayısı alınamadı, devam ediliyor:', countErr.message);
+    }
+  }
 
   try {
     const [productsAll, ordersAll] = await Promise.all([

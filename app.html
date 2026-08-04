@@ -761,7 +761,15 @@ async function syncShopifyData() {
       headers: { ...(await authHeaders()) }
     });
 
-    if (!response.ok) throw new Error('Sync failed');
+    if (!response.ok) {
+      if (response.status === 402) {
+        const err = await response.json().catch(() => ({}));
+        const goUpgrade = confirm((err.error || 'Katalog boyutu plan limitini aşıyor.') + '\n\nPlanınızı yükseltmek ister misiniz?');
+        if (goUpgrade) window.location.href = err.upgrade_url || '/pricing';
+        return;
+      }
+      throw new Error('Sync failed');
+    }
 
     const data = await response.json();
     catalogData = data;
@@ -3823,10 +3831,28 @@ async function runShopifyAiAnalysis(analysisType, productIdSubset = null) {
     toast('Analiz için önce Shopify\'dan ürün senkronize edin (Demo veri Shopify\'a bağlı değil)', 'info');
     return;
   }
-  toast('Shopify verisi Claude ile analiz ediliyor...', 'info');
   const productIds = productIdSubset
     ? linked.filter(p => productIdSubset.includes(p.shopify_product_id)).map(p => p.shopify_product_id)
     : linked.map(p => p.shopify_product_id);
+
+  // Frontend plan limit check — backend enforces too, this gives a better UX message
+  try {
+    const usageRes = await fetch(`${API_URL}/api/usage`, { headers: await authHeaders() });
+    if (usageRes.ok) {
+      const usage = await usageRes.json();
+      const bulkLimit = usage.limits?.max_bulk_size;
+      if (bulkLimit !== null && productIds.length > bulkLimit) {
+        const goUpgrade = confirm(
+          `Planınız tek seferde en fazla ${bulkLimit} ürün analiz edebiliyor.\n` +
+          `${productIds.length} ürün seçildi.\n\nPlanınızı yükseltmek ister misiniz?`
+        );
+        if (goUpgrade) window.location.href = '/pricing';
+        return;
+      }
+    }
+  } catch (_) { /* plan bilgisi alınamazsa backend enforce eder */ }
+
+  toast('Shopify verisi Claude ile analiz ediliyor...', 'info');
 
   try {
     const res = await fetch(`${API_URL}/api/shopify/ai-analyze`, {

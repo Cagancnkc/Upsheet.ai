@@ -646,7 +646,9 @@ app.get('/api/usage', async (req, res) => {
       ai_commands_per_day: plan.ai_commands_per_day === Infinity ? null : plan.ai_commands_per_day,
       ai_commands_per_month: plan.ai_commands_per_month === Infinity ? null : plan.ai_commands_per_month,
       max_rows: plan.max_rows,
-      max_file_size_mb: plan.max_file_size_mb
+      max_file_size_mb: plan.max_file_size_mb,
+      max_bulk_size: plan.max_bulk_size ?? null,
+      max_catalog_size: plan.max_catalog_size ?? null,
     },
     used: {
       today: usage.ai_commands_used_today,
