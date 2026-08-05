@@ -54,7 +54,7 @@
   --font-body: "Figtree", system-ui, sans-serif;
   font-family: var(--font-body); color: var(--text);
   min-height: 100%; display: flex; flex-direction: column;
-  align-items: center; justify-content: center; gap: 44px;
+  align-items: center; justify-content: center; gap: 28px;
   padding: 64px 24px; position: relative; background: var(--bg);
 }
 .ai-chat-page * { box-sizing: border-box; }
@@ -109,11 +109,11 @@
 .acp-message li { margin-bottom: 2px; }
 .acp-message h3, .acp-message h4 { margin: 10px 0 4px; font-size: 14px; font-weight: 600; }
 .acp-message p { margin: 0 0 6px; }
-.ai-chat-page .acp-stack { width: min(780px, 100%); display: flex; flex-direction: column; gap: 18px; }
+.ai-chat-page .acp-stack { width: min(780px, 100%); display: flex; flex-direction: column; gap: 12px; }
 .ai-chat-page .acp-bar { background: var(--bg); border-radius: 34px; padding: 6px; box-shadow: 0 12px 32px rgba(46,43,37,.22); }
 .ai-chat-page .acp-bar-inner {
   border: 1.5px solid var(--accent-200); border-radius: 30px;
-  padding: 20px 22px 14px; display: flex; flex-direction: column; gap: 14px;
+  padding: 14px 18px 10px; display: flex; flex-direction: column; gap: 10px;
 }
 .ai-chat-page .acp-files { display: flex; flex-wrap: wrap; gap: 8px; }
 .ai-chat-page .acp-file {
@@ -130,8 +130,8 @@
 .ai-chat-page .acp-file button:hover { background: var(--sage-400); }
 .ai-chat-page textarea {
   width: 100%; resize: none; border: 0; outline: none; background: transparent;
-  font-family: var(--font-body); font-size: 19px; line-height: 1.55;
-  color: var(--text); min-height: 62px; padding: 0;
+  font-family: var(--font-body); font-size: 16px; line-height: 1.55;
+  color: var(--text); min-height: 48px; padding: 0;
 }
 .ai-chat-page textarea::placeholder { color: #a29a90; }
 .ai-chat-page .acp-tools { display: flex; align-items: center; gap: 10px; }
@@ -151,7 +151,7 @@
 .ai-chat-page .acp-spacer { flex: 1; }
 .ai-chat-page .acp-count { font-size: 12px; color: #9b938a; font-variant-numeric: tabular-nums; }
 .ai-chat-page .acp-send {
-  width: 48px; height: 48px; border-radius: 999px; border: 0; cursor: pointer;
+  width: 42px; height: 42px; border-radius: 999px; border: 0; cursor: pointer;
   display: grid; place-items: center; background: var(--send); color: #fff;
   box-shadow: 0 3px 10px rgba(46,43,37,.16); transition: transform 140ms ease;
 }
