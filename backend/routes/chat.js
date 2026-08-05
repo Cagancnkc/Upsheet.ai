@@ -49,6 +49,10 @@ Kullanıcı Excel, tablo dosyası veya XLSX isterse, önce açıklama yaz, sonra
 Kullanıcı satış tahmini, öngörü, forecast veya projeksiyon isterse, önce açıklama yaz, sonra:
 <ACTION>{"type":"forecast","labels":["Ağu 2026","Eyl 2026","Eki 2026"],"values":[15000,18000,21000],"metric":"Tahmini Satış (₺)","trend":"up","note":"Tahmin genel e-ticaret büyüme trendlerine dayanmaktadır."}</ACTION>
 
+Kullanıcı bir veya birden fazla Shopify ürününü DEĞİŞTİRMEK isterse (fiyat, başlık, açıklama, etiket, durum, marka, SEO vb.), önce kısa Türkçe açıklama yaz, sonra:
+<ACTION>{"type":"shopify","changes":[{"product_id":12345678,"variant_id":null,"product_title":"Ürün Adı","field":"title","old_value":"Eski Başlık","new_value":"Yeni Başlık"}]}</ACTION>
+Desteklenen field değerleri: "title" | "body_html" | "tags" | "vendor" | "product_type" | "status" | "price" | "compare_at_price" | "seo_title" | "seo_description". Fiyat değişikliklerinde variant_id'yi ürün kataloğundan al. Birden fazla ürün/alan varsa hepsini tek changes dizisine ekle. Katalogdaki ürünlerin id ve variant_id alanlarını kullan — uydurmadan.
+
 Kural: Her zaman önce açıklayıcı Türkçe metin, <ACTION> bloğu en sona. JSON içinde çift tırnak kullan, tek tırnak kullanma.`;
 
 const DEEP_SYSTEM_PROMPT = `${SYSTEM_PROMPT}
@@ -81,17 +85,19 @@ function buildProductBlock(products) {
   if (!Array.isArray(products) || products.length === 0) return '';
   const rows = products.map(p => {
     const parts = [`"${String(p.title || '').slice(0, 60)}"`];
-    if (p.sku) parts.push(`SKU: ${p.sku}`);
+    if (p.id) parts.push(`product_id:${p.id}`);
+    if (p.variant_id) parts.push(`variant_id:${p.variant_id}`);
+    if (p.sku) parts.push(`SKU:${p.sku}`);
     if (p.price) parts.push(`₺${p.price}`);
-    if (p.compare_at_price) parts.push(`liste: ₺${p.compare_at_price}`);
+    if (p.compare_at_price) parts.push(`liste:₺${p.compare_at_price}`);
     if (p.status) parts.push(p.status);
-    if (p.inventory != null) parts.push(`stok: ${p.inventory}`);
-    if (p.vendor) parts.push(`marka: ${p.vendor}`);
-    if (p.type) parts.push(`tür: ${p.type}`);
-    if (p.tags) parts.push(`etiket: ${p.tags.slice(0, 60)}`);
+    if (p.inventory != null) parts.push(`stok:${p.inventory}`);
+    if (p.vendor) parts.push(`marka:${p.vendor}`);
+    if (p.type) parts.push(`tür:${p.type}`);
+    if (p.tags) parts.push(`etiket:${p.tags.slice(0, 60)}`);
     return parts.join(' | ');
   });
-  return `## KULLANICININ SHOPIFY KATALOĞU (${products.length} ürün)\nAşağıdaki gerçek ürün listesini kullan — fiyat, stok, SKU sorularını buradan yanıtla:\n${rows.join('\n')}`;
+  return `## KULLANICININ SHOPIFY KATALOĞU (${products.length} ürün)\nAşağıdaki gerçek ürün listesini kullan — fiyat, stok, SKU sorularını buradan yanıtla. Değişiklik isteğinde product_id ve variant_id alanlarını ACTION bloğuna ekle:\n${rows.join('\n')}`;
 }
 
 function deriveTitle(msg) {

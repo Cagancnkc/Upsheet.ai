@@ -1237,6 +1237,14 @@ function renderAIChatPage() {
       const rows = (action.labels||[]).map((l,i)=>`<tr><td>${escapeHtml(l)}</td><td>${Number(action.values?.[i]||0).toLocaleString('tr-TR')}</td></tr>`).join('');
       return `<div class="action-card"><h4>${icon} ${escapeHtml(action.metric||'Satış Tahmini')}</h4><table class="action-table"><tr><th>Dönem</th><th>Değer</th></tr>${rows}</table>${action.note?`<p class="action-note">${escapeHtml(action.note)}</p>`:''}</div>`;
     }
+    if (action.type === 'shopify') {
+      const changes = Array.isArray(action.changes) ? action.changes : [];
+      if (!changes.length) return null;
+      const fieldLabel = { title:'Başlık', body_html:'Açıklama', tags:'Etiketler', vendor:'Marka', product_type:'Ürün Tipi', status:'Durum', price:'Fiyat', compare_at_price:'Liste Fiyatı', seo_title:'SEO Başlığı', seo_description:'SEO Açıklaması' };
+      const rows = changes.map(c => `<tr><td style="font-weight:600">${escapeHtml(c.product_title||'')}</td><td>${escapeHtml(fieldLabel[c.field]||c.field)}</td><td style="color:#dc2626;text-decoration:line-through">${escapeHtml(String(c.old_value||''))}</td><td style="color:#16a34a">${escapeHtml(String(c.new_value||''))}</td></tr>`).join('');
+      const actionId = 'sfact_' + Math.random().toString(36).slice(2, 8);
+      return `<div class="action-card" id="${actionId}"><h4>🛍️ Shopify Değişiklikleri (${changes.length} alan)</h4><table class="action-table"><tr><th>Ürün</th><th>Alan</th><th>Eski</th><th>Yeni</th></tr>${rows}</table><button class="action-btn" onclick='window._applyShopifyChanges(${safeJSON(changes)}, "${actionId}")'>Shopify\'a Uygula</button></div>`;
+    }
     return null;
   };
 
@@ -1254,6 +1262,36 @@ function renderAIChatPage() {
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, action.sheetName||'Sayfa1');
     XLSX.writeFile(wb, action.filename||'tablo.xlsx');
+  };
+
+  window._applyShopifyChanges = async (changes, cardId) => {
+    const card = cardId ? document.getElementById(cardId) : null;
+    const btn = card ? card.querySelector('.action-btn') : null;
+    if (btn) { btn.disabled = true; btn.textContent = 'Uygulanıyor...'; }
+    try {
+      const res = await fetch(`${API_URL}/api/shopify/push`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...(await authHeaders()) },
+        body: JSON.stringify({ changes, confirmed: true })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        if (data.error === 'onay_gerekli') { if (btn) { btn.disabled = false; btn.textContent = 'Shopify\'a Uygula'; } return; }
+        throw new Error(data.error || `Hata ${res.status}`);
+      }
+      if (data.scope_missing) {
+        if (btn) { btn.textContent = '⚠️ Yazma izni eksik'; btn.disabled = false; }
+        if (typeof toast === 'function') toast('Shopify write_products izni gerekli. Mağazayı yeniden bağlayın.', 'error');
+        return;
+      }
+      const ok = data.pushed || 0;
+      const err = (data.errors || []).length;
+      if (btn) { btn.textContent = err ? `✓ ${ok} uygulandı · ${err} hata` : `✓ ${ok} değişiklik uygulandı`; }
+      if (typeof toast === 'function') toast(err ? `${ok} uygulandı, ${err} hata` : `${ok} değişiklik Shopify'a aktarıldı`, err ? 'error' : 'success');
+    } catch (e) {
+      if (btn) { btn.disabled = false; btn.textContent = 'Shopify\'a Uygula'; }
+      if (typeof toast === 'function') toast('Hata: ' + e.message, 'error');
+    }
   };
 
   const shopifySvgHtml = '<svg width="14" height="14" viewBox="0 0 256 292" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill="#fff" d="M223.774 57.34c-.201-1.46-1.48-2.268-2.537-2.357-1.055-.088-23.383-1.743-23.383-1.743s-15.507-15.395-17.209-17.099c-1.703-1.703-5.029-1.185-6.32-.805-.19.056-3.388 1.043-8.678 2.68-5.18-14.906-14.322-28.604-30.405-28.604-.444 0-.901.018-1.358.044C129.31 3.407 123.644.685 118.75.685c-37.46 0-55.348 46.835-60.956 70.635-14.548 4.503-24.883 7.71-26.202 8.124-8.123 2.548-8.38 2.805-9.448 10.462C21.34 95.71.203 259.406.203 259.406l165.024 30.94 89.442-19.34S223.973 58.803 223.774 57.34zM145.669 79.32l-14.4 4.457c.006-1.005.011-1.994.011-3.075 0-9.415-1.306-17-3.4-23.008 8.418 1.056 14.028 10.626 17.789 21.626zm-28.712-19.712c2.34 5.865 3.86 14.28 3.86 25.634 0 .58-.006 1.11-.011 1.65-9.373 2.902-19.557 6.05-29.762 9.208 5.732-22.115 16.474-32.795 25.913-36.492zm-11.564-10.939c1.672 0 3.357.567 4.968 1.673-12.404 5.834-25.7 20.535-31.316 49.9l-23.52 7.284C61.897 83.049 76.973 48.669 105.393 48.669z"/><path fill="#fff" d="M221.237 54.983c-1.055-.088-23.383-1.743-23.383-1.743s-15.507-15.395-17.209-17.099c-.637-.634-1.496-.959-2.394-1.099l-12.527 256.233 89.442-19.34S223.972 58.803 223.774 57.34c-.201-1.46-1.48-2.268-2.537-2.357"/><path fill="#95BF47" d="M147.183 108.09l-11.09 32.928s-9.582-5.13-21.312-5.13c-17.187 0-18.056 10.72-18.056 13.418 0 14.735 38.68 20.376 38.68 55.13 0 27.335-17.34 44.938-40.667 44.938-27.99 0-42.35-17.55-42.35-17.55l7.55-24.83s14.694 12.615 27.111 12.615c8.11 0 11.404-6.36 11.404-11.005 0-19.22-31.72-20.096-31.72-51.879 0-26.75 19.263-52.688 58.056-52.688 14.907 0 22.396 4.053 22.396 4.053z"/></svg>';
@@ -1523,6 +1561,8 @@ function renderAIChatPage() {
     try {
       const _sp = (typeof catalogData !== 'undefined' && Array.isArray(catalogData.products))
         ? catalogData.products.slice(0, 80).map(p => ({
+            id: p.shopify_product_id || null,
+            variant_id: p.shopify_variant_id || null,
             title: p.title,
             sku: p.sku || '',
             price: p.price || '',
