@@ -5183,43 +5183,114 @@ if (_origSetView) {
   });
 })();
 
-// ── Bildirimler (backend'den, günde en fazla 5) ──────────────────────────
-async function loadNotifications() {
-  try {
-    const h = await authHeaders();
-    const r = await fetch(API_URL + '/api/shopify/notifications', { headers: h });
-    const data = await r.json();
-    const badge = document.getElementById('notif-badge');
-    if (badge) badge.style.display = data.unreadCount > 0 ? 'block' : 'none';
-    const list = document.getElementById('notif-list');
-    if (!list) return;
-    if (!data.notifications || data.notifications.length === 0) {
-      list.innerHTML = '<p style="font-size:12px;color:#9ca3af;padding:12px;text-align:center;">Bildirim yok</p>';
+// ── Uygulama İçi Bildirim Sistemi (localStorage, günde 5 bildirim) ───────
+const InAppNotifications = (function() {
+  var POOL = [
+    { id:'tip1', type:'tip',         title:'İpucu: AI Chat\'i Keşfedin',       body:'AI Chat bölümünde Türkçe soru sorarak ürün analizleri yapabilirsiniz.' },
+    { id:'tip2', type:'tip',         title:'İpucu: Toplu Güncelleme',          body:'Katalog bölümünde birden fazla ürünü aynı anda güncelleyebilirsiniz.' },
+    { id:'tip3', type:'tip',         title:'İpucu: KDV Hesaplama',             body:'AI\'ya "KDV dahil fiyatları göster" yazarak otomatik vergi hesaplama yapabilirsiniz.' },
+    { id:'tip4', type:'tip',         title:'İpucu: Filtreler',                 body:'Geçmiş işlemler bölümünde tarih filtresiyle işlemlerinizi hızlıca bulabilirsiniz.' },
+    { id:'tip5', type:'tip',         title:'İpucu: Klavye Kısayolları',        body:'Ctrl+Z ile son işlemi geri alabilir, hızlı navigasyon için kısayolları kullanabilirsiniz.' },
+    { id:'rem1', type:'reminder',    title:'Hatırlatma: Ürün Stoku',           body:'Stok durumunu günlük kontrol etmek satış kayıplarını önler.' },
+    { id:'rem2', type:'reminder',    title:'Hatırlatma: Fiyat Analizi',        body:'Rakip fiyatlarını analiz etmek için AI Chat\'i kullanabilirsiniz.' },
+    { id:'rem3', type:'reminder',    title:'Hatırlatma: Katalog Kontrolü',     body:'Katalog Kontrolü bölümünde eksik ürün bilgilerini tamamlayın.' },
+    { id:'rem4', type:'reminder',    title:'Hatırlatma: Haftalık Rapor',       body:'Haftalık satış raporunuzu AI ile oluşturabilirsiniz.' },
+    { id:'rem5', type:'reminder',    title:'Hatırlatma: Senkronizasyon',       body:'Shopify mağazanızla senkronizasyonu düzenli yapın, veriler güncel kalsın.' },
+    { id:'ach1', type:'achievement', title:'Başarı: İlk AI Analizi!',          body:'AI kullanarak ürün analizinizi tamamladınız. Harika başlangıç!' },
+    { id:'ach2', type:'achievement', title:'Başarı: Düzenli Kullanıcı',        body:'Uygulamayı düzenli kullandığınız için teşekkürler, verimlilik artıyor!' },
+    { id:'ach3', type:'achievement', title:'Başarı: Katalog Güncel!',          body:'Ürün kataloğunuz eksiksiz görünüyor, tebrikler.' },
+    { id:'ach4', type:'achievement', title:'Başarı: Veri Analisti',            body:'Bu hafta birçok AI sorgusu yaptınız, içgörüleriniz derinleşiyor.' },
+    { id:'ach5', type:'achievement', title:'Başarı: Hızlı İşlem!',            body:'Bugün birden fazla toplu işlem gerçekleştirdiniz, verimlilik rekorunda!' },
+    { id:'upd1', type:'update',      title:'Yenilik: Gelişmiş AI Önerileri',  body:'AI artık ürün açıklamalarınız için kişiselleştirilmiş öneriler sunuyor.' },
+    { id:'upd2', type:'update',      title:'Yenilik: Toplu Export',            body:'Katalog verilerinizi Excel formatında tek tıkla dışa aktarabilirsiniz.' },
+    { id:'upd3', type:'update',      title:'Yenilik: Gelişmiş Filtreler',      body:'Ürünlerinizi birden fazla kritere göre aynı anda filtreleyebilirsiniz.' },
+    { id:'upd4', type:'update',      title:'Yenilik: Otomatik Yedekleme',     body:'Katalog verileriniz artık otomatik olarak yedekleniyor.' },
+    { id:'upd5', type:'update',      title:'Yenilik: Hızlı Arama',            body:'Geliştirilmiş arama ile binlerce ürün arasında anında sonuç alın.' },
+    { id:'ins1', type:'insight',     title:'İçgörü: Ürün Açıklamaları',       body:'Detaylı ürün açıklamaları dönüşüm oranını önemli ölçüde artırır.' },
+    { id:'ins2', type:'insight',     title:'İçgörü: KDV Optimizasyonu',       body:'KDV muafiyetli ürünlerinizi düzenli gözden geçirerek tasarruf edin.' },
+    { id:'ins3', type:'insight',     title:'İçgörü: Stok Stratejisi',         body:'En çok satan ürünlerinizin stok seviyesini proaktif tutmanızı öneririz.' },
+    { id:'ins4', type:'insight',     title:'İçgörü: Fiyatlandırma',           body:'Mevsimsel fiyat güncellemeleri satışlarınızı önemli ölçüde etkileyebilir.' },
+    { id:'ins5', type:'insight',     title:'İçgörü: Kategori Analizi',        body:'En kârlı ürün kategorilerinizi tespit etmek için AI Chat\'i kullanın.' },
+  ];
+  var TYPE_COLORS = { tip:'#3b82f6', reminder:'#f59e0b', achievement:'#16a34a', update:'#8b5cf6', insight:'#f97316' };
+  var TYPE_ICONS  = { tip:'ti-bulb', reminder:'ti-bell', achievement:'ti-trophy', update:'ti-sparkles', insight:'ti-chart-bar' };
+  var SLOTS = ['08:00','10:30','13:00','16:00','19:30'];
+
+  function todayKey() { return new Date().toISOString().slice(0, 10); }
+  function dayIndex() { return Math.floor((new Date() - new Date('2024-01-01')) / 86400000); }
+
+  function todayNotifications() {
+    var di = dayIndex();
+    var now = new Date();
+    var nowMin = now.getHours() * 60 + now.getMinutes();
+    return SLOTS.map(function(slot, i) {
+      var parts = slot.split(':');
+      var slotMin = parseInt(parts[0]) * 60 + parseInt(parts[1]);
+      var n = POOL[(di * 5 + i) % POOL.length];
+      return { id: n.id, type: n.type, title: n.title, body: n.body, slot: slot, available: nowMin >= slotMin };
+    });
+  }
+
+  function readIds() {
+    try { return JSON.parse(localStorage.getItem('notif_read_' + todayKey()) || '[]'); } catch(e) { return []; }
+  }
+
+  function markRead() {
+    var ids = todayNotifications().filter(function(n) { return n.available; }).map(function(n) { return n.id; });
+    localStorage.setItem('notif_read_' + todayKey(), JSON.stringify(ids));
+  }
+
+  function unreadCount() {
+    var avail = todayNotifications().filter(function(n) { return n.available; });
+    var read = readIds();
+    return avail.filter(function(n) { return read.indexOf(n.id) === -1; }).length;
+  }
+
+  function render(listEl) {
+    var notifs = todayNotifications().filter(function(n) { return n.available; }).reverse();
+    var read = readIds();
+    if (!notifs.length) {
+      listEl.innerHTML = '<p style="font-size:12px;color:#9ca3af;padding:16px;text-align:center;">Henüz bildirim yok</p>';
       return;
     }
-    list.innerHTML = data.notifications.map(function(n) {
-      const date = new Date(n.created_at).toLocaleDateString('tr-TR');
-      return '<div style="padding:10px 12px;border-radius:8px;' + (n.is_read ? '' : 'background:#f0fdf4;') + '">' +
+    listEl.innerHTML = notifs.map(function(n) {
+      var isRead = read.indexOf(n.id) !== -1;
+      var color = TYPE_COLORS[n.type] || '#6b7280';
+      var icon  = TYPE_ICONS[n.type]  || 'ti-bell';
+      return '<div style="display:flex;gap:10px;padding:10px 12px;border-radius:10px;margin-bottom:4px;' +
+        (isRead ? 'background:transparent;' : 'background:#f0fdf4;') + '">' +
+        '<div style="width:28px;height:28px;border-radius:8px;background:' + color + '1a;display:flex;align-items:center;justify-content:center;flex-shrink:0;">' +
+        '<i class="ti ' + icon + '" style="font-size:13px;color:' + color + ';"></i></div>' +
+        '<div style="min-width:0;">' +
         '<p style="font-size:12px;font-weight:600;color:#111827;margin:0 0 2px;">' + n.title + '</p>' +
-        '<p style="font-size:11px;color:#6b7280;margin:0 0 2px;">' + (n.body || '') + '</p>' +
-        '<p style="font-size:10px;color:#9ca3af;margin:0;">' + date + '</p></div>';
+        '<p style="font-size:11px;color:#6b7280;margin:0 0 2px;line-height:1.4;">' + n.body + '</p>' +
+        '<p style="font-size:10px;color:#9ca3af;margin:0;">' + n.slot + '</p></div></div>';
     }).join('');
-  } catch(e) { console.warn('Bildirimler yüklenemedi:', e); }
+  }
+
+  return { unreadCount: unreadCount, markRead: markRead, render: render };
+})();
+
+function loadNotifications() {
+  var badge = document.getElementById('notif-badge');
+  var count = InAppNotifications.unreadCount();
+  if (badge) badge.style.display = count > 0 ? 'block' : 'none';
+  var list = document.getElementById('notif-list');
+  if (list) InAppNotifications.render(list);
 }
 
 document.addEventListener('DOMContentLoaded', function() {
   // Bildirim butonu
-  document.getElementById('header-notif-btn')?.addEventListener('click', async function(e) {
+  document.getElementById('header-notif-btn')?.addEventListener('click', function(e) {
     e.stopPropagation();
-    const dropdown = document.getElementById('notif-dropdown');
-    const isOpen = dropdown.style.display === 'block';
+    var dropdown = document.getElementById('notif-dropdown');
+    var isOpen = dropdown.style.display === 'block';
     document.getElementById('profile-dropdown').style.display = 'none';
     dropdown.style.display = isOpen ? 'none' : 'block';
     if (!isOpen) {
-      await loadNotifications();
-      const h = await authHeaders();
-      fetch(API_URL + '/api/shopify/notifications/mark-read', { method: 'POST', headers: h }).catch(() => {});
-      const badge = document.getElementById('notif-badge');
+      loadNotifications();
+      InAppNotifications.markRead();
+      var badge = document.getElementById('notif-badge');
       if (badge) badge.style.display = 'none';
     }
   });
@@ -5259,6 +5330,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Sayfa yüklenince badge güncelle
   loadNotifications();
+  // Her 5 dakikada bir yeni zaman dilimi geçip geçmediğini kontrol et
+  setInterval(loadNotifications, 5 * 60 * 1000);
 });
 
 // ── Özel sütun ekle (sheet tabs) ─────────────────────────────────────────
