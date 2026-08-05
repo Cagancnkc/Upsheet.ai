@@ -1222,13 +1222,13 @@ function renderAIChatPage() {
     if (action.type === 'slide') {
       const first = action.slides?.[0] || {};
       const preview = `<div class="action-slide-preview"><h3>${escapeHtml(first.title||'')}</h3>${first.subtitle?`<p>${escapeHtml(first.subtitle)}</p>`:''}<ul>${(first.bullets||[]).slice(0,3).map(b=>`<li>${escapeHtml(b)}</li>`).join('')}</ul></div>`;
-      return `<div class="action-card">${preview}<button class="action-btn" onclick="window._downloadSlide(${safeJSON(action)})">⬇ Slayt İndir (.html)</button>${action.slides?.length>1?`<span style="font-size:11px;color:var(--muted);margin-left:8px">${action.slides.length} slayt</span>`:''}</div>`;
+      return `<div class="action-card">${preview}<button class="action-btn" onclick='window._downloadSlide(${safeJSON(action)})'>⬇ Slayt İndir (.html)</button>${action.slides?.length>1?`<span style="font-size:11px;color:var(--muted);margin-left:8px">${action.slides.length} slayt</span>`:''}</div>`;
     }
     if (action.type === 'excel') {
       const cols = (action.headers||[]).slice(0,5);
       const rows = (action.rows||[]).slice(0,4);
       const tbl = `<table class="action-table"><tr>${cols.map(h=>`<th>${escapeHtml(String(h))}</th>`).join('')}</tr>${rows.map(r=>`<tr>${cols.map((_,i)=>`<td>${escapeHtml(String(r[i]??''))}</td>`).join('')}</tr>`).join('')}</table>`;
-      return `<div class="action-card">${tbl}<button class="action-btn" onclick="window._downloadExcel(${safeJSON(action)})">⬇ Excel İndir (.xlsx)</button></div>`;
+      return `<div class="action-card">${tbl}<button class="action-btn" onclick='window._downloadExcel(${safeJSON(action)})'>⬇ Excel İndir (.xlsx)</button></div>`;
     }
     if (action.type === 'forecast') {
       const icon = action.trend==='up'?'📈':action.trend==='down'?'📉':'➡️';
