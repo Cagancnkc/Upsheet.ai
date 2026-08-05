@@ -37,7 +37,19 @@ const SYSTEM_PROMPT = `Sen Mocksheets AI Copilot'sun — Türkçe konuşan, Shop
 ## FORMAT
 - Kısa cevaplar için düz metin, uzunlar için markdown başlık/liste.
 - Emoji minimum — sadece durum işaretleri için (✓, ⚠️, ❌).
-- Türkçe karakterleri doğru kullan (ç, ğ, ı, ö, ş, ü).`;
+- Türkçe karakterleri doğru kullan (ç, ğ, ı, ö, ş, ü).
+
+## ÖZEL EYLEM ÇIKTILARI
+Kullanıcı slayt, sunum, PowerPoint veya presentation isterse, önce Türkçe açıklama yaz, sonra cevabının en sonuna şu bloğu ekle:
+<ACTION>{"type":"slide","slides":[{"title":"Başlık","subtitle":"Alt başlık","bullets":["Madde 1","Madde 2"]}],"filename":"sunum.html"}</ACTION>
+
+Kullanıcı Excel, tablo dosyası veya XLSX isterse, önce açıklama yaz, sonra:
+<ACTION>{"type":"excel","headers":["Sütun1","Sütun2","Sütun3"],"rows":[["değer1","değer2","değer3"]],"sheetName":"Sayfa1","filename":"tablo.xlsx"}</ACTION>
+
+Kullanıcı satış tahmini, öngörü, forecast veya projeksiyon isterse, önce açıklama yaz, sonra:
+<ACTION>{"type":"forecast","labels":["Ağu 2026","Eyl 2026","Eki 2026"],"values":[15000,18000,21000],"metric":"Tahmini Satış (₺)","trend":"up","note":"Tahmin genel e-ticaret büyüme trendlerine dayanmaktadır."}</ACTION>
+
+Kural: Her zaman önce açıklayıcı Türkçe metin, <ACTION> bloğu en sona. JSON içinde çift tırnak kullan, tek tırnak kullanma.`;
 
 const DEEP_SYSTEM_PROMPT = `${SYSTEM_PROMPT}
 
@@ -244,11 +256,21 @@ router.post('/message', checkLimit, upload.array('files', 5), async (req, res) =
       ]
     });
 
-    const reply = response.content
+    const rawReply = response.content
       .filter(b => b.type === 'text')
       .map(b => b.text)
       .join('\n')
       .trim() || 'Üzgünüm, cevap üretemedim.';
+
+    // ACTION bloğunu parse et
+    let parsedAction = null;
+    const actionMatch = rawReply.match(/<ACTION>([\s\S]*?)<\/ACTION>/);
+    const reply = actionMatch
+      ? rawReply.replace(/<ACTION>[\s\S]*?<\/ACTION>/, '').trim()
+      : rawReply;
+    if (actionMatch) {
+      try { parsedAction = JSON.parse(actionMatch[1]); } catch (e) { /* ignore */ }
+    }
 
     // Persist user + assistant messages, bump session
     if (userId && sessionId) {
@@ -269,6 +291,7 @@ router.post('/message', checkLimit, upload.array('files', 5), async (req, res) =
 
     res.json({
       reply,
+      action: parsedAction,
       sessionId,
       ragUsed,
       ragConfidence: ragResult.confidence,

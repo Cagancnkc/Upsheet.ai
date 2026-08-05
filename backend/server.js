@@ -833,6 +833,21 @@ app.listen(PORT, '0.0.0.0', () => {
     console.log('[email-job] Saatlik email job başlatıldı');
   } catch (e) { console.error('[email-job] Init error:', e.message); }
 
+  // Gece yarısı: AI limitleri sıfırla (00:00 İstanbul)
+  try {
+    const cronMidnight = require('node-cron');
+    cronMidnight.schedule('0 0 * * *', async () => {
+      const today = new Date().toISOString().slice(0, 10);
+      const sb = _createSbClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
+      await sb.from('user_usage')
+        .update({ ai_commands_used_today: 0, last_command_date: today })
+        .lt('last_command_date', today);
+      const cutoff = new Date(Date.now() - 90 * 86400000).toISOString().slice(0, 10);
+      await sb.from('prompt_bar_usage').delete().lt('day_key', cutoff);
+      console.log('[cron-midnight] AI limitleri sıfırlandı');
+    }, { timezone: 'Europe/Istanbul' });
+  } catch (e) { console.error('[cron-midnight] Init error:', e.message); }
+
   // Loops — günlük re-engagement kontrolleri (08:30 İstanbul)
   try {
     const cron2 = require('node-cron');

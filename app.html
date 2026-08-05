@@ -91,6 +91,24 @@
 @media (prefers-reduced-motion: reduce) {
   .ai-chat-page .acp-ticker-track { animation: none; }
 }
+.action-card { background: var(--bg); border: 1.5px solid var(--accent-200); border-radius: 10px; padding: 14px 16px; margin-top: 10px; }
+.action-card h4 { margin: 0 0 10px; font-size: 14px; font-weight: 600; }
+.action-table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 6px 0; }
+.action-table th, .action-table td { border: 1px solid var(--accent-200); padding: 5px 10px; text-align: left; }
+.action-table th { background: var(--accent-50,#f3f0ff); font-weight: 600; }
+.action-btn { display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; padding: 7px 14px; background: var(--accent); color: #fff; border: none; border-radius: 20px; cursor: pointer; font-size: 13px; font-weight: 500; }
+.action-btn:hover { opacity: .85; }
+.action-slide-preview { background: #1a1a2e; color: white; border-radius: 8px; padding: 20px 24px; margin-bottom: 10px; }
+.action-slide-preview h3 { margin: 0 0 6px; font-size: 18px; }
+.action-slide-preview p { margin: 0 0 8px; font-size: 13px; opacity: .75; }
+.action-slide-preview ul { margin: 0; padding-left: 18px; font-size: 13px; line-height: 1.7; }
+.action-note { font-size: 12px; color: var(--muted); margin: 8px 0 0; }
+.acp-message pre { background: var(--accent-50,#f3f0ff); border-radius: 6px; padding: 10px 14px; overflow-x: auto; font-size: 12px; margin: 6px 0; }
+.acp-message code { background: var(--accent-50,#f3f0ff); border-radius: 4px; padding: 1px 5px; font-size: 12px; }
+.acp-message ul, .acp-message ol { padding-left: 18px; margin: 4px 0; }
+.acp-message li { margin-bottom: 2px; }
+.acp-message h3, .acp-message h4 { margin: 10px 0 4px; font-size: 14px; font-weight: 600; }
+.acp-message p { margin: 0 0 6px; }
 .ai-chat-page .acp-stack { width: min(780px, 100%); display: flex; flex-direction: column; gap: 18px; }
 .ai-chat-page .acp-bar { background: var(--bg); border-radius: 34px; padding: 6px; box-shadow: 0 12px 32px rgba(46,43,37,.22); }
 .ai-chat-page .acp-bar-inner {
@@ -1130,8 +1148,9 @@ function renderAIChatPage() {
         <div class="acp-chips">
           <button class="acp-chip" type="button">Ürün açıklamalarını SEO'ya göre yaz</button>
           <button class="acp-chip" type="button">Stok tablosunu Shopify'a hazırla</button>
-          <button class="acp-chip" type="button">Sipariş verilerini özet rapora çevir</button>
-          <button class="acp-chip" type="button">Fiyat listesini toplu güncelle</button>
+          <button class="acp-chip" type="button">📊 Önümüzdeki 3 ay satış tahmini yap</button>
+          <button class="acp-chip" type="button">📋 Ürün listemi Excel tablosuna dönüştür</button>
+          <button class="acp-chip" type="button">🎯 Satış performansım için sunum slaytı hazırla</button>
         </div>
       </div>
     </div>
@@ -1158,6 +1177,83 @@ function renderAIChatPage() {
 
   const escapeHtml = (s) => String(s).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 
+  const renderMarkdown = (text) => {
+    const s = String(text || '');
+    const esc = (t) => t.replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+    const lines = s.split('\n');
+    let html = '';
+    let inCode = false;
+    let codeBuffer = '';
+    let inList = false;
+    for (let i = 0; i < lines.length; i++) {
+      let line = lines[i];
+      if (line.startsWith('```')) {
+        if (inCode) { html += '<pre><code>' + esc(codeBuffer) + '</code></pre>'; codeBuffer = ''; inCode = false; }
+        else { if (inList) { html += '</ul>'; inList = false; } inCode = true; }
+        continue;
+      }
+      if (inCode) { codeBuffer += (codeBuffer ? '\n' : '') + line; continue; }
+      const isBullet = /^[-*] /.test(line);
+      const isNum = /^\d+\. /.test(line);
+      const isH3 = /^### /.test(line);
+      const isH2 = /^## /.test(line);
+      const isH1 = /^# /.test(line);
+      if (!isBullet && !isNum && inList) { html += '</ul>'; inList = false; }
+      if (isH3) { html += '<h4>' + inlineFormat(esc(line.slice(4))) + '</h4>'; }
+      else if (isH2) { html += '<h3>' + inlineFormat(esc(line.slice(3))) + '</h3>'; }
+      else if (isH1) { html += '<h3>' + inlineFormat(esc(line.slice(2))) + '</h3>'; }
+      else if (isBullet) { if (!inList) { html += '<ul>'; inList = true; } html += '<li>' + inlineFormat(esc(line.slice(2))) + '</li>'; }
+      else if (isNum) { if (!inList) { html += '<ul>'; inList = true; } html += '<li>' + inlineFormat(esc(line.replace(/^\d+\. /, ''))) + '</li>'; }
+      else if (line.trim() === '') { html += '<br>'; }
+      else { html += '<p>' + inlineFormat(esc(line)) + '</p>'; }
+    }
+    if (inList) html += '</ul>';
+    if (inCode) html += '<pre><code>' + esc(codeBuffer) + '</code></pre>';
+    return html;
+  };
+  const inlineFormat = (s) => s
+    .replace(/`([^`]+)`/g, '<code>$1</code>')
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*([^*]+)\*/g, '<em>$1</em>');
+
+  const handleChatAction = (action) => {
+    if (!action) return null;
+    const safeJSON = (obj) => JSON.stringify(obj).replace(/'/g, '&#39;').replace(/</g, '\\u003c');
+    if (action.type === 'slide') {
+      const first = action.slides?.[0] || {};
+      const preview = `<div class="action-slide-preview"><h3>${escapeHtml(first.title||'')}</h3>${first.subtitle?`<p>${escapeHtml(first.subtitle)}</p>`:''}<ul>${(first.bullets||[]).slice(0,3).map(b=>`<li>${escapeHtml(b)}</li>`).join('')}</ul></div>`;
+      return `<div class="action-card">${preview}<button class="action-btn" onclick="window._downloadSlide(${safeJSON(action)})">⬇ Slayt İndir (.html)</button>${action.slides?.length>1?`<span style="font-size:11px;color:var(--muted);margin-left:8px">${action.slides.length} slayt</span>`:''}</div>`;
+    }
+    if (action.type === 'excel') {
+      const cols = (action.headers||[]).slice(0,5);
+      const rows = (action.rows||[]).slice(0,4);
+      const tbl = `<table class="action-table"><tr>${cols.map(h=>`<th>${escapeHtml(String(h))}</th>`).join('')}</tr>${rows.map(r=>`<tr>${cols.map((_,i)=>`<td>${escapeHtml(String(r[i]??''))}</td>`).join('')}</tr>`).join('')}</table>`;
+      return `<div class="action-card">${tbl}<button class="action-btn" onclick="window._downloadExcel(${safeJSON(action)})">⬇ Excel İndir (.xlsx)</button></div>`;
+    }
+    if (action.type === 'forecast') {
+      const icon = action.trend==='up'?'📈':action.trend==='down'?'📉':'➡️';
+      const rows = (action.labels||[]).map((l,i)=>`<tr><td>${escapeHtml(l)}</td><td>${Number(action.values?.[i]||0).toLocaleString('tr-TR')}</td></tr>`).join('');
+      return `<div class="action-card"><h4>${icon} ${escapeHtml(action.metric||'Satış Tahmini')}</h4><table class="action-table"><tr><th>Dönem</th><th>Değer</th></tr>${rows}</table>${action.note?`<p class="action-note">${escapeHtml(action.note)}</p>`:''}</div>`;
+    }
+    return null;
+  };
+
+  window._downloadSlide = (action) => {
+    const esc = (s) => String(s||'').replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+    const css = `body{font-family:'Segoe UI',sans-serif;background:#0f0f1a;margin:0;padding:24px}.slide{width:900px;min-height:506px;background:#fff;margin:20px auto;padding:56px 64px;box-shadow:0 8px 32px rgba(0,0,0,.5);border-radius:8px;page-break-after:always}h1{font-size:34px;color:#1a1a2e;margin:0 0 14px;font-weight:600}h2{font-size:20px;color:#5b21b6;margin:0 0 20px;font-weight:400}ul{font-size:17px;line-height:1.9;padding-left:24px}li{margin-bottom:6px}@media print{body{background:#fff}.slide{box-shadow:none;margin:0;page-break-after:always}}`;
+    const body = (action.slides||[]).map(s=>`<div class="slide"><h1>${esc(s.title)}</h1>${s.subtitle?`<h2>${esc(s.subtitle)}</h2>`:''}<ul>${(s.bullets||[]).map(b=>`<li>${esc(b)}</li>`).join('')}</ul></div>`).join('');
+    const blob = new Blob([`<!DOCTYPE html><html lang="tr"><head><meta charset="utf-8"><title>Sunum</title><style>${css}</style></head><body>${body}</body></html>`],{type:'text/html'});
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = action.filename||'sunum.html'; a.click();
+  };
+
+  window._downloadExcel = (action) => {
+    if (!window.XLSX) { alert('XLSX kütüphanesi yüklenmedi'); return; }
+    const ws = XLSX.utils.aoa_to_sheet([action.headers||[], ...(action.rows||[])]);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, action.sheetName||'Sayfa1');
+    XLSX.writeFile(wb, action.filename||'tablo.xlsx');
+  };
+
   const shopifySvgHtml = '<svg width="14" height="14" viewBox="0 0 256 292" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill="#fff" d="M223.774 57.34c-.201-1.46-1.48-2.268-2.537-2.357-1.055-.088-23.383-1.743-23.383-1.743s-15.507-15.395-17.209-17.099c-1.703-1.703-5.029-1.185-6.32-.805-.19.056-3.388 1.043-8.678 2.68-5.18-14.906-14.322-28.604-30.405-28.604-.444 0-.901.018-1.358.044C129.31 3.407 123.644.685 118.75.685c-37.46 0-55.348 46.835-60.956 70.635-14.548 4.503-24.883 7.71-26.202 8.124-8.123 2.548-8.38 2.805-9.448 10.462C21.34 95.71.203 259.406.203 259.406l165.024 30.94 89.442-19.34S223.973 58.803 223.774 57.34zM145.669 79.32l-14.4 4.457c.006-1.005.011-1.994.011-3.075 0-9.415-1.306-17-3.4-23.008 8.418 1.056 14.028 10.626 17.789 21.626zm-28.712-19.712c2.34 5.865 3.86 14.28 3.86 25.634 0 .58-.006 1.11-.011 1.65-9.373 2.902-19.557 6.05-29.762 9.208 5.732-22.115 16.474-32.795 25.913-36.492zm-11.564-10.939c1.672 0 3.357.567 4.968 1.673-12.404 5.834-25.7 20.535-31.316 49.9l-23.52 7.284C61.897 83.049 76.973 48.669 105.393 48.669z"/><path fill="#fff" d="M221.237 54.983c-1.055-.088-23.383-1.743-23.383-1.743s-15.507-15.395-17.209-17.099c-.637-.634-1.496-.959-2.394-1.099l-12.527 256.233 89.442-19.34S223.972 58.803 223.774 57.34c-.201-1.46-1.48-2.268-2.537-2.357"/><path fill="#95BF47" d="M147.183 108.09l-11.09 32.928s-9.582-5.13-21.312-5.13c-17.187 0-18.056 10.72-18.056 13.418 0 14.735 38.68 20.376 38.68 55.13 0 27.335-17.34 44.938-40.667 44.938-27.99 0-42.35-17.55-42.35-17.55l7.55-24.83s14.694 12.615 27.111 12.615c8.11 0 11.404-6.36 11.404-11.005 0-19.22-31.72-20.096-31.72-51.879 0-26.75 19.263-52.688 58.056-52.688 14.907 0 22.396 4.053 22.396 4.053z"/></svg>';
 
   const appendBubble = (role, text, extraClass = '', opts = {}) => {
@@ -1165,7 +1261,7 @@ function renderAIChatPage() {
     el.className = 'acp-msg ' + role + (extraClass ? ' ' + extraClass : '');
     const body = document.createElement('div');
     body.className = 'acp-msg-body';
-    body.innerHTML = escapeHtml(text || '');
+    body.innerHTML = role === 'assistant' ? renderMarkdown(text || '') : escapeHtml(text || '');
     el.appendChild(body);
     el._body = body;
     el._addPushAction = (replyText) => {
@@ -1450,7 +1546,9 @@ function renderAIChatPage() {
       if (!res.ok) throw new Error(data.error || 'Cevap alınamadı');
       const reply = data.reply || 'Üzgünüm, cevap üretemedim.';
       pending.classList.remove('pending');
-      pending._body.innerHTML = escapeHtml(reply);
+      pending._body.innerHTML = renderMarkdown(reply);
+      const actionHTML = handleChatAction(data.action);
+      if (actionHTML) { const ae = document.createElement('div'); ae.innerHTML = actionHTML; pending._body.appendChild(ae); }
       if (typeof pending._addPushAction === 'function') pending._addPushAction(reply);
       if (data.ragUsed && typeof pending._addFeedback === 'function') {
         pending._addFeedback({ query: data.ragQuery || msg, matchedExamples: [], topCategory: data.ragTopCategory });
