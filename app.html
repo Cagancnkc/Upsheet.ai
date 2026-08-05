@@ -1643,6 +1643,7 @@ function renderAIChatPage() {
         localStorage.setItem('chat_session_id', data.sessionId);
         if (isFirst) loadSessions();
       }
+      loadUserPlan();
     } catch (err) {
       pending.classList.remove('pending');
       pending.classList.add('error');
