@@ -1243,7 +1243,7 @@ function renderAIChatPage() {
       const fieldLabel = { title:'Başlık', body_html:'Açıklama', tags:'Etiketler', vendor:'Marka', product_type:'Ürün Tipi', status:'Durum', price:'Fiyat', compare_at_price:'Liste Fiyatı', seo_title:'SEO Başlığı', seo_description:'SEO Açıklaması' };
       const rows = changes.map(c => `<tr><td style="font-weight:600">${escapeHtml(c.product_title||'')}</td><td>${escapeHtml(fieldLabel[c.field]||c.field)}</td><td style="color:#dc2626;text-decoration:line-through">${escapeHtml(String(c.old_value||''))}</td><td style="color:#16a34a">${escapeHtml(String(c.new_value||''))}</td></tr>`).join('');
       const actionId = 'sfact_' + Math.random().toString(36).slice(2, 8);
-      return `<div class="action-card" id="${actionId}"><h4>🛍️ Shopify Değişiklikleri (${changes.length} alan)</h4><table class="action-table"><tr><th>Ürün</th><th>Alan</th><th>Eski</th><th>Yeni</th></tr>${rows}</table><button class="action-btn" onclick='window._applyShopifyChanges(${safeJSON(changes)}, "${actionId}")'>Shopify\'a Uygula</button></div>`;
+      return `<div class="action-card" id="${actionId}"><h4>🛍️ Shopify Değişiklikleri (${changes.length} alan)</h4><table class="action-table"><tr><th>Ürün</th><th>Alan</th><th>Eski</th><th>Yeni</th></tr>${rows}</table><div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;"><button class="action-btn action-btn-local" onclick='window._applyLocalChanges(${safeJSON(changes)}, "${actionId}")'>✓ Katalogda Güncelle</button><button class="action-btn" style="background:#374151" onclick='window._applyShopifyChanges(${safeJSON(changes)}, "${actionId}")'>Shopify\'a Uygula</button></div></div>`;
     }
     return null;
   };
@@ -1262,6 +1262,33 @@ function renderAIChatPage() {
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, action.sheetName||'Sayfa1');
     XLSX.writeFile(wb, action.filename||'tablo.xlsx');
+  };
+
+  window._applyLocalChanges = (changes, cardId) => {
+    if (!Array.isArray(changes) || !changes.length) return;
+    saveToUndoStack();
+    let count = 0;
+    changes.forEach(ch => {
+      const idx = catalogData.products.findIndex(p =>
+        (ch.product_id && String(p.shopify_product_id) === String(ch.product_id)) ||
+        (!ch.product_id && ch.product_title && p.title === ch.product_title)
+      );
+      if (idx !== -1) {
+        catalogData.products[idx][ch.field] = ch.new_value;
+        count++;
+      }
+    });
+    if (count > 0) {
+      updateUI();
+      if (typeof toast === 'function') toast(`${count} değişiklik yerel kataloga uygulandı`, 'success');
+    } else {
+      if (typeof toast === 'function') toast('Eşleşen ürün bulunamadı — önce katalog yükleyin', 'error');
+    }
+    const card = cardId ? document.getElementById(cardId) : null;
+    if (card) {
+      const btn = card.querySelector('.action-btn-local');
+      if (btn) { btn.textContent = count > 0 ? `✓ ${count} güncellendi` : '⚠️ Eşleşmedi'; btn.disabled = true; }
+    }
   };
 
   window._applyShopifyChanges = async (changes, cardId) => {
