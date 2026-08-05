@@ -77,6 +77,23 @@ function buildRagBlock(examples) {
   return `## İLGİLİ SHOPIFY BİLGİSİ (bağlam için — kullanıcıya doğrudan tekrar etme)\n${lines.join('\n\n')}`;
 }
 
+function buildProductBlock(products) {
+  if (!Array.isArray(products) || products.length === 0) return '';
+  const rows = products.map(p => {
+    const parts = [`"${String(p.title || '').slice(0, 60)}"`];
+    if (p.sku) parts.push(`SKU: ${p.sku}`);
+    if (p.price) parts.push(`₺${p.price}`);
+    if (p.compare_at_price) parts.push(`liste: ₺${p.compare_at_price}`);
+    if (p.status) parts.push(p.status);
+    if (p.inventory != null) parts.push(`stok: ${p.inventory}`);
+    if (p.vendor) parts.push(`marka: ${p.vendor}`);
+    if (p.type) parts.push(`tür: ${p.type}`);
+    if (p.tags) parts.push(`etiket: ${p.tags.slice(0, 60)}`);
+    return parts.join(' | ');
+  });
+  return `## KULLANICININ SHOPIFY KATALOĞU (${products.length} ürün)\nAşağıdaki gerçek ürün listesini kullan — fiyat, stok, SKU sorularını buradan yanıtla:\n${rows.join('\n')}`;
+}
+
 function deriveTitle(msg) {
   const clean = String(msg || '').trim().replace(/\s+/g, ' ');
   return clean.slice(0, 60) || 'Yeni Sohbet';
@@ -162,6 +179,10 @@ router.post('/message', checkLimit, upload.array('files', 5), async (req, res) =
     const skill = ['formula', 'analysis', 'ecommerce', 'content'].includes(body.skill) ? body.skill : null;
     const links = (body.links ? [].concat(body.links) : []).slice(0, 5).filter(l => typeof l === 'string');
     const files = req.files || [];
+    const rawProducts = body.shopifyProducts
+      ? (typeof body.shopifyProducts === 'string' ? JSON.parse(body.shopifyProducts) : body.shopifyProducts)
+      : [];
+    const shopifyProducts = Array.isArray(rawProducts) ? rawProducts.slice(0, 80) : [];
 
     const trimmed = String(message).trim().slice(0, 4000);
     if (!trimmed && files.length === 0 && links.length === 0) {
@@ -223,8 +244,10 @@ router.post('/message', checkLimit, upload.array('files', 5), async (req, res) =
     }
 
     const userContent = [];
-    if (ragBlock) userContent.push({ type: 'text', text: ragBlock, cache_control: { type: 'ephemeral' } });
-    if (trimmed) userContent.push({ type: 'text', text: trimmed });
+    const productBlock = buildProductBlock(shopifyProducts);
+    if (productBlock) userContent.push({ type: 'text', text: productBlock, cache_control: { type: 'ephemeral' } });
+    if (ragBlock)     userContent.push({ type: 'text', text: ragBlock,     cache_control: { type: 'ephemeral' } });
+    if (trimmed)      userContent.push({ type: 'text', text: trimmed });
     if (links.length > 0) {
       userContent.push({ type: 'text', text: `Kullanıcı şu bağlantıları paylaştı:\n${links.join('\n')}\n(Bu URL'leri analiz et ve mesajla ilgili bağlamda değerlendir.)` });
     }

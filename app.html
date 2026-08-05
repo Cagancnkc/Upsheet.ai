@@ -1521,6 +1521,20 @@ function renderAIChatPage() {
     const isFirst = !currentSessionId;
 
     try {
+      const _sp = (typeof catalogData !== 'undefined' && Array.isArray(catalogData.products))
+        ? catalogData.products.slice(0, 80).map(p => ({
+            title: p.title,
+            sku: p.sku || '',
+            price: p.price || '',
+            compare_at_price: p.compare_at_price || '',
+            status: p.status || '',
+            inventory: p.inventory_quantity ?? null,
+            vendor: p.vendor || '',
+            type: p.product_type || '',
+            tags: p.tags || ''
+          }))
+        : [];
+
       let fetchOptions;
       const hasFiles = attachments.some(a => a.type !== 'link');
       if (hasFiles) {
@@ -1529,6 +1543,7 @@ function renderAIChatPage() {
         if (currentSessionId) fd.append('sessionId', currentSessionId);
         fd.append('mode', mode);
         if (skill) fd.append('skill', skill);
+        if (_sp.length) fd.append('shopifyProducts', JSON.stringify(_sp));
         attachments.forEach(a => {
           if (a.type === 'link') fd.append('links', a.data);
           else fd.append('files', a.raw, a.name);
@@ -1539,7 +1554,7 @@ function renderAIChatPage() {
         fetchOptions = {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', ...(await authHeaders()) },
-          body: JSON.stringify({ message: msg || ' ', sessionId: currentSessionId, mode, skill, links })
+          body: JSON.stringify({ message: msg || ' ', sessionId: currentSessionId, mode, skill, links, shopifyProducts: _sp })
         };
       }
 
