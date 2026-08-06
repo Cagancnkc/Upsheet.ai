@@ -603,19 +603,69 @@ router.post('/ai-analyze', checkLimit, async (req, res) => {
   const shopifyHeaders = { 'X-Shopify-Access-Token': accessToken };
 
   try {
-    const idsParam = Array.isArray(productIds) && productIds.length > 0
-      ? `ids=${productIds.join(',')}&limit=50`
-      : 'limit=50';
-
-    const prodRes = await fetch(`${apiBase}/products.json?${idsParam}`, { headers: shopifyHeaders });
-    if (!prodRes.ok) {
-      return res.status(502).json({ error: 'Shopify ürünleri çekilemedi', status: prodRes.status });
+    let products;
+    let totalScanned;
+    if (Array.isArray(productIds) && productIds.length > 0) {
+      const prodRes = await fetch(`${apiBase}/products.json?ids=${productIds.join(',')}&limit=250`, { headers: shopifyHeaders });
+      if (!prodRes.ok) {
+        return res.status(502).json({ error: 'Shopify ürünleri çekilemedi', status: prodRes.status });
+      }
+      ({ products } = await prodRes.json());
+      totalScanned = products?.length || 0;
+    } else {
+      products = [];
+      let nextUrl = `${apiBase}/products.json?limit=250`;
+      const HARD_CAP = 2000;
+      while (nextUrl && products.length < HARD_CAP) {
+        const r = await fetch(nextUrl, { headers: shopifyHeaders });
+        if (!r.ok) break;
+        const { products: page } = await r.json();
+        if (Array.isArray(page)) products = products.concat(page);
+        const link = r.headers.get('Link') || r.headers.get('link');
+        const m = link && link.match(/<([^>]+)>;\s*rel="next"/);
+        nextUrl = m ? m[1] : null;
+      }
+      totalScanned = products.length;
     }
-    const { products } = await prodRes.json();
 
     if (!products || products.length === 0) {
-      return res.json({ suggestions: [], analyzedCount: 0 });
+      return res.json({ suggestions: [], analyzedCount: 0, totalScanned: 0 });
     }
+
+    // Akıllı ön-filtre — sadece gerçek eksikliği olan ürünler AI'a gider.
+    // productIds verildiyse filtre uygulanmaz (kullanıcı zaten belirli ID seçti).
+    const useSmartFilter = !(Array.isArray(productIds) && productIds.length > 0);
+    const isProblematic = (p) => {
+      const plain = (p.body_html || '').replace(/<[^>]+>/g, '').trim();
+      const shortDesc = plain.length < 100;
+      const shortTitle = (p.title || '').length < 20;
+      const thinTags = (p.tags || '').split(',').map(t => t.trim()).filter(Boolean).length < 3;
+      if (analysisType === 'titles') return shortTitle;
+      if (analysisType === 'descriptions') return shortDesc;
+      if (analysisType === 'tags') return thinTags;
+      return shortDesc || shortTitle || thinTags;
+    };
+    const candidateProducts = useSmartFilter ? products.filter(isProblematic) : products;
+    console.log(`[shopify ai-analyze] scanned ${totalScanned}, analyzing ${candidateProducts.length}`);
+
+    if (candidateProducts.length === 0) {
+      return res.json({ suggestions: [], analyzedCount: 0, totalScanned });
+    }
+
+    // Fallback yolunda bulk limit'i candidateProducts sayısına uygula
+    if (useSmartFilter && bulkLimit !== null && candidateProducts.length > bulkLimit) {
+      const planName = req.usage?.plan === 'free' ? 'Ücretsiz' : (req.usage?.plan || 'Mevcut');
+      return res.status(402).json({
+        error: 'Plan limiti aşıldı',
+        message: `${planName} planınız tek seferde en fazla ${bulkLimit} ürün analiz edebilir. Kataloğunuzda ${candidateProducts.length} sorunlu ürün bulundu.`,
+        currentPlan: req.usage?.plan,
+        limit: bulkLimit,
+        upgradeUrl: '/pricing',
+      });
+    }
+
+    // Sonraki kod bloğunun candidateProducts'ı işleyebilmesi için products'ı yeniden tanımla
+    products = candidateProducts;
 
     // SEO metafield'ları ayrı çağrıyla al — Shopify REST products.json'da
     // metafields_global_title_tag/description_tag 2021'de kaldırıldı.
@@ -720,16 +770,16 @@ SEO KURALLARI (KESİNLİKLE UYGULANACAK):
     );
 
     const allSuggestionsRaw = [];
-    for (const msg of batchResults) {
+    batchResults.forEach((msg, idx) => {
       const text = msg.content[0]?.text || '';
       try {
         const match = text.match(/\[[\s\S]*\]/);
         const parsed = JSON.parse(match ? match[0] : text);
         if (Array.isArray(parsed)) allSuggestionsRaw.push(...parsed);
       } catch {
-        console.warn('[shopify ai-analyze] batch parse hatası:', text.slice(0, 200));
+        console.warn(`[shopify ai-analyze] batch #${idx} parse hatası:`, text.slice(0, 200));
       }
-    }
+    });
 
     const ALLOWED = new Set(['title', 'seo_title', 'seo_description', 'tags']);
     const CHAR_LIMITS = { seo_title: 60, seo_description: 155, title: 70 };
@@ -749,7 +799,7 @@ SEO KURALLARI (KESİNLİKLE UYGULANACAK):
       `${suggestions.length} öneri hazır`, 'ai_complete', getSupabase()).catch(() => {});
 
     await incrementUsage(req.user.id);
-    res.json({ suggestions, analyzedCount: products.length });
+    res.json({ suggestions, analyzedCount: products.length, totalScanned });
   } catch (e) {
     console.error('[shopify ai-analyze]', e.message);
     res.status(500).json({ error: e.message });

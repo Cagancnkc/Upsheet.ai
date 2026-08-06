@@ -679,6 +679,7 @@ let exportHistory = [];
 let syncHistory = [];
 let viewMode = 'table';
 let _pendingAiChanges = []; // [{ shopifyProductId, productTitle, field, oldValue, newValue, decision }]
+let _aiAnalyzing = false;
 const SEO_CHAR_LIMITS = {
   seo_title: { max: 60, warn: 50, label: 'SEO Başlığı' },
   seo_description: { max: 160, warn: 145, label: 'Meta Açıklama' },
@@ -4023,6 +4024,10 @@ async function runCanvasAI() {
 // ═══════════════════════════════════════════════════════════════════════
 
 async function runShopifyAiAnalysis(analysisType, productIdSubset = null) {
+  if (_aiAnalyzing) {
+    toast('AI analizi zaten çalışıyor, lütfen bekleyin...', 'info');
+    return;
+  }
   const linked = catalogData.products.filter(p => p.shopify_product_id);
   if (linked.length === 0) {
     toast('Analiz için önce Shopify\'dan ürün senkronize edin (Demo veri Shopify\'a bağlı değil)', 'info');
@@ -4049,7 +4054,8 @@ async function runShopifyAiAnalysis(analysisType, productIdSubset = null) {
     }
   } catch (_) { /* plan bilgisi alınamazsa backend enforce eder */ }
 
-  toast('Shopify verisi Claude ile analiz ediliyor...', 'info');
+  _aiAnalyzing = true;
+  toast('Katalog taranıyor — büyük mağazalarda 30 saniyeye kadar sürebilir', 'info');
 
   try {
     const res = await fetch(`${API_URL}/api/shopify/ai-analyze`, {
@@ -4068,6 +4074,9 @@ async function runShopifyAiAnalysis(analysisType, productIdSubset = null) {
       throw new Error(err.error || 'Analiz başarısız');
     }
     const data = await res.json();
+    if (typeof data.totalScanned === 'number' && data.totalScanned > 0) {
+      toast(`${data.totalScanned} ürün tarandı, ${data.analyzedCount || 0} tanesi AI ile analiz edildi`, 'success');
+    }
     if (!data.suggestions || data.suggestions.length === 0) {
       toast('AI iyileştirme önerisi bulamadı', 'info');
       return;
@@ -4088,6 +4097,8 @@ async function runShopifyAiAnalysis(analysisType, productIdSubset = null) {
     showAiPreview();
   } catch (e) {
     toast('Analiz hatası: ' + e.message, 'error');
+  } finally {
+    _aiAnalyzing = false;
   }
 }
 
