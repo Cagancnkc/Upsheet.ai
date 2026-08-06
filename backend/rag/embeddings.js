@@ -1,10 +1,8 @@
 const OpenAI = require('openai');
 
-let _openai = null;
-function getOpenAI() {
-  if (!_openai) _openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-  return _openai;
-}
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY
+});
 
 // In-memory LRU embedding cache — aynı query için OpenAI'a tekrar gitmez
 const _embCache = new Map();
@@ -12,7 +10,7 @@ const _EMB_CACHE_MAX = 500;
 
 async function createEmbedding(text) {
   if (_embCache.has(text)) return _embCache.get(text);
-  const response = await getOpenAI().embeddings.create({
+  const response = await openai.embeddings.create({
     model: 'text-embedding-3-small',
     input: text,
     encoding_format: 'float'
