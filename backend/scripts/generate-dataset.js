@@ -24,7 +24,7 @@ async function generateForCategory(cat, count) {
     max_tokens: 2048,
     messages: [{
       role: 'user',
-      content: `Shopify e-ticaret platformu için ${count} adet Türkçe soru-cevap çifti üret. Kategori: "${cat}".\nJSON array döndür: [{ "user_command": "...", "category": "${cat}", "response_hint": "..." }]\nAçıklama ekleme, sadece array.`,
+      content: `Shopify e-ticaret platformu için ${count} adet Türkçe örnek üret. Kategori: "${cat}".\n\nÖnemli denge:\n- Yarısı imperative GRID KOMUTU olsun (örn: "stoku 0 olan ürünleri sil", "fiyata göre azalan sırala", "KDV sütununu topla") — spreadsheet action akışını besler.\n- Diğer yarısı doğal CHAT SORUSU olsun (örn: "en çok satan ürünüm hangisi?", "KDV nasıl hesaplanır?", "envanterimi nasıl optimize ederim?") — AI Chat cevaplarını besler.\n\nJSON array döndür: [{ "user_command": "...", "category": "${cat}", "response_hint": "..." }]\nAçıklama ekleme, sadece array.`,
     }],
   });
   const text = msg.content[0].text;
