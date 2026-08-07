@@ -7,7 +7,7 @@
 // ═══════════════════════════════════════════════════════════════
 function checkCommandLimit() {
   try {
-    var plan = JSON.parse(localStorage.getItem('mocksheets_plan'))?.plan || 'free';
+    var plan = userPlan || 'free';
     var limits = { free: 20, pro: 500, business: Infinity };
     var limit = limits[plan] !== undefined ? limits[plan] : 20;
     var key = 'mocksheets_usage_' + new Date().toISOString().slice(0, 7);

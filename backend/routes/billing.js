@@ -121,6 +121,7 @@ router.post('/webhook', async (req, res) => {
       if (userId && plan) {
         await sb.from('user_usage').update({
           plan,
+          subscription_status: 'active',
           polar_subscription_id: event.data.id,
         }).eq('user_id', userId);
       }

@@ -141,8 +141,6 @@ document.addEventListener('DOMContentLoaded', function() {
       var data = JSON.parse(pending);
       plan = data.plan || 'pro';
       period = data.period || 'monthly';
-      localStorage.setItem('subscription_plan', plan);
-      localStorage.setItem('subscription_period', period);
       localStorage.removeItem('pending_plan');
     } catch(e) {}
   }
