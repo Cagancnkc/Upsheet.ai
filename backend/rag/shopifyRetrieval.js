@@ -61,10 +61,15 @@ let CATEGORY_BOOST = {
   mocksheets_feature: 1.20,
   seo: 1.15,
   kdv: 1.15,
+  tax: 1.15,
   pricing: 1.10,
   integration: 1.10,
+  automation: 1.10,
+  customer_retention: 1.10,
   discount: 1.08,
+  localization: 1.08,
   inventory: 1.05,
+  returns: 1.05,
 };
 try {
   const boostPath = path.join(__dirname, 'categoryBoost.json');
@@ -103,6 +108,7 @@ for (const [t, freq] of df.entries()) {
 
 const K1 = 1.5;
 const B = 0.75;
+const ABSOLUTE_MIN_SCORE = 8.0;
 
 function bm25Score(queryTokens, doc) {
   const tf = new Map();
@@ -132,7 +138,7 @@ function retrieveShopifyExamples(query, k = 5) {
   if (maxScore <= 0) return { examples: [], confidence: 0 };
 
   const examples = scored
-    .filter(s => s.score >= maxScore * 0.22)
+    .filter(s => s.score >= ABSOLUTE_MIN_SCORE && s.score >= maxScore * 0.22)
     .sort((a, b) => b.score - a.score)
     .slice(0, k)
     .map(s => ({
@@ -142,7 +148,8 @@ function retrieveShopifyExamples(query, k = 5) {
       score: Number(s.score.toFixed(3))
     }));
 
-  return { examples, confidence: Number(maxScore.toFixed(3)) };
+  const ragUsed = examples.length > 0;
+  return { examples, confidence: Number(maxScore.toFixed(3)), ragUsed };
 }
 
 module.exports = { retrieveShopifyExamples };

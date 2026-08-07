@@ -105,6 +105,52 @@ function deriveTitle(msg) {
   return clean.slice(0, 60) || 'Yeni Sohbet';
 }
 
+// === Excel AI (Pipeline B) — Simple JSON action response ===
+const { buildExcelPrompt } = require('../prompts/excelPrompt');
+
+router.post('/', checkLimit, async (req, res) => {
+  try {
+    const { message, sheetContext, sheetName, history } = req.body || {};
+    const trimmed = String(message || '').trim().slice(0, 4000);
+    if (!trimmed) return res.status(400).json({ error: 'Mesaj boş' });
+
+    // Retrieve RAG context
+    const ragResult = retrieveShopifyExamples(trimmed, 3);
+    const ragContext = ragResult.examples || [];
+
+    // Build Excel prompt with RAG
+    const prompt = buildExcelPrompt(trimmed, sheetContext || [], ragContext);
+
+    // Call Claude with simple Excel prompt
+    const messages = [
+      ...(Array.isArray(history) ? history.slice(-4) : []),
+      { role: 'user', content: prompt }
+    ];
+
+    const response = await anthropic.messages.create({
+      model: 'claude-opus-4-7',
+      max_tokens: 1024,
+      messages
+    });
+
+    let reply = '';
+    try {
+      reply = JSON.parse(response.content[0]?.text || '{}');
+    } catch {
+      reply = { reply: response.content[0]?.text || 'Komut işlenemedi', action: 'message' };
+    }
+
+    if (req.user?.id) {
+      incrementUsage(req.user.id).catch(e => console.warn('[chat] usage failed:', e.message));
+    }
+
+    res.json(reply);
+  } catch (err) {
+    console.error('[chat/root POST] error:', err);
+    res.status(500).json({ error: err.message || 'İşlem başarısız' });
+  }
+});
+
 // === Session CRUD ===
 
 router.get('/sessions', checkLimit, async (req, res) => {
