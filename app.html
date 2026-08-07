@@ -45,6 +45,115 @@
     })(window, document, "clarity", "script", "xa2q453j9l");
 </script>
 <style>
+:root {
+  --accent: #16a34a;
+  --accent-tint: #dcfce7;
+  --accent-soft: #f0fdf4;
+  --accent-strong: #15803d;
+  --accent-ink: #14532d;
+  --bg: #ffffff;
+  --bg-soft: #f9fafb;
+  --bg-mute: #f3f4f6;
+  --text: #111827;
+  --text-2: #374151;
+  --text-3: #6b7280;
+  --text-4: #9ca3af;
+  --line: #e5e7eb;
+  --line-soft: #f3f4f6;
+  --radius-sm: 8px;
+  --radius: 10px;
+  --radius-lg: 14px;
+  --radius-pill: 999px;
+  --shadow-sm: 0 1px 2px rgba(17,24,39,.04);
+  --shadow: 0 4px 12px rgba(17,24,39,.06);
+  --shadow-lg: 0 20px 40px -8px rgba(17,24,39,.14);
+  --ring: 0 0 0 3px rgba(22,163,74,.18);
+  --ease-spring: cubic-bezier(.34,1.56,.64,1);
+}
+
+/* 21st.dev-inspired KPI card */
+.ms-kpi {
+  position: relative;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+  transition: border-color .2s ease, transform .2s ease, box-shadow .2s ease;
+  overflow: hidden;
+}
+.ms-kpi::before {
+  content: "";
+  position: absolute; inset: 0;
+  border-radius: inherit; pointer-events: none;
+  background: linear-gradient(135deg, transparent 60%, rgba(22,163,74,.06) 100%);
+  opacity: 0; transition: opacity .25s ease;
+}
+.ms-kpi:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+.ms-kpi:hover::before { opacity: 1; }
+.ms-kpi-value {
+  font-size: 28px; font-weight: 700; line-height: 1.1;
+  background: linear-gradient(135deg, var(--text) 0%, var(--accent-strong) 100%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+}
+.ms-kpi-label {
+  font-size: 11px; font-weight: 600; letter-spacing: .04em;
+  text-transform: uppercase; color: var(--text-3); margin-top: 6px;
+}
+
+/* Sidebar polish */
+.ms-nav-item {
+  position: relative;
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 12px; border-radius: var(--radius);
+  color: var(--text-2); font-size: 13px; font-weight: 500;
+  cursor: pointer; transition: background .18s ease, color .18s ease;
+}
+.ms-nav-item:hover { background: var(--bg-mute); color: var(--text); }
+.ms-nav-item.active {
+  background: var(--accent-tint); color: var(--accent-ink);
+}
+.ms-nav-item.active::before {
+  content: ""; position: absolute; left: -12px; top: 6px; bottom: 6px;
+  width: 3px; border-radius: var(--radius-pill); background: var(--accent);
+}
+
+/* Ring focus */
+.ms-focus:focus-visible { outline: none; box-shadow: var(--ring); }
+
+/* Glass toast */
+.ms-toast {
+  position: fixed; right: 24px; bottom: 24px; z-index: 9999;
+  display: flex; align-items: center; gap: 10px;
+  min-width: 240px; max-width: 380px;
+  padding: 12px 16px 12px 12px;
+  background: rgba(17,24,39,.92);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  font-size: 13px; font-weight: 500;
+  transform: translateY(20px) scale(.96); opacity: 0;
+  transition: transform .35s var(--ease-spring), opacity .25s ease;
+  pointer-events: none;
+}
+.ms-toast.show { transform: translateY(0) scale(1); opacity: 1; pointer-events: auto; }
+.ms-toast-icon {
+  flex-shrink: 0;
+  width: 22px; height: 22px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700;
+}
+.ms-toast.success .ms-toast-icon { background: var(--accent); color: #fff; }
+.ms-toast.error   .ms-toast-icon { background: #dc2626; color: #fff; }
+.ms-toast.info    .ms-toast-icon { background: rgba(255,255,255,.15); color: #fff; }
+
 .ai-chat-page {
   --bg: #ffffff; --text: #201e1d; --muted: #6b645c; --line: #e4ded6;
   --accent: #c67139; --accent-100: #fbeadd; --accent-200: #f3d3bb; --accent-400: #dfa477;
@@ -940,19 +1049,23 @@ function toast(message, type = 'info') {
   if (!container) {
     container = document.createElement('div');
     container.id = 'toast-container';
-    container.style.cssText = 'position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 8px;';
+    container.style.cssText = 'position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:10px;pointer-events:none;';
     document.body.appendChild(container);
   }
 
-  const toast = document.createElement('div');
-  const bgColor = type === 'error' ? '#ef4444' : type === 'success' ? '#22c55e' : '#3b82f6';
-  toast.style.cssText = `background: ${bgColor}; color: white; padding: 12px 16px; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); font-size: 13px; animation: slideIn 0.3s ease-out; max-width: 300px; word-break: break-word;`;
-  toast.textContent = message;
-  container.appendChild(toast);
+  const el = document.createElement('div');
+  const variant = type === 'error' ? 'error' : type === 'success' ? 'success' : 'info';
+  el.className = 'ms-toast ' + variant;
+  el.style.position = 'static';
+  el.style.pointerEvents = 'auto';
+  const glyph = variant === 'success' ? '✓' : variant === 'error' ? '✕' : 'i';
+  el.innerHTML = '<span class="ms-toast-icon">' + glyph + '</span><span style="line-height:1.4;">' + message + '</span>';
+  container.appendChild(el);
+  requestAnimationFrame(() => el.classList.add('show'));
 
   setTimeout(() => {
-    toast.style.animation = 'slideOut 0.3s ease-out';
-    setTimeout(() => toast.remove(), 300);
+    el.classList.remove('show');
+    setTimeout(() => el.remove(), 350);
   }, 3000);
 }
 
@@ -976,23 +1089,16 @@ function renderSidebar() {
   SIDEBAR_ITEMS.forEach(item => {
     const btn = document.createElement('button');
     btn.type = 'button';
-    btn.className = 'sidebar-nav-item';
+    btn.className = 'sidebar-nav-item ms-nav-item ms-focus';
     btn.dataset.view = item.view;
     const isActive = currentView === item.view;
-    btn.style.cssText =
-      'width:100%;display:flex;align-items:center;gap:8px;' +
-      'padding:6px 10px;border:none;border-radius:10px;cursor:pointer;' +
-      'font-size:12px;transition:background .15s ease,color .15s ease;margin-bottom:2px;' +
-      'background:' + (isActive ? '#f0fdf4' : 'transparent') + ';' +
-      'color:'     + (isActive ? '#16a34a' : '#6b7280') + ';';
+    if (isActive) btn.classList.add('active');
+    btn.style.width = '100%';
+    btn.style.border = 'none';
+    btn.style.background = 'transparent';
+    btn.style.marginBottom = '2px';
     btn.innerHTML = '<i class="ti ' + item.icon + '" style="font-size:14px;"></i>' +
                     '<span>' + item.label + '</span>';
-    btn.addEventListener('mouseenter', function() {
-      if (currentView !== item.view) this.style.background = '#f9fafb';
-    });
-    btn.addEventListener('mouseleave', function() {
-      if (currentView !== item.view) this.style.background = 'transparent';
-    });
     btn.addEventListener('click', function() { setView(item.view); });
     container.appendChild(btn);
   });
@@ -1749,48 +1855,48 @@ function renderDashboard() {
 
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:16px">
 
-        <div id="dash-card-health" style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:20px;transition:border-color .15s ease,transform .15s ease;">
+        <div id="dash-card-health" class="ms-kpi">
           <p style="font-size:12px;color:#6b7280;margin:0 0 8px;">Katalog Sağlığı</p>
           <div style="display:flex;align-items:baseline;gap:4px;">
-            <span id="dash-health-score" style="font-size:26px;font-weight:700;color:#111827;">${analysis.healthScore}</span>
+            <span id="dash-health-score" class="ms-kpi-value">${analysis.healthScore}</span>
             <span style="font-size:12px;color:#9ca3af;">/100</span>
             <span id="dash-health-trend" style="font-size:11px;font-weight:400;color:#6b7280;margin-left:4px;"></span>
           </div>
           <p id="dash-health-badge" style="font-size:11px;margin:6px 0 0;"></p>
         </div>
 
-        <div id="dash-card-products" style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:20px;transition:border-color .15s ease,transform .15s ease;">
+        <div id="dash-card-products" class="ms-kpi">
           <div style="display:flex;align-items:flex-start;justify-content:space-between;">
             <p style="font-size:12px;color:#6b7280;margin:0 0 8px;">Toplam Ürün</p>
             <div style="width:28px;height:28px;border-radius:8px;background:#eef2ff;display:flex;align-items:center;justify-content:center;">
               <i class="ti ti-shopping-bag" style="font-size:14px;color:#6366f1;"></i>
             </div>
           </div>
-          <span id="dash-total-products" style="font-size:26px;font-weight:700;color:#111827;">${analysis.totalProducts.toLocaleString('tr-TR')}</span>
+          <span id="dash-total-products" class="ms-kpi-value">${analysis.totalProducts.toLocaleString('tr-TR')}</span>
           <p style="font-size:10px;color:#9ca3af;margin:4px 0 0;">AI tarafından takip ediliyor</p>
           <p style="font-size:11px;color:#9ca3af;margin:2px 0 0;">Son senkronizasyon: ${lastSync}</p>
         </div>
 
-        <div id="dash-card-issues" style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:20px;transition:border-color .15s ease,transform .15s ease;">
+        <div id="dash-card-issues" class="ms-kpi">
           <div style="display:flex;align-items:flex-start;justify-content:space-between;">
             <p style="font-size:12px;color:#6b7280;margin:0 0 8px;">Görünürlük Riski Taşıyan Ürün</p>
             <div style="width:28px;height:28px;border-radius:8px;background:#fef2f2;display:flex;align-items:center;justify-content:center;">
               <i class="ti ti-alert-triangle" style="font-size:14px;color:#dc2626;"></i>
             </div>
           </div>
-          <span id="dash-issues-count" style="font-size:26px;font-weight:700;color:#111827;">${analysis.totalIssueCount}</span>
+          <span id="dash-issues-count" class="ms-kpi-value">${analysis.totalIssueCount}</span>
           <p style="font-size:12px;color:#9ca3af;margin:6px 0 0;">${analysis.totalIssueCount === 0 ? 'Sorun bulunamadı' : 'AI Önerileri panelinden düzeltin'}</p>
           ${analysis.totalIssueCount > 0 ? '<p style="font-size:11px;color:#dc2626;margin:4px 0 0;">Bu ürünler eksik veri nedeniyle arama sonuçlarında geride kalabilir</p>' : ''}
         </div>
 
-        <div id="dash-card-ready" style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:20px;transition:border-color .15s ease,transform .15s ease;">
+        <div id="dash-card-ready" class="ms-kpi">
           <div style="display:flex;align-items:flex-start;justify-content:space-between;">
             <p style="font-size:12px;color:#6b7280;margin:0 0 8px;">Hazır Ürün Oranı</p>
             <div style="width:28px;height:28px;border-radius:8px;background:#f0fdf4;display:flex;align-items:center;justify-content:center;">
               <i class="ti ti-circle-check" style="font-size:14px;color:#16a34a;"></i>
             </div>
           </div>
-          <span id="dash-ready-ratio" style="font-size:26px;font-weight:700;color:#111827;">—</span>
+          <span id="dash-ready-ratio" class="ms-kpi-value">—</span>
           <p id="dash-ready-sub" style="font-size:11px;color:#9ca3af;margin:6px 0 0;"></p>
         </div>
 
@@ -2234,21 +2340,65 @@ function renderAiRecommendations(issues) {
   });
 }
 
+const QUICK_ACTION_ICONS = {
+  clean_titles:          'ti-typography',
+  generate_descriptions: 'ti-align-left',
+  generate_seo:          'ti-search',
+  bulk_edit_prices:      'ti-currency-lira',
+  fix_stock:             'ti-package',
+};
+
 function renderDashQuickActions() {
   const container = document.getElementById('dash-quick-actions');
   if (!container) return;
   container.innerHTML = '';
+  const hasProducts = catalogData && Array.isArray(catalogData.products) && catalogData.products.length > 0;
   DASH_QUICK_PRESETS.forEach(preset => {
     const btn = document.createElement('button');
     btn.type = 'button';
-    btn.style.cssText = 'width:100%;text-align:left;padding:8px 10px;border:none;border-radius:8px;' +
-      'background:transparent;color:#374151;font-size:12px;cursor:pointer;transition:background .15s ease;';
-    btn.textContent = preset.label;
-    btn.addEventListener('mouseenter', function() { this.style.background = '#f9fafb'; });
-    btn.addEventListener('mouseleave', function() { this.style.background = 'transparent'; });
-    btn.addEventListener('click', function() {
-      if (typeof runAIAction === 'function') runAIAction(preset.action);
-    });
+    btn.disabled = !hasProducts;
+    const icon = QUICK_ACTION_ICONS[preset.action] || 'ti-sparkles';
+    btn.style.cssText = 'width:100%;display:flex;align-items:center;gap:10px;text-align:left;padding:10px 12px;' +
+      'border:1px solid transparent;border-radius:var(--radius,10px);' +
+      'background:transparent;color:' + (hasProducts ? 'var(--text-2,#374151)' : 'var(--text-4,#9ca3af)') + ';' +
+      'font-size:12px;cursor:' + (hasProducts ? 'pointer' : 'not-allowed') + ';' +
+      'transition:background .18s ease, border-color .18s ease, transform .18s ease;';
+    btn.innerHTML =
+      '<i class="ti ' + icon + '" style="font-size:14px;color:var(--accent-strong,#15803d);width:16px;flex-shrink:0;"></i>' +
+      '<span style="flex:1;">' + preset.label + '</span>' +
+      '<span class="qa-hint" style="font-size:10px;padding:2px 6px;border:1px solid var(--line,#e5e7eb);border-radius:var(--radius-sm,8px);color:var(--text-4,#9ca3af);background:var(--bg,#fff);opacity:0;transition:opacity .18s ease;">↵</span>';
+    if (hasProducts) {
+      btn.addEventListener('mouseenter', function() {
+        this.style.background = 'var(--accent-tint,#dcfce7)';
+        this.style.borderColor = 'var(--line-soft,#f3f4f6)';
+        const hint = this.querySelector('.qa-hint');
+        if (hint) hint.style.opacity = '1';
+      });
+      btn.addEventListener('mouseleave', function() {
+        this.style.background = 'transparent';
+        this.style.borderColor = 'transparent';
+        const hint = this.querySelector('.qa-hint');
+        if (hint) hint.style.opacity = '0';
+      });
+      btn.addEventListener('click', async function() {
+        if (typeof runAIAction !== 'function') return;
+        const labelEl = this.querySelector('span:not(.qa-hint)');
+        const origLabel = labelEl ? labelEl.textContent : preset.label;
+        this.disabled = true;
+        this.style.opacity = '0.7';
+        if (labelEl) labelEl.textContent = 'İşleniyor…';
+        try {
+          await runAIAction(preset.action);
+          if (typeof toast === 'function') toast('✓ ' + origLabel + ' tamamlandı', 'success');
+        } catch (e) {
+          if (typeof toast === 'function') toast('✗ ' + (e && e.message ? e.message : 'İşlem başarısız'), 'error');
+        } finally {
+          this.disabled = false;
+          this.style.opacity = '';
+          if (labelEl) labelEl.textContent = origLabel;
+        }
+      });
+    }
     container.appendChild(btn);
   });
 }

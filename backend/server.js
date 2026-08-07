@@ -760,6 +760,8 @@ app.post('/api/ai', checkLimit, async (req, res) => {
       generate_seo:          'Her ürün için seo_title (max 60 karakter) ve seo_description (max 155 karakter) yaz',
       standardize_vendors:   'Benzer vendor isimlerini standartlaştır',
       categorize_products:   'product_type ve tags alanlarını doldurup kategorize et',
+      bulk_edit_prices:      'Her ürünün variants[].price alanını incele. Eksik ya da 0 olanları ürün adı/kategorisine göre makul bir TL fiyatına (örn. 49-999 TL aralığı) tamamla. Zaten mantıklı olanları koru; ondalık ayırıcı olarak "." kullan.',
+      fix_stock:             'Her ürünün variants[].inventory_quantity alanını gözden geçir. 0 ya da null olanlara ürün türüne uygun mantıklı bir stok değeri (10-50 arası) ata. Zaten pozitif olan stokları koru; sayı olarak (string değil) yaz.',
     };
     const rawAction = action.startsWith('custom: ') ? action.slice(8) : action;
     const instruction = actionMap[rawAction] || rawAction;
