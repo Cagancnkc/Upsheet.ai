@@ -16,7 +16,7 @@ const CATEGORIES = [
   'slides', 'sunum', 'tablo_olustur', 'rapor',
 ];
 
-const TARGET = 300;
+const TARGET = 200;
 const PER_CAT = Math.ceil(TARGET / CATEGORIES.length);
 
 async function generateForCategory(cat, count) {
