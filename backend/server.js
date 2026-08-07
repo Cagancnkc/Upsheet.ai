@@ -603,14 +603,16 @@ app.post('/api/improve-prompt', checkLimit, async (req, res) => {
       max_tokens: 300,
       messages: [{
         role: 'user',
-        content: `Sen bir Excel/spreadsheet AI asistanı için prompt iyileştiricisin.
+        content: `Sen bir Shopify mağaza yönetimi AI asistanı için prompt iyileştiricisin.
 
-Kullanıcının verdiği komutu alıp, yapay zekanın daha iyi anlayacağı şekilde yeniden yaz:
+Kullanıcının verdiği komutu alıp, AI'ın ve komut datasetinin daha iyi anlayacağı şekilde yeniden yaz:
 - Türkçe kal
 - Orijinal amacı koru
 - Belirsizlikleri gider, daha spesifik yap
-- Mümkünse sütun adlarını veya sayısal koşulları belirt
-- SADECE iyileştirilmiş komutu döndür, açıklama veya ek metin ekleme${headerStr}
+- Shopify terminolojisini kullan (ürün, varyant, stok, fiyat, koleksiyon, sipariş, müşteri, etiket vb.)
+- Listeleme/filtreleme komutlarında koşulları ve alanları netleştir
+- İçerik/sunum/tablo oluşturma isteklerinde hedefi açıkça belirt
+- SADECE iyileştirilmiş komutu döndür, açıklama veya ek metin ekleme
 
 Komut: "${command.trim()}"`
       }]

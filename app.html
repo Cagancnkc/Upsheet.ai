@@ -516,6 +516,13 @@
   flex-shrink: 0; height: 36px;
 }
 .sf-chat-send-btn:hover { background: #1f2937; }
+.sf-improve-btn {
+  background: #f3f4f6; color: #374151; border: 1px solid #e5e7eb; border-radius: 8px;
+  padding: 0 12px; cursor: pointer; font-size: 12px; font-weight: 500;
+  flex-shrink: 0; height: 36px; transition: background 0.15s;
+}
+.sf-improve-btn:hover { background: #e5e7eb; }
+.sf-improve-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 .sf-chat-toggle-btn {
   background: #111827; color: #fff; border: none; border-radius: 6px;
   padding: 5px 12px; cursor: pointer; font-size: 12px; font-weight: 500;
@@ -676,6 +683,7 @@
       </div>
       <div class="sf-chat-input-row">
         <textarea id="sf-chat-input" placeholder="Ürünler hakkında bir şey sorun veya düzenleme isteyin…" rows="2"></textarea>
+        <button class="sf-improve-btn" id="sf-improve-btn" onclick="sfImprovePrompt()" title="Komutu AI ile iyileştir">✦ İyileştir</button>
         <button class="sf-chat-send-btn" onclick="sfChatSend()">Gönder</button>
       </div>
     </div>
@@ -4912,6 +4920,34 @@ async function sfChatSend() {
     pending.className = 'sf-chat-msg error';
   } finally {
     _sfChatBusy = false;
+  }
+}
+async function sfImprovePrompt() {
+  const input = document.getElementById('sf-chat-input');
+  const btn = document.getElementById('sf-improve-btn');
+  const text = (input?.value || '').trim();
+  if (!text) return;
+
+  btn.disabled = true;
+  btn.textContent = '…';
+
+  try {
+    const res = await fetch(`${API_URL}/api/improve-prompt`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...(await authHeaders()) },
+      body: JSON.stringify({ command: text }),
+    });
+    if (!res.ok) throw new Error('Yanıt alınamadı');
+    const data = await res.json();
+    if (data.improved) {
+      input.value = data.improved;
+      input.focus();
+    }
+  } catch (e) {
+    console.error('improve-prompt hatası:', e.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '✦ İyileştir';
   }
 }
 // ─── END Shopify AI Chat Panel ─────────────────────────────────────────────
