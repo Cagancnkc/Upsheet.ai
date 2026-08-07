@@ -516,6 +516,41 @@ app.get('/api/integrations/producthunt-reviews/public', async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+// Public pricing progress — no auth required, 5min cache
+let _pricingProgressCache = { data: null, at: 0 };
+app.get('/api/integrations/public/pricing-progress', async (req, res) => {
+  if (_pricingProgressCache.data && (Date.now() - _pricingProgressCache.at) < 300_000) {
+    return res.json(_pricingProgressCache.data);
+  }
+  try {
+    const sb = getSbForAuth();
+    const { data: count, error } = await sb.rpc('get_public_user_count');
+    if (error) throw error;
+    const THRESHOLD = 1000;
+    const current = count || 0;
+    const result = {
+      current,
+      threshold: THRESHOLD,
+      percentage: Math.min(100, Math.round((current / THRESHOLD) * 100)),
+      spotsLeft: Math.max(0, THRESHOLD - current),
+    };
+    _pricingProgressCache = { data: result, at: Date.now() };
+
+    if (current >= THRESHOLD) {
+      const { data: existing } = await sb.from('milestone_notifications')
+        .select('milestone').eq('milestone', '1000_users').maybeSingle();
+      if (!existing) {
+        await sb.from('milestone_notifications').insert({ milestone: '1000_users' });
+      }
+    }
+
+    res.json(result);
+  } catch (e) {
+    console.error('[pricing-progress]', e.message);
+    res.status(500).json({ error: e.message });
+  }
+});
+
 app.use('/api/integrations', checkLimit, integrationsRouter);
 app.use('/api/automations', automationsRouter);
 app.use('/api/stripe', stripeRouter);

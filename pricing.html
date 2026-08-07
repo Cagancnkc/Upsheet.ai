@@ -275,6 +275,16 @@ a{color:inherit}
       </div>
     </div>
 
+    <div id="pricing-progress-banner" style="max-width:900px;margin:0 auto 28px;padding:14px 20px;background:#f0fdf4;border:0.5px solid #d1fae5;border-radius:14px;display:none;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <span style="font-size:12px;font-weight:600;color:#16a34a;">🎉 Erken Kayıt Fiyatı</span>
+        <span id="pricing-progress-text" style="font-size:11px;color:#6b7280;">—</span>
+      </div>
+      <div style="height:6px;background:#dcfce7;border-radius:99px;overflow:hidden;">
+        <div id="pricing-progress-bar" style="height:100%;background:#16a34a;border-radius:99px;width:0%;transition:width .6s ease;"></div>
+      </div>
+    </div>
+
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px">
 
       <!-- Ücretsiz -->
@@ -505,6 +515,31 @@ document.addEventListener('DOMContentLoaded', function() {
     }, { threshold: 0 }).observe(pricingSection);
   }
 });
+</script>
+<script>
+(function() {
+  var API = window.location.hostname === 'localhost'
+    ? 'http://localhost:3001'
+    : 'https://upsheet-ai.onrender.com';
+  fetch(API + '/api/integrations/public/pricing-progress')
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      var banner = document.getElementById('pricing-progress-banner');
+      var bar    = document.getElementById('pricing-progress-bar');
+      var text   = document.getElementById('pricing-progress-text');
+      if (!banner || data.current === undefined) return;
+      banner.style.display = 'block';
+      bar.style.width = data.percentage + '%';
+      text.textContent = data.current.toLocaleString('tr-TR') + ' / ' +
+        data.threshold.toLocaleString('tr-TR') + ' kişi bu fiyattan yararlandı';
+      if (data.current >= data.threshold) {
+        banner.style.background = '#fef3c7';
+        banner.querySelector('span').style.color = '#d97706';
+        banner.querySelector('span').textContent = '⏰ Erken kayıt kontenjanı doldu';
+      }
+    })
+    .catch(function() { /* sessizce geç */ });
+})();
 </script>
 </body>
 </ht<!-- BEGIN PLERDY CODE -->
