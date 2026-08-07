@@ -2350,14 +2350,6 @@ router.get('/producthunt-reviews/all', requireAuth, async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// Manuel sync tetikleyici
-router.post('/producthunt-reviews/sync', requireAuth, async (req, res) => {
-  try {
-    const { fetchProductHuntComments } = require('../services/productHuntSync');
-    const count = await fetchProductHuntComments();
-    res.json({ ok: true, synced: count });
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
 
 // Onay toggle — is_visible'ı tersine çevirir
 router.post('/producthunt-reviews/:id/toggle-visible', requireAuth, async (req, res) => {
