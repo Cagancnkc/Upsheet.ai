@@ -13,9 +13,10 @@ const CATEGORIES = [
   'product', 'pricing', 'inventory', 'orders', 'seo',
   'marketing', 'analytics', 'kdv', 'customer', 'fulfillment',
   'discount', 'integration', 'cro',
+  'slides', 'sunum', 'tablo_olustur', 'rapor',
 ];
 
-const TARGET = 200;
+const TARGET = 300;
 const PER_CAT = Math.ceil(TARGET / CATEGORIES.length);
 
 async function generateForCategory(cat, count) {
@@ -24,7 +25,7 @@ async function generateForCategory(cat, count) {
     max_tokens: 2048,
     messages: [{
       role: 'user',
-      content: `Shopify e-ticaret platformu için ${count} adet Türkçe örnek üret. Kategori: "${cat}".\n\nÖnemli denge:\n- Yarısı imperative GRID KOMUTU olsun (örn: "stoku 0 olan ürünleri sil", "fiyata göre azalan sırala", "KDV sütununu topla") — spreadsheet action akışını besler.\n- Diğer yarısı doğal CHAT SORUSU olsun (örn: "en çok satan ürünüm hangisi?", "KDV nasıl hesaplanır?", "envanterimi nasıl optimize ederim?") — AI Chat cevaplarını besler.\n\nJSON array döndür: [{ "user_command": "...", "category": "${cat}", "response_hint": "..." }]\nAçıklama ekleme, sadece array.`,
+      content: `Shopify mağaza yönetimi ve içerik oluşturması için ${count} adet Türkçe örnek üret. Kategori: "${cat}".\n\nÖnemli denge:\n- Yarısı imperative SHOPIFY YÖNETİM KOMUTU olsun (örn: "stoğu 10'dan az ürünleri göster", "kampanyayı aktifleştir", "iade oranı yüksek ürünleri listele") — Shopify yönetim akışını besler.\n- Diğer yarısı doğal CHAT SORUSU VEYA İÇERİK OLUŞTURMA İSTEĞİ olsun (örn: "en çok satan ürünlerimi slayta dönüştür", "aylık satış raporumu tablo olarak oluştur", "ürün kataloğu için sunum hazırla", "KDV nasıl hesaplanır?") — AI Chat ve içerik üretim cevaplarını besler.\n\nJSON array döndür: [{ "user_command": "...", "category": "${cat}", "response_hint": "..." }]\nAçıklama ekleme, sadece array.`,
     }],
   });
   const text = msg.content[0].text;
