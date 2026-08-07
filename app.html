@@ -267,6 +267,7 @@
 .ai-chat-page .acp-send:hover { transform: scale(1.06); }
 .ai-chat-page .acp-send:active { transform: scale(.94); }
 .ai-chat-page .acp-send:disabled { background: #b8ab97; cursor: default; transform: none; }
+.ai-chat-page .acp-opt:disabled { opacity: 0.5; cursor: not-allowed; }
 .ai-chat-page .acp-chips { display: flex; flex-wrap: wrap; gap: 9px; justify-content: center; }
 .ai-chat-page .acp-chip {
   border: 1.5px solid var(--accent-200); background: var(--bg); border-radius: 999px;
@@ -1225,6 +1226,12 @@ function renderAIChatPage() {
               <input type="file" id="acp-file-input" multiple style="display:none" accept=".xlsx,.xls,.csv,.txt,.pdf,.docx">
               <input type="file" id="acp-img-input" multiple style="display:none" accept="image/*">
 
+              <!-- İyileştir -->
+              <button class="acp-opt" id="acp-improve-btn" type="button">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2l2 7h7l-5.5 4 2 7L12 16l-5.5 4 2-7L3 9h7z"/></svg>
+                İyileştir
+              </button>
+
               <!-- Derin Araştırma -->
               <button class="acp-opt" id="acp-deep-btn" type="button">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
@@ -1775,6 +1782,7 @@ function renderAIChatPage() {
   ta.addEventListener('input', sync);
   ta.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } });
   send.addEventListener('click', () => { if (!send.disabled) sendMessage(); });
+  view.querySelector('#acp-improve-btn')?.addEventListener('click', acpImprovePrompt);
   view.querySelectorAll('.acp-chip').forEach(c => c.addEventListener('click', () => { ta.value = c.textContent.trim(); sync(); ta.focus(); }));
 
   loadSessions();
@@ -4948,6 +4956,29 @@ async function sfImprovePrompt() {
   } finally {
     btn.disabled = false;
     btn.textContent = '✦ İyileştir';
+  }
+}
+
+async function acpImprovePrompt() {
+  const ta = document.getElementById('acp-pb');
+  const btn = document.getElementById('acp-improve-btn');
+  const text = (ta?.value || '').trim();
+  if (!text) return;
+  btn.disabled = true;
+  const orig = btn.innerHTML;
+  btn.innerHTML = '…';
+  try {
+    const res = await fetch(`${API_URL}/api/improve-prompt`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...(await authHeaders()) },
+      body: JSON.stringify({ command: text }),
+    });
+    if (!res.ok) throw new Error();
+    const data = await res.json();
+    if (data.improved) { ta.value = data.improved; ta.focus(); ta.dispatchEvent(new Event('input')); }
+  } catch { /* silent */ } finally {
+    btn.disabled = false;
+    btn.innerHTML = orig;
   }
 }
 // ─── END Shopify AI Chat Panel ─────────────────────────────────────────────
