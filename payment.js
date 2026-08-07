@@ -175,9 +175,6 @@ function showCheckoutModal(plan, period, info, link, user) {
           <span style="color:#10B981">✓</span> İstediğin zaman iptal edebilirsin
         </div>
         <div style="display:flex;align-items:center;gap:8px">
-          <span style="color:#10B981">✓</span> 14 gün para iade garantisi
-        </div>
-        <div style="display:flex;align-items:center;gap:8px">
           <span style="color:#10B981">✓</span> 256-bit SSL ile güvenli ödeme
         </div>
       </div>

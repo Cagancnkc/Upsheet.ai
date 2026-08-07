@@ -99,7 +99,6 @@ class PopupSystem {
         <div class="ms-exit-features">
           <span class="ms-exit-feat">⏱ 2.2s yanıt</span>
           <span class="ms-exit-feat">🔒 KVKK uyumlu</span>
-          <span class="ms-exit-feat">↩ 14 gün iade</span>
         </div>
         <a href="${this.authUrl}" class="ms-exit-cta" id="ms-exit-cta">${copy.cta}</a>
         <button class="ms-exit-dismiss" id="ms-exit-dismiss">Şimdi değil</button>
