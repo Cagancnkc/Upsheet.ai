@@ -4531,9 +4531,14 @@ function showAiPreview() {
             <div class="aip-diff-new">${newHtml}</div>
           </div>
           ${charCounterHtml}
-          ${c.reason
-            ? `<div style="display:flex;align-items:flex-start;gap:6px;padding:8px 10px;background:#eff6ff;border-radius:8px;margin:0 0 10px;"><i class="ti ti-info-circle" style="font-size:13px;color:#3b82f6;margin-top:1px;flex-shrink:0;"></i><span style="font-size:11px;color:#1e40af;line-height:1.5;">${escapeHtml(c.reason)}</span></div>`
-            : ''}
+          ${c.reason ? (() => {
+            const r = c.reason;
+            const isDataDriven = /görüntülen|sepete eklen|tıklan/i.test(r);
+            const badge = isDataDriven
+              ? '<span style="font-size:9px;font-weight:700;color:#3b82f6;background:#dbeafe;padding:2px 6px;border-radius:999px;margin-right:6px;vertical-align:middle;">📊 VERİ DESTEKLİ</span>'
+              : '';
+            return `<div style="display:flex;align-items:flex-start;gap:6px;padding:8px 10px;background:#eff6ff;border-radius:8px;margin:0 0 10px;"><i class="ti ti-info-circle" style="font-size:13px;color:#3b82f6;margin-top:1px;flex-shrink:0;"></i><span style="font-size:11px;color:#1e40af;line-height:1.5;">${badge}${escapeHtml(r)}</span></div>`;
+          })() : ''}
           <div class="aip-actions">
             <button class="aip-btn-reject ${c.decision === 'reject' ? 'active' : ''}" onclick="toggleChangeDecision(${i}, 'reject')">
               <i class="ti ti-x"></i> Reddet

@@ -8,6 +8,7 @@ const { encrypt, decrypt } = require('../services/encryption');
 const { checkLimit, incrementUsage } = require('../middleware/limits');
 const { indexProductsForRAG, INDEX_THRESHOLD } = require('../services/productIndexer');
 const { createNotification } = require('../services/notificationGenerator');
+const { getProductBehaviorData } = require('../services/behaviorAnalyzer');
 
 async function fetchAllPages(url, headers, maxPages = 20) {
   const results = [];
@@ -725,6 +726,18 @@ router.post('/ai-analyze', checkLimit, async (req, res) => {
     // Sonraki kod bloğunun candidateProducts'ı işleyebilmesi için products'ı yeniden tanımla
     products = candidateProducts;
 
+    const behaviorData = await getProductBehaviorData(
+      conn.shop_domain,
+      products.map(p => p.id),
+      getSupabase()
+    );
+
+    products.sort((a, b) => {
+      const aSig = behaviorData[String(a.id)]?.lowConversionSignal ? 1 : 0;
+      const bSig = behaviorData[String(b.id)]?.lowConversionSignal ? 1 : 0;
+      return bSig - aSig;
+    });
+
     // SEO metafield'ları ayrı çağrıyla al — Shopify REST products.json'da
     // metafields_global_title_tag/description_tag 2021'de kaldırıldı.
     const seoByProduct = new Map();
@@ -750,7 +763,12 @@ router.post('/ai-analyze', checkLimit, async (req, res) => {
     const productSummaries = products.map((p) => {
       const variant = p.variants?.[0] || {};
       const seo = seoByProduct.get(p.id) || { title: '', description: '' };
-      return {
+      const b = behaviorData[String(p.id)];
+      const behaviorNote = b
+        ? `${b.pageViews} görüntülenme, ${b.clicks} tıklama, ${b.addToCart} sepete ekleme` +
+          (b.lowConversionSignal ? ' — DÜŞÜK DÖNÜŞÜM SİNYALİ (yüksek ilgi, düşük sepete ekleme)' : '')
+        : null;
+      const entry = {
         id: p.id,
         title: p.title,
         body_html: (p.body_html || '').replace(/<[^>]+>/g, '').slice(0, 200),
@@ -764,6 +782,8 @@ router.post('/ai-analyze', checkLimit, async (req, res) => {
         inventory_quantity: variant.inventory_quantity ?? '',
         variant_count: p.variants?.length || 1,
       };
+      if (behaviorNote) entry.behavior = behaviorNote;
+      return entry;
     });
 
     const guidelines = await getQualityGuidelines();
@@ -805,7 +825,9 @@ SEO KURALLARI (KESİNLİKLE UYGULANACAK):
 - Her öneri için old_value VE new_value zorunlu
 - Değişmeyecek alanlar için öneri oluşturma
 - field değeri KESİNLİKLE şunlardan biri: title, seo_title, seo_description, tags
-- reason alanı zorunlu: DEĞİŞİKLİĞİN NEDENİNİ 10-15 kelimeyle, kullanıcıya hitap eden basit bir dille açıkla. Teknik jargon kullanma. Örnek: "Başlık 15 karakterdi, SEO için 40-60 karakter arası önerilir"${guidelinesText}`;
+- reason alanı zorunlu: DEĞİŞİKLİĞİN NEDENİNİ 10-15 kelimeyle, kullanıcıya hitap eden basit bir dille açıkla. Teknik jargon kullanma. Örnek: "Başlık 15 karakterdi, SEO için 40-60 karakter arası önerilir"${guidelinesText}
+
+DAVRANIŞ VERİSİ KULLANIMI: Bazı ürünlerin yanında son 14 günün gerçek ziyaretçi davranış verisi bulunur. "DÜŞÜK DÖNÜŞÜM SİNYALİ" işaretli ürünlere ÖNCELİK ver — ilgi görüyor ama satışa dönüşmüyor, muhtemelen açıklama/görsel/fiyat sorunu. Gerekçe alanında bu veriyi SOMUT sayılarla kullan. Örnek: "Son 14 günde 340 görüntülenme ama 4 sepete ekleme — açıklama yetersiz kalıyor olabilir." Davranış verisi olmayan ürünler için mevcut kalite kurallarına göre değerlendir.`;
 
     const BATCH_SIZE = 10;
     const batches = [];
