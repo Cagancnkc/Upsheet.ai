@@ -837,9 +837,8 @@ function showConnectPanel() {
     <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 20px; padding: 40px; text-align: center; background: linear-gradient(135deg, rgba(56, 141, 106, 0.02) 0%, rgba(56, 141, 106, 0.05) 100%);">
       <div style="font-size: 64px; opacity: 0.3;">🛍️</div>
       <h2 style="font-size: 24px; font-weight: 600; margin: 0; color: var(--ink);">Shopify Hesabınızı Bağlayın</h2>
-      <p style="font-size: 14px; color: var(--ink-3); max-width: 400px; margin: 0;">Ürünlerinizi, siparişlerinizi ve envanterinizi doğrudan burada yönetin.</p>
+      <p style="font-size: 14px; color: var(--ink-3); max-width: 400px; margin: 0;">Shopify mağazanızı seçin, izinleri onaylayın — ürünleriniz otomatik aktarılır.</p>
       <div style="display: flex; flex-direction: column; width: 100%; max-width: 340px; gap: 12px;">
-        <input id="shop-domain-input" type="text" placeholder="ornekmagazaniz.myshopify.com" style="width: 100%; padding: 12px 16px; border: 1px solid var(--line); border-radius: 8px; font-size: 14px; font-family: 'Inter', sans-serif;" />
         <button onclick="connectShopify()" style="width: 100%; padding: 12px 16px; background: linear-gradient(135deg, var(--brand) 0%, var(--brand-ink) 100%); color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 550; cursor: pointer; transition: transform 0.2s;">
           Shopify'a Bağlan →
         </button>
@@ -851,33 +850,60 @@ function showConnectPanel() {
   `;
 }
 
-function normalizeShopifyDomain(input) {
-  let clean = input.trim().toLowerCase()
-    .replace(/^https?:\/\//, '')
-    .replace(/\/+$/, '');
-  if (clean.endsWith('.myshopify.com')) return clean;
-  if (clean.includes('.') && !clean.endsWith('.myshopify.com')) return null;
-  return clean + '.myshopify.com';
+async function connectShopify() {
+  let jwt = typeof getAuthToken === 'function' ? getAuthToken() : null;
+  if (!jwt && typeof sbClient !== 'undefined') {
+    try {
+      const { data: { session } } = await sbClient.auth.getSession();
+      jwt = session?.access_token || null;
+    } catch (_) {}
+  }
+  const params = new URLSearchParams({ mode: 'popup' });
+  if (jwt) params.set('token', jwt);
+  params.set('redirect', window.location.href.split('?')[0] + '?shopify=connected&autopull=1');
+
+  const popup = window.open(
+    `${API_URL}/api/shopify/auth?${params}`,
+    'shopify_oauth',
+    'width=520,height=720,scrollbars=yes'
+  );
+  if (!popup) {
+    const fallback = new URLSearchParams(params);
+    fallback.delete('mode');
+    window.location.href = `${API_URL}/api/shopify/auth?${fallback}`;
+  }
 }
 
 function openShopifyConnectModal() {
-  document.getElementById('shopify-connect-modal').style.display = 'flex';
-  document.getElementById('shopify-domain-input').value = '';
-  document.getElementById('shopify-domain-error').style.display = 'none';
-  document.getElementById('shopify-domain-input').focus();
-}
-
-function connectShopify() {
-  const domain = document.getElementById('shop-domain-input')?.value.trim() || '';
-  if (!domain) { toast('Mağaza adresinizi girin', 'error'); return; }
-  const shop = normalizeShopifyDomain(domain);
-  if (!shop) { toast('Özel alan adı yerine Shopify mağaza adınızı girin (örn. magazam)', 'error'); return; }
-  window.location.href = `${API_URL}/api/shopify/auth?shop=${encodeURIComponent(shop)}`;
+  connectShopify();
 }
 
 function shopifyConnectModal() {
-  openShopifyConnectModal();
+  connectShopify();
 }
+
+window.addEventListener('message', function(e) {
+  if (!e.data || e.data.type !== 'shopify_auth') return;
+  var backendOrigin = '';
+  try { backendOrigin = new URL(API_URL).origin; } catch (_) {}
+  if (e.origin !== location.origin && e.origin !== backendOrigin) return;
+  if (e.data.error) {
+    toast('Shopify bağlantısı başarısız: ' + e.data.error, 'error');
+    return;
+  }
+  if (e.data.connected) {
+    toast('Shopify bağlantısı kuruldu! Veriler yükleniyor...', 'success');
+    if (e.data.shop_name) {
+      shopifyStore = e.data.shop_name;
+      document.title = 'Mocksheets — ' + shopifyStore;
+      const storeNameEl = document.getElementById('store-name');
+      if (storeNameEl) storeNameEl.textContent = e.data.shop_name;
+    }
+    const connectBtn = document.getElementById('google-shopify-connect-btn');
+    if (connectBtn) connectBtn.style.display = 'none';
+    checkShopifyStatus();
+  }
+});
 
 function loadDemoData() {
   catalogData.products = [
@@ -1253,9 +1279,9 @@ function renderAIChatPage() {
                 </div>
               </div>
 
-              <button class="acp-opt acp-shopify-btn" type="button" onclick="openShopifyConnectModal()">
-                <svg width="16" height="16" viewBox="0 0 256 292" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid"><path d="M223.774 57.34c-.201-1.46-1.48-2.268-2.537-2.357-1.055-.088-23.383-1.743-23.383-1.743s-15.507-15.395-17.209-17.099c-1.703-1.703-5.029-1.185-6.32-.805-.19.056-3.388 1.043-8.678 2.68-5.18-14.906-14.322-28.604-30.405-28.604-.444 0-.901.018-1.358.044C129.31 3.407 123.644.779 118.75.779c-37.465 0-55.364 46.835-60.976 70.635-14.558 4.511-24.9 7.718-26.221 8.133-8.126 2.549-8.383 2.805-9.45 10.462C21.3 95.806.038 260.235.038 260.235l165.678 31.042 89.77-19.42S223.973 58.8 223.774 57.34zM156.49 40.848l-14.019 4.339c.005-.988.01-1.96.01-3.023 0-9.264-1.286-16.723-3.349-22.636 8.287 1.04 13.806 10.469 17.358 21.32zm-27.638-19.483c2.304 5.773 3.802 14.058 3.802 25.238 0 .572-.005 1.095-.01 1.624-9.117 2.824-19.024 5.89-28.953 8.966 5.575-21.516 16.025-31.908 25.161-35.828zm-11.131-10.537c1.617 0 3.246.549 4.805 1.622-12.007 5.65-24.877 19.88-30.312 48.297l-22.886 7.088C75.694 46.16 90.81 10.828 117.72 10.828z" fill="#95BF46"/><path d="M221.237 54.983c-1.055-.088-23.383-1.743-23.383-1.743s-15.507-15.395-17.209-17.099c-.637-.634-1.496-.959-2.394-1.099l-12.527 256.233 89.762-19.418S223.972 58.8 223.774 57.34c-.201-1.46-1.48-2.268-2.537-2.357" fill="#5E8E3E"/><path d="M135.242 104.585l-11.069 32.926s-9.698-5.176-21.586-5.176c-17.428 0-18.305 10.937-18.305 13.693 0 15.038 39.2 20.8 39.2 56.024 0 27.713-17.577 45.558-41.277 45.558-28.44 0-42.984-17.7-42.984-17.7l7.615-25.16s14.95 12.835 27.565 12.835c8.243 0 11.596-6.49 11.596-11.232 0-19.616-32.16-20.491-32.16-52.724 0-27.129 19.472-53.382 58.778-53.382 15.145 0 22.627 4.338 22.627 4.338" fill="#FFF"/></svg>
-                Shopify hesabımı bağla
+              <button class="acp-opt acp-urun-sec-btn" id="acp-urun-sec-btn" type="button" onclick="openAcpProductPicker()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+                Ürün Seç
               </button>
 
               <div class="acp-spacer"></div>
@@ -1990,6 +2016,42 @@ function renderDashboard() {
         </button>
       </div>
 
+      <!-- Analytics Widget -->
+      <div class="dash-section" id="dash-analytics-section" style="margin-top:16px">
+        <div class="dash-card" style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:20px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+            <h3 style="margin:0;font-size:15px;font-weight:600">Ziyaretçi Davranışı</h3>
+            <div id="dash-tracking-toggle-wrap">
+              <button onclick="dashToggleTracking(true)" id="btn-enable-tracking"
+                style="font-size:12px;padding:6px 14px;background:#10b981;color:#fff;border:none;border-radius:8px;cursor:pointer">
+                Takibi Başlat
+              </button>
+            </div>
+          </div>
+          <div id="dash-analytics-empty" style="text-align:center;color:#888;font-size:13px;padding:24px 0">
+            Takip henüz etkin değil. "Takibi Başlat" butonuna tıklayarak mağaza ziyaretçilerinizi izlemeye başlayın.
+          </div>
+          <div id="dash-analytics-content" style="display:none">
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px">
+              <div style="background:#f9fafb;border-radius:10px;padding:12px;text-align:center;">
+                <div class="dash-stat-val" id="dash-stat-clicks" style="font-size:20px;font-weight:700;color:#111827">—</div>
+                <div class="dash-stat-lbl" style="font-size:12px;color:#6b7280;margin-top:4px">Tıklama</div>
+              </div>
+              <div style="background:#f9fafb;border-radius:10px;padding:12px;text-align:center;">
+                <div class="dash-stat-val" id="dash-stat-cart" style="font-size:20px;font-weight:700;color:#111827">—</div>
+                <div class="dash-stat-lbl" style="font-size:12px;color:#6b7280;margin-top:4px">Sepete Ekle</div>
+              </div>
+              <div style="background:#f9fafb;border-radius:10px;padding:12px;text-align:center;">
+                <div class="dash-stat-val" id="dash-stat-scroll" style="font-size:20px;font-weight:700;color:#111827">—</div>
+                <div class="dash-stat-lbl" style="font-size:12px;color:#6b7280;margin-top:4px">Ort. Scroll</div>
+              </div>
+            </div>
+            <div style="font-size:13px;font-weight:600;margin-bottom:8px">En Çok Tıklanan Ürünler</div>
+            <ul id="dash-top-products-list" style="margin:0;padding:0;list-style:none;font-size:13px"></ul>
+          </div>
+        </div>
+      </div>
+
     </div>`;
 
   // Health trend
@@ -2015,6 +2077,7 @@ function renderDashboard() {
   }
   renderDashProductsMini();
   renderDashCollectionsMini();
+  renderDashAnalyticsSection();
   document.getElementById('open-full-catalog-btn')
     ?.addEventListener('click', openFullCatalogEditor);
 
@@ -2208,6 +2271,66 @@ function renderDashCollectionsMini() {
     });
     container.appendChild(chip);
   });
+}
+
+async function renderDashAnalyticsSection() {
+  const statusRes = await fetch('/api/analytics/tracking-status', {
+    headers: { Authorization: `Bearer ${getAuthToken()}` }
+  }).catch(() => null);
+  if (!statusRes?.ok) return;
+  const status = await statusRes.json();
+
+  const toggleWrap = document.getElementById('dash-tracking-toggle-wrap');
+  if (toggleWrap) {
+    toggleWrap.innerHTML = status.tracking_enabled
+      ? `<button onclick="dashToggleTracking(false)" style="font-size:12px;padding:6px 14px;background:#ef4444;color:#fff;border:none;border-radius:8px;cursor:pointer">Takibi Durdur</button>`
+      : `<button onclick="dashToggleTracking(true)" style="font-size:12px;padding:6px 14px;background:#10b981;color:#fff;border:none;border-radius:8px;cursor:pointer">Takibi Başlat</button>`;
+  }
+
+  if (!status.tracking_enabled) return;
+
+  document.getElementById('dash-analytics-empty').style.display = 'none';
+  document.getElementById('dash-analytics-content').style.display = 'block';
+
+  const sumRes = await fetch('/api/analytics/summary', {
+    headers: { Authorization: `Bearer ${getAuthToken()}` }
+  }).catch(() => null);
+  if (!sumRes?.ok) return;
+  const s = await sumRes.json();
+
+  document.getElementById('dash-stat-clicks').textContent = s.total_clicks ?? '—';
+  document.getElementById('dash-stat-cart').textContent = s.total_cart ?? '—';
+  document.getElementById('dash-stat-scroll').textContent = s.avg_scroll_depth != null ? `${s.avg_scroll_depth}%` : '—';
+
+  renderDashTopProducts(s.top_products || []);
+}
+
+function renderDashTopProducts(products) {
+  const list = document.getElementById('dash-top-products-list');
+  if (!list) return;
+  if (!products.length) { list.innerHTML = '<li style="color:#888">Henüz veri yok</li>'; return; }
+  list.innerHTML = products.map((p, i) =>
+    `<li style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f0f0f0">
+      <span>${i + 1}. ${p.product_id}</span>
+      <span style="color:#6366f1;font-weight:600">${p.count} tık</span>
+    </li>`
+  ).join('');
+}
+
+async function dashToggleTracking(enable) {
+  const btn = document.querySelector('#dash-tracking-toggle-wrap button');
+  if (btn) btn.disabled = true;
+  const endpoint = enable ? '/api/shopify/analytics/enable' : '/api/shopify/analytics/disable';
+  const res = await fetch(endpoint, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${getAuthToken()}` }
+  }).catch(() => null);
+  if (res?.ok) {
+    await renderDashAnalyticsSection();
+  } else {
+    showToast('İşlem başarısız, lütfen tekrar deneyin.', 'error');
+    if (btn) btn.disabled = false;
+  }
 }
 
 // ─── DASHBOARD HELPERS ───────────────────────────────────────────────────
@@ -5215,6 +5338,90 @@ if (_origSetView) {
   </div>
 </div>
 
+<!-- ACP PRODUCT PICKER MODAL -->
+<div id="acp-product-picker-modal" style="display:none;position:fixed;inset:0;background:rgba(17,24,39,.45);z-index:651;align-items:center;justify-content:center;padding:20px;overflow-y:auto;">
+  <div style="background:#fff;border-radius:20px;width:500px;max-width:100%;margin:auto;box-shadow:0 20px 48px rgba(17,24,39,.2);">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 24px 0;">
+      <div>
+        <p style="font-size:15px;font-weight:700;color:#111827;margin:0;">Ürün Seç</p>
+        <p style="font-size:12px;color:#6b7280;margin:2px 0 0;">Mağazanızdan bir ürün seçin</p>
+      </div>
+      <button type="button" onclick="closeAcpProductPicker()" style="width:30px;height:30px;border:none;background:#f3f4f6;border-radius:8px;cursor:pointer;font-size:16px;color:#6b7280;display:flex;align-items:center;justify-content:center;">✕</button>
+    </div>
+
+    <div style="padding:16px 24px 24px;">
+      <input id="app-pp-search" type="text" placeholder="Ürün adı veya marka ara..." autocomplete="off"
+        style="width:100%;padding:10px 12px;border:1px solid #e5e7eb;border-radius:10px;font-size:13px;outline:none;box-sizing:border-box;margin-bottom:12px;"
+        onkeyup="const f = document.getElementById('app-pp-search').value; renderAcpProductList(f);"/>
+
+      <div id="app-pp-list" style="border:1px solid #e5e7eb;border-radius:10px;max-height:300px;overflow-y:auto;background:#f9fafb;">
+        <div class="app-pp-empty" style="padding:20px;text-align:center;color:#9ca3af;font-size:13px;">Ürün yükleniyor...</div>
+      </div>
+
+      <div style="display:flex;gap:8px;margin-top:16px;">
+        <button type="button" onclick="closeAcpProductPicker()" style="flex:1;padding:10px 16px;background:#f3f4f6;color:#374151;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">İptal</button>
+        <button type="button" onclick="confirmAcpProductSelection()" style="flex:1;padding:10px 16px;background:#95BF47;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">Seç</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.app-pp-item {
+  padding: 10px 12px;
+  border-bottom: 1px solid #f3f4f6;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.app-pp-item:hover {
+  background: #f0fdf4;
+}
+.app-pp-item.selected {
+  background: #dcfce7;
+  border-left: 3px solid #95BF47;
+  padding-left: 9px;
+}
+.app-pp-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 3px;
+}
+.app-pp-meta {
+  font-size: 11px;
+  color: #9ca3af;
+}
+.app-pp-empty {
+  padding: 20px;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 13px;
+}
+.app-pp-error {
+  padding: 20px;
+  text-align: center;
+  color: #dc2626;
+  font-size: 13px;
+}
+.app-pp-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+}
+.spinner {
+  width: 24px;
+  height: 24px;
+  border: 3px solid #e5e7eb;
+  border-top-color: #95BF47;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+</style>
+
 <script>
 (function() {
   const modal = document.getElementById('chat-push-modal');
@@ -5411,62 +5618,7 @@ if (_origSetView) {
 })();
 </script>
 
-<!-- Shopify Connect Modal -->
-<div id="shopify-connect-modal" style="display:none;position:fixed;inset:0;background:rgba(17,24,39,.4);z-index:600;align-items:center;justify-content:center;">
-  <div style="background:#fff;border-radius:20px;padding:28px;width:400px;box-shadow:0 20px 48px rgba(17,24,39,.2);">
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
-      <img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/shopify.svg" width="24" height="24" style="filter:invert(48%) sepia(98%) saturate(400%) hue-rotate(90deg);"/>
-      <p style="font-size:16px;font-weight:600;color:#111827;margin:0;">Shopify Mağazanızı Bağlayın</p>
-    </div>
-    <p style="font-size:13px;color:#6b7280;margin:0 0 16px;">Mağaza adınızı girin — sadece <code>myshopify.com</code>'dan önceki kısmı yeterli.</p>
-    <div style="display:flex;align-items:center;border:0.5px solid #e5e7eb;border-radius:12px;overflow:hidden;margin-bottom:8px;">
-      <input id="shopify-domain-input" type="text" placeholder="magazaniz"
-        style="flex:1;padding:12px 14px;border:none;outline:none;font-size:14px;color:#111827;"/>
-      <span style="padding:12px 14px;background:#f9fafb;color:#9ca3af;font-size:13px;border-left:0.5px solid #e5e7eb;">.myshopify.com</span>
-    </div>
-    <p id="shopify-domain-error" style="font-size:12px;color:#dc2626;margin:0 0 16px;display:none;"></p>
-    <div style="display:flex;gap:8px;">
-      <button id="shopify-modal-cancel" type="button"
-        style="flex:1;padding:10px;border:0.5px solid #e5e7eb;border-radius:12px;background:#fff;color:#374151;font-size:13px;cursor:pointer;">
-        İptal
-      </button>
-      <button id="shopify-modal-connect" type="button"
-        style="flex:1;padding:10px;border:none;border-radius:12px;background:#111827;color:#fff;font-size:13px;font-weight:600;cursor:pointer;">
-        Bağlan →
-      </button>
-    </div>
-  </div>
-</div>
-
 <script>
-(function() {
-  document.getElementById('shopify-modal-cancel').addEventListener('click', function() {
-    document.getElementById('shopify-connect-modal').style.display = 'none';
-  });
-
-  document.getElementById('shopify-modal-connect').addEventListener('click', function() {
-    const rawInput = document.getElementById('shopify-domain-input').value;
-    const errorEl = document.getElementById('shopify-domain-error');
-    if (!rawInput.trim()) {
-      errorEl.textContent = 'Lütfen mağaza adınızı girin.';
-      errorEl.style.display = 'block';
-      return;
-    }
-    const domain = normalizeShopifyDomain(rawInput);
-    if (!domain) {
-      errorEl.textContent = 'Özel alan adı (örn. magazam.com) yerine sadece Shopify mağaza adınızı girin (örn. magazam).';
-      errorEl.style.display = 'block';
-      return;
-    }
-    errorEl.style.display = 'none';
-    window.location.href = API_URL + '/api/shopify/auth?shop=' + encodeURIComponent(domain) + '&redirect=' + encodeURIComponent(window.location.href);
-  });
-
-  document.getElementById('shopify-domain-input').addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') document.getElementById('shopify-modal-connect').click();
-  });
-})();
-
 // ── Uygulama İçi Bildirim Sistemi (localStorage, günde 5 bildirim) ───────
 const InAppNotifications = (function() {
   var POOL = [
@@ -5630,6 +5782,99 @@ function promptAddCustomColumn() {
   window._customColumns.push({ key: key, label: name.trim() });
   if (typeof buildGrid === 'function') buildGrid();
   toast('"' + name.trim() + '" sütunu eklendi');
+}
+
+// ========== ACP PRODUCT PICKER ==========
+let _acpPickerProducts = [];
+let _acpPickerSelected = null;
+
+function openAcpProductPicker() {
+  const shopDomain = shopifyStore || localStorage.getItem('mocksheets_shop_domain');
+  if (!shopDomain) {
+    alert('Önce Shopify hesabınızı bağlayın.');
+    return;
+  }
+
+  const modal = document.getElementById('acp-product-picker-modal');
+  modal.style.display = 'flex';
+  document.getElementById('app-pp-search').value = '';
+  document.getElementById('app-pp-list').innerHTML = '<div class="app-pp-loading"><div class="spinner"></div></div>';
+  _acpPickerSelected = null;
+
+  // If catalogData.products exists, use it
+  if (catalogData && catalogData.products && catalogData.products.length > 0) {
+    _acpPickerProducts = catalogData.products;
+    renderAcpProductList();
+    return;
+  }
+
+  // Otherwise fetch from API
+  const url = `${API_URL}/api/shopify/data?type=products`;
+  fetch(url, { headers: authHeaders() })
+    .then(r => {
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      return r.json();
+    })
+    .then(data => {
+      _acpPickerProducts = data.products || [];
+      renderAcpProductList();
+    })
+    .catch(err => {
+      document.getElementById('app-pp-list').innerHTML = `<div class="app-pp-error">Ürünler yüklenemedi: ${err.message}</div>`;
+    });
+}
+
+function renderAcpProductList(filter = '') {
+  const list = document.getElementById('app-pp-list');
+  if (!list) return;
+
+  let filtered = _acpPickerProducts;
+  if (filter.trim()) {
+    const q = filter.toLowerCase();
+    filtered = _acpPickerProducts.filter(p =>
+      (p.title && p.title.toLowerCase().includes(q)) ||
+      (p.vendor && p.vendor.toLowerCase().includes(q))
+    );
+  }
+
+  if (filtered.length === 0) {
+    list.innerHTML = '<div class="app-pp-empty">Ürün bulunamadı</div>';
+    return;
+  }
+
+  list.innerHTML = filtered.slice(0, 200).map((p, idx) => `
+    <div class="app-pp-item" onclick="selectAcpProduct(${idx})">
+      <div class="app-pp-title">${p.title || 'Başlıksız'}</div>
+      <div class="app-pp-meta">${p.vendor || 'Üretici yok'} • ${p.price ? '$' + p.price : 'Fiyat yok'}</div>
+    </div>
+  `).join('');
+}
+
+function selectAcpProduct(idx) {
+  _acpPickerSelected = _acpPickerProducts[idx];
+  const items = document.querySelectorAll('.app-pp-item');
+  items.forEach((item, i) => {
+    item.classList.toggle('selected', i === idx);
+  });
+}
+
+function confirmAcpProductSelection() {
+  if (!_acpPickerSelected) {
+    alert('Bir ürün seçin');
+    return;
+  }
+
+  const ta = document.getElementById('acp-pb');
+  const info = `[Ürün: ${_acpPickerSelected.title || 'Bilinmiyor'}]`;
+  ta.value = (ta.value.trim() ? ta.value + '\n' : '') + info;
+
+  closeAcpProductPicker();
+}
+
+function closeAcpProductPicker() {
+  const modal = document.getElementById('acp-product-picker-modal');
+  if (modal) modal.style.display = 'none';
+  _acpPickerSelected = null;
 }
 </script>
 
