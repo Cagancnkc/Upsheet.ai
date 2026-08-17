@@ -2290,7 +2290,7 @@ function renderDashCollectionsMini() {
 }
 
 async function renderDashAnalyticsSection() {
-  const statusRes = await fetch('/api/analytics/tracking-status', {
+  const statusRes = await fetch(`${API_URL}/api/analytics/tracking-status`, {
     headers: { Authorization: `Bearer ${getAuthToken()}` }
   }).catch(() => null);
   if (!statusRes?.ok) return;
@@ -2308,7 +2308,7 @@ async function renderDashAnalyticsSection() {
   document.getElementById('dash-analytics-empty').style.display = 'none';
   document.getElementById('dash-analytics-content').style.display = 'block';
 
-  const sumRes = await fetch('/api/analytics/summary', {
+  const sumRes = await fetch(`${API_URL}/api/analytics/summary`, {
     headers: { Authorization: `Bearer ${getAuthToken()}` }
   }).catch(() => null);
   if (!sumRes?.ok) return;
@@ -2339,7 +2339,7 @@ function renderDashTopProducts(products) {
 async function dashToggleTracking(enable) {
   const btn = document.querySelector('#dash-tracking-toggle-wrap button');
   if (btn) btn.disabled = true;
-  const endpoint = enable ? '/api/shopify/analytics/enable' : '/api/shopify/analytics/disable';
+  const endpoint = enable ? `${API_URL}/api/shopify/analytics/enable` : `${API_URL}/api/shopify/analytics/disable`;
   const res = await fetch(endpoint, {
     method: 'POST',
     headers: { Authorization: `Bearer ${getAuthToken()}` }
