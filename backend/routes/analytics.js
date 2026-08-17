@@ -35,11 +35,11 @@ function checkRateLimit(sessionId, eventType) {
 
 // POST /track — public, logs visitor events
 router.post('/track', async (req, res) => {
-  const { shop_domain, event_type, page_url, element_id, product_id, scroll_depth, session_id } = req.body;
+  const { shop_domain, event_type, page_url, element_id, product_id, scroll_depth, session_id, order_total } = req.body;
 
   // Validate
   if (!shop_domain || !event_type) return res.status(400).json({ error: 'shop_domain ve event_type gerekli' });
-  if (!['page_view', 'click', 'scroll', 'add_to_cart'].includes(event_type)) {
+  if (!['page_view', 'click', 'scroll', 'add_to_cart', 'purchase'].includes(event_type)) {
     return res.status(400).json({ error: 'Geçersiz event_type' });
   }
   if (!session_id) return res.status(400).json({ error: 'session_id gerekli' });
@@ -65,13 +65,8 @@ router.post('/track', async (req, res) => {
 
   // Insert event
   const { error } = await sb.from('analytics_events').insert({
-    shop_domain,
-    event_type,
-    page_url,
-    element_id,
-    product_id,
-    scroll_depth,
-    session_id
+    shop_domain, event_type, page_url, element_id,
+    product_id, scroll_depth, session_id, order_total,
   });
 
   if (error) {
@@ -96,11 +91,8 @@ router.get('/summary', requireAuth, async (req, res) => {
 
   if (!conn) {
     return res.json({
-      total_visits: 0,
-      total_clicks: 0,
-      total_cart: 0,
-      avg_scroll_depth: 0,
-      top_products: []
+      total_visits: 0, total_clicks: 0, total_cart: 0, avg_scroll_depth: 0, top_products: [],
+      unique_visitors: 0, bounce_rate: 0, total_purchases: 0, conversion_rate: 0, total_revenue: 0,
     });
   }
 
@@ -109,42 +101,57 @@ router.get('/summary', requireAuth, async (req, res) => {
   // Aggregate events
   const { data: events } = await sb
     .from('analytics_events')
-    .select('event_type, product_id, scroll_depth')
+    .select('event_type, product_id, scroll_depth, session_id, order_total')
     .eq('shop_domain', conn.shop_domain)
     .gt('created_at', cutoffDate);
 
   if (!events || !events.length) {
     return res.json({
-      total_visits: 0,
-      total_clicks: 0,
-      total_cart: 0,
-      avg_scroll_depth: 0,
-      top_products: []
+      total_visits: 0, total_clicks: 0, total_cart: 0, avg_scroll_depth: 0, top_products: [],
+      unique_visitors: 0, bounce_rate: 0, total_purchases: 0, conversion_rate: 0, total_revenue: 0,
     });
   }
 
   // Aggregate
-  let total_visits = 0;
-  let total_clicks = 0;
-  let total_cart = 0;
-  let total_scroll = 0;
+  let total_visits = 0, total_clicks = 0, total_cart = 0, total_scroll = 0;
   const productMap = new Map();
+  const allSessions = new Set();
+  const pageViewsBySession = {};
+  let total_purchases = 0;
+  let total_revenue = 0;
 
   for (const evt of events) {
-    if (evt.event_type === 'page_view') total_visits++;
-    if (evt.event_type === 'click') {
-      total_clicks++;
-      if (evt.product_id) {
-        productMap.set(evt.product_id, (productMap.get(evt.product_id) || 0) + 1);
+    if (evt.session_id) allSessions.add(evt.session_id);
+    if (evt.event_type === 'page_view') {
+      total_visits++;
+      if (evt.session_id) {
+        pageViewsBySession[evt.session_id] = (pageViewsBySession[evt.session_id] || 0) + 1;
       }
     }
+    if (evt.event_type === 'click') {
+      total_clicks++;
+      if (evt.product_id) productMap.set(evt.product_id, (productMap.get(evt.product_id) || 0) + 1);
+    }
     if (evt.event_type === 'add_to_cart') total_cart++;
+    if (evt.event_type === 'purchase') {
+      total_purchases++;
+      total_revenue += parseFloat(evt.order_total) || 0;
+    }
     if (evt.scroll_depth != null) total_scroll += evt.scroll_depth;
   }
 
+  const unique_visitors = allSessions.size;
+
+  const sessionsWithPageView = Object.keys(pageViewsBySession).length;
+  const singlePageSessions = Object.values(pageViewsBySession).filter(n => n === 1).length;
+  const bounce_rate = sessionsWithPageView > 0
+    ? Math.round((singlePageSessions / sessionsWithPageView) * 100) : 0;
+
+  const conversion_rate = unique_visitors > 0
+    ? Math.round((total_purchases / unique_visitors) * 1000) / 10 : 0;
+
   const avg_scroll_depth = events.filter(e => e.scroll_depth != null).length > 0
-    ? Math.round(total_scroll / events.filter(e => e.scroll_depth != null).length)
-    : 0;
+    ? Math.round(total_scroll / events.filter(e => e.scroll_depth != null).length) : 0;
 
   const top_products = Array.from(productMap.entries())
     .sort((a, b) => b[1] - a[1])
@@ -152,11 +159,10 @@ router.get('/summary', requireAuth, async (req, res) => {
     .map(([product_id, count]) => ({ product_id, count }));
 
   res.json({
-    total_visits,
-    total_clicks,
-    total_cart,
-    avg_scroll_depth,
-    top_products
+    total_visits, total_clicks, total_cart, avg_scroll_depth, top_products,
+    unique_visitors, bounce_rate,
+    total_purchases, conversion_rate,
+    total_revenue: Math.round(total_revenue),
   });
 });
 

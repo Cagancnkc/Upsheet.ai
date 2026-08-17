@@ -2036,14 +2036,26 @@ function renderDashboard() {
             Takip henüz etkin değil. "Takibi Başlat" butonuna tıklayarak mağaza ziyaretçilerinizi izlemeye başlayın.
           </div>
           <div id="dash-analytics-content" style="display:none">
-            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px">
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:12px;margin-bottom:16px">
+              <div style="background:#f9fafb;border-radius:10px;padding:12px;text-align:center;">
+                <div class="dash-stat-val" id="dash-stat-visitors" style="font-size:20px;font-weight:700;color:#111827">—</div>
+                <div class="dash-stat-lbl" style="font-size:12px;color:#6b7280;margin-top:4px">Benzersiz Ziyaretçi</div>
+              </div>
               <div style="background:#f9fafb;border-radius:10px;padding:12px;text-align:center;">
                 <div class="dash-stat-val" id="dash-stat-clicks" style="font-size:20px;font-weight:700;color:#111827">—</div>
                 <div class="dash-stat-lbl" style="font-size:12px;color:#6b7280;margin-top:4px">Tıklama</div>
               </div>
               <div style="background:#f9fafb;border-radius:10px;padding:12px;text-align:center;">
+                <div class="dash-stat-val" id="dash-stat-bounce" style="font-size:20px;font-weight:700;color:#d97706">—</div>
+                <div class="dash-stat-lbl" style="font-size:12px;color:#6b7280;margin-top:4px">Çıkış Oranı</div>
+              </div>
+              <div style="background:#f9fafb;border-radius:10px;padding:12px;text-align:center;">
                 <div class="dash-stat-val" id="dash-stat-cart" style="font-size:20px;font-weight:700;color:#111827">—</div>
                 <div class="dash-stat-lbl" style="font-size:12px;color:#6b7280;margin-top:4px">Sepete Ekle</div>
+              </div>
+              <div style="background:#f9fafb;border-radius:10px;padding:12px;text-align:center;">
+                <div class="dash-stat-val" id="dash-stat-conversion" style="font-size:20px;font-weight:700;color:#16a34a">—</div>
+                <div class="dash-stat-lbl" style="font-size:12px;color:#6b7280;margin-top:4px">Dönüşüm Oranı</div>
               </div>
               <div style="background:#f9fafb;border-radius:10px;padding:12px;text-align:center;">
                 <div class="dash-stat-val" id="dash-stat-scroll" style="font-size:20px;font-weight:700;color:#111827">—</div>
@@ -2302,8 +2314,11 @@ async function renderDashAnalyticsSection() {
   if (!sumRes?.ok) return;
   const s = await sumRes.json();
 
+  document.getElementById('dash-stat-visitors').textContent = s.unique_visitors?.toLocaleString('tr-TR') ?? '—';
   document.getElementById('dash-stat-clicks').textContent = s.total_clicks ?? '—';
+  document.getElementById('dash-stat-bounce').textContent = s.bounce_rate != null ? `${s.bounce_rate}%` : '—';
   document.getElementById('dash-stat-cart').textContent = s.total_cart ?? '—';
+  document.getElementById('dash-stat-conversion').textContent = s.conversion_rate != null ? `${s.conversion_rate}%` : '—';
   document.getElementById('dash-stat-scroll').textContent = s.avg_scroll_depth != null ? `${s.avg_scroll_depth}%` : '—';
 
   renderDashTopProducts(s.top_products || []);

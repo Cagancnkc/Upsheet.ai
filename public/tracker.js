@@ -97,4 +97,13 @@
       });
     }
   }, true);
+
+  // Purchase / thank-you page detection
+  if (window.location.pathname.includes('/thank_you') ||
+      window.location.pathname.includes('/order-confirmation') ||
+      (window.Shopify && window.Shopify.checkout)) {
+    var orderTotal = (window.Shopify && window.Shopify.checkout)
+      ? window.Shopify.checkout.total_price : null;
+    send('purchase', { order_total: orderTotal });
+  }
 })();
