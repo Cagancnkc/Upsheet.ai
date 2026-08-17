@@ -1898,6 +1898,26 @@ function renderDashboard() {
         <span style="font-size:12px;color:#6b7280;">Verileriniz şifreli saklanıyor, Shopify onaylı bağlantı kullanılıyor</span>
       </div>
 
+      <div style="background:#111827;border-radius:14px;padding:20px;margin-bottom:16px;">
+        <div style="display:grid;grid-template-columns:repeat(3,1fr) auto;gap:20px;align-items:center;">
+          <div>
+            <p style="font-size:11px;color:#9ca3af;margin:0 0 4px;">Fark Edilmemiş Potansiyel</p>
+            <p id="dash-conversion-loss-count" style="font-size:22px;font-weight:700;color:#fff;margin:0;">${analysis.totalIssueCount > 0 ? analysis.totalIssueCount + ' ürün' : '—'}</p>
+          </div>
+          <div>
+            <p style="font-size:11px;color:#9ca3af;margin:0 0 4px;">Ziyaretçi (7 gün)</p>
+            <p id="dash-summary-visitors" style="font-size:22px;font-weight:700;color:#fff;margin:0;">—</p>
+          </div>
+          <div>
+            <p style="font-size:11px;color:#9ca3af;margin:0 0 4px;">Dönüşüm Oranı</p>
+            <p id="dash-summary-conversion" style="font-size:22px;font-weight:700;color:#fff;margin:0;">—</p>
+          </div>
+          <div id="dash-pending-suggestions-pill" style="background:#16a34a;border-radius:12px;padding:12px 16px;text-align:center;cursor:pointer;min-width:90px;">
+            <p id="dash-pending-count" style="font-size:20px;font-weight:700;color:#fff;margin:0;">${analysis.totalIssueCount}</p>
+            <p style="font-size:10px;color:#dcfce7;margin:2px 0 0;">öneri → incele</p>
+          </div>
+        </div>
+      </div>
 
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:16px">
 
@@ -1948,80 +1968,7 @@ function renderDashboard() {
 
       </div>
 
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-bottom:16px;">
-
-        <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:20px;">
-          <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 16px;">Katalog Sağlığı Detayı</p>
-          <div style="display:flex;gap:20px;align-items:center;flex-wrap:wrap;">
-            <div id="health-ring-container" style="flex-shrink:0;"></div>
-            <div id="dash-health-breakdown-full" style="flex:1;min-width:180px;display:flex;flex-direction:column;gap:8px;"></div>
-          </div>
-        </div>
-
-        <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:20px;">
-          <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 14px;">AI Önerileri</p>
-          <div id="dash-ai-recommendations" style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px;"></div>
-          <button id="fix-all-issues-btn" type="button"
-            style="width:100%;padding:11px;background:#111827;color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:600;opacity:${fixDisabled ? '0.5' : '1'};cursor:${fixDisabled ? 'not-allowed' : 'pointer'};"
-            ${fixDisabled ? 'disabled' : ''}>
-            Tüm Sorunları AI ile Düzelt
-          </button>
-        </div>
-
-        <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:20px;">
-          <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 14px;">Hızlı İşlemler</p>
-          <div id="dash-quick-actions" style="display:flex;flex-direction:column;gap:6px;"></div>
-        </div>
-
-      </div>
-
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;">
-        <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:20px;">
-          <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 14px;">Katalog Sağlığı Trendi</p>
-          <div id="health-trend-chart"></div>
-        </div>
-        <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:20px;">
-          <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 14px;">Son İşlemler</p>
-          <div id="dash-recent-operations-full" style="display:flex;flex-direction:column;gap:12px;"></div>
-        </div>
-      </div>
-
-      <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:20px;margin-top:16px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-          <p style="font-size:13px;font-weight:600;color:#111827;margin:0;">Ürünler</p>
-          <button id="open-full-catalog-btn" type="button"
-            style="padding:6px 14px;border:0.5px solid #e5e7eb;border-radius:10px;background:#fff;color:#374151;font-size:11px;font-weight:600;cursor:pointer;">
-            Tam Düzenleyiciyi Aç →
-          </button>
-        </div>
-        <div id="dash-products-mini-grid" style="display:grid;grid-template-columns:repeat(auto-fill, minmax(140px, 1fr));gap:10px;"></div>
-      </div>
-
-      <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:20px;margin-top:16px;">
-        <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 12px;">Kategoriler</p>
-        <div id="dash-collections-mini" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
-      </div>
-
-      <div id="geo-visibility-card" style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:20px;margin-top:16px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-          <div style="display:flex;align-items:center;gap:8px;">
-            <i class="ti ti-robot" style="font-size:16px;color:#16a34a;"></i>
-            <p style="font-size:13px;font-weight:600;color:#111827;margin:0;">AI Görünürlük Skoru</p>
-          </div>
-          <span id="geo-score-badge" style="font-size:20px;font-weight:700;color:#111827;">—</span>
-        </div>
-        <p style="font-size:11px;color:#9ca3af;margin:0 0 14px;">
-          Ürünlerinizin ChatGPT/Perplexity gibi AI alışveriş asistanları tarafından ne kadar anlaşılır olduğunu ölçer
-        </p>
-        <div id="geo-breakdown" style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;"></div>
-        <button id="geo-fix-btn" type="button"
-          style="width:100%;padding:9px;background:#111827;color:#fff;border:none;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;">
-          ✨ AI İçin Optimize Et
-        </button>
-      </div>
-
-      <!-- Analytics Widget -->
-      <div class="dash-section" id="dash-analytics-section" style="margin-top:16px">
+      <div class="dash-section" id="dash-analytics-section" style="margin-bottom:16px">
         <div class="dash-card" style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:20px;">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
             <h3 style="margin:0;font-size:15px;font-weight:600">Ziyaretçi Davranışı</h3>
@@ -2068,6 +2015,75 @@ function renderDashboard() {
         </div>
       </div>
 
+      <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:20px;margin-bottom:16px;">
+        <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 14px;">AI Önerileri</p>
+        <div id="dash-ai-recommendations" style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px;"></div>
+        <button id="fix-all-issues-btn" type="button"
+          style="width:100%;padding:11px;background:#111827;color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:600;opacity:${fixDisabled ? '0.5' : '1'};cursor:${fixDisabled ? 'not-allowed' : 'pointer'};"
+          ${fixDisabled ? 'disabled' : ''}>
+          Tüm Sorunları AI ile Düzelt
+        </button>
+      </div>
+
+      <div style="background:#111827;border:none;border-radius:14px;padding:20px;margin-bottom:16px;">
+        <p style="font-size:13px;font-weight:600;color:#fff;margin:0 0 14px;">Hızlı İşlemler</p>
+        <div id="dash-quick-actions" style="display:flex;flex-direction:column;gap:6px;"></div>
+      </div>
+
+      <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:20px;margin-bottom:16px;">
+        <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 16px;">Katalog Sağlığı Detayı</p>
+        <div style="display:flex;gap:20px;align-items:center;flex-wrap:wrap;">
+          <div id="health-ring-container" style="flex-shrink:0;"></div>
+          <div id="dash-health-breakdown-full" style="flex:1;min-width:180px;display:flex;flex-direction:column;gap:8px;"></div>
+        </div>
+      </div>
+
+      <div id="geo-visibility-card" style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:20px;margin-bottom:16px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <i class="ti ti-robot" style="font-size:16px;color:#16a34a;"></i>
+            <p style="font-size:13px;font-weight:600;color:#111827;margin:0;">AI Görünürlük Skoru</p>
+          </div>
+          <span id="geo-score-badge" style="font-size:20px;font-weight:700;color:#111827;">—</span>
+        </div>
+        <p style="font-size:11px;color:#9ca3af;margin:0 0 14px;">
+          Ürünlerinizin ChatGPT/Perplexity gibi AI alışveriş asistanları tarafından ne kadar anlaşılır olduğunu ölçer
+        </p>
+        <div id="geo-breakdown" style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;"></div>
+        <button id="geo-fix-btn" type="button"
+          style="width:100%;padding:9px;background:#111827;color:#fff;border:none;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;">
+          ✨ AI İçin Optimize Et
+        </button>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:16px;margin-bottom:16px;">
+        <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:20px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+            <p style="font-size:13px;font-weight:600;color:#111827;margin:0;">Ürünler</p>
+            <button id="open-full-catalog-btn" type="button"
+              style="padding:6px 14px;border:0.5px solid #e5e7eb;border-radius:10px;background:#fff;color:#374151;font-size:11px;font-weight:600;cursor:pointer;">
+              Tam Düzenleyiciyi Aç →
+            </button>
+          </div>
+          <div id="dash-products-mini-grid" style="display:grid;grid-template-columns:repeat(auto-fill, minmax(140px, 1fr));gap:10px;"></div>
+        </div>
+        <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:20px;">
+          <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 12px;">Kategoriler</p>
+          <div id="dash-collections-mini" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;">
+        <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:20px;">
+          <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 14px;">Katalog Sağlığı Trendi</p>
+          <div id="health-trend-chart"></div>
+        </div>
+        <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:20px;">
+          <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 14px;">Son İşlemler</p>
+          <div id="dash-recent-operations-full" style="display:flex;flex-direction:column;gap:12px;"></div>
+        </div>
+      </div>
+
     </div>`;
 
   // Health trend
@@ -2094,6 +2110,9 @@ function renderDashboard() {
   renderDashProductsMini();
   renderDashCollectionsMini();
   renderDashAnalyticsSection();
+  document.getElementById('dash-pending-suggestions-pill')?.addEventListener('click', function() {
+    setView('catalog-check');
+  });
   document.getElementById('open-full-catalog-btn')
     ?.addEventListener('click', openFullCatalogEditor);
 
@@ -2321,6 +2340,11 @@ async function renderDashAnalyticsSection() {
   document.getElementById('dash-stat-conversion').textContent = s.conversion_rate != null ? `${s.conversion_rate}%` : '—';
   document.getElementById('dash-stat-scroll').textContent = s.avg_scroll_depth != null ? `${s.avg_scroll_depth}%` : '—';
 
+  const summaryVisitors = document.getElementById('dash-summary-visitors');
+  if (summaryVisitors) summaryVisitors.textContent = s.unique_visitors?.toLocaleString('tr-TR') ?? '—';
+  const summaryConversion = document.getElementById('dash-summary-conversion');
+  if (summaryConversion) summaryConversion.textContent = s.conversion_rate != null ? `${s.conversion_rate}%` : '—';
+
   renderDashTopProducts(s.top_products || []);
 }
 
@@ -2517,24 +2541,24 @@ function renderDashQuickActions() {
     btn.disabled = !hasProducts;
     const icon = QUICK_ACTION_ICONS[preset.action] || 'ti-sparkles';
     btn.style.cssText = 'width:100%;display:flex;align-items:center;gap:10px;text-align:left;padding:10px 12px;' +
-      'border:1px solid transparent;border-radius:var(--radius,10px);' +
-      'background:transparent;color:' + (hasProducts ? 'var(--text-2,#374151)' : 'var(--text-4,#9ca3af)') + ';' +
+      'border:0.5px solid #374151;border-radius:var(--radius,10px);' +
+      'background:#1f2937;color:' + (hasProducts ? '#d1d5db' : '#6b7280') + ';' +
       'font-size:12px;cursor:' + (hasProducts ? 'pointer' : 'not-allowed') + ';' +
       'transition:background .18s ease, border-color .18s ease, transform .18s ease;';
     btn.innerHTML =
-      '<i class="ti ' + icon + '" style="font-size:14px;color:var(--accent-strong,#15803d);width:16px;flex-shrink:0;"></i>' +
+      '<i class="ti ' + icon + '" style="font-size:14px;color:#4ade80;width:16px;flex-shrink:0;"></i>' +
       '<span style="flex:1;">' + preset.label + '</span>' +
-      '<span class="qa-hint" style="font-size:10px;padding:2px 6px;border:1px solid var(--line,#e5e7eb);border-radius:var(--radius-sm,8px);color:var(--text-4,#9ca3af);background:var(--bg,#fff);opacity:0;transition:opacity .18s ease;">↵</span>';
+      '<span class="qa-hint" style="font-size:10px;padding:2px 6px;border:1px solid #4b5563;border-radius:var(--radius-sm,8px);color:#9ca3af;background:#374151;opacity:0;transition:opacity .18s ease;">↵</span>';
     if (hasProducts) {
       btn.addEventListener('mouseenter', function() {
-        this.style.background = 'var(--accent-tint,#dcfce7)';
-        this.style.borderColor = 'var(--line-soft,#f3f4f6)';
+        this.style.background = '#374151';
+        this.style.borderColor = '#4b5563';
         const hint = this.querySelector('.qa-hint');
         if (hint) hint.style.opacity = '1';
       });
       btn.addEventListener('mouseleave', function() {
-        this.style.background = 'transparent';
-        this.style.borderColor = 'transparent';
+        this.style.background = '#1f2937';
+        this.style.borderColor = '#374151';
         const hint = this.querySelector('.qa-hint');
         if (hint) hint.style.opacity = '0';
       });
