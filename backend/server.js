@@ -488,6 +488,14 @@ app.get('/api/integrations/microsoft/connect', async (req, res) => {
   res.redirect(`/api/integrations/excel/auth?${params}`);
 });
 
+app.get('/api/integrations/shopify/connect', async (req, res) => {
+  const token = await _verifyConnectToken(req, res);
+  if (!token) return;
+  const params = new URLSearchParams({ token, ...(req.query.redirect ? { redirect: req.query.redirect } : {}) });
+  if (req.query.popup === '1') params.set('mode', 'popup');
+  res.redirect(`/api/shopify/auth?${params}`);
+});
+
 const _CONNECT_MAP = {
   slack: 'slack', gmail: 'gmail', notion: 'notion',
   google_drive: 'drive', google_sheets: 'sheets',
@@ -573,6 +581,8 @@ app.use('/api/agents', agentsRouter);
 
 const shopifyRouter = require('./routes/shopify');
 app.use('/api/shopify', shopifyRouter);
+const analyticsRouter = require('./routes/analytics');
+app.use('/api/analytics', analyticsRouter);
 const chatRouter = require('./routes/chat');
 app.use('/api/chat', chatRouter);
 const ragFeedbackRouter = require('./routes/ragFeedback');

@@ -1,0 +1,23 @@
+# Shopify app configuration — Mocksheets
+# https://shopify.dev/docs/apps/build/cli-for-apps/app-configuration
+
+name = "Mocksheets"
+client_id = "env:SHOPIFY_CLIENT_ID"
+application_url = "https://mocksheets.com/app"
+embedded = false
+
+[access_scopes]
+scopes = "read_orders,read_products,read_customers,read_inventory,write_products"
+
+[auth]
+redirect_urls = [
+  "https://upsheet-ai.onrender.com/api/shopify/callback",
+  "http://localhost:3001/api/shopify/callback"
+]
+
+[webhooks]
+api_version = "2024-07"
+
+[[webhooks.subscriptions]]
+compliance_topics = ["customers/data_request", "customers/redact", "shop/redact"]
+uri = "https://upsheet-ai.onrender.com/api/shopify/webhooks"

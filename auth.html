@@ -584,7 +584,7 @@
         <div class="form-card-heading" id="formCardHeading">Tekrar hoş geldiniz</div>
 
         <!-- Shopify -->
-        <button class="btn-google" id="btn-shopify" onclick="startShopifyAuth()">
+        <button class="btn-google" id="btn-shopify" onclick="showShopifyDomainInput()">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 109.5 124" width="20" height="20" aria-hidden="true">
             <path fill="#95BF47" d="M74.7 14.8c0-.4-.4-.7-.7-.7-.3 0-6.6-.1-6.6-.1s-5.3-5.1-5.8-5.6-1.5-.4-1.9-.3c-.1 0-1.1.3-2.7.8-1.6-4.6-4.4-8.8-9.3-8.8h-.4C45.8.6 44 0 42.5 0c-11.6 0-17.2 14.5-19 21.9-4.5 1.4-7.7 2.4-8.1 2.5-2.5.8-2.6.9-2.9 3.2C12.2 29.4 5.6 80.6 5.6 80.6l51.5 9.7 27.9-6c.1 0-10.3-69.5-10.3-69.5zM53.9 19.6c-2.6.8-5.5 1.7-8.4 2.6.8-3.1 2.3-6.2 4.2-8.2.7-.7 1.6-1.6 2.7-2.1 1 2.1 1.5 5 1.5 7.7zm-6.9-13.4c.9 0 1.7.3 2.3.9-1.5.7-3 2-4.5 3.7-2.4 2.6-4.3 6.6-5 10.5-2.4.7-4.8 1.5-7 2.1 2-6.7 6.7-17.2 14.2-17.2z"/>
             <path fill="#5E8E3E" d="M74 14.1c-.3 0-6.6-.1-6.6-.1s-5.3-5.1-5.8-5.6c-.2-.2-.5-.3-.7-.4L57.2 90.2l27.9-6S74.7 14.7 74.7 14.4c0-.2-.4-.3-.7-.3z"/>
@@ -592,6 +592,25 @@
           </svg>
           Shopify ile devam et
         </button>
+
+        <!-- Shopify Domain Input (hidden by default) -->
+        <div id="shopifyDomainSection" style="display:none; margin-top:12px;">
+          <div class="auth-input-wrap">
+            <label class="auth-label" for="shopifyDomainInput">Mağaza URL'si</label>
+            <input
+              class="auth-input"
+              id="shopifyDomainInput"
+              type="text"
+              placeholder="maganizad.myshopify.com"
+              autocomplete="off"
+              onkeypress="if(event.key==='Enter') proceedShopifyAuth()"
+            >
+          </div>
+          <div style="display:flex;gap:8px;margin-top:12px;">
+            <button class="btn-submit" onclick="proceedShopifyAuth()" style="flex:1;">Devam Et →</button>
+            <button class="btn-submit" onclick="cancelShopifyAuth()" style="flex:1;background:#ccc;color:#333;">İptal</button>
+          </div>
+        </div>
 
         <!-- Google -->
         <button class="btn-google" onclick="handleGoogleLogin()">
@@ -631,38 +650,6 @@
         <div class="toggle-row" id="toggleRow">
           Hesabın yok mu?
           <button class="toggle-btn" onclick="switchMode('signup')">Kaydol</button>
-        </div>
-      </div>
-
-      <!-- Shopify Domain Modal -->
-      <div id="shopify-domain-modal" style="display:none; position:fixed; inset:0;
-        background:rgba(0,0,0,0.4); z-index:1000;
-        align-items:center; justify-content:center;">
-        <div style="background:#fff; border-radius:16px; padding:28px;
-          width:90%; max-width:400px; box-shadow:0 8px 32px rgba(0,0,0,0.12);">
-          <h3 style="margin:0 0 8px; font-size:16px; font-weight:600; color:#1a1a1a;">
-            Shopify mağaza adresin nedir?
-          </h3>
-          <p style="margin:0 0 16px; font-size:13px; color:#666; line-height:1.5;">
-            Shopify admin panelindeki mağaza adresini gir.
-          </p>
-          <input id="shopify-domain-input" type="text"
-            placeholder="magazaadi.myshopify.com"
-            style="width:100%; padding:10px 12px; border:1px solid var(--line);
-            border-radius:var(--radius); font-size:14px; box-sizing:border-box;
-            margin-bottom:12px; font-family:'Geist',sans-serif; outline:none;">
-          <button onclick="connectShopify()"
-            style="width:100%; padding:11px; background:var(--accent);
-            color:#fff; border:none; border-radius:var(--radius);
-            font-size:14px; font-weight:600; font-family:'Geist',sans-serif;
-            cursor:pointer; margin-bottom:8px;">
-            Bağlan
-          </button>
-          <button onclick="closeShopifyModal()"
-            style="width:100%; padding:8px; background:none; border:none;
-            font-size:13px; color:#666; cursor:pointer; font-family:'Geist',sans-serif;">
-            İptal
-          </button>
         </div>
       </div>
 
@@ -1041,30 +1028,29 @@ document.getElementById('emailInput').addEventListener('keydown', function(e) {
   }
 })();
 
-// ── Shopify OAuth ──────────────────────────────────────────────────────────────
+// ── Shopify OAuth (mağaza domain'i iste → OAuth başlat) ─────────────────────────
 var _shopifyApi = location.hostname === 'localhost'
   ? 'http://localhost:3001'
   : 'https://upsheet-ai.onrender.com';
 
-function startShopifyAuth() {
-  document.getElementById('shopify-domain-modal').style.display = 'flex';
-  setTimeout(function() { document.getElementById('shopify-domain-input').focus(); }, 100);
+function showShopifyDomainInput() {
+  document.getElementById('shopifyDomainSection').style.display = 'block';
+  document.getElementById('shopifyDomainInput').focus();
 }
 
-function closeShopifyModal() {
-  document.getElementById('shopify-domain-modal').style.display = 'none';
+function cancelShopifyAuth() {
+  document.getElementById('shopifyDomainSection').style.display = 'none';
+  document.getElementById('shopifyDomainInput').value = '';
 }
 
-function connectShopify() {
-  var domain = document.getElementById('shopify-domain-input').value.trim();
-  if (!domain) return;
-  if (!domain.includes('.myshopify.com')) domain = domain + '.myshopify.com';
-  window.location.href = _shopifyApi + '/api/shopify/auth?shop=' + encodeURIComponent(domain);
+function proceedShopifyAuth() {
+  const shop = document.getElementById('shopifyDomainInput').value.trim();
+  if (!shop) {
+    alert('Lütfen mağaza URL\'sini girin (örn: maganizad.myshopify.com)');
+    return;
+  }
+  window.location.href = _shopifyApi + '/api/shopify/auth?shop=' + encodeURIComponent(shop);
 }
-
-document.getElementById('shopify-domain-input').addEventListener('keydown', function(e) {
-  if (e.key === 'Enter') connectShopify();
-});
 
 // Shopify callback hata kontrolü
 (function() {

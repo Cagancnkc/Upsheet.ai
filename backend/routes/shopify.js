@@ -72,16 +72,49 @@ async function requireAuth(req, res, next) {
   next();
 }
 
+function normalizeShop(raw) {
+  if (!raw) return null;
+  let s = raw.trim().toLowerCase()
+    .replace(/^https?:\/\//, '')
+    .replace(/\/.*$/, '');
+  if (!s.includes('.')) s += '.myshopify.com';
+  return s;
+}
+
+function buildShopifyAuthorizeUrl(shop, clientId, redirectUri, scopes, state) {
+  const host = shop
+    ? `https://${shop}/admin/oauth/authorize`
+    : 'https://admin.shopify.com/admin/oauth/authorize';
+  return (
+    `${host}?client_id=${clientId}` +
+    `&scope=${scopes}` +
+    `&redirect_uri=${redirectUri}` +
+    `&state=${state}`
+  );
+}
+
 // ─── GET /api/shopify/auth ────────────────────────────────────────────────────
+// Shop domain'i normalize et: maganizad → maganizad.myshopify.com
+// ?shop= gerekli (ön yüzden alınacak) · ?token= JWT (mevcut kullanıcı) · ?mode=popup
 router.get('/auth', (req, res) => {
-  const { shop } = req.query;
-  if (!shop) return res.status(400).send('<p>shop parametresi eksik</p>');
+  const { shop: rawShop, token, mode, redirect } = req.query;
+  const shop = normalizeShop(rawShop);
+
+  if (!shop) {
+    return res.status(400).send('<p>Mağaza adı gerekli (örn: maganizad.myshopify.com)</p>');
+  }
 
   const clientId = process.env.SHOPIFY_CLIENT_ID;
   if (!clientId) return res.status(500).send('<p>Shopify OAuth yapılandırılmamış</p>');
 
   const nonce = crypto.randomUUID();
-  pendingStates.set(nonce, { shop, createdAt: Date.now() });
+  pendingStates.set(nonce, {
+    shop,
+    userToken: token || null,
+    mode: mode === 'popup' ? 'popup' : 'redirect',
+    redirect: redirect || null,
+    createdAt: Date.now(),
+  });
 
   const base = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 3001}`;
   const redirectUri = encodeURIComponent(`${base}/api/shopify/callback`);
@@ -89,32 +122,45 @@ router.get('/auth', (req, res) => {
     process.env.SHOPIFY_SCOPES || 'read_orders,read_products,read_customers,read_inventory,write_products'
   );
 
-  res.redirect(
-    `https://${shop}/admin/oauth/authorize` +
-    `?client_id=${clientId}` +
-    `&scope=${scopes}` +
-    `&redirect_uri=${redirectUri}` +
-    `&state=${nonce}`
-  );
+  res.redirect(buildShopifyAuthorizeUrl(shop, clientId, redirectUri, scopes, nonce));
 });
+
+async function resolveUserIdFromToken(token) {
+  if (!token) return null;
+  try {
+    const { data: { user }, error } = await getSupabase().auth.getUser(token);
+    if (error || !user) return null;
+    return user.id;
+  } catch {
+    return null;
+  }
+}
+
+function shopifyPopupScript(origin, payload) {
+  return `<script>window.opener?.postMessage(${JSON.stringify(payload)},${JSON.stringify(origin)});window.close();</script>`;
+}
 
 // ─── GET /api/shopify/callback ────────────────────────────────────────────────
 router.get('/callback', async (req, res) => {
   const frontend = process.env.FRONTEND_URL || 'https://mocksheets.com';
   const { code, shop, state } = req.query;
 
+  const failRedirect = () => res.redirect(`${frontend}/auth.html?shopify_error=true`);
+  const failPopup = (msg) => res.send(shopifyPopupScript(frontend, { type: 'shopify_auth', error: msg || 'Bağlantı başarısız' }));
+
   try {
-    // 1. CSRF kontrolü
-    if (!state || !pendingStates.has(state)) {
-      return res.redirect(`${frontend}/auth.html?shopify_error=true`);
+    const session = state ? pendingStates.get(state) : null;
+    if (!state || !session) {
+      if (req.query.mode === 'popup') return failPopup('Geçersiz oturum');
+      return failRedirect();
     }
     pendingStates.delete(state);
 
     if (!code || !shop) {
-      return res.redirect(`${frontend}/auth.html?shopify_error=true`);
+      if (session.mode === 'popup') return failPopup('Onay iptal edildi');
+      return failRedirect();
     }
 
-    // 2. Access token al
     const tokenResp = await fetch(`https://${shop}/admin/oauth/access_token`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -126,11 +172,11 @@ router.get('/callback', async (req, res) => {
     });
     const tokenData = await tokenResp.json();
     if (!tokenData.access_token) {
-      return res.redirect(`${frontend}/auth.html?shopify_error=true`);
+      if (session.mode === 'popup') return failPopup('Access token alınamadı');
+      return failRedirect();
     }
 
-    // 3. Mağaza bilgisini çek
-    const shopResp = await fetch(`https://${shop}/admin/api/2024-01/shop.json`, {
+    const shopResp = await fetch(`https://${shop}/admin/api/2024-07/shop.json`, {
       headers: { 'X-Shopify-Access-Token': tokenData.access_token },
     });
     const shopData = await shopResp.json();
@@ -139,40 +185,42 @@ router.get('/callback', async (req, res) => {
     const shopName = shopInfo.name || shop;
 
     if (!email) {
-      return res.redirect(`${frontend}/auth.html?shopify_error=true`);
+      if (session.mode === 'popup') return failPopup('Mağaza e-postası alınamadı');
+      return failRedirect();
     }
 
     const sb = getSupabase();
+    let userId = await resolveUserIdFromToken(session.userToken);
 
-    // 4. Kullanıcıyı bul veya oluştur
-    let userId;
-    const lookupResp = await fetch(
-      `${process.env.SUPABASE_URL}/auth/v1/admin/users?email=${encodeURIComponent(email)}&page=1&per_page=1`,
-      {
-        headers: {
-          apikey: process.env.SUPABASE_SERVICE_KEY,
-          Authorization: `Bearer ${process.env.SUPABASE_SERVICE_KEY}`,
-        },
-      }
-    );
-    const lookupData = await lookupResp.json();
-    const existingUser = lookupData.users?.[0];
+    if (!userId) {
+      const lookupResp = await fetch(
+        `${process.env.SUPABASE_URL}/auth/v1/admin/users?email=${encodeURIComponent(email)}&page=1&per_page=1`,
+        {
+          headers: {
+            apikey: process.env.SUPABASE_SERVICE_KEY,
+            Authorization: `Bearer ${process.env.SUPABASE_SERVICE_KEY}`,
+          },
+        }
+      );
+      const lookupData = await lookupResp.json();
+      const existingUser = lookupData.users?.[0];
 
-    if (existingUser) {
-      userId = existingUser.id;
-    } else {
-      const { data: newUser, error: createErr } = await sb.auth.admin.createUser({
-        email,
-        email_confirm: true,
-        user_metadata: { full_name: shopName, shopify_shop: shop },
-      });
-      if (createErr || !newUser?.user) {
-        return res.redirect(`${frontend}/auth.html?shopify_error=true`);
+      if (existingUser) {
+        userId = existingUser.id;
+      } else {
+        const { data: newUser, error: createErr } = await sb.auth.admin.createUser({
+          email,
+          email_confirm: true,
+          user_metadata: { full_name: shopName, shopify_shop: shop },
+        });
+        if (createErr || !newUser?.user) {
+          if (session.mode === 'popup') return failPopup('Kullanıcı oluşturulamadı');
+          return failRedirect();
+        }
+        userId = newUser.user.id;
       }
-      userId = newUser.user.id;
     }
 
-    // 5. shopify_connections tablosuna kaydet
     await sb.from('shopify_connections').upsert(
       {
         user_id: userId,
@@ -191,7 +239,20 @@ router.get('/callback', async (req, res) => {
       { onConflict: 'user_id' }
     );
 
-    // 6. Magic link üret → Supabase session kurar, app.html'e yönlendirir
+    if (session.mode === 'popup') {
+      return res.send(shopifyPopupScript(frontend, {
+        type: 'shopify_auth',
+        connected: true,
+        shop_domain: shop,
+        shop_name: shopName,
+      }));
+    }
+
+    if (session.userToken) {
+      const target = session.redirect || `${frontend}/app.html?shopify=connected&autopull=1`;
+      return res.redirect(target);
+    }
+
     const { data: linkData, error: linkErr } = await sb.auth.admin.generateLink({
       type: 'magiclink',
       email,
@@ -201,12 +262,13 @@ router.get('/callback', async (req, res) => {
     });
 
     if (linkErr || !linkData?.properties?.action_link) {
-      return res.redirect(`${frontend}/auth.html?shopify_error=true`);
+      return failRedirect();
     }
 
     res.redirect(linkData.properties.action_link);
   } catch (err) {
     console.error('[shopify callback]', err.message);
+    if (req.query.mode === 'popup') return failPopup(err.message);
     res.redirect(`${frontend}/auth.html?shopify_error=true`);
   }
 });
@@ -840,13 +902,67 @@ router.delete('/disconnect', requireAuth, async (req, res) => {
 
 function verifyShopifyWebhook(req) {
   const hmacHeader = req.headers['x-shopify-hmac-sha256'];
-  if (!hmacHeader) return false;
+  if (!hmacHeader || !req.body) return false;
   const generatedHash = crypto
     .createHmac('sha256', process.env.SHOPIFY_CLIENT_SECRET)
     .update(req.body)
     .digest('base64');
-  return crypto.timingSafeEqual(Buffer.from(generatedHash), Buffer.from(hmacHeader));
+  try {
+    const a = Buffer.from(generatedHash, 'base64');
+    const b = Buffer.from(hmacHeader, 'base64');
+    if (a.length !== b.length) return false;
+    return crypto.timingSafeEqual(a, b);
+  } catch {
+    return false;
+  }
 }
+
+function parseWebhookPayload(req) {
+  const raw = req.body;
+  if (!raw || !raw.length) return null;
+  try {
+    return JSON.parse(raw.toString());
+  } catch {
+    return null;
+  }
+}
+
+// POST /api/shopify/webhooks — birleşik GDPR/compliance endpoint (shopify.app.toml)
+router.post('/webhooks', (req, res) => {
+  try {
+    if (!verifyShopifyWebhook(req)) return res.status(401).send('Unauthorized');
+    const topic = (req.headers['x-shopify-topic'] || '').toLowerCase();
+    const payload = parseWebhookPayload(req);
+    if (!payload) return res.status(400).send('Bad Request');
+
+    console.log(`[shopify/webhooks] ${topic} for ${payload.shop_domain || 'unknown'}`);
+
+    if (topic === 'customers/data_request') {
+      // Müşteri verisi talebi — merchant düzeyinde saklanır, hemen onayla
+      return res.status(200).send('OK');
+    }
+
+    if (topic === 'customers/redact') {
+      // Müşteri verisi silme — kişisel veri saklanmıyor
+      return res.status(200).send('OK');
+    }
+
+    if (topic === 'shop/redact') {
+      const shopDomain = payload.shop_domain;
+      if (shopDomain) {
+        getSupabase().from('shopify_connections').delete().eq('shop_domain', shopDomain)
+          .then(() => console.log('[GDPR] shop/redact completed:', shopDomain))
+          .catch((e) => console.error('[GDPR] shop/redact error:', e.message));
+      }
+      return res.status(200).send('OK');
+    }
+
+    res.status(200).send('OK');
+  } catch (e) {
+    console.error('[shopify/webhooks] error:', e);
+    res.status(500).send('Error');
+  }
+});
 
 // POST /api/shopify/webhooks/customers-data-request
 // Triggered when a customer requests a copy of their data
@@ -1016,6 +1132,82 @@ router.post('/notifications/mark-read', requireAuth, async (req, res) => {
     res.json({ ok: true });
   } catch (e) {
     console.error('[shopify/notifications/mark-read]', e.message);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// POST /api/shopify/analytics/enable — enable visitor tracking via ScriptTag
+router.post('/analytics/enable', requireAuth, async (req, res) => {
+  try {
+    const sb = getSupabase();
+    const { data: conn } = await sb
+      .from('shopify_connections')
+      .select('shop_domain, access_token')
+      .eq('user_id', req.user.id)
+      .single();
+
+    if (!conn) {
+      return res.status(404).json({ error: 'Shopify bağlantısı bulunamadı' });
+    }
+
+    const scriptUrl = `${process.env.FRONTEND_URL}/tracker.js`;
+    const resp = await fetch(
+      `https://${conn.shop_domain}/admin/api/2024-01/script_tags.json`,
+      {
+        method: 'POST',
+        headers: {
+          'X-Shopify-Access-Token': conn.access_token,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ script_tag: { event: 'onload', src: scriptUrl } })
+      }
+    );
+
+    const json = await resp.json();
+    const scriptId = json.script_tag?.id?.toString();
+
+    await sb.from('shopify_connections')
+      .update({ tracking_enabled: true, tracking_script_id: scriptId })
+      .eq('user_id', req.user.id);
+
+    res.json({ ok: true, script_id: scriptId });
+  } catch (e) {
+    console.error('[shopify/analytics/enable]', e.message);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// POST /api/shopify/analytics/disable — disable visitor tracking
+router.post('/analytics/disable', requireAuth, async (req, res) => {
+  try {
+    const sb = getSupabase();
+    const { data: conn } = await sb
+      .from('shopify_connections')
+      .select('shop_domain, access_token, tracking_script_id')
+      .eq('user_id', req.user.id)
+      .single();
+
+    if (!conn) {
+      return res.status(404).json({ error: 'Shopify bağlantısı bulunamadı' });
+    }
+
+    if (conn.tracking_script_id) {
+      await fetch(
+        `https://${conn.shop_domain}/admin/api/2024-01/script_tags/${conn.tracking_script_id}.json`,
+        {
+          method: 'DELETE',
+          headers: { 'X-Shopify-Access-Token': conn.access_token }
+        }
+      );
+    }
+
+    await sb.from('shopify_connections')
+      .update({ tracking_enabled: false, tracking_script_id: null })
+      .eq('user_id', req.user.id);
+
+    res.json({ ok: true });
+  } catch (e) {
+    console.error('[shopify/analytics/disable]', e.message);
     res.status(500).json({ error: e.message });
   }
 });

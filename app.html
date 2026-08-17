@@ -850,7 +850,13 @@ function showConnectPanel() {
   `;
 }
 
-async function connectShopify() {
+function showShopifyConnectPrompt() {
+  const shop = prompt('Mağaza URL\'sini girin (örn: maganizad.myshopify.com):');
+  if (!shop) return;
+  proceedWithShopifyConnect(shop);
+}
+
+async function proceedWithShopifyConnect(shop) {
   let jwt = typeof getAuthToken === 'function' ? getAuthToken() : null;
   if (!jwt && typeof sbClient !== 'undefined') {
     try {
@@ -858,7 +864,7 @@ async function connectShopify() {
       jwt = session?.access_token || null;
     } catch (_) {}
   }
-  const params = new URLSearchParams({ mode: 'popup' });
+  const params = new URLSearchParams({ mode: 'popup', shop });
   if (jwt) params.set('token', jwt);
   params.set('redirect', window.location.href.split('?')[0] + '?shopify=connected&autopull=1');
 
@@ -872,6 +878,10 @@ async function connectShopify() {
     fallback.delete('mode');
     window.location.href = `${API_URL}/api/shopify/auth?${fallback}`;
   }
+}
+
+async function connectShopify() {
+  showShopifyConnectPrompt();
 }
 
 function openShopifyConnectModal() {
