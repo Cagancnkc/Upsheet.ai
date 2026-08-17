@@ -100,10 +100,6 @@ router.get('/auth', (req, res) => {
   const { shop: rawShop, token, mode, redirect } = req.query;
   const shop = normalizeShop(rawShop);
 
-  if (!shop) {
-    return res.status(400).send('<p>Mağaza adı gerekli (örn: maganizad.myshopify.com)</p>');
-  }
-
   const clientId = process.env.SHOPIFY_CLIENT_ID;
   if (!clientId) return res.status(500).send('<p>Shopify OAuth yapılandırılmamış</p>');
 
