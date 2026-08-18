@@ -1261,8 +1261,7 @@
         <span class="eyebrow" data-i18n="hero.badge">Shopify için AI Ürün Asistanı</span>
 
         <h1 data-i18n-html="hero.title">
-          Ziyaretçiniz var,<br>satışınız yok —<br>
-          <em><span class="accent">davranış verisi</span> cevabı gösterir.</em>
+          Shopify mağazanızın kullanıcı verilerini inceleyerek müşterilerin kaçış noktalarını otomatik bulun, çözün ve mağazanıza <em><span class="accent">tek tıkla</span> aktarın.</em>
         </h1>
 
         <p class="hero-sub" data-i18n-html="hero.desc">
@@ -1317,67 +1316,68 @@
         </div>
       </div><!-- /hero-left -->
 
-      <!-- SAĞ: Mini-dashboard görsel -->
+      <!-- SAĞ: Onay kartı görseli -->
       <div class="hero-dash" aria-hidden="true">
 
         <div class="hero-dash-head">
           <div class="hero-dash-title">
-            <i class="ti ti-layout-dashboard" style="font-size:14px;color:#16a34a;"></i>
-            Mağaza Analizi
+            <span class="dot" style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#16a34a;box-shadow:0 0 0 3px rgba(22,163,74,.2);"></span>
+            Öneriler Böyle Sunulur
           </div>
           <div class="hero-dash-live">CANLI</div>
         </div>
 
-        <table class="hdash-table">
-          <thead>
-            <tr>
-              <th>Ürün</th>
-              <th>Görünt.</th>
-              <th>Satış</th>
-              <th>Dönüş.%</th>
-              <th>Durum</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><span class="prod-name">Pamuk Elbise S</span></td>
-              <td>1.240</td><td>87</td><td>7,0%</td>
-              <td><span class="hd-badge ok"><i class="ti ti-trending-up" style="font-size:9px;"></i> İyi</span></td>
-            </tr>
-            <tr class="hd-active">
-              <td><span class="prod-name">Deri Cüzdan</span></td>
-              <td>340</td><td>4</td><td>1,2%</td>
-              <td><span class="hd-badge crit"><i class="ti ti-alert-triangle" style="font-size:9px;"></i> Kritik</span></td>
-            </tr>
-            <tr>
-              <td><span class="prod-name">Spor Çanta M</span></td>
-              <td>890</td><td>31</td><td>3,5%</td>
-              <td><span class="hd-badge warn"><i class="ti ti-minus" style="font-size:9px;"></i> Zayıf</span></td>
-            </tr>
-            <tr>
-              <td><span class="prod-name">Keten Gömlek</span></td>
-              <td>2.100</td><td>163</td><td>7,8%</td>
-              <td><span class="hd-badge ok"><i class="ti ti-trending-up" style="font-size:9px;"></i> İyi</span></td>
-            </tr>
-          </tbody>
-        </table>
-
-        <div class="hero-dash-ai">
-          <div style="display:flex;align-items:flex-start;gap:8px;">
-            <i class="ti ti-sparkles" style="font-size:13px;color:#6366f1;flex-shrink:0;margin-top:2px;"></i>
-            <p style="font-size:12px;color:#1e40af;margin:0;line-height:1.55;">
-              <b>Deri Cüzdan:</b> 340 görüntülenme, yalnızca 4 satış (1,2%).
-              Açıklama yetersiz — düzeltilmiş metin hazır.
-            </p>
+        <!-- Ürün satırı -->
+        <div style="margin:14px 16px 0;display:flex;align-items:center;justify-content:space-between;
+             padding:10px 12px;background:var(--paper-2);border-radius:10px;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="width:30px;height:30px;border-radius:8px;background:var(--line);
+                  display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">👟</span>
+            <div>
+              <p style="font-size:12px;font-weight:500;color:var(--ink);margin:0;">Koşu Ayakkabısı Pro</p>
+              <p style="font-size:10px;color:var(--mute);margin:1px 0 0;">SKU: KAY-PRO-42</p>
+            </div>
           </div>
+          <span style="font-size:9px;font-weight:600;color:#dc2626;background:#fef2f2;
+                padding:2px 7px;border-radius:999px;flex-shrink:0;">Düşük satış</span>
+        </div>
+
+        <!-- Alan etiketi -->
+        <div style="margin:10px 16px 6px;">
+          <span style="font-size:9px;font-weight:700;color:#3b82f6;background:#eff6ff;
+                padding:1px 6px;border-radius:999px;margin-right:6px;">📊 VERİ</span>
+          <span style="font-size:10px;color:var(--mute);">Ürün Açıklaması</span>
+        </div>
+
+        <!-- AI Gerekçe kutusu -->
+        <div style="margin:0 16px;padding:9px 12px;background:#eff6ff;border-radius:8px;">
+          <p style="font-size:10.5px;color:#1e40af;margin:0;line-height:1.55;">
+            <b>AI Gerekçesi:</b> 340 görüntülenme, sadece 4 satış — açıklama zenginleştirildi
+          </p>
+        </div>
+
+        <!-- Öneri metni -->
+        <div style="margin:10px 16px;padding:10px 12px;background:var(--paper-2);border:0.5px solid var(--line);
+             border-radius:8px;">
+          <p style="font-size:11px;color:var(--ink-2);margin:0;line-height:1.65;">
+            Yüksek enerji geri dönüşlü ara taban teknolojisi ile her adımda optimum itici güç sağlar.
+            Su geçirmez mesh üst yüzey, uzun koşularda ayak sağlığını korur.
+          </p>
+        </div>
+
+        <!-- Onayla butonu -->
+        <div class="hero-dash-ai" style="padding:12px 16px;">
           <div class="hero-dash-btns">
             <button class="hd-btn-ok">
-              <i class="ti ti-check" style="font-size:11px;margin-right:4px;"></i>Onayla &amp; Uygula
+              <i class="ti ti-circle-check" style="font-size:12px;margin-right:4px;"></i>Onayla
             </button>
             <button class="hd-btn-x">
               <i class="ti ti-x" style="font-size:11px;"></i>
             </button>
           </div>
+          <p style="font-size:10px;color:var(--mute);text-align:center;margin:8px 0 0;">
+            Onayladığınızda — Shopify'a otomatik yazılır
+          </p>
         </div>
 
       </div><!-- /hero-dash -->

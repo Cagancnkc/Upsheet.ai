@@ -6,7 +6,7 @@ const TRANSLATIONS = {
     'nav.start': 'Ücretsiz Kayıt Ol',
 
     'hero.badge': 'Shopify için AI Ürün Asistanı',
-    'hero.title': 'Ziyaretçiniz var,<br>satışınız yok —<br><em><span class="accent">davranış verisi</span> cevabı gösterir.</em>',
+    'hero.title': 'Shopify mağazanızın kullanıcı verilerini inceleyerek müşterilerin kaçış noktalarını otomatik bulun, çözün ve mağazanıza <em><span class="accent">tek tıkla</span> aktarın.</em>',
     'hero.desc': 'Hangi ürünün neden satmadığını tahmin etmeyin. Mocksheets ziyaretçi davranışınızı ve satış verinizi analiz eder, somut öneriler sunar — onayladığınızda mağazanıza otomatik yansır.',
     'hero.cta1': 'Ücretsiz Kayıt Ol',
     'hero.cta2': 'Canlı Gör →',
