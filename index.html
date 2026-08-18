@@ -496,6 +496,40 @@
     display:grid;grid-template-columns:1.15fr .85fr;gap:36px;align-items:end;margin-top:48px;
   }
   @media (max-width:960px){.hero-grid{grid-template-columns:1fr}}
+
+  /* ── Hero 2-kolon ─────────────────────────── */
+  .hero-2col{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center;}
+  @media(max-width:960px){.hero-2col{grid-template-columns:1fr;gap:40px;}}
+  .hero-left{display:flex;flex-direction:column;}
+  .hero-2col .hero-left h1{font-size:clamp(36px,3.8vw,58px);margin-top:18px;line-height:1.1;letter-spacing:-0.035em;}
+  /* Dashboard kartı */
+  .hero-dash{background:var(--paper);border:1px solid var(--line-strong);border-radius:20px;overflow:hidden;box-shadow:0 30px 80px -30px #0e0e1033;}
+  .hero-dash-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--line);background:var(--paper-2);}
+  .hero-dash-title{font-weight:600;font-size:13px;color:var(--ink);display:flex;align-items:center;gap:8px;}
+  .hero-dash-live{display:flex;align-items:center;gap:6px;font-size:10px;color:#16a34a;letter-spacing:.04em;font-family:'Geist Mono',monospace;}
+  .hero-dash-live::before{content:'';width:6px;height:6px;border-radius:50%;background:#16a34a;box-shadow:0 0 0 3px rgba(22,163,74,.22);animation:blink 1.4s steps(1) infinite;}
+  .hdash-table{width:100%;border-collapse:collapse;font-size:11.5px;}
+  .hdash-table th{padding:8px 12px;text-align:left;background:var(--paper-2);color:var(--mute);font-weight:500;border-bottom:1px solid var(--line);white-space:nowrap;}
+  .hdash-table th:not(:first-child){text-align:right;}
+  .hdash-table td{padding:9px 12px;border-bottom:1px solid var(--line);color:var(--ink-2);}
+  .hdash-table td:not(:first-child){text-align:right;font-variant-numeric:tabular-nums;}
+  .hdash-table tr:last-child td{border-bottom:0;}
+  .prod-name{color:var(--ink);font-weight:500;font-size:12px;max-width:110px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;}
+  .hd-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 7px;border-radius:99px;font-size:10px;font-weight:600;white-space:nowrap;}
+  .hd-badge.ok{background:#dcfce7;color:#15803d;}
+  .hd-badge.warn{background:#fef3c7;color:#92400e;}
+  .hd-badge.crit{background:#fee2e2;color:#991b1b;}
+  .hdash-table tr.hd-active td{background:rgba(99,102,241,.04);}
+  .hero-dash-ai{padding:14px 18px;background:linear-gradient(135deg,#eff6ff,#f5f3ff);border-top:1px solid #ddd6fe;display:flex;flex-direction:column;gap:10px;}
+  .hero-dash-btns{display:flex;gap:8px;}
+  .hd-btn-ok{flex:1;padding:8px;border:none;border-radius:8px;background:#16a34a;color:#fff;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;}
+  .hd-btn-x{padding:8px 12px;border:1px solid var(--line-strong);border-radius:8px;background:transparent;color:var(--ink-2);font-size:11px;cursor:pointer;font-family:inherit;}
+  [data-theme="dark"] .hero-dash-ai{background:rgba(99,102,241,.08);border-top-color:rgba(99,102,241,.22);}
+  [data-theme="dark"] .hd-badge.ok{background:rgba(34,197,94,.12);color:#4ade80;}
+  [data-theme="dark"] .hd-badge.warn{background:rgba(252,211,77,.10);color:#fcd34d;}
+  [data-theme="dark"] .hd-badge.crit{background:rgba(248,113,113,.10);color:#f87171;}
+  [data-theme="dark"] .hdash-table tr.hd-active td{background:rgba(99,102,241,.10);}
+
   .terminal{
     background:var(--ink);color:var(--paper);
     border-radius:22px;padding:18px 18px 16px;
@@ -1220,124 +1254,138 @@
 <!-- HERO -->
 <section class="hero">
   <div class="wrap">
-    <span class="eyebrow" data-i18n="hero.badge">Shopify için AI Ürün Asistanı</span>
+    <div class="hero-2col">
 
-    <h1 style="font-size:40px;font-weight:800;color:#111827;line-height:1.15;margin:0 0 16px;">
-      Mağazanızın Gerçek Potansiyeline Ulaşın
-    </h1>
+      <!-- SOL: başlık + CTA -->
+      <div class="hero-left">
+        <span class="eyebrow" data-i18n="hero.badge">Shopify için AI Ürün Asistanı</span>
 
-    <p class="hero-sub" data-i18n-html="hero.desc">
-      Hangi ürünün neden satmadığını tahmin etmeyin. Mocksheets
-      ziyaretçi davranışınızı ve satış verinizi analiz eder, somut
-      öneriler sunar — onayladığınızda mağazanıza otomatik yansır.
-    </p>
+        <h1 data-i18n-html="hero.title">
+          Ziyaretçiniz var,<br>satışınız yok —<br>
+          <em><span class="accent">davranış verisi</span> cevabı gösterir.</em>
+        </h1>
 
-    <p style="font-size:13px;color:#9ca3af;margin:8px 0 0;">
-      500 ürünü elle düzenlemek haftalar sürer. Mocksheets'te tek komutla dakikalar.
-    </p>
+        <p class="hero-sub" data-i18n-html="hero.desc">
+          Hangi ürünün neden satmadığını tahmin etmeyin. Mocksheets ziyaretçi
+          davranışınızı ve satış verinizi analiz eder, somut öneriler sunar —
+          onayladığınızda mağazanıza otomatik yansır.
+        </p>
 
-    <div class="hero-price-highlight">
-      <span class="hero-price-big" style="font-size:22px;">Aylık ₺149</span>
-      <div class="hero-price-sub">
-        <span>Tüm özellikler dahil</span>
-        <span class="hero-price-after">· İstediğin an iptal</span>
-      </div>
-    </div>
-
-    <div class="hero-actions">
-      <a href="/auth" class="btn btn-dark" data-i18n="hero.cta1">Ücretsiz Kayıt Ol</a>
-      <a href="#demo" class="btn btn-outline" data-i18n="hero.cta2">Canlı Gör →</a>
-    </div>
-
-    <div style="display:flex;justify-content:center;margin-top:16px;">
-      <a href="https://www.producthunt.com/products/mocksheets?launch=mocksheets"
-         target="_blank" rel="noopener noreferrer"
-         style="display:inline-flex;align-items:center;gap:10px;background:var(--paper);border:1.5px solid var(--line-strong);border-radius:10px;padding:9px 16px;text-decoration:none;font-family:inherit;transition:all .15s;box-shadow:0 1px 4px rgba(0,0,0,.07);"
-         onmouseover="this.style.borderColor='#DA552F';this.style.boxShadow='0 4px 16px rgba(218,85,47,.15)'"
-         onmouseout="this.style.borderColor='';this.style.boxShadow='0 1px 4px rgba(0,0,0,.07)'">
-        <svg width="26" height="26" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="display:block;shape-rendering:geometricPrecision;">
-          <circle cx="20" cy="20" r="20" fill="#DA552F"/>
-          <path d="M22.667 20H17v-6h5.667a3 3 0 0 1 0 6zm0-10H13v20h4v-6h5.667a7 7 0 1 0 0-14z" fill="#FFFFFF"/>
-        </svg>
-        <div style="text-align:left;line-height:1.2;">
-          <div style="font-size:10px;color:var(--mute);font-weight:500;letter-spacing:.02em;">Product Hunt'ta</div>
-          <div style="font-size:13px;font-weight:700;color:var(--ink);">Mocksheets</div>
-        </div>
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" style="opacity:.35;margin-left:2px;" aria-hidden="true">
-          <path d="M7 17L17 7M17 7H7M17 7v10" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </a>
-    </div>
-
-    <div style="display:flex;align-items:center;justify-content:center;gap:20px;margin-top:24px;flex-wrap:wrap;">
-      <span style="display:flex;align-items:center;gap:6px;font-size:12px;color:#6b7280;">
-        <i class="ti ti-lock" style="font-size:14px;color:#9ca3af;"></i>
-        Verileriniz şifreli
-      </span>
-      <span style="display:flex;align-items:center;gap:6px;font-size:12px;color:#6b7280;">
-        <i class="ti ti-brand-shopify" style="font-size:14px;color:#9ca3af;"></i>
-        Resmi Shopify entegrasyonu
-      </span>
-      <span style="display:flex;align-items:center;gap:6px;font-size:12px;color:#6b7280;">
-        <i class="ti ti-credit-card-off" style="font-size:14px;color:#9ca3af;"></i>
-        Kredi kartı gerekmez
-      </span>
-    </div>
-
-    <!-- Live mini demo — AI Görünürlük (GEO) -->
-    <div class="hero-grid">
-      <div class="terminal" aria-hidden="true">
-        <div class="term-bar">
-          <div class="d d1"></div><div class="d d2"></div><div class="d d3"></div>
-          <span class="label">mocksheets · ai görünürlük analizi</span>
-        </div>
-        <div class="term-line"><span class="term-prompt">›</span><span id="typed-line">Ürünlerim ChatGPT'de görünüyor mu<span class="term-cursor"></span></span></div>
-        <div class="term-line"><span class="term-comment">// 247 ürün · ChatGPT + Perplexity + Gemini · 0,9 s</span></div>
-        <div class="term-line"><span class="term-ok">✓</span><span>247 ürün AI görünürlüğü için tarandı</span></div>
-        <div class="term-line"><span class="term-ok">✓</span><span>62 üründe <span style="background:#fecaca;color:var(--ink);padding:1px 6px;border-radius:4px">yetersiz AI içeriği</span> tespit edildi</span></div>
-        <div class="term-line"><span class="term-ok">✓</span><span>AI Görünürlük Skoru: <b style="color:#fff">48 / 100</b></span></div>
-      </div>
-
-      <!-- Problem → Çözüm → Vaat akış görseli -->
-      <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:20px;
-           padding:28px 24px;box-shadow:0 20px 60px rgba(17,24,39,.10);">
-
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:20px;">
-          <span style="width:8px;height:8px;border-radius:999px;background:#dc2626;"></span>
-          <p style="font-size:12px;color:#6b7280;margin:0;">
-            Bu ürün çok görüntüleniyor, az satıyor
-          </p>
+        <div class="hero-price-highlight" style="margin-top:28px;">
+          <span class="hero-price-big" style="font-size:22px;">Aylık ₺149</span>
+          <div class="hero-price-sub">
+            <span>Tüm özellikler dahil</span>
+            <span class="hero-price-after">· İstediğin an iptal</span>
+          </div>
         </div>
 
-        <div style="display:flex;align-items:center;justify-content:center;margin-bottom:20px;">
-          <i class="ti ti-arrow-down" style="font-size:18px;color:#d1d5db;"></i>
+        <div class="hero-actions">
+          <a href="/auth" class="btn btn-dark" data-i18n="hero.cta1">Ücretsiz Kayıt Ol</a>
+          <a href="#demo" class="btn btn-outline" data-i18n="hero.cta2">Canlı Gör →</a>
         </div>
 
-        <div style="display:flex;align-items:flex-start;gap:8px;padding:12px 14px;
-             background:#eff6ff;border-radius:10px;margin-bottom:20px;">
-          <i class="ti ti-sparkles" style="font-size:14px;color:#3b82f6;margin-top:1px;"></i>
-          <p style="font-size:12px;color:#1e40af;margin:0;line-height:1.5;">
-            AI: "340 görüntülenme, sadece 4 satış — açıklama yetersiz
-            kalıyor olabilir"
-          </p>
+        <div style="margin-top:20px;">
+          <a href="https://www.producthunt.com/products/mocksheets?launch=mocksheets"
+             target="_blank" rel="noopener noreferrer"
+             style="display:inline-flex;align-items:center;gap:10px;background:var(--paper);border:1.5px solid var(--line-strong);border-radius:10px;padding:9px 16px;text-decoration:none;font-family:inherit;transition:all .15s;box-shadow:0 1px 4px rgba(0,0,0,.07);"
+             onmouseover="this.style.borderColor='#DA552F';this.style.boxShadow='0 4px 16px rgba(218,85,47,.15)'"
+             onmouseout="this.style.borderColor='';this.style.boxShadow='0 1px 4px rgba(0,0,0,.07)'">
+            <svg width="26" height="26" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="display:block;shape-rendering:geometricPrecision;">
+              <circle cx="20" cy="20" r="20" fill="#DA552F"/>
+              <path d="M22.667 20H17v-6h5.667a3 3 0 0 1 0 6zm0-10H13v20h4v-6h5.667a7 7 0 1 0 0-14z" fill="#FFFFFF"/>
+            </svg>
+            <div style="text-align:left;line-height:1.2;">
+              <div style="font-size:10px;color:var(--mute);font-weight:500;letter-spacing:.02em;">Product Hunt'ta</div>
+              <div style="font-size:13px;font-weight:700;color:var(--ink);">Mocksheets</div>
+            </div>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" style="opacity:.35;margin-left:2px;" aria-hidden="true">
+              <path d="M7 17L17 7M17 7H7M17 7v10" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
         </div>
 
-        <div style="display:flex;align-items:center;justify-content:center;margin-bottom:20px;">
-          <i class="ti ti-arrow-down" style="font-size:18px;color:#d1d5db;"></i>
+        <div style="display:flex;align-items:center;gap:20px;margin-top:20px;flex-wrap:wrap;">
+          <span style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--mute);">
+            <i class="ti ti-lock" style="font-size:14px;"></i>Verileriniz şifreli
+          </span>
+          <span style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--mute);">
+            <i class="ti ti-brand-shopify" style="font-size:14px;"></i>Resmi Shopify entegrasyonu
+          </span>
+          <span style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--mute);">
+            <i class="ti ti-credit-card-off" style="font-size:14px;"></i>Kredi kartı gerekmez
+          </span>
+        </div>
+      </div><!-- /hero-left -->
+
+      <!-- SAĞ: Mini-dashboard görsel -->
+      <div class="hero-dash" aria-hidden="true">
+
+        <div class="hero-dash-head">
+          <div class="hero-dash-title">
+            <i class="ti ti-layout-dashboard" style="font-size:14px;color:#16a34a;"></i>
+            Mağaza Analizi
+          </div>
+          <div class="hero-dash-live">CANLI</div>
         </div>
 
-        <div style="display:flex;align-items:center;gap:8px;padding:12px 14px;
-             background:#f0fdf4;border-radius:10px;">
-          <i class="ti ti-circle-check" style="font-size:14px;color:#16a34a;"></i>
-          <p style="font-size:12px;color:#16a34a;font-weight:600;margin:0;">
-            Onayladınız — Shopify'a otomatik yazıldı
-          </p>
+        <table class="hdash-table">
+          <thead>
+            <tr>
+              <th>Ürün</th>
+              <th>Görünt.</th>
+              <th>Satış</th>
+              <th>Dönüş.%</th>
+              <th>Durum</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="prod-name">Pamuk Elbise S</span></td>
+              <td>1.240</td><td>87</td><td>7,0%</td>
+              <td><span class="hd-badge ok"><i class="ti ti-trending-up" style="font-size:9px;"></i> İyi</span></td>
+            </tr>
+            <tr class="hd-active">
+              <td><span class="prod-name">Deri Cüzdan</span></td>
+              <td>340</td><td>4</td><td>1,2%</td>
+              <td><span class="hd-badge crit"><i class="ti ti-alert-triangle" style="font-size:9px;"></i> Kritik</span></td>
+            </tr>
+            <tr>
+              <td><span class="prod-name">Spor Çanta M</span></td>
+              <td>890</td><td>31</td><td>3,5%</td>
+              <td><span class="hd-badge warn"><i class="ti ti-minus" style="font-size:9px;"></i> Zayıf</span></td>
+            </tr>
+            <tr>
+              <td><span class="prod-name">Keten Gömlek</span></td>
+              <td>2.100</td><td>163</td><td>7,8%</td>
+              <td><span class="hd-badge ok"><i class="ti ti-trending-up" style="font-size:9px;"></i> İyi</span></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="hero-dash-ai">
+          <div style="display:flex;align-items:flex-start;gap:8px;">
+            <i class="ti ti-sparkles" style="font-size:13px;color:#6366f1;flex-shrink:0;margin-top:2px;"></i>
+            <p style="font-size:12px;color:#1e40af;margin:0;line-height:1.55;">
+              <b>Deri Cüzdan:</b> 340 görüntülenme, yalnızca 4 satış (1,2%).
+              Açıklama yetersiz — düzeltilmiş metin hazır.
+            </p>
+          </div>
+          <div class="hero-dash-btns">
+            <button class="hd-btn-ok">
+              <i class="ti ti-check" style="font-size:11px;margin-right:4px;"></i>Onayla &amp; Uygula
+            </button>
+            <button class="hd-btn-x">
+              <i class="ti ti-x" style="font-size:11px;"></i>
+            </button>
+          </div>
         </div>
-      </div>
-    </div>
+
+      </div><!-- /hero-dash -->
+
+    </div><!-- /hero-2col -->
 
     <!-- trust / logo cloud -->
-    <p style="font-size:11px;color:#64748b;text-align:center;margin-bottom:12px;letter-spacing:.06em;text-transform:uppercase;font-weight:500">Bu teknolojilerle inşa edildi</p>
+    <p style="font-size:11px;color:#64748b;text-align:center;margin-bottom:12px;margin-top:60px;letter-spacing:.06em;text-transform:uppercase;font-weight:500">Bu teknolojilerle inşa edildi</p>
     <div class="logo-cloud">
       <div class="lcc lcc-muted lcc-br lcc-bb">
         <img src="https://svgl.app/library/nvidia-wordmark-light.svg" alt="Nvidia">
@@ -1377,8 +1425,9 @@
 
     <!-- Başlık -->
     <div style="text-align:center; margin-bottom:48px;">
-      <h2 style="font-size:clamp(28px,4vw,40px); font-weight:500; color:var(--ink,#111); margin:0 0 14px; line-height:1.2;" data-i18n-html="steps.title">Kataloğunuzdan karara.<br>Üç adımda.</h2>
-      <p style="font-size:16px; color:var(--muted,#6b7280); margin:0 auto; max-width:460px; line-height:1.7;" data-i18n="steps.sub">Shopify'a bağla, AI analiz etsin, önerileri onayla — Mocksheets senkronize eder.</p>
+      <p style="font-size:11px;font-weight:600;color:var(--mute);letter-spacing:.08em;text-transform:uppercase;margin:0 0 12px;">Nasıl Çalışır</p>
+      <h2 style="font-size:clamp(28px,4vw,42px); font-weight:600; color:var(--ink,#111); margin:0 0 14px; line-height:1.15; letter-spacing:-0.025em;" data-i18n-html="steps.title">Gerçek veriyle büyüyen<br><em style="font-family:'Instrument Serif',serif;font-style:italic;font-weight:400;">üç adım.</em></h2>
+      <p style="font-size:16px; color:var(--muted,#6b7280); margin:0 auto; max-width:500px; line-height:1.7;" data-i18n="steps.sub">Shopify'ı bağla, AI davranış ve satış verini okusun, önerileri onayla — mağazana otomatik yazılsın.</p>
     </div>
 
     <!-- 3 Ana Kart -->
@@ -1386,15 +1435,13 @@
 
       <!-- KART 1: BAĞLA -->
       <div class="step-card-bg" style="background:#fff; border:0.5px solid #e5e7eb; border-radius:16px; padding:28px; display:flex; flex-direction:column; gap:18px;">
-        <div style="width:40px; height:40px; border-radius:10px; background:#f9fafb; border:0.5px solid #e5e7eb; display:flex; align-items:center; justify-content:center;">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M18 8h1a4 4 0 010 8h-1M6 8H5a4 4 0 000 8h1M6 12h12" stroke="#111" stroke-width="1.5" stroke-linecap="round"/>
-          </svg>
+        <div style="width:40px; height:40px; border-radius:10px; background:#f0fdf4; border:0.5px solid #bbf7d0; display:flex; align-items:center; justify-content:center;">
+          <i class="ti ti-plug-connected" style="font-size:18px; color:#16a34a;"></i>
         </div>
         <div>
           <p style="font-size:11px; color:#9ca3af; margin:0 0 8px; letter-spacing:0.08em;" data-i18n="steps.1.label">01 · BAĞLA</p>
-          <h3 style="font-size:17px; font-weight:500; color:#111; margin:0 0 8px; line-height:1.4;" data-i18n-html="steps.1.title">Shopify Mağazanızı Bağlayın</h3>
-          <p style="font-size:13px; color:#6b7280; margin:0; line-height:1.7;" data-i18n="steps.1.desc">Tek tıkla bağlanır, ziyaretçi davranışınız ve satış verileriniz otomatik izlenmeye başlar.</p>
+          <h3 style="font-size:17px; font-weight:500; color:#111; margin:0 0 8px; line-height:1.4;" data-i18n-html="steps.1.title">Shopify + Analitik Verini Bağla</h3>
+          <p style="font-size:13px; color:#6b7280; margin:0; line-height:1.7;" data-i18n="steps.1.desc">OAuth ile 2 dakikada bağlan. Ürün kataloğun, ziyaretçi sayıları ve satış verilerin otomatik çekilmeye başlar — elle veri girişi yok.</p>
         </div>
         <div style="display:flex; flex-wrap:wrap; gap:7px; margin-top:auto;">
           <span style="display:inline-flex; align-items:center; gap:6px; padding:5px 11px; background:#f9fafb; border:0.5px solid #e5e7eb; border-radius:20px; font-size:11px; color:#374151;">
@@ -1405,79 +1452,72 @@
             </svg>
             Shopify
           </span>
+          <span style="display:inline-flex; align-items:center; gap:6px; padding:5px 11px; background:#f9fafb; border:0.5px solid #e5e7eb; border-radius:20px; font-size:11px; color:#374151;">
+            <i class="ti ti-chart-bar" style="font-size:11px; color:#6b7280;"></i>Analytics
+          </span>
         </div>
       </div>
 
-      <!-- KART 2: YAZ (vurgulu) -->
+      <!-- KART 2: AI ÇEKİRDEK (vurgulu) -->
       <div class="step-card-bg" style="background:#fff; border:2px solid #6366f1; border-radius:16px; padding:28px; display:flex; flex-direction:column; gap:18px; position:relative;">
         <div style="position:absolute; top:-14px; left:50%; transform:translateX(-50%); background:#6366f1; color:#fff; font-size:11px; padding:4px 16px; border-radius:20px; white-space:nowrap; font-weight:500; letter-spacing:0.02em;">AI çekirdek</div>
 
         <div style="width:40px; height:40px; border-radius:10px; background:#eef2ff; border:0.5px solid #c7d2fe; display:flex; align-items:center; justify-content:center;">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" stroke="#6366f1" stroke-width="1.5" stroke-linejoin="round"/>
-          </svg>
+          <i class="ti ti-chart-dots" style="font-size:18px; color:#6366f1;"></i>
         </div>
 
         <div>
-          <p style="font-size:11px; color:#9ca3af; margin:0 0 8px; letter-spacing:0.08em;" data-i18n="steps.2.label">02 · İZLE VE ANALİZ ET</p>
-          <h3 style="font-size:17px; font-weight:500; color:#111; margin:0 0 8px; line-height:1.4;" data-i18n-html="steps.2.title">AI Verinize Baksın</h3>
-          <p style="font-size:13px; color:#6b7280; margin:0; line-height:1.7;" data-i18n="steps.2.desc">Hangi ürün çok görüntüleniyor ama satmıyor, hangi ürün en çok kazandırıyor — AI bunu gerçek verinizden çıkarır.</p>
+          <p style="font-size:11px; color:#9ca3af; margin:0 0 8px; letter-spacing:0.08em;" data-i18n="steps.2.label">02 · ANALİZ ET</p>
+          <h3 style="font-size:17px; font-weight:500; color:#111; margin:0 0 8px; line-height:1.4;" data-i18n-html="steps.2.title">AI Davranış &amp; Satış Verine Baksın</h3>
+          <p style="font-size:13px; color:#6b7280; margin:0; line-height:1.7;" data-i18n="steps.2.desc">Hangi ürün çok görüntülenip satmıyor — AI bunu gerçek ziyaretçi ve satış verisinden çıkarır, hazır öneri sunar.</p>
         </div>
 
         <div style="background:#f5f3ff; border:0.5px solid #ddd6fe; border-radius:10px; padding:14px; display:flex; flex-direction:column; gap:8px; margin-top:auto;">
           <div style="display:flex; align-items:flex-start; gap:8px; background:#ede9fe; padding:9px 12px; border-radius:8px;">
             <span style="color:#6366f1; font-size:14px; margin-top:1px; flex-shrink:0;">›</span>
-            <span style="font-size:12px; color:#4338ca; font-family:monospace; line-height:1.5;">Eksik SEO title'ı olan ürünleri bul</span>
+            <span style="font-size:12px; color:#4338ca; font-family:monospace; line-height:1.5;">340 görüntülenme, 4 satış — neden?</span>
           </div>
           <div style="display:flex; align-items:flex-start; gap:8px; padding:9px 12px; border-radius:8px; opacity:0.65;">
             <span style="color:#6366f1; font-size:14px; margin-top:1px; flex-shrink:0;">›</span>
-            <span style="font-size:12px; color:#374151; font-family:monospace; line-height:1.5;">Katalog sağlık skorunu hesapla</span>
+            <span style="font-size:12px; color:#374151; font-family:monospace; line-height:1.5;">En düşük dönüşümlü 10 ürünü listele</span>
           </div>
           <div style="display:flex; align-items:flex-start; gap:8px; padding:9px 12px; border-radius:8px; opacity:0.35;">
             <span style="color:#6366f1; font-size:14px; margin-top:1px; flex-shrink:0;">›</span>
-            <span style="font-size:12px; color:#374151; font-family:monospace; line-height:1.5;">Zayıf başlıkları AI ile yeniden yaz</span>
+            <span style="font-size:12px; color:#374151; font-family:monospace; line-height:1.5;">Sepetten terk edilen ürünleri bul</span>
           </div>
         </div>
       </div>
 
-      <!-- KART 3: ANALİZ ET -->
+      <!-- KART 3: ONAYLA -->
       <div class="step-card-bg" style="background:#fff; border:0.5px solid #e5e7eb; border-radius:16px; padding:28px; display:flex; flex-direction:column; gap:18px;">
         <div style="width:40px; height:40px; border-radius:10px; background:#f0fdf4; border:0.5px solid #bbf7d0; display:flex; align-items:center; justify-content:center;">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <polyline points="22,12 18,12 15,21 9,3 6,12 2,12" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
+          <i class="ti ti-circle-check" style="font-size:18px; color:#16a34a;"></i>
         </div>
 
         <div>
           <p style="font-size:11px; color:#9ca3af; margin:0 0 8px; letter-spacing:0.08em;" data-i18n="steps.3.label">03 · ONAYLA</p>
-          <h3 style="font-size:17px; font-weight:500; color:#111; margin:0 0 8px; line-height:1.4;" data-i18n-html="steps.3.title">Onaylayın, Mağazanız Güncellensin</h3>
-          <p style="font-size:13px; color:#6b7280; margin:0; line-height:1.7;" data-i18n="steps.3.desc">Her öneriyi somut verilerle görün, onayladıklarınız Shopify'a otomatik yazılsın.</p>
+          <h3 style="font-size:17px; font-weight:500; color:#111; margin:0 0 8px; line-height:1.4;" data-i18n-html="steps.3.title">Veri Destekli Öneriyi Onayla, Mağaza Güncellenir</h3>
+          <p style="font-size:13px; color:#6b7280; margin:0; line-height:1.7;" data-i18n="steps.3.desc">Her öneri neden yapıldığını açıklayan gerçek veriyle birlikte gelir. Onayladıklarınız Shopify'a otomatik yazılır.</p>
         </div>
 
         <div style="display:flex; flex-direction:column; gap:6px; margin-top:auto;">
           <div style="display:flex; align-items:center; justify-content:space-between; padding:9px 13px; background:#f9fafb; border-radius:8px;">
             <div style="display:flex; align-items:center; gap:8px;">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <polyline points="20,6 9,17 4,12" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-              <span style="font-size:12px; color:#111;">38 öneri · önizlendi</span>
+              <i class="ti ti-eye" style="font-size:13px; color:#6b7280;"></i>
+              <span style="font-size:12px; color:#111;">340 görüntülenme · 4 satış verisi eklendi</span>
             </div>
-            <span style="font-size:11px; color:#9ca3af;">2 sn</span>
+            <span style="font-size:11px; color:#9ca3af;">otomatik</span>
           </div>
           <div style="display:flex; align-items:center; justify-content:space-between; padding:9px 13px; background:#f9fafb; border-radius:8px;">
             <div style="display:flex; align-items:center; gap:8px;">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <polyline points="20,6 9,17 4,12" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-              <span style="font-size:12px; color:#111;">Toplu onay verildi</span>
+              <i class="ti ti-sparkles" style="font-size:13px; color:#6366f1;"></i>
+              <span style="font-size:12px; color:#111;">AI önerisi önizlendi &amp; onaylandı</span>
             </div>
             <span style="font-size:11px; color:#9ca3af;">1 sn</span>
           </div>
           <div style="display:flex; align-items:center; justify-content:space-between; padding:9px 13px; background:#f0fdf4; border-radius:8px; border:0.5px solid #bbf7d0;">
             <div style="display:flex; align-items:center; gap:8px;">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M20 6L9 17l-5-5"/>
-              </svg>
+              <i class="ti ti-brand-shopify" style="font-size:14px; color:#16a34a;"></i>
               <span style="font-size:12px; color:#16a34a; font-weight:500;">Shopify'a senkronize edildi</span>
             </div>
             <span style="font-size:11px; color:#16a34a;">1 sn</span>
