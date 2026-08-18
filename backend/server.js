@@ -974,6 +974,11 @@ app.listen(PORT, '0.0.0.0', () => {
     console.log('[emailTriggers] 5 cron job başlatıldı');
   } catch (e) { console.error('[emailTriggers] Init error:', e.message); }
 
+  // RAG günlük yeniden indeksleme (her gün 04:00 İstanbul)
+  try {
+    const { scheduleRAGReindex } = require('./jobs/reindexRAG');
+    scheduleRAGReindex();
+  } catch (e) { console.error('[rag-reindex] Init error:', e.message); }
 
   // Render free tier'ı uyanık tut: her 14 dakikada self-ping
   const SELF_URL = process.env.RENDER_EXTERNAL_URL || `http://localhost:${PORT}`;
