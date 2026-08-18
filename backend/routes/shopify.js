@@ -1030,38 +1030,25 @@ function parseWebhookPayload(req) {
 
 // POST /api/shopify/webhooks — birleşik GDPR/compliance endpoint (shopify.app.toml)
 router.post('/webhooks', (req, res) => {
+  if (!verifyShopifyWebhook(req)) {
+    return res.status(401).send('Unauthorized');
+  }
   try {
-    if (!verifyShopifyWebhook(req)) return res.status(401).send('Unauthorized');
     const topic = (req.headers['x-shopify-topic'] || '').toLowerCase();
     const payload = parseWebhookPayload(req);
-    if (!payload) return res.status(400).send('Bad Request');
 
-    console.log(`[shopify/webhooks] ${topic} for ${payload.shop_domain || 'unknown'}`);
+    console.log(`[shopify/webhooks] ${topic} for ${payload?.shop_domain || 'unknown'}`);
 
-    if (topic === 'customers/data_request') {
-      // Müşteri verisi talebi — merchant düzeyinde saklanır, hemen onayla
-      return res.status(200).send('OK');
-    }
-
-    if (topic === 'customers/redact') {
-      // Müşteri verisi silme — kişisel veri saklanmıyor
-      return res.status(200).send('OK');
-    }
-
-    if (topic === 'shop/redact') {
-      const shopDomain = payload.shop_domain;
-      if (shopDomain) {
-        getSupabase().from('shopify_connections').delete().eq('shop_domain', shopDomain)
-          .then(() => console.log('[GDPR] shop/redact completed:', shopDomain))
-          .catch((e) => console.error('[GDPR] shop/redact error:', e.message));
-      }
-      return res.status(200).send('OK');
+    if (topic === 'shop/redact' && payload?.shop_domain) {
+      getSupabase().from('shopify_connections').delete().eq('shop_domain', payload.shop_domain)
+        .then(() => console.log('[GDPR] shop/redact completed:', payload.shop_domain))
+        .catch((e) => console.error('[GDPR] shop/redact error:', e.message));
     }
 
     res.status(200).send('OK');
   } catch (e) {
     console.error('[shopify/webhooks] error:', e);
-    res.status(500).send('Error');
+    res.status(200).send('OK');
   }
 });
 
