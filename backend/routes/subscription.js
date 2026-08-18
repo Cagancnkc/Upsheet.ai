@@ -116,8 +116,8 @@ router.post('/change', async (req, res) => {
         mode: 'subscription',
         payment_method_types: ['card'],
         line_items: [{ price: newPriceId, quantity: 1 }],
-        success_url: (process.env.CLIENT_URL || 'https://mocksheets.com') + '/app.html?subscription=success',
-        cancel_url:  (process.env.CLIENT_URL || 'https://mocksheets.com') + '/app.html',
+        success_url: (process.env.CLIENT_URL || 'https://mocksheets.com') + '/app?subscription=success',
+        cancel_url:  (process.env.CLIENT_URL || 'https://mocksheets.com') + '/app',
         metadata: { userId: user.id, targetPlan, plan: newInternalPlan, period: newPeriod },
         subscription_data: { metadata: { userId: user.id, targetPlan, plan: newInternalPlan, period: newPeriod } },
         allow_promotion_codes: true,
@@ -234,7 +234,7 @@ router.post('/portal', async (req, res) => {
   try {
     const session = await getStripe().billingPortal.sessions.create({
       customer: usage.stripe_customer_id,
-      return_url: (process.env.CLIENT_URL || 'https://mocksheets.com') + '/app.html'
+      return_url: (process.env.CLIENT_URL || 'https://mocksheets.com') + '/app'
     });
     return res.json({ url: session.url });
   } catch (err) {

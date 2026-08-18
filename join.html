@@ -74,6 +74,7 @@
         y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
     })(window, document, "clarity", "script", "xa2q453j9l");
 </script>
+    <script src="/redirect-if-logged-in.js"></script>
 </head>
 <body>
 <div class="card" id="main-card">
@@ -182,7 +183,7 @@
       .then(function(result) {
         if (result.ok) {
           showStatus('✓ Takıma başarıyla katıldın! Yönlendiriliyorsun...', 'success');
-          setTimeout(function() { window.location.href = '/app.html'; }, 1500);
+          setTimeout(function() { window.location.href = '/app'; }, 1500);
         } else {
           showStatus(result.data.error || 'Bir hata oluştu. Lütfen tekrar deneyin.', 'error');
           btn.disabled = false;

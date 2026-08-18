@@ -2133,7 +2133,7 @@ router.get('/hubspot/callback', async (req, res) => {
         expires_at: Date.now() + (t.expires_in || 0) * 1000
       }
     }, { onConflict: 'user_id,provider' });
-    res.redirect((process.env.CLIENT_URL || '') + '/app.html?integration=hubspot');
+    res.redirect((process.env.CLIENT_URL || '') + '/app?integration=hubspot');
   } catch (e) {
     console.error('[hubspot/callback]', e);
     res.status(500).send('HubSpot bağlantı hatası: ' + e.message);
@@ -2180,7 +2180,7 @@ router.get('/stripe-connect/callback', async (req, res) => {
         refresh_token: resp.refresh_token
       }
     }, { onConflict: 'user_id,provider' });
-    res.redirect((process.env.CLIENT_URL || '') + '/app.html?integration=stripe');
+    res.redirect((process.env.CLIENT_URL || '') + '/app?integration=stripe');
   } catch (e) {
     console.error('[stripe-connect/callback]', e);
     res.status(500).send('Stripe bağlantı hatası: ' + e.message);

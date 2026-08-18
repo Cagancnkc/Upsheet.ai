@@ -246,7 +246,7 @@ router.get('/callback', async (req, res) => {
     }
 
     if (session.userToken) {
-      const target = session.redirect || `${frontend}/app.html?shopify=connected&autopull=1`;
+      const target = session.redirect || `${frontend}/app?shopify=connected&autopull=1`;
       return res.redirect(target);
     }
 
@@ -254,7 +254,7 @@ router.get('/callback', async (req, res) => {
       type: 'magiclink',
       email,
       options: {
-        redirectTo: `${frontend}/app.html?shopify=connected&autopull=1`,
+        redirectTo: `${frontend}/app?shopify=connected&autopull=1`,
       },
     });
 

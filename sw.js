@@ -4,7 +4,7 @@ const PRECACHE_URLS = [
   '/',
   '/index.html',
   '/auth.html',
-  '/app.html',
+  '/app',
   '/offline.html',
   '/css/style.css',
   '/css/landing.css',

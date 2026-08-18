@@ -15,14 +15,6 @@
   (function(){var t=localStorage.getItem('theme')||'light';document.documentElement.setAttribute('data-theme',t);document.documentElement.classList.add(t);}());
 </script>
 
-<script>
-  (function(){
-    var token = localStorage.getItem('sb-access-token');
-    if (token) {
-      window.location.href = '/app.html';
-    }
-  })();
-</script>
 
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -1187,6 +1179,7 @@
     })(window, document, "clarity", "script", "xa2q453j9l");
 </script>
 <script src="/i18n.js"></script>
+<script src="/redirect-if-logged-in.js"></script>
 </head>
 <body>
 
@@ -1830,7 +1823,7 @@ function toggleFaq(btn) {
         <ul>
           <li><a href="#features">Özellikler</a></li>
           <li><a href="/pricing">Fiyatlar</a></li>
-          <li><a href="/app.html">Uygulama</a></li>
+          <li><a href="/app">Uygulama</a></li>
           <li><a href="/degisiklikler">Değişiklik Günlüğü</a></li>
         </ul>
       </div>

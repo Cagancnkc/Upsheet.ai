@@ -125,7 +125,7 @@ router.post('/customer-portal', async (req, res) => {
   try {
     const session = await getStripe().billingPortal.sessions.create({
       customer: customerId,
-      return_url: process.env.CLIENT_URL + '/app.html'
+      return_url: process.env.CLIENT_URL + '/app'
     });
     res.json({ url: session.url });
   } catch (err) {
