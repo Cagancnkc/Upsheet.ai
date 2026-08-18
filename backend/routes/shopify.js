@@ -996,11 +996,18 @@ router.delete('/disconnect', requireAuth, async (req, res) => {
 
 function verifyShopifyWebhook(req) {
   const hmacHeader = req.headers['x-shopify-hmac-sha256'];
-  if (!hmacHeader || !req.body) return false;
+  if (!hmacHeader) return false;
+
+  if (!Buffer.isBuffer(req.body)) {
+    console.error('[HMAC] req.body Buffer değil — raw body middleware sırası hatalı olabilir');
+    return false;
+  }
+
   const generatedHash = crypto
     .createHmac('sha256', process.env.SHOPIFY_CLIENT_SECRET)
     .update(req.body)
     .digest('base64');
+
   try {
     const a = Buffer.from(generatedHash, 'base64');
     const b = Buffer.from(hmacHeader, 'base64');
@@ -1061,8 +1068,10 @@ router.post('/webhooks', (req, res) => {
 // POST /api/shopify/webhooks/customers-data-request
 // Triggered when a customer requests a copy of their data
 router.post('/webhooks/customers-data-request', (req, res) => {
+  if (!verifyShopifyWebhook(req)) {
+    return res.status(401).send('Unauthorized');
+  }
   try {
-    if (!verifyShopifyWebhook(req)) return res.status(401).send('Unauthorized');
     const payload = JSON.parse(req.body.toString());
     console.log('[GDPR] customers/data_request:', payload.shop_domain);
     // Upsheet does not store customer-level personal data — only merchant-level
@@ -1070,30 +1079,34 @@ router.post('/webhooks/customers-data-request', (req, res) => {
     res.status(200).send('OK');
   } catch (e) {
     console.error('[GDPR] customers-data-request error:', e);
-    res.status(500).send('Error');
+    res.status(200).send('OK');
   }
 });
 
 // POST /api/shopify/webhooks/customers-redact
 // Triggered when a customer requests erasure of their data
 router.post('/webhooks/customers-redact', (req, res) => {
+  if (!verifyShopifyWebhook(req)) {
+    return res.status(401).send('Unauthorized');
+  }
   try {
-    if (!verifyShopifyWebhook(req)) return res.status(401).send('Unauthorized');
     const payload = JSON.parse(req.body.toString());
     console.log('[GDPR] customers/redact:', payload.shop_domain);
     // No customer-level personal data stored — acknowledge immediately.
     res.status(200).send('OK');
   } catch (e) {
     console.error('[GDPR] customers-redact error:', e);
-    res.status(500).send('Error');
+    res.status(200).send('OK');
   }
 });
 
 // POST /api/shopify/webhooks/shop-redact
 // Triggered 48 hours after a merchant uninstalls the app — erase all their data
 router.post('/webhooks/shop-redact', async (req, res) => {
+  if (!verifyShopifyWebhook(req)) {
+    return res.status(401).send('Unauthorized');
+  }
   try {
-    if (!verifyShopifyWebhook(req)) return res.status(401).send('Unauthorized');
     const payload = JSON.parse(req.body.toString());
     const shopDomain = payload.shop_domain;
     console.log('[GDPR] shop/redact:', shopDomain);
@@ -1102,7 +1115,7 @@ router.post('/webhooks/shop-redact', async (req, res) => {
     res.status(200).send('OK');
   } catch (e) {
     console.error('[GDPR] shop-redact error:', e);
-    res.status(500).send('Error');
+    res.status(200).send('OK');
   }
 });
 
