@@ -1898,124 +1898,74 @@ function renderDashboard() {
         <span style="font-size:12px;color:#6b7280;">Verileriniz şifreli saklanıyor, Shopify onaylı bağlantı kullanılıyor</span>
       </div>
 
-      <div style="background:#111827;border-radius:14px;padding:20px;margin-bottom:16px;">
-        <div style="display:grid;grid-template-columns:repeat(3,1fr) auto;gap:20px;align-items:center;">
-          <div>
-            <p style="font-size:11px;color:#9ca3af;margin:0 0 4px;">Fark Edilmemiş Potansiyel</p>
-            <p id="dash-conversion-loss-count" style="font-size:22px;font-weight:700;color:#fff;margin:0;">${analysis.totalIssueCount > 0 ? analysis.totalIssueCount + ' ürün' : '—'}</p>
-          </div>
-          <div>
-            <p style="font-size:11px;color:#9ca3af;margin:0 0 4px;">Ziyaretçi (7 gün)</p>
-            <p id="dash-summary-visitors" style="font-size:22px;font-weight:700;color:#fff;margin:0;">—</p>
-          </div>
-          <div>
-            <p style="font-size:11px;color:#9ca3af;margin:0 0 4px;">Dönüşüm Oranı</p>
-            <p id="dash-summary-conversion" style="font-size:22px;font-weight:700;color:#fff;margin:0;">—</p>
-          </div>
-          <div id="dash-pending-suggestions-pill" style="background:#16a34a;border-radius:12px;padding:12px 16px;text-align:center;cursor:pointer;min-width:90px;">
-            <p id="dash-pending-count" style="font-size:20px;font-weight:700;color:#fff;margin:0;">${analysis.totalIssueCount}</p>
-            <p style="font-size:10px;color:#dcfce7;margin:2px 0 0;">öneri → incele</p>
-          </div>
+      <!-- Hero: 5 Operasyon Metriği (son 30 gün) -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:16px;">
+        <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:16px;">
+          <p style="font-size:11px;color:#9ca3af;margin:0 0 6px;">Ziyaretçi</p>
+          <p id="hero-visitors-value" style="font-size:22px;font-weight:700;color:#111827;margin:0 0 4px;">—</p>
+          <p id="hero-visitors-trend" style="font-size:11px;margin:0;">—</p>
+        </div>
+        <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:16px;">
+          <p style="font-size:11px;color:#9ca3af;margin:0 0 6px;">Toplam Satış</p>
+          <p id="hero-sales-value" style="font-size:22px;font-weight:700;color:#16a34a;margin:0 0 4px;">—</p>
+          <p id="hero-sales-trend" style="font-size:11px;margin:0;">—</p>
+        </div>
+        <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:16px;">
+          <p style="font-size:11px;color:#9ca3af;margin:0 0 6px;">Dönüşüm Oranı</p>
+          <p id="hero-conversion-value" style="font-size:22px;font-weight:700;color:#111827;margin:0 0 4px;">—</p>
+          <p id="hero-conversion-trend" style="font-size:11px;margin:0;">—</p>
+        </div>
+        <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:16px;">
+          <p style="font-size:11px;color:#9ca3af;margin:0 0 6px;">Sepete Ekleme Oranı</p>
+          <p id="hero-cart-value" style="font-size:22px;font-weight:700;color:#111827;margin:0 0 4px;">—</p>
+          <p id="hero-cart-trend" style="font-size:11px;margin:0;">—</p>
+        </div>
+        <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:16px;">
+          <p style="font-size:11px;color:#9ca3af;margin:0 0 6px;">Ort. Oturum Süresi</p>
+          <p id="hero-duration-value" style="font-size:22px;font-weight:700;color:#111827;margin:0 0 4px;">—</p>
+          <p id="hero-duration-trend" style="font-size:11px;margin:0;">—</p>
         </div>
       </div>
 
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:16px">
-
-        <div id="dash-card-revenue" class="ms-kpi">
-          <div style="display:flex;align-items:flex-start;justify-content:space-between;">
-            <p style="font-size:12px;color:#6b7280;margin:0 0 8px;">Toplam Gelir</p>
-            <div style="width:28px;height:28px;border-radius:8px;background:#f0fdf4;display:flex;align-items:center;justify-content:center;">
-              <i class="ti ti-currency-lira" style="font-size:14px;color:#16a34a;"></i>
-            </div>
-          </div>
-          <span id="dash-revenue-value" class="ms-kpi-value">—</span>
-          <p id="dash-revenue-sub" style="font-size:11px;color:#9ca3af;margin:6px 0 0;">Yükleniyor...</p>
-        </div>
-
-        <div id="dash-card-products" class="ms-kpi">
-          <div style="display:flex;align-items:flex-start;justify-content:space-between;">
-            <p style="font-size:12px;color:#6b7280;margin:0 0 8px;">Toplam Ürün</p>
-            <div style="width:28px;height:28px;border-radius:8px;background:#eef2ff;display:flex;align-items:center;justify-content:center;">
-              <i class="ti ti-shopping-bag" style="font-size:14px;color:#6366f1;"></i>
-            </div>
-          </div>
-          <span id="dash-total-products" class="ms-kpi-value">${analysis.totalProducts.toLocaleString('tr-TR')}</span>
-          <p style="font-size:10px;color:#9ca3af;margin:4px 0 0;">AI tarafından takip ediliyor</p>
-          <p style="font-size:11px;color:#9ca3af;margin:2px 0 0;">Son senkronizasyon: ${lastSync}</p>
-        </div>
-
-        <div id="dash-card-issues" class="ms-kpi">
-          <div style="display:flex;align-items:flex-start;justify-content:space-between;">
-            <p style="font-size:12px;color:#6b7280;margin:0 0 8px;">Görünürlük Riski Taşıyan Ürün</p>
-            <div style="width:28px;height:28px;border-radius:8px;background:#fef2f2;display:flex;align-items:center;justify-content:center;">
-              <i class="ti ti-alert-triangle" style="font-size:14px;color:#dc2626;"></i>
-            </div>
-          </div>
-          <span id="dash-issues-count" class="ms-kpi-value">${analysis.totalIssueCount}</span>
-          <p style="font-size:12px;color:#9ca3af;margin:6px 0 0;">${analysis.totalIssueCount === 0 ? 'Sorun bulunamadı' : 'AI Önerileri panelinden düzeltin'}</p>
-          ${analysis.totalIssueCount > 0 ? '<p style="font-size:11px;color:#dc2626;margin:4px 0 0;">Bu ürünler eksik veri nedeniyle arama sonuçlarında geride kalabilir</p>' : ''}
-        </div>
-
-        <div id="dash-card-ready" class="ms-kpi">
-          <div style="display:flex;align-items:flex-start;justify-content:space-between;">
-            <p style="font-size:12px;color:#6b7280;margin:0 0 8px;">Hazır Ürün Oranı</p>
-            <div style="width:28px;height:28px;border-radius:8px;background:#f0fdf4;display:flex;align-items:center;justify-content:center;">
-              <i class="ti ti-circle-check" style="font-size:14px;color:#16a34a;"></i>
-            </div>
-          </div>
-          <span id="dash-ready-ratio" class="ms-kpi-value">—</span>
-          <p id="dash-ready-sub" style="font-size:11px;color:#9ca3af;margin:6px 0 0;"></p>
-        </div>
-
+      <!-- Büyüme Fırsatları -->
+      <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:20px;margin-bottom:16px;">
+        <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 14px;">Büyüme Fırsatları</p>
+        <div id="growth-opportunities-list" style="display:flex;flex-direction:column;gap:10px;"></div>
       </div>
 
-      <div class="dash-section" id="dash-analytics-section" style="margin-bottom:16px">
-        <div class="dash-card" style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:20px;">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-            <h3 style="margin:0;font-size:15px;font-weight:600">Ziyaretçi Davranışı</h3>
-            <div id="dash-tracking-toggle-wrap">
-              <button onclick="dashToggleTracking(true)" id="btn-enable-tracking"
-                style="font-size:12px;padding:6px 14px;background:#10b981;color:#fff;border:none;border-radius:8px;cursor:pointer">
-                Takibi Başlat
-              </button>
-            </div>
-          </div>
-          <div id="dash-analytics-empty" style="text-align:center;color:#888;font-size:13px;padding:24px 0">
-            Takip henüz etkin değil. "Takibi Başlat" butonuna tıklayarak mağaza ziyaretçilerinizi izlemeye başlayın.
-          </div>
-          <div id="dash-analytics-content" style="display:none">
-            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:12px;margin-bottom:16px">
-              <div style="background:#f9fafb;border-radius:10px;padding:12px;text-align:center;">
-                <div class="dash-stat-val" id="dash-stat-visitors" style="font-size:20px;font-weight:700;color:#111827">—</div>
-                <div class="dash-stat-lbl" style="font-size:12px;color:#6b7280;margin-top:4px">Benzersiz Ziyaretçi</div>
-              </div>
-              <div style="background:#f9fafb;border-radius:10px;padding:12px;text-align:center;">
-                <div class="dash-stat-val" id="dash-stat-clicks" style="font-size:20px;font-weight:700;color:#111827">—</div>
-                <div class="dash-stat-lbl" style="font-size:12px;color:#6b7280;margin-top:4px">Tıklama</div>
-              </div>
-              <div style="background:#f9fafb;border-radius:10px;padding:12px;text-align:center;">
-                <div class="dash-stat-val" id="dash-stat-bounce" style="font-size:20px;font-weight:700;color:#d97706">—</div>
-                <div class="dash-stat-lbl" style="font-size:12px;color:#6b7280;margin-top:4px">Çıkış Oranı</div>
-              </div>
-              <div style="background:#f9fafb;border-radius:10px;padding:12px;text-align:center;">
-                <div class="dash-stat-val" id="dash-stat-cart" style="font-size:20px;font-weight:700;color:#111827">—</div>
-                <div class="dash-stat-lbl" style="font-size:12px;color:#6b7280;margin-top:4px">Sepete Ekle</div>
-              </div>
-              <div style="background:#f9fafb;border-radius:10px;padding:12px;text-align:center;">
-                <div class="dash-stat-val" id="dash-stat-conversion" style="font-size:20px;font-weight:700;color:#16a34a">—</div>
-                <div class="dash-stat-lbl" style="font-size:12px;color:#6b7280;margin-top:4px">Dönüşüm Oranı</div>
-              </div>
-              <div style="background:#f9fafb;border-radius:10px;padding:12px;text-align:center;">
-                <div class="dash-stat-val" id="dash-stat-scroll" style="font-size:20px;font-weight:700;color:#111827">—</div>
-                <div class="dash-stat-lbl" style="font-size:12px;color:#6b7280;margin-top:4px">Ort. Scroll</div>
-              </div>
-            </div>
-            <div style="font-size:13px;font-weight:600;margin-bottom:8px">En Çok Tıklanan Ürünler</div>
-            <ul id="dash-top-products-list" style="margin:0;padding:0;list-style:none;font-size:13px"></ul>
-          </div>
+      <!-- Ürün Performansı Tablosu -->
+      <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:20px;margin-bottom:16px;overflow-x:auto;">
+        <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 14px;">Ürün Performansı <span style="font-size:10px;color:#9ca3af;font-weight:400;">— Etkileşim Puanı = tıklama×2 + sepet×5</span></p>
+        <table style="width:100%;border-collapse:collapse;font-size:12px;">
+          <thead>
+            <tr style="border-bottom:0.5px solid #e5e7eb;">
+              <th style="text-align:left;padding:8px;color:#9ca3af;font-weight:500;">Ürün</th>
+              <th style="text-align:right;padding:8px;color:#9ca3af;font-weight:500;">Görüntülenme</th>
+              <th style="text-align:right;padding:8px;color:#9ca3af;font-weight:500;">Tıklama</th>
+              <th style="text-align:right;padding:8px;color:#9ca3af;font-weight:500;">Sepete Ekle</th>
+              <th style="text-align:right;padding:8px;color:#9ca3af;font-weight:500;">Sepet Oranı</th>
+              <th style="text-align:right;padding:8px;color:#9ca3af;font-weight:500;">Etkileşim</th>
+              <th style="text-align:center;padding:8px;color:#9ca3af;font-weight:500;">Durum</th>
+              <th style="text-align:left;padding:8px;color:#9ca3af;font-weight:500;">İşlem</th>
+            </tr>
+          </thead>
+          <tbody id="product-performance-tbody"></tbody>
+        </table>
+      </div>
+
+      <!-- Kullanıcı Davranışları -->
+      <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:20px;margin-bottom:16px;">
+        <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 14px;">Kullanıcı Davranışları</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;">
+          <div><p style="font-size:11px;font-weight:600;color:#9ca3af;margin:0 0 8px;text-transform:uppercase;letter-spacing:.04em;">En Çok Görüntülenen</p><div id="behavior-most-viewed"></div></div>
+          <div><p style="font-size:11px;font-weight:600;color:#9ca3af;margin:0 0 8px;text-transform:uppercase;letter-spacing:.04em;">En Çok Satılan</p><div id="behavior-most-sold"></div></div>
+          <div><p style="font-size:11px;font-weight:600;color:#9ca3af;margin:0 0 8px;text-transform:uppercase;letter-spacing:.04em;">En Çok Tıklanan</p><div id="behavior-most-clicked"></div></div>
+          <div><p style="font-size:11px;font-weight:600;color:#9ca3af;margin:0 0 8px;text-transform:uppercase;letter-spacing:.04em;">En Çok Terk Edilen</p><div id="behavior-most-abandoned"></div></div>
+          <div><p style="font-size:11px;font-weight:600;color:#9ca3af;margin:0 0 8px;text-transform:uppercase;letter-spacing:.04em;">En Fazla Etkileşim</p><div id="behavior-most-engaged"></div></div>
         </div>
       </div>
 
+      <!-- AI Önerileri -->
       <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:20px;margin-bottom:16px;">
         <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 14px;">AI Önerileri</p>
         <div id="dash-ai-recommendations" style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px;"></div>
@@ -2026,13 +1976,13 @@ function renderDashboard() {
         </button>
       </div>
 
+      <!-- Hızlı İşlemler -->
       <div style="background:#111827;border:none;border-radius:14px;padding:20px;margin-bottom:16px;">
         <p style="font-size:13px;font-weight:600;color:#fff;margin:0 0 14px;">Hızlı İşlemler</p>
         <div id="dash-quick-actions" style="display:flex;flex-direction:column;gap:6px;"></div>
       </div>
 
-
-
+      <!-- Ürünler + Kategoriler -->
       <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:16px;margin-bottom:16px;">
         <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:20px;">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
@@ -2042,7 +1992,7 @@ function renderDashboard() {
               Tam Düzenleyiciyi Aç →
             </button>
           </div>
-          <div id="dash-products-mini-grid" style="display:grid;grid-template-columns:repeat(auto-fill, minmax(140px, 1fr));gap:10px;"></div>
+          <div id="dash-products-mini-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;"></div>
         </div>
         <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:20px;">
           <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 12px;">Kategoriler</p>
@@ -2050,6 +2000,7 @@ function renderDashboard() {
         </div>
       </div>
 
+      <!-- Gerçek Satış Verisi -->
       <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:20px;margin-bottom:16px;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
           <p style="font-size:13px;font-weight:600;color:#111827;margin:0;">Gerçek Satış Verisi</p>
@@ -2086,6 +2037,7 @@ function renderDashboard() {
         </div>
       </div>
 
+      <!-- Son İşlemler -->
       <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:20px;">
         <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 14px;">Son İşlemler</p>
         <div id="dash-recent-operations-full" style="display:flex;flex-direction:column;gap:12px;"></div>
@@ -2093,41 +2045,19 @@ function renderDashboard() {
 
     </div>`;
 
+  renderHeroMetrics();
+  renderGrowthOpportunities();
+  renderProductPerformanceTable();
+  renderBehaviorLists();
   renderAiRecommendations(analysis.issues || []);
   renderDashQuickActions();
   renderDashRecentOperationsFull();
   renderDashSalesData();
   renderDashProductsMini();
   renderDashCollectionsMini();
-  renderDashAnalyticsSection();
-  document.getElementById('dash-pending-suggestions-pill')?.addEventListener('click', function() {
-    setView('catalog-check');
-  });
+
   document.getElementById('open-full-catalog-btn')
     ?.addEventListener('click', openFullCatalogEditor);
-
-  ['dash-card-revenue', 'dash-card-products', 'dash-card-issues', 'dash-card-ready'].forEach(id => {
-    const card = document.getElementById(id);
-    if (!card) return;
-    card.addEventListener('mouseenter', function() {
-      this.style.borderColor = '#16a34a';
-      this.style.transform = 'translateY(-1px)';
-    });
-    card.addEventListener('mouseleave', function() {
-      this.style.borderColor = '#e5e7eb';
-      this.style.transform = 'translateY(0)';
-    });
-  });
-
-  // Hazır ürün oranı — catalogData.products status='active'
-  const readyEl = document.getElementById('dash-ready-ratio');
-  const readySubEl = document.getElementById('dash-ready-sub');
-  if (readyEl && catalogData && catalogData.products && catalogData.products.length > 0) {
-    const total = catalogData.products.length;
-    const readyCount = catalogData.products.filter(p => (p.status || '').toLowerCase() === 'active').length;
-    readyEl.textContent = Math.round((readyCount / total) * 100) + '%';
-    if (readySubEl) readySubEl.textContent = readyCount.toLocaleString('tr-TR') + ' / ' + total.toLocaleString('tr-TR') + ' ürün hazır';
-  }
 
   // Sidebar mağaza adı — localStorage
   const storeNameEl = document.getElementById('sidebar-store-name');
@@ -2153,7 +2083,6 @@ function renderDashboard() {
       }
     });
   }
-
 
 }
 
@@ -2370,6 +2299,194 @@ const DASH_QUICK_PRESETS = [
   { action: 'fix_stock',             label: 'Stok Sorunlarını Düzelt' },
 ];
 
+// ─── DASHBOARD 2.0 — YENİ RENDER FONKSİYONLARI ─────────────────────────────
+
+function renderTrendBadge(elementId, trendValue) {
+  const el = document.getElementById(elementId);
+  if (!el) return;
+  if (trendValue > 0) {
+    el.innerHTML = '<span style="color:#16a34a;">↑ %' + trendValue + '</span> <span style="font-size:10px;color:#9ca3af;">önceki 30 güne göre</span>';
+  } else if (trendValue < 0) {
+    el.innerHTML = '<span style="color:#dc2626;">↓ %' + Math.abs(trendValue) + '</span> <span style="font-size:10px;color:#9ca3af;">önceki 30 güne göre</span>';
+  } else {
+    el.innerHTML = '<span style="color:#9ca3af;">— değişim yok</span>';
+  }
+}
+
+async function renderHeroMetrics() {
+  try {
+    const res = await fetch(API_URL + '/api/analytics/hero-metrics', {
+      headers: { Authorization: 'Bearer ' + getAuthToken() },
+    });
+    if (!res.ok) return;
+    const data = await res.json();
+
+    const vEl = document.getElementById('hero-visitors-value');
+    if (vEl) vEl.textContent = data.visitors.value.toLocaleString('tr-TR');
+    renderTrendBadge('hero-visitors-trend', data.visitors.trend);
+
+    const sEl = document.getElementById('hero-sales-value');
+    if (sEl) sEl.textContent = '₺' + data.totalSales.value.toLocaleString('tr-TR');
+    renderTrendBadge('hero-sales-trend', data.totalSales.trend);
+
+    const cEl = document.getElementById('hero-conversion-value');
+    if (cEl) cEl.textContent = '%' + data.conversionRate.value;
+    renderTrendBadge('hero-conversion-trend', data.conversionRate.trend);
+
+    const cartEl = document.getElementById('hero-cart-value');
+    if (cartEl) cartEl.textContent = '%' + data.addToCartRate.value;
+    renderTrendBadge('hero-cart-trend', data.addToCartRate.trend);
+
+    const dur = data.avgSessionDuration.value;
+    const dEl = document.getElementById('hero-duration-value');
+    if (dEl) dEl.textContent = Math.floor(dur / 60) + 'dk ' + (dur % 60) + 'sn';
+    renderTrendBadge('hero-duration-trend', data.avgSessionDuration.trend);
+  } catch (e) { console.warn('[hero-metrics] yüklenemedi:', e); }
+}
+
+async function renderGrowthOpportunities() {
+  const container = document.getElementById('growth-opportunities-list');
+  if (!container) return;
+  try {
+    const res = await fetch(API_URL + '/api/analytics/growth-opportunities', {
+      headers: { Authorization: 'Bearer ' + getAuthToken() },
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+
+    if (!data.opportunities || data.opportunities.length === 0) {
+      container.innerHTML = '<p style="font-size:12px;color:#9ca3af;margin:0;">Şu an belirgin bir büyüme fırsatı tespit edilmedi.</p>';
+      return;
+    }
+
+    const products = (catalogData && Array.isArray(catalogData.products)) ? catalogData.products : [];
+
+    data.opportunities.forEach(function(opp, idx) {
+      const match = products.find(function(p) { return String(p.shopify_product_id) === String(opp.productId); });
+      const productName = match ? match.title : ('Ürün #' + opp.productId);
+
+      const card = document.createElement('div');
+      card.style.cssText = 'border:0.5px solid #e5e7eb;border-radius:12px;padding:14px;';
+      card.innerHTML =
+        '<p style="font-size:12px;font-weight:600;color:#111827;margin:0 0 4px;">' + productName + '</p>' +
+        '<p style="font-size:12px;color:#6b7280;margin:0 0 8px;">' + opp.problem + '</p>' +
+        '<div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">' +
+        '<i class="ti ti-arrow-right" style="font-size:12px;color:#9ca3af;"></i>' +
+        '<span style="font-size:12px;color:#111827;">' + opp.suggestion + '</span>' +
+        '</div>' +
+        '<p style="font-size:11px;color:#16a34a;margin:0 0 10px;">Beklenen etki: ' + opp.expectedImpact + '</p>';
+
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.textContent = 'Uygula';
+      btn.style.cssText = 'width:100%;padding:6px;background:#111827;color:#fff;border:none;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;';
+      btn.addEventListener('click', function() {
+        if (opp.actionType === 'description') {
+          runShopifyAiAnalysis('generate_descriptions');
+        } else {
+          alert('Bu öneri türü için henüz otomatik uygulama yok — manuel inceleme önerilir.');
+        }
+      });
+      card.appendChild(btn);
+      container.appendChild(card);
+    });
+  } catch (e) { console.warn('[growth-opportunities] yüklenemedi:', e); }
+}
+
+async function renderProductPerformanceTable() {
+  const tbody = document.getElementById('product-performance-tbody');
+  if (!tbody) return;
+  tbody.innerHTML = '<tr><td colspan="8" style="padding:16px;text-align:center;color:#9ca3af;font-size:12px;">Yükleniyor...</td></tr>';
+  try {
+    const res = await fetch(API_URL + '/api/analytics/product-performance', {
+      headers: { Authorization: 'Bearer ' + getAuthToken() },
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+
+    if (!data.products || data.products.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="8" style="padding:16px;text-align:center;color:#9ca3af;font-size:12px;">Henüz yeterli davranış verisi yok</td></tr>';
+      return;
+    }
+
+    const products = (catalogData && Array.isArray(catalogData.products)) ? catalogData.products : [];
+    const statusMap = {
+      good:      { label: 'İyi',    color: '#16a34a', bg: '#f0fdf4' },
+      attention: { label: 'Dikkat', color: '#dc2626', bg: '#fef2f2' },
+      normal:    { label: 'Normal', color: '#6b7280', bg: '#f9fafb' },
+    };
+
+    tbody.innerHTML = data.products.map(function(p) {
+      const match = products.find(function(pr) { return String(pr.shopify_product_id) === String(p.productId); });
+      const name = match ? match.title : ('Ürün #' + p.productId);
+      const displayName = name.length > 28 ? name.slice(0, 28) + '…' : name;
+      const st = statusMap[p.status] || statusMap.normal;
+      return '<tr style="border-bottom:0.5px solid #f9fafb;">' +
+        '<td style="padding:8px;color:#111827;">' + displayName + '</td>' +
+        '<td style="padding:8px;text-align:right;color:#6b7280;">' + p.views + '</td>' +
+        '<td style="padding:8px;text-align:right;color:#6b7280;">' + p.clicks + '</td>' +
+        '<td style="padding:8px;text-align:right;color:#6b7280;">' + p.addToCart + '</td>' +
+        '<td style="padding:8px;text-align:right;color:#6b7280;">%' + p.addToCartRate + '</td>' +
+        '<td style="padding:8px;text-align:right;font-weight:600;color:#111827;">' + p.engagementScore + '</td>' +
+        '<td style="padding:8px;text-align:center;"><span style="font-size:10px;padding:2px 8px;border-radius:999px;background:' + st.bg + ';color:' + st.color + ';">' + st.label + '</span></td>' +
+        '<td style="padding:8px;"><button type="button" class="perf-incele-btn" style="padding:4px 10px;border:0.5px solid #e5e7eb;border-radius:6px;background:#fff;color:#374151;font-size:11px;cursor:pointer;">İncele</button></td>' +
+        '</tr>';
+    }).join('');
+
+    tbody.querySelectorAll('.perf-incele-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() { openFullCatalogEditor(); });
+    });
+  } catch (e) { console.warn('[product-performance] yüklenemedi:', e); }
+}
+
+function renderBehaviorMiniList(containerId, items, useCount) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  if (!items || items.length === 0) {
+    container.innerHTML = '<p style="font-size:11px;color:#9ca3af;margin:0;">Veri yok</p>';
+    return;
+  }
+  const products = (catalogData && Array.isArray(catalogData.products)) ? catalogData.products : [];
+  container.innerHTML = items.map(function(item) {
+    const pid = item.productId || item.product_id;
+    const cnt = useCount !== false ? (item.count !== undefined ? item.count : item.quantity) : item.quantity;
+    const match = products.find(function(p) { return String(p.shopify_product_id) === String(pid); });
+    const rawName = match ? match.title : (item.title || ('Ürün #' + pid));
+    const name = rawName.length > 22 ? rawName.slice(0, 22) + '…' : rawName;
+    return '<div style="display:flex;justify-content:space-between;align-items:center;font-size:11px;padding:4px 0;border-bottom:0.5px solid #f3f4f6;">' +
+      '<span style="color:#111827;">' + name + '</span>' +
+      '<span style="color:#6b7280;flex-shrink:0;margin-left:8px;">' + (cnt !== undefined ? cnt : '—') + '</span>' +
+      '</div>';
+  }).join('');
+}
+
+async function renderBehaviorLists() {
+  try {
+    const h = { Authorization: 'Bearer ' + getAuthToken() };
+    const res = await fetch(API_URL + '/api/analytics/behavior-lists', { headers: h });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+
+    renderBehaviorMiniList('behavior-most-viewed',    data.mostViewed);
+    renderBehaviorMiniList('behavior-most-clicked',   data.mostClicked);
+    renderBehaviorMiniList('behavior-most-abandoned', data.mostAbandoned);
+    renderBehaviorMiniList('behavior-most-engaged',   data.mostEngaged);
+
+    // En Çok Satılan — Shopify Orders API'den (mevcut endpoint)
+    try {
+      const salesRes = await fetch(API_URL + '/api/shopify/orders-analytics', { headers: h });
+      if (salesRes.ok) {
+        const salesData = await salesRes.json();
+        const topItems = (salesData.topProducts || []).map(function(p) {
+          return { productId: null, title: p.title, quantity: p.quantity };
+        });
+        renderBehaviorMiniList('behavior-most-sold', topItems);
+      } else {
+        renderBehaviorMiniList('behavior-most-sold', []);
+      }
+    } catch (_) { renderBehaviorMiniList('behavior-most-sold', []); }
+  } catch (e) { console.warn('[behavior-lists] yüklenemedi:', e); }
+}
 
 
 function renderAiRecommendations(issues) {

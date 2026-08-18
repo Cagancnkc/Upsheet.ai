@@ -220,4 +220,230 @@ router.get('/tracking-status', requireAuth, async (req, res) => {
   });
 });
 
+// GET /hero-metrics — 5 KPI metrik, son 30 gün vs önceki 30 gün trend karşılaştırması
+router.get('/hero-metrics', requireAuth, async (req, res) => {
+  try {
+    const sb = getSupabase();
+    const { data: conn } = await sb.from('shopify_connections')
+      .select('shop_domain').eq('user_id', req.user.id).single();
+    if (!conn) return res.json({
+      visitors: { value: 0, trend: 0 },
+      totalSales: { value: 0, trend: 0 },
+      conversionRate: { value: 0, trend: 0 },
+      addToCartRate: { value: 0, trend: 0 },
+      avgSessionDuration: { value: 0, trend: 0 },
+    });
+
+    const now = new Date();
+    const cur30  = new Date(now); cur30.setDate(now.getDate() - 30);
+    const prev60 = new Date(now); prev60.setDate(now.getDate() - 60);
+
+    async function period(start, end) {
+      const { data: ev } = await sb.from('analytics_events')
+        .select('event_type, session_id, duration_seconds, order_total')
+        .eq('shop_domain', conn.shop_domain)
+        .gte('created_at', start.toISOString())
+        .lt('created_at', end.toISOString());
+      if (!ev || !ev.length) return { visitors: 0, addToCartRate: 0, avgSessionDuration: 0, totalSales: 0, orderCount: 0 };
+      const sessions = new Set(ev.map(e => e.session_id).filter(Boolean));
+      const pageViews = ev.filter(e => e.event_type === 'page_view').length;
+      const addToCarts = ev.filter(e => e.event_type === 'add_to_cart').length;
+      const durations = ev.filter(e => e.event_type === 'session_duration' && e.duration_seconds);
+      const purchases = ev.filter(e => e.event_type === 'purchase');
+      return {
+        visitors: sessions.size,
+        addToCartRate: pageViews > 0 ? Math.round((addToCarts / pageViews) * 1000) / 10 : 0,
+        avgSessionDuration: durations.length > 0
+          ? Math.round(durations.reduce((s, d) => s + d.duration_seconds, 0) / durations.length) : 0,
+        totalSales: Math.round(purchases.reduce((s, e) => s + (parseFloat(e.order_total) || 0), 0)),
+        orderCount: purchases.length,
+      };
+    }
+
+    const [cur, prev] = await Promise.all([period(cur30, now), period(prev60, cur30)]);
+    const trend = (c, p) => p === 0 ? (c > 0 ? 100 : 0) : Math.round(((c - p) / p) * 100);
+
+    res.json({
+      visitors:          { value: cur.visitors,          trend: trend(cur.visitors, prev.visitors) },
+      totalSales:        { value: cur.totalSales,         trend: trend(cur.totalSales, prev.totalSales) },
+      conversionRate:    { value: cur.visitors > 0 ? Math.round((cur.orderCount / cur.visitors) * 1000) / 10 : 0, trend: 0 },
+      addToCartRate:     { value: cur.addToCartRate,      trend: trend(cur.addToCartRate, prev.addToCartRate) },
+      avgSessionDuration:{ value: cur.avgSessionDuration, trend: trend(cur.avgSessionDuration, prev.avgSessionDuration) },
+    });
+  } catch (e) {
+    console.error('[hero-metrics]', e);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// GET /growth-opportunities — davranış verisinden büyüme fırsatları (2 tip)
+router.get('/growth-opportunities', requireAuth, async (req, res) => {
+  try {
+    const sb = getSupabase();
+    const { data: conn } = await sb.from('shopify_connections')
+      .select('shop_domain').eq('user_id', req.user.id).single();
+    if (!conn) return res.json({ opportunities: [] });
+
+    const sinceDate = new Date(); sinceDate.setDate(sinceDate.getDate() - 30);
+    const { data: events } = await sb.from('analytics_events')
+      .select('event_type, product_id')
+      .eq('shop_domain', conn.shop_domain)
+      .gte('created_at', sinceDate.toISOString());
+
+    const clicksByProduct = {};
+    const cartsByProduct = {};
+    (events || []).forEach(e => {
+      if (!e.product_id) return;
+      if (e.event_type === 'click') clicksByProduct[e.product_id] = (clicksByProduct[e.product_id] || 0) + 1;
+      if (e.event_type === 'add_to_cart') cartsByProduct[e.product_id] = (cartsByProduct[e.product_id] || 0) + 1;
+    });
+
+    const opportunities = [];
+
+    // Tip 1: Yüksek tıklanma, düşük dönüşüm
+    Object.entries(clicksByProduct).forEach(([pid, clicks]) => {
+      const carts = cartsByProduct[pid] || 0;
+      if (clicks >= 10 && (carts / clicks) < 0.05) {
+        opportunities.push({
+          type: 'low_conversion',
+          productId: pid,
+          problem: 'Bu ürün yüksek tıklanma alıyor ancak düşük sepete eklenme oranına sahip.',
+          suggestion: 'Ürün açıklamasını ve görsellerini güncelle.',
+          expectedImpact: 'Daha yüksek dönüşüm oranı.',
+          actionType: 'description',
+        });
+      }
+    });
+
+    // Tip 2: Yüksek sepete ekleme oranı — cross-sell fırsatı
+    Object.entries(cartsByProduct).forEach(([pid, carts]) => {
+      const clicks = clicksByProduct[pid] || 1;
+      if (carts >= 5 && (carts / clicks) > 0.3) {
+        opportunities.push({
+          type: 'high_cart_rate',
+          productId: pid,
+          problem: 'Bu ürünün sepete eklenme oranı yüksek — alıcı ilgisi güçlü.',
+          suggestion: 'Benzer ürünleri veya tamamlayıcı ürünleri öne çıkar.',
+          expectedImpact: 'Daha yüksek ortalama sepet değeri.',
+          actionType: 'cross_sell',
+        });
+      }
+    });
+
+    res.json({ opportunities: opportunities.slice(0, 10) });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// GET /product-performance — ürün bazlı etkileşim metrikleri (son 30 gün)
+router.get('/product-performance', requireAuth, async (req, res) => {
+  try {
+    const sb = getSupabase();
+    const { data: conn } = await sb.from('shopify_connections')
+      .select('shop_domain').eq('user_id', req.user.id).single();
+    if (!conn) return res.json({ products: [] });
+
+    const sinceDate = new Date(); sinceDate.setDate(sinceDate.getDate() - 30);
+    const { data: events } = await sb.from('analytics_events')
+      .select('event_type, product_id')
+      .eq('shop_domain', conn.shop_domain)
+      .gte('created_at', sinceDate.toISOString());
+
+    const metrics = {};
+    (events || []).forEach(e => {
+      if (!e.product_id) return;
+      if (!metrics[e.product_id]) metrics[e.product_id] = { views: 0, clicks: 0, addToCart: 0 };
+      if (e.event_type === 'page_view') metrics[e.product_id].views++;
+      if (e.event_type === 'click') metrics[e.product_id].clicks++;
+      if (e.event_type === 'add_to_cart') metrics[e.product_id].addToCart++;
+    });
+
+    const tableRows = Object.entries(metrics).map(([pid, m]) => {
+      const addToCartRate = m.views > 0 ? Math.round((m.addToCart / m.views) * 1000) / 10 : 0;
+      // Etkileşim Puanı: tıklama×2 + sepete_ekleme×5 (max 100)
+      const engagementScore = Math.min(100, Math.round(m.clicks * 2 + m.addToCart * 5));
+
+      let status = 'normal';
+      if (m.clicks >= 10 && addToCartRate < 1) status = 'attention';
+      else if (addToCartRate > 5) status = 'good';
+
+      return {
+        productId: pid,
+        views: m.views,
+        clicks: m.clicks,
+        addToCart: m.addToCart,
+        addToCartRate,
+        engagementScore,
+        status,
+      };
+    }).sort((a, b) => b.engagementScore - a.engagementScore).slice(0, 50);
+
+    res.json({ products: tableRows });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// GET /behavior-lists — 5 kategori davranış listesi (son 30 gün)
+router.get('/behavior-lists', requireAuth, async (req, res) => {
+  try {
+    const sb = getSupabase();
+    const { data: conn } = await sb.from('shopify_connections')
+      .select('shop_domain').eq('user_id', req.user.id).single();
+    if (!conn) return res.json({ mostViewed: [], mostClicked: [], mostCarted: [], mostAbandoned: [], mostEngaged: [] });
+
+    const sinceDate = new Date(); sinceDate.setDate(sinceDate.getDate() - 30);
+    const { data: events } = await sb.from('analytics_events')
+      .select('event_type, product_id, session_id')
+      .eq('shop_domain', conn.shop_domain)
+      .gte('created_at', sinceDate.toISOString());
+
+    const viewsByProduct = {}, clicksByProduct = {}, cartsByProduct = {};
+    const purchaseSessions = new Set();
+
+    (events || []).forEach(e => {
+      if (e.event_type === 'purchase' && e.session_id) purchaseSessions.add(e.session_id);
+    });
+
+    (events || []).forEach(e => {
+      if (e.event_type === 'page_view' && e.product_id)
+        viewsByProduct[e.product_id] = (viewsByProduct[e.product_id] || 0) + 1;
+      if (e.event_type === 'click' && e.product_id)
+        clicksByProduct[e.product_id] = (clicksByProduct[e.product_id] || 0) + 1;
+      if (e.event_type === 'add_to_cart' && e.product_id)
+        cartsByProduct[e.product_id] = (cartsByProduct[e.product_id] || 0) + 1;
+    });
+
+    // Sepete eklenmiş ama o session'da satın alınmamış ürünler
+    const abandonedByProduct = {};
+    (events || []).forEach(e => {
+      if (e.event_type === 'add_to_cart' && e.product_id && e.session_id && !purchaseSessions.has(e.session_id)) {
+        abandonedByProduct[e.product_id] = (abandonedByProduct[e.product_id] || 0) + 1;
+      }
+    });
+
+    function top5(obj) {
+      return Object.entries(obj).sort((a, b) => b[1] - a[1]).slice(0, 5)
+        .map(([productId, count]) => ({ productId, count }));
+    }
+
+    // En fazla etkileşim: tıklama×2 + sepet×5
+    const engagedScores = {};
+    Object.keys({ ...clicksByProduct, ...cartsByProduct }).forEach(pid => {
+      engagedScores[pid] = (clicksByProduct[pid] || 0) * 2 + (cartsByProduct[pid] || 0) * 5;
+    });
+
+    res.json({
+      mostViewed:    top5(viewsByProduct),
+      mostClicked:   top5(clicksByProduct),
+      mostCarted:    top5(cartsByProduct),
+      mostAbandoned: top5(abandonedByProduct),
+      mostEngaged:   top5(engagedScores),
+    });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 module.exports = router;
