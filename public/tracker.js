@@ -20,6 +20,8 @@
     sessionStorage.setItem('ms_sid', sessionId);
   }
 
+  var sessionStartTime = Date.now();
+
   function send(eventType, payload) {
     const data = {
       shop_domain: shopDomain,
@@ -41,6 +43,17 @@
       }).catch(() => {});
     }
   }
+
+  function sendSessionDuration() {
+    var durationSeconds = Math.round((Date.now() - sessionStartTime) / 1000);
+    if (durationSeconds < 1 || durationSeconds > 1800) return;
+    send('session_duration', { duration_seconds: durationSeconds });
+  }
+
+  window.addEventListener('beforeunload', sendSessionDuration);
+  document.addEventListener('visibilitychange', function() {
+    if (document.visibilityState === 'hidden') sendSessionDuration();
+  });
 
   // Page view
   document.addEventListener('DOMContentLoaded', () => {

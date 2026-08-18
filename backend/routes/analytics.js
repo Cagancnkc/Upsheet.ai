@@ -35,11 +35,11 @@ function checkRateLimit(sessionId, eventType) {
 
 // POST /track — public, logs visitor events
 router.post('/track', async (req, res) => {
-  const { shop_domain, event_type, page_url, element_id, product_id, scroll_depth, session_id, order_total } = req.body;
+  const { shop_domain, event_type, page_url, element_id, product_id, scroll_depth, session_id, order_total, duration_seconds } = req.body;
 
   // Validate
   if (!shop_domain || !event_type) return res.status(400).json({ error: 'shop_domain ve event_type gerekli' });
-  if (!['page_view', 'click', 'scroll', 'add_to_cart', 'purchase'].includes(event_type)) {
+  if (!['page_view', 'click', 'scroll', 'add_to_cart', 'purchase', 'session_duration'].includes(event_type)) {
     return res.status(400).json({ error: 'Geçersiz event_type' });
   }
   if (!session_id) return res.status(400).json({ error: 'session_id gerekli' });
@@ -66,7 +66,7 @@ router.post('/track', async (req, res) => {
   // Insert event
   const { error } = await sb.from('analytics_events').insert({
     shop_domain, event_type, page_url, element_id,
-    product_id, scroll_depth, session_id, order_total,
+    product_id, scroll_depth, session_id, order_total, duration_seconds,
   });
 
   if (error) {
@@ -93,6 +93,7 @@ router.get('/summary', requireAuth, async (req, res) => {
     return res.json({
       total_visits: 0, total_clicks: 0, total_cart: 0, avg_scroll_depth: 0, top_products: [],
       unique_visitors: 0, bounce_rate: 0, total_purchases: 0, conversion_rate: 0, total_revenue: 0,
+      avg_session_duration: 0, cart_abandonment_rate: 0, top_abandoned_products: [],
     });
   }
 
@@ -101,7 +102,7 @@ router.get('/summary', requireAuth, async (req, res) => {
   // Aggregate events
   const { data: events } = await sb
     .from('analytics_events')
-    .select('event_type, product_id, scroll_depth, session_id, order_total')
+    .select('event_type, product_id, scroll_depth, session_id, order_total, duration_seconds')
     .eq('shop_domain', conn.shop_domain)
     .gt('created_at', cutoffDate);
 
@@ -109,11 +110,13 @@ router.get('/summary', requireAuth, async (req, res) => {
     return res.json({
       total_visits: 0, total_clicks: 0, total_cart: 0, avg_scroll_depth: 0, top_products: [],
       unique_visitors: 0, bounce_rate: 0, total_purchases: 0, conversion_rate: 0, total_revenue: 0,
+      avg_session_duration: 0, cart_abandonment_rate: 0, top_abandoned_products: [],
     });
   }
 
   // Aggregate
   let total_visits = 0, total_clicks = 0, total_cart = 0, total_scroll = 0;
+  let duration_sum = 0, duration_count = 0;
   const productMap = new Map();
   const allSessions = new Set();
   const pageViewsBySession = {};
@@ -138,9 +141,38 @@ router.get('/summary', requireAuth, async (req, res) => {
       total_revenue += parseFloat(evt.order_total) || 0;
     }
     if (evt.scroll_depth != null) total_scroll += evt.scroll_depth;
+    if (evt.event_type === 'session_duration' && evt.duration_seconds) {
+      duration_sum += evt.duration_seconds;
+      duration_count++;
+    }
   }
 
   const unique_visitors = allSessions.size;
+
+  const avg_session_duration = duration_count > 0
+    ? Math.round(duration_sum / duration_count)
+    : 0;
+
+  const cartSessions = new Set(
+    events.filter(e => e.event_type === 'add_to_cart' && e.session_id).map(e => e.session_id)
+  );
+  const purchaseSessions = new Set(
+    events.filter(e => e.event_type === 'purchase' && e.session_id).map(e => e.session_id)
+  );
+  const abandonedSessions = [...cartSessions].filter(sid => !purchaseSessions.has(sid));
+  const cart_abandonment_rate = cartSessions.size > 0
+    ? Math.round((abandonedSessions.length / cartSessions.size) * 100)
+    : 0;
+
+  const abandonedByProduct = {};
+  events
+    .filter(e => e.event_type === 'add_to_cart' && e.product_id && abandonedSessions.includes(e.session_id))
+    .forEach(e => {
+      abandonedByProduct[e.product_id] = (abandonedByProduct[e.product_id] || 0) + 1;
+    });
+  const top_abandoned_products = Object.entries(abandonedByProduct)
+    .sort((a, b) => b[1] - a[1]).slice(0, 5)
+    .map(([product_id, count]) => ({ product_id, count }));
 
   const sessionsWithPageView = Object.keys(pageViewsBySession).length;
   const singlePageSessions = Object.values(pageViewsBySession).filter(n => n === 1).length;
@@ -163,6 +195,9 @@ router.get('/summary', requireAuth, async (req, res) => {
     unique_visitors, bounce_rate,
     total_purchases, conversion_rate,
     total_revenue: Math.round(total_revenue),
+    avg_session_duration,
+    cart_abandonment_rate,
+    top_abandoned_products,
   });
 });
 
