@@ -1921,14 +1921,15 @@ function renderDashboard() {
 
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:16px">
 
-        <div id="dash-card-health" class="ms-kpi">
-          <p style="font-size:12px;color:#6b7280;margin:0 0 8px;">Katalog Sağlığı</p>
-          <div style="display:flex;align-items:baseline;gap:4px;">
-            <span id="dash-health-score" class="ms-kpi-value">${analysis.healthScore}</span>
-            <span style="font-size:12px;color:#9ca3af;">/100</span>
-            <span id="dash-health-trend" style="font-size:11px;font-weight:400;color:#6b7280;margin-left:4px;"></span>
+        <div id="dash-card-revenue" class="ms-kpi">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;">
+            <p style="font-size:12px;color:#6b7280;margin:0 0 8px;">Toplam Gelir</p>
+            <div style="width:28px;height:28px;border-radius:8px;background:#f0fdf4;display:flex;align-items:center;justify-content:center;">
+              <i class="ti ti-currency-lira" style="font-size:14px;color:#16a34a;"></i>
+            </div>
           </div>
-          <p id="dash-health-badge" style="font-size:11px;margin:6px 0 0;"></p>
+          <span id="dash-revenue-value" class="ms-kpi-value">—</span>
+          <p id="dash-revenue-sub" style="font-size:11px;color:#9ca3af;margin:6px 0 0;">Yükleniyor...</p>
         </div>
 
         <div id="dash-card-products" class="ms-kpi">
@@ -2030,13 +2031,6 @@ function renderDashboard() {
         <div id="dash-quick-actions" style="display:flex;flex-direction:column;gap:6px;"></div>
       </div>
 
-      <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:20px;margin-bottom:16px;">
-        <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 16px;">Katalog Sağlığı Detayı</p>
-        <div style="display:flex;gap:20px;align-items:center;flex-wrap:wrap;">
-          <div id="health-ring-container" style="flex-shrink:0;"></div>
-          <div id="dash-health-breakdown-full" style="flex:1;min-width:180px;display:flex;flex-direction:column;gap:8px;"></div>
-        </div>
-      </div>
 
 
       <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:16px;margin-bottom:16px;">
@@ -2056,40 +2050,53 @@ function renderDashboard() {
         </div>
       </div>
 
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;">
-        <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:20px;">
-          <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 14px;">Katalog Sağlığı Trendi</p>
-          <div id="health-trend-chart"></div>
+      <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:20px;margin-bottom:16px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+          <p style="font-size:13px;font-weight:600;color:#111827;margin:0;">Gerçek Satış Verisi</p>
+          <span id="dash-sales-badge" style="font-size:11px;color:#9ca3af;"></span>
         </div>
-        <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:20px;">
-          <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 14px;">Son İşlemler</p>
-          <div id="dash-recent-operations-full" style="display:flex;flex-direction:column;gap:12px;"></div>
+        <div id="dash-sales-loading" style="text-align:center;color:#9ca3af;font-size:12px;padding:20px 0;">Yükleniyor...</div>
+        <div id="dash-sales-error" style="display:none;color:#dc2626;font-size:12px;padding:8px 0;"></div>
+        <div id="dash-sales-content" style="display:none;">
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px;">
+            <div style="background:#f9fafb;border-radius:10px;padding:12px;text-align:center;">
+              <div style="font-size:11px;color:#9ca3af;margin-bottom:4px;">Toplam Gelir</div>
+              <div id="sales-total-revenue" style="font-size:18px;font-weight:700;color:#111827;">—</div>
+            </div>
+            <div style="background:#f9fafb;border-radius:10px;padding:12px;text-align:center;">
+              <div style="font-size:11px;color:#9ca3af;margin-bottom:4px;">Sipariş Sayısı</div>
+              <div id="sales-order-count" style="font-size:18px;font-weight:700;color:#111827;">—</div>
+            </div>
+            <div style="background:#f9fafb;border-radius:10px;padding:12px;text-align:center;">
+              <div style="font-size:11px;color:#9ca3af;margin-bottom:4px;">Ort. Sipariş</div>
+              <div id="sales-avg-order" style="font-size:18px;font-weight:700;color:#111827;">—</div>
+            </div>
+          </div>
+          <div id="sales-status-pills" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;"></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div>
+              <p style="font-size:12px;font-weight:600;color:#374151;margin:0 0 8px;">En Çok Satan Ürünler</p>
+              <div id="sales-top-products"></div>
+            </div>
+            <div>
+              <p style="font-size:12px;font-weight:600;color:#374151;margin:0 0 8px;">Son 30 Gün Gelir</p>
+              <div id="sales-revenue-chart"></div>
+            </div>
+          </div>
         </div>
+      </div>
+
+      <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:20px;">
+        <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 14px;">Son İşlemler</p>
+        <div id="dash-recent-operations-full" style="display:flex;flex-direction:column;gap:12px;"></div>
       </div>
 
     </div>`;
 
-  // Health trend
-  const prevScore = parseInt(localStorage.getItem('mocksheets_prev_health') || analysis.healthScore);
-  const delta = analysis.healthScore - prevScore;
-  localStorage.setItem('mocksheets_prev_health', String(analysis.healthScore));
-  const trendEl = document.getElementById('dash-health-trend');
-  if (trendEl && delta !== 0) {
-    trendEl.innerHTML = delta > 0
-      ? '<i class="ti ti-trending-up" style="color:#16a34a;font-size:12px;"></i> +' + delta
-      : '<i class="ti ti-trending-down" style="color:#dc2626;font-size:12px;"></i> ' + delta;
-  }
-  renderHealthRing(analysis.healthScore || 0);
-  renderHealthBreakdownFull(analysis.categoryScores || {});
   renderAiRecommendations(analysis.issues || []);
-
   renderDashQuickActions();
-
   renderDashRecentOperationsFull();
-  renderHealthTrendChart();
-  if (analysis.totalProducts > 0) {
-    saveTodayHealthSnapshot(analysis.healthScore, analysis.totalProducts, analysis.totalIssueCount);
-  }
+  renderDashSalesData();
   renderDashProductsMini();
   renderDashCollectionsMini();
   renderDashAnalyticsSection();
@@ -2099,10 +2106,7 @@ function renderDashboard() {
   document.getElementById('open-full-catalog-btn')
     ?.addEventListener('click', openFullCatalogEditor);
 
-  const topbarScoreEl = document.getElementById('topbar-health-score');
-  if (topbarScoreEl) topbarScoreEl.textContent = analysis.healthScore;
-
-  ['dash-card-health', 'dash-card-products', 'dash-card-issues', 'dash-card-ready'].forEach(id => {
+  ['dash-card-revenue', 'dash-card-products', 'dash-card-issues', 'dash-card-ready'].forEach(id => {
     const card = document.getElementById(id);
     if (!card) return;
     card.addEventListener('mouseenter', function() {
@@ -2114,15 +2118,6 @@ function renderDashboard() {
       this.style.transform = 'translateY(0)';
     });
   });
-
-  // Sağlık badge
-  const badgeEl = document.getElementById('dash-health-badge');
-  if (badgeEl) {
-    const s = analysis.healthScore || 0;
-    if (s >= 80) { badgeEl.textContent = 'Mükemmel Durumda'; badgeEl.style.color = '#16a34a'; }
-    else if (s >= 60) { badgeEl.textContent = 'İyi Yolda'; badgeEl.style.color = '#d97706'; }
-    else { badgeEl.textContent = 'Büyük Potansiyel Var'; badgeEl.style.color = '#d97706'; }
-  }
 
   // Hazır ürün oranı — catalogData.products status='active'
   const readyEl = document.getElementById('dash-ready-ratio');
@@ -2375,50 +2370,6 @@ const DASH_QUICK_PRESETS = [
   { action: 'fix_stock',             label: 'Stok Sorunlarını Düzelt' },
 ];
 
-function renderHealthRing(score) {
-  const container = document.getElementById('health-ring-container');
-  if (!container) return;
-  const radius = 52;
-  const circumference = 2 * Math.PI * radius;
-  const offset = circumference - (score / 100) * circumference;
-  const color = score >= 80 ? '#16a34a' : score >= 60 ? '#d97706' : '#dc2626';
-  container.innerHTML =
-    '<svg width="128" height="128" viewBox="0 0 128 128">' +
-    '<circle cx="64" cy="64" r="' + radius + '" fill="none" stroke="#f3f4f6" stroke-width="10"/>' +
-    '<circle cx="64" cy="64" r="' + radius + '" fill="none" stroke="' + color + '" stroke-width="10" ' +
-    'stroke-dasharray="' + circumference + '" stroke-dashoffset="' + offset + '" ' +
-    'stroke-linecap="round" transform="rotate(-90 64 64)" style="transition:stroke-dashoffset .4s ease;"/>' +
-    '<text x="64" y="60" text-anchor="middle" font-size="24" font-weight="700" fill="#111827">' + score + '</text>' +
-    '<text x="64" y="78" text-anchor="middle" font-size="11" fill="#9ca3af">/100</text>' +
-    '</svg>';
-}
-
-function renderHealthBreakdownFull(categoryScores) {
-  const container = document.getElementById('dash-health-breakdown-full');
-  if (!container) return;
-  container.innerHTML = '';
-  Object.entries(categoryScores).forEach(([key, value]) => {
-    const meta = CATEGORY_META[key] || { label: key, icon: 'ti-circle' };
-    const barColor = value >= 80 ? '#16a34a' : value >= 60 ? '#d97706' : '#dc2626';
-    const row = document.createElement('div');
-    row.style.cssText = 'display:flex;align-items:center;gap:8px;';
-    row.innerHTML =
-      '<i class="ti ' + meta.icon + '" style="font-size:13px;color:#9ca3af;width:16px;"></i>' +
-      '<span style="font-size:12px;color:#374151;width:110px;flex-shrink:0;">' + meta.label + '</span>' +
-      '<div style="flex:1;height:5px;background:#f3f4f6;border-radius:99px;overflow:hidden;">' +
-      '<div style="width:' + value + '%;height:100%;background:' + barColor + ';border-radius:99px;"></div></div>' +
-      '<span style="font-size:11px;font-weight:600;color:#111827;width:32px;text-align:right;">' + value + '%</span>';
-    if (value < 60) {
-      const improveLink = document.createElement('button');
-      improveLink.type = 'button';
-      improveLink.textContent = 'Geliştir →';
-      improveLink.style.cssText = 'font-size:10px;color:#16a34a;background:transparent;border:none;cursor:pointer;margin-left:6px;';
-      improveLink.addEventListener('click', function() { setView('catalog-check'); });
-      row.appendChild(improveLink);
-    }
-    container.appendChild(row);
-  });
-}
 
 
 function renderAiRecommendations(issues) {
@@ -2545,56 +2496,97 @@ function renderDashRecentOperationsFull() {
   }).join('');
 }
 
-async function saveTodayHealthSnapshot(score, totalProducts, issueCount) {
-  try {
-    await fetch(API_URL + '/api/integrations/health-snapshot', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', ...(await authHeaders()) },
-      body: JSON.stringify({ score, totalProducts, issueCount }),
-    });
-  } catch (e) { console.warn('Snapshot kaydedilemedi:', e); }
-}
+async function renderDashSalesData() {
+  const loadingEl = document.getElementById('dash-sales-loading');
+  const contentEl = document.getElementById('dash-sales-content');
+  const errorEl  = document.getElementById('dash-sales-error');
+  const badgeEl  = document.getElementById('dash-sales-badge');
+  if (!loadingEl || !contentEl) return;
 
-async function renderHealthTrendChart() {
-  const container = document.getElementById('health-trend-chart');
-  if (!container) return;
-  const token = getAuthToken();
-  if (!token) return;
+  loadingEl.style.display = 'block';
+  contentEl.style.display = 'none';
+  if (errorEl) errorEl.style.display = 'none';
+
   try {
-    const res = await fetch(API_URL + '/api/integrations/health-history', {
+    const res = await fetch(API_URL + '/api/shopify/orders-analytics', {
       headers: { ...(await authHeaders()) },
     });
-    if (res.status === 401) {
-      container.innerHTML = '<p style="font-size:12px;color:#9ca3af;padding:24px 0;text-align:center;margin:0;">' +
-        'Trend verisi için oturumunuzu yenilemeniz gerekebilir.</p>';
+    if (res.status === 404) {
+      loadingEl.style.display = 'none';
+      if (errorEl) { errorEl.style.display = 'block'; errorEl.textContent = 'Shopify bağlantısı bulunamadı.'; }
+      if (badgeEl) badgeEl.textContent = 'Bağlı değil';
       return;
     }
-    if (!res.ok) throw new Error('fetch failed');
+    if (!res.ok) throw new Error('Sunucu hatası: ' + res.status);
     const data = await res.json();
-    const history = data.history || [];
 
-    if (history.length < 2) {
-      container.innerHTML = renderDashEmptyState('ti-chart-line', 'Trend verisi birikiyor', 'En az 2 gün gerekli');
-      return;
+    const fmt = (n) => n.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const el = (id) => document.getElementById(id);
+
+    // KPI card
+    if (el('dash-revenue-value')) el('dash-revenue-value').textContent = fmt(data.totalRevenue) + ' ₺';
+    if (el('dash-revenue-sub'))   el('dash-revenue-sub').textContent   = data.orderCount.toLocaleString('tr-TR') + ' sipariş';
+
+    // Mini KPIs
+    if (el('sales-total-revenue')) el('sales-total-revenue').textContent = fmt(data.totalRevenue) + ' ₺';
+    if (el('sales-order-count'))   el('sales-order-count').textContent   = data.orderCount.toLocaleString('tr-TR');
+    if (el('sales-avg-order'))     el('sales-avg-order').textContent     = fmt(data.avgOrderValue) + ' ₺';
+
+    // Status pills
+    const pillsEl = el('sales-status-pills');
+    if (pillsEl) {
+      const cfg = { paid:{l:'Ödendi',c:'#16a34a',bg:'#f0fdf4'}, pending:{l:'Bekliyor',c:'#d97706',bg:'#fffbeb'}, refunded:{l:'İade',c:'#dc2626',bg:'#fef2f2'} };
+      pillsEl.innerHTML = Object.entries(data.statusBreakdown).map(([k,v]) => {
+        const s = cfg[k] || {l:k,c:'#6b7280',bg:'#f9fafb'};
+        return `<span style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:999px;background:${s.bg};color:${s.c};font-size:11px;font-weight:600;">${s.l}: ${v.toLocaleString('tr-TR')}</span>`;
+      }).join('');
     }
 
-    const width = 480, height = 140, padding = 20;
-    const scores = history.map(h => h.score);
-    const maxScore = Math.max(...scores, 100);
-    const minScore = Math.max(0, Math.min(...scores) - 10);
-    const range = (maxScore - minScore) || 1;
-    const points = history.map((h, i) => {
-      const x = padding + (i / (history.length - 1)) * (width - padding * 2);
-      const y = height - padding - ((h.score - minScore) / range) * (height - padding * 2);
-      return x + ',' + y;
-    }).join(' ');
+    // Top products
+    const topEl = el('sales-top-products');
+    if (topEl) {
+      topEl.innerHTML = data.topProducts.length === 0
+        ? '<p style="font-size:12px;color:#9ca3af;margin:0;">Ürün verisi yok.</p>'
+        : '<table style="width:100%;border-collapse:collapse;font-size:12px;"><thead><tr>'
+          + '<th style="text-align:left;padding:5px 6px;color:#9ca3af;font-weight:500;border-bottom:0.5px solid #e5e7eb;">#</th>'
+          + '<th style="text-align:left;padding:5px 6px;color:#9ca3af;font-weight:500;border-bottom:0.5px solid #e5e7eb;">Ürün</th>'
+          + '<th style="text-align:right;padding:5px 6px;color:#9ca3af;font-weight:500;border-bottom:0.5px solid #e5e7eb;">Adet</th>'
+          + '<th style="text-align:right;padding:5px 6px;color:#9ca3af;font-weight:500;border-bottom:0.5px solid #e5e7eb;">Gelir</th>'
+          + '</tr></thead><tbody>'
+          + data.topProducts.map((p,i) =>
+            `<tr><td style="padding:5px 6px;color:#9ca3af;">${i+1}</td>`
+            + `<td style="padding:5px 6px;color:#374151;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.title}</td>`
+            + `<td style="padding:5px 6px;text-align:right;color:#374151;">${p.quantity.toLocaleString('tr-TR')}</td>`
+            + `<td style="padding:5px 6px;text-align:right;color:#16a34a;font-weight:600;">${fmt(p.revenue)} ₺</td></tr>`
+          ).join('')
+          + '</tbody></table>';
+    }
 
-    container.innerHTML =
-      '<svg width="100%" height="' + height + '" viewBox="0 0 ' + width + ' ' + height + '" preserveAspectRatio="none">' +
-      '<polyline points="' + points + '" fill="none" stroke="#16a34a" stroke-width="2"/>' +
-      '</svg>';
-  } catch (e) {
-    container.innerHTML = renderDashErrorState('Trend verisi yüklenemedi');
+    // Revenue bar chart (last 30 days)
+    const chartEl = el('sales-revenue-chart');
+    if (chartEl && data.revenueByDay?.length) {
+      const revenues = data.revenueByDay.map(d => d.revenue);
+      const maxR = Math.max(...revenues, 1);
+      const W = 400, H = 80, pad = 4;
+      const bw = Math.max(1, Math.floor((W - pad*2) / revenues.length) - 1);
+      const bars = revenues.map((r,i) => {
+        const bh = Math.max(2, Math.round((r/maxR)*(H-pad*2)));
+        const x = pad + i * ((W-pad*2)/revenues.length);
+        return `<rect x="${x}" y="${H-pad-bh}" width="${bw}" height="${bh}" rx="2" fill="#16a34a" opacity="0.75"><title>${data.revenueByDay[i].date.slice(5)}: ${fmt(r)} ₺</title></rect>`;
+      }).join('');
+      chartEl.innerHTML = `<svg width="100%" height="${H}" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="display:block;">${bars}</svg>`
+        + `<div style="display:flex;justify-content:space-between;font-size:10px;color:#9ca3af;margin-top:2px;"><span>${data.revenueByDay[0]?.date?.slice(5) || ''}</span><span>${data.revenueByDay[data.revenueByDay.length-1]?.date?.slice(5) || ''}</span></div>`;
+    }
+
+    if (badgeEl) badgeEl.textContent = data.orderCount.toLocaleString('tr-TR') + ' sipariş';
+    loadingEl.style.display = 'none';
+    contentEl.style.display = 'block';
+
+  } catch (err) {
+    console.warn('[renderDashSalesData]', err.message);
+    loadingEl.style.display = 'none';
+    if (errorEl) { errorEl.style.display = 'block'; errorEl.textContent = 'Satış verisi yüklenemedi.'; }
+    if (badgeEl) badgeEl.textContent = 'Hata';
   }
 }
 

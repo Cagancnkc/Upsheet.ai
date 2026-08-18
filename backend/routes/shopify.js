@@ -318,6 +318,82 @@ router.get('/data', requireAuth, async (req, res) => {
   res.json(shopData);
 });
 
+// ─── GET /api/shopify/orders-analytics ───────────────────────────────────────
+router.get('/orders-analytics', requireAuth, async (req, res) => {
+  const { data: conn, error: connErr } = await getSupabase()
+    .from('shopify_connections')
+    .select('shop_domain, access_token')
+    .eq('user_id', req.user.id)
+    .single();
+
+  if (connErr || !conn) return res.status(404).json({ error: 'Shopify bağlantısı bulunamadı' });
+
+  const accessToken = decrypt(conn.access_token);
+  if (!accessToken) return res.status(500).json({ error: 'Token çözümlenemedi' });
+
+  const headers = { 'X-Shopify-Access-Token': accessToken };
+  const shop = conn.shop_domain;
+
+  const orders = await fetchAllPages(
+    `https://${shop}/admin/api/2024-07/orders.json?limit=250&status=any`,
+    headers
+  );
+
+  let totalRevenue = 0;
+  const orderCount = orders.length;
+  const statusBreakdown = {};
+  const productMap = {};
+  const revenueMap = {};
+
+  const cutoff = new Date();
+  cutoff.setDate(cutoff.getDate() - 29);
+
+  for (const order of orders) {
+    const price = parseFloat(order.total_price || 0);
+    totalRevenue += price;
+
+    const fs = order.financial_status || 'unknown';
+    statusBreakdown[fs] = (statusBreakdown[fs] || 0) + 1;
+
+    for (const item of order.line_items || []) {
+      const title = item.title || 'Bilinmeyen Ürün';
+      const qty = item.quantity || 0;
+      const rev = parseFloat(item.price || 0) * qty;
+      if (!productMap[title]) productMap[title] = { title, quantity: 0, revenue: 0 };
+      productMap[title].quantity += qty;
+      productMap[title].revenue += rev;
+    }
+
+    const orderDate = new Date(order.created_at);
+    if (orderDate >= cutoff) {
+      const day = order.created_at.slice(0, 10);
+      revenueMap[day] = (revenueMap[day] || 0) + price;
+    }
+  }
+
+  const topProducts = Object.values(productMap)
+    .sort((a, b) => b.revenue - a.revenue)
+    .slice(0, 5)
+    .map(p => ({ ...p, revenue: Math.round(p.revenue * 100) / 100 }));
+
+  const revenueByDay = [];
+  for (let i = 29; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    const key = d.toISOString().slice(0, 10);
+    revenueByDay.push({ date: key, revenue: Math.round((revenueMap[key] || 0) * 100) / 100 });
+  }
+
+  res.json({
+    totalRevenue: Math.round(totalRevenue * 100) / 100,
+    orderCount,
+    avgOrderValue: orderCount > 0 ? Math.round((totalRevenue / orderCount) * 100) / 100 : 0,
+    statusBreakdown,
+    topProducts,
+    revenueByDay,
+  });
+});
+
 // ─── GET /api/shopify/sync ────────────────────────────────────────────────────
 router.get('/sync', requireAuth, checkLimit, async (req, res) => {
   const { data: conn, error: connErr } = await getSupabase()
