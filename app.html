@@ -2218,8 +2218,10 @@ async function renderDashAnalyticsSection() {
 
   if (!status.tracking_enabled) return;
 
-  document.getElementById('dash-analytics-empty').style.display = 'none';
-  document.getElementById('dash-analytics-content').style.display = 'block';
+  const _analyticsEmpty = document.getElementById('dash-analytics-empty');
+  const _analyticsContent = document.getElementById('dash-analytics-content');
+  if (_analyticsEmpty) _analyticsEmpty.style.display = 'none';
+  if (_analyticsContent) _analyticsContent.style.display = 'block';
 
   const sumRes = await fetch(`${API_URL}/api/analytics/summary`, {
     headers: { Authorization: `Bearer ${getAuthToken()}` }
@@ -2227,12 +2229,18 @@ async function renderDashAnalyticsSection() {
   if (!sumRes?.ok) return;
   const s = await sumRes.json();
 
-  document.getElementById('dash-stat-visitors').textContent = s.unique_visitors?.toLocaleString('tr-TR') ?? '—';
-  document.getElementById('dash-stat-clicks').textContent = s.total_clicks ?? '—';
-  document.getElementById('dash-stat-bounce').textContent = s.bounce_rate != null ? `${s.bounce_rate}%` : '—';
-  document.getElementById('dash-stat-cart').textContent = s.total_cart ?? '—';
-  document.getElementById('dash-stat-conversion').textContent = s.conversion_rate != null ? `${s.conversion_rate}%` : '—';
-  document.getElementById('dash-stat-scroll').textContent = s.avg_scroll_depth != null ? `${s.avg_scroll_depth}%` : '—';
+  const _statVisitors = document.getElementById('dash-stat-visitors');
+  if (_statVisitors) _statVisitors.textContent = s.unique_visitors?.toLocaleString('tr-TR') ?? '—';
+  const _statClicks = document.getElementById('dash-stat-clicks');
+  if (_statClicks) _statClicks.textContent = s.total_clicks ?? '—';
+  const _statBounce = document.getElementById('dash-stat-bounce');
+  if (_statBounce) _statBounce.textContent = s.bounce_rate != null ? `${s.bounce_rate}%` : '—';
+  const _statCart = document.getElementById('dash-stat-cart');
+  if (_statCart) _statCart.textContent = s.total_cart ?? '—';
+  const _statConversion = document.getElementById('dash-stat-conversion');
+  if (_statConversion) _statConversion.textContent = s.conversion_rate != null ? `${s.conversion_rate}%` : '—';
+  const _statScroll = document.getElementById('dash-stat-scroll');
+  if (_statScroll) _statScroll.textContent = s.avg_scroll_depth != null ? `${s.avg_scroll_depth}%` : '—';
 
   const summaryVisitors = document.getElementById('dash-summary-visitors');
   if (summaryVisitors) summaryVisitors.textContent = s.unique_visitors?.toLocaleString('tr-TR') ?? '—';
@@ -2322,25 +2330,25 @@ async function renderHeroMetrics() {
     const data = await res.json();
 
     const vEl = document.getElementById('hero-visitors-value');
-    if (vEl) vEl.textContent = data.visitors.value.toLocaleString('tr-TR');
-    renderTrendBadge('hero-visitors-trend', data.visitors.trend);
+    if (vEl) vEl.textContent = data.visitors?.value != null ? data.visitors.value.toLocaleString('tr-TR') : '—';
+    renderTrendBadge('hero-visitors-trend', data.visitors?.trend ?? 0);
 
     const sEl = document.getElementById('hero-sales-value');
-    if (sEl) sEl.textContent = '₺' + data.totalSales.value.toLocaleString('tr-TR');
-    renderTrendBadge('hero-sales-trend', data.totalSales.trend);
+    if (sEl) sEl.textContent = data.totalSales?.value != null ? '₺' + data.totalSales.value.toLocaleString('tr-TR') : '—';
+    renderTrendBadge('hero-sales-trend', data.totalSales?.trend ?? 0);
 
     const cEl = document.getElementById('hero-conversion-value');
-    if (cEl) cEl.textContent = '%' + data.conversionRate.value;
-    renderTrendBadge('hero-conversion-trend', data.conversionRate.trend);
+    if (cEl) cEl.textContent = data.conversionRate?.value != null ? '%' + data.conversionRate.value : '—';
+    renderTrendBadge('hero-conversion-trend', data.conversionRate?.trend ?? 0);
 
     const cartEl = document.getElementById('hero-cart-value');
-    if (cartEl) cartEl.textContent = '%' + data.addToCartRate.value;
-    renderTrendBadge('hero-cart-trend', data.addToCartRate.trend);
+    if (cartEl) cartEl.textContent = data.addToCartRate?.value != null ? '%' + data.addToCartRate.value : '—';
+    renderTrendBadge('hero-cart-trend', data.addToCartRate?.trend ?? 0);
 
-    const dur = data.avgSessionDuration.value;
+    const dur = data.avgSessionDuration?.value ?? 0;
     const dEl = document.getElementById('hero-duration-value');
-    if (dEl) dEl.textContent = Math.floor(dur / 60) + 'dk ' + (dur % 60) + 'sn';
-    renderTrendBadge('hero-duration-trend', data.avgSessionDuration.trend);
+    if (dEl) dEl.textContent = dur > 0 ? Math.floor(dur / 60) + 'dk ' + (dur % 60) + 'sn' : '—';
+    renderTrendBadge('hero-duration-trend', data.avgSessionDuration?.trend ?? 0);
   } catch (e) { console.warn('[hero-metrics] yüklenemedi:', e); }
 }
 
@@ -2478,7 +2486,7 @@ async function renderBehaviorLists() {
       if (salesRes.ok) {
         const salesData = await salesRes.json();
         const topItems = (salesData.topProducts || []).map(function(p) {
-          return { productId: null, title: p.title, quantity: p.quantity };
+          return { title: p.title, quantity: p.quantity };
         });
         renderBehaviorMiniList('behavior-most-sold', topItems);
       } else {
@@ -2637,23 +2645,23 @@ async function renderDashSalesData() {
     if (!res.ok) throw new Error('Sunucu hatası: ' + res.status);
     const data = await res.json();
 
-    const fmt = (n) => n.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const fmt = (n) => (n ?? 0).toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     const el = (id) => document.getElementById(id);
 
     // KPI card
     if (el('dash-revenue-value')) el('dash-revenue-value').textContent = fmt(data.totalRevenue) + ' ₺';
-    if (el('dash-revenue-sub'))   el('dash-revenue-sub').textContent   = data.orderCount.toLocaleString('tr-TR') + ' sipariş';
+    if (el('dash-revenue-sub'))   el('dash-revenue-sub').textContent   = (data.orderCount ?? 0).toLocaleString('tr-TR') + ' sipariş';
 
     // Mini KPIs
     if (el('sales-total-revenue')) el('sales-total-revenue').textContent = fmt(data.totalRevenue) + ' ₺';
-    if (el('sales-order-count'))   el('sales-order-count').textContent   = data.orderCount.toLocaleString('tr-TR');
-    if (el('sales-avg-order'))     el('sales-avg-order').textContent     = fmt(data.avgOrderValue) + ' ₺';
+    if (el('sales-order-count'))   el('sales-order-count').textContent   = (data.orderCount ?? 0).toLocaleString('tr-TR');
+    if (el('sales-avg-order'))     el('sales-avg-order').textContent     = fmt(data.avgOrderValue ?? 0) + ' ₺';
 
     // Status pills
     const pillsEl = el('sales-status-pills');
     if (pillsEl) {
       const cfg = { paid:{l:'Ödendi',c:'#16a34a',bg:'#f0fdf4'}, pending:{l:'Bekliyor',c:'#d97706',bg:'#fffbeb'}, refunded:{l:'İade',c:'#dc2626',bg:'#fef2f2'} };
-      pillsEl.innerHTML = Object.entries(data.statusBreakdown).map(([k,v]) => {
+      pillsEl.innerHTML = Object.entries(data.statusBreakdown ?? {}).map(([k,v]) => {
         const s = cfg[k] || {l:k,c:'#6b7280',bg:'#f9fafb'};
         return `<span style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:999px;background:${s.bg};color:${s.c};font-size:11px;font-weight:600;">${s.l}: ${v.toLocaleString('tr-TR')}</span>`;
       }).join('');
@@ -2662,7 +2670,7 @@ async function renderDashSalesData() {
     // Top products
     const topEl = el('sales-top-products');
     if (topEl) {
-      topEl.innerHTML = data.topProducts.length === 0
+      topEl.innerHTML = (data.topProducts || []).length === 0
         ? '<p style="font-size:12px;color:#9ca3af;margin:0;">Ürün verisi yok.</p>'
         : '<table style="width:100%;border-collapse:collapse;font-size:12px;"><thead><tr>'
           + '<th style="text-align:left;padding:5px 6px;color:#9ca3af;font-weight:500;border-bottom:0.5px solid #e5e7eb;">#</th>'
