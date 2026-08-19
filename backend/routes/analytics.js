@@ -446,4 +446,51 @@ router.get('/behavior-lists', requireAuth, async (req, res) => {
   }
 });
 
+const multer = require('multer');
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 5 * 1024 * 1024 } });
+
+router.post('/upload-screenshot', upload.single('screenshot'), async (req, res) => {
+  try {
+    const { shop_domain, page_path, page_width, page_height } = req.body;
+    if (!req.file || !shop_domain || !page_path) {
+      return res.status(200).json({ ok: true });
+    }
+
+    const sb = _getSb();
+    const { data: conn } = await sb.from('shopify_connections')
+      .select('user_id, tracking_enabled').eq('shop_domain', shop_domain).maybeSingle();
+
+    if (!conn || !conn.tracking_enabled) return res.status(200).json({ ok: true });
+
+    const safePathName = page_path.replace(/[^a-zA-Z0-9]/g, '_') || 'home';
+    const fileName = `${conn.user_id}/${safePathName}.jpg`;
+
+    const { error: uploadError } = await sb.storage
+      .from('page-screenshots')
+      .upload(fileName, req.file.buffer, { contentType: 'image/jpeg', upsert: true });
+
+    if (uploadError) {
+      console.error('[screenshot upload] hata:', uploadError);
+      return res.status(200).json({ ok: true });
+    }
+
+    await sb.from('page_screenshots_meta').upsert({
+      user_id: conn.user_id,
+      page_path,
+      storage_path: fileName,
+      page_width: parseInt(page_width) || 0,
+      page_height: parseInt(page_height) || 0,
+      updated_at: new Date().toISOString(),
+    }, { onConflict: 'user_id,page_path' });
+
+    console.log('[screenshot upload] Başarılı:', fileName);
+    res.status(200).json({ ok: true });
+
+  } catch (e) {
+    console.error('[upload-screenshot] hata:', e);
+    res.status(200).json({ ok: true });
+  }
+});
+
 module.exports = router;
+
