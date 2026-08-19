@@ -809,8 +809,8 @@ router.post('/ai-analyze', checkLimit, async (req, res) => {
     );
 
     products.sort((a, b) => {
-      const aSig = behaviorData[String(a.id)]?.lowConversionSignal ? 1 : 0;
-      const bSig = behaviorData[String(b.id)]?.lowConversionSignal ? 1 : 0;
+      const aSig = behaviorData[String(a.id)]?.diagnosedPattern ? 1 : 0;
+      const bSig = behaviorData[String(b.id)]?.diagnosedPattern ? 1 : 0;
       return bSig - aSig;
     });
 
@@ -840,10 +840,12 @@ router.post('/ai-analyze', checkLimit, async (req, res) => {
       const variant = p.variants?.[0] || {};
       const seo = seoByProduct.get(p.id) || { title: '', description: '' };
       const b = behaviorData[String(p.id)];
-      const behaviorNote = b
-        ? `${b.pageViews} görüntülenme, ${b.clicks} tıklama, ${b.addToCart} sepete ekleme` +
-          (b.lowConversionSignal ? ' — DÜŞÜK DÖNÜŞÜM SİNYALİ (yüksek ilgi, düşük sepete ekleme)' : '')
-        : null;
+      let behaviorNote = null;
+      if (b) {
+        behaviorNote = `Görüntülenme: ${b.views}, Tıklama Oranı: %${b.clickThroughRate}, ` +
+          `Sepete Ekleme Oranı: %${b.addToCartRate}, Sepet Terk: %${b.cartAbandonmentRate}`;
+        if (b.diagnosedPattern) behaviorNote += ` — TEŞHİS: ${b.diagnosedPattern}`;
+      }
       const entry = {
         id: p.id,
         title: p.title,
@@ -862,11 +864,20 @@ router.post('/ai-analyze', checkLimit, async (req, res) => {
       return entry;
     });
 
-    const guidelines = await getQualityGuidelines();
+    const [guidelines, { data: diagnosticPatterns }] = await Promise.all([
+      getQualityGuidelines(),
+      getSupabase().from('diagnostic_patterns').select('*'),
+    ]);
     const guidelinesText = guidelines.length > 0
       ? '\n\nKALİTE KÜTÜPHANESİ (BU KURALLARA KESİNLİKLE UY):\n' +
         guidelines.map(g =>
           `- [${g.field_type}] ${g.rule_text}\n  ✓ İYİ: "${g.good_example}"\n  ✗ KÖTÜ: "${g.bad_example}"`
+        ).join('\n\n')
+      : '';
+    const patternsText = (diagnosticPatterns || []).length > 0
+      ? '\n\nTEŞHİS KALIPLARI KÜTÜPHANESİ (davranış notunda TEŞHİS etiketi varsa bu kalıbı kullan):\n' +
+        diagnosticPatterns.map(p =>
+          `- [${p.pattern_key}] ${p.pattern_description}\n  Olası nedenler: ${p.likely_causes}\n  Önerilen odak: ${p.suggested_fix_approach}`
         ).join('\n\n')
       : '';
 
@@ -901,9 +912,9 @@ SEO KURALLARI (KESİNLİKLE UYGULANACAK):
 - Her öneri için old_value VE new_value zorunlu
 - Değişmeyecek alanlar için öneri oluşturma
 - field değeri KESİNLİKLE şunlardan biri: title, seo_title, seo_description, tags
-- reason alanı zorunlu: DEĞİŞİKLİĞİN NEDENİNİ 10-15 kelimeyle, kullanıcıya hitap eden basit bir dille açıkla. Teknik jargon kullanma. Örnek: "Başlık 15 karakterdi, SEO için 40-60 karakter arası önerilir"${guidelinesText}
+- reason alanı zorunlu: DEĞİŞİKLİĞİN NEDENİNİ 10-15 kelimeyle, kullanıcıya hitap eden basit bir dille açıkla. Teknik jargon kullanma. Örnek: "Başlık 15 karakterdi, SEO için 40-60 karakter arası önerilir"${guidelinesText}${patternsText}
 
-DAVRANIŞ VERİSİ KULLANIMI: Bazı ürünlerin yanında son 14 günün gerçek ziyaretçi davranış verisi bulunur. "DÜŞÜK DÖNÜŞÜM SİNYALİ" işaretli ürünlere ÖNCELİK ver — ilgi görüyor ama satışa dönüşmüyor, muhtemelen açıklama/görsel/fiyat sorunu. Gerekçe alanında bu veriyi SOMUT sayılarla kullan. Örnek: "Son 14 günde 340 görüntülenme ama 4 sepete ekleme — açıklama yetersiz kalıyor olabilir." Davranış verisi olmayan ürünler için mevcut kalite kurallarına göre değerlendir.`;
+DAVRANIŞ VERİSİ KULLANIMI: Bazı ürünlerin yanında son 14 günün gerçek ziyaretçi davranış verisi bulunur. "TEŞHİS" etiketi olan ürünlere ÖNCELİK ver — yukarıdaki TEŞHİS KALIPLARI KÜTÜPHANESİ'nden ilgili kalıbın nedenini ve önerilen odak alanını kullan. Gerekçe alanında hem davranış rakamlarını HEM hangi teşhis kalıbına uyduğunu açıkça belirt. Örnek gerekçe: "Bu ürün %3 tıklama oranına sahip (low_click_through paterni) — başlık yeterince dikkat çekmediği için güçlendirdik." Davranış verisi olmayan ürünler için mevcut kalite kurallarına göre değerlendir.`;
 
     const BATCH_SIZE = 10;
     const batches = [];
@@ -948,6 +959,8 @@ DAVRANIŞ VERİSİ KULLANIMI: Bazı ürünlerin yanında son 14 günün gerçek 
         if (limit && typeof s.new_value === 'string' && s.new_value.length > limit) {
           s.new_value = s.new_value.slice(0, limit).trimEnd();
         }
+        const pattern = behaviorData[String(s.product_id)]?.diagnosedPattern;
+        if (pattern) s.diagnosedPattern = pattern;
         return s;
       });
 
