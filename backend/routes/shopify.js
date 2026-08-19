@@ -173,7 +173,7 @@ router.get('/callback', async (req, res) => {
       return failRedirect();
     }
 
-    const shopResp = await fetch(`https://${shop}/admin/api/2024-07/shop.json`, {
+    const shopResp = await fetch(`https://${shop}/admin/api/2025-07/shop.json`, {
       headers: { 'X-Shopify-Access-Token': tokenData.access_token },
     });
     const shopData = await shopResp.json();
@@ -287,10 +287,10 @@ router.get('/status', requireAuth, async (req, res) => {
 
 // ─── GET /api/shopify/data ────────────────────────────────────────────────────
 const DATA_ENDPOINTS = {
-  orders:          (shop) => `https://${shop}/admin/api/2024-01/orders.json?limit=250&status=any`,
-  products:        (shop) => `https://${shop}/admin/api/2024-01/products.json?limit=250`,
-  customers:       (shop) => `https://${shop}/admin/api/2024-01/customers.json?limit=250`,
-  abandoned_carts: (shop) => `https://${shop}/admin/api/2024-01/checkouts.json?limit=250`,
+  orders:          (shop) => `https://${shop}/admin/api/2025-07/orders.json?limit=250&status=any`,
+  products:        (shop) => `https://${shop}/admin/api/2025-07/products.json?limit=250`,
+  customers:       (shop) => `https://${shop}/admin/api/2025-07/customers.json?limit=250`,
+  abandoned_carts: (shop) => `https://${shop}/admin/api/2025-07/checkouts.json?limit=250`,
 };
 
 router.get('/data', requireAuth, async (req, res) => {
@@ -335,7 +335,7 @@ router.get('/orders-analytics', requireAuth, async (req, res) => {
   const shop = conn.shop_domain;
 
   const orders = await fetchAllPages(
-    `https://${shop}/admin/api/2024-07/orders.json?limit=250&status=any`,
+    `https://${shop}/admin/api/2025-07/orders.json?limit=250&status=any`,
     headers
   );
 
@@ -414,7 +414,7 @@ router.get('/sync', requireAuth, checkLimit, async (req, res) => {
   const maxCatalog = req.plan?.max_catalog_size ?? null;
   if (maxCatalog !== null) {
     try {
-      const countRes = await fetch(`https://${shop}/admin/api/2024-01/products/count.json`, { headers });
+      const countRes = await fetch(`https://${shop}/admin/api/2025-07/products/count.json`, { headers });
       if (countRes.ok) {
         const { count } = await countRes.json();
         if (count > maxCatalog) {
@@ -435,8 +435,8 @@ router.get('/sync', requireAuth, checkLimit, async (req, res) => {
 
   try {
     const [productsAll, ordersAll] = await Promise.all([
-      fetchAllPages(`https://${shop}/admin/api/2024-01/products.json?limit=250`, headers),
-      fetchAllPages(`https://${shop}/admin/api/2024-01/orders.json?limit=250&status=any`, headers),
+      fetchAllPages(`https://${shop}/admin/api/2025-07/products.json?limit=250`, headers),
+      fetchAllPages(`https://${shop}/admin/api/2025-07/orders.json?limit=250&status=any`, headers),
     ]);
     console.log(`[shopify/sync] fetched ${productsAll.length} products, ${ordersAll.length} orders for user ${req.user.id}`);
 
@@ -531,7 +531,7 @@ router.post('/push', requireAuth, async (req, res) => {
 
   const headers = { 'X-Shopify-Access-Token': accessToken, 'Content-Type': 'application/json' };
   const shop = conn.shop_domain;
-  const apiBase = `https://${shop}/admin/api/2024-01`;
+  const apiBase = `https://${shop}/admin/api/2025-07`;
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
   let pushed = 0, skipped = 0, errors = [];
@@ -734,7 +734,7 @@ router.post('/ai-analyze', checkLimit, async (req, res) => {
   const accessToken = decrypt(conn.access_token);
   if (!accessToken) return res.status(500).json({ error: 'Token çözümlenemedi' });
 
-  const apiBase = `https://${conn.shop_domain}/admin/api/2024-01`;
+  const apiBase = `https://${conn.shop_domain}/admin/api/2025-07`;
   const shopifyHeaders = { 'X-Shopify-Access-Token': accessToken };
 
   try {
@@ -1061,8 +1061,9 @@ router.post('/webhooks/customers-data-request', (req, res) => {
   try {
     const payload = JSON.parse(req.body.toString());
     console.log('[GDPR] customers/data_request:', payload.shop_domain);
-    // Upsheet does not store customer-level personal data — only merchant-level
-    // product/order metadata. Nothing to export; acknowledge immediately.
+    // Customer records are synced read-only for merchant dashboard display.
+    // No behavioral or personal data is persisted beyond merchant-scoped metadata.
+    // Acknowledge immediately; no export file to generate.
     res.status(200).send('OK');
   } catch (e) {
     console.error('[GDPR] customers-data-request error:', e);
@@ -1079,7 +1080,8 @@ router.post('/webhooks/customers-redact', (req, res) => {
   try {
     const payload = JSON.parse(req.body.toString());
     console.log('[GDPR] customers/redact:', payload.shop_domain);
-    // No customer-level personal data stored — acknowledge immediately.
+    // Customer records are fetched for display only and not retained.
+    // Acknowledge immediately.
     res.status(200).send('OK');
   } catch (e) {
     console.error('[GDPR] customers-redact error:', e);
@@ -1244,9 +1246,11 @@ router.post('/analytics/enable', requireAuth, async (req, res) => {
       return res.status(404).json({ error: 'Shopify bağlantısı bulunamadı' });
     }
 
+    // NOTE: Script Tags are deprecated as of Shopify 2024. Migration path:
+    // Theme App Extensions (shopify/theme-app-extension). Plan post-launch.
     const scriptUrl = `${process.env.FRONTEND_URL}/tracker.js`;
     const resp = await fetch(
-      `https://${conn.shop_domain}/admin/api/2024-01/script_tags.json`,
+      `https://${conn.shop_domain}/admin/api/2025-07/script_tags.json`,
       {
         method: 'POST',
         headers: {
@@ -1287,7 +1291,7 @@ router.post('/analytics/disable', requireAuth, async (req, res) => {
 
     if (conn.tracking_script_id) {
       await fetch(
-        `https://${conn.shop_domain}/admin/api/2024-01/script_tags/${conn.tracking_script_id}.json`,
+        `https://${conn.shop_domain}/admin/api/2025-07/script_tags/${conn.tracking_script_id}.json`,
         {
           method: 'DELETE',
           headers: { 'X-Shopify-Access-Token': conn.access_token }

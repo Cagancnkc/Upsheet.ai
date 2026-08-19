@@ -27,7 +27,7 @@ async function fetchAllProductsAsSheetRows(conn) {
   if (!token) throw new Error('Token çözümlenemedi');
   const shop = conn.shop_domain;
   const products = await _fetchAllPages(
-    `https://${shop}/admin/api/2024-01/products.json?limit=250`,
+    `https://${shop}/admin/api/2025-07/products.json?limit=250`,
     token
   );
   return [
