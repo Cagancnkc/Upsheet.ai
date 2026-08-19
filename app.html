@@ -750,6 +750,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/@anthropic-ai/sdk@4.12.0/index.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/heatmap.js/2.0.5/heatmap.min.js"></script>
 
 <script>
 // ═══════════════════════════════════════════════════════════════════════
@@ -1855,6 +1856,71 @@ function renderDashErrorState(message) {
   </div>`;
 }
 
+async function renderClickHeatmap() {
+  try {
+    const h = await authHeaders();
+    const pagesRes = await fetch(getAPI() + '/api/analytics/tracked-pages', { headers: h });
+    const pagesData = await pagesRes.json();
+    const select = document.getElementById('heatmap-page-select');
+    if (select && pagesData.pages && pagesData.pages.length > 0) {
+      select.innerHTML = pagesData.pages.map(p =>
+        '<option value="' + p.page_path + '">' + (p.page_path === '/' ? 'Ana Sayfa' : p.page_path) + '</option>'
+      ).join('');
+      select.onchange = function() { loadHeatmapForPage(this.value); };
+      loadHeatmapForPage(pagesData.pages[0].page_path);
+    } else {
+      const container = document.getElementById('heatmap-canvas-container');
+      if (container) container.innerHTML = '<p style="font-size:12px;color:#9ca3af;display:flex;align-items:center;justify-content:center;height:200px;">Henüz sayfa verisi toplanmadı — Analytics\'i etkinleştirin</p>';
+    }
+  } catch(e) { console.warn('Isı haritası sayfa listesi yüklenemedi:', e); }
+}
+
+async function loadHeatmapForPage(pagePath) {
+  const container = document.getElementById('heatmap-canvas-container');
+  const noteEl = document.getElementById('heatmap-honesty-note');
+  if (!container) return;
+  try {
+    const h = await authHeaders();
+    const res = await fetch(getAPI() + '/api/analytics/heatmap-data?page_path=' +
+      encodeURIComponent(pagePath) + '&days=14', { headers: h });
+    const data = await res.json();
+    if (noteEl) {
+      noteEl.textContent = data.totalClicks > 0
+        ? 'Ziyaretçilerin tarayıcısında alınan gerçek sayfa görüntüsü üzerinde — son 14 gün, ' + data.totalClicks + ' tıklama'
+        : '';
+    }
+    if (!data.screenshotUrl) {
+      container.innerHTML = '<p style="font-size:12px;color:#9ca3af;display:flex;align-items:center;justify-content:center;height:200px;">Bu sayfa için henüz görüntü toplanmadı</p>';
+      return;
+    }
+    container.innerHTML = '<img id="heatmap-bg-img" src="' + data.screenshotUrl + '" style="width:100%;display:block;" />';
+    if (!data.points || data.points.length === 0) return;
+    const heatmapInstance = h337.create({
+      container: container,
+      radius: 40,
+      maxOpacity: 0.6,
+      minOpacity: 0.05,
+      blur: 0.85,
+    });
+    const img = document.getElementById('heatmap-bg-img');
+    img.onload = function() {
+      const rect = img.getBoundingClientRect();
+      const heatmapData = data.points.map(p => ({
+        x: Math.round((p.x / 100) * rect.width),
+        y: Math.round((p.y / 100) * rect.height),
+        value: p.count,
+      }));
+      heatmapInstance.setData({
+        max: Math.max(...data.points.map(p => p.count)),
+        data: heatmapData,
+      });
+    };
+  } catch(e) {
+    console.warn('Isı haritası yüklenemedi:', e);
+    container.innerHTML = '<p style="font-size:12px;color:#9ca3af;">Yüklenemedi</p>';
+  }
+}
+
 function renderDashboard() {
   const view = document.getElementById('dashboard-view');
   if (!view) return;
@@ -1992,22 +2058,26 @@ function renderDashboard() {
         <div id="dash-ai-limit-msg" style="display:none;margin-top:10px;padding:10px 14px;background:#1f2937;border-radius:10px;border:0.5px solid #374151;"></div>
       </div>
 
-      <!-- Ürünler + Kategoriler -->
-      <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:16px;margin-bottom:16px;">
-        <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:20px;">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-            <p style="font-size:13px;font-weight:600;color:#111827;margin:0;">Ürünler</p>
-            <button id="open-full-catalog-btn" type="button"
-              style="padding:6px 14px;border:0.5px solid #e5e7eb;border-radius:10px;background:#fff;color:#374151;font-size:11px;font-weight:600;cursor:pointer;">
-              Tam Düzenleyiciyi Aç →
-            </button>
-          </div>
-          <div id="dash-products-mini-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;"></div>
+      <!-- Ürünler -->
+      <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:20px;margin-bottom:16px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+          <p style="font-size:13px;font-weight:600;color:#111827;margin:0;">Ürünler</p>
+          <button id="open-full-catalog-btn" type="button"
+            style="padding:6px 14px;border:0.5px solid #e5e7eb;border-radius:10px;background:#fff;color:#374151;font-size:11px;font-weight:600;cursor:pointer;">
+            Tam Düzenleyiciyi Aç →
+          </button>
         </div>
-        <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:20px;">
-          <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 12px;">Kategoriler</p>
-          <div id="dash-collections-mini" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+        <div id="dash-products-mini-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;"></div>
+      </div>
+
+      <!-- Isı Haritası -->
+      <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:20px;margin-bottom:16px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+          <p style="font-size:13px;font-weight:600;color:#111827;margin:0;">Tıklama Yoğunluk Haritası</p>
+          <select id="heatmap-page-select" style="font-size:11px;padding:4px 10px;border:0.5px solid #e5e7eb;border-radius:8px;background:#fff;"></select>
         </div>
+        <p id="heatmap-honesty-note" style="font-size:11px;color:#9ca3af;margin:0 0 14px;"></p>
+        <div id="heatmap-canvas-container" style="position:relative;width:100%;min-height:200px;background:#f9fafb;border-radius:10px;overflow:hidden;"></div>
       </div>
 
       <!-- Gerçek Satış Verisi -->
@@ -2064,7 +2134,7 @@ function renderDashboard() {
   renderDashRecentOperationsFull();
   renderDashSalesData();
   renderDashProductsMini();
-  renderDashCollectionsMini();
+  renderClickHeatmap();
   renderValueSummaryBanner();
 
   document.getElementById('open-full-catalog-btn')
