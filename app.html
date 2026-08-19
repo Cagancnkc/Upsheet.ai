@@ -1858,8 +1858,11 @@ function renderDashErrorState(message) {
 }
 
 async function renderClickHeatmap() {
+  const container = document.getElementById('heatmap-canvas-container');
   try {
     const h = await authHeaders();
+    const statusRes = await fetch(API_URL + '/api/analytics/tracking-status', { headers: h }).catch(() => null);
+    const trackingEnabled = statusRes ? (await statusRes.json()).tracking_enabled : false;
     const pagesRes = await fetch(API_URL + '/api/analytics/tracked-pages', { headers: h });
     const pagesData = await pagesRes.json();
     const select = document.getElementById('heatmap-page-select');
@@ -1869,11 +1872,15 @@ async function renderClickHeatmap() {
       ).join('');
       select.onchange = function() { loadHeatmapForPage(this.value); };
       loadHeatmapForPage(pagesData.pages[0].page_path);
-    } else {
-      const container = document.getElementById('heatmap-canvas-container');
-      if (container) container.innerHTML = '<p style="font-size:12px;color:#9ca3af;display:flex;align-items:center;justify-content:center;height:200px;">Henüz sayfa verisi toplanmadı — Analytics\'i etkinleştirin</p>';
+    } else if (container) {
+      container.innerHTML = trackingEnabled
+        ? '<p style="font-size:12px;color:#9ca3af;text-align:center;padding:40px 20px;">Takip etkin ✓ — Mağazanıza ziyaretçi geldikçe tıklama haritası otomatik oluşacak.</p>'
+        : '<p style="font-size:12px;color:#9ca3af;text-align:center;padding:40px 20px;">Ziyaretçi takibi kapalı — Yukarıdaki <strong style="color:#374151;">Takibi Başlat</strong> butonuna tıklayarak etkinleştirin. Ardından mağazanıza gelen ziyaretçilerin tıklama haritası burada görünecek.</p>';
     }
-  } catch(e) { console.warn('Isı haritası sayfa listesi yüklenemedi:', e); }
+  } catch(e) {
+    console.warn('Isı haritası sayfa listesi yüklenemedi:', e);
+    if (container) container.innerHTML = '<p style="font-size:12px;color:#9ca3af;text-align:center;padding:40px 20px;">Yüklenemedi</p>';
+  }
 }
 
 async function loadHeatmapForPage(pagePath) {
