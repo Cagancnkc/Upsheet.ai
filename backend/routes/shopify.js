@@ -1262,39 +1262,43 @@ router.post('/analytics/enable', requireAuth, async (req, res) => {
       });
     }
 
-    const { data: conn } = await sb
-      .from('shopify_connections')
-      .select('shop_domain, access_token')
-      .eq('user_id', req.user.id)
-      .single();
+    const { data: conn } = await sb.from('shopify_connections')
+      .select('shop_domain, access_token').eq('user_id', req.user.id).single();
 
-    if (!conn) {
-      return res.status(404).json({ error: 'Shopify bağlantısı bulunamadı' });
+    if (!conn) return res.status(404).json({ error: 'Shopify bağlantısı bulunamadı' });
+
+    const shopUrl = `https://${conn.shop_domain}/admin/api/2025-07`;
+    const headers = { 'X-Shopify-Access-Token': conn.access_token, 'Content-Type': 'application/json' };
+
+    // 1. html2canvas kütüphanesi (tracker.js'in bağımlılığı)
+    const h2cRes = await fetch(`${shopUrl}/script_tags.json`, {
+      method: 'POST', headers,
+      body: JSON.stringify({ script_tag: { event: 'onload', src: 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js' } }),
+    });
+    if (!h2cRes.ok) return res.status(500).json({ error: 'html2canvas kütüphanesi eklenemedi' });
+    const h2cData = await h2cRes.json();
+
+    // 2. tracker.js
+    const trackerRes = await fetch(`${shopUrl}/script_tags.json`, {
+      method: 'POST', headers,
+      body: JSON.stringify({ script_tag: { event: 'onload', src: `${process.env.FRONTEND_URL}/tracker.js` } }),
+    });
+    if (!trackerRes.ok) {
+      // yarım kurulum bırakma — html2canvas'ı geri al
+      await fetch(`${shopUrl}/script_tags/${h2cData.script_tag.id}.json`, {
+        method: 'DELETE', headers: { 'X-Shopify-Access-Token': conn.access_token },
+      }).catch(() => {});
+      return res.status(500).json({ error: 'İzleme scripti eklenemedi' });
     }
+    const trackerData = await trackerRes.json();
 
-    // NOTE: Script Tags are deprecated as of Shopify 2024. Migration path:
-    // Theme App Extensions (shopify/theme-app-extension). Plan post-launch.
-    const scriptUrl = `${process.env.FRONTEND_URL}/tracker.js`;
-    const resp = await fetch(
-      `https://${conn.shop_domain}/admin/api/2025-07/script_tags.json`,
-      {
-        method: 'POST',
-        headers: {
-          'X-Shopify-Access-Token': conn.access_token,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ script_tag: { event: 'onload', src: scriptUrl } })
-      }
-    );
+    await sb.from('shopify_connections').update({
+      tracking_enabled: true,
+      tracking_script_id: trackerData.script_tag.id?.toString(),
+      html2canvas_script_id: h2cData.script_tag.id?.toString(),
+    }).eq('user_id', req.user.id);
 
-    const json = await resp.json();
-    const scriptId = json.script_tag?.id?.toString();
-
-    await sb.from('shopify_connections')
-      .update({ tracking_enabled: true, tracking_script_id: scriptId })
-      .eq('user_id', req.user.id);
-
-    res.json({ ok: true, script_id: scriptId });
+    res.json({ ok: true, script_id: trackerData.script_tag.id });
   } catch (e) {
     console.error('[shopify/analytics/enable]', e.message);
     res.status(500).json({ error: e.message });
@@ -1305,29 +1309,30 @@ router.post('/analytics/enable', requireAuth, async (req, res) => {
 router.post('/analytics/disable', requireAuth, async (req, res) => {
   try {
     const sb = getSupabase();
-    const { data: conn } = await sb
-      .from('shopify_connections')
-      .select('shop_domain, access_token, tracking_script_id')
-      .eq('user_id', req.user.id)
-      .single();
+    const { data: conn } = await sb.from('shopify_connections')
+      .select('shop_domain, access_token, tracking_script_id, html2canvas_script_id')
+      .eq('user_id', req.user.id).single();
 
-    if (!conn) {
-      return res.status(404).json({ error: 'Shopify bağlantısı bulunamadı' });
-    }
+    if (!conn) return res.status(404).json({ error: 'Shopify bağlantısı bulunamadı' });
+
+    const shopUrl = `https://${conn.shop_domain}/admin/api/2025-07`;
+    const deleteHeaders = { 'X-Shopify-Access-Token': conn.access_token };
 
     if (conn.tracking_script_id) {
-      await fetch(
-        `https://${conn.shop_domain}/admin/api/2025-07/script_tags/${conn.tracking_script_id}.json`,
-        {
-          method: 'DELETE',
-          headers: { 'X-Shopify-Access-Token': conn.access_token }
-        }
-      );
+      await fetch(`${shopUrl}/script_tags/${conn.tracking_script_id}.json`, {
+        method: 'DELETE', headers: deleteHeaders,
+      }).catch(() => {});
     }
 
-    await sb.from('shopify_connections')
-      .update({ tracking_enabled: false, tracking_script_id: null })
-      .eq('user_id', req.user.id);
+    if (conn.html2canvas_script_id) {
+      await fetch(`${shopUrl}/script_tags/${conn.html2canvas_script_id}.json`, {
+        method: 'DELETE', headers: deleteHeaders,
+      }).catch(() => {});
+    }
+
+    await sb.from('shopify_connections').update({
+      tracking_enabled: false, tracking_script_id: null, html2canvas_script_id: null,
+    }).eq('user_id', req.user.id);
 
     res.json({ ok: true });
   } catch (e) {
