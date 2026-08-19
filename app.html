@@ -2376,7 +2376,12 @@ async function dashToggleTracking(enable) {
   if (res?.ok) {
     await renderDashAnalyticsSection();
   } else {
-    showToast('İşlem başarısız, lütfen tekrar deneyin.', 'error');
+    let msg = 'İşlem başarısız, lütfen tekrar deneyin.';
+    if (res?.status === 402) {
+      const body = await res.json().catch(() => ({}));
+      msg = body.error || 'Bu özellik Pro planda mevcut.';
+    }
+    toast(msg, 'error');
     if (btn) btn.disabled = false;
   }
 }
