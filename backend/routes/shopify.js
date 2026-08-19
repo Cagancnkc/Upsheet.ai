@@ -1249,6 +1249,19 @@ router.post('/notifications/mark-read', requireAuth, async (req, res) => {
 router.post('/analytics/enable', requireAuth, async (req, res) => {
   try {
     const sb = getSupabase();
+
+    const { data: usage } = await sb.from('user_usage')
+      .select('plan').eq('user_id', req.user.id).single();
+
+    if (usage?.plan === 'free') {
+      return res.status(402).json({
+        error: 'Bu özellik Pro planda mevcut',
+        code: 'PLAN_REQUIRED',
+        plan: 'free',
+        upgrade_url: '/pricing',
+      });
+    }
+
     const { data: conn } = await sb
       .from('shopify_connections')
       .select('shop_domain, access_token')
