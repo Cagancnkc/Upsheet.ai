@@ -7,25 +7,38 @@ const path = require('path');
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 const DATASET_PATH = path.join(__dirname, '../rag/shopifyDataset.js');
-const SUMMARY_PATH = path.join(__dirname, '../.generation-summary');
 
-const CATEGORIES = [
-  'product', 'pricing', 'inventory', 'orders', 'seo',
-  'marketing', 'analytics', 'kdv', 'customer', 'fulfillment',
-  'discount', 'integration', 'cro',
-  'slides', 'sunum', 'tablo_olustur', 'rapor',
-];
+// Legacy Excel/spreadsheet categories — remove entirely
+const LEGACY_CATEGORIES = new Set(['slides', 'sunum', 'tablo_olustur', 'rapor', 'sunung']);
 
-const TARGET = 200;
-const PER_CAT = Math.ceil(TARGET / CATEGORIES.length);
+// New system categories (behavior-data features)
+const NEW_CATEGORIES = ['behavior_tracking', 'growth_opportunities', 'ai_diagnosis'];
 
-async function generateForCategory(cat, count) {
+const BOOST_THRESHOLD = 50; // boost any category below this to 50
+
+// Extra context for new categories
+const CAT_CONTEXT = {
+  behavior_tracking:
+    'Shopify mağazasında ziyaretçi davranışı izleme: hangi ürünlere bakıldı, kaç saniye incelendi, sepete eklenip eklenmedi, hangi sayfalarda bounce yaşandı, tıklama ısı haritası verileri.',
+  growth_opportunities:
+    'AI tarafından tespit edilen büyüme fırsatları: dönüşüm oranı düşük ürünler, kaçırılan satış anları, çapraz satış önerileri, fiyat optimizasyonu, terk edilmiş segmentler.',
+  ai_diagnosis:
+    '"Bu ürün neden satılmıyor?" teşhis akışı: başlık/açıklama kalite skoru, fotoğraf eksikliği, rekabet fiyat karşılaştırması, SEO açığı, sipariş dönüşüm hunisi analizi.',
+};
+
+async function generateBatch(cat, count) {
+  const extra = CAT_CONTEXT[cat] ? `\nKategori bağlamı: ${CAT_CONTEXT[cat]}\n` : '';
   const msg = await client.messages.create({
     model: 'claude-haiku-4-5-20251001',
-    max_tokens: 2048,
+    max_tokens: 4096,
     messages: [{
       role: 'user',
-      content: `Shopify mağaza yönetimi ve içerik oluşturması için ${count} adet Türkçe örnek üret. Kategori: "${cat}".\n\nÖnemli denge:\n- Yarısı imperative SHOPIFY YÖNETİM KOMUTU olsun (örn: "stoğu 10'dan az ürünleri göster", "kampanyayı aktifleştir", "iade oranı yüksek ürünleri listele") — Shopify yönetim akışını besler.\n- Diğer yarısı doğal CHAT SORUSU VEYA İÇERİK OLUŞTURMA İSTEĞİ olsun (örn: "en çok satan ürünlerimi slayta dönüştür", "aylık satış raporumu tablo olarak oluştur", "ürün kataloğu için sunum hazırla", "KDV nasıl hesaplanır?") — AI Chat ve içerik üretim cevaplarını besler.\n\nJSON array döndür: [{ "user_command": "...", "category": "${cat}", "response_hint": "..." }]\nAçıklama ekleme, sadece array.`,
+      content: `Shopify mağaza yönetimi için TAM OLARAK ${count} adet Türkçe örnek üret. Kategori: "${cat}".${extra}
+Denge kuralı:
+- Yarısı emir/komut cümlesi olsun ("izleme raporunu göster", "dönüşümü düşük ürünleri listele")
+- Yarısı doğal chat sorusu olsun ("hangi ürünlerim neden satılmıyor?", "büyüme fırsatlarımı analiz et")
+
+Kesinlikle JSON array döndür (başka metin yok): [{ "user_command": "...", "category": "${cat}", "response_hint": "..." }]`,
     }],
   });
   const text = msg.content[0].text;
@@ -35,44 +48,87 @@ async function generateForCategory(cat, count) {
   return parsed.filter(e => e.user_command && e.category && e.response_hint);
 }
 
-async function main() {
-  const allNew = [];
-
-  for (const cat of CATEGORIES) {
-    if (allNew.length >= TARGET) break;
-    const needed = Math.min(PER_CAT, TARGET - allNew.length);
+async function generateToTarget(cat, currentCount) {
+  const needed = BOOST_THRESHOLD - currentCount;
+  if (needed <= 0) return [];
+  const results = [];
+  // Generate in batches of 20 to stay within token limits
+  const BATCH = 20;
+  let remaining = needed;
+  while (remaining > 0) {
+    const ask = Math.min(BATCH, remaining);
     try {
-      const batch = await generateForCategory(cat, needed);
-      const take = batch.slice(0, needed);
-      allNew.push(...take);
-      console.log(`[generate-dataset] ${cat}: +${take.length}`);
+      const batch = await generateBatch(cat, ask);
+      results.push(...batch.slice(0, ask));
+      remaining -= ask;
+      process.stdout.write(`  ${cat}: ${results.length}/${needed}\r`);
     } catch (e) {
-      console.error(`[generate-dataset] ${cat} hata:`, e.message);
+      console.error(`\n  [hata] ${cat} batch: ${e.message}`);
+      break;
     }
   }
-
-  if (allNew.length === 0) {
-    console.error('[generate-dataset] Hiç örnek üretilemedi — çıkılıyor');
-    process.exit(1);
-  }
-
-  const content = fs.readFileSync(DATASET_PATH, 'utf8');
-  const lastClose = content.lastIndexOf('];');
-  if (lastClose === -1) throw new Error('Dataset dosyasında kapanış ]; bulunamadı');
-
-  const jsLines = allNew.map(e =>
-    `  { user_command: ${JSON.stringify(e.user_command)}, category: ${JSON.stringify(e.category)}, response_hint: ${JSON.stringify(e.response_hint)} }`
-  ).join(',\n');
-
-  // Strip trailing comma before ]; to avoid double-comma sparse holes
-  const beforeClose = content.slice(0, lastClose).trimEnd().replace(/,\s*$/, '');
-  const updated = beforeClose + `,\n${jsLines}\n];\n`;
-
-  fs.writeFileSync(DATASET_PATH, updated, 'utf8');
-
-  const summary = `${allNew.length} examples added at ${new Date().toISOString()}`;
-  fs.writeFileSync(SUMMARY_PATH, summary);
-  console.log('[generate-dataset]', summary);
+  return results;
 }
 
-main().catch(e => { console.error('[generate-dataset] Fatal:', e); process.exit(1); });
+async function main() {
+  // Load current dataset
+  // eslint-disable-next-line import/no-dynamic-require
+  const current = require(DATASET_PATH);
+  console.log(`\n[ultra-dataset] Mevcut: ${current.length} örnek`);
+
+  // 1. Remove legacy categories
+  const cleaned = current.filter(e => !LEGACY_CATEGORIES.has(e.category));
+  const removedCount = current.length - cleaned.length;
+  console.log(`[ultra-dataset] Kaldırıldı: ${removedCount} Excel kalıntısı (${[...LEGACY_CATEGORIES].join(', ')})`);
+
+  // 2. Count per category in cleaned dataset
+  const catCount = {};
+  cleaned.forEach(e => { catCount[e.category] = (catCount[e.category] || 0) + 1; });
+
+  // 3. Find categories below threshold (excluding legacy)
+  const toBoost = Object.entries(catCount)
+    .filter(([, count]) => count < BOOST_THRESHOLD)
+    .sort((a, b) => a[1] - b[1]);
+
+  console.log(`[ultra-dataset] Güçlendirilecek: ${toBoost.length} kategori`);
+  toBoost.forEach(([c, n]) => console.log(`  ${c}: ${n} → ${BOOST_THRESHOLD} (+${BOOST_THRESHOLD - n})`));
+  console.log(`[ultra-dataset] Yeni kategori: ${NEW_CATEGORIES.join(', ')}\n`);
+
+  const allNew = [];
+
+  // 4. Boost thin categories
+  for (const [cat, count] of toBoost) {
+    const batch = await generateToTarget(cat, count);
+    allNew.push(...batch);
+    console.log(`\n[ultra-dataset] ✓ ${cat}: +${batch.length}`);
+  }
+
+  // 5. Add new system categories
+  for (const cat of NEW_CATEGORIES) {
+    const batch = await generateToTarget(cat, 0);
+    allNew.push(...batch);
+    console.log(`\n[ultra-dataset] ✓ YENİ ${cat}: +${batch.length}`);
+  }
+
+  // 6. Merge and sparse-hole check
+  const finalDataset = [...cleaned, ...allNew];
+  let holes = 0;
+  for (let i = 0; i < finalDataset.length; i++) if (!(i in finalDataset)) holes++;
+  if (holes > 0) console.warn(`[ultra-dataset] UYARI: ${holes} sparse hole`);
+
+  // 7. Write back complete dataset
+  const jsLines = finalDataset.map(e =>
+    `  { user_command: ${JSON.stringify(e.user_command)}, category: ${JSON.stringify(e.category)}, response_hint: ${JSON.stringify(e.response_hint)} }`
+  ).join(',\n');
+  fs.writeFileSync(DATASET_PATH, `module.exports = [\n${jsLines}\n];\n`, 'utf8');
+
+  // 8. Summary
+  const finalCatCount = {};
+  finalDataset.forEach(e => { finalCatCount[e.category] = (finalCatCount[e.category] || 0) + 1; });
+  console.log(`\n[ultra-dataset] TAMAMLANDI`);
+  console.log(`  Önceki: ${current.length} → Sonraki: ${finalDataset.length}`);
+  console.log(`  Kaldırılan: ${removedCount} | Eklenen: ${allNew.length}`);
+  console.log(`  Kategori sayısı: ${Object.keys(finalCatCount).length}`);
+}
+
+main().catch(e => { console.error('[ultra-dataset] Fatal:', e); process.exit(1); });
