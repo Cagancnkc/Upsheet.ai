@@ -1859,7 +1859,7 @@ function renderDashErrorState(message) {
 async function renderClickHeatmap() {
   try {
     const h = await authHeaders();
-    const pagesRes = await fetch(getAPI() + '/api/analytics/tracked-pages', { headers: h });
+    const pagesRes = await fetch(API_URL + '/api/analytics/tracked-pages', { headers: h });
     const pagesData = await pagesRes.json();
     const select = document.getElementById('heatmap-page-select');
     if (select && pagesData.pages && pagesData.pages.length > 0) {
@@ -1881,7 +1881,7 @@ async function loadHeatmapForPage(pagePath) {
   if (!container) return;
   try {
     const h = await authHeaders();
-    const res = await fetch(getAPI() + '/api/analytics/heatmap-data?page_path=' +
+    const res = await fetch(API_URL + '/api/analytics/heatmap-data?page_path=' +
       encodeURIComponent(pagePath) + '&days=14', { headers: h });
     const data = await res.json();
     if (noteEl) {
@@ -2060,14 +2060,11 @@ function renderDashboard() {
 
       <!-- Ürünler -->
       <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:20px;margin-bottom:16px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+        <div style="display:flex;align-items:center;margin-bottom:14px;">
           <p style="font-size:13px;font-weight:600;color:#111827;margin:0;">Ürünler</p>
-          <button id="open-full-catalog-btn" type="button"
-            style="padding:6px 14px;border:0.5px solid #e5e7eb;border-radius:10px;background:#fff;color:#374151;font-size:11px;font-weight:600;cursor:pointer;">
-            Tam Düzenleyiciyi Aç →
-          </button>
         </div>
         <div id="dash-products-mini-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;"></div>
+        <div id="dash-more-products-widget" style="display:none;margin-top:8px;border:0.5px solid #e5e7eb;border-radius:12px;overflow:hidden;"></div>
       </div>
 
       <!-- Isı Haritası -->
@@ -2078,43 +2075,6 @@ function renderDashboard() {
         </div>
         <p id="heatmap-honesty-note" style="font-size:11px;color:#9ca3af;margin:0 0 14px;"></p>
         <div id="heatmap-canvas-container" style="position:relative;width:100%;min-height:200px;background:#f9fafb;border-radius:10px;overflow:hidden;"></div>
-      </div>
-
-      <!-- Gerçek Satış Verisi -->
-      <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:20px;margin-bottom:16px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-          <p style="font-size:13px;font-weight:600;color:#111827;margin:0;">Gerçek Satış Verisi</p>
-          <span id="dash-sales-badge" style="font-size:11px;color:#9ca3af;"></span>
-        </div>
-        <div id="dash-sales-loading" style="text-align:center;color:#9ca3af;font-size:12px;padding:20px 0;">Yükleniyor...</div>
-        <div id="dash-sales-error" style="display:none;color:#dc2626;font-size:12px;padding:8px 0;"></div>
-        <div id="dash-sales-content" style="display:none;">
-          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px;">
-            <div style="background:#f9fafb;border-radius:10px;padding:12px;text-align:center;">
-              <div style="font-size:11px;color:#9ca3af;margin-bottom:4px;">Toplam Gelir</div>
-              <div id="sales-total-revenue" style="font-size:18px;font-weight:700;color:#111827;">—</div>
-            </div>
-            <div style="background:#f9fafb;border-radius:10px;padding:12px;text-align:center;">
-              <div style="font-size:11px;color:#9ca3af;margin-bottom:4px;">Sipariş Sayısı</div>
-              <div id="sales-order-count" style="font-size:18px;font-weight:700;color:#111827;">—</div>
-            </div>
-            <div style="background:#f9fafb;border-radius:10px;padding:12px;text-align:center;">
-              <div style="font-size:11px;color:#9ca3af;margin-bottom:4px;">Ort. Sipariş</div>
-              <div id="sales-avg-order" style="font-size:18px;font-weight:700;color:#111827;">—</div>
-            </div>
-          </div>
-          <div id="sales-status-pills" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;"></div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
-            <div>
-              <p style="font-size:12px;font-weight:600;color:#374151;margin:0 0 8px;">En Çok Satan Ürünler</p>
-              <div id="sales-top-products"></div>
-            </div>
-            <div>
-              <p style="font-size:12px;font-weight:600;color:#374151;margin:0 0 8px;">Son 30 Gün Gelir</p>
-              <div id="sales-revenue-chart"></div>
-            </div>
-          </div>
-        </div>
       </div>
 
       <!-- Son İşlemler -->
