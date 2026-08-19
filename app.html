@@ -1898,6 +1898,15 @@ function renderDashboard() {
         <span style="font-size:12px;color:#6b7280;">Verileriniz şifreli saklanıyor, Shopify onaylı bağlantı kullanılıyor</span>
       </div>
 
+      <!-- Aylık Kazanım Özeti (sadece Free, ayda 1 kez, JS tarafından gösterilir) -->
+      <div id="value-summary-banner" style="display:none;background:#f0fdf4;border:0.5px solid #d1fae5;border-radius:14px;padding:16px 20px;margin-bottom:16px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <p id="value-summary-text" style="font-size:13px;color:#166534;margin:0;flex:1;"></p>
+          <button id="value-summary-dismiss" type="button"
+            style="background:transparent;border:none;color:#9ca3af;cursor:pointer;font-size:18px;padding:0 0 0 12px;line-height:1;">×</button>
+        </div>
+      </div>
+
       <!-- Hero: 5 Operasyon Metriği (son 30 gün) -->
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:16px;">
         <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:16px;">
@@ -1980,6 +1989,7 @@ function renderDashboard() {
       <div style="background:#111827;border:none;border-radius:14px;padding:20px;margin-bottom:16px;">
         <p style="font-size:13px;font-weight:600;color:#fff;margin:0 0 14px;">Hızlı İşlemler</p>
         <div id="dash-quick-actions" style="display:flex;flex-direction:column;gap:6px;"></div>
+        <div id="dash-ai-limit-msg" style="display:none;margin-top:10px;padding:10px 14px;background:#1f2937;border-radius:10px;border:0.5px solid #374151;"></div>
       </div>
 
       <!-- Ürünler + Kategoriler -->
@@ -2055,6 +2065,7 @@ function renderDashboard() {
   renderDashSalesData();
   renderDashProductsMini();
   renderDashCollectionsMini();
+  renderValueSummaryBanner();
 
   document.getElementById('open-full-catalog-btn')
     ?.addEventListener('click', openFullCatalogEditor);
@@ -2356,11 +2367,15 @@ async function renderGrowthOpportunities() {
   const container = document.getElementById('growth-opportunities-list');
   if (!container) return;
   try {
-    const res = await fetch(API_URL + '/api/analytics/growth-opportunities', {
-      headers: { Authorization: 'Bearer ' + getAuthToken() },
-    });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const data = await res.json();
+    const h = { Authorization: 'Bearer ' + getAuthToken() };
+    const [oppRes, usageRes] = await Promise.all([
+      fetch(API_URL + '/api/analytics/growth-opportunities', { headers: h }),
+      fetch(API_URL + '/api/usage', { headers: h }),
+    ]);
+    if (!oppRes.ok) throw new Error('HTTP ' + oppRes.status);
+    const data = await oppRes.json();
+    const usageData = usageRes.ok ? await usageRes.json() : {};
+    const isFree = usageData.plan === 'free';
 
     if (!data.opportunities || data.opportunities.length === 0) {
       container.innerHTML = '<p style="font-size:12px;color:#9ca3af;margin:0;">Şu an belirgin bir büyüme fırsatı tespit edilmedi.</p>';
@@ -2368,8 +2383,11 @@ async function renderGrowthOpportunities() {
     }
 
     const products = (catalogData && Array.isArray(catalogData.products)) ? catalogData.products : [];
+    const VISIBLE_LIMIT = isFree ? 2 : data.opportunities.length;
+    const visible = data.opportunities.slice(0, VISIBLE_LIMIT);
+    const locked = data.opportunities.slice(VISIBLE_LIMIT);
 
-    data.opportunities.forEach(function(opp, idx) {
+    visible.forEach(function(opp) {
       const match = products.find(function(p) { return String(p.shopify_product_id) === String(opp.productId); });
       const productName = match ? match.title : ('Ürün #' + opp.productId);
 
@@ -2398,7 +2416,52 @@ async function renderGrowthOpportunities() {
       card.appendChild(btn);
       container.appendChild(card);
     });
+
+    if (locked.length > 0) {
+      const lockedCard = document.createElement('div');
+      lockedCard.style.cssText = 'position:relative;border:0.5px dashed #e5e7eb;border-radius:12px;padding:20px;text-align:center;overflow:hidden;';
+      lockedCard.innerHTML =
+        '<div style="filter:blur(4px);opacity:0.5;pointer-events:none;">' +
+        '<p style="font-size:12px;font-weight:600;color:#111827;margin:0 0 4px;">Ürün adı</p>' +
+        '<p style="font-size:12px;color:#6b7280;margin:0;">Bir davranış paterni tespit edildi</p>' +
+        '</div>' +
+        '<div style="position:absolute;inset:0;display:flex;flex-direction:column;' +
+        'align-items:center;justify-content:center;background:rgba(255,255,255,.55);">' +
+        '<p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 6px;">+' + locked.length + ' fırsat daha bulundu</p>' +
+        '<a href="/pricing" style="font-size:12px;color:#16a34a;font-weight:600;text-decoration:underline;">Tümünü görmek için Pro\'ya geçin →</a>' +
+        '</div>';
+      container.appendChild(lockedCard);
+    }
   } catch (e) { console.warn('[growth-opportunities] yüklenemedi:', e); }
+}
+
+async function renderValueSummaryBanner() {
+  try {
+    const h = { Authorization: 'Bearer ' + getAuthToken() };
+    const uRes = await fetch(API_URL + '/api/usage', { headers: h });
+    if (!uRes.ok) return;
+    const uData = await uRes.json();
+    if (uData.plan !== 'free') return;
+
+    const currentMonth = new Date().toISOString().slice(0, 7);
+    if (localStorage.getItem('_value_summary_shown_month') === currentMonth) return;
+
+    const totalActions = (uData.used && uData.used.this_month) || 0;
+    if (totalActions < 3) return;
+
+    const banner = document.getElementById('value-summary-banner');
+    const text = document.getElementById('value-summary-text');
+    if (!banner || !text) return;
+
+    text.innerHTML = '✨ Mocksheets ile bu ay <strong>' + totalActions +
+      ' komut</strong> tamamladınız. <a href="/pricing" style="color:#16a34a;font-weight:600;">Daha fazlası için Pro\'ya bakın →</a>';
+    banner.style.display = 'block';
+    localStorage.setItem('_value_summary_shown_month', currentMonth);
+
+    document.getElementById('value-summary-dismiss')?.addEventListener('click', function() {
+      banner.style.display = 'none';
+    });
+  } catch (e) { console.warn('[value-summary-banner] yüklenemedi:', e); }
 }
 
 async function renderProductPerformanceTable() {
@@ -2592,7 +2655,26 @@ function renderDashQuickActions() {
           await runAIAction(preset.action);
           if (typeof toast === 'function') toast('✓ ' + origLabel + ' tamamlandı', 'success');
         } catch (e) {
-          if (typeof toast === 'function') toast('✗ ' + (e && e.message ? e.message : 'İşlem başarısız'), 'error');
+          if (e && e.status === 402) {
+            const limitMsg = document.getElementById('dash-ai-limit-msg');
+            if (limitMsg) {
+              let monthlyCount = '';
+              try {
+                const uRes = await fetch(API_URL + '/api/usage', { headers: { Authorization: 'Bearer ' + getAuthToken() } });
+                if (uRes.ok) {
+                  const uData = await uRes.json();
+                  const n = uData.used && uData.used.this_month;
+                  if (n > 0) monthlyCount = 'Bu ay ' + n + ' komut tamamladınız. ';
+                }
+              } catch (_) {}
+              limitMsg.style.display = 'block';
+              limitMsg.innerHTML =
+                '<p style="font-size:12px;color:#d1d5db;margin:0 0 6px;">' + monthlyCount + 'Günlük komut hakkınız doldu.</p>' +
+                '<a href="/pricing" style="font-size:12px;color:#4ade80;font-weight:600;">Sınırsız kullanım için Pro\'yu inceleyin →</a>';
+            }
+          } else {
+            if (typeof toast === 'function') toast('✗ ' + (e && e.message ? e.message : 'İşlem başarısız'), 'error');
+          }
         } finally {
           this.disabled = false;
           this.style.opacity = '';
