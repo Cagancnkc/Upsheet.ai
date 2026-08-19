@@ -785,6 +785,7 @@ let catalogData = {
   collections: [],
   inventory: []
 };
+let _dashTopProductIds = new Set();
 let currentView = 'products';
 let selectedRows = new Set();
 let versionHistory = [];
@@ -2092,13 +2093,9 @@ function renderDashboard() {
   renderAiRecommendations(analysis.issues || []);
   renderDashQuickActions();
   renderDashRecentOperationsFull();
-  renderDashSalesData();
   renderDashProductsMini();
   renderClickHeatmap();
   renderValueSummaryBanner();
-
-  document.getElementById('open-full-catalog-btn')
-    ?.addEventListener('click', openFullCatalogEditor);
 
   // Sidebar mağaza adı — localStorage
   const storeNameEl = document.getElementById('sidebar-store-name');
@@ -2152,6 +2149,79 @@ function ensureBackToDashboardButton() {
   toolbar.insertBefore(backBtn, toolbar.firstChild);
 }
 
+function getDashSalesBadge(p) {
+  const id = String(p.id || '');
+  const title = (p.title || '').toLowerCase();
+  if (_dashTopProductIds.has(id) || _dashTopProductIds.has(title))
+    return { bg: '#f0fdf4', color: '#16a34a', label: 'Çok Satan' };
+  if ((p.status || '').toLowerCase() === 'draft')
+    return { bg: '#f3f4f6', color: '#6b7280', label: 'Az Satan' };
+  if ((p.status || '').toLowerCase() === 'incomplete')
+    return { bg: '#eff6ff', color: '#2563eb', label: 'Yoğunluk Var' };
+  if ((p.status || '').toLowerCase() === 'error')
+    return { bg: '#fef3c7', color: '#d97706', label: 'Sorunlu' };
+  return { bg: '#f9fafb', color: '#9ca3af', label: 'Normal' };
+}
+
+function _buildMiniProductCard(p) {
+  const imgUrl = (p.images && p.images[0]) ? p.images[0].src : (p.image || '');
+  const badge = getDashSalesBadge(p);
+  const card = document.createElement('div');
+  card.style.cssText = 'border:0.5px solid #e5e7eb;border-radius:10px;overflow:hidden;cursor:pointer;';
+  const imgHtml = imgUrl
+    ? '<img src="' + imgUrl + '" style="width:100%;height:64px;object-fit:cover;" ' +
+      'onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\';">' +
+      '<div style="display:none;height:64px;background:#f9fafb;align-items:center;justify-content:center;">' +
+      '<i class="ti ti-photo" style="font-size:16px;color:#9ca3af;"></i></div>'
+    : '<div style="height:64px;background:#f9fafb;display:flex;align-items:center;justify-content:center;">' +
+      '<i class="ti ti-photo" style="font-size:16px;color:#9ca3af;"></i></div>';
+  card.innerHTML = imgHtml +
+    '<div style="padding:8px;">' +
+    '<p style="font-size:11px;font-weight:500;color:#111827;margin:0 0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' +
+    (p.title || 'İsimsiz') + '</p>' +
+    '<span style="font-size:9px;padding:1px 6px;border-radius:999px;background:' + badge.bg + ';color:' + badge.color + ';">' +
+    badge.label + '</span></div>';
+  return card;
+}
+
+function toggleMoreProductsWidget(allProducts) {
+  const widget = document.getElementById('dash-more-products-widget');
+  if (!widget) return;
+  if (widget.style.display !== 'none') { widget.style.display = 'none'; return; }
+
+  const rest = allProducts.slice(8);
+  widget.innerHTML =
+    '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:0.5px solid #e5e7eb;">' +
+    '<span style="font-size:12px;font-weight:600;color:#111827;">Diğer Ürünler (' + rest.length + ')</span>' +
+    '<button type="button" onclick="document.getElementById(\'dash-more-products-widget\').style.display=\'none\'" ' +
+    'style="background:transparent;border:none;cursor:pointer;color:#6b7280;font-size:18px;line-height:1;padding:0;">×</button>' +
+    '</div>' +
+    '<div id="dash-more-products-list" style="max-height:280px;overflow-y:auto;padding:8px;display:flex;flex-direction:column;gap:6px;"></div>';
+
+  const list = widget.querySelector('#dash-more-products-list');
+  rest.forEach(function(p) {
+    const imgUrl = (p.images && p.images[0]) ? p.images[0].src : (p.image || '');
+    const badge = getDashSalesBadge(p);
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:center;gap:10px;padding:6px 8px;border-radius:8px;cursor:pointer;transition:background .15s;';
+    row.addEventListener('mouseenter', function() { this.style.background = '#f9fafb'; });
+    row.addEventListener('mouseleave', function() { this.style.background = ''; });
+    const thumb = imgUrl
+      ? '<img src="' + imgUrl + '" style="width:36px;height:36px;object-fit:cover;border-radius:6px;flex-shrink:0;" ' +
+        'onerror="this.style.display=\'none\'">'
+      : '<div style="width:36px;height:36px;background:#f3f4f6;border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;">' +
+        '<i class="ti ti-photo" style="font-size:14px;color:#9ca3af;"></i></div>';
+    row.innerHTML = thumb +
+      '<span style="font-size:11px;font-weight:500;color:#111827;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' +
+      (p.title || 'İsimsiz') + '</span>' +
+      '<span style="font-size:9px;padding:1px 6px;border-radius:999px;background:' + badge.bg + ';color:' + badge.color + ';flex-shrink:0;">' +
+      badge.label + '</span>';
+    list.appendChild(row);
+  });
+
+  widget.style.display = 'block';
+}
+
 function renderDashProductsMini() {
   const grid = document.getElementById('dash-products-mini-grid');
   if (!grid) return;
@@ -2168,28 +2238,7 @@ function renderDashProductsMini() {
   grid.innerHTML = '';
 
   slice.forEach(function(p) {
-    const imgUrl = (p.images && p.images[0]) ? p.images[0].src : '';
-    const badge = getStatusBadgeVisual(p.status || '');
-
-    const card = document.createElement('div');
-    card.style.cssText = 'border:0.5px solid #e5e7eb;border-radius:10px;overflow:hidden;cursor:pointer;';
-
-    const imgHtml = imgUrl
-      ? '<img src="' + imgUrl + '" style="width:100%;height:64px;object-fit:cover;" ' +
-        'onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\';">' +
-        '<div style="display:none;height:64px;background:#f9fafb;align-items:center;justify-content:center;">' +
-        '<i class="ti ti-photo" style="font-size:16px;color:#9ca3af;"></i></div>'
-      : '<div style="height:64px;background:#f9fafb;display:flex;align-items:center;justify-content:center;">' +
-        '<i class="ti ti-photo" style="font-size:16px;color:#9ca3af;"></i></div>';
-
-    card.innerHTML = imgHtml +
-      '<div style="padding:8px;">' +
-      '<p style="font-size:11px;font-weight:500;color:#111827;margin:0 0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' +
-      (p.title || 'İsimsiz') + '</p>' +
-      '<span style="font-size:9px;padding:1px 6px;border-radius:999px;background:' + badge.bg + ';color:' + badge.color + ';">' +
-      badge.label + '</span></div>';
-
-    card.addEventListener('click', function() { openFullCatalogEditor(); });
+    const card = _buildMiniProductCard(p);
     grid.appendChild(card);
   });
 
@@ -2199,7 +2248,7 @@ function renderDashProductsMini() {
     moreBtn.style.cssText = 'border:1px dashed #e5e7eb;border-radius:10px;background:transparent;' +
       'color:#6b7280;font-size:11px;cursor:pointer;min-height:96px;';
     moreBtn.textContent = '+' + (products.length - 8) + ' daha';
-    moreBtn.addEventListener('click', function() { openFullCatalogEditor(); });
+    moreBtn.addEventListener('click', function() { toggleMoreProductsWidget(products); });
     grid.appendChild(moreBtn);
   }
 }
@@ -2295,12 +2344,14 @@ function renderDashTopProducts(products) {
   const list = document.getElementById('dash-top-products-list');
   if (!list) return;
   if (!products.length) { list.innerHTML = '<li style="color:#888">Henüz veri yok</li>'; return; }
+  _dashTopProductIds = new Set(products.map(p => String(p.product_id || '')));
   list.innerHTML = products.map((p, i) =>
     `<li style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f0f0f0">
       <span>${i + 1}. ${p.product_id}</span>
       <span style="color:#6366f1;font-weight:600">${p.count} tık</span>
     </li>`
   ).join('');
+  renderDashProductsMini();
 }
 
 async function dashToggleTracking(enable) {
