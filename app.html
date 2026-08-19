@@ -3539,8 +3539,9 @@ async function renderSubscriptionSection() {
     const usage = usageResp.ok ? await usageResp.json() : null;
     const status = statusResp.ok ? await statusResp.json() : null;
 
-    const planName = usage?.plan_name ?? status?.plan ?? 'free';
-    const isFree = planName === 'free';
+    const planKey = usage?.plan ?? status?.plan ?? 'free';
+    const planName = usage?.plan_name ?? planKey;
+    const isFree = planKey === 'free';
     const cancelPending = status?.cancel_at_period_end === true;
     const periodEnd = status?.cancel_period_end
       ? new Intl.DateTimeFormat('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(status.cancel_period_end))
