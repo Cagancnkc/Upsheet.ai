@@ -2079,7 +2079,10 @@ function renderDashboard() {
       <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:20px;margin-bottom:16px;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
           <p style="font-size:13px;font-weight:600;color:#111827;margin:0;">Tıklama Yoğunluk Haritası</p>
-          <select id="heatmap-page-select" style="font-size:11px;padding:4px 10px;border:0.5px solid #e5e7eb;border-radius:8px;background:#fff;"></select>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div id="dash-tracking-toggle-wrap"></div>
+            <select id="heatmap-page-select" style="font-size:11px;padding:4px 10px;border:0.5px solid #e5e7eb;border-radius:8px;background:#fff;"></select>
+          </div>
         </div>
         <p id="heatmap-honesty-note" style="font-size:11px;color:#9ca3af;margin:0 0 14px;"></p>
         <div id="heatmap-canvas-container" style="position:relative;width:100%;min-height:200px;background:#f9fafb;border-radius:10px;overflow:hidden;"></div>
@@ -2102,6 +2105,7 @@ function renderDashboard() {
   renderDashRecentOperationsFull();
   renderDashProductsMini();
   renderClickHeatmap();
+  renderDashAnalyticsSection();
   renderValueSummaryBanner();
 
   // Sidebar mağaza adı — localStorage
