@@ -2815,14 +2815,14 @@ async function renderDashSalesData() {
     const res = await fetch(API_URL + '/api/shopify/orders-analytics', {
       headers: { ...(await authHeaders()) },
     });
-    if (res.status === 404) {
+    if (!res.ok) throw new Error('Sunucu hatası: ' + res.status);
+    const data = await res.json();
+    if (data.connected === false) {
       loadingEl.style.display = 'none';
       if (errorEl) { errorEl.style.display = 'block'; errorEl.textContent = 'Shopify bağlantısı bulunamadı.'; }
       if (badgeEl) badgeEl.textContent = 'Bağlı değil';
       return;
     }
-    if (!res.ok) throw new Error('Sunucu hatası: ' + res.status);
-    const data = await res.json();
 
     const fmt = (n) => (n ?? 0).toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     const el = (id) => document.getElementById(id);

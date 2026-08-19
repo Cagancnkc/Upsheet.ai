@@ -326,7 +326,7 @@ router.get('/orders-analytics', requireAuth, async (req, res) => {
     .eq('user_id', req.user.id)
     .single();
 
-  if (connErr || !conn) return res.status(404).json({ error: 'Shopify bağlantısı bulunamadı' });
+  if (connErr || !conn) return res.json({ connected: false, totalRevenue: 0, orderCount: 0, avgOrderValue: 0, topProducts: [], statusBreakdown: {}, revenueByDay: [] });
 
   const accessToken = decrypt(conn.access_token);
   if (!accessToken) return res.status(500).json({ error: 'Token çözümlenemedi' });
