@@ -35,7 +35,9 @@ function checkRateLimit(sessionId, eventType) {
 
 // POST /track — public, logs visitor events
 router.post('/track', async (req, res) => {
-  const { shop_domain, event_type, page_url, element_id, product_id, scroll_depth, session_id, order_total, duration_seconds } = req.body;
+  const { shop_domain, event_type, page_url, page_path, element_id, product_id,
+          scroll_depth, session_id, order_total, duration_seconds,
+          click_x_percent, click_y_percent } = req.body;
 
   // Validate
   if (!shop_domain || !event_type) return res.status(400).json({ error: 'shop_domain ve event_type gerekli' });
@@ -65,8 +67,9 @@ router.post('/track', async (req, res) => {
 
   // Insert event
   const { error } = await sb.from('analytics_events').insert({
-    shop_domain, event_type, page_url, element_id,
+    shop_domain, event_type, page_url, page_path, element_id,
     product_id, scroll_depth, session_id, order_total, duration_seconds,
+    click_x_percent, click_y_percent,
   });
 
   if (error) {
@@ -492,5 +495,77 @@ router.post('/upload-screenshot', upload.single('screenshot'), async (req, res) 
   }
 });
 
+router.get('/heatmap-data', requireAuth, async (req, res) => {
+  try {
+    const sb = getSupabase();
+    const { page_path, days } = req.query;
+    const targetPath = page_path || '/';
+    const sinceDate = new Date();
+    sinceDate.setDate(sinceDate.getDate() - (parseInt(days) || 14));
+
+    const { data: conn } = await sb.from('shopify_connections')
+      .select('shop_domain').eq('user_id', req.user.id).maybeSingle();
+
+    if (!conn) return res.json({ points: [], totalClicks: 0, screenshotUrl: null, pageWidth: null, pageHeight: null, pagePath: targetPath });
+
+    const { data: clicks } = await sb.from('analytics_events')
+      .select('click_x_percent, click_y_percent')
+      .eq('shop_domain', conn.shop_domain)
+      .eq('event_type', 'click')
+      .eq('page_path', targetPath)
+      .not('click_x_percent', 'is', null)
+      .gte('created_at', sinceDate.toISOString());
+
+    const GRID_SIZE = 20;
+    const grid = {};
+    (clicks || []).forEach(c => {
+      if (c.click_x_percent == null || c.click_y_percent == null) return;
+      const gx = Math.min(GRID_SIZE - 1, Math.max(0, Math.floor((c.click_x_percent / 100) * GRID_SIZE)));
+      const gy = Math.min(GRID_SIZE - 1, Math.max(0, Math.floor((c.click_y_percent / 100) * GRID_SIZE)));
+      const key = gx + ',' + gy;
+      grid[key] = (grid[key] || 0) + 1;
+    });
+
+    const points = Object.entries(grid).map(([key, count]) => {
+      const [gx, gy] = key.split(',').map(Number);
+      return { x: Math.round((gx / GRID_SIZE) * 100), y: Math.round((gy / GRID_SIZE) * 100), count };
+    });
+
+    const { data: meta } = await sb.from('page_screenshots_meta')
+      .select('storage_path, page_width, page_height')
+      .eq('user_id', req.user.id)
+      .eq('page_path', targetPath)
+      .maybeSingle();
+
+    let screenshotUrl = null;
+    if (meta?.storage_path) {
+      const { data: signed, error: signErr } = await sb.storage
+        .from('page-screenshots')
+        .createSignedUrl(meta.storage_path, 3600);
+      if (signErr) console.warn('[heatmap-data] imzalı URL hatası:', signErr.message);
+      else screenshotUrl = signed?.signedUrl || null;
+    }
+
+    res.json({ points, totalClicks: (clicks || []).length, screenshotUrl, pageWidth: meta?.page_width || null, pageHeight: meta?.page_height || null, pagePath: targetPath });
+  } catch (e) {
+    console.error('[heatmap-data] hata:', e);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+router.get('/tracked-pages', requireAuth, async (req, res) => {
+  try {
+    const sb = getSupabase();
+    const { data } = await sb.from('page_screenshots_meta')
+      .select('page_path, updated_at')
+      .eq('user_id', req.user.id)
+      .order('updated_at', { ascending: false });
+    res.json({ pages: data || [] });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 module.exports = router;
+
 
