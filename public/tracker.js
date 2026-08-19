@@ -62,6 +62,9 @@
 
   // Click tracking
   document.addEventListener('click', (e) => {
+    const xPercent = Math.round((e.clientX / window.innerWidth) * 100);
+    const yPercent = Math.round(((e.clientY + window.scrollY) / document.documentElement.scrollHeight) * 100);
+
     const target = e.target.closest('button, a, [data-product-id]');
     if (!target) return;
 
@@ -71,7 +74,10 @@
 
     send('click', {
       element_id: target.id || target.className,
-      product_id: productId
+      product_id: productId,
+      page_path: location.pathname,
+      click_x_percent: xPercent,
+      click_y_percent: yPercent,
     });
   }, true);
 
@@ -110,6 +116,48 @@
       });
     }
   }, true);
+
+  // Screenshot capture — once per page per session
+  var API_BASE = ENDPOINT.replace('/api/analytics/track', '');
+  var screenshotKey = '_ms_ss_' + location.pathname;
+
+  function captureAndUploadScreenshot() {
+    if (sessionStorage.getItem(screenshotKey)) return;
+    if (typeof html2canvas === 'undefined') {
+      console.warn('[Mocksheets] html2canvas yüklenmedi');
+      return;
+    }
+
+    setTimeout(function() {
+      html2canvas(document.body, {
+        scale: 0.5,
+        useCORS: true,
+        logging: false,
+        windowWidth: document.documentElement.scrollWidth,
+        windowHeight: document.documentElement.scrollHeight,
+      }).then(function(canvas) {
+        canvas.toBlob(function(blob) {
+          if (!blob) return;
+          var fd = new FormData();
+          fd.append('screenshot', blob, 'screenshot.jpg');
+          fd.append('shop_domain', shopDomain);
+          fd.append('page_path', location.pathname);
+          fd.append('page_width', document.documentElement.scrollWidth);
+          fd.append('page_height', document.documentElement.scrollHeight);
+          fetch(API_BASE + '/api/analytics/upload-screenshot', { method: 'POST', body: fd }).catch(function() {});
+          sessionStorage.setItem(screenshotKey, '1');
+        }, 'image/jpeg', 0.6);
+      }).catch(function(err) {
+        console.warn('[Mocksheets] Ekran görüntüsü alınamadı:', err);
+      });
+    }, 2000);
+  }
+
+  if (document.readyState === 'complete') {
+    captureAndUploadScreenshot();
+  } else {
+    window.addEventListener('load', captureAndUploadScreenshot);
+  }
 
   // Purchase / thank-you page detection
   if (window.location.pathname.includes('/thank_you') ||
