@@ -1870,6 +1870,7 @@ async function renderClickHeatmap() {
       select.innerHTML = pagesData.pages.map(p =>
         '<option value="' + p.page_path + '">' + (p.page_path === '/' ? 'Ana Sayfa' : p.page_path) + '</option>'
       ).join('');
+      select.style.display = 'block';
       select.onchange = function() { loadHeatmapForPage(this.value); };
       loadHeatmapForPage(pagesData.pages[0].page_path);
     } else if (container) {
@@ -2081,7 +2082,7 @@ function renderDashboard() {
           <p style="font-size:13px;font-weight:600;color:#111827;margin:0;">Tıklama Yoğunluk Haritası</p>
           <div style="display:flex;align-items:center;gap:8px;">
             <div id="dash-tracking-toggle-wrap"></div>
-            <select id="heatmap-page-select" style="font-size:11px;padding:4px 10px;border:0.5px solid #e5e7eb;border-radius:8px;background:#fff;"></select>
+            <select id="heatmap-page-select" style="font-size:11px;padding:4px 10px;border:0.5px solid #e5e7eb;border-radius:8px;background:#fff;display:none;"></select>
           </div>
         </div>
         <p id="heatmap-honesty-note" style="font-size:11px;color:#9ca3af;margin:0 0 14px;"></p>
