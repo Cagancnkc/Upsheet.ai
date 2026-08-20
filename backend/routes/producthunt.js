@@ -52,11 +52,13 @@ async function findInVotes(slug, target) {
       }
     `, { slug, after: cursor });
     const post = data && data.post;
-    if (!post) return false;
+    if (!post) throw new Error(`PH post bulunamadı (slug="${slug}") — PH_POST_SLUG env yanlış olabilir`);
     const edges = post.votes?.edges || [];
+    if (i === 0) console.log(`[PH] ${slug} post=OK votes edges=${edges.length}`);
     for (const e of edges) {
-      const u = normalizeUsername(e?.node?.user?.username);
-      if (u && u === target) return true;
+      const uByUsername = normalizeUsername(e?.node?.user?.username);
+      const uByName     = normalizeUsername(e?.node?.user?.name);
+      if ((uByUsername && uByUsername === target) || (uByName && uByName === target)) return true;
     }
     if (!post.votes?.pageInfo?.hasNextPage) return false;
     cursor = post.votes.pageInfo.endCursor;
@@ -78,11 +80,13 @@ async function findInComments(slug, target) {
       }
     `, { slug, after: cursor });
     const post = data && data.post;
-    if (!post) return false;
+    if (!post) throw new Error(`PH post bulunamadı (slug="${slug}") — PH_POST_SLUG env yanlış olabilir`);
     const edges = post.comments?.edges || [];
+    if (i === 0) console.log(`[PH] ${slug} post=OK comments edges=${edges.length}`);
     for (const e of edges) {
-      const u = normalizeUsername(e?.node?.user?.username);
-      if (u && u === target) return true;
+      const uByUsername = normalizeUsername(e?.node?.user?.username);
+      const uByName     = normalizeUsername(e?.node?.user?.name);
+      if ((uByUsername && uByUsername === target) || (uByName && uByName === target)) return true;
     }
     if (!post.comments?.pageInfo?.hasNextPage) return false;
     cursor = post.comments.pageInfo.endCursor;
