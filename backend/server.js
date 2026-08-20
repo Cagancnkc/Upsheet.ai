@@ -572,6 +572,8 @@ app.use('/api/contact', contactRouter);
 const { router: authWebhooksRouter } = require('./routes/auth-webhooks');
 app.use('/api/webhooks', authWebhooksRouter);
 app.use('/api/promos', promosRouter);
+const productHuntRouter = require('./routes/producthunt');
+app.use('/api/producthunt', productHuntRouter);
 const pdfRouter = require('./routes/pdf');
 app.use('/api/pdf', pdfRouter);
 const teamRouter = require('./routes/team');
@@ -683,6 +685,10 @@ app.get('/api/usage', async (req, res) => {
   const usage = await getOrCreateUsage(user.id);
   const plan = PLANS[usage.plan] || PLANS.free;
 
+  const bonusCommands = usage.ph_bonus_commands || 0;
+  const effectiveDaily = plan.ai_commands_per_day === Infinity ? Infinity : plan.ai_commands_per_day + bonusCommands;
+  const effectiveMonthly = plan.ai_commands_per_month === Infinity ? Infinity : plan.ai_commands_per_month + bonusCommands;
+
   res.json({
     plan: usage.plan,
     plan_name: plan.displayName,
@@ -700,12 +706,12 @@ app.get('/api/usage', async (req, res) => {
       this_month: usage.ai_commands_used_month
     },
     remaining: {
-      today: plan.ai_commands_per_day === Infinity
+      today: effectiveDaily === Infinity
         ? null
-        : Math.max(0, plan.ai_commands_per_day - usage.ai_commands_used_today),
-      this_month: plan.ai_commands_per_month === Infinity
+        : Math.max(0, effectiveDaily - usage.ai_commands_used_today),
+      this_month: effectiveMonthly === Infinity
         ? null
-        : Math.max(0, plan.ai_commands_per_month - usage.ai_commands_used_month)
+        : Math.max(0, effectiveMonthly - usage.ai_commands_used_month)
     },
     features: {
       integrations: plan.integrations,
@@ -714,7 +720,11 @@ app.get('/api/usage', async (req, res) => {
       accounting_formulas: plan.accounting_formulas
     },
     subscription_status: usage.subscription_status,
-    plan_ends_at: usage.plan_ends_at
+    plan_ends_at: usage.plan_ends_at,
+    ph_bonus_claimed: !!usage.ph_bonus_claimed,
+    ph_bonus_commands: bonusCommands,
+    effective_daily_limit: effectiveDaily === Infinity ? null : effectiveDaily,
+    effective_monthly_limit: effectiveMonthly === Infinity ? null : effectiveMonthly
   });
 });
 

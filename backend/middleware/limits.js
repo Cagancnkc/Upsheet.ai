@@ -99,12 +99,13 @@ async function checkLimit(req, res, next) {
 
   const plan = PLANS[usage.plan] || PLANS.free;
 
+  const bonusCommands = usage.ph_bonus_commands || 0;
   if (plan.ai_commands_per_day !== Infinity &&
-      usage.ai_commands_used_today >= plan.ai_commands_per_day) {
+      usage.ai_commands_used_today >= plan.ai_commands_per_day + bonusCommands) {
     return res.status(429).json({
       error: 'Günlük AI komut limitine ulaştınız',
       code: 'DAILY_LIMIT_REACHED',
-      limit: plan.ai_commands_per_day,
+      limit: plan.ai_commands_per_day + bonusCommands,
       used: usage.ai_commands_used_today,
       plan: usage.plan,
       reset: 'Yarın gece yarısı sıfırlanır',
@@ -113,11 +114,11 @@ async function checkLimit(req, res, next) {
   }
 
   if (plan.ai_commands_per_month !== Infinity &&
-      usage.ai_commands_used_month >= plan.ai_commands_per_month) {
+      usage.ai_commands_used_month >= plan.ai_commands_per_month + bonusCommands) {
     return res.status(429).json({
       error: 'Aylık AI komut limitine ulaştınız',
       code: 'MONTHLY_LIMIT_REACHED',
-      limit: plan.ai_commands_per_month,
+      limit: plan.ai_commands_per_month + bonusCommands,
       used: usage.ai_commands_used_month,
       plan: usage.plan,
       reset: 'Ayın 1\'inde sıfırlanır',
