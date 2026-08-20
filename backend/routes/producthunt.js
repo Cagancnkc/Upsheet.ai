@@ -38,58 +38,62 @@ async function phQuery(query, variables) {
   return json.data;
 }
 
-async function findInVotes(slug, target) {
+// Kullanıcının oy verdiği postlar içinde slug'ı ara (user-side: çok daha az sayfa)
+async function userVotedPost(slug, username) {
   let cursor = null;
-  for (let i = 0; i < 40; i++) {
+  for (let i = 0; i < 20; i++) {
     const data = await phQuery(`
-      query($slug: String!, $after: String) {
-        post(slug: $slug) {
-          votes(first: 50, after: $after) {
+      query($username: String!, $after: String) {
+        user(username: $username) {
+          votedPosts(first: 50, after: $after) {
             pageInfo { hasNextPage endCursor }
-            edges { node { user { username name } } }
+            edges { node { slug } }
           }
         }
       }
-    `, { slug, after: cursor });
-    const post = data && data.post;
-    if (!post) throw new Error(`PH post bulunamadı (slug="${slug}") — PH_POST_SLUG env yanlış olabilir`);
-    const edges = post.votes?.edges || [];
-    if (i === 0) console.log(`[PH] ${slug} post=OK votes edges=${edges.length}`);
+    `, { username, after: cursor });
+
+    const user = data && data.user;
+    if (user === null) return null; // PH'da böyle bir kullanıcı yok
+    if (!user) throw new Error('PH user query beklenmedik yanıt');
+
+    const edges = user.votedPosts?.edges || [];
+    if (i === 0) console.log(`[PH] user=${username} votedPosts[0] edges=${edges.length}`);
     for (const e of edges) {
-      const uByUsername = normalizeUsername(e?.node?.user?.username);
-      const uByName     = normalizeUsername(e?.node?.user?.name);
-      if ((uByUsername && uByUsername === target) || (uByName && uByName === target)) return true;
+      if (e?.node?.slug === slug) return true;
     }
-    if (!post.votes?.pageInfo?.hasNextPage) return false;
-    cursor = post.votes.pageInfo.endCursor;
+    if (!user.votedPosts?.pageInfo?.hasNextPage) return false;
+    cursor = user.votedPosts.pageInfo.endCursor;
   }
   return false;
 }
 
-async function findInComments(slug, target) {
+// Kullanıcının yorumları içinde slug'ı ara
+async function userCommentedPost(slug, username) {
   let cursor = null;
-  for (let i = 0; i < 40; i++) {
+  for (let i = 0; i < 20; i++) {
     const data = await phQuery(`
-      query($slug: String!, $after: String) {
-        post(slug: $slug) {
+      query($username: String!, $after: String) {
+        user(username: $username) {
           comments(first: 50, after: $after) {
             pageInfo { hasNextPage endCursor }
-            edges { node { user { username name } } }
+            edges { node { post { slug } } }
           }
         }
       }
-    `, { slug, after: cursor });
-    const post = data && data.post;
-    if (!post) throw new Error(`PH post bulunamadı (slug="${slug}") — PH_POST_SLUG env yanlış olabilir`);
-    const edges = post.comments?.edges || [];
-    if (i === 0) console.log(`[PH] ${slug} post=OK comments edges=${edges.length}`);
+    `, { username, after: cursor });
+
+    const user = data && data.user;
+    if (user === null) return null;
+    if (!user) throw new Error('PH user query beklenmedik yanıt');
+
+    const edges = user.comments?.edges || [];
+    if (i === 0) console.log(`[PH] user=${username} comments[0] edges=${edges.length}`);
     for (const e of edges) {
-      const uByUsername = normalizeUsername(e?.node?.user?.username);
-      const uByName     = normalizeUsername(e?.node?.user?.name);
-      if ((uByUsername && uByUsername === target) || (uByName && uByName === target)) return true;
+      if (e?.node?.post?.slug === slug) return true;
     }
-    if (!post.comments?.pageInfo?.hasNextPage) return false;
-    cursor = post.comments.pageInfo.endCursor;
+    if (!user.comments?.pageInfo?.hasNextPage) return false;
+    cursor = user.comments.pageInfo.endCursor;
   }
   return false;
 }
@@ -132,7 +136,6 @@ router.post('/claim', async (req, res) => {
       return res.status(400).json({ error: 'Geçersiz Product Hunt kullanıcı adı' });
     }
 
-    // Kayıt var mı bak, yoksa oluştur
     let { data: usage } = await supabase
       .from('user_usage')
       .select('*')
@@ -155,7 +158,6 @@ router.post('/claim', async (req, res) => {
       });
     }
 
-    // Aynı PH kullanıcı adını başka biri kullanmış mı?
     const { data: existing } = await supabase
       .from('user_usage')
       .select('user_id')
@@ -172,11 +174,20 @@ router.post('/claim', async (req, res) => {
       return res.status(503).json({ error: 'Product Hunt entegrasyonu henüz aktif değil' });
     }
 
-    // Doğrulama: hem upvote hem yorum
     let voted = false, commented = false;
     try {
-      voted = await findInVotes(PH_SLUG, target);
-      if (voted) commented = await findInComments(PH_SLUG, target);
+      const votedResult = await userVotedPost(PH_SLUG, target);
+      if (votedResult === null) {
+        return res.status(404).json({
+          error: `"${raw}" adlı kullanıcı Product Hunt'ta bulunamadı. Kullanıcı adını kontrol et.`,
+          code: 'USER_NOT_FOUND'
+        });
+      }
+      voted = votedResult;
+      if (voted) {
+        const commentedResult = await userCommentedPost(PH_SLUG, target);
+        commented = commentedResult === true;
+      }
     } catch (e) {
       console.error('[producthunt/claim] PH API hatası:', e.message);
       return res.status(502).json({ error: 'Product Hunt API şu an cevap vermiyor, biraz sonra tekrar dene' });
@@ -184,7 +195,7 @@ router.post('/claim', async (req, res) => {
 
     if (!voted) {
       return res.status(404).json({
-        error: `"${raw}" bu ürüne upvote vermemiş görünüyor. Önce upvote+yorum yap, sonra tekrar dene.`,
+        error: `"${raw}" bu ürüne upvote vermemiş görünüyor. Önce upvote + yorum yap, sonra tekrar dene.`,
         code: 'NOT_VOTED'
       });
     }
