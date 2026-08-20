@@ -38,62 +38,76 @@ async function phQuery(query, variables) {
   return json.data;
 }
 
-// Kullanıcının oy verdiği postlar içinde slug'ı ara (user-side: çok daha az sayfa)
-async function userVotedPost(slug, username) {
+async function userExists(username) {
+  const data = await phQuery(`
+    query($username: String!) {
+      user(username: $username) { id username }
+    }
+  `, { username });
+  return !!(data && data.user);
+}
+
+// Post-side: postun oylayanları içinde username eşleşmesi ara
+async function postVoterMatches(slug, username) {
   let cursor = null;
-  for (let i = 0; i < 20; i++) {
+  for (let i = 0; i < 40; i++) {
     const data = await phQuery(`
-      query($username: String!, $after: String) {
-        user(username: $username) {
-          votedPosts(first: 50, after: $after) {
+      query($slug: String!, $after: String) {
+        post(slug: $slug) {
+          votes(first: 50, after: $after) {
             pageInfo { hasNextPage endCursor }
-            edges { node { slug } }
+            edges { node { user { username } } }
           }
         }
       }
-    `, { username, after: cursor });
+    `, { slug, after: cursor });
 
-    const user = data && data.user;
-    if (user === null) return null; // PH'da böyle bir kullanıcı yok
-    if (!user) throw new Error('PH user query beklenmedik yanıt');
+    const post = data && data.post;
+    if (!post) throw new Error('PH post bulunamadı: ' + slug);
 
-    const edges = user.votedPosts?.edges || [];
-    if (i === 0) console.log(`[PH] user=${username} votedPosts[0] edges=${edges.length}`);
+    const edges = post.votes?.edges || [];
+    if (i === 0) console.log(`[PH] post=${slug} votes[0] edges=${edges.length}`);
     for (const e of edges) {
-      if (e?.node?.slug === slug) return true;
+      if ((e?.node?.user?.username || '').toLowerCase() === username) return true;
     }
-    if (!user.votedPosts?.pageInfo?.hasNextPage) return false;
-    cursor = user.votedPosts.pageInfo.endCursor;
+    if (!post.votes?.pageInfo?.hasNextPage) return false;
+    cursor = post.votes.pageInfo.endCursor;
   }
   return false;
 }
 
-// Kullanıcının yorumları içinde slug'ı ara
-async function userCommentedPost(slug, username) {
+// Post-side: postun tüm yorumlarını (üst seviye + replies) tara
+async function postCommenterMatches(slug, username) {
   let cursor = null;
-  for (let i = 0; i < 20; i++) {
+  for (let i = 0; i < 40; i++) {
     const data = await phQuery(`
-      query($username: String!, $after: String) {
-        user(username: $username) {
-          comments(first: 50, after: $after) {
+      query($slug: String!, $after: String) {
+        post(slug: $slug) {
+          comments(first: 20, after: $after) {
             pageInfo { hasNextPage endCursor }
-            edges { node { post { slug } } }
+            edges { node {
+              user { username }
+              replies(first: 20) { edges { node { user { username } } } }
+            } }
           }
         }
       }
-    `, { username, after: cursor });
+    `, { slug, after: cursor });
 
-    const user = data && data.user;
-    if (user === null) return null;
-    if (!user) throw new Error('PH user query beklenmedik yanıt');
+    const post = data && data.post;
+    if (!post) throw new Error('PH post bulunamadı: ' + slug);
 
-    const edges = user.comments?.edges || [];
-    if (i === 0) console.log(`[PH] user=${username} comments[0] edges=${edges.length}`);
+    const edges = post.comments?.edges || [];
+    if (i === 0) console.log(`[PH] post=${slug} comments[0] edges=${edges.length}`);
     for (const e of edges) {
-      if (e?.node?.post?.slug === slug) return true;
+      if ((e?.node?.user?.username || '').toLowerCase() === username) return true;
+      const replies = e?.node?.replies?.edges || [];
+      for (const r of replies) {
+        if ((r?.node?.user?.username || '').toLowerCase() === username) return true;
+      }
     }
-    if (!user.comments?.pageInfo?.hasNextPage) return false;
-    cursor = user.comments.pageInfo.endCursor;
+    if (!post.comments?.pageInfo?.hasNextPage) return false;
+    cursor = post.comments.pageInfo.endCursor;
   }
   return false;
 }
@@ -176,17 +190,16 @@ router.post('/claim', async (req, res) => {
 
     let voted = false, commented = false;
     try {
-      const votedResult = await userVotedPost(PH_SLUG, target);
-      if (votedResult === null) {
+      const exists = await userExists(target);
+      if (!exists) {
         return res.status(404).json({
           error: `"${raw}" adlı kullanıcı Product Hunt'ta bulunamadı. Kullanıcı adını kontrol et.`,
           code: 'USER_NOT_FOUND'
         });
       }
-      voted = votedResult;
+      voted = await postVoterMatches(PH_SLUG, target);
       if (voted) {
-        const commentedResult = await userCommentedPost(PH_SLUG, target);
-        commented = commentedResult === true;
+        commented = await postCommenterMatches(PH_SLUG, target);
       }
     } catch (e) {
       console.error('[producthunt/claim] PH API hatası:', e.message);
