@@ -1037,6 +1037,27 @@ async function checkShopifyStatus() {
   }
 }
 
+function showShopifyUpgradePopup() {
+  if (document.getElementById('shopify-upgrade-popup')) return;
+  const overlay = document.createElement('div');
+  overlay.id = 'shopify-upgrade-popup';
+  overlay.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;';
+  overlay.innerHTML = `
+    <div style="background:#fff;border-radius:20px;max-width:440px;width:90%;padding:36px 32px;box-shadow:0 20px 60px rgba(0,0,0,0.2);text-align:center;font-family:inherit;">
+      <div style="font-size:48px;margin-bottom:12px;">🛍️</div>
+      <h2 style="margin:0 0 8px;font-size:20px;font-weight:700;color:#1a1a2e;">Shopify Entegrasyonu Pro Özelliği</h2>
+      <p style="color:#666;font-size:14px;margin:0 0 20px;">Shopify verilerinizi görüntülemek ve işlem yapmak için Pro plana geçmeniz gerekiyor.</p>
+      <div style="background:#f8f9fa;border-radius:12px;padding:14px;margin-bottom:24px;font-size:13px;color:#444;">
+        Mevcut planınız: <strong style="color:#e53e3e;">Ücretsiz</strong>
+      </div>
+      <button onclick="window.location.href='index.html#pricing'" style="width:100%;padding:14px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;margin-bottom:10px;">⬆️ Planı Yükselt</button>
+      <button onclick="document.getElementById('shopify-upgrade-popup').remove()" style="width:100%;padding:12px;background:transparent;color:#888;border:1px solid #e2e8f0;border-radius:12px;font-size:14px;cursor:pointer;">Şimdi Değil</button>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
+}
+
 async function loadUserPlan() {
   const token = getAuthToken();
   if (!token) return;
@@ -5448,6 +5469,18 @@ if (_origSetView) {
   };
 }
 // ─── END DEBUG LOGGING ────────────────────────────────────────────────────
+
+// Free plan + Shopify bağlıysa her buton tıklamasını yakala
+document.addEventListener('click', function(e) {
+  if (typeof userPlan === 'undefined' || userPlan !== 'free') return;
+  if (!shopifyStore) return;
+  if (e.target.closest('#shopify-upgrade-popup')) return;
+  const btn = e.target.closest('button, [role="button"], a.btn, input[type="button"], input[type="submit"]');
+  if (!btn) return;
+  e.preventDefault();
+  e.stopImmediatePropagation();
+  showShopifyUpgradePopup();
+}, true);
 </script>
 
 <!-- ═══════════════════════════════════════════════════════════════════
