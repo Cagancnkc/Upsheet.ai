@@ -1,22 +1,34 @@
 (function () {
-  var SUPABASE_URL = 'https://ogizbfzoywylljvnidak.supabase.co';
-  var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9naXpiZnpveXd5bGxqdm5pZGFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwNzUxMjcsImV4cCI6MjA4ODY1MTEyN30.Vxu4ffDrG1nHR02vEbMeFKFHqUNYfVA9vBMyQmZj41k';
+  try {
+    var raw = localStorage.getItem('sb-ogizbfzoywylljvnidak-auth-token');
+    if (!raw) return;
+    var session = JSON.parse(raw);
+    var exp = session && session.expires_at;
+    if (!exp || (exp * 1000) <= Date.now()) return;
 
-  function runCheck() {
-    var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    sb.auth.getSession().then(function (result) {
-      if (result.data && result.data.session) {
-        window.location.replace('/app');
+    function updateNav() {
+      var navCta = document.querySelector('.nav-cta');
+      if (navCta) {
+        var btns = navCta.querySelectorAll('a.btn');
+        btns.forEach(function(b) { b.style.display = 'none'; });
+        var dash = document.createElement('a');
+        dash.href = '/app';
+        dash.className = 'btn btn-dark';
+        dash.textContent = 'Dashboard\'a Dön →';
+        navCta.appendChild(dash);
       }
-    });
-  }
 
-  if (window.supabase) {
-    runCheck();
-  } else {
-    var s = document.createElement('script');
-    s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
-    s.onload = runCheck;
-    document.head.appendChild(s);
-  }
+      var lpCta = document.querySelector('.lp-nav-cta');
+      if (lpCta) {
+        lpCta.href = '/app';
+        lpCta.textContent = '→ Dashboard\'a Dön';
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', updateNav);
+    } else {
+      updateNav();
+    }
+  } catch (e) {}
 })();
