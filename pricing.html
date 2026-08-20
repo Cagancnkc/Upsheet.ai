@@ -77,6 +77,8 @@ a{color:inherit}
 .plan-card.dark .plan-desc{color:#9ca3af}
 .plan-price-row{display:flex;align-items:baseline;gap:4px}
 .plan-price-big{font-size:56px;font-weight:700;line-height:1;letter-spacing:-.04em}
+.usd-hint{font-size:11px;color:var(--muted);font-family:'Geist Mono',monospace;letter-spacing:.02em;margin-bottom:2px;line-height:1.2}
+.plan-card.dark .usd-hint{color:#9ca3af}
 .plan-card.light .plan-price-big{color:var(--ink)}
 .plan-card.dark .plan-price-big{color:#f9fafb}
 .plan-price-unit{font-size:15px;color:var(--muted);font-weight:500}
@@ -308,6 +310,7 @@ a{color:inherit}
           <div class="plan-desc" style="margin-top:6px">Büyüyen Shopify mağazaları için tam AI katalog optimizasyonu.</div>
         </div>
         <p style="font-size:12px;color:#9ca3af;text-decoration:line-through;margin:0 0 4px;">Manuel yapılsa: ₺15.000+/ay</p>
+        <div class="usd-hint" id="usd-hint-pro" style="display:none"></div>
         <div class="plan-price-row">
           <span class="plan-price-big" id="price-pro">₺149</span>
           <span class="plan-price-unit">/ay</span>
@@ -349,6 +352,7 @@ a{color:inherit}
           <div class="plan-name">Ultra</div>
           <div class="plan-desc" style="margin-top:6px">Büyük kataloglar ve ajanslar için sınırsız güç.</div>
         </div>
+        <div class="usd-hint" id="usd-hint-ultra" style="display:none"></div>
         <div class="plan-price-row">
           <span class="plan-price-big" id="price-ultra">₺399</span>
           <span class="plan-price-unit">/ay</span>
@@ -451,6 +455,16 @@ a{color:inherit}
 var _billingPeriod = 'monthly';
 var MONTHLY = { pro: 149, ultra: 399 };
 var YEARLY  = { pro: 119, ultra: 319 };
+var _usdRate = null;
+
+function updateUsdHints() {
+  if (_usdRate == null) return;
+  var prices = _billingPeriod === 'yearly' ? YEARLY : MONTHLY;
+  var proEl = document.getElementById('usd-hint-pro');
+  var ultraEl = document.getElementById('usd-hint-ultra');
+  if (proEl) { proEl.textContent = '≈ $' + (prices.pro * _usdRate).toFixed(2) + '/ay'; proEl.style.display = ''; }
+  if (ultraEl) { ultraEl.textContent = '≈ $' + (prices.ultra * _usdRate).toFixed(2) + '/ay'; ultraEl.style.display = ''; }
+}
 
 var POLAR_URLS = {
   pro:   { monthly: 'https://buy.polar.sh/polar_cl_nVa6wF1jLlNzwSBNJ9n0DbfdsK260yFFi2ME34ePJ1W', yearly: 'https://buy.polar.sh/polar_cl_QIhbzKVVap5xuCuLGOwv0pVCiJ9GNzK89N6u513m0Ik' },
@@ -488,6 +502,8 @@ function setPricingPeriod(p) {
   var stickyCta   = document.getElementById('sticky-cta');
   if (stickyPrice) stickyPrice.textContent = '₺' + prices.pro;
   if (stickyCta)   stickyCta.href = getPolarUrl('pro', period);
+
+  updateUsdHints();
 }
 
 /* ROI Calculator */
@@ -509,6 +525,13 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('roi-role').addEventListener('change', updateROI);
   updateROI();
   setPricingPeriod('yearly');
+
+  if ((navigator.language || '').toLowerCase().startsWith('en')) {
+    fetch('https://api.frankfurter.app/latest?from=TRY&to=USD')
+      .then(function(r){ return r.json(); })
+      .then(function(d){ _usdRate = d.rates && d.rates.USD; updateUsdHints(); })
+      .catch(function(){});
+  }
 
   // Sticky bar: show after #pricing section scrolls out of view
   var pricingSection = document.getElementById('pricing');
