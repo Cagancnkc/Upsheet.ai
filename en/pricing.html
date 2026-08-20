@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-H0KT59S6GP"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-H0KT59S6GP');
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Optimize your Shopify catalog with AI. Plans starting at $0/mo, cancel anytime.">
+<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+<link rel="canonical" href="https://mocksheets.com/en/pricing">
+<link rel="alternate" hreflang="en" href="https://mocksheets.com/en/pricing">
+<link rel="alternate" hreflang="tr" href="https://mocksheets.com/pricing">
+<link rel="alternate" hreflang="x-default" href="https://mocksheets.com/pricing">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Pricing — Mocksheets | AI Catalog Assistant for Shopify">
+<meta name="twitter:description" content="Optimize your Shopify catalog with AI. Plans starting at $0/mo, cancel anytime.">
+<meta name="twitter:site" content="@mocksheets">
+<meta name="twitter:image" content="https://mocksheets.com/images/og-preview.png">
+<meta property="og:title" content="Pricing — Mocksheets | AI Catalog Assistant for Shopify">
+<meta property="og:description" content="Optimize your Shopify catalog with AI. Plans starting at $0/mo, cancel anytime.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://mocksheets.com/en/pricing">
+<meta property="og:image" content="https://mocksheets.com/images/brand/logo-128x128.png">
+<link rel="icon" type="image/png" href="/images/brand/logo-128x128.png">
+<title>Pricing — Mocksheets | AI Catalog Assistant for Shopify</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&family=Geist+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/landing.css">
+<style>
+:root{
+  --brand:#16a34a;--brand-dark:#15803d;--brand-soft:#dcfce7;
+  --ink:#0a0612;--muted:#6b6478;--line:#E5E7EB;--bg:#F7F7F5;
+}
+body{background:var(--bg);font-family:'Geist',system-ui,-apple-system,sans-serif;color:var(--ink);margin:0}
+a{color:inherit}
+.pricing-wrap{max-width:1180px;margin:0 auto;padding:100px 24px 40px}
+.pricing-hero{text-align:center;margin-bottom:40px}
+.pricing-hero h1{font-size:clamp(36px,5vw,64px);line-height:1.05;letter-spacing:-.03em;font-weight:700;margin:0 0 14px}
+.pricing-hero p{font-size:17px;color:var(--muted);max-width:600px;margin:0 auto 24px;line-height:1.6}
+
+.roi-calc{background:#fff;border:1.5px solid var(--line);border-radius:20px;padding:36px;margin:40px auto 60px;max-width:900px}
+.roi-calc h2{font-size:22px;font-weight:800;margin:0 0 24px;text-align:center}
+.roi-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px}
+.roi-grid label{display:block;font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.roi-grid output{color:var(--brand);font-weight:800;font-size:16px}
+.roi-grid input[type=range]{width:100%;margin-top:10px;accent-color:var(--brand)}
+.roi-grid select{width:100%;margin-top:10px;padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;background:#fff;font-family:inherit;font-size:14px;cursor:pointer}
+.roi-result{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;padding-top:20px;border-top:1px solid var(--line)}
+.roi-result>div{text-align:center;padding:16px 8px}
+.roi-result span{display:block;font-size:12px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em}
+.roi-result b{display:block;font-size:24px;font-weight:800;color:var(--ink)}
+.roi-result .roi-net{background:linear-gradient(135deg,var(--brand),var(--brand-dark));border-radius:12px;color:#fff}
+.roi-result .roi-net span{color:rgba(255,255,255,.85)}
+.roi-result .roi-net b{color:#fff}
+@media(max-width:640px){.roi-grid,.roi-result{grid-template-columns:1fr}input[type=range],select{font-size:16px!important}}
+
+.pricing-toggle-wrap{text-align:center;margin-bottom:32px}
+.pricing-toggle{display:inline-flex;padding:3px;background:#fff;border-radius:99px;border:1px solid var(--line)}
+.pricing-toggle button{border:0;background:transparent;padding:10px 20px;border-radius:99px;font-family:inherit;font-size:14px;color:var(--muted);cursor:pointer;font-weight:500;display:inline-flex;align-items:center;gap:8px;transition:all .15s}
+.pricing-toggle button.active{background:#111827;color:#fff}
+.save-pill{background:var(--brand-soft);color:var(--brand-dark);font-size:11px;font-weight:700;padding:3px 8px;border-radius:99px;font-family:'Geist Mono',monospace}
+.pricing-toggle button.active .save-pill{background:rgba(255,255,255,.15);color:#a7f3d0}
+
+.plan-card{border-radius:20px;padding:32px;display:flex;flex-direction:column;gap:20px}
+.plan-card.light{background:#fff;border:1.5px solid var(--line)}
+.plan-card.dark{background:#111827;border:1.5px solid #1f2937;color:#f9fafb}
+.plan-badge{display:inline-block;background:linear-gradient(135deg,var(--brand),var(--brand-dark));color:#fff;font-size:11px;font-weight:700;padding:5px 14px;border-radius:99px;letter-spacing:.06em;width:fit-content}
+.plan-name{font-size:24px;font-weight:700;letter-spacing:-.02em}
+.plan-card.dark .plan-name{color:#f9fafb}
+.plan-desc{font-size:14px;color:var(--muted);line-height:1.5}
+.plan-card.dark .plan-desc{color:#9ca3af}
+.plan-price-row{display:flex;align-items:baseline;gap:4px}
+.plan-price-big{font-size:56px;font-weight:700;line-height:1;letter-spacing:-.04em}
+.plan-card.light .plan-price-big{color:var(--ink)}
+.plan-card.dark .plan-price-big{color:#f9fafb}
+.plan-price-unit{font-size:15px;color:var(--muted);font-weight:500}
+.plan-card.dark .plan-price-unit{color:#9ca3af}
+.plan-feats{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px}
+.plan-feat{display:flex;align-items:flex-start;gap:8px;font-size:14px;line-height:1.4}
+.plan-card.light .plan-feat{color:var(--ink)}
+.plan-card.dark .plan-feat{color:#d1d5db}
+.plan-feat-icon{color:var(--brand);font-weight:700;flex-shrink:0;margin-top:1px}
+.plan-card.dark .plan-feat-icon{color:#4ade80}
+.plan-cta{display:flex;align-items:center;justify-content:center;gap:8px;padding:14px 24px;border-radius:99px;font-family:inherit;font-size:15px;font-weight:600;cursor:pointer;text-decoration:none;transition:all .15s;border:0;margin-top:auto}
+.plan-cta.outline{background:transparent;border:1.5px solid var(--line);color:var(--ink)}
+.plan-cta.outline:hover{border-color:var(--ink)}
+.plan-cta.green{background:var(--brand);color:#fff}
+.plan-cta.green:hover{background:var(--brand-dark);transform:translateY(-1px)}
+.plan-cta.white{background:#fff;color:#111827}
+.plan-cta.white:hover{background:#f3f4f6;transform:translateY(-1px)}
+.plan-divider{height:1px;background:var(--line);margin:4px 0}
+.plan-card.dark .plan-divider{background:#1f2937}
+
+.pricing-compare{margin:80px auto 60px;max-width:1000px}
+.pricing-compare h2{font-size:28px;font-weight:800;text-align:center;margin:0 0 32px;letter-spacing:-.02em}
+.compare-table{width:100%;border-collapse:separate;border-spacing:0;background:#fff;border:1.5px solid var(--line);border-radius:16px;overflow:hidden;font-size:14px}
+.compare-table th,.compare-table td{padding:14px 16px;text-align:center;border-bottom:1px solid var(--line)}
+.compare-table th{background:#FAFAFA;font-weight:700;color:var(--ink);font-size:13px}
+.compare-table th:first-child,.compare-table td:first-child{text-align:left;font-weight:600;color:var(--muted)}
+.compare-table tr:last-child td{border-bottom:0}
+.compare-table .col-highlight{background:#f0fdf4}
+.compare-check{color:var(--brand);font-weight:700}
+.compare-dash{color:#cbd5e1}
+@media(max-width:640px){.compare-table{font-size:12px}.compare-table th,.compare-table td{padding:10px 8px}}
+
+.trust-band{display:flex;justify-content:center;gap:40px;flex-wrap:wrap;padding:32px 24px;margin:40px 0;color:var(--muted);font-size:14px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.trust-band span{display:inline-flex;align-items:center;gap:8px}
+.trust-band span::before{content:"✓";color:var(--brand);font-weight:800}
+
+.pricing-faq{max-width:760px;margin:60px auto}
+.pricing-faq h2{font-size:28px;font-weight:800;text-align:center;margin:0 0 28px;letter-spacing:-.02em}
+.pricing-faq details{background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:18px 22px;margin-bottom:12px;cursor:pointer}
+.pricing-faq details[open]{border-color:var(--brand)}
+.pricing-faq summary{font-weight:700;font-size:15px;list-style:none;display:flex;justify-content:space-between;align-items:center}
+.pricing-faq summary::after{content:"+";font-size:22px;color:var(--brand);font-weight:400;transition:transform .2s}
+.pricing-faq details[open] summary::after{transform:rotate(45deg)}
+.pricing-faq details p{margin:12px 0 0;font-size:14px;color:var(--muted);line-height:1.7}
+
+.testimonials{max-width:960px;margin:0 auto 60px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.testimonial-card{background:#fff;border:1.5px solid var(--line);border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:10px}
+.t-stars{color:#f59e0b;font-size:15px;letter-spacing:1px}
+.testimonial-card p{font-size:14px;color:#374151;line-height:1.65;margin:0;flex:1}
+.testimonial-card cite{font-size:12px;color:var(--muted);font-weight:600;font-style:normal}
+
+#sticky-pricing-bar{position:fixed;bottom:0;left:0;right:0;background:#111827;color:#fff;padding:14px 24px;z-index:1000;box-shadow:0 -4px 20px rgba(0,0,0,.25);transform:translateY(100%);transition:transform .3s ease}
+#sticky-pricing-bar.visible{transform:translateY(0)}
+.sticky-bar-inner{max-width:960px;margin:0 auto;display:flex;align-items:center;justify-content:center;gap:20px;flex-wrap:wrap}
+
+@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.4}}
+@media(max-width:640px){.testimonials{grid-template-columns:1fr}#sticky-pricing-bar .sticky-guarantee{display:none}}
+</style>
+<script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "xa2q453j9l");
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    { "@type": "Question", "name": "Can I start without a credit card?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes. The Free plan is fully free and unlimited in time. Start using it right away — no credit card required." } },
+    { "@type": "Question", "name": "How do I connect my Shopify store?",
+      "acceptedAnswer": { "@type": "Answer", "text": "After upgrading to Pro or Ultra, connect your Shopify store in one click from the settings screen. OAuth handles the secure connection — you never share your password." } },
+    { "@type": "Question", "name": "Where is my data stored?",
+      "acceptedAnswer": { "@type": "Answer", "text": "All data is stored encrypted on Supabase infrastructure in the EU region. Fully GDPR-compliant — your data belongs to you and can be exported or deleted at any time." } },
+    { "@type": "Question", "name": "What's the difference with the annual plan?",
+      "acceptedAnswer": { "@type": "Answer", "text": "With annual billing, Pro is $7/mo and Ultra is $19/mo — 20% cheaper than monthly. Billed once per year." } },
+    { "@type": "Question", "name": "How is Ultra different from Pro?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Ultra includes priority AI processing speed, early access to new features, and priority live support. Pro gives you unlimited catalog size and standard AI speed." } }
+  ]
+}
+</script>
+    <script src="/redirect-if-logged-in.js?v=2"></script>
+</head>
+<body>
+<nav class="lp-nav">
+  <a href="/en" class="lp-nav-logo">
+    <img src="/images/brand/logo-128x128.png" alt="mocksheets" style="width:24px;height:24px;object-fit:contain;flex-shrink:0">
+    <span>mocksheets<span class="brand-dot">.</span></span>
+  </a>
+  <a href="/en" class="lp-nav-cta">← Home</a>
+</nav>
+
+<div class="pricing-wrap">
+
+  <section class="pricing-hero">
+    <div style="display:inline-flex;align-items:center;gap:8px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:99px;padding:6px 16px;font-size:13px;color:#15803d;font-weight:600;margin-bottom:18px">
+      <span style="width:8px;height:8px;background:#16a34a;border-radius:50%;display:inline-block;animation:pulse-dot 2s infinite"></span>
+      25 Shopify stores joined
+    </div>
+    <h1>Optimize your Shopify catalog with AI.</h1>
+    <p>From product titles to SEO, from bulk edits to catalog health — all automated. Starting at $9/mo.</p>
+  </section>
+
+  <section class="roi-calc" aria-label="ROI Calculator">
+    <h2>How much do you save per month?</h2>
+    <div class="roi-grid">
+      <label>Weekly hours spent on catalog: <output id="roi-hours-val">10</output> hrs
+        <input type="range" id="roi-hours" min="1" max="40" value="10" aria-label="Weekly catalog management hours">
+      </label>
+      <label>Your role
+        <select id="roi-role" aria-label="Role">
+          <option value="15">Small business owner ($15/hr)</option>
+          <option value="25" selected>Operations manager ($25/hr)</option>
+          <option value="40">Agency / consultant ($40/hr)</option>
+        </select>
+      </label>
+    </div>
+    <div class="roi-result">
+      <div><span>Hours saved / month</span><b id="roi-time">28 hrs</b></div>
+      <div><span>Monthly $ value</span><b id="roi-value">$700</b></div>
+      <div class="roi-net"><span>Net gain after Mocksheets Pro</span><b id="roi-net">$691/mo</b></div>
+    </div>
+  </section>
+
+  <section class="testimonials" aria-label="Testimonials">
+    <div class="testimonial-card">
+      <div class="t-stars">★★★★★</div>
+      <p>"I optimized SEO titles for 500 products in 2 hours. It used to take 3 weeks. Now I ship updates faster than any competitor."</p>
+      <cite>— Mert K., Electronics store</cite>
+    </div>
+    <div class="testimonial-card">
+      <div class="t-stars">★★★★★</div>
+      <p>"My catalog health score went from 38% to 91%. Organic traffic from Google increased 60% in a month. The ROI is unreal."</p>
+      <cite>— Selin A., Fashion &amp; Accessories</cite>
+    </div>
+    <div class="testimonial-card">
+      <div class="t-stars">★★★★★</div>
+      <p>"We manage our clients' Shopify catalogs with Mocksheets. As a single e-commerce agency we save 70% of our time."</p>
+      <cite>— Emre T., E-commerce Agency</cite>
+    </div>
+  </section>
+
+  <section id="pricing" aria-label="Pricing plans" style="max-width:1100px;margin:0 auto;padding:0 0 80px">
+
+    <div style="max-width:560px;margin:0 auto 40px;text-align:center;padding:20px 24px;background:#f9fafb;border-radius:16px;border:0.5px solid #e5e7eb;">
+      <p style="font-size:13px;color:#6b7280;margin:0 0 8px;line-height:1.6;">
+        Manually SEO-optimizing a 500-product catalog takes an average of
+        <strong style="color:#111827;">3+ weeks</strong>.
+        Payroll cost alone runs
+        <strong style="color:#111827;">$450+ per month.</strong>
+      </p>
+      <p style="font-size:14px;color:#16a34a;font-weight:600;margin:0;">Mocksheets starts at $9.</p>
+    </div>
+
+    <div class="pricing-toggle-wrap">
+      <div class="pricing-toggle" role="tablist" aria-label="Billing period">
+        <button id="billing-monthly-btn" class="active" role="tab" aria-selected="true" onclick="setPricingPeriod('monthly')">Monthly</button>
+        <button id="billing-yearly-btn" role="tab" aria-selected="false" onclick="setPricingPeriod('yearly')">Yearly <span class="save-pill">20% OFF</span></button>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px">
+
+      <!-- Free -->
+      <div class="plan-card light">
+        <div>
+          <div class="plan-name">Free</div>
+          <div class="plan-desc" style="margin-top:6px">For those exploring catalog tools. No card required.</div>
+        </div>
+        <div class="plan-price-row">
+          <span class="plan-price-big">$0</span>
+          <span class="plan-price-unit">/mo</span>
+        </div>
+        <div class="plan-divider"></div>
+        <ul class="plan-feats">
+          <li class="plan-feat"><span class="plan-feat-icon">✓</span> 5-product catalog size</li>
+          <li class="plan-feat"><span class="plan-feat-icon">✓</span> Basic catalog health score</li>
+          <li class="plan-feat"><span class="plan-feat-icon">✓</span> 3 AI prompts per day (prompt bar)</li>
+          <li class="plan-feat"><span class="plan-feat-icon">✓</span> Email support</li>
+        </ul>
+        <a href="/auth" class="plan-cta outline">Start Free</a>
+      </div>
+
+      <!-- Pro -->
+      <div class="plan-card dark">
+        <div>
+          <div class="plan-badge">MOST POPULAR</div>
+          <p style="font-size:11px;color:#9ca3af;margin:4px 0 0;">Ideal for most Shopify stores</p>
+          <div class="plan-name" style="margin-top:12px">Pro</div>
+          <div class="plan-desc" style="margin-top:6px">Full AI catalog optimization for growing Shopify stores.</div>
+        </div>
+        <p style="font-size:12px;color:#9ca3af;text-decoration:line-through;margin:0 0 4px;">If done manually: $450+/mo</p>
+        <div class="plan-price-row">
+          <span class="plan-price-big" id="price-pro">$9</span>
+          <span class="plan-price-unit">/mo</span>
+        </div>
+        <div id="yearly-info-pro" style="display:none;font-size:12px;color:#a7f3d0;margin-top:-12px">Billed annually: <strong style="color:#4ade80">$84</strong> · Save <strong style="color:#4ade80">$24</strong> vs monthly</div>
+        <div class="plan-divider"></div>
+        <ul style="list-style:none;padding:0;margin:0 0 28px;display:flex;flex-direction:column;gap:10px;">
+          <li style="display:flex;gap:8px;font-size:13px;color:#e5e7eb;"><span style="color:#16a34a;">✓</span> Unlimited AI product title/description optimization</li>
+          <li style="display:flex;gap:8px;font-size:13px;color:#e5e7eb;"><span style="color:#16a34a;">✓</span> Visitor behavior and sales data tracking</li>
+          <li style="display:flex;gap:8px;font-size:13px;color:#e5e7eb;"><span style="color:#16a34a;">✓</span> AI diagnoses why products aren't selling</li>
+          <li style="display:flex;gap:8px;font-size:13px;color:#e5e7eb;"><span style="color:#16a34a;">✓</span> Unlimited Growth Opportunity detection</li>
+          <li style="display:flex;gap:8px;font-size:13px;color:#e5e7eb;"><span style="color:#16a34a;">✓</span> Bulk AI editing (up to 500 products)</li>
+          <li style="display:flex;gap:8px;font-size:13px;color:#e5e7eb;"><span style="color:#16a34a;">✓</span> Automatic Shopify sync</li>
+          <li style="display:flex;gap:8px;font-size:13px;color:#e5e7eb;"><span style="color:#16a34a;">✓</span> Approval-based write-back</li>
+          <li style="display:flex;gap:8px;font-size:13px;color:#e5e7eb;"><span style="color:#16a34a;">✓</span> 15 AI prompts per day</li>
+        </ul>
+        <a id="cta-pro" href="/auth?plan=pro&period=monthly" class="plan-cta green">Start with Pro →</a>
+      </div>
+
+      <!-- Ultra -->
+      <div class="plan-card light">
+        <div>
+          <div class="plan-name">Ultra</div>
+          <div class="plan-desc" style="margin-top:6px">Unlimited power for large catalogs and agencies.</div>
+        </div>
+        <div class="plan-price-row">
+          <span class="plan-price-big" id="price-ultra">$24</span>
+          <span class="plan-price-unit">/mo</span>
+        </div>
+        <div id="yearly-info-ultra" style="display:none;font-size:12px;color:#6b7280;margin-top:-12px">Billed annually: <strong style="color:#16a34a">$228</strong> · Save <strong style="color:#16a34a">$60</strong> vs monthly</div>
+        <p style="font-size:11px;color:#9ca3af;margin:8px 0 16px;">For large catalogs and agencies</p>
+        <div class="plan-divider"></div>
+        <ul class="plan-feats">
+          <li class="plan-feat"><span class="plan-feat-icon">✓</span> <strong>Unlimited</strong> catalog size</li>
+          <li class="plan-feat"><span class="plan-feat-icon">✓</span> Priority AI processing speed</li>
+          <li class="plan-feat"><span class="plan-feat-icon">✓</span> Unlimited AI prompts (prompt bar)</li>
+          <li class="plan-feat"><span class="plan-feat-icon">✓</span> Early access to new features</li>
+          <li class="plan-feat"><span class="plan-feat-icon">✓</span> Priority live support</li>
+        </ul>
+        <a id="cta-ultra" href="/auth?plan=ultra&period=monthly" class="plan-cta outline">Upgrade to Ultra →</a>
+      </div>
+
+    </div>
+
+    <p style="text-align:center;font-size:12px;color:#9ca3af;margin:24px 0 8px;">Not sure? Most Shopify stores start with Pro.</p>
+    <p style="text-align:center;font-size:13px;color:var(--muted);margin-top:20px">GDPR-compliant · No contract · Cancel anytime</p>
+
+  </section>
+
+  <section class="pricing-compare" aria-label="Plan comparison">
+    <h2>Compare plans</h2>
+    <div style="overflow-x:auto">
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>Feature</th>
+          <th>Free</th>
+          <th class="col-highlight">Pro</th>
+          <th>Ultra</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Catalog analysis (one-time)</td><td>5 products</td><td class="col-highlight">100 products</td><td>Unlimited</td></tr>
+        <tr><td>AI prompts / day (prompt bar)</td><td>3</td><td class="col-highlight">15</td><td>Unlimited</td></tr>
+        <tr><td>AI title/description opt.</td><td><span class="compare-dash">—</span></td><td class="col-highlight"><span class="compare-check">✓</span></td><td><span class="compare-check">✓</span></td></tr>
+        <tr><td>Bulk AI editing</td><td><span class="compare-dash">—</span></td><td class="col-highlight"><span class="compare-check">✓</span></td><td><span class="compare-check">✓</span></td></tr>
+        <tr><td>Catalog health score</td><td>Basic</td><td class="col-highlight">Full</td><td>Full</td></tr>
+        <tr><td>Shopify sync</td><td><span class="compare-dash">—</span></td><td class="col-highlight"><span class="compare-check">✓</span></td><td><span class="compare-check">✓</span></td></tr>
+        <tr><td>Write-back to Shopify</td><td><span class="compare-dash">—</span></td><td class="col-highlight"><span class="compare-check">✓</span></td><td><span class="compare-check">✓</span></td></tr>
+        <tr><td>Catalog size</td><td>5 products</td><td class="col-highlight">Unlimited</td><td>Unlimited</td></tr>
+        <tr><td>AI processing speed</td><td>Standard</td><td class="col-highlight">Standard</td><td>Priority</td></tr>
+        <tr><td>Support</td><td>Email</td><td class="col-highlight">Priority email</td><td>Priority live</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </section>
+
+  <div class="trust-band">
+    <span>GDPR-compliant · your data is yours</span>
+    <span>Cancel anytime · one click</span>
+  </div>
+
+  <section class="pricing-faq" aria-label="Frequently asked questions">
+    <h2>Frequently asked questions</h2>
+    <details>
+      <summary>Can I start without a credit card?</summary>
+      <p>Yes. The Free plan is fully free and unlimited in time. Start using it right away — no credit card required.</p>
+    </details>
+    <details>
+      <summary>How do I connect my Shopify store?</summary>
+      <p>After upgrading to Pro or Ultra, connect your Shopify store in one click from the settings screen. OAuth handles the secure connection — you never share your password.</p>
+    </details>
+    <details>
+      <summary>What's the difference with the annual plan?</summary>
+      <p>With annual billing, Pro is $7/mo and Ultra is $19/mo — 20% cheaper than monthly. Billed once per year. Cancel any time.</p>
+    </details>
+    <details>
+      <summary>Where is my data stored?</summary>
+      <p>All data is stored encrypted on Supabase infrastructure in the EU region. Fully GDPR-compliant — your data belongs to you and can be exported or deleted at any time.</p>
+    </details>
+    <details>
+      <summary>How is Ultra different from Pro?</summary>
+      <p>Pro gives you unlimited catalog size and standard AI speed. Ultra adds priority AI processing speed, early access to new features, and priority live support.</p>
+    </details>
+    <details>
+      <summary>How do I cancel my subscription?</summary>
+      <p>Cancel any time from your account settings. Cancellation stops the next renewal; you keep access through the end of your current period.</p>
+    </details>
+  </section>
+
+</div>
+
+<div id="sticky-pricing-bar" aria-hidden="true">
+  <div class="sticky-bar-inner">
+    <span style="font-size:15px;font-weight:600;">Pro · <span id="sticky-price">$7</span>/mo</span>
+    <a id="sticky-cta" href="https://buy.polar.sh/polar_cl_QIhbzKVVap5xuCuLGOwv0pVCiJ9GNzK89N6u513m0Ik" style="display:inline-flex;align-items:center;gap:6px;background:#16a34a;color:#fff;padding:10px 22px;border-radius:99px;text-decoration:none;font-weight:700;font-size:14px;transition:background .15s" onmouseover="this.style.background='#15803d'" onmouseout="this.style.background='#16a34a'">Get Started →</a>
+  </div>
+</div>
+
+<footer style="text-align:center;padding:32px 24px;border-top:1px solid #E5E7EB;margin-top:40px;font-size:13px;color:#9CA3AF">
+  <p>© 2026 Mocksheets · <a href="/en" style="color:#9CA3AF">Home</a> · <a href="/en/contact" style="color:#9CA3AF">Contact</a> · <a href="/en/privacy" style="color:#9CA3AF">Privacy</a> · <a href="/en/terms" style="color:#9CA3AF">Terms</a> · <a href="/pricing" style="color:#9CA3AF">Türkçe</a></p>
+</footer>
+
+<script>
+var _billingPeriod = 'monthly';
+var MONTHLY = { pro: 9, ultra: 24 };
+var YEARLY  = { pro: 7, ultra: 19 };
+
+// TODO: swap to USD Polar product IDs when created — using TRY links for now.
+// Polar checkout accepts any card and handles currency conversion at checkout.
+var POLAR_URLS = {
+  pro:   { monthly: 'https://buy.polar.sh/polar_cl_nVa6wF1jLlNzwSBNJ9n0DbfdsK260yFFi2ME34ePJ1W', yearly: 'https://buy.polar.sh/polar_cl_QIhbzKVVap5xuCuLGOwv0pVCiJ9GNzK89N6u513m0Ik' },
+  ultra: { monthly: 'https://buy.polar.sh/polar_cl_UcqugjkfYNI4dXxjHU34Dq5tCk5s94akWbAXK4ZvnfO', yearly: 'https://buy.polar.sh/polar_cl_Rb0bIam8OOnsyo0VgTElLPz23IJfIjZlNEuc72xIIQX' }
+};
+
+function getPolarUrl(plan, period) { return POLAR_URLS[plan][period]; }
+
+function setPricingPeriod(p) {
+  _billingPeriod = p;
+  var yearly = p === 'yearly';
+  var prices = yearly ? YEARLY : MONTHLY;
+  var period = yearly ? 'yearly' : 'monthly';
+
+  var monthlyBtn = document.getElementById('billing-monthly-btn');
+  var yearlyBtn  = document.getElementById('billing-yearly-btn');
+  monthlyBtn.classList.toggle('active', !yearly);
+  yearlyBtn.classList.toggle('active', yearly);
+  monthlyBtn.setAttribute('aria-selected', String(!yearly));
+  yearlyBtn.setAttribute('aria-selected', String(yearly));
+
+  document.getElementById('price-pro').textContent   = '$' + prices.pro;
+  document.getElementById('price-ultra').textContent = '$' + prices.ultra;
+
+  document.getElementById('cta-pro').href   = getPolarUrl('pro',   period);
+  document.getElementById('cta-ultra').href = getPolarUrl('ultra', period);
+
+  document.getElementById('yearly-info-pro').style.display   = yearly ? '' : 'none';
+  document.getElementById('yearly-info-ultra').style.display = yearly ? '' : 'none';
+
+  var stickyPrice = document.getElementById('sticky-price');
+  var stickyCta   = document.getElementById('sticky-cta');
+  if (stickyPrice) stickyPrice.textContent = '$' + prices.pro;
+  if (stickyCta)   stickyCta.href = getPolarUrl('pro', period);
+}
+
+function updateROI() {
+  var hours = parseInt(document.getElementById('roi-hours').value, 10);
+  var hourlyRate = parseInt(document.getElementById('roi-role').value, 10);
+  var weeklyTimeSaved = hours * 0.65;
+  var monthlyTimeSaved = weeklyTimeSaved * 4.33;
+  var monthlyValue = monthlyTimeSaved * hourlyRate;
+  var netGain = monthlyValue - 9;
+  document.getElementById('roi-hours-val').textContent = hours;
+  document.getElementById('roi-time').textContent = Math.round(monthlyTimeSaved) + ' hrs';
+  document.getElementById('roi-value').textContent = '$' + Math.round(monthlyValue).toLocaleString('en-US');
+  document.getElementById('roi-net').textContent = '$' + Math.round(netGain).toLocaleString('en-US') + '/mo';
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('roi-hours').addEventListener('input', updateROI);
+  document.getElementById('roi-role').addEventListener('change', updateROI);
+  updateROI();
+  setPricingPeriod('yearly');
+
+  var pricingSection = document.getElementById('pricing');
+  var stickyBar = document.getElementById('sticky-pricing-bar');
+  if (pricingSection && stickyBar) {
+    new IntersectionObserver(function(entries) {
+      var visible = entries[0].isIntersecting;
+      if (visible) { stickyBar.classList.remove('visible'); }
+      else { stickyBar.classList.add('visible'); }
+    }, { threshold: 0 }).observe(pricingSection);
+  }
+});
+</script>
+</body>
+</html>
