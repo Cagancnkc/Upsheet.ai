@@ -1,4 +1,10 @@
 (function () {
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then(function (registrations) {
+      registrations.forEach(function (r) { r.unregister(); });
+    });
+  }
+
   try {
     var raw = localStorage.getItem('sb-ogizbfzoywylljvnidak-auth-token');
     if (!raw) return;
