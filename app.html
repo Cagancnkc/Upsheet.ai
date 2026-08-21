@@ -2699,7 +2699,7 @@ async function renderValueSummaryBanner() {
     if (localStorage.getItem('_value_summary_shown_month') === currentMonth) return;
 
     const totalActions = (uData.used && uData.used.this_month) || 0;
-    if (totalActions < 3) return;
+    if (totalActions < 5) return;
 
     const banner = document.getElementById('value-summary-banner');
     const text = document.getElementById('value-summary-text');

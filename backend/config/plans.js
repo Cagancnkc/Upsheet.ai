@@ -6,7 +6,7 @@ const PLANS = {
     displayName: 'Ücretsiz',
     ai_commands_per_month: 20,
     ai_commands_per_day: 5,
-    maxPromptBarPerDay: 3,
+    maxPromptBarPerDay: 5,
     max_rows: 10000,
     max_file_size_mb: 2,
     max_sheets: 1,
