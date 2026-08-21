@@ -1,6 +1,20 @@
 <!doctype html>
 <html lang="tr">
 <head>
+<!-- OAuth error URL cleanup — must run before GA -->
+<script>
+(function() {
+  var params = new URLSearchParams(window.location.search);
+  if (params.get('error')) {
+    console.warn('[oauth-error] Silinen hata parametreleri:', params.get('error_description'));
+    var cleanUrl = new URL(window.location.href);
+    cleanUrl.searchParams.delete('error');
+    cleanUrl.searchParams.delete('error_code');
+    cleanUrl.searchParams.delete('error_description');
+    window.history.replaceState({}, '', cleanUrl.toString());
+  }
+})();
+</script>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-H0KT59S6GP"></script>
 <script>
@@ -821,19 +835,6 @@
 const API_URL = window.location.hostname === 'localhost'
   ? 'http://localhost:3001'
   : 'https://upsheet-ai.onrender.com';
-
-// OAuth hata parametrelerini URL'den temizle (server_error vs.)
-(function() {
-  const params = new URLSearchParams(window.location.search);
-  if (params.get('error')) {
-    console.warn('[oauth-error] Geçmiş bir OAuth hatası tespit edildi:', params.get('error_description'));
-    const cleanUrl = new URL(window.location);
-    cleanUrl.searchParams.delete('error');
-    cleanUrl.searchParams.delete('error_code');
-    cleanUrl.searchParams.delete('error_description');
-    window.history.replaceState({}, '', cleanUrl);
-  }
-})();
 
 // ═══════════════════════════════════════════════════════════════════════
 // STATE
