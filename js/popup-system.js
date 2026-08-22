@@ -44,8 +44,8 @@ class PopupSystem {
     ];
 
     this.VARIANTS = {
-      A: { headline: 'Haftada <span class="ms-accent">18 saat</span> mi Excel\'e gidiyor?', cta: 'Ücretsiz Başla — Kart Gerekmez' },
-      B: { headline: 'Formül yazmadan <span class="ms-accent">Excel</span> yönet.',          cta: '3 Ay $1\'a Başla →' }
+      A: { headline: 'Kataloğunuzda <span class="ms-accent">satmayan ürünleri</span> AI ile bulun.', cta: 'Ücretsiz Başla — Kart Gerekmez' },
+      B: { headline: 'Manuel düzenleme yapmadan <span class="ms-accent">Shopify kataloğunuzu</span> optimize edin.', cta: '3 Ay $1\'a Başla →' }
     };
   }
 

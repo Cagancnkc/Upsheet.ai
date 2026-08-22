@@ -1,4 +1,4 @@
-// ExcelAI — Backend API wrapper (tarayıcıda yüklenir)
+// Mocksheets — Backend API wrapper (tarayıcıda yüklenir)
 const API_BASE = 'http://localhost:3001';
 
 async function processAICommand(message, sheetContext, sheetName, history) {

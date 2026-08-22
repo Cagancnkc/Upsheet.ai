@@ -3,13 +3,13 @@
 module.exports = {
   user_signed_up: {
     title: 'Mocksheets\'e Hoş Geldiniz! 👋',
-    body: 'Excel/CSV dosyanızı yükleyin, Türkçe yazın, sonucu görün. İlk komutunuzu denemek 30 saniye sürer.',
+    body: 'Shopify mağazanızı bağlayın, Türkçe yazın, kataloğunuzu optimize edin. İlk komutunuzu denemek 30 saniye sürer.',
     cta_text: 'İlk Komutumu Vereyim',
     cta_url: 'https://mocksheets.com/app',
   },
   no_first_command_24h: {
     title: 'Henüz Başlamadınız mı?',
-    body: 'Excel dosyanızı yükleyip "stoku kritik olan ürünleri bul" gibi bir komut yazmanız yeterli.',
+    body: 'Shopify mağazanızı bağlayıp "eksik SEO başlıklarını doldur" gibi bir komut yazmanız yeterli.',
     cta_text: 'Şimdi Deneyin',
     cta_url: 'https://mocksheets.com/app',
   },
@@ -81,7 +81,7 @@ module.exports = {
   },
   user_inactive_14d: {
     title: 'Nasılsınız?',
-    body: '14 gündür sizi görmedik. Excel işlerinizi hâlâ elle mi yapıyorsunuz?',
+    body: '14 gündür sizi görmedik. Shopify kataloğunuzu hâlâ elle mi düzenliyorsunuz?',
     cta_text: 'Geri Dönün',
     cta_url: 'https://mocksheets.com/app',
   },

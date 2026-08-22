@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**Mocksheets** is a Turkish-first AI-powered Excel assistant — a browser-based spreadsheet UI that accepts Turkish natural language commands and uses Claude + RAG to translate them into structured JSON actions applied to the sheet.
+**Mocksheets** is a Turkish-first AI-powered Shopify catalog assistant — a platform that connects to Shopify stores, analyzes visitor behavior and sales data, and uses Claude + RAG to generate catalog optimization recommendations.
 
 ## Architecture
 

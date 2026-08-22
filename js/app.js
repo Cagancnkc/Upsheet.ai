@@ -1552,12 +1552,12 @@ async function sendChat() {
 
 async function callOpenAI(userMsg) {
   const sheetCtx = getSheetContext();
-  const system = `You are an Excel AI assistant. Analyze the user's Excel data, suggest formulas, and provide insights.
+  const system = `You are a Shopify catalog AI assistant. Analyze the user's catalog data, suggest improvements, and provide insights.
 Active sheet: "${activeSheet}"
 First 20 rows, 10 columns of data:
 ${sheetCtx}
 
-Kısa ve net Türkçe yanıtlar ver. Formül önerileri için standart Excel formatını kullan (=TOPLA(), =ORTALAMA(), =SUM(), =AVERAGE(), vb.).`;
+Kısa ve net Türkçe yanıtlar ver. Formül önerileri için standart Google Sheets formatını kullan (=TOPLA(), =ORTALAMA(), =SUM(), =AVERAGE(), vb.).`;
 
   const resp = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
@@ -2434,13 +2434,13 @@ function cmdAIAction(type) {
   const prompts = {
     analyze: `Analyze the data in the active sheet "${activeSheet}" and highlight key insights.`,
     chart:   `Suggest the most suitable chart type for this data and explain why.`,
-    summary: `Create a short, clear executive summary from this Excel data.`,
-    formula: `Suggest useful Excel formulas for this data structure.`,
+    summary: `Create a short, clear executive summary from this catalog data.`,
+    formula: `Suggest useful formulas and data operations for this catalog structure.`,
     // legacy Turkish keys for backward compat
     analiz:  `Analyze the data in the active sheet "${activeSheet}" and highlight key insights.`,
     grafik:  `Suggest the most suitable chart type for this data and explain why.`,
-    özet:    `Create a short, clear executive summary from this Excel data.`,
-    formül:  `Suggest useful Excel formulas for this data structure.`,
+    özet:    `Create a short, clear executive summary from this catalog data.`,
+    formül:  `Suggest useful formulas and data operations for this catalog structure.`,
   };
   document.getElementById('chatInput').value = prompts[type];
   if (typeof openFloatingChat === 'function') openFloatingChat();
@@ -3205,7 +3205,7 @@ function saveData() {
     const MB4 = 4 * 1024 * 1024;
     if (serialized.length > MB4) {
       // Prune other localStorage keys to free space
-      ['excel_autosave_v1','excel_autosave_v2','excel_autosave_v3'].forEach(function(k) {
+      ['sheet_autosave_v1','sheet_autosave_v2','sheet_autosave_v3'].forEach(function(k) {
         try { localStorage.removeItem(k); } catch(e) {}
       });
       // Also prune chat history if needed
@@ -3214,7 +3214,7 @@ function saveData() {
       }
     }
 
-    localStorage.setItem('excel_autosave', serialized);
+    localStorage.setItem('sheet_autosave', serialized);
     dirtyCells.clear(); // reset dirty tracking after successful save
     setTimeout(function() { setSaveState('saved'); }, 400);
     toast(t('toast_saved'), 'ok');
@@ -3229,7 +3229,7 @@ function saveData() {
           activeSheet,
           fileName: document.getElementById('fileName') ? document.getElementById('fileName').textContent : ''
         };
-        localStorage.setItem('excel_autosave', JSON.stringify(minPayload));
+        localStorage.setItem('sheet_autosave', JSON.stringify(minPayload));
         dirtyCells.clear();
         setTimeout(function() { setSaveState('saved'); }, 400);
         toast(t('toast_storage_full'), 'warning');
@@ -3244,7 +3244,7 @@ function saveData() {
 
 function loadAutoSave() {
   try {
-    const raw = localStorage.getItem('excel_autosave');
+    const raw = localStorage.getItem('sheet_autosave');
     if (!raw) return false;
     const d = JSON.parse(raw);
     if (d.sheets) {
@@ -3623,7 +3623,7 @@ async function uploadFileToSupabase(file, parsedSheets) {
   setSyncBadge('syncing');
 
   var storagePath = currentUser.id + '/' + Date.now() + '_' + file.name;
-  var uploadRes   = await sb.storage.from('excel-files').upload(storagePath, file, { upsert: false });
+  var uploadRes   = await sb.storage.from('sheet-files').upload(storagePath, file, { upsert: false });
   if (uploadRes.error) {
     toast('Cloud upload failed: ' + uploadRes.error.message, 'err');
     setSyncBadge('unsaved');
@@ -3695,7 +3695,7 @@ async function autoSave() {
     var recRes = await sb.from('files').select('storage_path').eq('id', currentFileId).single();
     if (recRes.error) throw recRes.error;
 
-    var upRes = await sb.storage.from('excel-files').upload(recRes.data.storage_path, blob, { upsert: true });
+    var upRes = await sb.storage.from('sheet-files').upload(recRes.data.storage_path, blob, { upsert: true });
     if (upRes.error) throw upRes.error;
 
     await sb.from('files').update({ updated_at: new Date().toISOString() }).eq('id', currentFileId);
@@ -3720,7 +3720,7 @@ async function syncFromSupabase(fileId, localTimestamp = null) {
     if (recRes.error) return;
     // Cloud versiyonu local'den daha yeni değilse overwrite etme (race condition fix)
     if (localTimestamp && recRes.data.updated_at <= localTimestamp) return;
-    var blobRes = await sb.storage.from('excel-files').download(recRes.data.storage_path);
+    var blobRes = await sb.storage.from('sheet-files').download(recRes.data.storage_path);
     if (blobRes.error) return;
     var ab = await blobRes.data.arrayBuffer();
     var wb = XLSX.read(ab);
@@ -3774,7 +3774,7 @@ async function loadFileById(fileId) {
     // Not cached — download from Supabase
     var recRes = await sb.from('files').select('*').eq('id', fileId).single();
     if (recRes.error) { toast(t('toast_file_not_found'), 'err'); return; }
-    var blobRes = await sb.storage.from('excel-files').download(recRes.data.storage_path);
+    var blobRes = await sb.storage.from('sheet-files').download(recRes.data.storage_path);
     if (blobRes.error) { toast(t('toast_file_dl_failed'), 'err'); return; }
     var ab = await blobRes.data.arrayBuffer();
     var wb = XLSX.read(ab);
@@ -3817,11 +3817,11 @@ async function saveVersion(label) {
     setSyncBadge('syncing');
     var recRes = await sb.from('files').select('*').eq('id', currentFileId).single();
     if (recRes.error) throw recRes.error;
-    var blobRes = await sb.storage.from('excel-files').download(recRes.data.storage_path);
+    var blobRes = await sb.storage.from('sheet-files').download(recRes.data.storage_path);
     if (blobRes.error) throw blobRes.error;
 
     var versionPath = recRes.data.storage_path.replace('.xlsx', '_v' + Date.now() + '.xlsx');
-    await sb.storage.from('excel-files').upload(versionPath, blobRes.data, { upsert: false });
+    await sb.storage.from('sheet-files').upload(versionPath, blobRes.data, { upsert: false });
 
     var verRes = await sb.from('file_versions')
       .select('version_number')
@@ -3849,7 +3849,7 @@ async function restoreVersion(versionId) {
   try {
     var verRes = await sb.from('file_versions').select('*').eq('id', versionId).single();
     if (verRes.error) throw verRes.error;
-    var blobRes = await sb.storage.from('excel-files').download(verRes.data.storage_path);
+    var blobRes = await sb.storage.from('sheet-files').download(verRes.data.storage_path);
     if (blobRes.error) throw blobRes.error;
     var ab = await blobRes.data.arrayBuffer();
     var wb = XLSX.read(ab);
@@ -3920,7 +3920,7 @@ async function deleteFile(fileId) {
     // Get storage path first
     var recRes = await sb.from('files').select('storage_path').eq('id', fileId).single();
     if (!recRes.error && recRes.data) {
-      await sb.storage.from('excel-files').remove([recRes.data.storage_path]);
+      await sb.storage.from('sheet-files').remove([recRes.data.storage_path]);
     }
     // file_versions cascade should handle versions via FK ON DELETE CASCADE
     await sb.from('files').delete().eq('id', fileId);
@@ -4340,7 +4340,7 @@ function handleCompareFile(input, role) {
   }
   const ext = file.name.split('.').pop().toLowerCase();
   if (!['xlsx', 'xls', 'csv'].includes(ext)) {
-    toast('Only Excel (.xlsx, .xls) and CSV files are supported', 'err');
+    toast('Only .xlsx, .xls, and CSV files are supported', 'err');
     input.value = '';
     return;
   }
@@ -4863,7 +4863,7 @@ function renderIntegrationShortcuts() {
   const localIcon = (file) => `<img src="/images/integrations/${file}" width="28" height="28" style="border-radius:7px;object-fit:contain">`;
   const configs = [
     { key:'int_gs',      name:'Google Sheets',    fn:'exportToGSheets',      icon: localIcon('googlesheets.svg') },
-    { key:'int_excel',   name:'Excel Online',     fn:'exportToExcelOnline',  icon: localIcon('microsoftexcel.svg') },
+
     { key:'int_notion',  name:'Notion',           fn:'exportToNotion',       icon: localIcon('notion.svg') },
     { key:'int_slack',   name:'Slack',            fn:'exportToSlack',        icon: localIcon('slack.svg') },
     { key:'int_airtable',name:'Airtable',         fn:'exportToAirtable',     icon: localIcon('airtable.svg') },
@@ -4963,20 +4963,6 @@ async function exportToGSheets() {
   }
 }
 
-function exportToExcelOnline() {
-  document.getElementById('export-dropdown').style.display = 'none';
-  if (typeof XLSX === 'undefined') { toast('SheetJS kütüphanesi yüklenemedi', 'err'); return; }
-  const data = sheets[activeSheet];
-  let lastRow = 0;
-  for (let r = 0; r < ROWS; r++) { if (data[r].some(c => c !== '')) lastRow = r + 1; }
-  const exportData = data.slice(0, Math.max(lastRow, 1));
-  const ws = XLSX.utils.aoa_to_sheet(exportData);
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, activeSheet || 'Sheet1');
-  const fileName = (activeSheet || 'Mocksheets') + '.xlsx';
-  XLSX.writeFile(wb, fileName);
-  toast(`"${fileName}" indirildi (${exportData.length} satır)`, 'ok');
-}
 
 async function exportToNotion() {
   document.getElementById('export-dropdown').style.display = 'none';

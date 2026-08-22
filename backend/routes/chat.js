@@ -43,8 +43,6 @@ const SYSTEM_PROMPT = `Sen Mocksheets AI Copilot'sun — Türkçe konuşan, Shop
 Kullanıcı slayt, sunum, PowerPoint veya presentation isterse, önce Türkçe açıklama yaz, sonra cevabının en sonuna şu bloğu ekle:
 <ACTION>{"type":"slide","slides":[{"title":"Başlık","subtitle":"Alt başlık","bullets":["Madde 1","Madde 2"]}],"filename":"sunum.html"}</ACTION>
 
-Kullanıcı Excel, tablo dosyası veya XLSX isterse, önce açıklama yaz, sonra:
-<ACTION>{"type":"excel","headers":["Sütun1","Sütun2","Sütun3"],"rows":[["değer1","değer2","değer3"]],"sheetName":"Sayfa1","filename":"tablo.xlsx"}</ACTION>
 
 Kullanıcı satış tahmini, öngörü, forecast veya projeksiyon isterse, önce açıklama yaz, sonra:
 <ACTION>{"type":"forecast","labels":["Ağu 2026","Eyl 2026","Eki 2026"],"values":[15000,18000,21000],"metric":"Tahmini Satış (₺)","trend":"up","note":"Tahmin genel e-ticaret büyüme trendlerine dayanmaktadır."}</ACTION>
@@ -105,8 +103,6 @@ function deriveTitle(msg) {
   return clean.slice(0, 60) || 'Yeni Sohbet';
 }
 
-// === Excel AI (Pipeline B) — Simple JSON action response ===
-const { buildExcelPrompt } = require('../prompts/excelPrompt');
 
 router.post('/', checkLimit, async (req, res) => {
   try {
@@ -118,18 +114,18 @@ router.post('/', checkLimit, async (req, res) => {
     const ragResult = retrieveShopifyExamples(trimmed, 3);
     const ragContext = ragResult.examples || [];
 
-    // Build Excel prompt with RAG
-    const prompt = buildExcelPrompt(trimmed, sheetContext || [], ragContext);
+    const ragBlock = buildRagBlock(ragContext);
+    const userContent = ragBlock ? `${ragBlock}\n\nKomut: ${trimmed}` : trimmed;
 
-    // Call Claude with simple Excel prompt
     const messages = [
       ...(Array.isArray(history) ? history.slice(-4) : []),
-      { role: 'user', content: prompt }
+      { role: 'user', content: userContent }
     ];
 
     const response = await anthropic.messages.create({
       model: 'claude-opus-4-7',
       max_tokens: 1024,
+      system: SYSTEM_PROMPT,
       messages
     });
 

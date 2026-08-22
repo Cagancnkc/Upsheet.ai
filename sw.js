@@ -1,5 +1,5 @@
-// ExcelAI Service Worker
-const CACHE_NAME = 'excelai-v1';
+// Mocksheets Service Worker
+const CACHE_NAME = 'mocksheets-v1';
 const PRECACHE_URLS = [
   '/',
   '/index.html',

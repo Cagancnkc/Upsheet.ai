@@ -7,7 +7,7 @@ const supabase = createClient(
 
 async function insertCommand(command, embedding) {
   const { data, error } = await supabase
-    .from('excel_commands')
+    .from('catalog_commands')
     .insert({
       user_command: command.user_command,
       logic:        command.logic || '',
