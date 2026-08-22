@@ -1218,6 +1218,25 @@
   }
   .pc-card-desc { font-size: 12px; color: #64748b; line-height: 1.5; }
 
+  /* Hero floating benefit chips */
+  @keyframes hero-chip-float {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-8px); }
+  }
+  .hero-benefit-chips { position:absolute; inset:0; pointer-events:none; z-index:1; }
+  .hero-benefit-chip {
+    position:absolute; display:flex; align-items:center; gap:6px;
+    padding:8px 12px; background:#fff; border:0.5px solid #e5e7eb;
+    border-radius:999px; box-shadow:0 4px 12px rgba(17,24,39,.08);
+    white-space:nowrap; font-size:11px; font-weight:600; color:#374151;
+    animation: hero-chip-float 4s ease-in-out infinite;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero-benefit-chip { animation:none !important; }
+  }
+  @media (max-width: 900px) {
+    .hero-benefit-chip { font-size:10px; padding:6px 10px; }
+  }
 
 </style>
 
@@ -1269,11 +1288,12 @@
 
 <!-- HERO -->
 <section class="hero" id="hero-variant-a">
+  <div class="hero-benefit-chips" data-hero="a"></div>
   <div class="wrap">
     <div class="hero-2col">
 
       <!-- SOL: başlık + CTA -->
-      <div class="hero-left">
+      <div class="hero-left" style="position:relative; z-index:2;">
         <span class="eyebrow" data-i18n="hero.badge">Shopify için AI Ürün Asistanı</span>
 
         <h1 data-i18n-html="hero.title">
@@ -1437,8 +1457,9 @@
 
 <!-- HERO VARIANT B (A/B test) -->
 <section class="hero" id="hero-variant-b">
+  <div class="hero-benefit-chips" data-hero="b"></div>
   <div class="wrap" style="max-width:1000px;">
-    <div style="text-align:center;padding:24px 0 0;">
+    <div style="text-align:center;padding:24px 0 0;position:relative;z-index:2;">
 
 
 
@@ -1515,6 +1536,52 @@
         });
       });
     }
+  });
+</script>
+
+<script>
+  // Hero floating benefit chips
+  const HERO_BENEFIT_CHIPS = [
+    { kind:'shopify',       label:'Otomatik Shopify Senkron',      top:'8%',  left:'4%',  delay:'0s' },
+    { kind:'ai-visibility', label:'AI Arama Motorlarında Görünün', top:'15%', left:'78%', delay:'0.5s' },
+    { kind:'text', text:'🔍',  label:'Toplu SEO Denetimi',           top:'35%', left:'2%',  delay:'1s' },
+    { kind:'text', text:'📊',  label:'Ziyaretçi Davranış Analizi',   top:'68%', left:'6%',  delay:'1.5s' },
+    { kind:'text', text:'🏷️',  label:'Toplu Ürün Düzenleme',         top:'25%', left:'85%', delay:'2s' },
+    { kind:'text', text:'🌍',  label:'Çok Dilli İçerik',              top:'55%', left:'82%', delay:'2.5s' },
+    { kind:'text', text:'✓',   label:'Onaylı Değişiklik',             top:'78%', left:'80%', delay:'3s' },
+    { kind:'text', text:'💰',  label:'Gerçek Satış Verisi',           top:'82%', left:'10%', delay:'3.5s' }
+  ];
+
+  function heroChipIconHtml(chip) {
+    if (chip.kind === 'shopify') {
+      return '<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/shopify.svg" width="14" height="14" alt="Shopify" style="filter:invert(48%) sepia(98%) saturate(400%) hue-rotate(90deg);"/>';
+    }
+    if (chip.kind === 'ai-visibility') {
+      return [
+        '<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/openai.svg" width="12" height="12" alt="ChatGPT" style="margin-right:2px;"/>',
+        '<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/anthropic.svg" width="12" height="12" alt="Claude" style="margin-right:2px;"/>',
+        '<img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/googlegemini.svg" width="12" height="12" alt="Gemini"/>'
+      ].join('');
+    }
+    return '<span style="font-size:14px;">' + chip.text + '</span>';
+  }
+
+  function renderHeroBenefitChips() {
+    var isMobile = window.innerWidth < 768;
+    var list = isMobile ? HERO_BENEFIT_CHIPS.slice(0, 4) : HERO_BENEFIT_CHIPS;
+    document.querySelectorAll('.hero-benefit-chips').forEach(function(container) {
+      container.innerHTML = list.map(function(chip) {
+        return '<div class="hero-benefit-chip" style="top:' + chip.top + ';left:' + chip.left + ';animation-delay:' + chip.delay + ';">' +
+          heroChipIconHtml(chip) + '<span>' + chip.label + '</span></div>';
+      }).join('');
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', renderHeroBenefitChips);
+  var __heroChipsResizeT;
+  window.addEventListener('resize', function() {
+    clearTimeout(__heroChipsResizeT);
+    __heroChipsResizeT = setTimeout(renderHeroBenefitChips, 150);
   });
 </script>
 
@@ -2063,6 +2130,9 @@ function toggleFaq(btn) {
     <div class="foot-bottom">
       <span>© 2026 Mocksheets · Shopify satıcıları için AI katalog yönetimi</span>
     </div>
+    <p style="font-size:9px;color:#d1d5db;text-align:center;margin:4px 0 0;">
+      ChatGPT, Claude, Gemini adları ve logoları ilgili şirketlere aittir.
+    </p>
   </div>
 </footer>
 
