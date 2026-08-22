@@ -7,7 +7,7 @@ const TRANSLATIONS = {
 
     'hero.badge': 'Shopify için AI Ürün Asistanı',
     'hero.title': 'Mağazanızın verilerini izleyin,<br>müşterilerin kaçış noktasını görün,<br><em>tek adımla <span class="accent">optimize edin.</span></em>',
-    'hero.desc': 'Hangi ürünün neden satmadığını tahmin etmeyin. Mocksheets ziyaretçi davranışınızı ve satış verinizi analiz eder, somut öneriler sunar — onayladığınızda mağazanıza otomatik yansır.',
+    'hero.desc': 'Hangi ürünün neden satmadığını tahmin etmeyin. Mocksheets ziyaretçi davranışınızı ve satış verilerinizi analiz ederek her ürün için somut öneriler üretir. Kullanıcı verinize göre mağazanızın her detayını — başlık, açıklama, SEO, fiyat, görsel ve kategori — <b style="color:var(--ink)">toplu şekilde düzenleyin</b>; onayladığınız değişiklikler saniyeler içinde Shopify mağazanıza otomatik yansısın.',
     'hero.cta1': 'Ücretsiz Kayıt Ol',
     'hero.cta2': 'Canlı Gör →',
     'hero.badge_v2': 'Yeni: Ziyaretçi Davranışına Dayalı AI Öneriler',
@@ -65,7 +65,7 @@ const TRANSLATIONS = {
 
     'hero.badge': 'AI Catalog Platform for Shopify',
     'hero.title': 'Manage & Optimize Your<br><em><span class="accent">Shopify Catalog with AI.</span></em>',
-    'hero.desc': 'AI analyzes your titles, SEO fields and descriptions, then proposes fixes. <b style="color:var(--ink)">You approve — Mocksheets writes back to Shopify.</b>',
+    'hero.desc': 'Stop guessing why products don\'t sell. Mocksheets analyzes visitor behavior and sales data to generate concrete recommendations for every product. Based on your real user data, <b style="color:var(--ink)">bulk-edit every detail</b> of your store — titles, descriptions, SEO, prices, images and categories — and every change you approve syncs to your Shopify store automatically in seconds.',
     'hero.cta1': 'Sign Up Free',
     'hero.cta2': 'See Live →',
     'hero.badge_v2': 'New: AI Suggestions Based on Visitor Behavior',
