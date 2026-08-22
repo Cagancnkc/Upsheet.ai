@@ -1100,16 +1100,7 @@ async function loadUserPlan() {
 
     if (upgradeBtn) upgradeBtn.style.display = data.plan === 'free' ? 'block' : 'none';
 
-    // PH bonus button visibility
-    const phBtn = document.getElementById('ph-claim-btn');
-    const phBadge = document.getElementById('ph-claimed-badge');
-    if (data.ph_bonus_claimed) {
-      if (phBtn) phBtn.style.display = 'none';
-      if (phBadge) phBadge.style.display = 'block';
-    } else {
-      if (phBtn) phBtn.style.display = 'block';
-      if (phBadge) phBadge.style.display = 'none';
-    }
+
   } catch(e) {
     console.warn('Plan bilgisi alınamadı:', e);
   }
@@ -3697,6 +3688,10 @@ async function renderSettingsPage() {
   });
 
   document.getElementById('open-delete-modal-btn').addEventListener('click', () => openDeleteAccountModal());
+
+  document.getElementById('shopify-review-btn')?.addEventListener('click', function() {
+    window.open('https://apps.shopify.com/mocksheets/reviews', '_blank', 'noopener,noreferrer');
+  });
 
   await renderProfileInfo();
   await renderSubscriptionSection();
