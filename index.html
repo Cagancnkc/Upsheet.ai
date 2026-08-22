@@ -24,6 +24,31 @@
       localStorage.setItem('_hero_variant', v);
     }
     document.documentElement.dataset.heroVariant = v;
+    window.__AB = { variant: v, testId: 'hero-v1', startDate: '2026-08-22' };
+
+    // GA4 view event — fired once per session
+    var sessionKey = '_ab_viewed_' + window.__AB.testId;
+    if (!sessionStorage.getItem(sessionKey)) {
+      sessionStorage.setItem(sessionKey, '1');
+      window.addEventListener('load', function() {
+        if (typeof gtag === 'function') {
+          gtag('event', 'ab_test_view', { ab_variant: v, ab_test_id: window.__AB.testId });
+        }
+      });
+    }
+
+    // CTA click tracking
+    document.addEventListener('click', function(e) {
+      var el = e.target.closest('[data-ab-cta]');
+      if (!el) return;
+      if (typeof gtag === 'function') {
+        gtag('event', 'ab_test_click', {
+          ab_variant: v,
+          ab_test_id: window.__AB.testId,
+          ab_cta: el.getAttribute('data-ab-cta')
+        });
+      }
+    });
   })();
 </script>
 <style>
@@ -921,12 +946,8 @@
   .tax-row:last-child{border-bottom:0;font-weight:600}
   .tax-row .amt{color:var(--ink)}
 
-  /* logo strip animation */
-  .scrolling-row{
-    overflow:hidden;mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);
-  }
-  .scrolling-row .track{display:flex;gap:48px;animation:scroll 30s linear infinite;width:max-content}
-  @keyframes scroll{to{transform:translateX(-50%)}}
+  .scrolling-row{overflow:hidden;}
+  .scrolling-row .track{display:flex;flex-wrap:wrap;gap:32px;justify-content:center;}
 
   /* responsive nav */
   @media (max-width:780px){
@@ -1237,6 +1258,9 @@
   @media (max-width: 900px) {
     .hero-benefit-chip { font-size:10px; padding:6px 10px; }
   }
+  @media (max-width: 600px) {
+    .hero-benefit-chips { display:none; }
+  }
 
 </style>
 
@@ -1319,8 +1343,8 @@
         </div>
 
         <div class="hero-actions">
-          <a href="/auth" class="btn btn-dark" data-i18n="hero.cta1">Ücretsiz Kayıt Ol</a>
-          <a href="#demo" class="btn btn-outline" data-i18n="hero.cta2">Canlı Gör →</a>
+          <a href="/auth" class="btn btn-dark" data-i18n="hero.cta1" data-ab-cta="signup-a">Ücretsiz Kayıt Ol</a>
+          <a href="#demo" class="btn btn-outline" data-i18n="hero.cta2" data-ab-cta="demo-a">Canlı Gör →</a>
         </div>
 
         <div style="margin-top:20px;">
@@ -1425,8 +1449,8 @@
       </div>
 
       <div class="hero-actions" style="justify-content:center;margin-bottom:12px;">
-        <a href="/auth" class="btn btn-dark" data-i18n="hero.cta1_v2">Ücretsiz Başlayın →</a>
-        <a href="/pricing" class="btn btn-outline" data-i18n="hero.cta2_v2">Fiyatları Gör</a>
+        <a href="/auth" class="btn btn-dark" data-i18n="hero.cta1_v2" data-ab-cta="signup-b">Ücretsiz Başlayın →</a>
+        <a href="/pricing" class="btn btn-outline" data-i18n="hero.cta2_v2" data-ab-cta="pricing-b">Fiyatları Gör</a>
       </div>
 
       <p data-i18n="hero.trust_v2" style="font-size:12px;color:var(--mute);margin:0 0 40px;">
@@ -1507,86 +1531,6 @@
   });
 </script>
 
-<script>
-(function() {
-  var ICON_SOURCES = [
-    {
-      url: 'https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/shopify.svg',
-      colorFilter: 'invert(48%) sepia(98%) saturate(400%) hue-rotate(90deg)',
-      label: 'shopify'
-    },
-    {
-      url: 'https://cdn.jsdelivr.net/npm/@shopify/polaris-icons@9/dist/svg/CashDollarIcon.svg',
-      colorFilter: 'none',
-      label: 'sale-notification'
-    }
-  ];
-
-  var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (prefersReducedMotion) return;
-
-  var heroSections = [
-    document.getElementById('hero-variant-a'),
-    document.getElementById('hero-variant-b')
-  ].filter(Boolean);
-
-  var lastSpawnTime = 0;
-  var SPAWN_THROTTLE_MS = 150;
-
-  function spawnIcon(container, x, y) {
-    var source = ICON_SOURCES[Math.floor(Math.random() * ICON_SOURCES.length)];
-
-    var wrapper = document.createElement('div');
-    wrapper.style.cssText =
-      'position:absolute;left:' + x + 'px;top:' + y + 'px;' +
-      'width:22px;height:22px;pointer-events:none;opacity:0;' +
-      'transform:scale(0.5);transition:opacity .5s ease,transform .5s ease;' +
-      'z-index:5;';
-
-    var img = document.createElement('img');
-    img.src = source.url;
-    img.style.cssText = 'width:100%;height:100%;display:block;';
-    if (source.colorFilter !== 'none') {
-      img.style.filter = source.colorFilter;
-    }
-    wrapper.appendChild(img);
-
-    if (source.label === 'sale-notification') {
-      var badge = document.createElement('span');
-      badge.textContent = '+1';
-      badge.style.cssText =
-        'position:absolute;top:-6px;right:-8px;background:#16a34a;' +
-        'color:#fff;font-size:9px;font-weight:700;padding:1px 4px;' +
-        'border-radius:999px;line-height:1.2;';
-      wrapper.appendChild(badge);
-    }
-
-    container.appendChild(wrapper);
-
-    requestAnimationFrame(function() {
-      wrapper.style.opacity = '0.85';
-      wrapper.style.transform = 'scale(1) translateY(-16px)';
-    });
-
-    setTimeout(function() {
-      wrapper.style.opacity = '0';
-      wrapper.style.transform = 'scale(0.8) translateY(-32px)';
-      setTimeout(function() { wrapper.remove(); }, 500);
-    }, 600);
-  }
-
-  heroSections.forEach(function(section) {
-    section.addEventListener('mousemove', function(e) {
-      var now = Date.now();
-      if (now - lastSpawnTime < SPAWN_THROTTLE_MS) return;
-      lastSpawnTime = now;
-
-      var rect = section.getBoundingClientRect();
-      spawnIcon(section, e.clientX - rect.left, e.clientY - rect.top);
-    });
-  });
-})();
-</script>
 
 <!-- FEATURES -->
 <section id="features" style="padding: 80px 0;">

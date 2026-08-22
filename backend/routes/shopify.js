@@ -218,6 +218,27 @@ router.get('/callback', async (req, res) => {
       }
     }
 
+    /*
+     * DB MIGRATION REQUIRED (run once in Supabase SQL editor):
+     * ALTER TABLE shopify_connections DROP CONSTRAINT IF EXISTS shopify_connections_user_id_key;
+     * ALTER TABLE shopify_connections ADD CONSTRAINT shopify_connections_user_shop_unique UNIQUE (user_id, shop_domain);
+     * ALTER TABLE user_usage ADD COLUMN IF NOT EXISTS active_shop_id text;
+     */
+    // Check store limit before connecting
+    const PLANS = require('../config/plans');
+    const usageRow = await sb.from('user_usage').select('plan').eq('user_id', userId).single().then(r => r.data);
+    const userPlan = PLANS[usageRow?.plan] || PLANS.free;
+    const maxStores = userPlan.max_stores || 1;
+    const { count: existingStoreCount } = await sb.from('shopify_connections')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', userId)
+      .neq('shop_domain', shop); // exclude current shop (re-connect is ok)
+    if ((existingStoreCount || 0) >= maxStores) {
+      const msg = `Planınız en fazla ${maxStores} mağaza bağlamanıza izin veriyor. Ultra plana geçerek 5 mağazaya kadar bağlayabilirsiniz.`;
+      if (session.mode === 'popup') return failPopup(msg);
+      return res.redirect(`${frontend}/pricing?reason=store_limit`);
+    }
+
     await sb.from('shopify_connections').upsert(
       {
         user_id: userId,
@@ -233,7 +254,7 @@ router.get('/callback', async (req, res) => {
         },
         updated_at: new Date().toISOString(),
       },
-      { onConflict: 'user_id' }
+      { onConflict: 'user_id,shop_domain' }
     );
 
     if (session.mode === 'popup') {
@@ -986,7 +1007,7 @@ DAVRANIŞ VERİSİ KULLANIMI: Bazı ürünlerin yanında son 14 günün gerçek 
     res.json({ suggestions, analyzedCount: products.length, totalScanned });
   } catch (e) {
     console.error('[shopify ai-analyze]', e.message);
-    res.status(500).json({ error: e.message });
+    res.status(500).json({ error: "Sunucu hatası" });
   }
 });
 
@@ -1005,7 +1026,7 @@ router.get('/rag-status', requireAuth, async (req, res) => {
     });
   } catch (err) {
     console.error('[shopify/rag-status]', err.message);
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: "Sunucu hatası" });
   }
 });
 
@@ -1229,7 +1250,7 @@ Kurallar:
     });
   } catch (e) {
     console.error('[shopify/chat] hata:', e);
-    res.status(500).json({ error: e.message });
+    res.status(500).json({ error: "Sunucu hatası" });
   }
 });
 
@@ -1245,7 +1266,7 @@ router.get('/notifications', requireAuth, async (req, res) => {
     res.json({ notifications: data || [], unreadCount: unreadCount || 0 });
   } catch (e) {
     console.error('[shopify/notifications]', e.message);
-    res.status(500).json({ error: e.message });
+    res.status(500).json({ error: "Sunucu hatası" });
   }
 });
 
@@ -1256,7 +1277,7 @@ router.post('/notifications/mark-read', requireAuth, async (req, res) => {
     res.json({ ok: true });
   } catch (e) {
     console.error('[shopify/notifications/mark-read]', e.message);
-    res.status(500).json({ error: e.message });
+    res.status(500).json({ error: "Sunucu hatası" });
   }
 });
 
@@ -1316,7 +1337,7 @@ router.post('/analytics/enable', requireAuth, async (req, res) => {
     res.json({ ok: true, script_id: trackerData.script_tag.id });
   } catch (e) {
     console.error('[shopify/analytics/enable]', e.message);
-    res.status(500).json({ error: e.message });
+    res.status(500).json({ error: "Sunucu hatası" });
   }
 });
 
@@ -1352,7 +1373,44 @@ router.post('/analytics/disable', requireAuth, async (req, res) => {
     res.json({ ok: true });
   } catch (e) {
     console.error('[shopify/analytics/disable]', e.message);
-    res.status(500).json({ error: e.message });
+    res.status(500).json({ error: "Sunucu hatası" });
+  }
+});
+
+// ── Multi-store: list all connected stores ─────────────────────────────────
+router.get('/connections', requireAuth, async (req, res) => {
+  try {
+    const sb = getSupabase();
+    const { data, error } = await sb.from('shopify_connections')
+      .select('shop_domain, shop_name, shop_meta, updated_at, last_sync')
+      .eq('user_id', req.userId)
+      .order('updated_at', { ascending: false });
+    if (error) throw error;
+    const activeShop = await sb.from('user_usage').select('active_shop_id').eq('user_id', req.userId).single()
+      .then(r => r.data?.active_shop_id || null);
+    res.json({ connections: data || [], active_shop: activeShop });
+  } catch (e) {
+    res.status(500).json({ error: 'Mağaza listesi alınamadı' });
+  }
+});
+
+// ── Multi-store: switch active store ──────────────────────────────────────
+router.post('/switch-store', requireAuth, async (req, res) => {
+  const { shop_domain } = req.body || {};
+  if (!shop_domain) return res.status(400).json({ error: 'shop_domain gerekli' });
+  try {
+    const sb = getSupabase();
+    // Verify user owns this store
+    const { data: conn } = await sb.from('shopify_connections')
+      .select('shop_domain, shop_name')
+      .eq('user_id', req.userId)
+      .eq('shop_domain', shop_domain)
+      .single();
+    if (!conn) return res.status(404).json({ error: 'Mağaza bulunamadı' });
+    await sb.from('user_usage').update({ active_shop_id: shop_domain }).eq('user_id', req.userId);
+    res.json({ success: true, active_shop: shop_domain, shop_name: conn.shop_name });
+  } catch (e) {
+    res.status(500).json({ error: 'Mağaza değiştirilemedi' });
   }
 });
 

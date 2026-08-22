@@ -569,11 +569,17 @@
             <path d="M45.5 47.3l-3.8 11.2s-3.3-1.8-7.4-1.8c-6 0-6.3 3.8-6.3 4.7 0 5.2 13.5 7.2 13.5 19.3 0 9.5-6 15.6-14.2 15.6-9.8 0-14.7-6.1-14.7-6.1l2.6-8.7s5.1 4.4 9.5 4.4c2.8 0 4-2.2 4-3.9 0-6.8-11.1-7.1-11.1-18.2 0-9.3 6.7-18.4 20.2-18.4 5 0 7.7 1.9 7.7 1.9z" fill="#fff"/>
           </svg>
       </div>
-      <div style="min-width:0;">
+      <div style="min-width:0;flex:1;">
         <p id="sidebar-store-name" style="font-size:12px;font-weight:600;color:#111827;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">—</p>
         <p style="font-size:10px;color:#9ca3af;margin:0;">Shopify Mağazası</p>
       </div>
+      <button id="sidebar-switch-store-btn" type="button" title="Mağaza Değiştir"
+        style="display:none;width:24px;height:24px;border:0.5px solid #e5e7eb;border-radius:6px;background:#fff;cursor:pointer;align-items:center;justify-content:center;flex-shrink:0;">
+        <i class="ti ti-switch-2" style="font-size:13px;color:#6b7280;"></i>
+      </button>
     </div>
+    <!-- Mağaza seçici dropdown (multi-store) -->
+    <div id="sidebar-store-switcher" style="display:none;margin:0 8px 8px;border:0.5px solid #e5e7eb;border-radius:10px;overflow:hidden;background:#fff;"></div>
 
     <div id="sidebar-nav-list" style="padding:8px 6px;"></div>
 
@@ -1101,10 +1107,59 @@ async function loadUserPlan() {
 
     if (upgradeBtn) upgradeBtn.style.display = data.plan === 'free' ? 'block' : 'none';
 
+    // Multi-store: load connected stores if plan supports it
+    if (data.plan === 'ultra' || data.plan === 'business') {
+      loadConnectedStores();
+    }
 
   } catch(e) {
     console.warn('Plan bilgisi alınamadı:', e);
   }
+}
+
+async function loadConnectedStores() {
+  try {
+    const res = await fetch(API_URL + '/api/shopify/connections', { headers: await authHeaders() });
+    if (!res.ok) return;
+    const data = await res.json();
+    const stores = data.connections || [];
+    const activeShop = data.active_shop;
+    const switchBtn = document.getElementById('sidebar-switch-store-btn');
+    const switcher = document.getElementById('sidebar-store-switcher');
+    if (stores.length <= 1) { if (switchBtn) switchBtn.style.display = 'none'; return; }
+    if (switchBtn) switchBtn.style.display = 'flex';
+    if (switchBtn) switchBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      if (!switcher) return;
+      switcher.style.display = switcher.style.display === 'none' ? '' : 'none';
+    });
+    if (switcher) {
+      switcher.innerHTML = stores.map(s =>
+        '<button type="button" data-shop="' + s.shop_domain + '" style="width:100%;display:flex;align-items:center;gap:8px;padding:10px 12px;border:none;background:' +
+        (s.shop_domain === activeShop ? '#f0fdf4' : '#fff') + ';cursor:pointer;font-size:12px;color:#111827;text-align:left;">' +
+        '<span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + (s.shop_name || s.shop_domain) + '</span>' +
+        (s.shop_domain === activeShop ? '<i class="ti ti-check" style="color:#16a34a;font-size:13px;"></i>' : '') +
+        '</button>'
+      ).join('');
+      switcher.querySelectorAll('[data-shop]').forEach(function(btn) {
+        btn.addEventListener('click', async function() {
+          const shop = this.getAttribute('data-shop');
+          try {
+            await fetch(API_URL + '/api/shopify/switch-store', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', ...(await authHeaders()) },
+              body: JSON.stringify({ shop_domain: shop }),
+            });
+            localStorage.setItem('mocksheets_shop_domain', shop);
+            const storeNameEl = document.getElementById('sidebar-store-name');
+            if (storeNameEl) storeNameEl.textContent = shop.replace('.myshopify.com', '');
+            if (switcher) switcher.style.display = 'none';
+            toast('Mağaza değiştirildi: ' + shop.replace('.myshopify.com', ''), 'success');
+          } catch (e) { toast('Mağaza değiştirilemedi', 'error'); }
+        });
+      });
+    }
+  } catch (e) { /* multi-store panel silent fail */ }
 }
 
 // ═══════════════════════════════════════════════════════════════════════

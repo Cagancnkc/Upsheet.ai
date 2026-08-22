@@ -172,9 +172,18 @@ const aiLimiter = rateLimit({
   max: 15,
   message: { error: 'AI istek limiti aşıldı. 1 dakika sonra tekrar deneyin.' }
 });
+// Shopify AI analyze — stricter limit (expensive operation)
+const shopifyAnalyzeLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'AI analiz limiti aşıldı. 1 dakika sonra tekrar deneyin.' }
+});
 app.use('/api/', generalLimiter);
 app.use('/api/ai', aiLimiter);
 app.use('/api/batch-ai', aiLimiter);
+app.use('/api/shopify/ai-analyze', shopifyAnalyzeLimiter);
 
 const integrationsRouter = require('./routes/integrations');
 const stripeRouter = require('./routes/stripe');

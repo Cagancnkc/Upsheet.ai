@@ -3510,6 +3510,7 @@
 html, body { overflow-x: hidden; max-width: 100%; }
 
 @media (max-width: 768px) {
+  #mobile-menu-btn { display: flex !important; }
   .shopify-layout,
   .shopify-layout.ai-panel-open {
     grid-template-columns: 1fr !important;
@@ -3519,6 +3520,18 @@ html, body { overflow-x: hidden; max-width: 100%; }
     overflow-x: hidden;
   }
   .sf-sidebar { display: none !important; }
+  .sf-sidebar.mobile-open {
+    display: flex !important;
+    position: fixed; top: 0; left: 0; bottom: 0;
+    width: min(280px, 85vw); z-index: 500;
+    transform: translateX(0); box-shadow: 4px 0 24px rgba(0,0,0,.18);
+  }
+  .mobile-sidebar-backdrop {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,.4); z-index: 499; cursor: pointer;
+  }
+  body.mobile-sidebar-open .mobile-sidebar-backdrop { display: block; }
+  body.mobile-sidebar-open { overflow: hidden; }
   .sf-topbar,
   .sf-main-content-row,
   .sf-stats-row {
@@ -3536,4 +3549,35 @@ html, body { overflow-x: hidden; max-width: 100%; }
 @media (max-width: 480px) {
   .sf-topbar { height: auto !important; padding: 8px 12px !important; flex-wrap: wrap; }
   .sf-stat-card { min-width: 140px; }
+}
+
+/* ============ Mobile bug fixes ============ */
+
+/* Body scroll lock when sidebar/drawer is open */
+body.sidebar-open-lock { overflow: hidden; }
+
+/* Chat panel — full width on mobile */
+@media (max-width: 480px) {
+  .sf-chat-panel { width: 100vw; }
+}
+
+/* Topbar action buttons — icon-only on very small screens */
+@media (max-width: 420px) {
+  .topbar-action-label { display: none; }
+}
+
+/* Dashboard right rail overlay backdrop */
+.rail-backdrop {
+  display: none;
+  position: fixed; inset: 0; background: rgba(0,0,0,.35);
+  z-index: 299; cursor: pointer;
+}
+@media (max-width: 768px) {
+  .rail.open ~ .rail-backdrop,
+  .sidebar.open ~ .rail-backdrop { display: block; }
+}
+
+/* Prevent horizontal overflow on small screens */
+@media (max-width: 600px) {
+  .ms-toast { right: 12px; left: 12px; min-width: 0; max-width: 100%; }
 }
