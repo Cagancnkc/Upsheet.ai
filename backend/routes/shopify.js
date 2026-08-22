@@ -695,11 +695,26 @@ router.post('/push', requireAuth, async (req, res) => {
     if (pushed > 0) createNotification(req.user.id, "Değişiklikler Shopify'a aktarıldı",
       `${pushed} ürün güncellendi`, 'sync', getSupabase()).catch(() => {});
 
+    let isFirstSuccess = false;
+    if (pushed > 0) {
+      const sb = getSupabase();
+      const { data: usg } = await sb.from('user_usage')
+        .select('first_success_shown, plan')
+        .eq('user_id', req.user.id).single();
+      if (usg && !usg.first_success_shown && usg.plan === 'free') {
+        isFirstSuccess = true;
+        await sb.from('user_usage')
+          .update({ first_success_shown: true })
+          .eq('user_id', req.user.id);
+      }
+    }
+
     res.json({
       pushed,
       skipped,
       errors: errors.length > 0 ? errors : undefined,
       scope_missing: scopeMissing || undefined,
+      isFirstSuccess,
     });
   } catch (err) {
     console.error('[shopify push]', err.message);

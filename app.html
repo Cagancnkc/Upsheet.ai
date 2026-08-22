@@ -579,66 +579,6 @@
 
     <div class="sf-sidebar-spacer"></div>
 
-    <div style="margin:12px 12px 0;">
-      <a href="https://www.producthunt.com/products/mocksheets?launch=mocksheets"
-         target="_blank" rel="noopener noreferrer"
-         style="display:flex;align-items:center;gap:10px;background:#fff;border:0.5px solid #e5e7eb;border-radius:12px;padding:10px 12px;text-decoration:none;transition:all .15s;"
-         onmouseover="this.style.borderColor='#DA552F';this.style.boxShadow='0 4px 12px rgba(218,85,47,.12)'"
-         onmouseout="this.style.borderColor='#e5e7eb';this.style.boxShadow='none'">
-        <svg width="24" height="24" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="flex-shrink:0;">
-          <circle cx="20" cy="20" r="20" fill="#DA552F"/>
-          <path d="M22.667 20H17v-6h5.667a3 3 0 0 1 0 6zm0-10H13v20h4v-6h5.667a7 7 0 1 0 0-14z" fill="#FFFFFF"/>
-        </svg>
-        <div style="min-width:0;line-height:1.2;">
-          <div style="font-size:9px;color:#9ca3af;font-weight:500;letter-spacing:.02em;">Product Hunt'ta</div>
-          <div style="font-size:12px;font-weight:700;color:#111827;">Mocksheets</div>
-        </div>
-      </a>
-      <p style="font-size:10px;color:#6b7280;margin:8px 2px 0;line-height:1.4;">
-        🎁 Product Hunt'ta <strong>upvote + yorum</strong> yaparsan sana özel <strong style="color:#16a34a;">+10 ekstra komut</strong> hediye!
-      </p>
-      <button id="ph-claim-btn" type="button"
-        style="display:none;width:100%;margin-top:8px;padding:7px 0;background:#DA552F;color:#fff;border:none;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;letter-spacing:.02em;"
-        onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
-        🎁 Ödülü Al (+10 komut)
-      </button>
-      <p id="ph-claimed-badge" style="display:none;font-size:10px;color:#16a34a;font-weight:600;margin:8px 2px 0;text-align:center;">
-        ✅ +10 komut alındı!
-      </p>
-    </div>
-
-    <!-- Product Hunt Claim Modal -->
-    <div id="ph-claim-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;align-items:center;justify-content:center;">
-      <div style="background:#fff;border-radius:16px;padding:24px;width:320px;max-width:90vw;box-shadow:0 20px 60px rgba(0,0,0,.18);">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
-          <svg width="28" height="28" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;">
-            <circle cx="20" cy="20" r="20" fill="#DA552F"/>
-            <path d="M22.667 20H17v-6h5.667a3 3 0 0 1 0 6zm0-10H13v20h4v-6h5.667a7 7 0 1 0 0-14z" fill="#fff"/>
-          </svg>
-          <div>
-            <div style="font-size:13px;font-weight:700;color:#111827;">+10 Ekstra Komut Al</div>
-            <div style="font-size:11px;color:#6b7280;">Product Hunt kullanıcı adını gir</div>
-          </div>
-        </div>
-        <p style="font-size:11px;color:#6b7280;margin:0 0 12px;line-height:1.5;">
-          Mocksheets'e <strong>upvote + yorum</strong> yaptıktan sonra Product Hunt kullanıcı adını gir, +10 komut hemen eklensin.
-        </p>
-        <input id="ph-username-input" type="text" placeholder="@kullanici-adi"
-          style="width:100%;box-sizing:border-box;padding:9px 12px;border:1px solid #d1d5db;border-radius:8px;font-size:13px;outline:none;margin-bottom:10px;"
-          onfocus="this.style.borderColor='#DA552F'" onblur="this.style.borderColor='#d1d5db'">
-        <div id="ph-modal-error" style="display:none;font-size:11px;color:#dc2626;margin-bottom:8px;"></div>
-        <div style="display:flex;gap:8px;">
-          <button id="ph-modal-cancel" type="button"
-            style="flex:1;padding:8px;border:1px solid #e5e7eb;background:#f9fafb;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;color:#374151;">
-            İptal
-          </button>
-          <button id="ph-modal-submit" type="button"
-            style="flex:2;padding:8px;background:#DA552F;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;">
-            Doğrula &amp; Al
-          </button>
-        </div>
-      </div>
-    </div>
 
     <div style="margin:12px;">
       <div style="border-radius:12px;padding:14px;background:#f9fafb;border:0.5px solid #e5e7eb;">
@@ -1173,66 +1113,6 @@ async function loadUserPlan() {
   } catch(e) {
     console.warn('Plan bilgisi alınamadı:', e);
   }
-}
-
-function initPhClaimFlow() {
-  const btn = document.getElementById('ph-claim-btn');
-  const modal = document.getElementById('ph-claim-modal');
-  const cancelBtn = document.getElementById('ph-modal-cancel');
-  const submitBtn = document.getElementById('ph-modal-submit');
-  const input = document.getElementById('ph-username-input');
-  const errEl = document.getElementById('ph-modal-error');
-  if (!btn || !modal) return;
-
-  btn.addEventListener('click', () => {
-    input.value = '';
-    if (errEl) { errEl.textContent = ''; errEl.style.display = 'none'; }
-    modal.style.display = 'flex';
-    setTimeout(() => input.focus(), 50);
-  });
-
-  cancelBtn?.addEventListener('click', () => { modal.style.display = 'none'; });
-  modal.addEventListener('click', (e) => { if (e.target === modal) modal.style.display = 'none'; });
-
-  submitBtn?.addEventListener('click', async () => {
-    const username = input.value.trim().replace(/^@/, '');
-    if (!username) { showErr('Kullanıcı adı boş olamaz'); return; }
-
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'Doğrulanıyor…';
-    if (errEl) { errEl.textContent = ''; errEl.style.display = 'none'; }
-
-    try {
-      const headers = await authHeaders();
-      const res = await fetch(API_URL + '/api/producthunt/claim', {
-        method: 'POST',
-        headers: { ...headers, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ph_username: username })
-      });
-      const data = await res.json();
-      if (res.ok) {
-        modal.style.display = 'none';
-        toast(data.message || '🎁 +10 ekstra komut hesabına eklendi!', 'success');
-        document.getElementById('ph-claim-btn').style.display = 'none';
-        const badge = document.getElementById('ph-claimed-badge');
-        if (badge) badge.style.display = 'block';
-        loadUserPlan();
-      } else {
-        showErr(data.error || 'Bir hata oluştu');
-      }
-    } catch (e) {
-      showErr('Bağlantı hatası, tekrar dene');
-    } finally {
-      submitBtn.disabled = false;
-      submitBtn.textContent = 'Doğrula & Al';
-    }
-
-    function showErr(msg) {
-      if (errEl) { errEl.textContent = msg; errEl.style.display = 'block'; }
-    }
-  });
-
-  input.addEventListener('keydown', (e) => { if (e.key === 'Enter') submitBtn?.click(); });
 }
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -3786,6 +3666,17 @@ async function renderSettingsPage() {
       <button id="export-my-data-btn" type="button" style="padding:7px 16px;background:#f3f4f6;color:#374151;border:0.5px solid #e5e7eb;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;">Verilerimi İndir</button>
     </div>
 
+    <div style="margin-top:32px;padding-top:24px;border-top:0.5px solid #e5e7eb;">
+      <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 4px;">Mocksheets'i Değerlendirin</p>
+      <p style="font-size:12px;color:#6b7280;margin:0 0 12px;">Deneyiminizi Shopify App Store'da paylaşmak ister misiniz?</p>
+      <button id="shopify-review-btn" type="button"
+        style="display:flex;align-items:center;gap:8px;padding:8px 16px;border:0.5px solid #e5e7eb;border-radius:10px;background:#fff;color:#374151;font-size:12px;font-weight:600;cursor:pointer;">
+        <img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/shopify.svg" width="14" height="14"
+             style="filter:invert(48%) sepia(98%) saturate(400%) hue-rotate(90deg);"/>
+        Shopify'da Değerlendirin
+      </button>
+    </div>
+
     <div style="margin-top:32px;padding:16px;border:1px solid #fca5a5;border-radius:12px;">
       <p style="font-size:13px;font-weight:600;color:#dc2626;margin:0 0 4px;">Tehlikeli Bölge</p>
       <p style="font-size:12px;color:#6b7280;margin:0 0 12px;">Hesabınızı kalıcı olarak silmek tüm verilerinizi siler ve geri alınamaz.</p>
@@ -3862,6 +3753,46 @@ async function renderProfileInfo() {
   }
 }
 
+function renderPlanComparisonWidget(planKey) {
+  const box = document.getElementById('subscription-section');
+  if (!box || planKey !== 'free') return;
+
+  const analysis = typeof computeCatalogIssues === 'function' ? computeCatalogIssues() : null;
+  const issueCount = analysis ? analysis.totalIssueCount : 0;
+  const totalProducts = analysis ? analysis.totalProducts : 0;
+
+  const issueLabel = issueCount > 0
+    ? `${issueCount} sorun tespit edildi (${totalProducts} ürün içinde)`
+    : 'Henüz analiz çalıştırılmadı';
+
+  const widget = document.createElement('div');
+  widget.id = 'plan-comparison-widget';
+  widget.style.cssText = 'margin-top:16px;';
+  widget.innerHTML = `
+    <div style="border:0.5px solid #e5e7eb;border-radius:12px;padding:16px;background:#f9fafb;">
+      <p style="font-size:12px;font-weight:600;color:#111827;margin:0 0 10px;">Free vs Pro — Sizin Kataloğunuza Göre</p>
+      <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:0.5px solid #e5e7eb;">
+        <span style="font-size:12px;color:#6b7280;">Tespit edilen sorun</span>
+        <span style="font-size:12px;color:#111827;">${issueLabel} · Free: yalnızca 5 ürünü analiz eder</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:0.5px solid #e5e7eb;">
+        <span style="font-size:12px;color:#6b7280;">Öneri kaynağı</span>
+        <span style="font-size:12px;color:#374151;">Free: Statik kurallar &nbsp;→&nbsp; <strong style="color:#16a34a;">Pro: Gerçek ziyaretçi verisi</strong></span>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:8px 0;">
+        <span style="font-size:12px;color:#6b7280;">Günlük AI komutu</span>
+        <span style="font-size:12px;color:#374151;">5 → <strong style="color:#16a34a;">15</strong></span>
+      </div>
+    </div>
+    <div style="margin-top:10px;padding:12px 14px;background:#fff;border:0.5px solid #e5e7eb;border-radius:10px;">
+      <p style="font-size:11px;color:#9ca3af;margin:0;">
+        <strong style="color:#374151;">Shopify Magic kullanıyorsanız:</strong>
+        Magic tek ürün için içerik yazar. Mocksheets mağazanızın tamamını sürekli izler ve toplu düzeltir.
+      </p>
+    </div>`;
+  box.appendChild(widget);
+}
+
 async function renderSubscriptionSection() {
   const box = document.getElementById('subscription-section');
   if (!box) return;
@@ -3935,6 +3866,8 @@ async function renderSubscriptionSection() {
         uncancelBtn.textContent = 'İptali Geri Al';
       }
     });
+
+    renderPlanComparisonWidget(planKey);
   } catch (e) {
     box.innerHTML = `
       <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 8px;">Abonelik</p>
@@ -4071,49 +4004,6 @@ async function loadVisibilityChecks() {
   }
 }
 
-async function loadPhReviewsAdmin() {
-  const container = document.getElementById('ph-reviews-admin-list');
-  if (!container) return;
-  try {
-    const res = await fetch(API_URL + '/api/integrations/producthunt-reviews/all', { headers: await authHeaders() });
-    const data = await res.json();
-    if (!data.reviews || data.reviews.length === 0) {
-      container.innerHTML = '<p style="font-size:12px;color:#9ca3af;">Henüz yorum çekilmedi. Cron job her gün 06:00\'da çalışır.</p>';
-      return;
-    }
-    container.innerHTML = data.reviews.map(r => {
-      const date = r.ph_created_at ? new Date(r.ph_created_at).toLocaleDateString('tr-TR') : '';
-      const checked = r.is_visible ? 'checked' : '';
-      const bgColor = r.is_visible ? '#f0fdf4' : '#f9fafb';
-      const short = r.content.length > 100 ? r.content.slice(0, 100) + '…' : r.content;
-      return `<div style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:0.5px solid #e5e7eb;border-radius:10px;background:${bgColor};">
-        <input type="checkbox" data-ph-id="${r.id}" ${checked}
-          style="margin-top:3px;cursor:pointer;accent-color:#16a34a;" onchange="togglePhReview(this)"/>
-        <div style="flex:1;min-width:0;">
-          <p style="font-size:12px;color:#111827;margin:0 0 2px;font-weight:500;">${r.author_name}</p>
-          <p style="font-size:11px;color:#374151;margin:0 0 2px;line-height:1.5;">${short}</p>
-          <p style="font-size:10px;color:#9ca3af;margin:0;">${date} · ${r.votes_count} oy</p>
-        </div>
-      </div>`;
-    }).join('');
-  } catch (e) {
-    container.innerHTML = '<p style="font-size:12px;color:#dc2626;">Yüklenemedi: ' + e.message + '</p>';
-  }
-}
-
-async function togglePhReview(checkbox) {
-  const id = checkbox.dataset.phId;
-  try {
-    await fetch(API_URL + '/api/integrations/producthunt-reviews/' + encodeURIComponent(id) + '/toggle-visible', {
-      method: 'POST',
-      headers: await authHeaders(),
-    });
-    loadPhReviewsAdmin();
-  } catch (e) {
-    alert('Güncellenemedi: ' + e.message);
-    checkbox.checked = !checkbox.checked;
-  }
-}
 
 document.addEventListener('click', async function(e) {
   if (e.target.id !== 'visibility-save-btn') return;
@@ -5191,6 +5081,10 @@ async function pushChangesToShopify(accepted) {
       errCount > 0 ? 'info' : 'success'
     );
     addActivityLog(`Shopify push: ${data.pushed} ürün` + (errCount > 0 ? ` (${errCount} hata)` : ''));
+    if (data.isFirstSuccess) {
+      const m = document.getElementById('first-success-modal');
+      if (m) m.style.display = 'flex';
+    }
     syncHistory.push({ date: new Date().toLocaleString('tr-TR'), ts: Date.now(), products: data.pushed, orders: 0 });
   } catch (e) {
     toast('Shopify gönderim hatası: ' + e.message, 'error');
@@ -5556,7 +5450,6 @@ document.addEventListener('DOMContentLoaded', function() {
   showGoogleShopifyConnectIfNeeded();
   checkShopifyStatus();
   loadUserPlan();
-  initPhClaimFlow();
   document.getElementById('sidebar-plan-upgrade-btn')?.addEventListener('click', () => {
     window.location.href = '/pricing';
   });
@@ -6334,7 +6227,31 @@ function closeAcpProductPicker() {
   if (modal) modal.style.display = 'none';
   _acpPickerSelected = null;
 }
+
+document.getElementById('first-success-close')?.addEventListener('click', () => {
+  document.getElementById('first-success-modal').style.display = 'none';
+});
+document.getElementById('first-success-upgrade')?.addEventListener('click', () => {
+  window.location.href = '/pricing';
+});
 </script>
+
+<div id="first-success-modal" style="display:none;position:fixed;inset:0;background:rgba(17,24,39,.5);z-index:700;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:20px;padding:32px;width:420px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.15);">
+    <div style="width:56px;height:56px;background:#f0fdf4;border-radius:999px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+      <i class="ti ti-check" style="font-size:28px;color:#16a34a;"></i>
+    </div>
+    <p style="font-size:16px;font-weight:700;color:#111827;margin:0 0 8px;">İlk değişikliğinizi başarıyla uyguladınız</p>
+    <p style="font-size:13px;color:#6b7280;margin:0 0 20px;line-height:1.6;">
+      Bu öneri, genel bir SEO kuralı değil — <strong>gerçek ziyaretçi verinize</strong> dayanıyordu.
+      Kataloğunuzda bu tarz fırsatlar birikince, hepsini tek seferde görüp uygulayabilirsiniz.
+    </p>
+    <div style="display:flex;gap:8px;">
+      <button id="first-success-close" type="button" style="flex:1;padding:10px;border:0.5px solid #e5e7eb;border-radius:12px;background:#fff;color:#374151;font-size:13px;cursor:pointer;">Devam Et</button>
+      <button id="first-success-upgrade" type="button" style="flex:1;padding:10px;border:none;border-radius:12px;background:#16a34a;color:#fff;font-size:13px;font-weight:600;cursor:pointer;">Pro'yu İncele</button>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
