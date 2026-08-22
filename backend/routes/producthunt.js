@@ -40,10 +40,10 @@ async function phQuery(query, variables) {
 
 async function userExists(username) {
   const data = await phQuery(`
-    query($username: String!) {
-      user(username: $username) { id username }
+    query($slug: String!) {
+      user(slug: $slug) { id username }
     }
-  `, { username });
+  `, { slug: username });
   return !!(data && data.user);
 }
 
