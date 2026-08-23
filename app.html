@@ -1154,7 +1154,7 @@ function showMultiStoreUpgradeModal() {
         <div>✓ Mağazalar arası tek tıkla geçiş</div>
         <div>✓ Ajans paneli yönetimi</div>
       </div>
-      <button onclick="window.location.href='index.html#pricing'"
+      <button onclick="window.location.href='/pricing'"
         style="width:100%;padding:14px;background:linear-gradient(135deg,#7c3aed,#4f46e5);
                color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:600;
                cursor:pointer;margin-bottom:10px;">⬆️ Ultra'ya Geç</button>
@@ -1179,7 +1179,7 @@ function showShopifyUpgradePopup() {
       <div style="background:#f8f9fa;border-radius:12px;padding:14px;margin-bottom:24px;font-size:13px;color:#444;">
         Mevcut planınız: <strong style="color:#e53e3e;">Ücretsiz</strong>
       </div>
-      <button onclick="window.location.href='index.html#pricing'" style="width:100%;padding:14px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;margin-bottom:10px;">⬆️ Planı Yükselt</button>
+      <button onclick="window.location.href='/pricing'" style="width:100%;padding:14px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;margin-bottom:10px;">⬆️ Planı Yükselt</button>
       <button onclick="document.getElementById('shopify-upgrade-popup').remove()" style="width:100%;padding:12px;background:transparent;color:#888;border:1px solid #e2e8f0;border-radius:12px;font-size:14px;cursor:pointer;">Şimdi Değil</button>
     </div>
   `;
@@ -2272,35 +2272,85 @@ function renderDashboard() {
         </div>
       </div>
 
-      <!-- AI Önerileri (collapsible) -->
-      <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:20px;margin-bottom:16px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-          <p style="font-size:13px;font-weight:600;color:#111827;margin:0;">AI Önerileri</p>
-          <button id="ai-recs-toggle" type="button" style="background:none;border:none;font-size:11px;color:#6b7280;cursor:pointer;padding:2px 0;">Tümünü Gör</button>
+      <!-- AI Önerileri (kompakt) -->
+      <div id="card-ai-recs" style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;overflow:hidden;margin-bottom:10px;">
+        <div class="card-toggle-header" data-card="ai-recs"
+          style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;cursor:pointer;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:13px;font-weight:600;color:#111827;">AI Önerileri</span>
+            <span id="ai-recs-badge" style="font-size:10px;background:#fef3c7;color:#92400e;padding:2px 7px;border-radius:999px;font-weight:600;"></span>
+          </div>
+          <i id="ai-recs-chevron" class="ti ti-chevron-down" style="font-size:13px;color:#9ca3af;transition:transform .2s;"></i>
         </div>
-        <div id="dash-ai-recommendations" style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px;"></div>
-        <button id="fix-all-issues-btn" type="button"
-          style="width:100%;padding:11px;background:#111827;color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:600;opacity:${fixDisabled ? '0.5' : '1'};cursor:${fixDisabled ? 'not-allowed' : 'pointer'};"
-          ${fixDisabled ? 'disabled' : ''}>
-          Tüm Sorunları AI ile Düzelt
-        </button>
+        <div id="ai-recs-body" style="display:none;padding:0 14px 14px;">
+          <div id="dash-ai-recommendations" style="display:flex;flex-direction:column;gap:8px;margin-bottom:8px;max-height:140px;overflow-y:auto;"></div>
+          <button id="ai-recs-toggle" type="button" style="display:none;background:none;border:none;font-size:11px;color:#6b7280;cursor:pointer;padding:4px 0 8px;width:100%;text-align:left;">Tümünü Gör</button>
+          <button id="fix-all-issues-btn" type="button"
+            style="width:100%;padding:10px;background:#111827;color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:600;opacity:${fixDisabled ? '0.5' : '1'};cursor:${fixDisabled ? 'not-allowed' : 'pointer'};"
+            ${fixDisabled ? 'disabled' : ''}>
+            Tüm Sorunları AI ile Düzelt
+          </button>
+        </div>
       </div>
 
-      <!-- Hızlı İşlemler (collapsible) -->
-      <div style="background:#111827;border:none;border-radius:14px;padding:20px;margin-bottom:16px;">
-        <p style="font-size:13px;font-weight:600;color:#fff;margin:0 0 14px;">Hızlı İşlemler</p>
-        <div id="dash-quick-actions" style="display:flex;flex-direction:column;gap:6px;"></div>
-        <button id="dash-quick-actions-more" type="button" style="display:none;width:100%;margin-top:8px;padding:8px;background:rgba(255,255,255,.08);border:0.5px solid rgba(255,255,255,.12);border-radius:8px;color:#9ca3af;font-size:12px;cursor:pointer;"></button>
-        <div id="dash-ai-limit-msg" style="display:none;margin-top:10px;padding:10px 14px;background:#1f2937;border-radius:10px;border:0.5px solid #374151;"></div>
+      <!-- Hızlı İşlemler (kompakt) -->
+      <div id="card-quick-actions" style="background:#111827;border:none;border-radius:14px;overflow:hidden;margin-bottom:10px;">
+        <div class="card-toggle-header" data-card="quick-actions"
+          style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;cursor:pointer;">
+          <span style="font-size:13px;font-weight:600;color:#fff;">Hızlı İşlemler</span>
+          <i id="quick-actions-chevron" class="ti ti-chevron-down" style="font-size:13px;color:#9ca3af;transition:transform .2s;"></i>
+        </div>
+        <div id="quick-actions-body" style="display:none;padding:0 14px 14px;">
+          <div id="dash-quick-actions" style="display:flex;flex-direction:column;gap:6px;"></div>
+          <button id="dash-quick-actions-more" type="button" style="display:none;width:100%;margin-top:8px;padding:8px;background:rgba(255,255,255,.08);border:0.5px solid rgba(255,255,255,.12);border-radius:8px;color:#9ca3af;font-size:12px;cursor:pointer;"></button>
+          <div id="dash-ai-limit-msg" style="display:none;margin-top:10px;padding:10px 14px;background:#1f2937;border-radius:10px;border:0.5px solid #374151;"></div>
+        </div>
       </div>
 
-      <!-- Ürünler (compact) -->
-      <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:20px;margin-bottom:16px;">
-        <div style="display:flex;align-items:center;margin-bottom:14px;">
-          <p style="font-size:13px;font-weight:600;color:#111827;margin:0;">Ürünler</p>
+      <!-- Ürünler (kompakt) -->
+      <div id="card-products" style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;overflow:hidden;margin-bottom:10px;">
+        <div class="card-toggle-header" data-card="products"
+          style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;cursor:pointer;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:13px;font-weight:600;color:#111827;">Ürünler</span>
+            <span id="products-badge" style="font-size:10px;background:#eff6ff;color:#1d4ed8;padding:2px 7px;border-radius:999px;font-weight:600;"></span>
+          </div>
+          <i id="products-chevron" class="ti ti-chevron-down" style="font-size:13px;color:#9ca3af;transition:transform .2s;"></i>
         </div>
-        <div id="dash-products-mini-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;"></div>
-        <div id="dash-more-products-widget" style="display:none;margin-top:8px;border:0.5px solid #e5e7eb;border-radius:12px;overflow:hidden;"></div>
+        <div id="products-body" style="display:none;padding:0 14px 14px;">
+          <div id="dash-products-mini-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:8px;"></div>
+          <div id="dash-more-products-widget" style="display:none;margin-top:8px;border:0.5px solid #e5e7eb;border-radius:12px;overflow:hidden;"></div>
+        </div>
+      </div>
+
+      <!-- Widget: Kategori Bazlı Veri Kalitesi -->
+      <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:14px;margin-bottom:10px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+          <p style="font-size:13px;font-weight:600;color:#111827;margin:0;">Kategori Veri Kalitesi</p>
+          <span style="font-size:10px;color:#9ca3af;">Sağlık skoru %</span>
+        </div>
+        <div id="widget-cat-quality" style="display:flex;flex-direction:column;gap:7px;">
+          <p style="font-size:12px;color:#9ca3af;margin:0;">Ürün yükleniyor...</p>
+        </div>
+      </div>
+
+      <!-- Widget: Sepet Terk Hunisi -->
+      <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:14px;margin-bottom:10px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+          <p style="font-size:13px;font-weight:600;color:#111827;margin:0;">Sepet Terk Hunisi</p>
+          <span id="funnel-period-label" style="font-size:10px;color:#9ca3af;">Son 30 gün</span>
+        </div>
+        <div id="widget-cart-funnel" style="display:flex;flex-direction:column;gap:6px;">
+          <p style="font-size:12px;color:#9ca3af;margin:0;">Analitik yükleniyor...</p>
+        </div>
+      </div>
+
+      <!-- Widget: Senkron & Bağlantı Durumu -->
+      <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:14px;margin-bottom:10px;">
+        <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 10px;">Bağlantı Durumu</p>
+        <div id="widget-sync-status" style="display:flex;flex-direction:column;gap:7px;">
+          <p style="font-size:12px;color:#9ca3af;margin:0;">Kontrol ediliyor...</p>
+        </div>
       </div>
 
       <!-- Isı Haritası -->
@@ -2329,9 +2379,13 @@ function renderDashboard() {
   renderProductPerformanceTable();
   renderBehaviorLists();
   renderAiRecommendations(analysis.issues || []);
+  const _aiBadge = document.getElementById('ai-recs-badge');
+  if (_aiBadge) { const _ai = analysis.issues || []; _aiBadge.textContent = _ai.length ? _ai.length + ' öneri' : ''; }
   renderDashQuickActions();
   renderDashRecentOperationsFull();
   renderDashProductsMini();
+  const _pb = document.getElementById('products-badge');
+  if (_pb) { const _pc = (catalogData && catalogData.products) ? catalogData.products.length : 0; if (_pc) _pb.textContent = _pc + ' ürün'; }
   renderClickHeatmap();
   renderDashAnalyticsSection();
   renderValueSummaryBanner();
@@ -2364,6 +2418,10 @@ function renderDashboard() {
       }
     });
   }
+
+  renderCategoryQualityWidget();
+  renderSyncStatusWidget().catch(() => {});
+  if (typeof window._bindCardToggles === 'function') window._bindCardToggles();
 
 }
 
@@ -2830,6 +2888,7 @@ async function renderHeroMetrics() {
     const dEl = document.getElementById('hero-duration-value');
     if (dEl) dEl.textContent = dur > 0 ? Math.floor(dur / 60) + 'dk ' + (dur % 60) + 'sn' : '—';
     renderTrendBadge('hero-duration-trend', data.avgSessionDuration?.trend ?? 0);
+    renderCartFunnelWidget(data.rawFunnel || {});
   } catch (e) { console.warn('[hero-metrics] yüklenemedi:', e); }
 }
 
@@ -4154,7 +4213,7 @@ function renderPlanComparisonWidget(planKey) {
       </div>
       <div style="display:flex;justify-content:space-between;padding:8px 0;">
         <span style="font-size:12px;color:#6b7280;">Günlük AI komutu</span>
-        <span style="font-size:12px;color:#374151;">5 → <strong style="color:#16a34a;">15</strong></span>
+        <span style="font-size:12px;color:#374151;">5 → <strong style="color:#16a34a;">30</strong></span>
       </div>
     </div>
     <div style="margin-top:10px;padding:12px 14px;background:#fff;border:0.5px solid #e5e7eb;border-radius:10px;">
@@ -4246,10 +4305,8 @@ async function renderSubscriptionSection() {
       <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 8px;">Abonelik</p>
       <div style="border:0.5px solid #e5e7eb;border-radius:10px;padding:12px 14px;background:#f9fafb;display:flex;align-items:center;justify-content:space-between;">
         <p style="font-size:12px;color:#9ca3af;margin:0;">Abonelik bilgisi yüklenemedi.</p>
-        <button id="cancel-sub-btn" type="button" style="padding:7px 16px;background:#fff;color:#dc2626;border:0.5px solid #fca5a5;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;">Aboneliği İptal Et</button>
+        <button type="button" disabled style="padding:7px 16px;background:#f3f4f6;color:#9ca3af;border:0.5px solid #e5e7eb;border-radius:8px;font-size:12px;font-weight:600;cursor:not-allowed;">Aboneliği İptal Et</button>
       </div>`;
-    const cancelBtn = document.getElementById('cancel-sub-btn');
-    if (cancelBtn) cancelBtn.addEventListener('click', () => openCancelSubscriptionModal());
   }
 }
 
@@ -5580,21 +5637,6 @@ async function authHeaders() {
   return { 'Authorization': 'Bearer ' + token };
 }
 
-// GEÇİCİ DEBUG: Session ve backend token doğrulamasını test et
-setTimeout(async () => {
-  const { data: { session }, error } = await sbClient.auth.getSession();
-  console.log('[session-debug] session var mı:', !!session);
-  console.log('[session-debug] access_token ilk 20 karakter:', session?.access_token?.slice(0, 20));
-  console.log('[session-debug] token süresi doldu mu:', session ? new Date(session.expires_at * 1000) < new Date() : 'session yok');
-  console.log('[session-debug] getSession hatası:', error);
-  if (session) {
-    const testRes = await fetch(API_URL + '/api/usage', {
-      headers: { Authorization: 'Bearer ' + session.access_token }
-    });
-    console.log('[session-debug] /api/usage gerçek test sonucu:', testRes.status);
-  }
-}, 3000);
-
 function isGoogleUser() {
   const token = getAuthToken();
   if (!token) return false;
@@ -5716,6 +5758,13 @@ async function sfChatSend() {
     pending.appendChild(replyEl);
 
     if (data.type === 'changes' && data.changes?.length) {
+      if (typeof openAiWatchScreen === 'function') openAiWatchScreen();
+      const watchIds = data.changes.map(ch =>
+        typeof aiWatchAddItem === 'function'
+          ? aiWatchAddItem(ch.product_title || '', ch.field, ch.old_value, ch.new_value, 'pending')
+          : null
+      );
+
       const FIELD_LABELS = {
         title: 'Başlık', body_html: 'Açıklama', tags: 'Etiketler',
         vendor: 'Marka', product_type: 'Ürün Tipi', status: 'Durum',
@@ -5763,11 +5812,14 @@ async function sfChatSend() {
             applyBtn.textContent = `✅ ${pushData.pushed} değişiklik uygulandı`;
             const errTxt = pushData.errors?.length ? ` (${pushData.errors.length} hata)` : '';
             _sfChatAppendMsg('assistant', `${pushData.pushed} değişiklik Shopify'a gönderildi.${errTxt}`);
+            watchIds.forEach(id => { if (id && typeof aiWatchUpdateItem === 'function') aiWatchUpdateItem(id, 'done'); });
+            if (typeof aiWatchFinish === 'function') aiWatchFinish(pushData.pushed, pushData.errors?.length || 0);
           }
         } catch (err) {
           applyBtn.disabled = false;
           applyBtn.textContent = '⚠️ Hata — tekrar dene';
           _sfChatAppendMsg('assistant', 'Uygulama sırasında hata: ' + err.message);
+          watchIds.forEach(id => { if (id && typeof aiWatchUpdateItem === 'function') aiWatchUpdateItem(id, 'error'); });
         }
       };
       diffEl.appendChild(applyBtn);
@@ -6762,6 +6814,127 @@ function revertAiWatchChanges() {
   menuBtn.addEventListener('click', function(e) { e.stopPropagation(); openMobileSidebar(); });
   backdrop.addEventListener('click', closeMobileSidebar);
   document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeMobileSidebar(); });
+})();
+
+// ── Kategori Bazlı Veri Kalitesi Widget ──────────────────────────────────────
+function renderCategoryQualityWidget() {
+  const el = document.getElementById('widget-cat-quality');
+  if (!el) return;
+  const result = computeCatalogIssues();
+  const cats = result.categoryScores || [];
+  if (!cats.length) {
+    el.innerHTML = '<p style="font-size:12px;color:#9ca3af;margin:0;">Yeterli ürün verisi yok</p>';
+    return;
+  }
+  el.innerHTML = cats.slice(0, 6).map(c => {
+    const pct = Math.round(c.score);
+    const color = pct >= 80 ? '#16a34a' : pct >= 50 ? '#d97706' : '#dc2626';
+    return '<div>' +
+      '<div style="display:flex;justify-content:space-between;margin-bottom:3px;">' +
+        '<span style="font-size:11px;color:#374151;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + c.name + '</span>' +
+        '<span style="font-size:11px;font-weight:600;color:' + color + ';">' + pct + '%</span>' +
+      '</div>' +
+      '<div style="height:5px;background:#f3f4f6;border-radius:999px;overflow:hidden;">' +
+        '<div style="height:100%;width:' + pct + '%;background:' + color + ';border-radius:999px;transition:width .4s;"></div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+// ── Sepet Terk Hunisi Widget ──────────────────────────────────────────────────
+function renderCartFunnelWidget(metrics) {
+  const el = document.getElementById('widget-cart-funnel');
+  if (!el) return;
+  if (!metrics || !metrics.sessions) {
+    el.innerHTML = '<p style="font-size:12px;color:#9ca3af;margin:0;">Analitik verisi bulunamadı</p>';
+    return;
+  }
+  var steps = [
+    { label: 'Ziyaretçi',        value: metrics.sessions   || 0, icon: 'ti-users' },
+    { label: 'Sayfa Görüntüleme', value: metrics.pageViews  || 0, icon: 'ti-eye' },
+    { label: 'Sepete Ekleme',    value: metrics.addToCarts || 0, icon: 'ti-shopping-cart' },
+    { label: 'Satın Alma',       value: metrics.purchases  || 0, icon: 'ti-receipt' },
+  ];
+  var maxVal = steps[0].value || 1;
+  el.innerHTML = steps.map(function(s, i) {
+    var pct = Math.round((s.value / maxVal) * 100);
+    var dropPct = (i > 0 && steps[i-1].value)
+      ? Math.round((1 - s.value / steps[i-1].value) * 100)
+      : null;
+    return '<div>' +
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;">' +
+        '<div style="display:flex;align-items:center;gap:5px;">' +
+          '<i class="ti ' + s.icon + '" style="font-size:12px;color:#6b7280;"></i>' +
+          '<span style="font-size:11px;color:#374151;">' + s.label + '</span>' +
+          (dropPct !== null ? '<span style="font-size:10px;color:#dc2626;">▼' + dropPct + '%</span>' : '') +
+        '</div>' +
+        '<span style="font-size:11px;font-weight:600;color:#111827;">' + s.value.toLocaleString('tr-TR') + '</span>' +
+      '</div>' +
+      '<div style="height:5px;background:#f3f4f6;border-radius:999px;overflow:hidden;">' +
+        '<div style="height:100%;width:' + pct + '%;background:#4f46e5;border-radius:999px;transition:width .4s;"></div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+// ── Senkron & Bağlantı Durumu Widget ─────────────────────────────────────────
+async function renderSyncStatusWidget() {
+  var el = document.getElementById('widget-sync-status');
+  if (!el) return;
+  var lastSync = localStorage.getItem('mocksheets_last_sync');
+  var syncLabel = 'Hiç senkronize edilmedi';
+  var syncColor = '#9ca3af';
+  if (lastSync) {
+    var mins = Math.round((Date.now() - new Date(lastSync)) / 60000);
+    if (mins < 60)        { syncLabel = mins + ' dk önce';                     syncColor = '#16a34a'; }
+    else if (mins < 1440) { syncLabel = Math.round(mins / 60) + ' sa önce';   syncColor = '#d97706'; }
+    else                  { syncLabel = Math.round(mins / 1440) + ' gün önce'; syncColor = '#dc2626'; }
+  }
+  var connected = false, trackingOn = false, shopDomain = '';
+  try {
+    var hdr = await authHeaders();
+    var results = await Promise.all([
+      fetch(API_URL + '/api/shopify/status',             { headers: hdr }),
+      fetch(API_URL + '/api/analytics/tracking-status',  { headers: hdr }),
+    ]);
+    if (results[0].ok) { var d1 = await results[0].json(); connected = d1.connected; shopDomain = d1.shop_domain || ''; }
+    if (results[1].ok) { var d2 = await results[1].json(); trackingOn = d2.tracking_enabled; }
+  } catch(_) {}
+  var rows = [
+    { label: 'Shopify Bağlantısı', value: connected ? (shopDomain.replace('.myshopify.com','') || 'Bağlı') : 'Bağlı değil', dot: connected ? '#16a34a' : '#dc2626' },
+    { label: 'Son Senkron',        value: syncLabel,                                                                           dot: syncColor },
+    { label: 'Takip Scripti',      value: trackingOn ? 'Aktif' : 'Pasif',                                                     dot: trackingOn ? '#16a34a' : '#9ca3af' },
+  ];
+  el.innerHTML = rows.map(function(r) {
+    return '<div style="display:flex;align-items:center;justify-content:space-between;padding:7px 10px;background:#f9fafb;border-radius:8px;">' +
+      '<span style="font-size:11px;color:#6b7280;">' + r.label + '</span>' +
+      '<div style="display:flex;align-items:center;gap:5px;">' +
+        '<span style="width:7px;height:7px;border-radius:50%;background:' + r.dot + ';flex-shrink:0;"></span>' +
+        '<span style="font-size:11px;font-weight:600;color:#111827;">' + r.value + '</span>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+// ── Kompakt kart collapse toggle ──────────────────────────────────────────────
+(function() {
+  function bindCardToggles() {
+    document.querySelectorAll('.card-toggle-header').forEach(function(header) {
+      if (header._bound) return;
+      header._bound = true;
+      header.addEventListener('click', function() {
+        var key     = this.dataset.card;
+        var body    = document.getElementById(key + '-body');
+        var chevron = document.getElementById(key + '-chevron');
+        if (!body) return;
+        var open = body.style.display !== 'none';
+        body.style.display = open ? 'none' : '';
+        if (chevron) chevron.style.transform = open ? '' : 'rotate(180deg)';
+      });
+    });
+  }
+  document.addEventListener('DOMContentLoaded', bindCardToggles);
+  window._bindCardToggles = bindCardToggles;
 })();
 
 // Topbar store dropdown toggle
