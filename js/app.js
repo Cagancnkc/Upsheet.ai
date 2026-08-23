@@ -8,15 +8,15 @@
 function checkCommandLimit() {
   try {
     var plan = userPlan || 'free';
-    var limits = { free: 20, pro: 500, business: Infinity };
-    var limit = limits[plan] !== undefined ? limits[plan] : 20;
+    var staticLimits = { free: 20, pro: 200, promax: 1500, business: Infinity, ultra: Infinity };
+    var limit = userUsage?.limits?.ai_commands_per_month ?? (staticLimits[plan] !== undefined ? staticLimits[plan] : 20);
     var key = 'mocksheets_usage_' + new Date().toISOString().slice(0, 7);
     var usage = parseInt(localStorage.getItem(key) || '0');
     if (usage >= limit) {
       showToast(
         '⚠️ Aylık ' + limit + ' komut limitine ulaştınız.' +
-        (plan === 'free' ? ' <a href="index.html#pricing" style="color:#A5B4FC">Pro\'ya geç →</a>' : ''),
-        'error'
+        (plan === 'free' ? ' <a href="/pricing" style="color:#A5B4FC">Pro\'ya geç →</a>' : ''),
+        'err'
       );
       return false;
     }
@@ -4212,8 +4212,8 @@ async function loadUserUsage() {
 function updateUsageUI() {
   if (!userUsage) return;
 
-  const planColors = { free: '#6B7280', pro: '#4F46E5', business: '#059669' };
-  const badges = { free: '🆓 Ücretsiz', pro: '⭐ Pro', business: '🏢 İş Planı' };
+  const planColors = { free: '#6B7280', pro: '#4F46E5', promax: '#7C3AED', business: '#059669', ultra: '#DC2626' };
+  const badges = { free: '🆓 Ücretsiz', pro: '⭐ Pro', promax: '🚀 Pro Max', business: '🏢 İş Planı', ultra: '💎 Ultra' };
 
   const planEl = document.getElementById('sbPlanBadge');
   if (planEl) {
@@ -4281,7 +4281,7 @@ function showUpgradeModal(featureName) {
       </div>
       <div style="display:flex;gap:10px">
         <button onclick="document.getElementById('upgradeModal').remove()" style="flex:1;padding:11px;border:1.5px solid #E5E7EB;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;background:white;color:#374151">Şimdi Değil</button>
-        <button onclick="window.location.href='index.html#pricing'" style="flex:2;padding:11px;border:none;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;background:#4F46E5;color:white">⬆️ Planı Yükselt</button>
+        <button onclick="window.location.href='/pricing'" style="flex:2;padding:11px;border:none;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;background:#4F46E5;color:white">⬆️ Planı Yükselt</button>
       </div>
     </div>`;
 
@@ -4315,7 +4315,7 @@ function showLimitModal(errorData) {
       </div>
       <div style="display:flex;gap:10px">
         <button onclick="document.getElementById('limitModal').remove()" style="flex:1;padding:11px;border:1.5px solid #E5E7EB;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;background:white;color:#374151">Tamam</button>
-        <button onclick="window.location.href='index.html#pricing'" style="flex:2;padding:11px;border:none;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;background:#4F46E5;color:white">⬆️ Limiti Artır</button>
+        <button onclick="window.location.href='/pricing'" style="flex:2;padding:11px;border:none;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;background:#4F46E5;color:white">⬆️ Limiti Artır</button>
       </div>
     </div>`;
 
