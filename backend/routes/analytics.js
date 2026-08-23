@@ -247,7 +247,7 @@ router.get('/hero-metrics', requireAuth, async (req, res) => {
         .eq('shop_domain', conn.shop_domain)
         .gte('created_at', start.toISOString())
         .lt('created_at', end.toISOString());
-      if (!ev || !ev.length) return { visitors: 0, addToCartRate: 0, avgSessionDuration: 0, totalSales: 0, orderCount: 0 };
+      if (!ev || !ev.length) return { visitors: 0, pageViews: 0, addToCarts: 0, addToCartRate: 0, avgSessionDuration: 0, totalSales: 0, orderCount: 0 };
       const sessions = new Set(ev.map(e => e.session_id).filter(Boolean));
       const pageViews = ev.filter(e => e.event_type === 'page_view').length;
       const addToCarts = ev.filter(e => e.event_type === 'add_to_cart').length;
@@ -255,6 +255,8 @@ router.get('/hero-metrics', requireAuth, async (req, res) => {
       const purchases = ev.filter(e => e.event_type === 'purchase');
       return {
         visitors: sessions.size,
+        pageViews,
+        addToCarts,
         addToCartRate: pageViews > 0 ? Math.round((addToCarts / pageViews) * 1000) / 10 : 0,
         avgSessionDuration: durations.length > 0
           ? Math.round(durations.reduce((s, d) => s + d.duration_seconds, 0) / durations.length) : 0,
@@ -272,6 +274,7 @@ router.get('/hero-metrics', requireAuth, async (req, res) => {
       conversionRate:    { value: cur.visitors > 0 ? Math.round((cur.orderCount / cur.visitors) * 1000) / 10 : 0, trend: 0 },
       addToCartRate:     { value: cur.addToCartRate,      trend: trend(cur.addToCartRate, prev.addToCartRate) },
       avgSessionDuration:{ value: cur.avgSessionDuration, trend: trend(cur.avgSessionDuration, prev.avgSessionDuration) },
+      rawFunnel: { sessions: cur.visitors, pageViews: cur.pageViews, addToCarts: cur.addToCarts, purchases: cur.orderCount },
     });
   } catch (e) {
     console.error('[hero-metrics]', e);
