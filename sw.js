@@ -1,5 +1,5 @@
 // Mocksheets Service Worker
-const CACHE_NAME = 'mocksheets-v1';
+const CACHE_NAME = 'mocksheets-v2';
 const PRECACHE_URLS = [
   '/',
   '/index.html',
