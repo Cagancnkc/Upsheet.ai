@@ -931,6 +931,7 @@ window.addEventListener('message', function(e) {
   }
   if (e.data.connected) {
     toast('Shopify bağlantısı kuruldu! Veriler yükleniyor...', 'success');
+    if (typeof gtag === 'function') gtag('event', 'shopify_connect_success', { shop: e.data.shop_name || '' });
     if (e.data.shop_name) {
       shopifyStore = e.data.shop_name;
       document.title = 'Mocksheets — ' + shopifyStore;
@@ -1073,12 +1074,27 @@ async function checkShopifyStatus() {
     }
   } catch (err) {
     console.error('Status check failed:', err);
+    var isNetworkErr = (err instanceof TypeError && err.message && err.message.includes('fetch'));
+    if (typeof gtag === 'function') {
+      gtag('event', 'shopify_connect_error', {
+        error_type: isNetworkErr ? 'network_error' : 'server_error',
+        error_message: (err.message || '').slice(0, 100)
+      });
+    }
     showConnectPanel(); // loadDemoData() devre dışı
     const connectBtn = document.getElementById('google-shopify-connect-btn');
     if (connectBtn) connectBtn.style.display = 'inline-flex';
     const tw = document.getElementById('topbar-store-widget');
     if (tw) tw.style.display = 'none';
+    toast(isNetworkErr
+      ? 'Bağlantı kontrolü başarısız — internet bağlantınızı kontrol edin'
+      : 'Mağaza durumu alınamadı. Lütfen sayfayı yenileyin.', 'err');
   }
+}
+
+function dashboardConnectShopify() {
+  if (typeof gtag === 'function') gtag('event', 'shopify_connect_start', { location: 'dashboard_empty' });
+  shopifyConnectModal();
 }
 
 // ── Multi-Store Topbar Widget ──────────────────────────────────────────
@@ -1993,7 +2009,15 @@ function renderAIChatPage() {
     } catch (err) {
       pending.classList.remove('pending');
       pending.classList.add('error');
-      pending._body.innerHTML = escapeHtml('⚠️ ' + (err.message || 'Bağlantı hatası. Lütfen tekrar deneyin.'));
+      var _acpErrMsg = !navigator.onLine
+        ? 'İnternet bağlantısı yok. Tekrar bağlanıp deneyin.'
+        : (err.message || 'Bağlantı hatası. Lütfen tekrar deneyin.');
+      if (typeof gtag === 'function') {
+        gtag('event', 'ai_chat_error', { error_message: (err.message || '').slice(0, 100), chat_type: 'acp' });
+      }
+      pending._body.innerHTML = escapeHtml('⚠️ ' + _acpErrMsg) +
+        ' <button type="button" style="color:#f97316;background:none;border:none;cursor:pointer;font-weight:600;text-decoration:underline;padding:0;margin-left:6px;" ' +
+        'onclick="this.closest(\'.acp-msg\').remove();document.getElementById(\'acp-pb\')?.focus()">Tekrar Dene</button>';
     } finally {
       busy = false;
       sync();
@@ -2006,7 +2030,14 @@ function renderAIChatPage() {
   ta.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } });
   send.addEventListener('click', () => { if (!send.disabled) sendMessage(); });
   view.querySelector('#acp-improve-btn')?.addEventListener('click', acpImprovePrompt);
-  view.querySelectorAll('.acp-chip').forEach(c => c.addEventListener('click', () => { ta.value = c.textContent.trim(); sync(); ta.focus(); }));
+  view.querySelectorAll('.acp-chip').forEach(c => c.addEventListener('click', () => {
+    ta.value = c.textContent.trim();
+    sync();
+    ta.focus();
+    if (typeof gtag === 'function') {
+      gtag('event', 'ai_chat_empty_prompt_click', { prompt_text: c.textContent.trim().slice(0, 60) });
+    }
+  }));
 
   loadSessions();
   if (currentSessionId) loadMessages(currentSessionId);
@@ -2137,14 +2168,11 @@ function renderDashboard() {
           <i class="ti ti-shopping-bag" style="font-size:28px;color:#9ca3af;"></i>
           <p style="font-size:14px;font-weight:600;color:#111827;margin:12px 0 4px;">Henüz katalog verisi yok</p>
           <p style="font-size:12px;color:#6b7280;margin:0 0 16px;">Shopify mağazanızı bağlayıp verinizi çekin</p>
-          <!-- GEÇİCİ DEVRE DIŞI: Dashboard redesign sırasında kaldırıldı.
-               Geri eklemek için bu yorum bloğunu kaldır.
-          <button type="button" id="dashboard-connect-shopify-btn" onclick="shopifyConnectModal()"
-            style="display:flex;align-items:center;gap:8px;padding:10px 24px;background:#111827;color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;margin:0 auto;">
+          <button type="button" id="dashboard-connect-shopify-btn" onclick="dashboardConnectShopify()"
+            style="display:flex;align-items:center;gap:8px;padding:10px 24px;background:#111827;color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;margin:0 auto 12px;">
             <img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/shopify.svg" width="16" height="16" style="filter:invert(100%);" alt="Shopify"/>
             Shopify Hesabını Bağla
           </button>
-          -->
           <button type="button" onclick="loadDemoData();"
             style="font-size:11px;color:#9ca3af;background:transparent;border:none;cursor:pointer;margin-top:8px;text-decoration:underline;">
             Demo görünümünü aç
@@ -2422,6 +2450,18 @@ function renderDashboard() {
   renderCategoryQualityWidget();
   renderSyncStatusWidget().catch(() => {});
   if (typeof window._bindCardToggles === 'function') window._bindCardToggles();
+
+  // Hero metrik kartları veri gelene kadar skeleton göster
+  ['hero-visitors-value','hero-sales-value','hero-conversion-value',
+   'hero-cart-value','hero-duration-value'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el && el.textContent.trim() === '—') {
+      el.parentElement.classList.add('skeleton', 'skeleton-metric');
+      setTimeout(function() {
+        el.parentElement.classList.remove('skeleton', 'skeleton-metric');
+      }, 4000);
+    }
+  });
 
 }
 
@@ -3352,7 +3392,12 @@ async function renderDashSalesData() {
   } catch (err) {
     console.warn('[renderDashSalesData]', err.message);
     loadingEl.style.display = 'none';
-    if (errorEl) { errorEl.style.display = 'block'; errorEl.textContent = 'Satış verisi yüklenemedi.'; }
+    if (errorEl) {
+      errorEl.style.display = 'block';
+      errorEl.innerHTML = 'Satış verisi yüklenemedi. ' +
+        '<button type="button" style="color:#f97316;background:none;border:none;cursor:pointer;font-weight:600;text-decoration:underline;padding:0;" ' +
+        'onclick="renderDashSalesData()">Tekrar dene</button>';
+    }
     if (badgeEl) badgeEl.textContent = 'Hata';
   }
 }
@@ -5723,6 +5768,8 @@ async function sfChatSend() {
 
   const pending = _sfChatAppendMsg('assistant', 'Düşünüyor…');
 
+  if (typeof gtag === 'function') gtag('event', 'ai_chat_start', { has_products: (catalogData.products || []).length > 0, chat_type: 'shopify' });
+
   try {
     const products = (catalogData.products || []).slice(0, 30).map(p => ({
       product_id: p.shopify_product_id,
@@ -5752,6 +5799,7 @@ async function sfChatSend() {
     const data = await res.json();
     _sfChatHistory.push({ role: 'assistant', content: data.reply });
 
+    if (typeof gtag === 'function') gtag('event', 'ai_chat_success', { chat_type: 'shopify' });
     pending.textContent = '';
     const replyEl = document.createElement('div');
     replyEl.textContent = data.reply;
@@ -5826,7 +5874,22 @@ async function sfChatSend() {
       pending.appendChild(diffEl);
     }
   } catch (e) {
-    pending.textContent = '⚠️ ' + e.message;
+    var _sfErrUser;
+    if (!navigator.onLine) {
+      _sfErrUser = 'İnternet bağlantısı yok. Lütfen bağlantınızı kontrol edip tekrar deneyin.';
+    } else if (e.message && e.message.includes('429')) {
+      _sfErrUser = 'Çok fazla istek gönderildi. Lütfen birkaç saniye bekleyin.';
+    } else if (e.message && /50[0-9]/.test(e.message)) {
+      _sfErrUser = 'Sunucu şu an meşgul. Birazdan tekrar deneyin.';
+    } else {
+      _sfErrUser = 'Yanıt alınamadı. Lütfen tekrar deneyin.';
+    }
+    if (typeof gtag === 'function') {
+      gtag('event', 'ai_chat_error', { error_message: (e.message || '').slice(0, 100), chat_type: 'shopify' });
+    }
+    pending.innerHTML = _sfErrUser +
+      ' <button type="button" style="color:#f97316;background:none;border:none;cursor:pointer;font-weight:600;text-decoration:underline;padding:0;margin-left:6px;" ' +
+      'onclick="this.parentElement.remove();document.getElementById(\'sf-chat-input\')?.focus()">Tekrar Dene</button>';
     pending.className = 'sf-chat-msg error';
   } finally {
     _sfChatBusy = false;
@@ -5925,6 +5988,18 @@ document.addEventListener('DOMContentLoaded', function() {
 // ─── DEBUG LOGGING (diagnostic) ───────────────────────────────────────────
 window.addEventListener('error', function(e) {
   console.error('[APP HATASI]', e.message, 'Satır:', e.lineno, 'Dosya:', e.filename);
+});
+
+window.addEventListener('unhandledrejection', function(e) {
+  var msg = (e.reason && e.reason.message) ? e.reason.message : String(e.reason || 'Bilinmeyen hata');
+  console.error('[UNHANDLED PROMISE]', msg);
+  if (typeof gtag === 'function') {
+    gtag('event', 'error_occurred', {
+      error_type: 'unhandled_promise',
+      error_message: msg.slice(0, 100)
+    });
+  }
+  e.preventDefault();
 });
 
 const _origSetView = typeof setView === 'function' ? setView : null;

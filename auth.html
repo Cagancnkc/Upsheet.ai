@@ -778,21 +778,23 @@ function switchMode(mode) {
   var heading    = document.getElementById('formCardHeading');
   var toggleRow  = document.getElementById('toggleRow');
   var submitText = document.getElementById('submitText');
+  var authError  = document.getElementById('authError');
 
-  document.getElementById('authError').style.display = 'none';
+  if (authError) authError.style.display = 'none';
 
   if (mode === 'signup') {
-    heading.textContent   = 'Hesabınızı oluşturun';
-    submitText.textContent = 'Kaydol →';
-    toggleRow.innerHTML   = 'Zaten hesabın var mı? <button class="toggle-btn" onclick="switchMode(\'signin\')">Giriş yap</button>';
+    if (heading)    heading.textContent    = 'Hesabınızı oluşturun';
+    if (submitText) submitText.textContent = 'Kaydol →';
+    if (toggleRow)  toggleRow.innerHTML   = 'Zaten hesabın var mı? <button class="toggle-btn" onclick="switchMode(\'signin\')">Giriş yap</button>';
   } else {
-    heading.textContent   = 'Tekrar hoş geldiniz';
-    submitText.textContent = 'Giriş Yap →';
-    toggleRow.innerHTML   = 'Hesabın yok mu? <button class="toggle-btn" onclick="switchMode(\'signup\')">Kaydol</button>';
+    if (heading)    heading.textContent    = 'Tekrar hoş geldiniz';
+    if (submitText) submitText.textContent = 'Giriş Yap →';
+    if (toggleRow)  toggleRow.innerHTML   = 'Hesabın yok mu? <button class="toggle-btn" onclick="switchMode(\'signup\')">Kaydol</button>';
   }
 
   // Re-validate current email
-  onEmailInput(document.getElementById('emailInput').value);
+  var _emailEl = document.getElementById('emailInput');
+  if (_emailEl) onEmailInput(_emailEl.value);
 }
 
 // ── Email validation ───────────────────────────────────────────
@@ -878,7 +880,8 @@ async function handleSubmit() {
     }
     btn.classList.add('success-state');
     btn.innerHTML = '<span>✓ Bağlantı gönderildi</span>';
-    document.getElementById('formCardHeading').textContent = '📬 E-postanızı kontrol edin';
+    var _hEl = document.getElementById('formCardHeading');
+    if (_hEl) _hEl.textContent = '📬 E-postanızı kontrol edin';
 
   } catch(e) {
     errEl.textContent   = 'Beklenmeyen bir hata oluştu. Lütfen tekrar deneyin.';
@@ -994,9 +997,12 @@ function translateError(msg) {
 })();
 
 // Handle Enter key
-document.getElementById('emailInput').addEventListener('keydown', function(e) {
-  if (e.key === 'Enter' && emailValid) handleSubmit();
-});
+(function() {
+  var _el = document.getElementById('emailInput');
+  if (_el) _el.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && emailValid) handleSubmit();
+  });
+})();
 
 // Pre-fill email from URL param (e.g. from landing page sticky form)
 (function() {
@@ -1015,17 +1021,42 @@ var _shopifyApi = location.hostname === 'localhost'
   : 'https://upsheet-ai.onrender.com';
 
 function startShopifyAuth() {
+  if (typeof gtag === 'function') gtag('event', 'shopify_connect_start', { location: 'auth_page' });
   window.location.href = _shopifyApi + '/api/shopify/auth';
 }
 
 // Shopify callback hata kontrolü
 (function() {
   var _sp = new URLSearchParams(window.location.search);
-  if (_sp.get('shopify_error')) {
+  var _errCode = _sp.get('shopify_error');
+  if (_errCode) {
+    if (typeof gtag === 'function') gtag('event', 'shopify_connect_error', { error_code: _errCode });
     var errEl = document.getElementById('authError');
     if (errEl) {
-      errEl.textContent = 'Shopify bağlantısı başarısız. Tekrar deneyin.';
+      errEl.innerHTML = 'Shopify bağlantısı başarısız. ' +
+        '<button type="button" id="shopify-retry-btn" ' +
+        'style="background:none;border:none;color:#f97316;cursor:pointer;font-weight:600;text-decoration:underline;padding:0;font-size:inherit;"' +
+        ' onclick="shopifyRetry()">Tekrar Dene</button>';
       errEl.style.display = 'block';
+    }
+  }
+})();
+
+function shopifyRetry() {
+  var btn = document.getElementById('shopify-retry-btn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Bağlanıyor…'; }
+  if (typeof gtag === 'function') gtag('event', 'shopify_connect_retry');
+  startShopifyAuth();
+}
+
+// Plan parametresini pricing sayfasından taşı
+(function() {
+  var _planParam = new URLSearchParams(window.location.search).get('plan');
+  if (_planParam && ['pro','promax','business','ultra'].includes(_planParam)) {
+    var labels = { pro: 'Pro', promax: 'Pro Max', business: 'Business', ultra: 'Ultra' };
+    var headingEl = document.getElementById('formCardHeading');
+    if (headingEl && headingEl.textContent === 'Tekrar hoş geldiniz') {
+      headingEl.textContent = (labels[_planParam] || _planParam) + ' planına başlamak için kaydolun';
     }
   }
 })();

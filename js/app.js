@@ -88,11 +88,13 @@ function buildGrid(data) {
     console.warn('buildGrid: invalid data', data);
     return;
   }
-  console.log('%c[buildGrid]', 'color:green;font-weight:bold',
-    '| rows:', data.length,
-    '| headers:', data[0]?.slice(0, 5),
-    '| row1:', data[1]?.slice(0, 5)
-  );
+  if (window.location.hostname === 'localhost') {
+    console.log('%c[buildGrid]', 'color:green;font-weight:bold',
+      '| rows:', data.length,
+      '| headers:', data[0]?.slice(0, 5),
+      '| row1:', data[1]?.slice(0, 5)
+    );
+  }
   const grid = document.getElementById('grid');
   grid.innerHTML = '';
   const meta = getCellMeta();
@@ -1505,7 +1507,7 @@ async function sendChat() {
   try {
     let reply;
     if (typeof processAICommand === 'function') {
-      console.warn('[CALL #' + (++CALL_COUNTER) + '] sendChat → processAICommand', new Error().stack.split('\n')[2]?.trim());
+      if (window.location.hostname === 'localhost') console.warn('[CALL #' + (++CALL_COUNTER) + '] sendChat → processAICommand', new Error().stack.split('\n')[2]?.trim());
       const aiResult = await processAICommand(finalMessage, sheets[activeSheet] || [], activeSheet, chatHistory.slice(-8));
       if (!aiResult || aiResult?.error === 'offline') {
         clearInterval(_loadTimer);
