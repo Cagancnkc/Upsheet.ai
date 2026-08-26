@@ -6,16 +6,16 @@ Paste this block into the **Test instructions** field on the Shopify Partner Das
 
 ## Test Shopify development store
 
-- **Store URL:** `<FILL IN — e.g. https://mocksheets-review.myshopify.com/admin>`
-- **Merchant email:** `<FILL IN>`
-- **Merchant password:** `<FILL IN>`
+- **Store URL:** `https://cagan-souanvk1.myshopify.com/admin`
+- **Merchant email:** `cagancanakci3827@gmail.com`
+- **Merchant password:** `12345`
 
 The store is pre-loaded with a small product catalogue so reviewers can exercise sync, AI analysis, and push flows without seeding data.
 
 ## Mocksheets reviewer account
 
 - **Email:** `reviewer@mocksheets.com`
-- **Password:** `<FILL IN — paste generated password>`
+- **Password:** `Reviewer2026!`
 - **Plan:** Pro (all features unlocked; usage limits are ceiling values, not paywalls)
 
 The reviewer account is provisioned in Supabase and mapped to the test Shopify store above via `shopify_connections`.
