@@ -154,28 +154,6 @@ a{color:#111110;text-decoration:none}
 /* ── Sections below plans ── */
 .section-wrap{max-width:1180px;margin:0 auto;padding:0 40px}
 
-/* ROI Calculator */
-.roi-calc{background:#fff;border:1.5px solid #E5E7EB;border-radius:20px;padding:36px;margin:60px auto;max-width:900px}
-.roi-calc h2{font-size:22px;font-weight:800;margin:0 0 24px;text-align:center;color:#111110}
-.roi-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px}
-.roi-grid label{display:block;font-size:13px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:.05em}
-.roi-grid output{color:#16a34a;font-weight:800;font-size:16px}
-.roi-grid input[type=range]{width:100%;margin-top:10px;accent-color:#16a34a}
-.roi-grid select{width:100%;margin-top:10px;padding:10px 12px;border:1.5px solid #E5E7EB;border-radius:10px;background:#fff;font-family:inherit;font-size:14px;cursor:pointer;color:#111110}
-.roi-result{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;padding-top:20px;border-top:1px solid #E5E7EB}
-.roi-result>div{text-align:center;padding:16px 8px}
-.roi-result span{display:block;font-size:12px;color:#6b7280;margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em}
-.roi-result b{display:block;font-size:24px;font-weight:800;color:#111110}
-.roi-result .roi-net{background:linear-gradient(135deg,#16a34a,#15803d);border-radius:12px;color:#fff}
-.roi-result .roi-net span{color:rgba(255,255,255,.85)}
-.roi-result .roi-net b{color:#fff}
-
-/* Testimonials */
-.testimonials{max-width:960px;margin:0 auto 60px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px;padding:0 40px}
-.testimonial-card{background:#fff;border:1.5px solid #E5E7EB;border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:10px}
-.t-stars{color:#f59e0b;font-size:15px;letter-spacing:1px}
-.testimonial-card p{font-size:14px;color:#374151;line-height:1.65;margin:0;flex:1}
-.testimonial-card cite{font-size:12px;color:#6b7280;font-weight:600;font-style:normal}
 
 /* Compare table */
 .pricing-compare{margin:40px auto 60px;max-width:1000px;padding:0 40px}
@@ -217,8 +195,6 @@ a{color:#111110;text-decoration:none}
   .plan-col-free{padding:0 0 40px 0;border-bottom:1px solid #e2e2dc}
   .plan-col-pro{padding:40px 0;border-left:none;border-right:none;border-top:1px solid #e2e2dc;border-bottom:1px solid #e2e2dc}
   .plan-col-ultra{padding:40px 0 0 0;border-top:1px solid #e2e2dc}
-  .testimonials{grid-template-columns:1fr;padding:0 24px}
-  .roi-grid,.roi-result{grid-template-columns:1fr}
   .pricing-compare,.pricing-faq{padding:0 24px}
 }
 @media(max-width:640px){
@@ -343,49 +319,6 @@ a{color:#111110;text-decoration:none}
   </div><!-- /pg-inner -->
 </div><!-- /pg-outer -->
 
-<!-- ROI Calculator -->
-<div style="padding:0 40px">
-  <section class="roi-calc" aria-label="ROI Hesaplayıcı">
-    <h2>Aylık ne kadar kazanırsınız?</h2>
-    <div class="roi-grid">
-      <label>Haftalık katalog yönetim süreniz: <output id="roi-hours-val">10</output> saat
-        <input type="range" id="roi-hours" min="1" max="40" value="10" aria-label="Haftalık katalog yönetim süresi">
-      </label>
-      <label>Rolünüz
-        <select id="roi-role" aria-label="Rol seçimi">
-          <option value="250">Küçük işletme sahibi (₺250/saat)</option>
-          <option value="400" selected>Operasyon yöneticisi (₺400/saat)</option>
-          <option value="600">Ajans / danışman (₺600/saat)</option>
-        </select>
-      </label>
-    </div>
-    <div class="roi-result">
-      <div><span>Aylık kazanılan zaman</span><b id="roi-time">28 saat</b></div>
-      <div><span>Aylık ₺ değeri</span><b id="roi-value">₺11.200</b></div>
-      <div class="roi-net"><span>Mocksheets Pro sonrası net kazanç</span><b id="roi-net">₺11.051/ay</b></div>
-    </div>
-  </section>
-</div>
-
-<!-- Testimonials -->
-<section class="testimonials" aria-label="Müşteri yorumları">
-  <div class="testimonial-card">
-    <div class="t-stars">★★★★★</div>
-    <p>"500 ürünümün SEO başlıklarını 2 saatte tamamladım. Daha önce 3 hafta sürerdi. Artık rakiplerimden çok daha hızlı güncelleme yapabiliyorum."</p>
-    <cite>— Mert K., Elektronik mağazası</cite>
-  </div>
-  <div class="testimonial-card">
-    <div class="t-stars">★★★★★</div>
-    <p>"Katalog sağlık skorum %38'den %91'e çıktı. Google'daki organik trafiğimiz bir ayda %60 arttı. Yatırımın geri dönüşü inanılmaz."</p>
-    <cite>— Selin A., Moda &amp; Aksesuar</cite>
-  </div>
-  <div class="testimonial-card">
-    <div class="t-stars">★★★★★</div>
-    <p>"Müşterilerimizin Shopify kataloglarını Mocksheets ile yönetiyoruz. Tek bir e-ticaret ajansı olarak zamandan %70 tasarruf ettik."</p>
-    <cite>— Emre T., E-ticaret Ajansı</cite>
-  </div>
-</section>
-
 <!-- Comparison table -->
 <section class="pricing-compare" aria-label="Plan karşılaştırması">
   <h2>Planları karşılaştırın</h2>
@@ -504,24 +437,7 @@ function setPricingPeriod(p) {
   if (stickyCta)   stickyCta.href = getPolarUrl('pro', period);
 }
 
-/* ROI Calculator */
-function updateROI() {
-  var hours = parseInt(document.getElementById('roi-hours').value, 10);
-  var hourlyRate = parseInt(document.getElementById('roi-role').value, 10);
-  var weeklyTimeSaved = hours * 0.65;
-  var monthlyTimeSaved = weeklyTimeSaved * 4.33;
-  var monthlyValue = monthlyTimeSaved * hourlyRate;
-  var netGain = monthlyValue - 149;
-  document.getElementById('roi-hours-val').textContent = hours;
-  document.getElementById('roi-time').textContent = Math.round(monthlyTimeSaved) + ' saat';
-  document.getElementById('roi-value').textContent = '₺' + Math.round(monthlyValue).toLocaleString('tr-TR');
-  document.getElementById('roi-net').textContent = '₺' + Math.round(netGain).toLocaleString('tr-TR') + '/ay';
-}
-
 document.addEventListener('DOMContentLoaded', function() {
-  document.getElementById('roi-hours').addEventListener('input', updateROI);
-  document.getElementById('roi-role').addEventListener('change', updateROI);
-  updateROI();
   setPricingPeriod('yearly');
 
   // Sticky bar: show after #pricing section scrolls out of view
