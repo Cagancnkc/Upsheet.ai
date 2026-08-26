@@ -542,14 +542,14 @@
   /* ============ SHOPIFY LAYOUT ============ */
   .shopify-layout {
     display: grid;
-    grid-template-columns: 200px 1fr;
-    grid-template-rows: 52px 1fr auto auto;
+    grid-template-columns: 240px 1fr;
+    grid-template-rows: 60px 1fr auto;
     height: 100vh;
     overflow: hidden;
-    background: linear-gradient(135deg, #F6F6F4 0%, #FAFAF8 100%);
+    background: #f9fafb;
   }
   .shopify-layout.ai-panel-open {
-    grid-template-columns: 200px 1fr 320px;
+    grid-template-columns: 240px 1fr;
   }
 
   /* ============ STATS ROW (Card Layout) ============ */
@@ -868,29 +868,6 @@
     font-weight: 500;
   }
 
-  /* ============ BOTTOM STRIP ============ */
-  .sf-bottom-strip {
-    display: flex;
-    gap: 16px;
-    padding: 0 24px 20px;
-    grid-column: 2 / -1;
-    grid-row: 5;
-    flex-shrink: 0;
-  }
-
-  .sf-bottom-card {
-    flex: 1;
-    background: #FFFFFF;
-    border: 1px solid #E8E8E3;
-    border-radius: 13px;
-    padding: 14px 18px;
-    transition: all 0.2s ease;
-  }
-
-  .sf-bottom-card:hover {
-    border-color: #DCDCD6;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-  }
 
   /* ============ SECTION PANELS ============ */
   .sf-section-panel {
@@ -1186,11 +1163,11 @@
     align-items: center;
     background: #FFFFFF;
     backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(232, 232, 227, 0.5);
-    height: 52px;
-    padding: 0 20px;
+    border-bottom: 1px solid #eceef1;
+    height: 60px;
+    padding: 0 24px;
     gap: 16px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    box-shadow: 0 1px 2px rgba(16,24,40,0.03);
     position: relative;
     z-index: 200;
   }

@@ -466,14 +466,26 @@
   .ai-chat-page .acp-msg { max-width: 92%; font-size: 14px; }
 }
 
-/* ── Shopify AI Chat Panel ──────────────────────────────────────── */
+/* ── Shopify AI Chat Panel (floating bottom-center) ─────────────── */
+@keyframes ms-pulse { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:0.5; transform:scale(1.3); } }
+@keyframes ms-fadein { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:translateY(0); } }
 .sf-chat-panel {
-  position: fixed; right: 0; top: 0; bottom: 0;
-  width: 400px; background: #fff; border-left: 1px solid #e5e7eb;
+  position: fixed;
+  bottom: 22px;
+  left: calc(50% + 120px);
+  transform: translateX(-50%);
+  width: 680px;
+  max-width: calc(100vw - 300px);
+  border-radius: 30px;
+  top: auto; right: auto; height: auto;
+  max-height: calc(100vh - 44px);
+  background: linear-gradient(180deg,#ffffff 0%,#fbfbfd 100%);
+  border: 1px solid #edeef2;
+  box-shadow: 0 2px 6px rgba(16,24,40,0.04), 0 28px 60px -18px rgba(16,24,40,0.22);
   display: flex; flex-direction: column; z-index: 900;
-  transition: transform 0.3s ease; box-shadow: -4px 0 20px rgba(0,0,0,0.08);
+  transition: transform 0.35s cubic-bezier(.4,0,.2,1), opacity 0.35s;
 }
-.sf-chat-panel--closed { transform: translateX(100%); }
+.sf-chat-panel--closed { transform: translateX(-50%) translateY(calc(100% + 22px)); opacity: 0; pointer-events: none; }
 .sf-chat-header {
   display: flex; align-items: center; justify-content: space-between;
   padding: 14px 16px; border-bottom: 1px solid #e5e7eb; flex-shrink: 0;
@@ -561,8 +573,8 @@
 
   <!-- ============ SIDEBAR ============ -->
   <aside class="sf-sidebar">
-    <div style="padding:12px;margin:8px;border:0.5px solid #e5e7eb;border-radius:12px;display:flex;align-items:center;gap:8px;">
-      <div id="sidebar-store-icon" style="width:28px;height:28px;border-radius:8px;background:#f0fdf4;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+    <div style="padding:12px;margin:8px;border:1px solid #d1fae5;border-radius:12px;display:flex;align-items:center;gap:8px;background:#f0fdf4;">
+      <div id="sidebar-store-icon" style="width:28px;height:28px;border-radius:8px;background:#ffffff;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 1px 2px rgba(16,24,40,0.08);">
         <svg width="16" height="16" viewBox="0 0 109 124" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <path d="M74.7 23.5c0-.4-.4-.7-.7-.7-.4 0-6.9-.5-6.9-.5s-4.6-4.5-5.1-5c-.5-.5-1.5-.4-1.9-.3-.1 0-1 .3-2.5.8-1.5-4.3-4.1-8.2-8.7-8.2h-.4C47.2 7.9 45.6 7 44.2 7c-10.7 0-15.8 13.4-17.4 20.2-4.2 1.3-7.2 2.2-7.6 2.4-2.3.7-2.4.8-2.7 3-.2 1.6-6.4 49.4-6.4 49.4L58 92l30.5-6.6C88.5 85.4 74.7 23.9 74.7 23.5zM53.7 27.6l-8.2 2.5c0-3.5-.5-8.5-2.5-12.1 5.2 1 8.6 6.9 10.7 9.6zm-14.4-9c1.7 1.5 3.5 4 4.6 8.9L34 30.5c1-4.6 3-9.1 5.3-11.9zm-4-3.3c1 0 1.9.3 2.8.9-3.5 1.6-7.2 5.8-8.8 14L22 32.7c2.1-7.1 6.5-17.4 13.3-17.4z" fill="#95BF47"/>
             <path d="M74 22.8c-.4 0-6.9-.5-6.9-.5s-4.6-4.5-5.1-5c-.2-.2-.4-.3-.7-.3v75l30.5-6.6S74.4 23.9 74.4 23.5c-.1-.4-.4-.7-.4-.7z" fill="#5E8E3E"/>
@@ -571,7 +583,7 @@
       </div>
       <div style="min-width:0;flex:1;">
         <p id="sidebar-store-name" style="font-size:12px;font-weight:600;color:#111827;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">—</p>
-        <p style="font-size:10px;color:#9ca3af;margin:0;">Shopify Mağazası</p>
+        <p style="font-size:10px;color:#16a34a;margin:0;font-weight:500;">Mağaza bağlı</p>
       </div>
       <button id="sidebar-switch-store-btn" type="button" title="Mağaza Değiştir"
         style="display:none;width:24px;height:24px;border:0.5px solid #e5e7eb;border-radius:6px;background:#fff;cursor:pointer;align-items:center;justify-content:center;flex-shrink:0;">
@@ -587,7 +599,7 @@
 
 
     <div style="margin:12px;">
-      <div style="border-radius:12px;padding:14px;background:#f9fafb;border:0.5px solid #e5e7eb;">
+      <div style="border-radius:12px;padding:14px;background:#f9fafb;border:1px solid #eceef1;">
         <p style="font-size:11px;color:#6b7280;margin:0 0 4px;">Plan</p>
         <p id="sidebar-plan-name" style="font-size:13px;font-weight:600;color:#111827;margin:0 0 8px;">—</p>
         <div style="height:4px;background:#e5e7eb;border-radius:99px;overflow:hidden;margin-bottom:6px;">
@@ -604,7 +616,7 @@
 
   <!-- ============ TOPBAR ============ -->
   <!-- TOPBAR -->
-    <header class="sf-topbar" style="display:flex;align-items:center;justify-content:space-between;padding:14px 24px;border-bottom:0.5px solid #e5e7eb;background:#fff;">
+    <header class="sf-topbar" style="display:flex;align-items:center;justify-content:space-between;padding:0 24px;border-bottom:1px solid #eceef1;background:#fff;height:60px;">
       <div style="display:flex;align-items:center;gap:8px;">
         <button id="mobile-menu-btn" type="button" aria-label="Menüyü Aç" style="display:none;width:32px;height:32px;border:0.5px solid #e5e7eb;border-radius:8px;background:#fff;cursor:pointer;align-items:center;justify-content:center;flex-shrink:0;"><i class="ti ti-menu-2" style="font-size:16px;color:#374151;"></i></button>
         <img src="/images/brand/logo-128x128.png" alt="mocksheets" style="width:24px;height:24px;object-fit:contain;flex-shrink:0;">
@@ -745,44 +757,6 @@
     <div id="products-view" style="display:none;padding:32px;max-width:1000px;margin:0 auto;"></div>
     <div id="ai-chat-view" style="display:none;"></div>
 
-    <!-- BOTTOM STRIP -->
-    <div class="sf-bottom-strip">
-      <div class="sf-bottom-card">
-        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
-          <span style="font-size: 18px;">◉</span>
-          <div>
-            <div style="font-weight: 700; font-size: 12.5px;">Veri Kalitesi</div>
-          </div>
-        </div>
-        <div style="font-size: 18px; font-weight: 700; margin-bottom: 2px;" id="bottom-quality-pct">96%</div>
-        <div style="font-size: 11px; color: var(--ink-3); margin-bottom: 8px;" id="bottom-quality-desc">Müthiş</div>
-        <div style="font-size: 11px; color: var(--ink-3);" id="bottom-quality-missing">312 değer eksik</div>
-      </div>
-      <div class="sf-bottom-card">
-        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
-          <span style="font-size: 18px;">⚠️</span>
-          <div>
-            <div style="font-weight: 700; font-size: 12.5px;">Üst Sorunlar</div>
-          </div>
-        </div>
-        <div style="font-size: 11px; color: var(--ink-3); line-height: 1.6;">
-          <div>📝 Eksik açıklamalar — 312</div>
-          <div>📝 Eksik alt metin — 142</div>
-          <div>📝 Yinelenen başlıklar — 98</div>
-        </div>
-      </div>
-      <div class="sf-bottom-card">
-        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
-          <span style="font-size: 18px;">✨</span>
-          <div>
-            <div style="font-weight: 700; font-size: 12.5px;">AI Önerileri</div>
-          </div>
-        </div>
-        <div style="font-size: 11px; color: var(--ink-3); margin-bottom: 8px;">Uygulamaya Hazır</div>
-        <div style="font-size: 18px; font-weight: 700; margin-bottom: 8px;" id="bottom-ai-count">1,234</div>
-        <button style="width: 100%; height: 28px; background: var(--brand); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 550;" onclick="applyAllSuggestions()">Tümünü Uygula</button>
-      </div>
-    </div>
 
 
 </div>
@@ -2185,15 +2159,16 @@ function renderDashboard() {
   const fixDisabled = analysis.totalIssueCount === 0;
 
   view.innerHTML = `
-    <div style="padding:24px;box-sizing:border-box;width:100%;min-width:0;">
-      <h2 style="font-size:20px;font-weight:600;margin-bottom:24px">Dashboard</h2>
-      <div style="display:flex;align-items:center;gap:8px;padding:8px 0;margin-bottom:12px;">
-        <i class="ti ti-shield-check" style="font-size:14px;color:#16a34a;"></i>
-        <span style="font-size:12px;color:#6b7280;">Verileriniz şifreli saklanıyor, Shopify onaylı bağlantı kullanılıyor</span>
+    <div style="padding:28px 28px 120px;box-sizing:border-box;width:100%;min-width:0;animation:ms-fadein .3s ease;">
+
+      <!-- Hero Header -->
+      <div style="margin-bottom:24px;">
+        <h1 style="font-size:24px;font-weight:700;color:#111827;margin:0 0 4px;">Dashboard</h1>
+        <p style="font-size:13px;color:#6b7280;margin:0;">Mağazanızın canlı özeti ve AI önerileri</p>
       </div>
 
       <!-- Aylık Kazanım Özeti (sadece Free, ayda 1 kez, JS tarafından gösterilir) -->
-      <div id="value-summary-banner" style="display:none;background:#f0fdf4;border:0.5px solid #d1fae5;border-radius:14px;padding:16px 20px;margin-bottom:16px;">
+      <div id="value-summary-banner" style="display:none;background:#f0fdf4;border:1px solid #d1fae5;border-radius:16px;padding:16px 20px;margin-bottom:20px;">
         <div style="display:flex;align-items:center;justify-content:space-between;">
           <p id="value-summary-text" style="font-size:13px;color:#166534;margin:0;flex:1;"></p>
           <button id="value-summary-dismiss" type="button"
@@ -2201,44 +2176,88 @@ function renderDashboard() {
         </div>
       </div>
 
-      <!-- Hero: 5 Operasyon Metriği (son 30 gün) -->
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:16px;">
-        <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:16px;">
-          <p style="font-size:11px;color:#9ca3af;margin:0 0 6px;">Ziyaretçi</p>
-          <p id="hero-visitors-value" style="font-size:22px;font-weight:700;color:#111827;margin:0 0 4px;">—</p>
-          <p id="hero-visitors-trend" style="font-size:11px;margin:0;">—</p>
+      <!-- Live Activity Card -->
+      <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:22px;margin-bottom:20px;box-shadow:0 1px 2px rgba(16,24,40,0.03);">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+          <div style="display:flex;gap:0;border:1px solid #eceef1;border-radius:10px;overflow:hidden;">
+            <button id="live-tab-store" onclick="switchLiveTab('store')" style="padding:7px 14px;font-size:12px;font-weight:600;border:none;background:#111827;color:#fff;cursor:pointer;">Canlı Mağaza</button>
+            <button id="live-tab-activity" onclick="switchLiveTab('activity')" style="padding:7px 14px;font-size:12px;font-weight:500;border:none;background:transparent;color:#6b7280;cursor:pointer;">Canlı Aktivite</button>
+            <button id="live-tab-heatmap" onclick="switchLiveTab('heatmap')" style="padding:7px 14px;font-size:12px;font-weight:500;border:none;background:transparent;color:#6b7280;cursor:pointer;">Isı Haritası</button>
+          </div>
+          <span style="display:inline-flex;align-items:center;gap:6px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:999px;padding:4px 10px;font-size:11px;font-weight:700;color:#16a34a;">
+            <span style="width:6px;height:6px;border-radius:50%;background:#16a34a;animation:ms-pulse 1.5s ease-in-out infinite;display:inline-block;"></span>
+            AI ÇALIŞIYOR
+          </span>
         </div>
-        <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:16px;">
-          <p style="font-size:11px;color:#9ca3af;margin:0 0 6px;">Toplam Satış</p>
-          <p id="hero-sales-value" style="font-size:22px;font-weight:700;color:#16a34a;margin:0 0 4px;">—</p>
-          <p id="hero-sales-trend" style="font-size:11px;margin:0;">—</p>
+        <!-- Tab: Canlı Mağaza -->
+        <div id="live-panel-store" style="display:block;">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;">
+            <div style="background:#f9fafb;border-radius:12px;padding:14px;">
+              <p style="font-size:11px;color:#9ca3af;margin:0 0 6px;">Ziyaretçi</p>
+              <p id="hero-visitors-value" style="font-size:22px;font-weight:700;color:#111827;margin:0 0 3px;">—</p>
+              <p id="hero-visitors-trend" style="font-size:11px;margin:0;">—</p>
+            </div>
+            <div style="background:#f9fafb;border-radius:12px;padding:14px;">
+              <p style="font-size:11px;color:#9ca3af;margin:0 0 6px;">Toplam Satış</p>
+              <p id="hero-sales-value" style="font-size:22px;font-weight:700;color:#16a34a;margin:0 0 3px;">—</p>
+              <p id="hero-sales-trend" style="font-size:11px;margin:0;">—</p>
+            </div>
+            <div style="background:#f9fafb;border-radius:12px;padding:14px;">
+              <p style="font-size:11px;color:#9ca3af;margin:0 0 6px;">Dönüşüm Oranı</p>
+              <p id="hero-conversion-value" style="font-size:22px;font-weight:700;color:#111827;margin:0 0 3px;">—</p>
+              <p id="hero-conversion-trend" style="font-size:11px;margin:0;">—</p>
+            </div>
+            <div style="background:#f9fafb;border-radius:12px;padding:14px;">
+              <p style="font-size:11px;color:#9ca3af;margin:0 0 6px;">Sepete Ekleme</p>
+              <p id="hero-cart-value" style="font-size:22px;font-weight:700;color:#111827;margin:0 0 3px;">—</p>
+              <p id="hero-cart-trend" style="font-size:11px;margin:0;">—</p>
+            </div>
+            <div style="background:#f9fafb;border-radius:12px;padding:14px;">
+              <p style="font-size:11px;color:#9ca3af;margin:0 0 6px;">Ort. Süre</p>
+              <p id="hero-duration-value" style="font-size:22px;font-weight:700;color:#111827;margin:0 0 3px;">—</p>
+              <p id="hero-duration-trend" style="font-size:11px;margin:0;">—</p>
+            </div>
+          </div>
         </div>
-        <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:16px;">
-          <p style="font-size:11px;color:#9ca3af;margin:0 0 6px;">Dönüşüm Oranı</p>
-          <p id="hero-conversion-value" style="font-size:22px;font-weight:700;color:#111827;margin:0 0 4px;">—</p>
-          <p id="hero-conversion-trend" style="font-size:11px;margin:0;">—</p>
+        <!-- Tab: Canlı Aktivite -->
+        <div id="live-panel-activity" style="display:none;">
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#f9fafb;border-radius:10px;font-size:12px;color:#374151;">
+              <span style="width:6px;height:6px;border-radius:50%;background:#16a34a;animation:ms-pulse 1.5s ease-in-out infinite;flex-shrink:0;"></span>
+              AI katalog önerisi oluşturuldu — 2 dk önce
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#f9fafb;border-radius:10px;font-size:12px;color:#374151;">
+              <span style="width:6px;height:6px;border-radius:50%;background:#3b82f6;flex-shrink:0;"></span>
+              Shopify senkronizasyonu tamamlandı — 8 dk önce
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#f9fafb;border-radius:10px;font-size:12px;color:#374151;">
+              <span style="width:6px;height:6px;border-radius:50%;background:#f59e0b;flex-shrink:0;"></span>
+              3 ürün güncellendi — 15 dk önce
+            </div>
+          </div>
         </div>
-        <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:16px;">
-          <p style="font-size:11px;color:#9ca3af;margin:0 0 6px;">Sepete Ekleme Oranı</p>
-          <p id="hero-cart-value" style="font-size:22px;font-weight:700;color:#111827;margin:0 0 4px;">—</p>
-          <p id="hero-cart-trend" style="font-size:11px;margin:0;">—</p>
-        </div>
-        <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:16px;">
-          <p style="font-size:11px;color:#9ca3af;margin:0 0 6px;">Ort. Oturum Süresi</p>
-          <p id="hero-duration-value" style="font-size:22px;font-weight:700;color:#111827;margin:0 0 4px;">—</p>
-          <p id="hero-duration-trend" style="font-size:11px;margin:0;">—</p>
+        <!-- Tab: Isı Haritası -->
+        <div id="live-panel-heatmap" style="display:none;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div id="dash-tracking-toggle-wrap"></div>
+              <select id="heatmap-page-select" style="font-size:11px;padding:4px 10px;border:0.5px solid #e5e7eb;border-radius:8px;background:#fff;display:none;"></select>
+            </div>
+          </div>
+          <p id="heatmap-honesty-note" style="font-size:11px;color:#9ca3af;margin:0 0 10px;"></p>
+          <div id="heatmap-canvas-container" style="position:relative;width:100%;min-height:180px;background:#f9fafb;border-radius:10px;overflow:hidden;"></div>
         </div>
       </div>
 
       <!-- Büyüme Fırsatları -->
-      <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:20px;margin-bottom:16px;">
-        <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 14px;">Büyüme Fırsatları</p>
+      <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:22px;margin-bottom:16px;box-shadow:0 1px 2px rgba(16,24,40,0.03);">
+        <p style="font-size:14px;font-weight:600;color:#111827;margin:0 0 16px;">Büyüme Fırsatları</p>
         <div id="growth-opportunities-list" style="display:flex;flex-direction:column;gap:10px;"></div>
       </div>
 
       <!-- Ürün Performansı Tablosu -->
-      <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:20px;margin-bottom:16px;overflow-x:auto;">
-        <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 14px;">Ürün Performansı <span style="font-size:10px;color:#9ca3af;font-weight:400;">— Etkileşim Puanı = tıklama×2 + sepet×5</span></p>
+      <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:22px;margin-bottom:16px;overflow-x:auto;box-shadow:0 1px 2px rgba(16,24,40,0.03);">
+        <p style="font-size:14px;font-weight:600;color:#111827;margin:0 0 16px;">Ürün Performansı <span style="font-size:10px;color:#9ca3af;font-weight:400;">— Etkileşim Puanı = tıklama×2 + sepet×5</span></p>
         <table style="width:100%;border-collapse:collapse;font-size:12px;">
           <thead>
             <tr style="border-bottom:0.5px solid #e5e7eb;">
@@ -2257,8 +2276,8 @@ function renderDashboard() {
       </div>
 
       <!-- Kullanıcı Davranışları -->
-      <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:20px;margin-bottom:16px;">
-        <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 14px;">Kullanıcı Davranışları</p>
+      <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:22px;margin-bottom:16px;box-shadow:0 1px 2px rgba(16,24,40,0.03);">
+        <p style="font-size:14px;font-weight:600;color:#111827;margin:0 0 16px;">Kullanıcı Davranışları</p>
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;">
           <div><p style="font-size:11px;font-weight:600;color:#9ca3af;margin:0 0 8px;text-transform:uppercase;letter-spacing:.04em;">En Çok Görüntülenen</p><div id="behavior-most-viewed"></div></div>
           <div><p style="font-size:11px;font-weight:600;color:#9ca3af;margin:0 0 8px;text-transform:uppercase;letter-spacing:.04em;">En Çok Satılan</p><div id="behavior-most-sold"></div></div>
@@ -2269,9 +2288,9 @@ function renderDashboard() {
       </div>
 
       <!-- Gelir Trendi Grafiği -->
-      <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:20px;margin-bottom:16px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-          <p style="font-size:13px;font-weight:600;color:#111827;margin:0;">Gelir Trendi <span style="font-size:10px;color:#9ca3af;font-weight:400;">— son 30 gün</span></p>
+      <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:22px;margin-bottom:16px;box-shadow:0 1px 2px rgba(16,24,40,0.03);">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+          <p style="font-size:14px;font-weight:600;color:#111827;margin:0;">Gelir Trendi <span style="font-size:10px;color:#9ca3af;font-weight:400;">— son 30 gün</span></p>
           <span id="revenue-trend-total" style="font-size:13px;font-weight:700;color:#16a34a;"></span>
         </div>
         <canvas id="revenue-trend-chart" height="80" style="width:100%;display:block;"></canvas>
@@ -2279,29 +2298,29 @@ function renderDashboard() {
       </div>
 
       <!-- Top 5 Ürün Performansı -->
-      <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:20px;margin-bottom:16px;">
-        <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 14px;">Top 5 Ürün <span style="font-size:10px;color:#9ca3af;font-weight:400;">— Etkileşim Skoru</span></p>
+      <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:22px;margin-bottom:16px;box-shadow:0 1px 2px rgba(16,24,40,0.03);">
+        <p style="font-size:14px;font-weight:600;color:#111827;margin:0 0 16px;">Top 5 Ürün <span style="font-size:10px;color:#9ca3af;font-weight:400;">— Etkileşim Skoru</span></p>
         <div id="top5-products-bars" style="display:flex;flex-direction:column;gap:10px;"></div>
       </div>
 
       <!-- İki Sütun: Ziyaretçi Kaynakları + Stok Uyarıları -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
-        <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:20px;">
-          <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 14px;">Ziyaretçi Kaynakları</p>
+        <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:22px;box-shadow:0 1px 2px rgba(16,24,40,0.03);">
+          <p style="font-size:14px;font-weight:600;color:#111827;margin:0 0 16px;">Ziyaretçi Kaynakları</p>
           <div id="traffic-sources-chart" style="display:flex;align-items:center;gap:16px;">
             <div id="traffic-donut" style="width:80px;height:80px;border-radius:50%;flex-shrink:0;background:conic-gradient(#16a34a 0% 60%,#3b82f6 60% 80%,#f59e0b 80% 92%,#e5e7eb 92% 100%);"></div>
             <div id="traffic-legend" style="display:flex;flex-direction:column;gap:6px;font-size:11px;"></div>
           </div>
         </div>
-        <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:20px;">
-          <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 10px;">Stok Uyarıları <span id="low-stock-count" style="font-size:10px;background:#fef3c7;color:#92400e;border-radius:999px;padding:2px 7px;font-weight:600;"></span></p>
+        <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:22px;box-shadow:0 1px 2px rgba(16,24,40,0.03);">
+          <p style="font-size:14px;font-weight:600;color:#111827;margin:0 0 10px;">Stok Uyarıları <span id="low-stock-count" style="font-size:10px;background:#fef3c7;color:#92400e;border-radius:999px;padding:2px 7px;font-weight:600;"></span></p>
           <div id="low-stock-list" style="display:flex;flex-direction:column;gap:6px;max-height:120px;overflow-y:auto;"></div>
           <p id="low-stock-empty" style="font-size:12px;color:#9ca3af;margin:0;">Tüm ürünler yeterli stokta</p>
         </div>
       </div>
 
       <!-- AI Önerileri (kompakt) -->
-      <div id="card-ai-recs" style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;overflow:hidden;margin-bottom:10px;">
+      <div id="card-ai-recs" style="background:#fff;border:1px solid #eceef1;border-radius:16px;overflow:hidden;margin-bottom:12px;box-shadow:0 1px 2px rgba(16,24,40,0.03);">
         <div class="card-toggle-header" data-card="ai-recs"
           style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;cursor:pointer;">
           <div style="display:flex;align-items:center;gap:8px;">
@@ -2322,7 +2341,7 @@ function renderDashboard() {
       </div>
 
       <!-- Hızlı İşlemler (kompakt) -->
-      <div id="card-quick-actions" style="background:#111827;border:none;border-radius:14px;overflow:hidden;margin-bottom:10px;">
+      <div id="card-quick-actions" style="background:#111827;border:none;border-radius:16px;overflow:hidden;margin-bottom:12px;">
         <div class="card-toggle-header" data-card="quick-actions"
           style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;cursor:pointer;">
           <span style="font-size:13px;font-weight:600;color:#fff;">Hızlı İşlemler</span>
@@ -2336,7 +2355,7 @@ function renderDashboard() {
       </div>
 
       <!-- Ürünler (kompakt) -->
-      <div id="card-products" style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;overflow:hidden;margin-bottom:10px;">
+      <div id="card-products" style="background:#fff;border:1px solid #eceef1;border-radius:16px;overflow:hidden;margin-bottom:12px;box-shadow:0 1px 2px rgba(16,24,40,0.03);">
         <div class="card-toggle-header" data-card="products"
           style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;cursor:pointer;">
           <div style="display:flex;align-items:center;gap:8px;">
@@ -2352,9 +2371,9 @@ function renderDashboard() {
       </div>
 
       <!-- Widget: Kategori Bazlı Veri Kalitesi -->
-      <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:14px;margin-bottom:10px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-          <p style="font-size:13px;font-weight:600;color:#111827;margin:0;">Kategori Veri Kalitesi</p>
+      <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:20px;margin-bottom:12px;box-shadow:0 1px 2px rgba(16,24,40,0.03);">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          <p style="font-size:14px;font-weight:600;color:#111827;margin:0;">Kategori Veri Kalitesi</p>
           <span style="font-size:10px;color:#9ca3af;">Sağlık skoru %</span>
         </div>
         <div id="widget-cat-quality" style="display:flex;flex-direction:column;gap:7px;">
@@ -2363,9 +2382,9 @@ function renderDashboard() {
       </div>
 
       <!-- Widget: Sepet Terk Hunisi -->
-      <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:14px;margin-bottom:10px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-          <p style="font-size:13px;font-weight:600;color:#111827;margin:0;">Sepet Terk Hunisi</p>
+      <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:20px;margin-bottom:12px;box-shadow:0 1px 2px rgba(16,24,40,0.03);">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          <p style="font-size:14px;font-weight:600;color:#111827;margin:0;">Sepet Terk Hunisi</p>
           <span id="funnel-period-label" style="font-size:10px;color:#9ca3af;">Son 30 gün</span>
         </div>
         <div id="widget-cart-funnel" style="display:flex;flex-direction:column;gap:6px;">
@@ -2374,29 +2393,16 @@ function renderDashboard() {
       </div>
 
       <!-- Widget: Senkron & Bağlantı Durumu -->
-      <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:14px;margin-bottom:10px;">
-        <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 10px;">Bağlantı Durumu</p>
+      <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:20px;margin-bottom:12px;box-shadow:0 1px 2px rgba(16,24,40,0.03);">
+        <p style="font-size:14px;font-weight:600;color:#111827;margin:0 0 12px;">Bağlantı Durumu</p>
         <div id="widget-sync-status" style="display:flex;flex-direction:column;gap:7px;">
           <p style="font-size:12px;color:#9ca3af;margin:0;">Kontrol ediliyor...</p>
         </div>
       </div>
 
-      <!-- Isı Haritası -->
-      <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:20px;margin-bottom:16px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-          <p style="font-size:13px;font-weight:600;color:#111827;margin:0;">Tıklama Yoğunluk Haritası</p>
-          <div style="display:flex;align-items:center;gap:8px;">
-            <div id="dash-tracking-toggle-wrap"></div>
-            <select id="heatmap-page-select" style="font-size:11px;padding:4px 10px;border:0.5px solid #e5e7eb;border-radius:8px;background:#fff;display:none;"></select>
-          </div>
-        </div>
-        <p id="heatmap-honesty-note" style="font-size:11px;color:#9ca3af;margin:0 0 14px;"></p>
-        <div id="heatmap-canvas-container" style="position:relative;width:100%;min-height:200px;background:#f9fafb;border-radius:10px;overflow:hidden;"></div>
-      </div>
-
       <!-- Son İşlemler -->
-      <div style="background:#fff;border:0.5px solid #e5e7eb;border-radius:14px;padding:20px;">
-        <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 14px;">Son İşlemler</p>
+      <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:22px;box-shadow:0 1px 2px rgba(16,24,40,0.03);">
+        <p style="font-size:14px;font-weight:600;color:#111827;margin:0 0 16px;">Son İşlemler</p>
         <div id="dash-recent-operations-full" style="display:flex;flex-direction:column;gap:12px;"></div>
       </div>
 
@@ -2415,6 +2421,16 @@ function renderDashboard() {
   const _pb = document.getElementById('products-badge');
   if (_pb) { const _pc = (catalogData && catalogData.products) ? catalogData.products.length : 0; if (_pc) _pb.textContent = _pc + ' ürün'; }
   renderClickHeatmap();
+  // Wire Live Activity tabs
+  window.switchLiveTab = function(tab) {
+    ['store','activity','heatmap'].forEach(function(t) {
+      var btn = document.getElementById('live-tab-' + t);
+      var panel = document.getElementById('live-panel-' + t);
+      if (btn) { btn.style.background = t === tab ? '#111827' : 'transparent'; btn.style.color = t === tab ? '#fff' : '#6b7280'; btn.style.fontWeight = t === tab ? '600' : '500'; }
+      if (panel) panel.style.display = t === tab ? 'block' : 'none';
+    });
+    if (tab === 'heatmap') renderClickHeatmap();
+  };
   renderDashAnalyticsSection();
   renderValueSummaryBanner();
   renderTrafficSourcesChart(null);
