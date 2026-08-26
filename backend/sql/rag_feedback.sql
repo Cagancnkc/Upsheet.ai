@@ -16,3 +16,15 @@ create index if not exists shopify_rag_feedback_category_rating_idx
 
 create index if not exists shopify_rag_feedback_created_idx
   on shopify_rag_feedback(created_at desc);
+
+-- RLS: kullanıcılar yalnızca kendi satırlarını görebilir/ekleyebilir.
+-- Backend service key ile RLS'i bypass eder, bu politikalar frontend erişimini kısıtlar.
+alter table shopify_rag_feedback enable row level security;
+
+create policy "users_select_own_feedback"
+  on shopify_rag_feedback for select
+  using (auth.uid() = user_id);
+
+create policy "users_insert_own_feedback"
+  on shopify_rag_feedback for insert
+  with check (auth.uid() = user_id);
