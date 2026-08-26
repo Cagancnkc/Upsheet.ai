@@ -61,8 +61,19 @@ setInterval(() => {
   }
 }, 5 * 60 * 1000);
 
+function readCookie(req, name) {
+  const raw = req.headers.cookie;
+  if (!raw) return null;
+  const parts = raw.split(';');
+  for (const p of parts) {
+    const [k, ...v] = p.trim().split('=');
+    if (k === name) return decodeURIComponent(v.join('='));
+  }
+  return null;
+}
+
 async function requireAuth(req, res, next) {
-  const token = req.headers.authorization?.replace('Bearer ', '');
+  const token = req.headers.authorization?.replace('Bearer ', '') || readCookie(req, 'mocksheets_session');
   if (!token) return res.status(401).json({ error: 'Giriş gerekli' });
   const { data: { user }, error } = await getSupabase().auth.getUser(token);
   if (error || !user) {
@@ -71,6 +82,26 @@ async function requireAuth(req, res, next) {
   }
   req.user = user;
   next();
+}
+
+// Verify HMAC signature Shopify sends on every entry-point URL.
+// Docs: https://shopify.dev/docs/apps/build/authentication-authorization/access-tokens/authorization-code-grant#step-3-verify-the-installation-request
+function verifyShopifyEntryHmac(query, secret) {
+  const { hmac, signature, ...rest } = query;
+  if (!hmac || typeof hmac !== 'string') return false;
+  const message = Object.keys(rest)
+    .sort()
+    .map((k) => `${k}=${Array.isArray(rest[k]) ? rest[k].join(',') : rest[k]}`)
+    .join('&');
+  const digest = crypto.createHmac('sha256', secret).update(message).digest('hex');
+  try {
+    const a = Buffer.from(digest, 'hex');
+    const b = Buffer.from(hmac, 'hex');
+    if (a.length !== b.length) return false;
+    return crypto.timingSafeEqual(a, b);
+  } catch {
+    return false;
+  }
 }
 
 function normalizeShop(raw) {
@@ -93,6 +124,53 @@ function buildShopifyAuthorizeUrl(shop, clientId, redirectUri, scopes, state) {
     `&state=${state}`
   );
 }
+
+// ─── GET /api/shopify/install ─────────────────────────────────────────────────
+// Shopify App Store'un `application_url` olarak çağırdığı giriş noktası.
+// Merchant, admin'den appi açtığında burası tetiklenir. HMAC doğrulaması yapıp
+// mağaza bağlı değilse OAuth başlatır, bağlıysa frontend'e yönlendirir.
+router.get('/install', async (req, res) => {
+  const frontend = process.env.FRONTEND_URL || 'https://mocksheets.com';
+  const rawShop = req.query.shop;
+
+  // Doğrudan kullanıcı ziyareti (Shopify parametresi yok) → normal SPA
+  if (!rawShop) {
+    return res.redirect(`${frontend}/app`);
+  }
+
+  const secret = process.env.SHOPIFY_CLIENT_SECRET;
+  if (!secret) {
+    console.error('[shopify/install] SHOPIFY_CLIENT_SECRET tanımlı değil');
+    return res.status(500).send('Shopify yapılandırılmamış');
+  }
+
+  if (!verifyShopifyEntryHmac(req.query, secret)) {
+    console.warn('[shopify/install] HMAC doğrulaması başarısız', { shop: rawShop });
+    return res.status(401).send('Invalid HMAC signature');
+  }
+
+  const shop = normalizeShop(rawShop);
+  if (!shop || !/^[a-z0-9][a-z0-9-]*\.myshopify\.com$/.test(shop)) {
+    return res.status(400).send('Invalid shop parameter');
+  }
+
+  try {
+    const { data: existing } = await getSupabase()
+      .from('shopify_connections')
+      .select('shop_domain')
+      .eq('shop_domain', shop)
+      .maybeSingle();
+
+    if (existing) {
+      return res.redirect(`${frontend}/app?shop=${encodeURIComponent(shop)}&autopull=1`);
+    }
+  } catch (err) {
+    console.warn('[shopify/install] bağlantı sorgusu başarısız, OAuth ile devam:', err.message);
+  }
+
+  const base = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 3001}`;
+  return res.redirect(`${base}/api/shopify/auth?shop=${encodeURIComponent(shop)}`);
+});
 
 // ─── GET /api/shopify/auth ────────────────────────────────────────────────────
 // Shop domain'i normalize et: maganizad → maganizad.myshopify.com
@@ -266,7 +344,23 @@ router.get('/callback', async (req, res) => {
       }));
     }
 
+    // First-party session cookie mirrors the Supabase JWT so the app works when
+    // localStorage is blocked (Shopify 1.1.1: Chrome incognito / third-party cookies off).
+    const setSessionCookie = (jwt) => {
+      if (!jwt) return;
+      const parts = [
+        `mocksheets_session=${encodeURIComponent(jwt)}`,
+        'Path=/',
+        'HttpOnly',
+        'Secure',
+        'SameSite=Lax',
+        `Max-Age=${60 * 60 * 24 * 7}`,
+      ];
+      res.setHeader('Set-Cookie', parts.join('; '));
+    };
+
     if (session.userToken) {
+      setSessionCookie(session.userToken);
       const target = session.redirect || `${frontend}/app?shopify=connected&autopull=1`;
       return res.redirect(target);
     }
@@ -280,7 +374,8 @@ router.get('/callback', async (req, res) => {
     });
 
     if (linkErr || !linkData?.properties?.action_link) {
-      return failRedirect();
+      console.warn('[shopify callback] magic link üretilemedi, auth.html\'e yönlendiriliyor:', linkErr?.message);
+      return res.redirect(`${frontend}/auth.html?shopify_pending=${encodeURIComponent(shop)}`);
     }
 
     res.redirect(linkData.properties.action_link);

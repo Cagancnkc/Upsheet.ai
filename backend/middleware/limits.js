@@ -60,9 +60,19 @@ async function resetIfNeeded(usage, userId) {
   return usage;
 }
 
+function readSessionCookie(req) {
+  const raw = req.headers.cookie;
+  if (!raw) return null;
+  for (const part of raw.split(';')) {
+    const [k, ...v] = part.trim().split('=');
+    if (k === 'mocksheets_session') return decodeURIComponent(v.join('='));
+  }
+  return null;
+}
+
 // Limit kontrolü middleware
 async function checkLimit(req, res, next) {
-  const token = req.headers.authorization?.replace('Bearer ', '');
+  const token = req.headers.authorization?.replace('Bearer ', '') || readSessionCookie(req);
   if (!token) {
     return res.status(401).json({
       error: 'Giriş gerekli',
