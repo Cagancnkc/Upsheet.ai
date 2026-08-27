@@ -2131,113 +2131,101 @@ function renderDashboard() {
   if (!view) return;
 
   const analysis = computeCatalogIssues();
-  const lastSync = exportHistory?.[0]?.date
-    ? new Date(exportHistory[0].date).toLocaleString('tr-TR') : 'Henüz yok';
-
-  if (analysis.totalProducts === 0) {
-    view.innerHTML = `
-      <div style="padding:24px">
-        <h2 style="font-size:20px;font-weight:600;margin-bottom:24px">Dashboard</h2>
-        <div style="text-align:center;padding:48px 24px;border:1px dashed #e5e7eb;border-radius:16px;">
-          <i class="ti ti-shopping-bag" style="font-size:28px;color:#9ca3af;"></i>
-          <p style="font-size:14px;font-weight:600;color:#111827;margin:12px 0 4px;">Henüz katalog verisi yok</p>
-          <p style="font-size:12px;color:#6b7280;margin:0 0 16px;">Shopify mağazanızı bağlayıp verinizi çekin</p>
-          <button type="button" id="dashboard-connect-shopify-btn" onclick="dashboardConnectShopify()"
-            style="display:flex;align-items:center;gap:8px;padding:10px 24px;background:#111827;color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;margin:0 auto 12px;">
-            <img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/shopify.svg" width="16" height="16" style="filter:invert(100%);" alt="Shopify"/>
-            Shopify Hesabını Bağla
-          </button>
-          <button type="button" onclick="loadDemoData();"
-            style="font-size:11px;color:#9ca3af;background:transparent;border:none;cursor:pointer;margin-top:8px;text-decoration:underline;">
-            Demo görünümünü aç
-          </button>
-        </div>
-      </div>`;
-    return;
-  }
-
+  const isDemo = analysis.totalProducts === 0;
   const fixDisabled = analysis.totalIssueCount === 0;
 
   view.innerHTML = `
     <div style="padding:28px 28px 120px;box-sizing:border-box;width:100%;min-width:0;animation:ms-fadein .3s ease;">
 
-      <!-- Hero Header -->
+      <!-- 1. Hero -->
       <div style="margin-bottom:24px;">
-        <h1 style="font-size:24px;font-weight:700;color:#111827;margin:0 0 4px;">Dashboard</h1>
-        <p style="font-size:13px;color:#6b7280;margin:0;">Mağazanızın canlı özeti ve AI önerileri</p>
+        <h1 style="font-size:22px;font-weight:700;color:#111827;margin:0 0 2px;">Dashboard</h1>
+        <p style="font-size:13.5px;color:#6b7280;margin:0;">AI, kataloğunuz için arka planda çalışmaya devam ediyor.</p>
       </div>
 
-      <!-- Aylık Kazanım Özeti (sadece Free, ayda 1 kez, JS tarafından gösterilir) -->
+      <!-- Value Summary Banner -->
       <div id="value-summary-banner" style="display:none;background:#f0fdf4;border:1px solid #d1fae5;border-radius:16px;padding:16px 20px;margin-bottom:20px;">
         <div style="display:flex;align-items:center;justify-content:space-between;">
           <p id="value-summary-text" style="font-size:13px;color:#166534;margin:0;flex:1;"></p>
-          <button id="value-summary-dismiss" type="button"
-            style="background:transparent;border:none;color:#9ca3af;cursor:pointer;font-size:18px;padding:0 0 0 12px;line-height:1;">×</button>
+          <button id="value-summary-dismiss" type="button" style="background:transparent;border:none;color:#9ca3af;cursor:pointer;font-size:18px;padding:0 0 0 12px;line-height:1;">×</button>
         </div>
       </div>
 
-      <!-- Live Activity Card -->
+      <!-- 2. Live Activity Card -->
       <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:22px;margin-bottom:20px;box-shadow:0 1px 2px rgba(16,24,40,0.03);">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
           <div style="display:flex;gap:0;border:1px solid #eceef1;border-radius:10px;overflow:hidden;">
-            <button id="live-tab-store" onclick="switchLiveTab('store')" style="padding:7px 14px;font-size:12px;font-weight:600;border:none;background:#111827;color:#fff;cursor:pointer;">Canlı Mağaza</button>
-            <button id="live-tab-activity" onclick="switchLiveTab('activity')" style="padding:7px 14px;font-size:12px;font-weight:500;border:none;background:transparent;color:#6b7280;cursor:pointer;">Canlı Aktivite</button>
-            <button id="live-tab-heatmap" onclick="switchLiveTab('heatmap')" style="padding:7px 14px;font-size:12px;font-weight:500;border:none;background:transparent;color:#6b7280;cursor:pointer;">Isı Haritası</button>
+            <button class="dash-live-tab" id="live-tab-store" onclick="switchLiveTab(this,'store')" data-active="true" style="padding:7px 14px;font-size:12px;font-weight:600;border:none;background:#111827;color:#fff;cursor:pointer;">Canlı Önizleme</button>
+            <button class="dash-live-tab" id="live-tab-live" onclick="switchLiveTab(this,'live')" data-active="false" style="padding:7px 14px;font-size:12px;font-weight:500;border:none;background:transparent;color:#6b7280;cursor:pointer;">Canlı Akış</button>
+            <button class="dash-live-tab" id="live-tab-heatmap" onclick="switchLiveTab(this,'heatmap')" data-active="false" style="padding:7px 14px;font-size:12px;font-weight:500;border:none;background:transparent;color:#6b7280;cursor:pointer;">Isı Haritası</button>
           </div>
-          <span style="display:inline-flex;align-items:center;gap:6px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:999px;padding:4px 10px;font-size:11px;font-weight:700;color:#16a34a;">
+          <span style="display:inline-flex;align-items:center;gap:6px;background:#f0fdf4;border:1px solid #dcfce7;border-radius:999px;padding:4px 10px;font-size:11px;font-weight:700;color:#15803d;">
             <span style="width:6px;height:6px;border-radius:50%;background:#16a34a;animation:ms-pulse 1.5s ease-in-out infinite;display:inline-block;"></span>
             AI ÇALIŞIYOR
           </span>
         </div>
-        <!-- Tab: Canlı Mağaza -->
-        <div id="live-panel-store" style="display:block;">
-          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;">
-            <div style="background:#f9fafb;border-radius:12px;padding:14px;">
-              <p style="font-size:11px;color:#9ca3af;margin:0 0 6px;">Ziyaretçi</p>
-              <p id="hero-visitors-value" style="font-size:22px;font-weight:700;color:#111827;margin:0 0 3px;">—</p>
-              <p id="hero-visitors-trend" style="font-size:11px;margin:0;">—</p>
+        <!-- Tab: Canlı Önizleme -->
+        <div class="dash-live-panel" id="dash-live-store" style="display:block;">
+          <div style="background:#1a1a2e;border-radius:14px;height:340px;overflow:hidden;position:relative;">
+            <div style="background:#111827;padding:8px 16px;display:flex;align-items:center;gap:12px;">
+              <div style="display:flex;gap:5px;">
+                <div style="width:8px;height:8px;border-radius:50%;background:#ff5f57;"></div>
+                <div style="width:8px;height:8px;border-radius:50%;background:#febc2e;"></div>
+                <div style="width:8px;height:8px;border-radius:50%;background:#28c840;"></div>
+              </div>
+              <div style="flex:1;background:#374151;border-radius:4px;height:16px;display:flex;align-items:center;padding:0 8px;">
+                <span style="font-size:9px;color:#9ca3af;">mockshop.myshopify.com</span>
+              </div>
             </div>
-            <div style="background:#f9fafb;border-radius:12px;padding:14px;">
-              <p style="font-size:11px;color:#9ca3af;margin:0 0 6px;">Toplam Satış</p>
-              <p id="hero-sales-value" style="font-size:22px;font-weight:700;color:#16a34a;margin:0 0 3px;">—</p>
-              <p id="hero-sales-trend" style="font-size:11px;margin:0;">—</p>
+            <div style="background:#16a34a;padding:5px 16px;text-align:center;">
+              <span style="font-size:9.5px;color:#fff;font-weight:600;">🚀 Ücretsiz Kargo — 500₺ Üzeri Siparişlerde</span>
             </div>
-            <div style="background:#f9fafb;border-radius:12px;padding:14px;">
-              <p style="font-size:11px;color:#9ca3af;margin:0 0 6px;">Dönüşüm Oranı</p>
-              <p id="hero-conversion-value" style="font-size:22px;font-weight:700;color:#111827;margin:0 0 3px;">—</p>
-              <p id="hero-conversion-trend" style="font-size:11px;margin:0;">—</p>
+            <div style="background:#fff;padding:6px 16px;display:flex;align-items:center;gap:16px;border-bottom:1px solid #f3f4f6;">
+              <div style="width:60px;height:12px;background:#111827;border-radius:2px;"></div>
+              <div style="display:flex;gap:10px;flex:1;">
+                <div style="width:40px;height:8px;background:#e5e7eb;border-radius:2px;"></div>
+                <div style="width:40px;height:8px;background:#e5e7eb;border-radius:2px;"></div>
+                <div style="width:40px;height:8px;background:#e5e7eb;border-radius:2px;"></div>
+              </div>
             </div>
-            <div style="background:#f9fafb;border-radius:12px;padding:14px;">
-              <p style="font-size:11px;color:#9ca3af;margin:0 0 6px;">Sepete Ekleme</p>
-              <p id="hero-cart-value" style="font-size:22px;font-weight:700;color:#111827;margin:0 0 3px;">—</p>
-              <p id="hero-cart-trend" style="font-size:11px;margin:0;">—</p>
+            <div style="padding:12px 16px;background:#fff;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
+              <div style="background:#f3f4f6;border-radius:6px;aspect-ratio:3/4;display:flex;align-items:center;justify-content:center;font-size:22px;">👔</div>
+              <div style="background:#f3f4f6;border-radius:6px;aspect-ratio:3/4;display:flex;align-items:center;justify-content:center;font-size:22px;">👜</div>
+              <div style="background:#f3f4f6;border-radius:6px;aspect-ratio:3/4;display:flex;align-items:center;justify-content:center;font-size:22px;">👟</div>
             </div>
-            <div style="background:#f9fafb;border-radius:12px;padding:14px;">
-              <p style="font-size:11px;color:#9ca3af;margin:0 0 6px;">Ort. Süre</p>
-              <p id="hero-duration-value" style="font-size:22px;font-weight:700;color:#111827;margin:0 0 3px;">—</p>
-              <p id="hero-duration-trend" style="font-size:11px;margin:0;">—</p>
+            <div style="position:absolute;inset:0;background:rgba(0,0,0,0.48);backdrop-filter:blur(2px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;">
+              <span style="background:#16a34a;color:#fff;font-size:9px;font-weight:700;letter-spacing:.1em;padding:4px 10px;border-radius:999px;">CANLI ÖNİZLEME</span>
+              <p style="font-size:13px;font-weight:600;color:#fff;margin:0;text-align:center;">Mağazanız bu an nasıl görünüyor?</p>
+              <p style="font-size:11px;color:rgba(255,255,255,.7);margin:0;text-align:center;">Shopify bağlantısı ile canlı önizleme aktif olur</p>
+              <button type="button" onclick="dashboardConnectShopify()" style="margin-top:4px;padding:8px 18px;background:#fff;color:#111827;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;">
+                <img src="https://cdn.simpleicons.org/shopify/95BF47" width="14" height="14" alt=""> Mağazayı Bağla
+              </button>
             </div>
           </div>
         </div>
-        <!-- Tab: Canlı Aktivite -->
-        <div id="live-panel-activity" style="display:none;">
-          <div style="display:flex;flex-direction:column;gap:8px;">
-            <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#f9fafb;border-radius:10px;font-size:12px;color:#374151;">
-              <span style="width:6px;height:6px;border-radius:50%;background:#16a34a;animation:ms-pulse 1.5s ease-in-out infinite;flex-shrink:0;"></span>
-              AI katalog önerisi oluşturuldu — 2 dk önce
+        <!-- Tab: Canlı Akış -->
+        <div class="dash-live-panel" id="dash-live-live" style="display:none;">
+          <div style="position:relative;background:#0f1117;border-radius:12px;padding:16px;font-family:'Courier New',monospace;font-size:11px;color:#4ade80;max-height:280px;overflow:hidden;">
+            <div style="line-height:1.9;">
+              <div><span style="color:#6b7280;">[14:23:01]</span> ✓ <span style="color:#fff;">Keten Gömlek</span> görüntülendi — İstanbul</div>
+              <div><span style="color:#6b7280;">[14:23:04]</span> 🛒 <span style="color:#fbbf24;">Oversize Kapüşonlu</span> sepete eklendi</div>
+              <div><span style="color:#6b7280;">[14:23:09]</span> ✓ <span style="color:#fff;">Minimalist Çanta</span> görüntülendi — Ankara</div>
+              <div><span style="color:#6b7280;">[14:23:11]</span> 💰 <span style="color:#4ade80;">Sipariş tamamlandı</span> — ₺312.00</div>
+              <div><span style="color:#6b7280;">[14:23:15]</span> ✓ <span style="color:#fff;">Deri Kemer</span> arama sonuçlarında tıklandı</div>
+              <div><span style="color:#6b7280;">[14:23:18]</span> ⚠ <span style="color:#f87171;">Yazlık Elbise</span> sayfasından çıkıldı</div>
+              <div><span style="color:#6b7280;">[14:23:22]</span> 🛒 <span style="color:#fbbf24;">Keten Gömlek</span> sepete eklendi</div>
+              <div><span style="color:#6b7280;">[14:23:25]</span> ✓ <span style="color:#fff;">Baskılı Tişört</span> görüntülendi — İzmir</div>
+              <div><span style="color:#6b7280;">[14:23:28]</span> 💰 <span style="color:#4ade80;">Sipariş tamamlandı</span> — ₺89.90</div>
             </div>
-            <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#f9fafb;border-radius:10px;font-size:12px;color:#374151;">
-              <span style="width:6px;height:6px;border-radius:50%;background:#3b82f6;flex-shrink:0;"></span>
-              Shopify senkronizasyonu tamamlandı — 8 dk önce
-            </div>
-            <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#f9fafb;border-radius:10px;font-size:12px;color:#374151;">
-              <span style="width:6px;height:6px;border-radius:50%;background:#f59e0b;flex-shrink:0;"></span>
-              3 ürün güncellendi — 15 dk önce
+            <div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent 40%,rgba(15,17,23,0.97) 100%);display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:24px;">
+              <button type="button" onclick="dashboardConnectShopify()" style="padding:9px 20px;background:#16a34a;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;">
+                <img src="https://cdn.simpleicons.org/shopify/fff" width="14" height="14" alt=""> Shopify Mağazanı Bağla
+              </button>
             </div>
           </div>
         </div>
         <!-- Tab: Isı Haritası -->
-        <div id="live-panel-heatmap" style="display:none;">
+        <div class="dash-live-panel" id="dash-live-heatmap" style="display:none;">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
             <div style="display:flex;align-items:center;gap:8px;">
               <div id="dash-tracking-toggle-wrap"></div>
@@ -2249,136 +2237,317 @@ function renderDashboard() {
         </div>
       </div>
 
-      <!-- Büyüme Fırsatları -->
-      <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:22px;margin-bottom:16px;box-shadow:0 1px 2px rgba(16,24,40,0.03);">
-        <p style="font-size:14px;font-weight:600;color:#111827;margin:0 0 16px;">Büyüme Fırsatları</p>
-        <div id="growth-opportunities-list" style="display:flex;flex-direction:column;gap:10px;"></div>
+      <!-- 3. Ziyaretçi Davranışı -->
+      <section style="margin-bottom:20px;">
+        <h2 style="font-size:15px;font-weight:700;color:#111827;margin:0 0 14px;">Ziyaretçi Davranışı</h2>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+          <div style="border:1px solid #eceef1;border-radius:16px;padding:18px;background:#fff;">
+            <p style="font-size:12px;color:#6b7280;margin:0 0 8px;">Benzersiz Ziyaretçi</p>
+            <p id="hero-visitors-value" style="font-size:22px;font-weight:700;color:#111827;margin:0 0 6px;">${isDemo ? '12.480' : '—'}</p>
+            <span style="font-size:11px;color:${isDemo ? '#16a34a' : '#9ca3af'};font-weight:600;">${isDemo ? '▲ +8.2%' : '—'}</span>
+            <span id="hero-visitors-trend" style="display:none;"></span>
+          </div>
+          <div style="border:1px solid #eceef1;border-radius:16px;padding:18px;background:#fff;">
+            <p style="font-size:12px;color:#6b7280;margin:0 0 8px;">Tıklama</p>
+            <p style="font-size:22px;font-weight:700;color:#111827;margin:0 0 6px;">${isDemo ? '34.920' : '—'}</p>
+            <span style="font-size:11px;color:${isDemo ? '#16a34a' : '#9ca3af'};font-weight:600;">${isDemo ? '▲ +4.1%' : '—'}</span>
+          </div>
+          <div style="border:1px solid #eceef1;border-radius:16px;padding:18px;background:#fff;">
+            <p style="font-size:12px;color:#6b7280;margin:0 0 8px;">Çıkış Oranı</p>
+            <p id="hero-conversion-value" style="font-size:22px;font-weight:700;color:#111827;margin:0 0 6px;">${isDemo ? '%38.4' : '—'}</p>
+            <span style="font-size:11px;color:${isDemo ? '#16a34a' : '#9ca3af'};font-weight:600;">${isDemo ? '▼ -2.3%' : '—'}</span>
+            <span id="hero-conversion-trend" style="display:none;"></span>
+          </div>
+          <div style="border:1px solid #eceef1;border-radius:16px;padding:18px;background:#fff;">
+            <p style="font-size:12px;color:#6b7280;margin:0 0 8px;">Sepete Ekleme</p>
+            <p id="hero-cart-value" style="font-size:22px;font-weight:700;color:#111827;margin:0 0 6px;">${isDemo ? '2.140' : '—'}</p>
+            <span style="font-size:11px;color:${isDemo ? '#16a34a' : '#9ca3af'};font-weight:600;">${isDemo ? '▲ +11.6%' : '—'}</span>
+            <span id="hero-cart-trend" style="display:none;"></span>
+          </div>
+          <div style="border:1px solid #eceef1;border-radius:16px;padding:18px;background:#fff;">
+            <p style="font-size:12px;color:#6b7280;margin:0 0 8px;">Dönüşüm Oranı</p>
+            <p style="font-size:22px;font-weight:700;color:#111827;margin:0 0 6px;">${isDemo ? '%3.8' : '—'}</p>
+            <span style="font-size:11px;color:${isDemo ? '#16a34a' : '#9ca3af'};font-weight:600;">${isDemo ? '▲ +0.6%' : '—'}</span>
+          </div>
+          <div style="border:1px solid #eceef1;border-radius:16px;padding:18px;background:#fff;">
+            <p style="font-size:12px;color:#6b7280;margin:0 0 8px;">Ort. Oturum Süresi</p>
+            <p id="hero-duration-value" style="font-size:22px;font-weight:700;color:#111827;margin:0 0 6px;">${isDemo ? '4dk 12sn' : '—'}</p>
+            <span style="font-size:11px;color:${isDemo ? '#16a34a' : '#9ca3af'};font-weight:600;">${isDemo ? '▲ +5.4%' : '—'}</span>
+            <span id="hero-duration-trend" style="display:none;"></span>
+          </div>
+        </div>
+        <span id="hero-sales-value" style="display:none;"></span>
+        <span id="hero-sales-trend" style="display:none;"></span>
+      </section>
+
+      <!-- 4. AI Önerileri -->
+      <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:22px;margin-bottom:20px;box-shadow:0 1px 2px rgba(16,24,40,0.03);">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+          <p style="font-size:15px;font-weight:700;color:#111827;margin:0;">AI Önerileri</p>
+          <span id="ai-recs-badge" style="font-size:10px;background:#fef3c7;color:#92400e;padding:2px 7px;border-radius:999px;font-weight:600;display:none;"></span>
+        </div>
+        ${isDemo ? `
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div style="background:#f9fafb;border:1px solid #f3f4f6;border-radius:10px;padding:14px;display:flex;align-items:flex-start;gap:12px;">
+            <span style="font-size:9px;font-weight:700;background:#dbeafe;color:#1e40af;border-radius:4px;padding:2px 6px;white-space:nowrap;margin-top:1px;">VERİ</span>
+            <div><p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 4px;">SEO Başlıklarını Güncelle</p><p style="font-size:11.5px;color:#6b7280;margin:0;">18 ürünün başlığı anahtar kelime optimizasyonu gerektiriyor.</p></div>
+          </div>
+          <div style="background:#f9fafb;border:1px solid #f3f4f6;border-radius:10px;padding:14px;display:flex;align-items:flex-start;gap:12px;">
+            <span style="font-size:9px;font-weight:700;background:#dcfce7;color:#15803d;border-radius:4px;padding:2px 6px;white-space:nowrap;margin-top:1px;">KURAL</span>
+            <div><p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 4px;">Stok Uyarısı Ekle</p><p style="font-size:11.5px;color:#6b7280;margin:0;">Düşük stoklu ürünlerde aciliyet bildirimi göster.</p></div>
+          </div>
+          <div style="background:#f9fafb;border:1px solid #f3f4f6;border-radius:10px;padding:14px;display:flex;align-items:flex-start;gap:12px;">
+            <span style="font-size:9px;font-weight:700;background:#dbeafe;color:#1e40af;border-radius:4px;padding:2px 6px;white-space:nowrap;margin-top:1px;">VERİ</span>
+            <div><p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 4px;">Ürün Açıklamalarını Zenginleştir</p><p style="font-size:11.5px;color:#6b7280;margin:0;">24 ürünün açıklaması 50 kelimeden kısa ve dönüşümü düşürüyor.</p></div>
+          </div>
+          <div style="background:#f9fafb;border:1px solid #f3f4f6;border-radius:10px;padding:14px;display:flex;align-items:flex-start;gap:12px;">
+            <span style="font-size:9px;font-weight:700;background:#dcfce7;color:#15803d;border-radius:4px;padding:2px 6px;white-space:nowrap;margin-top:1px;">KURAL</span>
+            <div><p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 4px;">Fiyatlandırma Stratejisi</p><p style="font-size:11.5px;color:#6b7280;margin:0;">Rekabetçi ürünlerde %5-10 indirim satışları artırabilir.</p></div>
+          </div>
+          <div style="background:#f9fafb;border:1px solid #f3f4f6;border-radius:10px;padding:14px;display:flex;align-items:flex-start;gap:12px;">
+            <span style="font-size:9px;font-weight:700;background:#dbeafe;color:#1e40af;border-radius:4px;padding:2px 6px;white-space:nowrap;margin-top:1px;">VERİ</span>
+            <div><p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 4px;">Görsel Kalitesini İyileştir</p><p style="font-size:11.5px;color:#6b7280;margin:0;">Mobil görünümde 12 ürün görseli optimize edilmemiş durumda.</p></div>
+          </div>
+        </div>
+        ` : `
+        <div id="dash-ai-recommendations" style="display:flex;flex-direction:column;gap:8px;"></div>
+        <button id="fix-all-issues-btn" type="button"
+          style="width:100%;margin-top:14px;padding:10px;background:#111827;color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:600;opacity:${fixDisabled ? '0.5' : '1'};cursor:${fixDisabled ? 'not-allowed' : 'pointer'};"
+          ${fixDisabled ? 'disabled' : ''}>Tüm Sorunları AI ile Düzelt</button>
+        `}
+        <div id="card-ai-recs" style="display:none;"></div>
+        <div id="ai-recs-body" style="display:none;"></div>
+        <button id="ai-recs-toggle" type="button" style="display:none;"></button>
+        <i id="ai-recs-chevron" style="display:none;"></i>
       </div>
 
-      <!-- Ürün Performansı Tablosu -->
-      <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:22px;margin-bottom:16px;overflow-x:auto;box-shadow:0 1px 2px rgba(16,24,40,0.03);">
-        <p style="font-size:14px;font-weight:600;color:#111827;margin:0 0 16px;">Ürün Performansı <span style="font-size:10px;color:#9ca3af;font-weight:400;">— Etkileşim Puanı = tıklama×2 + sepet×5</span></p>
+      <!-- 5. Büyüme Fırsatları -->
+      <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:22px;margin-bottom:20px;box-shadow:0 1px 2px rgba(16,24,40,0.03);">
+        <p style="font-size:15px;font-weight:700;color:#111827;margin:0 0 16px;">Büyüme Fırsatları</p>
+        <div id="growth-opportunities-list" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+          ${isDemo ? `
+          <div style="background:#fff;border:1px solid #eceef1;border-radius:14px;padding:18px;">
+            <span style="font-size:9px;font-weight:700;background:#fef3c7;color:#92400e;border-radius:4px;padding:2px 6px;">SORUN</span>
+            <p style="font-size:13px;font-weight:700;color:#111827;margin:10px 0 4px;">%62 Sepet Terk Oranı</p>
+            <span style="font-size:9px;font-weight:700;background:#dbeafe;color:#1e40af;border-radius:4px;padding:2px 6px;display:inline-block;margin-bottom:6px;">ÖNERİ</span>
+            <p style="font-size:11.5px;color:#6b7280;margin:0 0 8px;">Ücretsiz kargo başlık banderi ekle</p>
+            <span style="font-size:9px;font-weight:700;background:#dcfce7;color:#15803d;border-radius:4px;padding:2px 6px;display:inline-block;margin-bottom:6px;">BEKLENEN ETKİ</span>
+            <p style="font-size:12px;font-weight:600;color:#16a34a;margin:0 0 14px;">+%4-6 dönüşüm</p>
+            <button type="button" onclick="sendChat('Ücretsiz kargo başlık banderi ekle')" style="width:100%;padding:8px;background:#111827;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;">Uygula</button>
+          </div>
+          <div style="background:#fff;border:1px solid #eceef1;border-radius:14px;padding:18px;">
+            <span style="font-size:9px;font-weight:700;background:#fef3c7;color:#92400e;border-radius:4px;padding:2px 6px;">SORUN</span>
+            <p style="font-size:13px;font-weight:700;color:#111827;margin:10px 0 4px;">18 Ürün SEO Başlığı Yetersiz</p>
+            <span style="font-size:9px;font-weight:700;background:#dbeafe;color:#1e40af;border-radius:4px;padding:2px 6px;display:inline-block;margin-bottom:6px;">ÖNERİ</span>
+            <p style="font-size:11.5px;color:#6b7280;margin:0 0 8px;">AI ile toplu SEO optimizasyonu uygula</p>
+            <span style="font-size:9px;font-weight:700;background:#dcfce7;color:#15803d;border-radius:4px;padding:2px 6px;display:inline-block;margin-bottom:6px;">BEKLENEN ETKİ</span>
+            <p style="font-size:12px;font-weight:600;color:#16a34a;margin:0 0 14px;">+%12 organik trafik</p>
+            <button type="button" onclick="runShopifyAiAnalysis('all')" style="width:100%;padding:8px;background:#111827;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;">Uygula</button>
+          </div>
+          <div style="background:#fff;border:1px solid #eceef1;border-radius:14px;padding:18px;">
+            <span style="font-size:9px;font-weight:700;background:#fef3c7;color:#92400e;border-radius:4px;padding:2px 6px;">SORUN</span>
+            <p style="font-size:13px;font-weight:700;color:#111827;margin:10px 0 4px;">Mobil Görseller Optimize Değil</p>
+            <span style="font-size:9px;font-weight:700;background:#dbeafe;color:#1e40af;border-radius:4px;padding:2px 6px;display:inline-block;margin-bottom:6px;">ÖNERİ</span>
+            <p style="font-size:11.5px;color:#6b7280;margin:0 0 8px;">Görselleri sıkıştır ve WebP formatına çevir</p>
+            <span style="font-size:9px;font-weight:700;background:#dcfce7;color:#15803d;border-radius:4px;padding:2px 6px;display:inline-block;margin-bottom:6px;">BEKLENEN ETKİ</span>
+            <p style="font-size:12px;font-weight:600;color:#16a34a;margin:0 0 14px;">-%3 çıkış oranı</p>
+            <button type="button" onclick="sendChat('Mobil görselleri optimize et')" style="width:100%;padding:8px;background:#111827;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;">Uygula</button>
+          </div>
+          ` : ''}
+        </div>
+      </div>
+
+      <!-- 6. Ürün Performansı Tablosu -->
+      <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:22px;margin-bottom:20px;overflow-x:auto;box-shadow:0 1px 2px rgba(16,24,40,0.03);">
+        <p style="font-size:15px;font-weight:700;color:#111827;margin:0 0 16px;">Ürün Performansı</p>
         <table style="width:100%;border-collapse:collapse;font-size:12px;">
           <thead>
-            <tr style="border-bottom:0.5px solid #e5e7eb;">
-              <th style="text-align:left;padding:8px;color:#9ca3af;font-weight:500;">Ürün</th>
-              <th style="text-align:right;padding:8px;color:#9ca3af;font-weight:500;">Görüntülenme</th>
-              <th style="text-align:right;padding:8px;color:#9ca3af;font-weight:500;">Tıklama</th>
-              <th style="text-align:right;padding:8px;color:#9ca3af;font-weight:500;">Sepete Ekle</th>
-              <th style="text-align:right;padding:8px;color:#9ca3af;font-weight:500;">Sepet Oranı</th>
-              <th style="text-align:right;padding:8px;color:#9ca3af;font-weight:500;">Etkileşim</th>
-              <th style="text-align:center;padding:8px;color:#9ca3af;font-weight:500;">Durum</th>
-              <th style="text-align:left;padding:8px;color:#9ca3af;font-weight:500;">İşlem</th>
+            <tr style="border-bottom:1px solid #f3f4f6;">
+              <th style="text-align:left;padding:8px 10px;color:#9ca3af;font-weight:500;white-space:nowrap;">Ürün</th>
+              <th style="text-align:right;padding:8px 10px;color:#9ca3af;font-weight:500;">Görüntülenme</th>
+              <th style="text-align:right;padding:8px 10px;color:#9ca3af;font-weight:500;">Satış</th>
+              <th style="text-align:right;padding:8px 10px;color:#9ca3af;font-weight:500;">Gelir</th>
+              <th style="text-align:right;padding:8px 10px;color:#9ca3af;font-weight:500;">Dönüşüm</th>
+              <th style="text-align:right;padding:8px 10px;color:#9ca3af;font-weight:500;">Sepet Oranı</th>
+              <th style="text-align:right;padding:8px 10px;color:#9ca3af;font-weight:500;">Etkileşim</th>
+              <th style="text-align:center;padding:8px 10px;color:#9ca3af;font-weight:500;">Durum</th>
+              <th style="text-align:left;padding:8px 10px;color:#9ca3af;font-weight:500;">İşlem</th>
             </tr>
           </thead>
-          <tbody id="product-performance-tbody"></tbody>
+          <tbody id="product-performance-tbody">
+            ${isDemo ? `
+            <tr style="border-bottom:1px solid #f9fafb;">
+              <td style="padding:10px;font-weight:500;color:#111827;">Keten Gömlek — Beyaz</td>
+              <td style="padding:10px;text-align:right;color:#374151;">4.820</td>
+              <td style="padding:10px;text-align:right;color:#374151;">312</td>
+              <td style="padding:10px;text-align:right;color:#374151;">₺54.840</td>
+              <td style="padding:10px;text-align:right;color:#374151;">%6.5</td>
+              <td style="padding:10px;text-align:right;color:#374151;">%18.2</td>
+              <td style="padding:10px;text-align:right;color:#374151;">1.248</td>
+              <td style="padding:10px;text-align:center;"><span style="font-size:10px;font-weight:600;background:#dcfce7;color:#15803d;border-radius:999px;padding:2px 8px;">İyi</span></td>
+              <td style="padding:10px;"><a href="#" onclick="switchToView('catalog-editor-layout');return false;" style="font-size:11px;color:#6b7280;text-decoration:underline;">Düzenle</a></td>
+            </tr>
+            <tr style="border-bottom:1px solid #f9fafb;">
+              <td style="padding:10px;font-weight:500;color:#111827;">Oversize Kapüşonlu</td>
+              <td style="padding:10px;text-align:right;color:#374151;">3.640</td>
+              <td style="padding:10px;text-align:right;color:#374151;">218</td>
+              <td style="padding:10px;text-align:right;color:#374151;">₺43.600</td>
+              <td style="padding:10px;text-align:right;color:#374151;">%5.9</td>
+              <td style="padding:10px;text-align:right;color:#374151;">%14.7</td>
+              <td style="padding:10px;text-align:right;color:#374151;">892</td>
+              <td style="padding:10px;text-align:center;"><span style="font-size:10px;font-weight:600;background:#dcfce7;color:#15803d;border-radius:999px;padding:2px 8px;">İyi</span></td>
+              <td style="padding:10px;"><a href="#" onclick="switchToView('catalog-editor-layout');return false;" style="font-size:11px;color:#6b7280;text-decoration:underline;">Düzenle</a></td>
+            </tr>
+            <tr style="border-bottom:1px solid #f9fafb;">
+              <td style="padding:10px;font-weight:500;color:#111827;">Deri Kemer — Siyah</td>
+              <td style="padding:10px;text-align:right;color:#374151;">2.910</td>
+              <td style="padding:10px;text-align:right;color:#374151;">98</td>
+              <td style="padding:10px;text-align:right;color:#374151;">₺19.600</td>
+              <td style="padding:10px;text-align:right;color:#374151;">%3.4</td>
+              <td style="padding:10px;text-align:right;color:#374151;">%9.1</td>
+              <td style="padding:10px;text-align:right;color:#374151;">462</td>
+              <td style="padding:10px;text-align:center;"><span style="font-size:10px;font-weight:600;background:#fef3c7;color:#92400e;border-radius:999px;padding:2px 8px;">Orta</span></td>
+              <td style="padding:10px;"><a href="#" onclick="switchToView('catalog-editor-layout');return false;" style="font-size:11px;color:#6b7280;text-decoration:underline;">Düzenle</a></td>
+            </tr>
+            <tr style="border-bottom:1px solid #f9fafb;">
+              <td style="padding:10px;font-weight:500;color:#111827;">Minimalist Çanta</td>
+              <td style="padding:10px;text-align:right;color:#374151;">2.240</td>
+              <td style="padding:10px;text-align:right;color:#374151;">74</td>
+              <td style="padding:10px;text-align:right;color:#374151;">₺37.000</td>
+              <td style="padding:10px;text-align:right;color:#374151;">%3.3</td>
+              <td style="padding:10px;text-align:right;color:#374151;">%8.4</td>
+              <td style="padding:10px;text-align:right;color:#374151;">518</td>
+              <td style="padding:10px;text-align:center;"><span style="font-size:10px;font-weight:600;background:#fef3c7;color:#92400e;border-radius:999px;padding:2px 8px;">Orta</span></td>
+              <td style="padding:10px;"><a href="#" onclick="switchToView('catalog-editor-layout');return false;" style="font-size:11px;color:#6b7280;text-decoration:underline;">Düzenle</a></td>
+            </tr>
+            <tr style="border-bottom:1px solid #f9fafb;">
+              <td style="padding:10px;font-weight:500;color:#111827;">Baskılı Tişört</td>
+              <td style="padding:10px;text-align:right;color:#374151;">1.820</td>
+              <td style="padding:10px;text-align:right;color:#374151;">42</td>
+              <td style="padding:10px;text-align:right;color:#374151;">₺5.040</td>
+              <td style="padding:10px;text-align:right;color:#374151;">%2.3</td>
+              <td style="padding:10px;text-align:right;color:#374151;">%6.1</td>
+              <td style="padding:10px;text-align:right;color:#374151;">294</td>
+              <td style="padding:10px;text-align:center;"><span style="font-size:10px;font-weight:600;background:#fee2e2;color:#b91c1c;border-radius:999px;padding:2px 8px;">Düşük</span></td>
+              <td style="padding:10px;"><a href="#" onclick="switchToView('catalog-editor-layout');return false;" style="font-size:11px;color:#6b7280;text-decoration:underline;">Düzenle</a></td>
+            </tr>
+            <tr>
+              <td style="padding:10px;font-weight:500;color:#111827;">Yazlık Elbise</td>
+              <td style="padding:10px;text-align:right;color:#374151;">1.540</td>
+              <td style="padding:10px;text-align:right;color:#374151;">28</td>
+              <td style="padding:10px;text-align:right;color:#374151;">₺11.200</td>
+              <td style="padding:10px;text-align:right;color:#374151;">%1.8</td>
+              <td style="padding:10px;text-align:right;color:#374151;">%5.2</td>
+              <td style="padding:10px;text-align:right;color:#374151;">196</td>
+              <td style="padding:10px;text-align:center;"><span style="font-size:10px;font-weight:600;background:#fee2e2;color:#b91c1c;border-radius:999px;padding:2px 8px;">Düşük</span></td>
+              <td style="padding:10px;"><a href="#" onclick="switchToView('catalog-editor-layout');return false;" style="font-size:11px;color:#6b7280;text-decoration:underline;">Düzenle</a></td>
+            </tr>
+            ` : ''}
+          </tbody>
         </table>
       </div>
 
-      <!-- Kullanıcı Davranışları -->
-      <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:22px;margin-bottom:16px;box-shadow:0 1px 2px rgba(16,24,40,0.03);">
-        <p style="font-size:14px;font-weight:600;color:#111827;margin:0 0 16px;">Kullanıcı Davranışları</p>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;">
-          <div><p style="font-size:11px;font-weight:600;color:#9ca3af;margin:0 0 8px;text-transform:uppercase;letter-spacing:.04em;">En Çok Görüntülenen</p><div id="behavior-most-viewed"></div></div>
-          <div><p style="font-size:11px;font-weight:600;color:#9ca3af;margin:0 0 8px;text-transform:uppercase;letter-spacing:.04em;">En Çok Satılan</p><div id="behavior-most-sold"></div></div>
-          <div><p style="font-size:11px;font-weight:600;color:#9ca3af;margin:0 0 8px;text-transform:uppercase;letter-spacing:.04em;">En Çok Tıklanan</p><div id="behavior-most-clicked"></div></div>
-          <div><p style="font-size:11px;font-weight:600;color:#9ca3af;margin:0 0 8px;text-transform:uppercase;letter-spacing:.04em;">En Çok Terk Edilen</p><div id="behavior-most-abandoned"></div></div>
-          <div><p style="font-size:11px;font-weight:600;color:#9ca3af;margin:0 0 8px;text-transform:uppercase;letter-spacing:.04em;">En Fazla Etkileşim</p><div id="behavior-most-engaged"></div></div>
+      <!-- 7. Kullanıcı Davranışları -->
+      <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:22px;margin-bottom:20px;box-shadow:0 1px 2px rgba(16,24,40,0.03);">
+        <p style="font-size:15px;font-weight:700;color:#111827;margin:0 0 16px;">Kullanıcı Davranışları</p>
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;">
+          <div>
+            <p style="font-size:10px;font-weight:700;color:#9ca3af;margin:0 0 8px;text-transform:uppercase;letter-spacing:.04em;">En Çok Görüntülenen</p>
+            <div id="behavior-most-viewed">${isDemo ? '<p style="font-size:12px;color:#374151;margin:4px 0 0;">Keten Gömlek</p><p style="font-size:12px;color:#374151;margin:4px 0 0;">Oversize Kapüşonlu</p><p style="font-size:12px;color:#374151;margin:4px 0 0;">Minimalist Çanta</p>' : ''}</div>
+          </div>
+          <div>
+            <p style="font-size:10px;font-weight:700;color:#9ca3af;margin:0 0 8px;text-transform:uppercase;letter-spacing:.04em;">En Çok Satılan</p>
+            <div id="behavior-most-sold">${isDemo ? '<p style="font-size:12px;color:#374151;margin:4px 0 0;">Keten Gömlek</p><p style="font-size:12px;color:#374151;margin:4px 0 0;">Oversize Kapüşonlu</p><p style="font-size:12px;color:#374151;margin:4px 0 0;">Deri Kemer</p>' : ''}</div>
+          </div>
+          <div>
+            <p style="font-size:10px;font-weight:700;color:#9ca3af;margin:0 0 8px;text-transform:uppercase;letter-spacing:.04em;">En Çok Tıklanan</p>
+            <div id="behavior-most-clicked">${isDemo ? '<p style="font-size:12px;color:#374151;margin:4px 0 0;">Oversize Kapüşonlu</p><p style="font-size:12px;color:#374151;margin:4px 0 0;">Minimalist Çanta</p><p style="font-size:12px;color:#374151;margin:4px 0 0;">Baskılı Tişört</p>' : ''}</div>
+          </div>
+          <div>
+            <p style="font-size:10px;font-weight:700;color:#9ca3af;margin:0 0 8px;text-transform:uppercase;letter-spacing:.04em;">En Çok Terk Edilen</p>
+            <div id="behavior-most-abandoned">${isDemo ? '<p style="font-size:12px;color:#374151;margin:4px 0 0;">Yazlık Elbise</p><p style="font-size:12px;color:#374151;margin:4px 0 0;">Baskılı Tişört</p><p style="font-size:12px;color:#374151;margin:4px 0 0;">Deri Kemer</p>' : ''}</div>
+          </div>
+          <div>
+            <p style="font-size:10px;font-weight:700;color:#9ca3af;margin:0 0 8px;text-transform:uppercase;letter-spacing:.04em;">En Fazla Etkileşim</p>
+            <div id="behavior-most-engaged">${isDemo ? '<p style="font-size:12px;color:#374151;margin:4px 0 0;">Keten Gömlek</p><p style="font-size:12px;color:#374151;margin:4px 0 0;">Oversize Kapüşonlu</p><p style="font-size:12px;color:#374151;margin:4px 0 0;">Minimalist Çanta</p>' : ''}</div>
+          </div>
         </div>
       </div>
 
-      <!-- Gelir Trendi Grafiği -->
-      <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:22px;margin-bottom:16px;box-shadow:0 1px 2px rgba(16,24,40,0.03);">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-          <p style="font-size:14px;font-weight:600;color:#111827;margin:0;">Gelir Trendi <span style="font-size:10px;color:#9ca3af;font-weight:400;">— son 30 gün</span></p>
-          <span id="revenue-trend-total" style="font-size:13px;font-weight:700;color:#16a34a;"></span>
-        </div>
-        <canvas id="revenue-trend-chart" height="80" style="width:100%;display:block;"></canvas>
-        <div id="revenue-trend-empty" style="display:none;padding:32px 0;text-align:center;color:#9ca3af;font-size:12px;">Satış verisi henüz yüklenmedi</div>
-      </div>
-
-      <!-- Top 5 Ürün Performansı -->
-      <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:22px;margin-bottom:16px;box-shadow:0 1px 2px rgba(16,24,40,0.03);">
-        <p style="font-size:14px;font-weight:600;color:#111827;margin:0 0 16px;">Top 5 Ürün <span style="font-size:10px;color:#9ca3af;font-weight:400;">— Etkileşim Skoru</span></p>
-        <div id="top5-products-bars" style="display:flex;flex-direction:column;gap:10px;"></div>
-      </div>
-
-      <!-- İki Sütun: Ziyaretçi Kaynakları + Stok Uyarıları -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+      <!-- 8. Ürünler + Kategoriler -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;">
         <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:22px;box-shadow:0 1px 2px rgba(16,24,40,0.03);">
-          <p style="font-size:14px;font-weight:600;color:#111827;margin:0 0 16px;">Ziyaretçi Kaynakları</p>
-          <div id="traffic-sources-chart" style="display:flex;align-items:center;gap:16px;">
-            <div id="traffic-donut" style="width:80px;height:80px;border-radius:50%;flex-shrink:0;background:conic-gradient(#16a34a 0% 60%,#3b82f6 60% 80%,#f59e0b 80% 92%,#e5e7eb 92% 100%);"></div>
-            <div id="traffic-legend" style="display:flex;flex-direction:column;gap:6px;font-size:11px;"></div>
+          <p style="font-size:14px;font-weight:600;color:#111827;margin:0 0 14px;">Ürünler</p>
+          <div id="dash-products-mini-grid" style="display:flex;flex-wrap:wrap;gap:8px;">
+            ${isDemo ? `
+            <span style="background:#f3f4f6;border-radius:8px;padding:6px 12px;font-size:12px;color:#374151;font-weight:500;">Keten Gömlek <span style="color:#9ca3af;">248</span></span>
+            <span style="background:#f3f4f6;border-radius:8px;padding:6px 12px;font-size:12px;color:#374151;font-weight:500;">Kapüşonlu <span style="color:#9ca3af;">211</span></span>
+            <span style="background:#f3f4f6;border-radius:8px;padding:6px 12px;font-size:12px;color:#374151;font-weight:500;">Deri Kemer <span style="color:#9ca3af;">98</span></span>
+            <span style="background:#f3f4f6;border-radius:8px;padding:6px 12px;font-size:12px;color:#374151;font-weight:500;">Çanta <span style="color:#9ca3af;">74</span></span>
+            <span style="background:#f3f4f6;border-radius:8px;padding:6px 12px;font-size:12px;color:#374151;font-weight:500;">Tişört <span style="color:#9ca3af;">42</span></span>
+            <span style="background:#f3f4f6;border-radius:8px;padding:6px 12px;font-size:12px;color:#374151;font-weight:500;">Elbise <span style="color:#9ca3af;">28</span></span>
+            ` : ''}
           </div>
+          <div id="dash-more-products-widget" style="display:none;margin-top:8px;"></div>
         </div>
         <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:22px;box-shadow:0 1px 2px rgba(16,24,40,0.03);">
-          <p style="font-size:14px;font-weight:600;color:#111827;margin:0 0 10px;">Stok Uyarıları <span id="low-stock-count" style="font-size:10px;background:#fef3c7;color:#92400e;border-radius:999px;padding:2px 7px;font-weight:600;"></span></p>
-          <div id="low-stock-list" style="display:flex;flex-direction:column;gap:6px;max-height:120px;overflow-y:auto;"></div>
-          <p id="low-stock-empty" style="font-size:12px;color:#9ca3af;margin:0;">Tüm ürünler yeterli stokta</p>
-        </div>
-      </div>
-
-      <!-- AI Önerileri (kompakt) -->
-      <div id="card-ai-recs" style="background:#fff;border:1px solid #eceef1;border-radius:16px;overflow:hidden;margin-bottom:12px;box-shadow:0 1px 2px rgba(16,24,40,0.03);">
-        <div class="card-toggle-header" data-card="ai-recs"
-          style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;cursor:pointer;">
-          <div style="display:flex;align-items:center;gap:8px;">
-            <span style="font-size:13px;font-weight:600;color:#111827;">AI Önerileri</span>
-            <span id="ai-recs-badge" style="font-size:10px;background:#fef3c7;color:#92400e;padding:2px 7px;border-radius:999px;font-weight:600;"></span>
+          <p style="font-size:14px;font-weight:600;color:#111827;margin:0 0 14px;">Kategoriler</p>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;">
+            <span style="background:#dcfce7;color:#15803d;border-radius:999px;padding:5px 12px;font-size:12px;font-weight:600;">Giyim</span>
+            <span style="background:#dcfce7;color:#15803d;border-radius:999px;padding:5px 12px;font-size:12px;font-weight:600;">Aksesuar</span>
+            <span style="background:#dcfce7;color:#15803d;border-radius:999px;padding:5px 12px;font-size:12px;font-weight:600;">Ayakkabı</span>
+            <span style="background:#dcfce7;color:#15803d;border-radius:999px;padding:5px 12px;font-size:12px;font-weight:600;">Çanta</span>
+            <span style="background:#dcfce7;color:#15803d;border-radius:999px;padding:5px 12px;font-size:12px;font-weight:600;">İç Giyim</span>
+            <span style="background:#dcfce7;color:#15803d;border-radius:999px;padding:5px 12px;font-size:12px;font-weight:600;">Spor</span>
+            <span style="background:#dcfce7;color:#15803d;border-radius:999px;padding:5px 12px;font-size:12px;font-weight:600;">Yazlık</span>
+            <span style="background:#dcfce7;color:#15803d;border-radius:999px;padding:5px 12px;font-size:12px;font-weight:600;">Kışlık</span>
           </div>
-          <i id="ai-recs-chevron" class="ti ti-chevron-down" style="font-size:13px;color:#9ca3af;transition:transform .2s;"></i>
-        </div>
-        <div id="ai-recs-body" style="display:none;padding:0 14px 14px;">
-          <div id="dash-ai-recommendations" style="display:flex;flex-direction:column;gap:8px;margin-bottom:8px;max-height:140px;overflow-y:auto;"></div>
-          <button id="ai-recs-toggle" type="button" style="display:none;background:none;border:none;font-size:11px;color:#6b7280;cursor:pointer;padding:4px 0 8px;width:100%;text-align:left;">Tümünü Gör</button>
-          <button id="fix-all-issues-btn" type="button"
-            style="width:100%;padding:10px;background:#111827;color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:600;opacity:${fixDisabled ? '0.5' : '1'};cursor:${fixDisabled ? 'not-allowed' : 'pointer'};"
-            ${fixDisabled ? 'disabled' : ''}>
-            Tüm Sorunları AI ile Düzelt
-          </button>
         </div>
       </div>
 
-      <!-- Hızlı İşlemler (kompakt) -->
-      <div id="card-quick-actions" style="background:#111827;border:none;border-radius:16px;overflow:hidden;margin-bottom:12px;">
-        <div class="card-toggle-header" data-card="quick-actions"
-          style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;cursor:pointer;">
-          <span style="font-size:13px;font-weight:600;color:#fff;">Hızlı İşlemler</span>
-          <i id="quick-actions-chevron" class="ti ti-chevron-down" style="font-size:13px;color:#9ca3af;transition:transform .2s;"></i>
-        </div>
-        <div id="quick-actions-body" style="display:none;padding:0 14px 14px;">
-          <div id="dash-quick-actions" style="display:flex;flex-direction:column;gap:6px;"></div>
-          <button id="dash-quick-actions-more" type="button" style="display:none;width:100%;margin-top:8px;padding:8px;background:rgba(255,255,255,.08);border:0.5px solid rgba(255,255,255,.12);border-radius:8px;color:#9ca3af;font-size:12px;cursor:pointer;"></button>
-          <div id="dash-ai-limit-msg" style="display:none;margin-top:10px;padding:10px 14px;background:#1f2937;border-radius:10px;border:0.5px solid #374151;"></div>
-        </div>
-      </div>
-
-      <!-- Ürünler (kompakt) -->
-      <div id="card-products" style="background:#fff;border:1px solid #eceef1;border-radius:16px;overflow:hidden;margin-bottom:12px;box-shadow:0 1px 2px rgba(16,24,40,0.03);">
-        <div class="card-toggle-header" data-card="products"
-          style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;cursor:pointer;">
-          <div style="display:flex;align-items:center;gap:8px;">
-            <span style="font-size:13px;font-weight:600;color:#111827;">Ürünler</span>
-            <span id="products-badge" style="font-size:10px;background:#eff6ff;color:#1d4ed8;padding:2px 7px;border-radius:999px;font-weight:600;"></span>
+      <!-- 9. Katalog Sağlık Trendi + Son İşlemler -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;">
+        <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:22px;box-shadow:0 1px 2px rgba(16,24,40,0.03);">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+            <p style="font-size:14px;font-weight:600;color:#111827;margin:0;">Katalog Sağlık Trendi</p>
+            <span style="font-size:10px;color:#9ca3af;">Son 8 hafta</span>
           </div>
-          <i id="products-chevron" class="ti ti-chevron-down" style="font-size:13px;color:#9ca3af;transition:transform .2s;"></i>
+          <div style="display:flex;align-items:flex-end;gap:6px;height:100px;">
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;"><div style="width:100%;height:62px;background:linear-gradient(to top,#16a34a,#86efac);border-radius:4px 4px 0 0;"></div><span style="font-size:9px;color:#9ca3af;">H1</span></div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;"><div style="width:100%;height:68px;background:linear-gradient(to top,#16a34a,#86efac);border-radius:4px 4px 0 0;"></div><span style="font-size:9px;color:#9ca3af;">H2</span></div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;"><div style="width:100%;height:64px;background:linear-gradient(to top,#16a34a,#86efac);border-radius:4px 4px 0 0;"></div><span style="font-size:9px;color:#9ca3af;">H3</span></div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;"><div style="width:100%;height:71px;background:linear-gradient(to top,#16a34a,#86efac);border-radius:4px 4px 0 0;"></div><span style="font-size:9px;color:#9ca3af;">H4</span></div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;"><div style="width:100%;height:75px;background:linear-gradient(to top,#16a34a,#86efac);border-radius:4px 4px 0 0;"></div><span style="font-size:9px;color:#9ca3af;">H5</span></div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;"><div style="width:100%;height:73px;background:linear-gradient(to top,#16a34a,#86efac);border-radius:4px 4px 0 0;"></div><span style="font-size:9px;color:#9ca3af;">H6</span></div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;"><div style="width:100%;height:80px;background:linear-gradient(to top,#16a34a,#86efac);border-radius:4px 4px 0 0;"></div><span style="font-size:9px;color:#9ca3af;">H7</span></div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;"><div style="width:100%;height:84px;background:linear-gradient(to top,#16a34a,#86efac);border-radius:4px 4px 0 0;"></div><span style="font-size:9px;color:#9ca3af;">H8</span></div>
+          </div>
+          <!-- Hidden compat elements for renderRevenueTrendChart JS -->
+          <canvas id="revenue-trend-chart" style="display:none;"></canvas>
+          <span id="revenue-trend-total" style="display:none;"></span>
+          <div id="revenue-trend-empty" style="display:none;"></div>
         </div>
-        <div id="products-body" style="display:none;padding:0 14px 14px;">
-          <div id="dash-products-mini-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:8px;"></div>
-          <div id="dash-more-products-widget" style="display:none;margin-top:8px;border:0.5px solid #e5e7eb;border-radius:12px;overflow:hidden;"></div>
+        <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:22px;box-shadow:0 1px 2px rgba(16,24,40,0.03);">
+          <p style="font-size:14px;font-weight:600;color:#111827;margin:0 0 16px;">Son İşlemler</p>
+          <div id="dash-recent-operations-full" style="display:flex;flex-direction:column;gap:10px;">
+            ${isDemo ? `
+            <div style="display:flex;align-items:center;gap:10px;"><div style="width:32px;height:32px;border-radius:8px;background:#dcfce7;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">🔄</div><div><p style="font-size:12.5px;font-weight:500;color:#111827;margin:0;">Katalog senkronize edildi</p><p style="font-size:11px;color:#9ca3af;margin:0;">2 saat önce</p></div></div>
+            <div style="display:flex;align-items:center;gap:10px;"><div style="width:32px;height:32px;border-radius:8px;background:#dbeafe;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">🤖</div><div><p style="font-size:12.5px;font-weight:500;color:#111827;margin:0;">AI SEO analizi çalıştırıldı</p><p style="font-size:11px;color:#9ca3af;margin:0;">3 saat önce</p></div></div>
+            <div style="display:flex;align-items:center;gap:10px;"><div style="width:32px;height:32px;border-radius:8px;background:#fef3c7;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">✏️</div><div><p style="font-size:12.5px;font-weight:500;color:#111827;margin:0;">3 ürün başlığı güncellendi</p><p style="font-size:11px;color:#9ca3af;margin:0;">Dün</p></div></div>
+            <div style="display:flex;align-items:center;gap:10px;"><div style="width:32px;height:32px;border-radius:8px;background:#dcfce7;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">📤</div><div><p style="font-size:12.5px;font-weight:500;color:#111827;margin:0;">Shopify'a aktarım tamamlandı</p><p style="font-size:11px;color:#9ca3af;margin:0;">Dün</p></div></div>
+            <div style="display:flex;align-items:center;gap:10px;"><div style="width:32px;height:32px;border-radius:8px;background:#f3f4f6;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">📊</div><div><p style="font-size:12.5px;font-weight:500;color:#111827;margin:0;">Performans raporu oluşturuldu</p><p style="font-size:11px;color:#9ca3af;margin:0;">2 gün önce</p></div></div>
+            ` : ''}
+          </div>
         </div>
       </div>
 
-      <!-- Widget: Kategori Bazlı Veri Kalitesi -->
+      <!-- Widget: Kategori Veri Kalitesi -->
       <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:20px;margin-bottom:12px;box-shadow:0 1px 2px rgba(16,24,40,0.03);">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
           <p style="font-size:14px;font-weight:600;color:#111827;margin:0;">Kategori Veri Kalitesi</p>
           <span style="font-size:10px;color:#9ca3af;">Sağlık skoru %</span>
         </div>
-        <div id="widget-cat-quality" style="display:flex;flex-direction:column;gap:7px;">
-          <p style="font-size:12px;color:#9ca3af;margin:0;">Ürün yükleniyor...</p>
-        </div>
+        <div id="widget-cat-quality" style="display:flex;flex-direction:column;gap:7px;"></div>
       </div>
 
       <!-- Widget: Sepet Terk Hunisi -->
@@ -2387,98 +2556,112 @@ function renderDashboard() {
           <p style="font-size:14px;font-weight:600;color:#111827;margin:0;">Sepet Terk Hunisi</p>
           <span id="funnel-period-label" style="font-size:10px;color:#9ca3af;">Son 30 gün</span>
         </div>
-        <div id="widget-cart-funnel" style="display:flex;flex-direction:column;gap:6px;">
-          <p style="font-size:12px;color:#9ca3af;margin:0;">Analitik yükleniyor...</p>
-        </div>
+        <div id="widget-cart-funnel" style="display:flex;flex-direction:column;gap:6px;"></div>
       </div>
 
-      <!-- Widget: Senkron & Bağlantı Durumu -->
-      <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:20px;margin-bottom:12px;box-shadow:0 1px 2px rgba(16,24,40,0.03);">
+      <!-- Widget: Bağlantı Durumu -->
+      <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:20px;margin-bottom:20px;box-shadow:0 1px 2px rgba(16,24,40,0.03);">
         <p style="font-size:14px;font-weight:600;color:#111827;margin:0 0 12px;">Bağlantı Durumu</p>
-        <div id="widget-sync-status" style="display:flex;flex-direction:column;gap:7px;">
-          <p style="font-size:12px;color:#9ca3af;margin:0;">Kontrol ediliyor...</p>
-        </div>
+        <div id="widget-sync-status" style="display:flex;flex-direction:column;gap:7px;"></div>
       </div>
 
-      <!-- Son İşlemler -->
-      <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:22px;box-shadow:0 1px 2px rgba(16,24,40,0.03);">
-        <p style="font-size:14px;font-weight:600;color:#111827;margin:0 0 16px;">Son İşlemler</p>
-        <div id="dash-recent-operations-full" style="display:flex;flex-direction:column;gap:12px;"></div>
-      </div>
+      <!-- Hidden compat elements for JS functions -->
+      <div id="card-ai-recs" style="display:none;"></div>
+      <div id="card-quick-actions" style="display:none;"></div>
+      <div id="card-products" style="display:none;"></div>
+      <div id="dash-quick-actions" style="display:none;"></div>
+      <div id="dash-quick-actions-more" style="display:none;"></div>
+      <div id="dash-ai-limit-msg" style="display:none;"></div>
+      <div id="top5-products-bars" style="display:none;"></div>
+      <div id="traffic-sources-chart" style="display:none;"><div id="traffic-donut"></div><div id="traffic-legend"></div></div>
+      <div id="low-stock-list" style="display:none;"></div>
+      <p id="low-stock-empty" style="display:none;"></p>
+      <span id="low-stock-count" style="display:none;"></span>
+      <span id="products-badge" style="display:none;"></span>
 
     </div>`;
 
-  renderHeroMetrics();
-  renderGrowthOpportunities();
-  renderProductPerformanceTable();
-  renderBehaviorLists();
-  renderAiRecommendations(analysis.issues || []);
-  const _aiBadge = document.getElementById('ai-recs-badge');
-  if (_aiBadge) { const _ai = analysis.issues || []; _aiBadge.textContent = _ai.length ? _ai.length + ' öneri' : ''; }
-  renderDashQuickActions();
-  renderDashRecentOperationsFull();
-  renderDashProductsMini();
-  const _pb = document.getElementById('products-badge');
-  if (_pb) { const _pc = (catalogData && catalogData.products) ? catalogData.products.length : 0; if (_pc) _pb.textContent = _pc + ' ürün'; }
-  renderClickHeatmap();
-  // Wire Live Activity tabs
-  window.switchLiveTab = function(tab) {
-    ['store','activity','heatmap'].forEach(function(t) {
-      var btn = document.getElementById('live-tab-' + t);
-      var panel = document.getElementById('live-panel-' + t);
-      if (btn) { btn.style.background = t === tab ? '#111827' : 'transparent'; btn.style.color = t === tab ? '#fff' : '#6b7280'; btn.style.fontWeight = t === tab ? '600' : '500'; }
-      if (panel) panel.style.display = t === tab ? 'block' : 'none';
+  // Wire switchLiveTab
+  window.switchLiveTab = function(btn, tab) {
+    document.querySelectorAll('.dash-live-tab').forEach(function(t) {
+      t.style.background = 'transparent';
+      t.style.color = '#6b7280';
+      t.style.fontWeight = '500';
+      t.dataset.active = 'false';
     });
+    if (btn && btn.style) {
+      btn.style.background = '#111827';
+      btn.style.color = '#fff';
+      btn.style.fontWeight = '600';
+      btn.dataset.active = 'true';
+    }
+    document.querySelectorAll('.dash-live-panel').forEach(function(p) { p.style.display = 'none'; });
+    var panel = document.getElementById('dash-live-' + tab);
+    if (panel) panel.style.display = 'block';
     if (tab === 'heatmap') renderClickHeatmap();
   };
-  renderDashAnalyticsSection();
-  renderValueSummaryBanner();
-  renderTrafficSourcesChart(null);
-  renderLowStockAlerts();
-  renderTop5ProductsBars([]);
-  renderRevenueTrendChart([]);
 
-  // Sidebar mağaza adı — localStorage
+  renderValueSummaryBanner();
+  renderSyncStatusWidget().catch(function() {});
+
+  if (!isDemo) {
+    renderHeroMetrics();
+    renderGrowthOpportunities();
+    renderProductPerformanceTable();
+    renderBehaviorLists();
+    renderAiRecommendations(analysis.issues || []);
+    const _aiBadge = document.getElementById('ai-recs-badge');
+    if (_aiBadge) {
+      const _ai = analysis.issues || [];
+      if (_ai.length) { _aiBadge.textContent = _ai.length + ' öneri'; _aiBadge.style.display = ''; }
+    }
+    renderDashQuickActions();
+    renderDashRecentOperationsFull();
+    renderDashProductsMini();
+    renderClickHeatmap();
+    renderDashAnalyticsSection();
+    renderTrafficSourcesChart(null);
+    renderLowStockAlerts();
+    renderTop5ProductsBars([]);
+    renderRevenueTrendChart([]);
+    renderCategoryQualityWidget();
+    if (typeof window._bindCardToggles === 'function') window._bindCardToggles();
+
+    const fixAllBtn = document.getElementById('fix-all-issues-btn');
+    if (fixAllBtn && !fixAllBtn.disabled) {
+      fixAllBtn.addEventListener('click', async function() {
+        const btn = this;
+        const originalText = btn.textContent.trim();
+        btn.disabled = true;
+        btn.textContent = 'AI analiz ediyor...';
+        try {
+          await runShopifyAiAnalysis('all');
+        } catch(e) {
+          alert('Analiz başarısız: ' + e.message);
+        } finally {
+          btn.disabled = false;
+          btn.textContent = originalText;
+        }
+      });
+    }
+
+    ['hero-visitors-value','hero-sales-value','hero-conversion-value',
+     'hero-cart-value','hero-duration-value'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el && el.textContent.trim() === '—') {
+        el.parentElement.classList.add('skeleton', 'skeleton-metric');
+        setTimeout(function() {
+          el.parentElement.classList.remove('skeleton', 'skeleton-metric');
+        }, 4000);
+      }
+    });
+  }
+
   const storeNameEl = document.getElementById('sidebar-store-name');
   if (storeNameEl) {
     const domain = localStorage.getItem('mocksheets_shop_domain');
     if (domain) storeNameEl.textContent = domain.replace('.myshopify.com', '');
   }
-
-  const fixAllBtn = document.getElementById('fix-all-issues-btn');
-  if (fixAllBtn && !fixAllBtn.disabled) {
-    fixAllBtn.addEventListener('click', async function() {
-      const btn = this;
-      const originalText = btn.textContent.trim();
-      btn.disabled = true;
-      btn.textContent = 'AI analiz ediyor...';
-      try {
-        await runShopifyAiAnalysis('all');
-      } catch(e) {
-        alert('Analiz başarısız: ' + e.message);
-      } finally {
-        btn.disabled = false;
-        btn.textContent = originalText;
-      }
-    });
-  }
-
-  renderCategoryQualityWidget();
-  renderSyncStatusWidget().catch(() => {});
-  if (typeof window._bindCardToggles === 'function') window._bindCardToggles();
-
-  // Hero metrik kartları veri gelene kadar skeleton göster
-  ['hero-visitors-value','hero-sales-value','hero-conversion-value',
-   'hero-cart-value','hero-duration-value'].forEach(function(id) {
-    var el = document.getElementById(id);
-    if (el && el.textContent.trim() === '—') {
-      el.parentElement.classList.add('skeleton', 'skeleton-metric');
-      setTimeout(function() {
-        el.parentElement.classList.remove('skeleton', 'skeleton-metric');
-      }, 4000);
-    }
-  });
-
 }
 
 // ─── CATALOG EDITOR — DASHBOARD'DAN AÇILIR ───────────────────────────────
