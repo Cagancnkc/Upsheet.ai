@@ -2128,6 +2128,8 @@ async function loadHeatmapForPage(pagePath) {
 }
 
 function renderDashboard() {
+  const view = document.getElementById('dashboard-view');
+  if (!view) return;
   view.innerHTML = `<main style="padding:28px;display:flex;flex-direction:column;gap:22px;max-width:1300px;">
 
   <!-- HEADER -->
@@ -3821,6 +3823,8 @@ async function renderAiActionsPage() {
 }
 
 async function renderValidationCenter() {
+  const view = document.getElementById('validation-view');
+  if (!view) return;
   view.innerHTML = `<main style="padding:28px;display:flex;flex-direction:column;gap:20px;max-width:1240px;">
   <!-- HEADER -->
   <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:20px;">
@@ -4155,6 +4159,8 @@ async function renderSyncStatusPanel() {
 }
 
 function renderSyncPage() {
+  const view = document.getElementById('sync-view');
+  if (!view) return;
   view.innerHTML = `<main style="padding:28px;display:flex;flex-direction:column;gap:22px;max-width:1100px;">
   <!-- HEADER -->
   <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:20px;">
@@ -4232,6 +4238,8 @@ function renderSyncPage() {
 }
 
 function loadAndRenderHistory() {
+  const view = document.getElementById('history-view');
+  if (!view) return;
   view.innerHTML = `<main style="padding:28px;display:flex;flex-direction:column;gap:20px;max-width:1180px;">
   <!-- HEADER -->
   <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:20px;">
