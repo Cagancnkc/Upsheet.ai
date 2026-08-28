@@ -484,26 +484,60 @@
   pointer-events: none;
 }
 .dash-chat > * { pointer-events: auto; }
-.dash-chat__messages {
-  display: none; flex-direction: column; gap: 10px;
-  max-height: 300px; overflow-y: auto; padding: 4px 2px;
-  background: rgba(255,255,255,0.85); backdrop-filter: blur(12px);
-  border-radius: 16px; transition: max-height 0.2s;
+/* Conversation panel — appears above composer after first message */
+.dash-chat__panel {
+  display: none;
+  flex-direction: column;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  box-shadow: 0 24px 48px -18px rgba(16,24,40,0.24), 0 2px 6px rgba(16,24,40,0.05);
+  overflow: hidden;
+  transition: max-height 0.24s ease, opacity 0.18s ease;
+  max-height: 420px;
+  opacity: 1;
 }
-.dash-chat__messages.collapsed { max-height: 0; overflow: hidden; padding: 0; }
+.dash-chat[data-has-messages="true"] .dash-chat__panel { display: flex; }
+.dash-chat[data-panel-collapsed="true"] .dash-chat__panel {
+  max-height: 44px;
+}
+.dash-chat[data-panel-collapsed="true"] .dash-chat__messages { display: none; }
 .dash-chat__messages-header {
-  display: none; flex-direction: row; justify-content: space-between; align-items: center;
-  font-size: 12px; font-weight: 600; color: #374151; padding: 8px 12px;
-  background: rgba(255,255,255,0.9); border-bottom: 1px solid #e5e7eb;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 14px;
+  background: #fafbfc;
+  border-bottom: 1px solid #eef0f3;
+  flex-shrink: 0;
+  height: 44px; box-sizing: border-box;
 }
-.dash-chat[data-has-messages="true"] .dash-chat__messages-header { display: flex; }
-.dash-chat__messages-collapse {
-  border: none; background: none; cursor: pointer; color: #9ca3af; font-size: 14px;
-  padding: 0; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center;
-  transition: transform 0.2s; flex-shrink: 0;
+.dash-chat__messages-title {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px; font-weight: 600; color: #111827;
 }
-.dash-chat__messages.collapsed ~ .dash-chat__messages-header .dash-chat__messages-collapse { transform: rotate(-90deg); }
-.dash-chat[data-has-messages="true"] .dash-chat__messages { display: flex; padding: 12px; border: 1px solid #edeef2; box-shadow: 0 12px 32px -12px rgba(16,24,40,0.16); }
+.dash-chat__messages-title .dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: #22c55e; box-shadow: 0 0 0 3px rgba(34,197,94,0.15);
+}
+.dash-chat__header-actions { display: flex; align-items: center; gap: 2px; }
+.dash-chat__header-btn {
+  width: 28px; height: 28px; border-radius: 8px; border: none;
+  background: transparent; cursor: pointer; color: #6b7280;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.12s, color 0.12s;
+}
+.dash-chat__header-btn:hover { background: #eef0f3; color: #111827; }
+.dash-chat__header-btn.close:hover { background: #fee2e2; color: #dc2626; }
+.dash-chat[data-panel-collapsed="true"] .dash-chat__header-btn.minimize svg { transform: rotate(180deg); }
+.dash-chat__header-btn svg { transition: transform 0.18s; }
+.dash-chat__messages {
+  display: flex; flex-direction: column; gap: 10px;
+  padding: 16px 16px 14px;
+  overflow-y: auto;
+  max-height: 360px;
+  scrollbar-width: thin; scrollbar-color: #d1d5db transparent;
+}
+.dash-chat__messages::-webkit-scrollbar { width: 6px; }
+.dash-chat__messages::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
 .dash-chat__msg {
   max-width: 82%; padding: 10px 14px; border-radius: 14px;
   font-size: 14px; line-height: 1.5; white-space: pre-wrap; word-break: break-word;
@@ -2633,10 +2667,25 @@ function renderDashboard() {
 
 <!-- DASHBOARD FLOATING AI CHAT -->
 <div id="dash-chat-panel" class="dash-chat" data-has-messages="false" data-has-text="false">
-  <div id="dash-chat-messages" class="dash-chat__messages"></div>
-  <div id="dash-chat-messages-header" class="dash-chat__messages-header">
-    <span>Sohbet</span>
-    <button type="button" id="dash-messages-collapse" class="dash-chat__messages-collapse" title="Küçült">▼</button>
+  <div class="dash-chat__panel">
+    <div id="dash-chat-messages-header" class="dash-chat__messages-header">
+      <div class="dash-chat__messages-title">
+        <span class="dot"></span>
+        <span>Mocksheets Asistan</span>
+      </div>
+      <div class="dash-chat__header-actions">
+        <button type="button" id="dash-messages-newchat" class="dash-chat__header-btn" title="Yeni sohbet">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>
+        </button>
+        <button type="button" id="dash-messages-collapse" class="dash-chat__header-btn minimize" title="Küçült">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <button type="button" id="dash-messages-close" class="dash-chat__header-btn close" title="Kapat">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+    </div>
+    <div id="dash-chat-messages" class="dash-chat__messages"></div>
   </div>
   <div id="dash-chat-suggestions" class="dash-chat__suggestions">
     <button type="button" data-fill="En çok satan 10 ürünü listele">En çok satan 10 ürünü listele</button>
@@ -6641,11 +6690,28 @@ function initDashChat() {
   document.getElementById('dash-improve-btn')?.addEventListener('click', sfImprovePrompt);
 
   document.getElementById('dash-messages-collapse')?.addEventListener('click', () => {
+    _dashChatMessagesCollapsed = !_dashChatMessagesCollapsed;
+    _dashChatSetFlag('data-panel-collapsed', _dashChatMessagesCollapsed);
+  });
+
+  document.getElementById('dash-messages-close')?.addEventListener('click', () => {
     const msgs = document.getElementById('dash-chat-messages');
-    if (msgs) {
-      _dashChatMessagesCollapsed = !_dashChatMessagesCollapsed;
-      msgs.classList.toggle('collapsed', _dashChatMessagesCollapsed);
-    }
+    if (msgs) msgs.innerHTML = '';
+    _sfChatHistory = [];
+    _dashChatMessagesCollapsed = false;
+    _dashChatSetFlag('data-panel-collapsed', false);
+    _dashChatSetFlag('data-has-messages', false);
+    document.getElementById('dash-chat-input')?.focus();
+  });
+
+  document.getElementById('dash-messages-newchat')?.addEventListener('click', () => {
+    const msgs = document.getElementById('dash-chat-messages');
+    if (msgs) msgs.innerHTML = '';
+    _sfChatHistory = [];
+    _dashChatMessagesCollapsed = false;
+    _dashChatSetFlag('data-panel-collapsed', false);
+    _dashChatSetFlag('data-has-messages', false);
+    document.getElementById('dash-chat-input')?.focus();
   });
 
   document.getElementById('dash-chat-mic')?.addEventListener('click', () => {
