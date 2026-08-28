@@ -467,6 +467,7 @@
 }
 
 /* ── Shopify AI Chat Panel (floating bottom-center) ─────────────── */
+@keyframes ms-spin { to { transform:rotate(360deg); } }
 @keyframes ms-pulse { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:0.5; transform:scale(1.3); } }
 @keyframes ms-fadein { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:translateY(0); } }
 .sf-chat-panel {
@@ -2127,541 +2128,438 @@ async function loadHeatmapForPage(pagePath) {
 }
 
 function renderDashboard() {
-  const view = document.getElementById('dashboard-view');
-  if (!view) return;
+  view.innerHTML = `<main style="padding:28px;display:flex;flex-direction:column;gap:22px;max-width:1300px;">
 
-  const analysis = computeCatalogIssues();
-  const isDemo = analysis.totalProducts === 0;
-  const fixDisabled = analysis.totalIssueCount === 0;
+  <!-- HEADER -->
+  <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:20px;">
+    <div>
+      <h1 style="font-size:22px;font-weight:700;margin:0 0 3px;letter-spacing:-0.01em;">Dashboard</h1>
+      <p style="font-size:13px;color:#9ca3af;margin:0;">Mağazanızın gerçek zamanlı performans özeti</p>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <span style="display:flex;align-items:center;gap:7px;padding:8px 14px;border-radius:999px;border:1px solid #eceef1;background:#fff;font-size:12.5px;font-weight:600;color:#6b7280;">
+        <span style="width:6px;height:6px;border-radius:50%;background:#16a34a;animation:ms-pulse 1.8s ease-in-out infinite;"></span>
+        Canlı
+      </span>
+      <button onclick="syncShopifyData?.()" style="background:#111827;border:none;color:#fff;font-size:12.5px;font-weight:600;padding:9px 18px;border-radius:10px;cursor:pointer;font-family:'Inter',sans-serif;">Senkronize Et</button>
+    </div>
+  </div>
 
-  view.innerHTML = `
-    <div style="padding:28px 28px 120px;box-sizing:border-box;width:100%;min-width:0;animation:ms-fadein .3s ease;">
-
-      <!-- 1. Hero -->
-      <div style="margin-bottom:24px;">
-        <h1 style="font-size:22px;font-weight:700;color:#111827;margin:0 0 2px;">Dashboard</h1>
-        <p style="font-size:13.5px;color:#6b7280;margin:0;">AI, kataloğunuz için arka planda çalışmaya devam ediyor.</p>
+  <!-- LIVE ACTIVITY TABS -->
+  <section style="background:#fff;border:1px solid #eceef1;border-radius:18px;box-shadow:0 1px 2px rgba(16,24,40,0.03);overflow:hidden;">
+    <div style="display:flex;align-items:center;gap:2px;padding:12px 16px;border-bottom:1px solid #f1f2f4;">
+      <button id="dash-tab-btn-store" onclick="switchDashTab('store')" style="padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;border:none;background:#111827;color:#fff;">Canlı Mağaza</button>
+      <button id="dash-tab-btn-live" onclick="switchDashTab('live')" style="padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;border:none;background:transparent;color:#6b7280;">Canlı Aktivite</button>
+      <button id="dash-tab-btn-heatmap" onclick="switchDashTab('heatmap')" style="padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;border:none;background:transparent;color:#6b7280;">Isı Haritası</button>
+    </div>
+    <!-- TAB: Canlı Mağaza (default shown) -->
+    <div id="dash-tab-panel-store" style="padding:22px 24px;display:flex;flex-direction:column;gap:14px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+        <span style="font-size:13.5px;font-weight:600;color:#111827;">Aktif Oturumlar</span>
+        <span style="font-size:22px;font-weight:700;color:#111827;">47</span>
       </div>
-
-      <!-- Value Summary Banner -->
-      <div id="value-summary-banner" style="display:none;background:#f0fdf4;border:1px solid #d1fae5;border-radius:16px;padding:16px 20px;margin-bottom:20px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;">
-          <p id="value-summary-text" style="font-size:13px;color:#166534;margin:0;flex:1;"></p>
-          <button id="value-summary-dismiss" type="button" style="background:transparent;border:none;color:#9ca3af;cursor:pointer;font-size:18px;padding:0 0 0 12px;line-height:1;">×</button>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <!-- live feed: 9 entries, first has pulsing yellow dot (İŞLENİYOR), rest green/blue/red -->
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:#f9fafb;border:1px solid #f1f2f4;border-radius:12px;">
+          <span style="width:8px;height:8px;border-radius:50%;background:#f59e0b;animation:ms-pulse 1.8s ease-in-out infinite;flex-shrink:0;"></span>
+          <span style="font-size:12.5px;color:#111827;flex:1;">Ziyaretçi ürün sayfasına girdi — Kadife Kesim Ceket</span>
+          <span style="font-size:11.5px;color:#9ca3af;">09:41</span>
         </div>
-      </div>
-
-      <!-- 2. Live Activity Card -->
-      <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:22px;margin-bottom:20px;box-shadow:0 1px 2px rgba(16,24,40,0.03);">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
-          <div style="display:flex;gap:0;border:1px solid #eceef1;border-radius:10px;overflow:hidden;">
-            <button class="dash-live-tab" id="live-tab-store" onclick="switchLiveTab(this,'store')" data-active="true" style="padding:7px 14px;font-size:12px;font-weight:600;border:none;background:#111827;color:#fff;cursor:pointer;">Canlı Önizleme</button>
-            <button class="dash-live-tab" id="live-tab-live" onclick="switchLiveTab(this,'live')" data-active="false" style="padding:7px 14px;font-size:12px;font-weight:500;border:none;background:transparent;color:#6b7280;cursor:pointer;">Canlı Akış</button>
-            <button class="dash-live-tab" id="live-tab-heatmap" onclick="switchLiveTab(this,'heatmap')" data-active="false" style="padding:7px 14px;font-size:12px;font-weight:500;border:none;background:transparent;color:#6b7280;cursor:pointer;">Isı Haritası</button>
-          </div>
-          <span style="display:inline-flex;align-items:center;gap:6px;background:#f0fdf4;border:1px solid #dcfce7;border-radius:999px;padding:4px 10px;font-size:11px;font-weight:700;color:#15803d;">
-            <span style="width:6px;height:6px;border-radius:50%;background:#16a34a;animation:ms-pulse 1.5s ease-in-out infinite;display:inline-block;"></span>
-            AI ÇALIŞIYOR
-          </span>
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:#f9fafb;border:1px solid #f1f2f4;border-radius:12px;">
+          <span style="width:8px;height:8px;border-radius:50%;background:#16a34a;flex-shrink:0;"></span>
+          <span style="font-size:12.5px;color:#111827;flex:1;">Sipariş tamamlandı — ₺2.400</span>
+          <span style="font-size:11.5px;color:#9ca3af;">09:40</span>
         </div>
-        <!-- Tab: Canlı Önizleme -->
-        <div class="dash-live-panel" id="dash-live-store" style="display:block;">
-          <div style="background:#1a1a2e;border-radius:14px;height:340px;overflow:hidden;position:relative;">
-            <div style="background:#111827;padding:8px 16px;display:flex;align-items:center;gap:12px;">
-              <div style="display:flex;gap:5px;">
-                <div style="width:8px;height:8px;border-radius:50%;background:#ff5f57;"></div>
-                <div style="width:8px;height:8px;border-radius:50%;background:#febc2e;"></div>
-                <div style="width:8px;height:8px;border-radius:50%;background:#28c840;"></div>
-              </div>
-              <div style="flex:1;background:#374151;border-radius:4px;height:16px;display:flex;align-items:center;padding:0 8px;">
-                <span style="font-size:9px;color:#9ca3af;">mockshop.myshopify.com</span>
-              </div>
-            </div>
-            <div style="background:#16a34a;padding:5px 16px;text-align:center;">
-              <span style="font-size:9.5px;color:#fff;font-weight:600;">🚀 Ücretsiz Kargo — 500₺ Üzeri Siparişlerde</span>
-            </div>
-            <div style="background:#fff;padding:6px 16px;display:flex;align-items:center;gap:16px;border-bottom:1px solid #f3f4f6;">
-              <div style="width:60px;height:12px;background:#111827;border-radius:2px;"></div>
-              <div style="display:flex;gap:10px;flex:1;">
-                <div style="width:40px;height:8px;background:#e5e7eb;border-radius:2px;"></div>
-                <div style="width:40px;height:8px;background:#e5e7eb;border-radius:2px;"></div>
-                <div style="width:40px;height:8px;background:#e5e7eb;border-radius:2px;"></div>
-              </div>
-            </div>
-            <div style="padding:12px 16px;background:#fff;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
-              <div style="background:#f3f4f6;border-radius:6px;aspect-ratio:3/4;display:flex;align-items:center;justify-content:center;font-size:22px;">👔</div>
-              <div style="background:#f3f4f6;border-radius:6px;aspect-ratio:3/4;display:flex;align-items:center;justify-content:center;font-size:22px;">👜</div>
-              <div style="background:#f3f4f6;border-radius:6px;aspect-ratio:3/4;display:flex;align-items:center;justify-content:center;font-size:22px;">👟</div>
-            </div>
-            <div style="position:absolute;inset:0;background:rgba(0,0,0,0.48);backdrop-filter:blur(2px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;">
-              <span style="background:#16a34a;color:#fff;font-size:9px;font-weight:700;letter-spacing:.1em;padding:4px 10px;border-radius:999px;">CANLI ÖNİZLEME</span>
-              <p style="font-size:13px;font-weight:600;color:#fff;margin:0;text-align:center;">Mağazanız bu an nasıl görünüyor?</p>
-              <p style="font-size:11px;color:rgba(255,255,255,.7);margin:0;text-align:center;">Shopify bağlantısı ile canlı önizleme aktif olur</p>
-              <button type="button" onclick="dashboardConnectShopify()" style="margin-top:4px;padding:8px 18px;background:#fff;color:#111827;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;">
-                <img src="https://cdn.simpleicons.org/shopify/95BF47" width="14" height="14" alt=""> Mağazayı Bağla
-              </button>
-            </div>
-          </div>
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:#f9fafb;border:1px solid #f1f2f4;border-radius:12px;">
+          <span style="width:8px;height:8px;border-radius:50%;background:#3b82f6;flex-shrink:0;"></span>
+          <span style="font-size:12.5px;color:#111827;flex:1;">Arama: "keten gömlek yazlık"</span>
+          <span style="font-size:11.5px;color:#9ca3af;">09:39</span>
         </div>
-        <!-- Tab: Canlı Akış -->
-        <div class="dash-live-panel" id="dash-live-live" style="display:none;">
-          <div style="position:relative;background:#0f1117;border-radius:12px;padding:16px;font-family:'Courier New',monospace;font-size:11px;color:#4ade80;max-height:280px;overflow:hidden;">
-            <div style="line-height:1.9;">
-              <div><span style="color:#6b7280;">[14:23:01]</span> ✓ <span style="color:#fff;">Keten Gömlek</span> görüntülendi — İstanbul</div>
-              <div><span style="color:#6b7280;">[14:23:04]</span> 🛒 <span style="color:#fbbf24;">Oversize Kapüşonlu</span> sepete eklendi</div>
-              <div><span style="color:#6b7280;">[14:23:09]</span> ✓ <span style="color:#fff;">Minimalist Çanta</span> görüntülendi — Ankara</div>
-              <div><span style="color:#6b7280;">[14:23:11]</span> 💰 <span style="color:#4ade80;">Sipariş tamamlandı</span> — ₺312.00</div>
-              <div><span style="color:#6b7280;">[14:23:15]</span> ✓ <span style="color:#fff;">Deri Kemer</span> arama sonuçlarında tıklandı</div>
-              <div><span style="color:#6b7280;">[14:23:18]</span> ⚠ <span style="color:#f87171;">Yazlık Elbise</span> sayfasından çıkıldı</div>
-              <div><span style="color:#6b7280;">[14:23:22]</span> 🛒 <span style="color:#fbbf24;">Keten Gömlek</span> sepete eklendi</div>
-              <div><span style="color:#6b7280;">[14:23:25]</span> ✓ <span style="color:#fff;">Baskılı Tişört</span> görüntülendi — İzmir</div>
-              <div><span style="color:#6b7280;">[14:23:28]</span> 💰 <span style="color:#4ade80;">Sipariş tamamlandı</span> — ₺89.90</div>
-            </div>
-            <div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent 40%,rgba(15,17,23,0.97) 100%);display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:24px;">
-              <button type="button" onclick="dashboardConnectShopify()" style="padding:9px 20px;background:#16a34a;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;">
-                <img src="https://cdn.simpleicons.org/shopify/fff" width="14" height="14" alt=""> Shopify Mağazanı Bağla
-              </button>
-            </div>
-          </div>
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:#f9fafb;border:1px solid #f1f2f4;border-radius:12px;">
+          <span style="width:8px;height:8px;border-radius:50%;background:#ef4444;flex-shrink:0;"></span>
+          <span style="font-size:12.5px;color:#111827;flex:1;">Sepet terk edildi — ₺4.800</span>
+          <span style="font-size:11.5px;color:#9ca3af;">09:38</span>
         </div>
-        <!-- Tab: Isı Haritası -->
-        <div class="dash-live-panel" id="dash-live-heatmap" style="display:none;">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-            <div style="display:flex;align-items:center;gap:8px;">
-              <div id="dash-tracking-toggle-wrap"></div>
-              <select id="heatmap-page-select" style="font-size:11px;padding:4px 10px;border:0.5px solid #e5e7eb;border-radius:8px;background:#fff;display:none;"></select>
-            </div>
-          </div>
-          <p id="heatmap-honesty-note" style="font-size:11px;color:#9ca3af;margin:0 0 10px;"></p>
-          <div id="heatmap-canvas-container" style="position:relative;width:100%;min-height:180px;background:#f9fafb;border-radius:10px;overflow:hidden;"></div>
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:#f9fafb;border:1px solid #f1f2f4;border-radius:12px;">
+          <span style="width:8px;height:8px;border-radius:50%;background:#16a34a;flex-shrink:0;"></span>
+          <span style="font-size:12.5px;color:#111827;flex:1;">Ürün incelemesi — Yazlık Keten Gömlek</span>
+          <span style="font-size:11.5px;color:#9ca3af;">09:37</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:#f9fafb;border:1px solid #f1f2f4;border-radius:12px;">
+          <span style="width:8px;height:8px;border-radius:50%;background:#3b82f6;flex-shrink:0;"></span>
+          <span style="font-size:12.5px;color:#111827;flex:1;">Filtre: Kategori → Dış Giyim</span>
+          <span style="font-size:11.5px;color:#9ca3af;">09:36</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:#f9fafb;border:1px solid #f1f2f4;border-radius:12px;">
+          <span style="width:8px;height:8px;border-radius:50%;background:#16a34a;flex-shrink:0;"></span>
+          <span style="font-size:12.5px;color:#111827;flex:1;">Sipariş tamamlandı — ₺1.860</span>
+          <span style="font-size:11.5px;color:#9ca3af;">09:34</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:#f9fafb;border:1px solid #f1f2f4;border-radius:12px;">
+          <span style="width:8px;height:8px;border-radius:50%;background:#ef4444;flex-shrink:0;"></span>
+          <span style="font-size:12.5px;color:#111827;flex:1;">Hata: ödeme reddedildi</span>
+          <span style="font-size:11.5px;color:#9ca3af;">09:31</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:#f9fafb;border:1px solid #f1f2f4;border-radius:12px;">
+          <span style="width:8px;height:8px;border-radius:50%;background:#16a34a;flex-shrink:0;"></span>
+          <span style="font-size:12.5px;color:#111827;flex:1;">Yeni ziyaretçi kaydoldu</span>
+          <span style="font-size:11.5px;color:#9ca3af;">09:29</span>
         </div>
       </div>
+    </div>
+    <!-- TAB: Canlı Aktivite (hidden) -->
+    <div id="dash-tab-panel-live" style="display:none;padding:22px 24px;">
+      <p style="font-size:13.5px;color:#9ca3af;text-align:center;">Canlı aktivite akışı burada görünecek.</p>
+    </div>
+    <!-- TAB: Isı Haritası (hidden) -->
+    <div id="dash-tab-panel-heatmap" style="display:none;padding:22px 24px;">
+      <p style="font-size:13.5px;color:#9ca3af;text-align:center;">Isı haritası burada görünecek.</p>
+    </div>
+  </section>
 
-      <!-- 3. Ziyaretçi Davranışı -->
-      <section style="margin-bottom:20px;">
-        <h2 style="font-size:15px;font-weight:700;color:#111827;margin:0 0 14px;">Ziyaretçi Davranışı</h2>
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
-          <div style="border:1px solid #eceef1;border-radius:16px;padding:18px;background:#fff;">
-            <p style="font-size:12px;color:#6b7280;margin:0 0 8px;">Benzersiz Ziyaretçi</p>
-            <p id="hero-visitors-value" style="font-size:22px;font-weight:700;color:#111827;margin:0 0 6px;">${isDemo ? '12.480' : '—'}</p>
-            <span style="font-size:11px;color:${isDemo ? '#16a34a' : '#9ca3af'};font-weight:600;">${isDemo ? '▲ +8.2%' : '—'}</span>
-            <span id="hero-visitors-trend" style="display:none;"></span>
-          </div>
-          <div style="border:1px solid #eceef1;border-radius:16px;padding:18px;background:#fff;">
-            <p style="font-size:12px;color:#6b7280;margin:0 0 8px;">Tıklama</p>
-            <p style="font-size:22px;font-weight:700;color:#111827;margin:0 0 6px;">${isDemo ? '34.920' : '—'}</p>
-            <span style="font-size:11px;color:${isDemo ? '#16a34a' : '#9ca3af'};font-weight:600;">${isDemo ? '▲ +4.1%' : '—'}</span>
-          </div>
-          <div style="border:1px solid #eceef1;border-radius:16px;padding:18px;background:#fff;">
-            <p style="font-size:12px;color:#6b7280;margin:0 0 8px;">Çıkış Oranı</p>
-            <p id="hero-conversion-value" style="font-size:22px;font-weight:700;color:#111827;margin:0 0 6px;">${isDemo ? '%38.4' : '—'}</p>
-            <span style="font-size:11px;color:${isDemo ? '#16a34a' : '#9ca3af'};font-weight:600;">${isDemo ? '▼ -2.3%' : '—'}</span>
-            <span id="hero-conversion-trend" style="display:none;"></span>
-          </div>
-          <div style="border:1px solid #eceef1;border-radius:16px;padding:18px;background:#fff;">
-            <p style="font-size:12px;color:#6b7280;margin:0 0 8px;">Sepete Ekleme</p>
-            <p id="hero-cart-value" style="font-size:22px;font-weight:700;color:#111827;margin:0 0 6px;">${isDemo ? '2.140' : '—'}</p>
-            <span style="font-size:11px;color:${isDemo ? '#16a34a' : '#9ca3af'};font-weight:600;">${isDemo ? '▲ +11.6%' : '—'}</span>
-            <span id="hero-cart-trend" style="display:none;"></span>
-          </div>
-          <div style="border:1px solid #eceef1;border-radius:16px;padding:18px;background:#fff;">
-            <p style="font-size:12px;color:#6b7280;margin:0 0 8px;">Dönüşüm Oranı</p>
-            <p style="font-size:22px;font-weight:700;color:#111827;margin:0 0 6px;">${isDemo ? '%3.8' : '—'}</p>
-            <span style="font-size:11px;color:${isDemo ? '#16a34a' : '#9ca3af'};font-weight:600;">${isDemo ? '▲ +0.6%' : '—'}</span>
-          </div>
-          <div style="border:1px solid #eceef1;border-radius:16px;padding:18px;background:#fff;">
-            <p style="font-size:12px;color:#6b7280;margin:0 0 8px;">Ort. Oturum Süresi</p>
-            <p id="hero-duration-value" style="font-size:22px;font-weight:700;color:#111827;margin:0 0 6px;">${isDemo ? '4dk 12sn' : '—'}</p>
-            <span style="font-size:11px;color:${isDemo ? '#16a34a' : '#9ca3af'};font-weight:600;">${isDemo ? '▲ +5.4%' : '—'}</span>
-            <span id="hero-duration-trend" style="display:none;"></span>
-          </div>
-        </div>
-        <span id="hero-sales-value" style="display:none;"></span>
-        <span id="hero-sales-trend" style="display:none;"></span>
-      </section>
-
-      <!-- 4. AI Önerileri -->
-      <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:22px;margin-bottom:20px;box-shadow:0 1px 2px rgba(16,24,40,0.03);">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-          <p style="font-size:15px;font-weight:700;color:#111827;margin:0;">AI Önerileri</p>
-          <span id="ai-recs-badge" style="font-size:10px;background:#fef3c7;color:#92400e;padding:2px 7px;border-radius:999px;font-weight:600;display:none;"></span>
-        </div>
-        ${isDemo ? `
-        <div style="display:flex;flex-direction:column;gap:10px;">
-          <div style="background:#f9fafb;border:1px solid #f3f4f6;border-radius:10px;padding:14px;display:flex;align-items:flex-start;gap:12px;">
-            <span style="font-size:9px;font-weight:700;background:#dbeafe;color:#1e40af;border-radius:4px;padding:2px 6px;white-space:nowrap;margin-top:1px;">VERİ</span>
-            <div><p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 4px;">SEO Başlıklarını Güncelle</p><p style="font-size:11.5px;color:#6b7280;margin:0;">18 ürünün başlığı anahtar kelime optimizasyonu gerektiriyor.</p></div>
-          </div>
-          <div style="background:#f9fafb;border:1px solid #f3f4f6;border-radius:10px;padding:14px;display:flex;align-items:flex-start;gap:12px;">
-            <span style="font-size:9px;font-weight:700;background:#dcfce7;color:#15803d;border-radius:4px;padding:2px 6px;white-space:nowrap;margin-top:1px;">KURAL</span>
-            <div><p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 4px;">Stok Uyarısı Ekle</p><p style="font-size:11.5px;color:#6b7280;margin:0;">Düşük stoklu ürünlerde aciliyet bildirimi göster.</p></div>
-          </div>
-          <div style="background:#f9fafb;border:1px solid #f3f4f6;border-radius:10px;padding:14px;display:flex;align-items:flex-start;gap:12px;">
-            <span style="font-size:9px;font-weight:700;background:#dbeafe;color:#1e40af;border-radius:4px;padding:2px 6px;white-space:nowrap;margin-top:1px;">VERİ</span>
-            <div><p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 4px;">Ürün Açıklamalarını Zenginleştir</p><p style="font-size:11.5px;color:#6b7280;margin:0;">24 ürünün açıklaması 50 kelimeden kısa ve dönüşümü düşürüyor.</p></div>
-          </div>
-          <div style="background:#f9fafb;border:1px solid #f3f4f6;border-radius:10px;padding:14px;display:flex;align-items:flex-start;gap:12px;">
-            <span style="font-size:9px;font-weight:700;background:#dcfce7;color:#15803d;border-radius:4px;padding:2px 6px;white-space:nowrap;margin-top:1px;">KURAL</span>
-            <div><p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 4px;">Fiyatlandırma Stratejisi</p><p style="font-size:11.5px;color:#6b7280;margin:0;">Rekabetçi ürünlerde %5-10 indirim satışları artırabilir.</p></div>
-          </div>
-          <div style="background:#f9fafb;border:1px solid #f3f4f6;border-radius:10px;padding:14px;display:flex;align-items:flex-start;gap:12px;">
-            <span style="font-size:9px;font-weight:700;background:#dbeafe;color:#1e40af;border-radius:4px;padding:2px 6px;white-space:nowrap;margin-top:1px;">VERİ</span>
-            <div><p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 4px;">Görsel Kalitesini İyileştir</p><p style="font-size:11.5px;color:#6b7280;margin:0;">Mobil görünümde 12 ürün görseli optimize edilmemiş durumda.</p></div>
-          </div>
-        </div>
-        ` : `
-        <div id="dash-ai-recommendations" style="display:flex;flex-direction:column;gap:8px;"></div>
-        <button id="fix-all-issues-btn" type="button"
-          style="width:100%;margin-top:14px;padding:10px;background:#111827;color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:600;opacity:${fixDisabled ? '0.5' : '1'};cursor:${fixDisabled ? 'not-allowed' : 'pointer'};"
-          ${fixDisabled ? 'disabled' : ''}>Tüm Sorunları AI ile Düzelt</button>
-        `}
-        <div id="card-ai-recs" style="display:none;"></div>
-        <div id="ai-recs-body" style="display:none;"></div>
-        <button id="ai-recs-toggle" type="button" style="display:none;"></button>
-        <i id="ai-recs-chevron" style="display:none;"></i>
+  <!-- ZİYARETÇİ DAVRANIŞI — 6 metric cards -->
+  <section>
+    <h2 style="font-size:13px;font-weight:700;margin:0 0 10px;color:#374151;">Ziyaretçi Davranışı</h2>
+    <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:12px;">
+      <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:18px;box-shadow:0 1px 2px rgba(16,24,40,0.03);display:flex;flex-direction:column;gap:6px;">
+        <span style="font-size:11.5px;color:#9ca3af;font-weight:600;">Benzersiz Ziyaretçi</span>
+        <span style="font-size:22px;font-weight:700;color:#111827;line-height:1;">12.480</span>
+        <span style="font-size:11.5px;color:#16a34a;font-weight:600;">+8.2%</span>
       </div>
+      <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:18px;box-shadow:0 1px 2px rgba(16,24,40,0.03);display:flex;flex-direction:column;gap:6px;">
+        <span style="font-size:11.5px;color:#9ca3af;font-weight:600;">Tıklama</span>
+        <span style="font-size:22px;font-weight:700;color:#111827;line-height:1;">34.920</span>
+        <span style="font-size:11.5px;color:#16a34a;font-weight:600;">+4.1%</span>
+      </div>
+      <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:18px;box-shadow:0 1px 2px rgba(16,24,40,0.03);display:flex;flex-direction:column;gap:6px;">
+        <span style="font-size:11.5px;color:#9ca3af;font-weight:600;">Çıkış Oranı</span>
+        <span style="font-size:22px;font-weight:700;color:#111827;line-height:1;">%38.4</span>
+        <span style="font-size:11.5px;color:#16a34a;font-weight:600;">-2.3%</span>
+      </div>
+      <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:18px;box-shadow:0 1px 2px rgba(16,24,40,0.03);display:flex;flex-direction:column;gap:6px;">
+        <span style="font-size:11.5px;color:#9ca3af;font-weight:600;">Sepete Ekleme</span>
+        <span style="font-size:22px;font-weight:700;color:#111827;line-height:1;">2.140</span>
+        <span style="font-size:11.5px;color:#16a34a;font-weight:600;">+11.6%</span>
+      </div>
+      <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:18px;box-shadow:0 1px 2px rgba(16,24,40,0.03);display:flex;flex-direction:column;gap:6px;">
+        <span style="font-size:11.5px;color:#9ca3af;font-weight:600;">Dönüşüm Oranı</span>
+        <span style="font-size:22px;font-weight:700;color:#111827;line-height:1;">%3.8</span>
+        <span style="font-size:11.5px;color:#16a34a;font-weight:600;">+0.6%</span>
+      </div>
+      <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:18px;box-shadow:0 1px 2px rgba(16,24,40,0.03);display:flex;flex-direction:column;gap:6px;">
+        <span style="font-size:11.5px;color:#9ca3af;font-weight:600;">Ort. Oturum Süresi</span>
+        <span style="font-size:22px;font-weight:700;color:#111827;line-height:1;">4dk 12sn</span>
+        <span style="font-size:11.5px;color:#16a34a;font-weight:600;">+5.4%</span>
+      </div>
+    </div>
+  </section>
 
-      <!-- 5. Büyüme Fırsatları -->
-      <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:22px;margin-bottom:20px;box-shadow:0 1px 2px rgba(16,24,40,0.03);">
-        <p style="font-size:15px;font-weight:700;color:#111827;margin:0 0 16px;">Büyüme Fırsatları</p>
-        <div id="growth-opportunities-list" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
-          ${isDemo ? `
-          <div style="background:#fff;border:1px solid #eceef1;border-radius:14px;padding:18px;">
-            <span style="font-size:9px;font-weight:700;background:#fef3c7;color:#92400e;border-radius:4px;padding:2px 6px;">SORUN</span>
-            <p style="font-size:13px;font-weight:700;color:#111827;margin:10px 0 4px;">%62 Sepet Terk Oranı</p>
-            <span style="font-size:9px;font-weight:700;background:#dbeafe;color:#1e40af;border-radius:4px;padding:2px 6px;display:inline-block;margin-bottom:6px;">ÖNERİ</span>
-            <p style="font-size:11.5px;color:#6b7280;margin:0 0 8px;">Ücretsiz kargo başlık banderi ekle</p>
-            <span style="font-size:9px;font-weight:700;background:#dcfce7;color:#15803d;border-radius:4px;padding:2px 6px;display:inline-block;margin-bottom:6px;">BEKLENEN ETKİ</span>
-            <p style="font-size:12px;font-weight:600;color:#16a34a;margin:0 0 14px;">+%4-6 dönüşüm</p>
-            <button type="button" onclick="sendChat('Ücretsiz kargo başlık banderi ekle')" style="width:100%;padding:8px;background:#111827;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;">Uygula</button>
-          </div>
-          <div style="background:#fff;border:1px solid #eceef1;border-radius:14px;padding:18px;">
-            <span style="font-size:9px;font-weight:700;background:#fef3c7;color:#92400e;border-radius:4px;padding:2px 6px;">SORUN</span>
-            <p style="font-size:13px;font-weight:700;color:#111827;margin:10px 0 4px;">18 Ürün SEO Başlığı Yetersiz</p>
-            <span style="font-size:9px;font-weight:700;background:#dbeafe;color:#1e40af;border-radius:4px;padding:2px 6px;display:inline-block;margin-bottom:6px;">ÖNERİ</span>
-            <p style="font-size:11.5px;color:#6b7280;margin:0 0 8px;">AI ile toplu SEO optimizasyonu uygula</p>
-            <span style="font-size:9px;font-weight:700;background:#dcfce7;color:#15803d;border-radius:4px;padding:2px 6px;display:inline-block;margin-bottom:6px;">BEKLENEN ETKİ</span>
-            <p style="font-size:12px;font-weight:600;color:#16a34a;margin:0 0 14px;">+%12 organik trafik</p>
-            <button type="button" onclick="runShopifyAiAnalysis('all')" style="width:100%;padding:8px;background:#111827;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;">Uygula</button>
-          </div>
-          <div style="background:#fff;border:1px solid #eceef1;border-radius:14px;padding:18px;">
-            <span style="font-size:9px;font-weight:700;background:#fef3c7;color:#92400e;border-radius:4px;padding:2px 6px;">SORUN</span>
-            <p style="font-size:13px;font-weight:700;color:#111827;margin:10px 0 4px;">Mobil Görseller Optimize Değil</p>
-            <span style="font-size:9px;font-weight:700;background:#dbeafe;color:#1e40af;border-radius:4px;padding:2px 6px;display:inline-block;margin-bottom:6px;">ÖNERİ</span>
-            <p style="font-size:11.5px;color:#6b7280;margin:0 0 8px;">Görselleri sıkıştır ve WebP formatına çevir</p>
-            <span style="font-size:9px;font-weight:700;background:#dcfce7;color:#15803d;border-radius:4px;padding:2px 6px;display:inline-block;margin-bottom:6px;">BEKLENEN ETKİ</span>
-            <p style="font-size:12px;font-weight:600;color:#16a34a;margin:0 0 14px;">-%3 çıkış oranı</p>
-            <button type="button" onclick="sendChat('Mobil görselleri optimize et')" style="width:100%;padding:8px;background:#111827;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;">Uygula</button>
-          </div>
-          ` : ''}
+  <!-- AI ÖNERİLERİ — 5 rows -->
+  <section>
+    <h2 style="font-size:13px;font-weight:700;margin:0 0 10px;color:#374151;">AI Önerileri</h2>
+    <div style="background:#fff;border:1px solid #eceef1;border-radius:18px;box-shadow:0 1px 2px rgba(16,24,40,0.03);overflow:hidden;">
+      <!-- Row 1: VERİ -->
+      <div style="display:flex;align-items:center;gap:14px;padding:16px 24px;border-bottom:1px solid #f6f7f8;">
+        <span style="font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:999px;background:#dbeafe;color:#1d4ed8;white-space:nowrap;">VERİ</span>
+        <span style="font-size:13.5px;color:#111827;flex:1;">Kadife Kesim Ceket sayfasında ortalama 4dk 47sn geçiriliyor — açıklama uzunluğu artırılabilir.</span>
+        <button onclick="navigateTo?.('products')" style="background:#111827;border:none;color:#fff;font-size:12px;font-weight:600;padding:8px 16px;border-radius:9px;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;">Uygula</button>
+      </div>
+      <!-- Row 2: VERİ -->
+      <div style="display:flex;align-items:center;gap:14px;padding:16px 24px;border-bottom:1px solid #f6f7f8;">
+        <span style="font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:999px;background:#dbeafe;color:#1d4ed8;white-space:nowrap;">VERİ</span>
+        <span style="font-size:13.5px;color:#111827;flex:1;">Mobil kullanıcıların %68'i ürün görselini tam yüklemeden çıkıyor — görsel boyutları optimize edilmeli.</span>
+        <button onclick="navigateTo?.('sync')" style="background:#111827;border:none;color:#fff;font-size:12px;font-weight:600;padding:8px 16px;border-radius:9px;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;">Uygula</button>
+      </div>
+      <!-- Row 3: KURAL -->
+      <div style="display:flex;align-items:center;gap:14px;padding:16px 24px;border-bottom:1px solid #f6f7f8;">
+        <span style="font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:999px;background:#dcfce7;color:#15803d;white-space:nowrap;">KURAL</span>
+        <span style="font-size:13.5px;color:#111827;flex:1;">18 üründe SEO başlığı 70 karakteri aşıyor — kısal için toplu düzenleme önerilir.</span>
+        <button onclick="navigateTo?.('validation')" style="background:#111827;border:none;color:#fff;font-size:12px;font-weight:600;padding:8px 16px;border-radius:9px;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;">Uygula</button>
+      </div>
+      <!-- Row 4: VERİ -->
+      <div style="display:flex;align-items:center;gap:14px;padding:16px 24px;border-bottom:1px solid #f6f7f8;">
+        <span style="font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:999px;background:#dbeafe;color:#1d4ed8;white-space:nowrap;">VERİ</span>
+        <span style="font-size:13.5px;color:#111827;flex:1;">Hafta sonu dönüşüm oranı hafta içinden %22 düşük — kampanya veya fiyat testi önerilebilir.</span>
+        <button onclick="openUpgradeModal?.()" style="background:#111827;border:none;color:#fff;font-size:12px;font-weight:600;padding:8px 16px;border-radius:9px;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;">Uygula</button>
+      </div>
+      <!-- Row 5: KURAL -->
+      <div style="display:flex;align-items:center;gap:14px;padding:16px 24px;">
+        <span style="font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:999px;background:#dcfce7;color:#15803d;white-space:nowrap;">KURAL</span>
+        <span style="font-size:13.5px;color:#111827;flex:1;">12 üründe görsel alt metni eksik — erişilebilirlik ve görsel SEO için eklenmeli.</span>
+        <button onclick="navigateTo?.('validation')" style="background:#111827;border:none;color:#fff;font-size:12px;font-weight:600;padding:8px 16px;border-radius:9px;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;">Uygula</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- BÜYÜME FIRSATLARI — 3 cards -->
+  <section>
+    <h2 style="font-size:13px;font-weight:700;margin:0 0 10px;color:#374151;">Büyüme Fırsatları</h2>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;">
+      <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:20px;box-shadow:0 1px 2px rgba(16,24,40,0.03);display:flex;flex-direction:column;gap:10px;">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;">
+          <span style="font-size:14.5px;font-weight:600;color:#111827;">Sepet Terk</span>
+          <span style="font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;background:#fee2e2;color:#b91c1c;">%62</span>
         </div>
+        <p style="font-size:12.5px;color:#6b7280;margin:0;line-height:1.5;">Sepete eklenen ürünlerin %62'si satın alınmadan terk edildi. Hatırlatma e-postası veya indirim kuponu önerilebilir.</p>
+        <button id="growth-btn-0" onclick="applyGrowthCard(0)" style="background:#111827;border:none;color:#fff;font-size:12.5px;font-weight:600;padding:9px 16px;border-radius:10px;cursor:pointer;font-family:'Inter',sans-serif;margin-top:auto;">Fırsatı Değerlendir</button>
       </div>
-
-      <!-- 6. Ürün Performansı Tablosu -->
-      <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:22px;margin-bottom:20px;overflow-x:auto;box-shadow:0 1px 2px rgba(16,24,40,0.03);">
-        <p style="font-size:15px;font-weight:700;color:#111827;margin:0 0 16px;">Ürün Performansı</p>
-        <table style="width:100%;border-collapse:collapse;font-size:12px;">
-          <thead>
-            <tr style="border-bottom:1px solid #f3f4f6;">
-              <th style="text-align:left;padding:8px 10px;color:#9ca3af;font-weight:500;white-space:nowrap;">Ürün</th>
-              <th style="text-align:right;padding:8px 10px;color:#9ca3af;font-weight:500;">Görüntülenme</th>
-              <th style="text-align:right;padding:8px 10px;color:#9ca3af;font-weight:500;">Satış</th>
-              <th style="text-align:right;padding:8px 10px;color:#9ca3af;font-weight:500;">Gelir</th>
-              <th style="text-align:right;padding:8px 10px;color:#9ca3af;font-weight:500;">Dönüşüm</th>
-              <th style="text-align:right;padding:8px 10px;color:#9ca3af;font-weight:500;">Sepet Oranı</th>
-              <th style="text-align:right;padding:8px 10px;color:#9ca3af;font-weight:500;">Etkileşim</th>
-              <th style="text-align:center;padding:8px 10px;color:#9ca3af;font-weight:500;">Durum</th>
-              <th style="text-align:left;padding:8px 10px;color:#9ca3af;font-weight:500;">İşlem</th>
-            </tr>
-          </thead>
-          <tbody id="product-performance-tbody">
-            ${isDemo ? `
-            <tr style="border-bottom:1px solid #f9fafb;">
-              <td style="padding:10px;font-weight:500;color:#111827;">Keten Gömlek — Beyaz</td>
-              <td style="padding:10px;text-align:right;color:#374151;">4.820</td>
-              <td style="padding:10px;text-align:right;color:#374151;">312</td>
-              <td style="padding:10px;text-align:right;color:#374151;">₺54.840</td>
-              <td style="padding:10px;text-align:right;color:#374151;">%6.5</td>
-              <td style="padding:10px;text-align:right;color:#374151;">%18.2</td>
-              <td style="padding:10px;text-align:right;color:#374151;">1.248</td>
-              <td style="padding:10px;text-align:center;"><span style="font-size:10px;font-weight:600;background:#dcfce7;color:#15803d;border-radius:999px;padding:2px 8px;">İyi</span></td>
-              <td style="padding:10px;"><a href="#" onclick="switchToView('catalog-editor-layout');return false;" style="font-size:11px;color:#6b7280;text-decoration:underline;">Düzenle</a></td>
-            </tr>
-            <tr style="border-bottom:1px solid #f9fafb;">
-              <td style="padding:10px;font-weight:500;color:#111827;">Oversize Kapüşonlu</td>
-              <td style="padding:10px;text-align:right;color:#374151;">3.640</td>
-              <td style="padding:10px;text-align:right;color:#374151;">218</td>
-              <td style="padding:10px;text-align:right;color:#374151;">₺43.600</td>
-              <td style="padding:10px;text-align:right;color:#374151;">%5.9</td>
-              <td style="padding:10px;text-align:right;color:#374151;">%14.7</td>
-              <td style="padding:10px;text-align:right;color:#374151;">892</td>
-              <td style="padding:10px;text-align:center;"><span style="font-size:10px;font-weight:600;background:#dcfce7;color:#15803d;border-radius:999px;padding:2px 8px;">İyi</span></td>
-              <td style="padding:10px;"><a href="#" onclick="switchToView('catalog-editor-layout');return false;" style="font-size:11px;color:#6b7280;text-decoration:underline;">Düzenle</a></td>
-            </tr>
-            <tr style="border-bottom:1px solid #f9fafb;">
-              <td style="padding:10px;font-weight:500;color:#111827;">Deri Kemer — Siyah</td>
-              <td style="padding:10px;text-align:right;color:#374151;">2.910</td>
-              <td style="padding:10px;text-align:right;color:#374151;">98</td>
-              <td style="padding:10px;text-align:right;color:#374151;">₺19.600</td>
-              <td style="padding:10px;text-align:right;color:#374151;">%3.4</td>
-              <td style="padding:10px;text-align:right;color:#374151;">%9.1</td>
-              <td style="padding:10px;text-align:right;color:#374151;">462</td>
-              <td style="padding:10px;text-align:center;"><span style="font-size:10px;font-weight:600;background:#fef3c7;color:#92400e;border-radius:999px;padding:2px 8px;">Orta</span></td>
-              <td style="padding:10px;"><a href="#" onclick="switchToView('catalog-editor-layout');return false;" style="font-size:11px;color:#6b7280;text-decoration:underline;">Düzenle</a></td>
-            </tr>
-            <tr style="border-bottom:1px solid #f9fafb;">
-              <td style="padding:10px;font-weight:500;color:#111827;">Minimalist Çanta</td>
-              <td style="padding:10px;text-align:right;color:#374151;">2.240</td>
-              <td style="padding:10px;text-align:right;color:#374151;">74</td>
-              <td style="padding:10px;text-align:right;color:#374151;">₺37.000</td>
-              <td style="padding:10px;text-align:right;color:#374151;">%3.3</td>
-              <td style="padding:10px;text-align:right;color:#374151;">%8.4</td>
-              <td style="padding:10px;text-align:right;color:#374151;">518</td>
-              <td style="padding:10px;text-align:center;"><span style="font-size:10px;font-weight:600;background:#fef3c7;color:#92400e;border-radius:999px;padding:2px 8px;">Orta</span></td>
-              <td style="padding:10px;"><a href="#" onclick="switchToView('catalog-editor-layout');return false;" style="font-size:11px;color:#6b7280;text-decoration:underline;">Düzenle</a></td>
-            </tr>
-            <tr style="border-bottom:1px solid #f9fafb;">
-              <td style="padding:10px;font-weight:500;color:#111827;">Baskılı Tişört</td>
-              <td style="padding:10px;text-align:right;color:#374151;">1.820</td>
-              <td style="padding:10px;text-align:right;color:#374151;">42</td>
-              <td style="padding:10px;text-align:right;color:#374151;">₺5.040</td>
-              <td style="padding:10px;text-align:right;color:#374151;">%2.3</td>
-              <td style="padding:10px;text-align:right;color:#374151;">%6.1</td>
-              <td style="padding:10px;text-align:right;color:#374151;">294</td>
-              <td style="padding:10px;text-align:center;"><span style="font-size:10px;font-weight:600;background:#fee2e2;color:#b91c1c;border-radius:999px;padding:2px 8px;">Düşük</span></td>
-              <td style="padding:10px;"><a href="#" onclick="switchToView('catalog-editor-layout');return false;" style="font-size:11px;color:#6b7280;text-decoration:underline;">Düzenle</a></td>
-            </tr>
-            <tr>
-              <td style="padding:10px;font-weight:500;color:#111827;">Yazlık Elbise</td>
-              <td style="padding:10px;text-align:right;color:#374151;">1.540</td>
-              <td style="padding:10px;text-align:right;color:#374151;">28</td>
-              <td style="padding:10px;text-align:right;color:#374151;">₺11.200</td>
-              <td style="padding:10px;text-align:right;color:#374151;">%1.8</td>
-              <td style="padding:10px;text-align:right;color:#374151;">%5.2</td>
-              <td style="padding:10px;text-align:right;color:#374151;">196</td>
-              <td style="padding:10px;text-align:center;"><span style="font-size:10px;font-weight:600;background:#fee2e2;color:#b91c1c;border-radius:999px;padding:2px 8px;">Düşük</span></td>
-              <td style="padding:10px;"><a href="#" onclick="switchToView('catalog-editor-layout');return false;" style="font-size:11px;color:#6b7280;text-decoration:underline;">Düzenle</a></td>
-            </tr>
-            ` : ''}
-          </tbody>
-        </table>
+      <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:20px;box-shadow:0 1px 2px rgba(16,24,40,0.03);display:flex;flex-direction:column;gap:10px;">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;">
+          <span style="font-size:14.5px;font-weight:600;color:#111827;">SEO Başlığı</span>
+          <span style="font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;background:#fffbeb;color:#a16207;">18 ürün</span>
+        </div>
+        <p style="font-size:12.5px;color:#6b7280;margin:0;line-height:1.5;">18 üründe SEO başlığı optimize edilmemiş. Toplu AI yeniden yazımı ile organik trafiği artırılabilir.</p>
+        <button id="growth-btn-1" onclick="applyGrowthCard(1)" style="background:#111827;border:none;color:#fff;font-size:12.5px;font-weight:600;padding:9px 16px;border-radius:10px;cursor:pointer;font-family:'Inter',sans-serif;margin-top:auto;">Fırsatı Değerlendir</button>
       </div>
+      <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:20px;box-shadow:0 1px 2px rgba(16,24,40,0.03);display:flex;flex-direction:column;gap:10px;">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;">
+          <span style="font-size:14.5px;font-weight:600;color:#111827;">Mobil Görseller</span>
+          <span style="font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;background:#fffbeb;color:#a16207;">Optimize Et</span>
+        </div>
+        <p style="font-size:12.5px;color:#6b7280;margin:0;line-height:1.5;">Mobil kullanıcıların %68'i görsel yüklenmeden çıkıyor. Görsel boyutlarının küçültülmesi dönüşümü artırabilir.</p>
+        <button id="growth-btn-2" onclick="applyGrowthCard(2)" style="background:#111827;border:none;color:#fff;font-size:12.5px;font-weight:600;padding:9px 16px;border-radius:10px;cursor:pointer;font-family:'Inter',sans-serif;margin-top:auto;">Fırsatı Değerlendir</button>
+      </div>
+    </div>
+  </section>
 
-      <!-- 7. Kullanıcı Davranışları -->
-      <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:22px;margin-bottom:20px;box-shadow:0 1px 2px rgba(16,24,40,0.03);">
-        <p style="font-size:15px;font-weight:700;color:#111827;margin:0 0 16px;">Kullanıcı Davranışları</p>
-        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;">
-          <div>
-            <p style="font-size:10px;font-weight:700;color:#9ca3af;margin:0 0 8px;text-transform:uppercase;letter-spacing:.04em;">En Çok Görüntülenen</p>
-            <div id="behavior-most-viewed">${isDemo ? '<p style="font-size:12px;color:#374151;margin:4px 0 0;">Keten Gömlek</p><p style="font-size:12px;color:#374151;margin:4px 0 0;">Oversize Kapüşonlu</p><p style="font-size:12px;color:#374151;margin:4px 0 0;">Minimalist Çanta</p>' : ''}</div>
-          </div>
-          <div>
-            <p style="font-size:10px;font-weight:700;color:#9ca3af;margin:0 0 8px;text-transform:uppercase;letter-spacing:.04em;">En Çok Satılan</p>
-            <div id="behavior-most-sold">${isDemo ? '<p style="font-size:12px;color:#374151;margin:4px 0 0;">Keten Gömlek</p><p style="font-size:12px;color:#374151;margin:4px 0 0;">Oversize Kapüşonlu</p><p style="font-size:12px;color:#374151;margin:4px 0 0;">Deri Kemer</p>' : ''}</div>
-          </div>
-          <div>
-            <p style="font-size:10px;font-weight:700;color:#9ca3af;margin:0 0 8px;text-transform:uppercase;letter-spacing:.04em;">En Çok Tıklanan</p>
-            <div id="behavior-most-clicked">${isDemo ? '<p style="font-size:12px;color:#374151;margin:4px 0 0;">Oversize Kapüşonlu</p><p style="font-size:12px;color:#374151;margin:4px 0 0;">Minimalist Çanta</p><p style="font-size:12px;color:#374151;margin:4px 0 0;">Baskılı Tişört</p>' : ''}</div>
-          </div>
-          <div>
-            <p style="font-size:10px;font-weight:700;color:#9ca3af;margin:0 0 8px;text-transform:uppercase;letter-spacing:.04em;">En Çok Terk Edilen</p>
-            <div id="behavior-most-abandoned">${isDemo ? '<p style="font-size:12px;color:#374151;margin:4px 0 0;">Yazlık Elbise</p><p style="font-size:12px;color:#374151;margin:4px 0 0;">Baskılı Tişört</p><p style="font-size:12px;color:#374151;margin:4px 0 0;">Deri Kemer</p>' : ''}</div>
-          </div>
-          <div>
-            <p style="font-size:10px;font-weight:700;color:#9ca3af;margin:0 0 8px;text-transform:uppercase;letter-spacing:.04em;">En Fazla Etkileşim</p>
-            <div id="behavior-most-engaged">${isDemo ? '<p style="font-size:12px;color:#374151;margin:4px 0 0;">Keten Gömlek</p><p style="font-size:12px;color:#374151;margin:4px 0 0;">Oversize Kapüşonlu</p><p style="font-size:12px;color:#374151;margin:4px 0 0;">Minimalist Çanta</p>' : ''}</div>
-          </div>
+  <!-- ÜRÜN PERFORMANSI — 9-col table, 6 rows -->
+  <section>
+    <h2 style="font-size:13px;font-weight:700;margin:0 0 10px;color:#374151;">Ürün Performansı</h2>
+    <div style="background:#fff;border:1px solid #eceef1;border-radius:18px;box-shadow:0 1px 2px rgba(16,24,40,0.03);overflow:hidden;">
+      <table style="width:100%;border-collapse:collapse;font-size:13px;">
+        <thead>
+          <tr style="background:#f9fafb;border-bottom:1px solid #f1f2f4;">
+            <th style="padding:12px 20px;text-align:left;font-size:11.5px;font-weight:700;color:#9ca3af;letter-spacing:0.04em;">ÜRÜN</th>
+            <th style="padding:12px 16px;text-align:right;font-size:11.5px;font-weight:700;color:#9ca3af;letter-spacing:0.04em;">GÖRÜNTÜLENME</th>
+            <th style="padding:12px 16px;text-align:right;font-size:11.5px;font-weight:700;color:#9ca3af;letter-spacing:0.04em;">SATIŞ</th>
+            <th style="padding:12px 16px;text-align:right;font-size:11.5px;font-weight:700;color:#9ca3af;letter-spacing:0.04em;">GELİR</th>
+            <th style="padding:12px 16px;text-align:right;font-size:11.5px;font-weight:700;color:#9ca3af;letter-spacing:0.04em;">DÖNÜŞÜM</th>
+            <th style="padding:12px 16px;text-align:right;font-size:11.5px;font-weight:700;color:#9ca3af;letter-spacing:0.04em;">PAZAR PAYI</th>
+            <th style="padding:12px 16px;text-align:right;font-size:11.5px;font-weight:700;color:#9ca3af;letter-spacing:0.04em;">SKOR</th>
+            <th style="padding:12px 16px;text-align:left;font-size:11.5px;font-weight:700;color:#9ca3af;letter-spacing:0.04em;">DURUM</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid #f6f7f8;">
+            <td style="padding:14px 20px;font-weight:600;color:#111827;">Kadife Kesim Ceket</td>
+            <td style="padding:14px 16px;text-align:right;color:#6b7280;">8.240</td>
+            <td style="padding:14px 16px;text-align:right;color:#6b7280;">312</td>
+            <td style="padding:14px 16px;text-align:right;color:#6b7280;">₺186.400</td>
+            <td style="padding:14px 16px;text-align:right;color:#6b7280;">%3.8</td>
+            <td style="padding:14px 16px;text-align:right;color:#6b7280;">%22</td>
+            <td style="padding:14px 16px;text-align:right;font-weight:700;color:#111827;">8.4</td>
+            <td style="padding:14px 16px;"><span style="font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;background:#dcfce7;color:#15803d;">Güçlü</span></td>
+          </tr>
+          <tr style="border-bottom:1px solid #f6f7f8;">
+            <td style="padding:14px 20px;font-weight:600;color:#111827;">Yazlık Keten Gömlek</td>
+            <td style="padding:14px 16px;text-align:right;color:#6b7280;">6.910</td>
+            <td style="padding:14px 16px;text-align:right;color:#6b7280;">280</td>
+            <td style="padding:14px 16px;text-align:right;color:#6b7280;">₺98.000</td>
+            <td style="padding:14px 16px;text-align:right;color:#6b7280;">%4.1</td>
+            <td style="padding:14px 16px;text-align:right;color:#6b7280;">%19</td>
+            <td style="padding:14px 16px;text-align:right;font-weight:700;color:#111827;">7.9</td>
+            <td style="padding:14px 16px;"><span style="font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;background:#dcfce7;color:#15803d;">Güçlü</span></td>
+          </tr>
+          <tr style="border-bottom:1px solid #f6f7f8;">
+            <td style="padding:14px 20px;font-weight:600;color:#111827;">Denim Ceket</td>
+            <td style="padding:14px 16px;text-align:right;color:#6b7280;">5.320</td>
+            <td style="padding:14px 16px;text-align:right;color:#6b7280;">140</td>
+            <td style="padding:14px 16px;text-align:right;color:#6b7280;">₺84.000</td>
+            <td style="padding:14px 16px;text-align:right;color:#6b7280;">%2.6</td>
+            <td style="padding:14px 16px;text-align:right;color:#6b7280;">%15</td>
+            <td style="padding:14px 16px;text-align:right;font-weight:700;color:#111827;">6.5</td>
+            <td style="padding:14px 16px;"><span style="font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;background:#fef3c7;color:#92400e;">İzlemede</span></td>
+          </tr>
+          <tr style="border-bottom:1px solid #f6f7f8;">
+            <td style="padding:14px 20px;font-weight:600;color:#111827;">Örgü Kazak</td>
+            <td style="padding:14px 16px;text-align:right;color:#6b7280;">4.180</td>
+            <td style="padding:14px 16px;text-align:right;color:#6b7280;">96</td>
+            <td style="padding:14px 16px;text-align:right;color:#6b7280;">₺52.800</td>
+            <td style="padding:14px 16px;text-align:right;color:#6b7280;">%2.3</td>
+            <td style="padding:14px 16px;text-align:right;color:#6b7280;">%12</td>
+            <td style="padding:14px 16px;text-align:right;font-weight:700;color:#111827;">5.8</td>
+            <td style="padding:14px 16px;"><span style="font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;background:#fef3c7;color:#92400e;">İzlemede</span></td>
+          </tr>
+          <tr style="border-bottom:1px solid #f6f7f8;">
+            <td style="padding:14px 20px;font-weight:600;color:#111827;">Deri Çanta</td>
+            <td style="padding:14px 16px;text-align:right;color:#6b7280;">3.640</td>
+            <td style="padding:14px 16px;text-align:right;color:#6b7280;">52</td>
+            <td style="padding:14px 16px;text-align:right;color:#6b7280;">₺62.400</td>
+            <td style="padding:14px 16px;text-align:right;color:#6b7280;">%1.4</td>
+            <td style="padding:14px 16px;text-align:right;color:#6b7280;">%9</td>
+            <td style="padding:14px 16px;text-align:right;font-weight:700;color:#111827;">4.2</td>
+            <td style="padding:14px 16px;"><span style="font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;background:#fee2e2;color:#b91c1c;">Dikkat</span></td>
+          </tr>
+          <tr>
+            <td style="padding:14px 20px;font-weight:600;color:#111827;">Basic Tişört</td>
+            <td style="padding:14px 16px;text-align:right;color:#6b7280;">2.910</td>
+            <td style="padding:14px 16px;text-align:right;color:#6b7280;">410</td>
+            <td style="padding:14px 16px;text-align:right;color:#6b7280;">₺32.800</td>
+            <td style="padding:14px 16px;text-align:right;color:#6b7280;">%14.1</td>
+            <td style="padding:14px 16px;text-align:right;color:#6b7280;">%8</td>
+            <td style="padding:14px 16px;text-align:right;font-weight:700;color:#111827;">9.1</td>
+            <td style="padding:14px 16px;"><span style="font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;background:#dcfce7;color:#15803d;">Güçlü</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- KULLANICI DAVRANIŞLARI — 5 lists, grid 5-col -->
+  <section>
+    <h2 style="font-size:13px;font-weight:700;margin:0 0 10px;color:#374151;">Kullanıcı Davranışları</h2>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;">
+      <!-- En Çok Görüntülenen -->
+      <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:18px;box-shadow:0 1px 2px rgba(16,24,40,0.03);display:flex;flex-direction:column;gap:10px;">
+        <span style="font-size:12px;font-weight:700;color:#374151;">En Çok Görüntülenen</span>
+        <div style="display:flex;flex-direction:column;gap:7px;">
+          <div style="display:flex;justify-content:space-between;font-size:12.5px;"><span style="color:#111827;">Kadife Kesim Ceket</span><span style="color:#9ca3af;">8.240</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:12.5px;"><span style="color:#111827;">Yazlık Keten Gömlek</span><span style="color:#9ca3af;">6.910</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:12.5px;"><span style="color:#111827;">Denim Ceket</span><span style="color:#9ca3af;">5.320</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:12.5px;"><span style="color:#111827;">Örgü Kazak</span><span style="color:#9ca3af;">4.180</span></div>
         </div>
       </div>
-
-      <!-- 8. Ürünler + Kategoriler -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;">
-        <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:22px;box-shadow:0 1px 2px rgba(16,24,40,0.03);">
-          <p style="font-size:14px;font-weight:600;color:#111827;margin:0 0 14px;">Ürünler</p>
-          <div id="dash-products-mini-grid" style="display:flex;flex-wrap:wrap;gap:8px;">
-            ${isDemo ? `
-            <span style="background:#f3f4f6;border-radius:8px;padding:6px 12px;font-size:12px;color:#374151;font-weight:500;">Keten Gömlek <span style="color:#9ca3af;">248</span></span>
-            <span style="background:#f3f4f6;border-radius:8px;padding:6px 12px;font-size:12px;color:#374151;font-weight:500;">Kapüşonlu <span style="color:#9ca3af;">211</span></span>
-            <span style="background:#f3f4f6;border-radius:8px;padding:6px 12px;font-size:12px;color:#374151;font-weight:500;">Deri Kemer <span style="color:#9ca3af;">98</span></span>
-            <span style="background:#f3f4f6;border-radius:8px;padding:6px 12px;font-size:12px;color:#374151;font-weight:500;">Çanta <span style="color:#9ca3af;">74</span></span>
-            <span style="background:#f3f4f6;border-radius:8px;padding:6px 12px;font-size:12px;color:#374151;font-weight:500;">Tişört <span style="color:#9ca3af;">42</span></span>
-            <span style="background:#f3f4f6;border-radius:8px;padding:6px 12px;font-size:12px;color:#374151;font-weight:500;">Elbise <span style="color:#9ca3af;">28</span></span>
-            ` : ''}
-          </div>
-          <div id="dash-more-products-widget" style="display:none;margin-top:8px;"></div>
-        </div>
-        <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:22px;box-shadow:0 1px 2px rgba(16,24,40,0.03);">
-          <p style="font-size:14px;font-weight:600;color:#111827;margin:0 0 14px;">Kategoriler</p>
-          <div style="display:flex;flex-wrap:wrap;gap:8px;">
-            <span style="background:#dcfce7;color:#15803d;border-radius:999px;padding:5px 12px;font-size:12px;font-weight:600;">Giyim</span>
-            <span style="background:#dcfce7;color:#15803d;border-radius:999px;padding:5px 12px;font-size:12px;font-weight:600;">Aksesuar</span>
-            <span style="background:#dcfce7;color:#15803d;border-radius:999px;padding:5px 12px;font-size:12px;font-weight:600;">Ayakkabı</span>
-            <span style="background:#dcfce7;color:#15803d;border-radius:999px;padding:5px 12px;font-size:12px;font-weight:600;">Çanta</span>
-            <span style="background:#dcfce7;color:#15803d;border-radius:999px;padding:5px 12px;font-size:12px;font-weight:600;">İç Giyim</span>
-            <span style="background:#dcfce7;color:#15803d;border-radius:999px;padding:5px 12px;font-size:12px;font-weight:600;">Spor</span>
-            <span style="background:#dcfce7;color:#15803d;border-radius:999px;padding:5px 12px;font-size:12px;font-weight:600;">Yazlık</span>
-            <span style="background:#dcfce7;color:#15803d;border-radius:999px;padding:5px 12px;font-size:12px;font-weight:600;">Kışlık</span>
-          </div>
+      <!-- En Çok Satılan -->
+      <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:18px;box-shadow:0 1px 2px rgba(16,24,40,0.03);display:flex;flex-direction:column;gap:10px;">
+        <span style="font-size:12px;font-weight:700;color:#374151;">En Çok Satılan</span>
+        <div style="display:flex;flex-direction:column;gap:7px;">
+          <div style="display:flex;justify-content:space-between;font-size:12.5px;"><span style="color:#111827;">Basic Tişört</span><span style="color:#9ca3af;">410</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:12.5px;"><span style="color:#111827;">Kadife Kesim Ceket</span><span style="color:#9ca3af;">312</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:12.5px;"><span style="color:#111827;">Yazlık Keten Gömlek</span><span style="color:#9ca3af;">280</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:12.5px;"><span style="color:#111827;">Denim Ceket</span><span style="color:#9ca3af;">140</span></div>
         </div>
       </div>
-
-      <!-- 9. Katalog Sağlık Trendi + Son İşlemler -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;">
-        <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:22px;box-shadow:0 1px 2px rgba(16,24,40,0.03);">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-            <p style="font-size:14px;font-weight:600;color:#111827;margin:0;">Katalog Sağlık Trendi</p>
-            <span style="font-size:10px;color:#9ca3af;">Son 8 hafta</span>
-          </div>
-          <div style="display:flex;align-items:flex-end;gap:6px;height:100px;">
-            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;"><div style="width:100%;height:62px;background:linear-gradient(to top,#16a34a,#86efac);border-radius:4px 4px 0 0;"></div><span style="font-size:9px;color:#9ca3af;">H1</span></div>
-            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;"><div style="width:100%;height:68px;background:linear-gradient(to top,#16a34a,#86efac);border-radius:4px 4px 0 0;"></div><span style="font-size:9px;color:#9ca3af;">H2</span></div>
-            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;"><div style="width:100%;height:64px;background:linear-gradient(to top,#16a34a,#86efac);border-radius:4px 4px 0 0;"></div><span style="font-size:9px;color:#9ca3af;">H3</span></div>
-            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;"><div style="width:100%;height:71px;background:linear-gradient(to top,#16a34a,#86efac);border-radius:4px 4px 0 0;"></div><span style="font-size:9px;color:#9ca3af;">H4</span></div>
-            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;"><div style="width:100%;height:75px;background:linear-gradient(to top,#16a34a,#86efac);border-radius:4px 4px 0 0;"></div><span style="font-size:9px;color:#9ca3af;">H5</span></div>
-            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;"><div style="width:100%;height:73px;background:linear-gradient(to top,#16a34a,#86efac);border-radius:4px 4px 0 0;"></div><span style="font-size:9px;color:#9ca3af;">H6</span></div>
-            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;"><div style="width:100%;height:80px;background:linear-gradient(to top,#16a34a,#86efac);border-radius:4px 4px 0 0;"></div><span style="font-size:9px;color:#9ca3af;">H7</span></div>
-            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;"><div style="width:100%;height:84px;background:linear-gradient(to top,#16a34a,#86efac);border-radius:4px 4px 0 0;"></div><span style="font-size:9px;color:#9ca3af;">H8</span></div>
-          </div>
-          <!-- Hidden compat elements for renderRevenueTrendChart JS -->
-          <canvas id="revenue-trend-chart" style="display:none;"></canvas>
-          <span id="revenue-trend-total" style="display:none;"></span>
-          <div id="revenue-trend-empty" style="display:none;"></div>
-        </div>
-        <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:22px;box-shadow:0 1px 2px rgba(16,24,40,0.03);">
-          <p style="font-size:14px;font-weight:600;color:#111827;margin:0 0 16px;">Son İşlemler</p>
-          <div id="dash-recent-operations-full" style="display:flex;flex-direction:column;gap:10px;">
-            ${isDemo ? `
-            <div style="display:flex;align-items:center;gap:10px;"><div style="width:32px;height:32px;border-radius:8px;background:#dcfce7;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">🔄</div><div><p style="font-size:12.5px;font-weight:500;color:#111827;margin:0;">Katalog senkronize edildi</p><p style="font-size:11px;color:#9ca3af;margin:0;">2 saat önce</p></div></div>
-            <div style="display:flex;align-items:center;gap:10px;"><div style="width:32px;height:32px;border-radius:8px;background:#dbeafe;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">🤖</div><div><p style="font-size:12.5px;font-weight:500;color:#111827;margin:0;">AI SEO analizi çalıştırıldı</p><p style="font-size:11px;color:#9ca3af;margin:0;">3 saat önce</p></div></div>
-            <div style="display:flex;align-items:center;gap:10px;"><div style="width:32px;height:32px;border-radius:8px;background:#fef3c7;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">✏️</div><div><p style="font-size:12.5px;font-weight:500;color:#111827;margin:0;">3 ürün başlığı güncellendi</p><p style="font-size:11px;color:#9ca3af;margin:0;">Dün</p></div></div>
-            <div style="display:flex;align-items:center;gap:10px;"><div style="width:32px;height:32px;border-radius:8px;background:#dcfce7;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">📤</div><div><p style="font-size:12.5px;font-weight:500;color:#111827;margin:0;">Shopify'a aktarım tamamlandı</p><p style="font-size:11px;color:#9ca3af;margin:0;">Dün</p></div></div>
-            <div style="display:flex;align-items:center;gap:10px;"><div style="width:32px;height:32px;border-radius:8px;background:#f3f4f6;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">📊</div><div><p style="font-size:12.5px;font-weight:500;color:#111827;margin:0;">Performans raporu oluşturuldu</p><p style="font-size:11px;color:#9ca3af;margin:0;">2 gün önce</p></div></div>
-            ` : ''}
-          </div>
+      <!-- En Çok Tıklanan -->
+      <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:18px;box-shadow:0 1px 2px rgba(16,24,40,0.03);display:flex;flex-direction:column;gap:10px;">
+        <span style="font-size:12px;font-weight:700;color:#374151;">En Çok Tıklanan</span>
+        <div style="display:flex;flex-direction:column;gap:7px;">
+          <div style="display:flex;justify-content:space-between;font-size:12.5px;"><span style="color:#111827;">Yazlık Keten Gömlek</span><span style="color:#9ca3af;">2.840</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:12.5px;"><span style="color:#111827;">Deri Çanta</span><span style="color:#9ca3af;">1.920</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:12.5px;"><span style="color:#111827;">Örgü Kazak</span><span style="color:#9ca3af;">1.410</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:12.5px;"><span style="color:#111827;">Denim Ceket</span><span style="color:#9ca3af;">980</span></div>
         </div>
       </div>
-
-      <!-- Widget: Kategori Veri Kalitesi -->
-      <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:20px;margin-bottom:12px;box-shadow:0 1px 2px rgba(16,24,40,0.03);">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-          <p style="font-size:14px;font-weight:600;color:#111827;margin:0;">Kategori Veri Kalitesi</p>
-          <span style="font-size:10px;color:#9ca3af;">Sağlık skoru %</span>
+      <!-- En Çok Terk Edilen -->
+      <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:18px;box-shadow:0 1px 2px rgba(16,24,40,0.03);display:flex;flex-direction:column;gap:10px;">
+        <span style="font-size:12px;font-weight:700;color:#374151;">En Çok Terk Edilen</span>
+        <div style="display:flex;flex-direction:column;gap:7px;">
+          <div style="display:flex;justify-content:space-between;font-size:12.5px;"><span style="color:#111827;">Deri Çanta</span><span style="color:#9ca3af;">%74</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:12.5px;"><span style="color:#111827;">Örgü Kazak</span><span style="color:#9ca3af;">%68</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:12.5px;"><span style="color:#111827;">Denim Ceket</span><span style="color:#9ca3af;">%61</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:12.5px;"><span style="color:#111827;">Basic Tişört</span><span style="color:#9ca3af;">%44</span></div>
         </div>
-        <div id="widget-cat-quality" style="display:flex;flex-direction:column;gap:7px;"></div>
       </div>
-
-      <!-- Widget: Sepet Terk Hunisi -->
-      <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:20px;margin-bottom:12px;box-shadow:0 1px 2px rgba(16,24,40,0.03);">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-          <p style="font-size:14px;font-weight:600;color:#111827;margin:0;">Sepet Terk Hunisi</p>
-          <span id="funnel-period-label" style="font-size:10px;color:#9ca3af;">Son 30 gün</span>
+      <!-- En Etkileşimli -->
+      <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:18px;box-shadow:0 1px 2px rgba(16,24,40,0.03);display:flex;flex-direction:column;gap:10px;">
+        <span style="font-size:12px;font-weight:700;color:#374151;">En Etkileşimli</span>
+        <div style="display:flex;flex-direction:column;gap:7px;">
+          <div style="display:flex;justify-content:space-between;font-size:12.5px;"><span style="color:#111827;">Basic Tişört</span><span style="color:#9ca3af;">9.1</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:12.5px;"><span style="color:#111827;">Kadife Kesim Ceket</span><span style="color:#9ca3af;">8.4</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:12.5px;"><span style="color:#111827;">Yazlık Keten Gömlek</span><span style="color:#9ca3af;">7.9</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:12.5px;"><span style="color:#111827;">Denim Ceket</span><span style="color:#9ca3af;">6.5</span></div>
         </div>
-        <div id="widget-cart-funnel" style="display:flex;flex-direction:column;gap:6px;"></div>
       </div>
+    </div>
+  </section>
 
-      <!-- Widget: Bağlantı Durumu -->
-      <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:20px;margin-bottom:20px;box-shadow:0 1px 2px rgba(16,24,40,0.03);">
-        <p style="font-size:14px;font-weight:600;color:#111827;margin:0 0 12px;">Bağlantı Durumu</p>
-        <div id="widget-sync-status" style="display:flex;flex-direction:column;gap:7px;"></div>
+  <!-- ÜRÜNLER + KATEGORİLER — 2-col grid -->
+  <section style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+    <!-- Ürünler -->
+    <div style="background:#fff;border:1px solid #eceef1;border-radius:18px;padding:20px 24px;box-shadow:0 1px 2px rgba(16,24,40,0.03);display:flex;flex-direction:column;gap:14px;">
+      <span style="font-size:13.5px;font-weight:700;color:#111827;">Ürünler</span>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;">
+        <span style="padding:7px 14px;border-radius:999px;border:1px solid #eceef1;background:#f9fafb;font-size:12.5px;font-weight:600;color:#374151;">248 <span style="font-weight:400;color:#9ca3af;margin-left:4px;">Toplam Ürün</span></span>
+        <span style="padding:7px 14px;border-radius:999px;border:1px solid #eceef1;background:#f9fafb;font-size:12.5px;font-weight:600;color:#374151;">211 <span style="font-weight:400;color:#9ca3af;margin-left:4px;">Aktif</span></span>
+        <span style="padding:7px 14px;border-radius:999px;border:1px solid #eceef1;background:#f9fafb;font-size:12.5px;font-weight:600;color:#374151;">24 <span style="font-weight:400;color:#9ca3af;margin-left:4px;">Taslak</span></span>
+        <span style="padding:7px 14px;border-radius:999px;border:1px solid #eceef1;background:#f9fafb;font-size:12.5px;font-weight:600;color:#374151;">13 <span style="font-weight:400;color:#9ca3af;margin-left:4px;">Stokta Yok</span></span>
       </div>
+    </div>
+    <!-- Kategoriler -->
+    <div style="background:#fff;border:1px solid #eceef1;border-radius:18px;padding:20px 24px;box-shadow:0 1px 2px rgba(16,24,40,0.03);display:flex;flex-direction:column;gap:14px;">
+      <span style="font-size:13.5px;font-weight:700;color:#111827;">Kategoriler</span>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;">
+        <span style="padding:6px 12px;border-radius:999px;border:1px solid #dcfce7;background:#f0fdf4;font-size:12px;font-weight:600;color:#15803d;">Dış Giyim <span style="opacity:0.7;">64</span></span>
+        <span style="padding:6px 12px;border-radius:999px;border:1px solid #dcfce7;background:#f0fdf4;font-size:12px;font-weight:600;color:#15803d;">Üst Giyim <span style="opacity:0.7;">58</span></span>
+        <span style="padding:6px 12px;border-radius:999px;border:1px solid #dcfce7;background:#f0fdf4;font-size:12px;font-weight:600;color:#15803d;">Aksesuar <span style="opacity:0.7;">42</span></span>
+        <span style="padding:6px 12px;border-radius:999px;border:1px solid #dcfce7;background:#f0fdf4;font-size:12px;font-weight:600;color:#15803d;">Ayakkabı <span style="opacity:0.7;">31</span></span>
+        <span style="padding:6px 12px;border-radius:999px;border:1px solid #dcfce7;background:#f0fdf4;font-size:12px;font-weight:600;color:#15803d;">Alt Giyim <span style="opacity:0.7;">29</span></span>
+        <span style="padding:6px 12px;border-radius:999px;border:1px solid #dcfce7;background:#f0fdf4;font-size:12px;font-weight:600;color:#15803d;">Çanta <span style="opacity:0.7;">18</span></span>
+        <span style="padding:6px 12px;border-radius:999px;border:1px solid #dcfce7;background:#f0fdf4;font-size:12px;font-weight:600;color:#15803d;">Takı <span style="opacity:0.7;">12</span></span>
+        <span style="padding:6px 12px;border-radius:999px;border:1px solid #dcfce7;background:#f0fdf4;font-size:12px;font-weight:600;color:#15803d;">Diğer <span style="opacity:0.7;">6</span></span>
+      </div>
+    </div>
+  </section>
 
-      <!-- Hidden compat elements for JS functions -->
-      <div id="card-ai-recs" style="display:none;"></div>
-      <div id="card-quick-actions" style="display:none;"></div>
-      <div id="card-products" style="display:none;"></div>
-      <div id="dash-quick-actions" style="display:none;"></div>
-      <div id="dash-quick-actions-more" style="display:none;"></div>
-      <div id="dash-ai-limit-msg" style="display:none;"></div>
-      <div id="top5-products-bars" style="display:none;"></div>
-      <div id="traffic-sources-chart" style="display:none;"><div id="traffic-donut"></div><div id="traffic-legend"></div></div>
-      <div id="low-stock-list" style="display:none;"></div>
-      <p id="low-stock-empty" style="display:none;"></p>
-      <span id="low-stock-count" style="display:none;"></span>
-      <span id="products-badge" style="display:none;"></span>
+  <!-- KATALOG SAĞLIK TRENDİ + SON İŞLEMLER — 2-col grid -->
+  <section style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+    <!-- Sağlık Trendi -->
+    <div style="background:#fff;border:1px solid #eceef1;border-radius:18px;padding:20px 24px;box-shadow:0 1px 2px rgba(16,24,40,0.03);display:flex;flex-direction:column;gap:14px;">
+      <span style="font-size:13.5px;font-weight:700;color:#111827;">Katalog Sağlık Trendi</span>
+      <div style="display:flex;align-items:flex-end;gap:6px;height:80px;">
+        <!-- bars: heights 62,68,64,71,75,73,80,84 — last dark, others #d1d5db -->
+        <div style="flex:1;height:62%;background:#d1d5db;border-radius:4px 4px 0 0;"></div>
+        <div style="flex:1;height:68%;background:#d1d5db;border-radius:4px 4px 0 0;"></div>
+        <div style="flex:1;height:64%;background:#d1d5db;border-radius:4px 4px 0 0;"></div>
+        <div style="flex:1;height:71%;background:#d1d5db;border-radius:4px 4px 0 0;"></div>
+        <div style="flex:1;height:75%;background:#d1d5db;border-radius:4px 4px 0 0;"></div>
+        <div style="flex:1;height:73%;background:#d1d5db;border-radius:4px 4px 0 0;"></div>
+        <div style="flex:1;height:80%;background:#d1d5db;border-radius:4px 4px 0 0;"></div>
+        <div style="flex:1;height:84%;background:#111827;border-radius:4px 4px 0 0;"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:#9ca3af;">
+        <span>7 hafta önce</span><span>Bu hafta</span>
+      </div>
+    </div>
+    <!-- Son İşlemler -->
+    <div style="background:#fff;border:1px solid #eceef1;border-radius:18px;padding:20px 24px;box-shadow:0 1px 2px rgba(16,24,40,0.03);display:flex;flex-direction:column;gap:10px;">
+      <span style="font-size:13.5px;font-weight:700;color:#111827;">Son İşlemler</span>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;font-size:12.5px;">
+          <span style="color:#374151;line-height:1.4;">Senkronizasyon tamamlandı — 248 ürün</span>
+          <span style="color:#9ca3af;white-space:nowrap;">2 dk önce</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;font-size:12.5px;">
+          <span style="color:#374151;line-height:1.4;">Katalog kuralı çalıştırıldı: alt metin kontrolü</span>
+          <span style="color:#9ca3af;white-space:nowrap;">18 dk önce</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;font-size:12.5px;">
+          <span style="color:#374151;line-height:1.4;">Shopify webhook alındı: stok güncellemesi</span>
+          <span style="color:#9ca3af;white-space:nowrap;">41 dk önce</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;font-size:12.5px;">
+          <span style="color:#374151;line-height:1.4;">Haftalık rapor oluşturuldu</span>
+          <span style="color:#9ca3af;white-space:nowrap;">3 sa önce</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;font-size:12.5px;">
+          <span style="color:#374151;line-height:1.4;">Senkronizasyon tamamlandı — 246 ürün</span>
+          <span style="color:#9ca3af;white-space:nowrap;">Dün, 22:10</span>
+        </div>
+      </div>
+    </div>
+  </section>
 
-    </div>`;
+</main>`;
+}
 
-  // Wire switchLiveTab
-  window.switchLiveTab = function(btn, tab) {
-    document.querySelectorAll('.dash-live-tab').forEach(function(t) {
-      t.style.background = 'transparent';
-      t.style.color = '#6b7280';
-      t.style.fontWeight = '500';
-      t.dataset.active = 'false';
-    });
-    if (btn && btn.style) {
-      btn.style.background = '#111827';
-      btn.style.color = '#fff';
-      btn.style.fontWeight = '600';
-      btn.dataset.active = 'true';
-    }
-    document.querySelectorAll('.dash-live-panel').forEach(function(p) { p.style.display = 'none'; });
-    var panel = document.getElementById('dash-live-' + tab);
-    if (panel) panel.style.display = 'block';
-    if (tab === 'heatmap') renderClickHeatmap();
-  };
+function switchDashTab(tab) {
+  ['store','live','heatmap'].forEach(t => {
+    const btn = document.getElementById('dash-tab-btn-' + t);
+    const panel = document.getElementById('dash-tab-panel-' + t);
+    const active = t === tab;
+    if (btn) { btn.style.background = active ? '#111827' : 'transparent'; btn.style.color = active ? '#fff' : '#6b7280'; }
+    if (panel) panel.style.display = active ? 'flex' : 'none';
+  });
+  if (tab === 'store') document.getElementById('dash-tab-panel-store').style.display = 'flex';
+}
 
-  renderValueSummaryBanner();
-  renderSyncStatusWidget().catch(function() {});
-
-  if (!isDemo) {
-    renderHeroMetrics();
-    renderGrowthOpportunities();
-    renderProductPerformanceTable();
-    renderBehaviorLists();
-    renderAiRecommendations(analysis.issues || []);
-    const _aiBadge = document.getElementById('ai-recs-badge');
-    if (_aiBadge) {
-      const _ai = analysis.issues || [];
-      if (_ai.length) { _aiBadge.textContent = _ai.length + ' öneri'; _aiBadge.style.display = ''; }
-    }
-    renderDashQuickActions();
-    renderDashRecentOperationsFull();
-    renderDashProductsMini();
-    renderClickHeatmap();
-    renderDashAnalyticsSection();
-    renderTrafficSourcesChart(null);
-    renderLowStockAlerts();
-    renderTop5ProductsBars([]);
-    renderRevenueTrendChart([]);
-    renderCategoryQualityWidget();
-    if (typeof window._bindCardToggles === 'function') window._bindCardToggles();
-
-    const fixAllBtn = document.getElementById('fix-all-issues-btn');
-    if (fixAllBtn && !fixAllBtn.disabled) {
-      fixAllBtn.addEventListener('click', async function() {
-        const btn = this;
-        const originalText = btn.textContent.trim();
-        btn.disabled = true;
-        btn.textContent = 'AI analiz ediyor...';
-        try {
-          await runShopifyAiAnalysis('all');
-        } catch(e) {
-          alert('Analiz başarısız: ' + e.message);
-        } finally {
-          btn.disabled = false;
-          btn.textContent = originalText;
-        }
-      });
-    }
-
-    ['hero-visitors-value','hero-sales-value','hero-conversion-value',
-     'hero-cart-value','hero-duration-value'].forEach(function(id) {
-      var el = document.getElementById(id);
-      if (el && el.textContent.trim() === '—') {
-        el.parentElement.classList.add('skeleton', 'skeleton-metric');
-        setTimeout(function() {
-          el.parentElement.classList.remove('skeleton', 'skeleton-metric');
-        }, 4000);
-      }
-    });
-  }
-
-  const storeNameEl = document.getElementById('sidebar-store-name');
-  if (storeNameEl) {
-    const domain = localStorage.getItem('mocksheets_shop_domain');
-    if (domain) storeNameEl.textContent = domain.replace('.myshopify.com', '');
-  }
+function applyGrowthCard(idx) {
+  const btn = document.getElementById('growth-btn-' + idx);
+  if (!btn) return;
+  btn.textContent = 'Uygulandı';
+  btn.style.background = '#f0fdf4';
+  btn.style.color = '#15803d';
+  btn.style.border = '1px solid #dcfce7';
+  btn.disabled = true;
 }
 
 // ─── CATALOG EDITOR — DASHBOARD'DAN AÇILIR ───────────────────────────────
@@ -3923,130 +3821,191 @@ async function renderAiActionsPage() {
 }
 
 async function renderValidationCenter() {
-  const view = document.getElementById('validation-view');
-  if (!view) return;
-  const analysis = computeCatalogIssues();
-  const issues = analysis.issues;
+  view.innerHTML = `<main style="padding:28px;display:flex;flex-direction:column;gap:20px;max-width:1240px;">
+  <!-- HEADER -->
+  <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:20px;">
+    <div>
+      <h1 style="font-size:22px;font-weight:700;margin:0 0 3px;letter-spacing:-0.01em;">Katalog Kontrolü</h1>
+      <p style="font-size:13px;color:#9ca3af;margin:0;">Son tarama: az önce · 248 üründe sürekli denetim</p>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <span style="display:flex;align-items:center;gap:7px;padding:8px 14px;border-radius:999px;border:1px solid #eceef1;background:#fff;font-size:12.5px;font-weight:600;color:#6b7280;">
+        <span style="width:6px;height:6px;border-radius:50%;background:#16a34a;animation:ms-pulse 1.8s ease-in-out infinite;"></span>
+        Değişiklik yok
+      </span>
+      <span style="display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:999px;border:1px solid #eceef1;background:#fff;font-size:12.5px;font-weight:600;color:#6b7280;">
+        Sağlık <span style="color:#111827;font-weight:700;font-size:13.5px;">%68</span>
+      </span>
+    </div>
+  </div>
 
-  // Fetch previous scan for delta badge (best-effort)
-  let prevIssueCount = null;
-  try {
-    const r = await fetch(API_URL + '/api/integrations/previous-scan', {
-      headers: await authHeaders()
-    });
-    if (r.ok) {
-      const d = await r.json();
-      if (d.total_issue_count != null) prevIssueCount = d.total_issue_count;
-    }
-  } catch (_) {}
-
-  let deltaBadge = '';
-  if (prevIssueCount != null) {
-    const diff = analysis.totalIssueCount - prevIssueCount;
-    if (diff < 0) {
-      deltaBadge = `<span style="font-size:11px;font-weight:600;color:#16a34a;background:#f0fdf4;border:0.5px solid #bbf7d0;border-radius:999px;padding:3px 9px;">↓ ${Math.abs(diff)} sorun azaldı</span>`;
-    } else if (diff > 0) {
-      deltaBadge = `<span style="font-size:11px;font-weight:600;color:#dc2626;background:#fef2f2;border:0.5px solid #fecaca;border-radius:999px;padding:3px 9px;">↑ ${diff} sorun arttı</span>`;
-    } else {
-      deltaBadge = `<span style="font-size:11px;font-weight:600;color:#6b7280;background:#f9fafb;border:0.5px solid #e5e7eb;border-radius:999px;padding:3px 9px;">= Değişiklik yok</span>`;
-    }
-  }
-
-  view.innerHTML = `
-    <div style="display:flex;align-items:center;gap:10px;padding:16px 24px;border-bottom:1px solid #e5e7eb;flex-wrap:wrap;">
-      <div style="flex:1;">
-        <h2 style="font-size:15px;font-weight:600;margin:0;">Katalog Kontrolü</h2>
-        <span id="validation-last-scan" style="font-size:11px;color:#9ca3af;"></span>
+  <!-- STATS SECTION -->
+  <section style="background:#fff;border:1px solid #eceef1;border-radius:18px;padding:22px 24px;box-shadow:0 1px 2px rgba(16,24,40,0.03);display:flex;flex-direction:column;gap:20px;">
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;">
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <span style="font-size:12px;color:#9ca3af;font-weight:600;">Taranan Ürün</span>
+        <span style="font-size:26px;font-weight:700;line-height:1;color:#111827;">248</span>
       </div>
-      ${deltaBadge}
-      <div style="display:flex;align-items:center;gap:6px;padding:5px 12px;border:0.5px solid #e5e7eb;border-radius:999px;">
-        <span style="font-size:11px;color:#6b7280;">Sağlık</span>
-        <span style="font-size:12px;font-weight:600;color:#16a34a;">${analysis.healthScore}%</span>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <span style="font-size:12px;color:#9ca3af;font-weight:600;">Kritik Sorun</span>
+        <span style="font-size:26px;font-weight:700;line-height:1;color:#b91c1c;">12</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <span style="font-size:12px;color:#9ca3af;font-weight:600;">Uyarı Seviyesi</span>
+        <span style="font-size:26px;font-weight:700;line-height:1;color:#a16207;">27</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <span style="font-size:12px;color:#9ca3af;font-weight:600;">Sorunsuz Ürün</span>
+        <span style="font-size:26px;font-weight:700;line-height:1;color:#15803d;">209</span>
       </div>
     </div>
-    <div id="catalog-issues-list" style="padding:24px;"></div>`;
-
-  document.getElementById('validation-last-scan').textContent = 'Son tarama: az önce';
-
-  const listEl = document.getElementById('catalog-issues-list');
-
-  if (analysis.totalProducts === 0) {
-    listEl.innerHTML = '<p style="font-size:12px;color:#6b7280;">Henüz katalog verisi yok.</p>';
-    return;
-  }
-
-  if (issues.length === 0) {
-    listEl.innerHTML = '<p style="font-size:12px;color:#16a34a;">Sorun tespit edilmedi ✓</p>';
-    return;
-  }
-
-  const dangerCount  = issues.filter(i => i.severity === 'danger').length;
-  const warningCount = issues.filter(i => i.severity === 'warning').length;
-  const okCount      = Math.max(0, analysis.totalProducts - analysis.totalIssueCount);
-  const strip = document.createElement('div');
-  strip.style.cssText = 'display:flex;gap:20px;padding:14px 0;margin-bottom:16px;border-bottom:0.5px solid #f3f4f6;';
-  strip.innerHTML = `
-    <div><p style="font-size:10px;color:#9ca3af;margin:0 0 2px;">Taranan Ürün</p>
-      <p style="font-size:16px;font-weight:700;color:#111827;margin:0;">${analysis.totalProducts.toLocaleString('tr-TR')}</p></div>
-    <div><p style="font-size:10px;color:#9ca3af;margin:0 0 2px;">Kritik Sorun</p>
-      <p style="font-size:16px;font-weight:700;color:#dc2626;margin:0;">${dangerCount}</p></div>
-    <div><p style="font-size:10px;color:#9ca3af;margin:0 0 2px;">Uyarı Seviyesi</p>
-      <p style="font-size:16px;font-weight:700;color:#d97706;margin:0;">${warningCount}</p></div>
-    <div><p style="font-size:10px;color:#9ca3af;margin:0 0 2px;">Sorunsuz Ürün</p>
-      <p style="font-size:16px;font-weight:700;color:#16a34a;margin:0;">${okCount.toLocaleString('tr-TR')}</p></div>`;
-  listEl.appendChild(strip);
-
-  const summary = document.createElement('p');
-  summary.style.cssText = 'font-size:12px;color:#6b7280;margin:0 0 16px;';
-  summary.textContent = `${analysis.totalIssueCount} kaçırılan fırsat tespit edildi (${analysis.totalProducts} ürün tarandı).`;
-  listEl.appendChild(summary);
-
-  issues.forEach((issue, issueIdx) => {
-    const color = issue.severity === 'danger' ? '#dc2626' : '#d97706';
-    const row = document.createElement('div');
-    row.style.cssText = 'border-bottom:1px solid #f3f4f6;';
-
-    const header = document.createElement('div');
-    header.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:10px 0;cursor:pointer;user-select:none;';
-    header.innerHTML = `
-      <div style="display:flex;align-items:center;gap:8px;">
-        <span class="chevron" style="font-size:10px;color:#9ca3af;display:inline-block;transition:transform 0.15s;">▶</span>
-        <span style="font-size:13px;color:#374151;">${issue.label}</span>
+    <div style="height:1px;background:#f1f2f4;"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;">
+      <p style="font-size:13px;color:#6b7280;margin:0;">30 kaçırılan fırsat tespit edildi (248 ürün tarandı).</p>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="width:180px;height:6px;border-radius:999px;background:#f1f2f4;overflow:hidden;">
+          <div style="height:100%;width:68%;background:#111827;border-radius:999px;"></div>
+        </div>
+        <span style="font-size:11.5px;color:#9ca3af;">katalog sağlığı</span>
       </div>
-      <div style="display:flex;align-items:center;gap:8px;">
-        <span style="font-size:12px;font-weight:600;color:${color};">${issue.count} ürün</span>
-        <button class="fix-all-btn" style="font-size:11px;padding:4px 10px;background:#16a34a;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:600;">Tümünü Düzelt</button>
-      </div>`;
-    row.appendChild(header);
+    </div>
+  </section>
 
-    const panel = document.createElement('div');
-    panel.style.cssText = 'display:none;padding:0 0 12px 20px;';
-    row.appendChild(panel);
+  <!-- ISSUES SECTION — 4 accordion row -->
+  <section style="background:#fff;border:1px solid #eceef1;border-radius:18px;box-shadow:0 1px 2px rgba(16,24,40,0.03);overflow:hidden;">
+    <!-- ROW 0: Eksik Görsel / Kritik / 12 -->
+    <div style="border-bottom:1px solid #f1f2f4;">
+      <div style="display:flex;align-items:center;gap:16px;padding:18px 24px;">
+        <button onclick="toggleValIssue(0)" style="display:flex;align-items:center;gap:12px;flex:1;background:transparent;border:none;cursor:pointer;padding:0;text-align:left;font-family:'Inter',sans-serif;">
+          <span id="val-caret-0" style="display:flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:7px;background:#f4f5f7;color:#6b7280;transition:transform 0.18s ease;">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5l10 7-10 7z"/></svg>
+          </span>
+          <span style="display:flex;flex-direction:column;gap:2px;">
+            <span style="font-size:15px;font-weight:600;color:#111827;">Eksik Görsel</span>
+            <span style="font-size:12.5px;color:#9ca3af;">Ürün görseli olmayan kayıtlar</span>
+          </span>
+        </button>
+        <span style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px;letter-spacing:0.02em;background:#fef2f2;color:#b91c1c;">Kritik</span>
+        <span style="font-size:13px;font-weight:600;color:#6b7280;min-width:64px;text-align:right;">12 ürün</span>
+        <button onclick="runIssueFix({label:'Eksik Görsel',severity:'danger'}, null)" style="background:#111827;color:#fff;border:none;font-size:12.5px;font-weight:600;padding:9px 18px;border-radius:10px;cursor:pointer;font-family:'Inter',sans-serif;">Tümünü Düzelt</button>
+      </div>
+      <div id="val-panel-0" style="display:none;padding:0 24px 18px 56px;display:none;flex-direction:column;gap:8px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;background:#f9fafb;border:1px solid #f1f2f4;border-radius:12px;padding:11px 14px;">
+          <span style="font-size:13px;color:#111827;font-weight:500;">Deri Çanta</span>
+          <span style="font-size:12px;color:#9ca3af;">ana görsel yok</span>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;background:#f9fafb;border:1px solid #f1f2f4;border-radius:12px;padding:11px 14px;">
+          <span style="font-size:13px;color:#111827;font-weight:500;">Örgü Kazak</span>
+          <span style="font-size:12px;color:#9ca3af;">2 varyant görselsiz</span>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;background:#f9fafb;border:1px solid #f1f2f4;border-radius:12px;padding:11px 14px;">
+          <span style="font-size:13px;color:#111827;font-weight:500;">Basic Tişört</span>
+          <span style="font-size:12px;color:#9ca3af;">galeri boş</span>
+        </div>
+      </div>
+    </div>
+    <!-- ROW 1: AI İçin Yetersiz Detay / Uyarı / 9 -->
+    <div style="border-bottom:1px solid #f1f2f4;">
+      <div style="display:flex;align-items:center;gap:16px;padding:18px 24px;">
+        <button onclick="toggleValIssue(1)" style="display:flex;align-items:center;gap:12px;flex:1;background:transparent;border:none;cursor:pointer;padding:0;text-align:left;font-family:'Inter',sans-serif;">
+          <span id="val-caret-1" style="display:flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:7px;background:#f4f5f7;color:#6b7280;transition:transform 0.18s ease;">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5l10 7-10 7z"/></svg>
+          </span>
+          <span style="display:flex;flex-direction:column;gap:2px;">
+            <span style="font-size:15px;font-weight:600;color:#111827;">AI İçin Yetersiz Detay</span>
+            <span style="font-size:12.5px;color:#9ca3af;">Açıklama AI optimizasyonu için çok kısa</span>
+          </span>
+        </button>
+        <span style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px;letter-spacing:0.02em;background:#fffbeb;color:#a16207;">Uyarı</span>
+        <span style="font-size:13px;font-weight:600;color:#6b7280;min-width:64px;text-align:right;">9 ürün</span>
+        <button onclick="runIssueFix({label:'AI İçin Yetersiz Detay',severity:'warning'}, null)" style="background:#111827;color:#fff;border:none;font-size:12.5px;font-weight:600;padding:9px 18px;border-radius:10px;cursor:pointer;font-family:'Inter',sans-serif;">Tümünü Düzelt</button>
+      </div>
+      <div id="val-panel-1" style="display:none;padding:0 24px 18px 56px;flex-direction:column;gap:8px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;background:#f9fafb;border:1px solid #f1f2f4;border-radius:12px;padding:11px 14px;">
+          <span style="font-size:13px;color:#111827;font-weight:500;">Denim Ceket</span>
+          <span style="font-size:12px;color:#9ca3af;">38 karakter açıklama</span>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;background:#f9fafb;border:1px solid #f1f2f4;border-radius:12px;padding:11px 14px;">
+          <span style="font-size:13px;color:#111827;font-weight:500;">Yazlık Keten Gömlek</span>
+          <span style="font-size:12px;color:#9ca3af;">malzeme bilgisi eksik</span>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;background:#f9fafb;border:1px solid #f1f2f4;border-radius:12px;padding:11px 14px;">
+          <span style="font-size:13px;color:#111827;font-weight:500;">Kadife Kesim Ceket</span>
+          <span style="font-size:12px;color:#9ca3af;">beden tablosu yok</span>
+        </div>
+      </div>
+    </div>
+    <!-- ROW 2: Eksik SEO / Uyarı / 18 -->
+    <div style="border-bottom:1px solid #f1f2f4;">
+      <div style="display:flex;align-items:center;gap:16px;padding:18px 24px;">
+        <button onclick="toggleValIssue(2)" style="display:flex;align-items:center;gap:12px;flex:1;background:transparent;border:none;cursor:pointer;padding:0;text-align:left;font-family:'Inter',sans-serif;">
+          <span id="val-caret-2" style="display:flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:7px;background:#f4f5f7;color:#6b7280;transition:transform 0.18s ease;">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5l10 7-10 7z"/></svg>
+          </span>
+          <span style="display:flex;flex-direction:column;gap:2px;">
+            <span style="font-size:15px;font-weight:600;color:#111827;">Eksik SEO</span>
+            <span style="font-size:12.5px;color:#9ca3af;">Meta başlık ve açıklama boş</span>
+          </span>
+        </button>
+        <span style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px;letter-spacing:0.02em;background:#fffbeb;color:#a16207;">Uyarı</span>
+        <span style="font-size:13px;font-weight:600;color:#6b7280;min-width:64px;text-align:right;">18 ürün</span>
+        <button onclick="runIssueFix({label:'Eksik SEO',severity:'warning'}, null)" style="background:#111827;color:#fff;border:none;font-size:12.5px;font-weight:600;padding:9px 18px;border-radius:10px;cursor:pointer;font-family:'Inter',sans-serif;">Tümünü Düzelt</button>
+      </div>
+      <div id="val-panel-2" style="display:none;padding:0 24px 18px 56px;flex-direction:column;gap:8px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;background:#f9fafb;border:1px solid #f1f2f4;border-radius:12px;padding:11px 14px;">
+          <span style="font-size:13px;color:#111827;font-weight:500;">Basic Tişört</span>
+          <span style="font-size:12px;color:#9ca3af;">meta açıklama boş</span>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;background:#f9fafb;border:1px solid #f1f2f4;border-radius:12px;padding:11px 14px;">
+          <span style="font-size:13px;color:#111827;font-weight:500;">Deri Çanta</span>
+          <span style="font-size:12px;color:#9ca3af;">başlık 70+ karakter</span>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;background:#f9fafb;border:1px solid #f1f2f4;border-radius:12px;padding:11px 14px;">
+          <span style="font-size:13px;color:#111827;font-weight:500;">Örgü Kazak</span>
+          <span style="font-size:12px;color:#9ca3af;">anahtar kelime yok</span>
+        </div>
+      </div>
+    </div>
+    <!-- ROW 3: Alt Metin Eksik / Bilgi / 5 -->
+    <div>
+      <div style="display:flex;align-items:center;gap:16px;padding:18px 24px;">
+        <button onclick="toggleValIssue(3)" style="display:flex;align-items:center;gap:12px;flex:1;background:transparent;border:none;cursor:pointer;padding:0;text-align:left;font-family:'Inter',sans-serif;">
+          <span id="val-caret-3" style="display:flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:7px;background:#f4f5f7;color:#6b7280;transition:transform 0.18s ease;">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5l10 7-10 7z"/></svg>
+          </span>
+          <span style="display:flex;flex-direction:column;gap:2px;">
+            <span style="font-size:15px;font-weight:600;color:#111827;">Alt Metin Eksik</span>
+            <span style="font-size:12.5px;color:#9ca3af;">Erişilebilirlik ve görsel SEO</span>
+          </span>
+        </button>
+        <span style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px;letter-spacing:0.02em;background:#f4f5f7;color:#4b5563;">Bilgi</span>
+        <span style="font-size:13px;font-weight:600;color:#6b7280;min-width:64px;text-align:right;">5 ürün</span>
+        <button onclick="toast('Bu sorun için otomatik düzeltme mevcut değil','info')" style="background:#111827;color:#fff;border:none;font-size:12.5px;font-weight:600;padding:9px 18px;border-radius:10px;cursor:pointer;font-family:'Inter',sans-serif;">Tümünü Düzelt</button>
+      </div>
+      <div id="val-panel-3" style="display:none;padding:0 24px 18px 56px;flex-direction:column;gap:8px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;background:#f9fafb;border:1px solid #f1f2f4;border-radius:12px;padding:11px 14px;">
+          <span style="font-size:13px;color:#111827;font-weight:500;">Denim Ceket</span>
+          <span style="font-size:12px;color:#9ca3af;">3 görselde alt metin yok</span>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;background:#f9fafb;border:1px solid #f1f2f4;border-radius:12px;padding:11px 14px;">
+          <span style="font-size:13px;color:#111827;font-weight:500;">Kadife Kesim Ceket</span>
+          <span style="font-size:12px;color:#9ca3af;">1 görselde alt metin yok</span>
+        </div>
+      </div>
+    </div>
+  </section>
 
-    header.addEventListener('click', (e) => {
-      if (e.target.closest('.fix-all-btn') || e.target.closest('.fix-sel-btn')) return;
-      const isOpen = panel.style.display !== 'none';
-      const chevron = header.querySelector('.chevron');
-      if (isOpen) {
-        panel.style.display = 'none';
-        chevron.style.transform = '';
-      } else {
-        panel.style.display = 'block';
-        chevron.style.transform = 'rotate(90deg)';
-        if (!panel.dataset.loaded) {
-          renderIssueProductList(panel, issue, issueIdx);
-          panel.dataset.loaded = '1';
-        }
-      }
-    });
+  <p style="font-size:12px;color:#9ca3af;margin:0 2px;">Düzeltmeler siz onaylayana kadar Shopify'a yazılmaz.</p>
+</main>`;
+}
 
-    header.querySelector('.fix-all-btn').addEventListener('click', (e) => {
-      e.stopPropagation();
-      runIssueFix(issue, null);
-    });
-
-    listEl.appendChild(row);
-  });
+function toggleValIssue(i) {
+  const panel = document.getElementById('val-panel-' + i);
+  const caret = document.getElementById('val-caret-' + i);
+  if (!panel) return;
+  const open = panel.style.display === 'flex';
+  panel.style.display = open ? 'none' : 'flex';
+  if (caret) caret.style.transform = open ? '' : 'rotate(90deg)';
 }
 
 function renderIssueProductList(container, issue, issueIdx) {
@@ -4196,85 +4155,390 @@ async function renderSyncStatusPanel() {
 }
 
 function renderSyncPage() {
-  const view = document.getElementById('sync-view');
-  if (!view) return;
-  const lastSync = localStorage.getItem('mocksheets_last_sync');
-  const lastSyncText = lastSync
-    ? new Date(lastSync).toLocaleDateString('tr-TR', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' })
-    : 'Henüz yok';
-  const productCount = (catalogData && catalogData.products) ? catalogData.products.length : 0;
+  view.innerHTML = `<main style="padding:28px;display:flex;flex-direction:column;gap:22px;max-width:1100px;">
+  <!-- HEADER -->
+  <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:20px;">
+    <div>
+      <h1 style="font-size:22px;font-weight:700;margin:0 0 3px;letter-spacing:-0.01em;">Senkronizasyon</h1>
+      <p style="font-size:13px;color:#9ca3af;margin:0;">Veri çekin veya kataloğunuzu dışa aktarın</p>
+    </div>
+    <span style="display:flex;align-items:center;gap:7px;padding:8px 14px;border-radius:999px;border:1px solid #eceef1;background:#fff;font-size:12.5px;font-weight:600;color:#6b7280;">
+      <span style="width:6px;height:6px;border-radius:50%;background:#16a34a;animation:ms-pulse 1.8s ease-in-out infinite;"></span>
+      Otomatik senkron açık
+    </span>
+  </div>
 
-  view.innerHTML = `
-    <div style="padding:32px;max-width:800px;margin:0 auto;">
-      <p style="font-size:16px;font-weight:600;color:#111827;margin:0 0 4px;">Senkronizasyon</p>
-      <p style="font-size:12px;color:#6b7280;margin:0 0 24px;">Veri çekin veya kataloğunuzu dışa aktarın</p>
+  <!-- CONNECTED STORE CARD (renderSyncStatusPanel populates id="sync-status-panel") -->
+  <div id="sync-status-panel" style="display:flex;align-items:center;justify-content:space-between;gap:16px;background:#fff;border:1px solid #eceef1;border-radius:16px;padding:18px 22px;box-shadow:0 1px 2px rgba(16,24,40,0.03);">
+    <div style="display:flex;align-items:center;gap:14px;">
+      <span style="width:40px;height:40px;border-radius:12px;border:1px solid #eceef1;background:#f9fafb;display:flex;align-items:center;justify-content:center;">
+        <img src="https://cdn.simpleicons.org/shopify/95BF47" width="19" height="19" style="display:block;">
+      </span>
+      <div>
+        <div style="font-size:14px;font-weight:600;color:#111827;">mocksheets-store.myshopify.com</div>
+        <div style="font-size:12.5px;color:#9ca3af;">Bağlantı sağlıklı · son kontrol 2 dk önce</div>
+      </div>
+    </div>
+    <button style="background:#fff;border:1px solid #eceef1;color:#374151;font-size:12.5px;font-weight:600;padding:9px 16px;border-radius:10px;cursor:pointer;font-family:'Inter',sans-serif;">Bağlantıyı Yönet</button>
+  </div>
 
-      <div id="sync-status-panel" style="background:#f9fafb;border-radius:14px;padding:16px 20px;margin-bottom:20px;"></div>
+  <!-- IMPORT SECTION -->
+  <section>
+    <h2 style="font-size:13px;font-weight:700;margin:0 0 10px;color:#374151;">İçe Aktar</h2>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <!-- Shopify -->
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;background:#fff;border:1px solid #eceef1;border-radius:16px;padding:18px 22px;box-shadow:0 1px 2px rgba(16,24,40,0.03);">
+        <div>
+          <div style="font-size:14.5px;font-weight:600;color:#111827;">Shopify Katalogu</div>
+          <div style="font-size:12.5px;color:#9ca3af;margin-top:2px;">Son çekim: 2 dk önce · 248 ürün</div>
+        </div>
+        <button onclick="syncShopifyData()" style="background:#111827;border:none;color:#fff;font-size:12.5px;font-weight:600;padding:9px 20px;border-radius:10px;cursor:pointer;font-family:'Inter',sans-serif;">Şimdi Çek</button>
+      </div>
+      <!-- CSV -->
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;background:#fff;border:1px solid #eceef1;border-radius:16px;padding:18px 22px;box-shadow:0 1px 2px rgba(16,24,40,0.03);">
+        <div>
+          <div style="font-size:14.5px;font-weight:600;color:#111827;">CSV Yükle</div>
+          <div style="font-size:12.5px;color:#9ca3af;margin-top:2px;">Shopify, WooCommerce veya özel CSV</div>
+        </div>
+        <button onclick="document.getElementById('csv-upload-input')?.click()" style="background:#111827;border:none;color:#fff;font-size:12.5px;font-weight:600;padding:9px 20px;border-radius:10px;cursor:pointer;font-family:'Inter',sans-serif;">Şimdi Çek</button>
+      </div>
+      <!-- Google Sheets -->
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;background:#fff;border:1px solid #eceef1;border-radius:16px;padding:18px 22px;box-shadow:0 1px 2px rgba(16,24,40,0.03);">
+        <div>
+          <div style="font-size:14.5px;font-weight:600;color:#111827;">Google Sheets</div>
+          <div style="font-size:12.5px;color:#9ca3af;margin-top:2px;">Bağlı sayfa yok</div>
+        </div>
+        <button onclick="toast('Google Sheets bağlantısı yakında','info')" style="background:#111827;border:none;color:#fff;font-size:12.5px;font-weight:600;padding:9px 20px;border-radius:10px;cursor:pointer;font-family:'Inter',sans-serif;">Şimdi Çek</button>
+      </div>
+    </div>
+  </section>
 
-      <p style="font-size:12px;font-weight:600;color:#374151;margin:0 0 10px;">İçe Aktar</p>
-      <div style="padding:16px;border:0.5px solid #e5e7eb;border-radius:12px;margin-bottom:24px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
-          <div>
-            <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 4px;">Shopify Katalogu</p>
-            <p style="font-size:11px;color:#9ca3af;margin:0;">Son çekim: ${lastSyncText} · ${productCount.toLocaleString('tr-TR')} ürün</p>
-          </div>
-          <button type="button" onclick="syncShopifyData()" style="padding:8px 16px;background:#16a34a;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;">Şimdi Çek</button>
+  <!-- EXPORT SECTION -->
+  <section>
+    <h2 style="font-size:13px;font-weight:700;margin:0 0 10px;color:#374151;">Dışa Aktar</h2>
+    <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;box-shadow:0 1px 2px rgba(16,24,40,0.03);overflow:hidden;">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 22px;border-bottom:1px solid #f1f2f4;">
+        <span style="font-size:13px;color:#6b7280;">Kataloğunuzu CSV veya Shopify formatında indirin</span>
+        <div style="display:flex;gap:8px;">
+          <button onclick="exportToCSV?.()" style="background:#111827;border:none;color:#fff;font-size:12.5px;font-weight:600;padding:9px 18px;border-radius:10px;cursor:pointer;font-family:'Inter',sans-serif;">CSV Dışa Aktar</button>
+          <button onclick="pushToShopify?.()" style="background:#fff;border:1px solid #eceef1;color:#374151;font-size:12.5px;font-weight:600;padding:9px 18px;border-radius:10px;cursor:pointer;font-family:'Inter',sans-serif;">Shopify'a Gönder</button>
         </div>
       </div>
-
-      <p style="font-size:12px;font-weight:600;color:#374151;margin:0 0 10px;">Dışa Aktar</p>
-      <div style="padding:16px;border:0.5px solid #e5e7eb;border-radius:12px;">
-        ${renderExportHistory()}
-      </div>
-    </div>`;
-
+      <div style="padding:64px 22px;text-align:center;color:#9ca3af;font-size:13.5px;">Henüz ihraç geçmişi yok.</div>
+    </div>
+  </section>
+</main>`;
   renderSyncStatusPanel();
 }
 
 function loadAndRenderHistory() {
-  const view = document.getElementById('history-view');
-  if (!view) return;
+  view.innerHTML = `<main style="padding:28px;display:flex;flex-direction:column;gap:20px;max-width:1180px;">
+  <!-- HEADER -->
+  <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:20px;">
+    <div>
+      <h1 style="font-size:22px;font-weight:700;margin:0 0 3px;letter-spacing:-0.01em;">Geçmiş İşlemler</h1>
+      <p style="font-size:13px;color:#9ca3af;margin:0;">Mağazanızda yapılan her değişiklik burada kayıt altında</p>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <span style="display:flex;align-items:center;gap:7px;padding:8px 14px;border-radius:999px;border:1px solid #eceef1;background:#fff;font-size:12.5px;font-weight:600;color:#6b7280;">
+        <span style="width:6px;height:6px;border-radius:50%;background:#16a34a;animation:ms-pulse 1.8s ease-in-out infinite;"></span>
+        Canlı kayıt
+      </span>
+      <button style="background:#fff;border:1px solid #eceef1;color:#374151;font-size:12.5px;font-weight:600;padding:9px 16px;border-radius:10px;cursor:pointer;font-family:'Inter',sans-serif;">Dışa Aktar</button>
+    </div>
+  </div>
 
-  const combined = [
-    ...(exportHistory || []).map(h => ({ ts: h.ts || 0, label: h.type || 'Dışa Aktarım', sub: h.count ? h.count + ' kayıt' : '', type: h.type || '' })),
-    ...(syncHistory   || []).map(h => ({ ts: h.ts || 0, label: 'Senkronizasyon', sub: (h.products || 0) + ' ürün', type: 'sync' })),
-  ].sort((a, b) => b.ts - a.ts);
+  <!-- STATS -->
+  <section style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;">
+    <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:18px;box-shadow:0 1px 2px rgba(16,24,40,0.03);display:flex;flex-direction:column;gap:6px;">
+      <span style="font-size:11.5px;color:#9ca3af;font-weight:600;">Bugünkü işlem</span>
+      <span style="font-size:22px;font-weight:700;color:#111827;line-height:1;">4</span>
+      <span style="font-size:11.5px;color:#9ca3af;">son 24 saat</span>
+    </div>
+    <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:18px;box-shadow:0 1px 2px rgba(16,24,40,0.03);display:flex;flex-direction:column;gap:6px;">
+      <span style="font-size:11.5px;color:#9ca3af;font-weight:600;">AI tarafından</span>
+      <span style="font-size:22px;font-weight:700;color:#111827;line-height:1;">18</span>
+      <span style="font-size:11.5px;color:#9ca3af;">bu hafta</span>
+    </div>
+    <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:18px;box-shadow:0 1px 2px rgba(16,24,40,0.03);display:flex;flex-direction:column;gap:6px;">
+      <span style="font-size:11.5px;color:#9ca3af;font-weight:600;">Geri alınan</span>
+      <span style="font-size:22px;font-weight:700;color:#111827;line-height:1;">0</span>
+      <span style="font-size:11.5px;color:#9ca3af;">bu hafta</span>
+    </div>
+    <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:18px;box-shadow:0 1px 2px rgba(16,24,40,0.03);display:flex;flex-direction:column;gap:6px;">
+      <span style="font-size:11.5px;color:#9ca3af;font-weight:600;">Onay bekleyen</span>
+      <span style="font-size:22px;font-weight:700;color:#111827;line-height:1;">3</span>
+      <span style="font-size:11.5px;color:#9ca3af;">inceleme gerekli</span>
+    </div>
+  </section>
 
-  if (!combined.length) {
-    view.innerHTML = '<div style="padding:24px;text-align:center;color:#9ca3af;font-size:12px;">Henüz işlem kaydı yok</div>';
-    return;
-  }
+  <!-- FILTERS + SEARCH -->
+  <section style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+    <button class="hist-chip" data-cat="Tümü" onclick="filterHistChip(this)" style="padding:8px 16px;border-radius:999px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;border:1px solid #111827;background:#111827;color:#fff;">Tümü</button>
+    <button class="hist-chip" data-cat="İçerik" onclick="filterHistChip(this)" style="padding:8px 16px;border-radius:999px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;border:1px solid #eceef1;background:#fff;color:#6b7280;">İçerik</button>
+    <button class="hist-chip" data-cat="Fiyat" onclick="filterHistChip(this)" style="padding:8px 16px;border-radius:999px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;border:1px solid #eceef1;background:#fff;color:#6b7280;">Fiyat</button>
+    <button class="hist-chip" data-cat="Görsel" onclick="filterHistChip(this)" style="padding:8px 16px;border-radius:999px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;border:1px solid #eceef1;background:#fff;color:#6b7280;">Görsel</button>
+    <button class="hist-chip" data-cat="Vitrin" onclick="filterHistChip(this)" style="padding:8px 16px;border-radius:999px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;border:1px solid #eceef1;background:#fff;color:#6b7280;">Vitrin</button>
+    <button class="hist-chip" data-cat="Senkron" onclick="filterHistChip(this)" style="padding:8px 16px;border-radius:999px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;border:1px solid #eceef1;background:#fff;color:#6b7280;">Senkron</button>
+    <div style="margin-left:auto;display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #eceef1;border-radius:999px;padding:8px 16px;min-width:260px;">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="hist-search" placeholder="İşlemlerde ara…" oninput="filterHistSearch(this.value)" style="flex:1;border:none;outline:none;background:transparent;font-size:13px;color:#111827;font-family:'Inter',sans-serif;">
+    </div>
+  </section>
 
-  const now   = new Date();
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
-  const week  = today - 7 * 86400000;
-  const groups = { today: [], week: [], older: [] };
-  combined.forEach(item => {
-    if (item.ts >= today)     groups.today.push(item);
-    else if (item.ts >= week) groups.week.push(item);
-    else                      groups.older.push(item);
+  <!-- LOG CARD -->
+  <section style="background:#fff;border:1px solid #eceef1;border-radius:18px;box-shadow:0 1px 2px rgba(16,24,40,0.03);overflow:hidden;">
+    <!-- BUGÜN -->
+    <div>
+      <div style="padding:14px 24px 8px;font-size:11.5px;font-weight:700;letter-spacing:0.05em;color:#9ca3af;background:#fcfcfd;border-bottom:1px solid #f6f7f8;">BUGÜN</div>
+      <!-- Entry 0: SEO başlığı -->
+      <div class="hist-entry" data-cat="İçerik" style="border-bottom:1px solid #f6f7f8;">
+        <div style="display:flex;align-items:flex-start;gap:14px;padding:16px 24px;">
+          <span style="width:36px;height:36px;border-radius:12px;border:1px solid #eceef1;background:#f9fafb;display:flex;align-items:center;justify-content:center;color:#4b5563;flex-shrink:0;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6V4h16v2"/><path d="M12 4v16"/><path d="M9 20h6"/></svg>
+          </span>
+          <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;">
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+              <span style="font-size:14px;font-weight:600;color:#111827;">SEO başlığı güncellendi</span>
+              <span style="font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:999px;letter-spacing:0.03em;background:#eef2ff;color:#4338ca;">AI</span>
+            </div>
+            <span style="font-size:12.5px;color:#6b7280;">Yazlık Keten Gömlek · meta başlık yeniden yazıldı</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;flex-shrink:0;">
+            <span style="font-size:12px;color:#9ca3af;min-width:52px;text-align:right;">09:41</span>
+            <button onclick="toggleHistEntry(this)" style="background:#fff;border:1px solid #eceef1;border-radius:9px;padding:7px 12px;font-size:12px;font-weight:600;color:#374151;cursor:pointer;font-family:'Inter',sans-serif;">Detay</button>
+            <button style="background:#111827;border:none;color:#fff;border-radius:9px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">Geri Al</button>
+          </div>
+        </div>
+        <div class="hist-detail-panel" style="display:none;padding:0 24px 18px 62px;grid-template-columns:1fr 1fr;gap:10px;">
+          <div style="background:#fdf6f6;border:1px solid #fbeaea;border-radius:12px;padding:12px 14px;">
+            <div style="font-size:10.5px;font-weight:700;letter-spacing:0.04em;color:#b91c1c;margin-bottom:5px;">ÖNCE</div>
+            <div style="font-size:12.5px;color:#4b5563;line-height:1.5;">Keten Gömlek</div>
+          </div>
+          <div style="background:#f6faf7;border:1px solid #e7f2ea;border-radius:12px;padding:12px 14px;">
+            <div style="font-size:10.5px;font-weight:700;letter-spacing:0.04em;color:#15803d;margin-bottom:5px;">SONRA</div>
+            <div style="font-size:12.5px;color:#4b5563;line-height:1.5;">Yazlık Keten Gömlek — Nefes Alan Kumaş | Store</div>
+          </div>
+        </div>
+      </div>
+      <!-- Entry 1: İndirim kuralı -->
+      <div class="hist-entry" data-cat="Fiyat" style="border-bottom:1px solid #f6f7f8;">
+        <div style="display:flex;align-items:flex-start;gap:14px;padding:16px 24px;">
+          <span style="width:36px;height:36px;border-radius:12px;border:1px solid #eceef1;background:#f9fafb;display:flex;align-items:center;justify-content:center;color:#4b5563;flex-shrink:0;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20"/><path d="M17 6H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </span>
+          <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;">
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+              <span style="font-size:14px;font-weight:600;color:#111827;">İndirim kuralı uygulandı</span>
+              <span style="font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:999px;letter-spacing:0.03em;background:#eef2ff;color:#4338ca;">AI</span>
+            </div>
+            <span style="font-size:12.5px;color:#6b7280;">Denim Ceket · %10 sezon sonu indirimi</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;flex-shrink:0;">
+            <span style="font-size:12px;color:#9ca3af;min-width:52px;text-align:right;">09:38</span>
+            <button onclick="toggleHistEntry(this)" style="background:#fff;border:1px solid #eceef1;border-radius:9px;padding:7px 12px;font-size:12px;font-weight:600;color:#374151;cursor:pointer;font-family:'Inter',sans-serif;">Detay</button>
+            <button style="background:#111827;border:none;color:#fff;border-radius:9px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">Geri Al</button>
+          </div>
+        </div>
+        <div class="hist-detail-panel" style="display:none;padding:0 24px 18px 62px;grid-template-columns:1fr 1fr;gap:10px;">
+          <div style="background:#fdf6f6;border:1px solid #fbeaea;border-radius:12px;padding:12px 14px;">
+            <div style="font-size:10.5px;font-weight:700;letter-spacing:0.04em;color:#b91c1c;margin-bottom:5px;">ÖNCE</div>
+            <div style="font-size:12.5px;color:#4b5563;line-height:1.5;">₺2.400</div>
+          </div>
+          <div style="background:#f6faf7;border:1px solid #e7f2ea;border-radius:12px;padding:12px 14px;">
+            <div style="font-size:10.5px;font-weight:700;letter-spacing:0.04em;color:#15803d;margin-bottom:5px;">SONRA</div>
+            <div style="font-size:12.5px;color:#4b5563;line-height:1.5;">₺2.160</div>
+          </div>
+        </div>
+      </div>
+      <!-- Entry 2: Görsel alt metni -->
+      <div class="hist-entry" data-cat="Görsel" style="border-bottom:1px solid #f6f7f8;">
+        <div style="display:flex;align-items:flex-start;gap:14px;padding:16px 24px;">
+          <span style="width:36px;height:36px;border-radius:12px;border:1px solid #eceef1;background:#f9fafb;display:flex;align-items:center;justify-content:center;color:#4b5563;flex-shrink:0;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="8.5" cy="9.5" r="1.5"/><path d="m21 16-5-5L5 20"/></svg>
+          </span>
+          <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;">
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+              <span style="font-size:14px;font-weight:600;color:#111827;">Görsel alt metni eklendi</span>
+              <span style="font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:999px;letter-spacing:0.03em;background:#eef2ff;color:#4338ca;">AI</span>
+            </div>
+            <span style="font-size:12.5px;color:#6b7280;">3 üründe erişilebilirlik metni oluşturuldu</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;flex-shrink:0;">
+            <span style="font-size:12px;color:#9ca3af;min-width:52px;text-align:right;">09:37</span>
+            <button onclick="toggleHistEntry(this)" style="background:#fff;border:1px solid #eceef1;border-radius:9px;padding:7px 12px;font-size:12px;font-weight:600;color:#374151;cursor:pointer;font-family:'Inter',sans-serif;">Detay</button>
+            <button style="background:#111827;border:none;color:#fff;border-radius:9px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">Geri Al</button>
+          </div>
+        </div>
+        <div class="hist-detail-panel" style="display:none;padding:0 24px 18px 62px;grid-template-columns:1fr 1fr;gap:10px;">
+          <div style="background:#fdf6f6;border:1px solid #fbeaea;border-radius:12px;padding:12px 14px;">
+            <div style="font-size:10.5px;font-weight:700;letter-spacing:0.04em;color:#b91c1c;margin-bottom:5px;">ÖNCE</div>
+            <div style="font-size:12.5px;color:#4b5563;line-height:1.5;">alt metin yok</div>
+          </div>
+          <div style="background:#f6faf7;border:1px solid #e7f2ea;border-radius:12px;padding:12px 14px;">
+            <div style="font-size:10.5px;font-weight:700;letter-spacing:0.04em;color:#15803d;margin-bottom:5px;">SONRA</div>
+            <div style="font-size:12.5px;color:#4b5563;line-height:1.5;">"Bej keten gömlek, önden görünüm"</div>
+          </div>
+        </div>
+      </div>
+      <!-- Entry 3: Hero görseli -->
+      <div class="hist-entry" data-cat="Vitrin" style="">
+        <div style="display:flex;align-items:flex-start;gap:14px;padding:16px 24px;">
+          <span style="width:36px;height:36px;border-radius:12px;border:1px solid #eceef1;background:#f9fafb;display:flex;align-items:center;justify-content:center;color:#4b5563;flex-shrink:0;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+          </span>
+          <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;">
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+              <span style="font-size:14px;font-weight:600;color:#111827;">Ana sayfa hero görseli değiştirildi</span>
+              <span style="font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:999px;letter-spacing:0.03em;background:#f4f5f7;color:#4b5563;">Kullanıcı</span>
+            </div>
+            <span style="font-size:12.5px;color:#6b7280;">Yeni koleksiyon banner'ı yayına alındı</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;flex-shrink:0;">
+            <span style="font-size:12px;color:#9ca3af;min-width:52px;text-align:right;">09:12</span>
+            <button onclick="toggleHistEntry(this)" style="background:#fff;border:1px solid #eceef1;border-radius:9px;padding:7px 12px;font-size:12px;font-weight:600;color:#374151;cursor:pointer;font-family:'Inter',sans-serif;">Detay</button>
+            <button style="background:#111827;border:none;color:#fff;border-radius:9px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">Geri Al</button>
+          </div>
+        </div>
+        <div class="hist-detail-panel" style="display:none;padding:0 24px 18px 62px;grid-template-columns:1fr 1fr;gap:10px;">
+          <div style="background:#fdf6f6;border:1px solid #fbeaea;border-radius:12px;padding:12px 14px;">
+            <div style="font-size:10.5px;font-weight:700;letter-spacing:0.04em;color:#b91c1c;margin-bottom:5px;">ÖNCE</div>
+            <div style="font-size:12.5px;color:#4b5563;line-height:1.5;">yaz-kampanya.jpg</div>
+          </div>
+          <div style="background:#f6faf7;border:1px solid #e7f2ea;border-radius:12px;padding:12px 14px;">
+            <div style="font-size:10.5px;font-weight:700;letter-spacing:0.04em;color:#15803d;margin-bottom:5px;">SONRA</div>
+            <div style="font-size:12.5px;color:#4b5563;line-height:1.5;">yeni-koleksiyon-hero.jpg</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- DÜN -->
+    <div>
+      <div style="padding:14px 24px 8px;font-size:11.5px;font-weight:700;letter-spacing:0.05em;color:#9ca3af;background:#fcfcfd;border-bottom:1px solid #f6f7f8;border-top:1px solid #f1f2f4;">DÜN</div>
+      <!-- Entry 4: Senkronizasyon tamamlandı -->
+      <div class="hist-entry" data-cat="Senkron" style="border-bottom:1px solid #f6f7f8;">
+        <div style="display:flex;align-items:flex-start;gap:14px;padding:16px 24px;">
+          <span style="width:36px;height:36px;border-radius:12px;border:1px solid #eceef1;background:#f9fafb;display:flex;align-items:center;justify-content:center;color:#4b5563;flex-shrink:0;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 21v-5h5"/></svg>
+          </span>
+          <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;">
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+              <span style="font-size:14px;font-weight:600;color:#111827;">Senkronizasyon tamamlandı</span>
+              <span style="font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:999px;letter-spacing:0.03em;background:#f0fdf4;color:#15803d;">Sistem</span>
+            </div>
+            <span style="font-size:12.5px;color:#6b7280;">246 ürün Shopify'dan çekildi</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;flex-shrink:0;">
+            <span style="font-size:12px;color:#9ca3af;min-width:52px;text-align:right;">22:10</span>
+            <button onclick="toggleHistEntry(this)" style="background:#fff;border:1px solid #eceef1;border-radius:9px;padding:7px 12px;font-size:12px;font-weight:600;color:#374151;cursor:pointer;font-family:'Inter',sans-serif;">Detay</button>
+            <span style="font-size:12px;color:#9ca3af;padding:7px 14px;">—</span>
+          </div>
+        </div>
+        <div class="hist-detail-panel" style="display:none;padding:0 24px 18px 62px;grid-template-columns:1fr 1fr;gap:10px;">
+          <div style="background:#fdf6f6;border:1px solid #fbeaea;border-radius:12px;padding:12px 14px;">
+            <div style="font-size:10.5px;font-weight:700;letter-spacing:0.04em;color:#b91c1c;margin-bottom:5px;">ÖNCE</div>
+            <div style="font-size:12.5px;color:#4b5563;line-height:1.5;">244 ürün</div>
+          </div>
+          <div style="background:#f6faf7;border:1px solid #e7f2ea;border-radius:12px;padding:12px 14px;">
+            <div style="font-size:10.5px;font-weight:700;letter-spacing:0.04em;color:#15803d;margin-bottom:5px;">SONRA</div>
+            <div style="font-size:12.5px;color:#4b5563;line-height:1.5;">246 ürün</div>
+          </div>
+        </div>
+      </div>
+      <!-- Entry 5: Ürün açıklaması -->
+      <div class="hist-entry" data-cat="İçerik" style="border-bottom:1px solid #f6f7f8;">
+        <div style="display:flex;align-items:flex-start;gap:14px;padding:16px 24px;">
+          <span style="width:36px;height:36px;border-radius:12px;border:1px solid #eceef1;background:#f9fafb;display:flex;align-items:center;justify-content:center;color:#4b5563;flex-shrink:0;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          </span>
+          <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;">
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+              <span style="font-size:14px;font-weight:600;color:#111827;">Ürün açıklaması yeniden yazıldı</span>
+              <span style="font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:999px;letter-spacing:0.03em;background:#eef2ff;color:#4338ca;">AI</span>
+            </div>
+            <span style="font-size:12.5px;color:#6b7280;">Kadife Kesim Ceket · 3 paragraf</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;flex-shrink:0;">
+            <span style="font-size:12px;color:#9ca3af;min-width:52px;text-align:right;">18:24</span>
+            <button onclick="toggleHistEntry(this)" style="background:#fff;border:1px solid #eceef1;border-radius:9px;padding:7px 12px;font-size:12px;font-weight:600;color:#374151;cursor:pointer;font-family:'Inter',sans-serif;">Detay</button>
+            <button style="background:#111827;border:none;color:#fff;border-radius:9px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">Geri Al</button>
+          </div>
+        </div>
+        <div class="hist-detail-panel" style="display:none;padding:0 24px 18px 62px;grid-template-columns:1fr 1fr;gap:10px;">
+          <div style="background:#fdf6f6;border:1px solid #fbeaea;border-radius:12px;padding:12px 14px;">
+            <div style="font-size:10.5px;font-weight:700;letter-spacing:0.04em;color:#b91c1c;margin-bottom:5px;">ÖNCE</div>
+            <div style="font-size:12.5px;color:#4b5563;line-height:1.5;">38 karakterlik kısa açıklama</div>
+          </div>
+          <div style="background:#f6faf7;border:1px solid #e7f2ea;border-radius:12px;padding:12px 14px;">
+            <div style="font-size:10.5px;font-weight:700;letter-spacing:0.04em;color:#15803d;margin-bottom:5px;">SONRA</div>
+            <div style="font-size:12.5px;color:#4b5563;line-height:1.5;">Malzeme, kalıp ve bakım bilgisi içeren tam açıklama</div>
+          </div>
+        </div>
+      </div>
+      <!-- Entry 6: Koleksiyon sırası -->
+      <div class="hist-entry" data-cat="Vitrin" style="">
+        <div style="display:flex;align-items:flex-start;gap:14px;padding:16px 24px;">
+          <span style="width:36px;height:36px;border-radius:12px;border:1px solid #eceef1;background:#f9fafb;display:flex;align-items:center;justify-content:center;color:#4b5563;flex-shrink:0;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+          </span>
+          <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;">
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+              <span style="font-size:14px;font-weight:600;color:#111827;">Koleksiyon sırası değiştirildi</span>
+              <span style="font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:999px;letter-spacing:0.03em;background:#f4f5f7;color:#4b5563;">Kullanıcı</span>
+            </div>
+            <span style="font-size:12.5px;color:#6b7280;">Aksesuar koleksiyonu ana menüye taşındı</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;flex-shrink:0;">
+            <span style="font-size:12px;color:#9ca3af;min-width:52px;text-align:right;">15:02</span>
+            <button onclick="toggleHistEntry(this)" style="background:#fff;border:1px solid #eceef1;border-radius:9px;padding:7px 12px;font-size:12px;font-weight:600;color:#374151;cursor:pointer;font-family:'Inter',sans-serif;">Detay</button>
+            <button style="background:#111827;border:none;color:#fff;border-radius:9px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">Geri Al</button>
+          </div>
+        </div>
+        <div class="hist-detail-panel" style="display:none;padding:0 24px 18px 62px;grid-template-columns:1fr 1fr;gap:10px;">
+          <div style="background:#fdf6f6;border:1px solid #fbeaea;border-radius:12px;padding:12px 14px;">
+            <div style="font-size:10.5px;font-weight:700;letter-spacing:0.04em;color:#b91c1c;margin-bottom:5px;">ÖNCE</div>
+            <div style="font-size:12.5px;color:#4b5563;line-height:1.5;">Menü: Dış Giyim, Üst Giyim</div>
+          </div>
+          <div style="background:#f6faf7;border:1px solid #e7f2ea;border-radius:12px;padding:12px 14px;">
+            <div style="font-size:10.5px;font-weight:700;letter-spacing:0.04em;color:#15803d;margin-bottom:5px;">SONRA</div>
+            <div style="font-size:12.5px;color:#4b5563;line-height:1.5;">Menü: Dış Giyim, Aksesuar, Üst Giyim</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <p style="font-size:12px;color:#9ca3af;margin:0 2px;">Kayıtlar 90 gün saklanır · geri alınan işlemler Shopify'a anında yansır.</p>
+</main>`;
+}
+
+function toggleHistEntry(btn) {
+  const entry = btn.closest('.hist-entry');
+  if (!entry) return;
+  const panel = entry.querySelector('.hist-detail-panel');
+  if (!panel) return;
+  const open = panel.style.display === 'grid';
+  panel.style.display = open ? 'none' : 'grid';
+  btn.textContent = open ? 'Detay' : 'Gizle';
+}
+
+function filterHistChip(chip) {
+  document.querySelectorAll('.hist-chip').forEach(b => {
+    b.style.background = '#fff'; b.style.color = '#6b7280'; b.style.borderColor = '#eceef1';
   });
+  chip.style.background = '#111827'; chip.style.color = '#fff'; chip.style.borderColor = '#111827';
+  const cat = chip.dataset.cat;
+  document.querySelectorAll('.hist-entry').forEach(e => {
+    e.style.display = (cat === 'Tümü' || e.dataset.cat === cat) ? '' : 'none';
+  });
+}
 
-  const renderGroup = (label, items) => {
-    if (!items.length) return '';
-    const rows = items.map(item => {
-      const time = item.ts ? new Date(item.ts).toLocaleTimeString('tr-TR', { hour:'2-digit', minute:'2-digit' }) : '';
-      return `<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:0.5px solid #f9fafb;">
-        <i class="ti ${getHistoryIcon(item.type)}" style="font-size:14px;color:#16a34a;flex-shrink:0;width:18px;text-align:center;"></i>
-        <div style="flex:1;"><p style="font-size:12px;color:#111827;margin:0;">${item.label}</p>
-          ${item.sub ? `<p style="font-size:11px;color:#9ca3af;margin:2px 0 0;">${item.sub}</p>` : ''}</div>
-        ${time ? `<span style="font-size:10px;color:#9ca3af;">${time}</span>` : ''}
-      </div>`;
-    }).join('');
-    return `<p style="font-size:10px;font-weight:600;color:#9ca3af;text-transform:uppercase;letter-spacing:.04em;margin:16px 0 4px;">${label}</p>${rows}`;
-  };
-
-  view.innerHTML = `<div style="padding:24px;max-width:600px;">
-    <p style="font-size:16px;font-weight:600;color:#111827;margin:0 0 16px;">Geçmiş</p>
-    ${renderGroup('Bugün', groups.today)}
-    ${renderGroup('Bu Hafta', groups.week)}
-    ${renderGroup('Daha Eski', groups.older)}
-  </div>`;
+function filterHistSearch(q) {
+  q = q.toLocaleLowerCase('tr');
+  document.querySelectorAll('.hist-entry').forEach(e => {
+    const text = e.textContent.toLocaleLowerCase('tr');
+    e.style.display = q === '' || text.includes(q) ? '' : 'none';
+  });
 }
 
 async function disconnectShopify() {
@@ -4312,49 +4576,119 @@ async function renderSettingsPage() {
   const actionBtn = connected
     ? '<button type="button" onclick="disconnectShopify()" style="font-size:11px;color:#dc2626;background:#fff;border:1px solid #fca5a5;border-radius:8px;padding:4px 12px;cursor:pointer;">Kaldır</button>'
     : '<button type="button" onclick="setView(\'import\')" style="font-size:11px;color:#16a34a;background:#fff;border:1px solid #86efac;border-radius:8px;padding:4px 12px;cursor:pointer;">Bağlan</button>';
-  view.innerHTML = `<div style="padding:24px;max-width:600px;">
-    <p style="font-size:16px;font-weight:600;color:#111827;margin:0 0 24px;">Ayarlar</p>
-    <div style="border:0.5px solid #e5e7eb;border-radius:12px;overflow:hidden;">
-      <div style="padding:14px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #f3f4f6;">
+  view.innerHTML = `<main style="padding:28px;display:flex;flex-direction:column;gap:26px;max-width:860px;">
+  <div>
+    <h1 style="font-size:22px;font-weight:700;margin:0 0 3px;letter-spacing:-0.01em;">Ayarlar</h1>
+    <p style="font-size:13px;color:#9ca3af;margin:0;">Hesap, bağlantı ve otomasyon tercihleri</p>
+  </div>
+
+  <!-- SECTION 1: Shopify + Plan -->
+  <section style="background:#fff;border:1px solid #eceef1;border-radius:18px;box-shadow:0 1px 2px rgba(16,24,40,0.03);overflow:hidden;">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:20px 24px;border-bottom:1px solid #f6f7f8;">
+      <div style="display:flex;align-items:center;gap:14px;">
+        <span style="width:40px;height:40px;border-radius:12px;border:1px solid #eceef1;background:#f9fafb;display:flex;align-items:center;justify-content:center;">
+          <img src="https://cdn.simpleicons.org/shopify/95BF47" width="19" height="19" style="display:block;">
+        </span>
         <div>
-          <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 2px;">Shopify Bağlantısı</p>
-          <p style="font-size:11px;color:${connected ? '#16a34a' : '#9ca3af'};margin:0;">${storeName}</p>
+          <div style="font-size:14.5px;font-weight:600;color:#111827;">Shopify Bağlantısı</div>
+          <div style="font-size:12.5px;color:${connected ? '#16a34a' : '#9ca3af'};margin-top:2px;">${storeName}</div>
         </div>
-        ${actionBtn}
       </div>
-      <div style="padding:14px 16px;" id="settings-plan-row">
-        <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 2px;">Plan</p>
-        <p style="font-size:11px;color:#6b7280;margin:0;">Yükleniyor…</p>
+      ${actionBtn}
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:20px 24px;" id="settings-plan-row">
+      <div>
+        <div style="font-size:14.5px;font-weight:600;color:#111827;">Plan</div>
+        <div style="font-size:12.5px;color:#9ca3af;margin-top:2px;">Yükleniyor…</div>
+      </div>
+      <button onclick="openUpgradeModal?.()" style="background:#111827;border:none;color:#fff;font-size:12.5px;font-weight:600;padding:9px 18px;border-radius:10px;cursor:pointer;font-family:'Inter',sans-serif;">Planı Yükselt</button>
+    </div>
+  </section>
+
+  <!-- SECTION 2: Profil Bilgisi -->
+  <section>
+    <h2 style="font-size:13px;font-weight:700;margin:0 0 10px;color:#374151;">Profil Bilgisi</h2>
+    <div id="profile-info-box" style="background:#fff;border:1px solid #eceef1;border-radius:18px;box-shadow:0 1px 2px rgba(16,24,40,0.03);padding:20px 24px;"></div>
+  </section>
+
+  <!-- SECTION 3: Abonelik -->
+  <section>
+    <h2 style="font-size:13px;font-weight:700;margin:0 0 10px;color:#374151;">Abonelik</h2>
+    <div id="subscription-section" style="background:#fff;border:1px solid #eceef1;border-radius:18px;box-shadow:0 1px 2px rgba(16,24,40,0.03);padding:20px 24px;"></div>
+  </section>
+
+  <!-- SECTION 4: Otomasyon -->
+  <section>
+    <h2 style="font-size:13px;font-weight:700;margin:0 0 10px;color:#374151;">Otomasyon</h2>
+    <div style="background:#fff;border:1px solid #eceef1;border-radius:18px;box-shadow:0 1px 2px rgba(16,24,40,0.03);overflow:hidden;">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 24px;border-bottom:1px solid #f6f7f8;">
+        <div>
+          <div style="font-size:14px;font-weight:600;color:#111827;">Otomatik senkronizasyon</div>
+          <div style="font-size:12.5px;color:#9ca3af;margin-top:2px;">Shopify değişikliklerini saatlik olarak çek</div>
+        </div>
+        <button id="stoggle-auto" data-on="1" onclick="toggleSettingRow('auto')" style="width:44px;height:26px;border-radius:999px;border:1px solid #111827;background:#111827;padding:2px;cursor:pointer;display:flex;justify-content:flex-end;align-items:center;transition:all 0.18s;flex-shrink:0;">
+          <span style="width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(16,24,40,0.25);display:block;"></span>
+        </button>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 24px;border-bottom:1px solid #f6f7f8;">
+        <div>
+          <div style="font-size:14px;font-weight:600;color:#111827;">AI otomatik optimizasyon</div>
+          <div style="font-size:12.5px;color:#9ca3af;margin-top:2px;">SEO ve açıklama iyileştirmelerini kendiliğinden hazırla</div>
+        </div>
+        <button id="stoggle-ai" data-on="1" onclick="toggleSettingRow('ai')" style="width:44px;height:26px;border-radius:999px;border:1px solid #111827;background:#111827;padding:2px;cursor:pointer;display:flex;justify-content:flex-end;align-items:center;transition:all 0.18s;flex-shrink:0;">
+          <span style="width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(16,24,40,0.25);display:block;"></span>
+        </button>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 24px;border-bottom:1px solid #f6f7f8;">
+        <div>
+          <div style="font-size:14px;font-weight:600;color:#111827;">Yayın öncesi onay iste</div>
+          <div style="font-size:12.5px;color:#9ca3af;margin-top:2px;">Değişiklikler Shopify'a yazılmadan önce onayınıza sunulur</div>
+        </div>
+        <button id="stoggle-approve" data-on="1" onclick="toggleSettingRow('approve')" style="width:44px;height:26px;border-radius:999px;border:1px solid #111827;background:#111827;padding:2px;cursor:pointer;display:flex;justify-content:flex-end;align-items:center;transition:all 0.18s;flex-shrink:0;">
+          <span style="width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(16,24,40,0.25);display:block;"></span>
+        </button>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 24px;">
+        <div>
+          <div style="font-size:14px;font-weight:600;color:#111827;">Haftalık e-posta raporu</div>
+          <div style="font-size:12.5px;color:#9ca3af;margin-top:2px;">Katalog sağlığı ve fırsat özeti</div>
+        </div>
+        <button id="stoggle-mail" data-on="0" onclick="toggleSettingRow('mail')" style="width:44px;height:26px;border-radius:999px;border:1px solid #e5e7eb;background:#f4f5f7;padding:2px;cursor:pointer;display:flex;justify-content:flex-start;align-items:center;transition:all 0.18s;flex-shrink:0;">
+          <span style="width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(16,24,40,0.25);display:block;"></span>
+        </button>
       </div>
     </div>
+  </section>
 
-    <div id="profile-info-box" style="margin-top:32px;padding-top:24px;border-top:0.5px solid #e5e7eb;"></div>
+  <!-- KVKK (mevcut koddan) -->
+  <div style="padding-top:4px;">
+    <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 4px;">Verilerimi İndir (KVKK)</p>
+    <p style="font-size:12px;color:#6b7280;margin:0 0 12px;">Hesabınıza ait tüm verileri JSON olarak indirin.</p>
+    <button id="export-my-data-btn" type="button" style="padding:7px 16px;background:#f3f4f6;color:#374151;border:0.5px solid #e5e7eb;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;">Verilerimi İndir</button>
+  </div>
 
-    <div id="subscription-section" style="margin-top:32px;padding-top:24px;border-top:0.5px solid #e5e7eb;"></div>
+  <!-- Mocksheets Değerlendirme (mevcut koddan) -->
+  <div style="padding-top:4px;">
+    <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 4px;">Mocksheets'i Değerlendirin</p>
+    <p style="font-size:12px;color:#6b7280;margin:0 0 12px;">Deneyiminizi Shopify App Store'da paylaşmak ister misiniz?</p>
+    <button id="shopify-review-btn" type="button" style="display:flex;align-items:center;gap:8px;padding:8px 16px;border:0.5px solid #e5e7eb;border-radius:10px;background:#fff;color:#374151;font-size:12px;font-weight:600;cursor:pointer;">
+      <img src="https://cdn.simpleicons.org/shopify/95BF47" width="14" height="14" style="display:block;">
+      Shopify'da Değerlendirin
+    </button>
+  </div>
 
-    <div style="margin-top:32px;padding-top:24px;border-top:0.5px solid #e5e7eb;">
-      <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 4px;">Verilerimi İndir (KVKK)</p>
-      <p style="font-size:12px;color:#6b7280;margin:0 0 12px;">Hesabınıza ait tüm verileri JSON olarak indirin.</p>
-      <button id="export-my-data-btn" type="button" style="padding:7px 16px;background:#f3f4f6;color:#374151;border:0.5px solid #e5e7eb;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;">Verilerimi İndir</button>
+  <!-- SECTION 5: Tehlikeli Bölge -->
+  <section>
+    <h2 style="font-size:13px;font-weight:700;margin:0 0 10px;color:#b91c1c;">Tehlikeli Bölge</h2>
+    <div style="background:#fff;border:1px solid #fbeaea;border-radius:18px;padding:20px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;">
+      <div>
+        <div style="font-size:14px;font-weight:600;color:#111827;">Hesabı sil</div>
+        <div style="font-size:12.5px;color:#9ca3af;margin-top:2px;">Tüm katalog verisi ve işlem geçmişi kalıcı olarak silinir.</div>
+      </div>
+      <button id="open-delete-modal-btn" type="button" style="background:#fff;border:1px solid #fbeaea;color:#b91c1c;font-size:12.5px;font-weight:600;padding:10px 18px;border-radius:10px;cursor:pointer;font-family:'Inter',sans-serif;">Hesabı Sil</button>
     </div>
-
-    <div style="margin-top:32px;padding-top:24px;border-top:0.5px solid #e5e7eb;">
-      <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 4px;">Mocksheets'i Değerlendirin</p>
-      <p style="font-size:12px;color:#6b7280;margin:0 0 12px;">Deneyiminizi Shopify App Store'da paylaşmak ister misiniz?</p>
-      <button id="shopify-review-btn" type="button"
-        style="display:flex;align-items:center;gap:8px;padding:8px 16px;border:0.5px solid #e5e7eb;border-radius:10px;background:#fff;color:#374151;font-size:12px;font-weight:600;cursor:pointer;">
-        <img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/shopify.svg" width="14" height="14"
-             style="filter:invert(48%) sepia(98%) saturate(400%) hue-rotate(90deg);"/>
-        Shopify'da Değerlendirin
-      </button>
-    </div>
-
-    <div style="margin-top:32px;padding:16px;border:1px solid #fca5a5;border-radius:12px;">
-      <p style="font-size:13px;font-weight:600;color:#dc2626;margin:0 0 4px;">Tehlikeli Bölge</p>
-      <p style="font-size:12px;color:#6b7280;margin:0 0 12px;">Hesabınızı kalıcı olarak silmek tüm verilerinizi siler ve geri alınamaz.</p>
-      <button id="open-delete-modal-btn" type="button" style="padding:7px 16px;background:#dc2626;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;">Hesabı Sil</button>
-    </div>
-  </div>`;
+  </section>
+</main>`;
 
   document.getElementById('export-my-data-btn').addEventListener('click', async () => {
     try {
@@ -4402,6 +4736,17 @@ async function renderSettingsPage() {
       }
     }
   } catch(_) {}
+}
+
+function toggleSettingRow(key) {
+  const btn = document.getElementById('stoggle-' + key);
+  if (!btn) return;
+  const on = btn.dataset.on === '1';
+  const newOn = !on;
+  btn.dataset.on = newOn ? '1' : '0';
+  btn.style.background = newOn ? '#111827' : '#f4f5f7';
+  btn.style.borderColor = newOn ? '#111827' : '#e5e7eb';
+  btn.style.justifyContent = newOn ? 'flex-end' : 'flex-start';
 }
 
 async function renderProfileInfo() {
