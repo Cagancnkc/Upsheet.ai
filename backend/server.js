@@ -559,6 +559,8 @@ const shopifyRouter = require('./routes/shopify');
 app.use('/api/shopify', shopifyRouter);
 const analyticsRouter = require('./routes/analytics');
 app.use('/api/analytics', analyticsRouter);
+const onboardingRouter = require('./routes/onboarding');
+app.use('/api/onboarding', onboardingRouter);
 const chatRouter = require('./routes/chat');
 app.use('/api/chat', chatRouter);
 const ragFeedbackRouter = require('./routes/ragFeedback');

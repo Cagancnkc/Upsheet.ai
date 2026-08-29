@@ -396,8 +396,15 @@ router.get('/status', requireAuth, async (req, res) => {
 
   res.json(
     data
-      ? { connected: true, shop_domain: data.shop_domain, shop_name: data.shop_name, last_sync: data.last_sync }
-      : { connected: false }
+      ? {
+          connected: true,
+          shop_domain: data.shop_domain,
+          shop_name: data.shop_name,
+          last_sync: data.last_sync ?? null,
+          sync_error: null,
+          next_sync: null,
+        }
+      : { connected: false, last_sync: null, sync_error: null, next_sync: null }
   );
 });
 
@@ -840,10 +847,12 @@ router.post('/push', requireAuth, async (req, res) => {
 
 // ─── POST /api/shopify/ai-analyze ────────────────────────────────────────────
 router.post('/ai-analyze', checkLimit, async (req, res) => {
-  const { productIds, analysisType } = req.body || {};
+  const { productIds, analysisType, preview } = req.body || {};
 
-  const bulkLimit = req.plan?.max_bulk_size ?? null;
-  if (bulkLimit !== null && Array.isArray(productIds) && productIds.length > bulkLimit) {
+  // Preview mode: onboarding first-value flow. Bypass bulk limits, cap at 3 suggestions.
+  const isPreview = !!preview;
+  const bulkLimit = isPreview ? 3 : (req.plan?.max_bulk_size ?? null);
+  if (!isPreview && bulkLimit !== null && Array.isArray(productIds) && productIds.length > bulkLimit) {
     const planName = req.usage?.plan === 'free' ? 'Ücretsiz' : (req.usage?.plan || 'Mevcut');
     return res.status(402).json({
       error: 'Plan limiti aşıldı',
@@ -851,6 +860,7 @@ router.post('/ai-analyze', checkLimit, async (req, res) => {
       currentPlan: req.usage?.plan,
       limit: bulkLimit,
       upgradeUrl: '/pricing',
+      upgrade_context: 'bulk_scan',
     });
   }
 
@@ -919,7 +929,7 @@ router.post('/ai-analyze', checkLimit, async (req, res) => {
     }
 
     // Fallback yolunda bulk limit'i candidateProducts sayısına uygula
-    if (useSmartFilter && bulkLimit !== null && candidateProducts.length > bulkLimit) {
+    if (!isPreview && useSmartFilter && bulkLimit !== null && candidateProducts.length > bulkLimit) {
       const planName = req.usage?.plan === 'free' ? 'Ücretsiz' : (req.usage?.plan || 'Mevcut');
       return res.status(402).json({
         error: 'Plan limiti aşıldı',
@@ -927,7 +937,12 @@ router.post('/ai-analyze', checkLimit, async (req, res) => {
         currentPlan: req.usage?.plan,
         limit: bulkLimit,
         upgradeUrl: '/pricing',
+        upgrade_context: 'bulk_scan',
       });
+    }
+    // Preview mode: hard-cap the candidate list to 3
+    if (isPreview && candidateProducts.length > 3) {
+      candidateProducts.length = 3;
     }
 
     // Sonraki kod bloğunun candidateProducts'ı işleyebilmesi için products'ı yeniden tanımla

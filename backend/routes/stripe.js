@@ -26,7 +26,7 @@ const PLANS = {
 
 // ── Checkout Session oluştur ─────────────────────
 router.post('/create-checkout-session', async (req, res) => {
-  const { plan, period, userEmail, userId, quantity } = req.body;
+  const { plan, period, userEmail, userId, quantity, trial, intent } = req.body;
 
   if (!plan || !period) {
     return res.status(400).json({ error: 'Plan ve periyot gerekli' });
@@ -59,13 +59,17 @@ router.post('/create-checkout-session', async (req, res) => {
         plan,
         period,
         userId: userId || '',
+        intent: intent || '',
+        trial: trial ? '1' : '0',
       },
       subscription_data: {
         metadata: {
           plan,
           period,
-          userId: userId || ''
-        }
+          userId: userId || '',
+          intent: intent || '',
+        },
+        ...(trial ? { trial_period_days: 7 } : {}),
       },
       allow_promotion_codes: true,
       billing_address_collection: 'auto',
@@ -173,15 +177,36 @@ router.post('/webhook',
             planEndsAt = new Date(now.setFullYear(now.getFullYear() + 1));
           }
 
+          const trialFlag = session.metadata?.trial === '1';
+          // If trial was requested, pull the actual trial_end from the Stripe subscription
+          let trialStartedAt = null;
+          let trialEndsAt = null;
+          let subStatus = 'active';
+          if (trialFlag && session.subscription) {
+            try {
+              const subFull = await getStripe().subscriptions.retrieve(session.subscription);
+              if (subFull?.status === 'trialing' && subFull.trial_end) {
+                subStatus = 'trialing';
+                trialStartedAt = new Date((subFull.trial_start || Date.now() / 1000) * 1000).toISOString();
+                trialEndsAt = new Date(subFull.trial_end * 1000).toISOString();
+              }
+            } catch (e) {
+              console.warn('[stripe] trial subscription lookup failed:', e.message);
+            }
+          }
+
           await sb.from('user_usage').upsert({
             user_id: userId,
             plan: plan,
             stripe_customer_id: session.customer,
             stripe_subscription_id: session.subscription,
-            subscription_status: 'active',
+            subscription_status: subStatus,
             subscription_period: period,
             plan_started_at: new Date().toISOString(),
-            plan_ends_at: planEndsAt?.toISOString()
+            plan_ends_at: planEndsAt?.toISOString(),
+            trial_started_at: trialStartedAt,
+            trial_ends_at: trialEndsAt,
+            trial_used: trialFlag ? true : undefined,
           }, { onConflict: 'user_id' });
 
           console.log(`✅ Plan güncellendi: ${userId} → ${plan} (${period})`);
@@ -236,11 +261,14 @@ router.post('/webhook',
           newPlan = 'business';
         }
         const subStatus = sub.status === 'active' ? 'active' : sub.status;
+        const trialEndIso = sub.trial_end ? new Date(sub.trial_end * 1000).toISOString() : null;
         await sbUpd.from('user_usage')
           .update({
             plan: newPlan,
             subscription_status: subStatus,
             plan_ends_at: new Date(sub.current_period_end * 1000).toISOString(),
+            trial_ends_at: trialEndIso,
+            trial_used: sub.trial_end ? true : undefined,
           })
           .eq('stripe_subscription_id', sub.id);
 

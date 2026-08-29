@@ -107,7 +107,17 @@ async function checkLimit(req, res, next) {
   let usage = await getOrCreateUsage(user.id);
   usage = await resetIfNeeded(usage, user.id);
 
-  const plan = PLANS[usage.plan] || PLANS.free;
+  // Trial handling: if trial_ends_at is in the future and status is 'trialing',
+  // give Pro entitlement regardless of the stored plan.
+  const trialEnds = usage.trial_ends_at ? new Date(usage.trial_ends_at).getTime() : 0;
+  const trialActive = usage.subscription_status === 'trialing' && trialEnds > Date.now();
+  const effectivePlanKey = trialActive ? 'pro' : (usage.plan || 'free');
+  // If trial expired, downgrade in-memory (webhook will sync DB)
+  if (usage.subscription_status === 'trialing' && trialEnds && trialEnds <= Date.now()) {
+    usage = { ...usage, plan: 'free', subscription_status: 'expired' };
+  }
+
+  const plan = PLANS[effectivePlanKey] || PLANS.free;
 
   const bonusCommands = usage.ph_bonus_commands || 0;
   if (plan.ai_commands_per_day !== Infinity &&

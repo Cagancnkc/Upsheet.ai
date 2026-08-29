@@ -831,7 +831,7 @@ async function handleSubmit() {
   var _authParams   = new URLSearchParams(window.location.search);
   var _authRedirect = _authParams.get('redirect');
   var _authIntegration = _authParams.get('integration');
-  var _appDest = '/app';
+  var _appDest = currentMode === 'signup' ? '/app?onboarding=welcome' : '/app';
   if (_authRedirect === 'automations') _appDest = '/app?open=integrations';
   if (_authRedirect === 'app') _appDest = '/app';
   if (_authRedirect) {
@@ -842,6 +842,7 @@ async function handleSubmit() {
   var _baseUrl   = (window.location.hostname === 'localhost') ? 'http://localhost:3000/' : 'https://mocksheets.com/';
   var redirectTo = _baseUrl + _appDest;
 
+  if (typeof gtag === 'function') gtag('event', currentMode === 'signup' ? 'sign_up_start' : 'sign_in_start');
   try {
     var result;
     if (currentMode === 'signup') {
@@ -860,6 +861,7 @@ async function handleSubmit() {
     }
 
     if (result.error) {
+      if (typeof gtag === 'function') gtag('event', currentMode === 'signup' ? 'sign_up_error' : 'sign_in_error', { error_message: String(result.error.message).slice(0, 100) });
       errEl.textContent   = translateError(result.error.message);
       errEl.style.display = 'block';
       btn.disabled = false;
@@ -867,6 +869,8 @@ async function handleSubmit() {
       return;
     }
 
+    if (typeof gtag === 'function') gtag('event', currentMode === 'signup' ? 'sign_up_success' : 'sign_in_success');
+    if (currentMode === 'signup' && typeof gtag === 'function') gtag('event', 'sign_up_complete', { method: 'email_otp' });
     // Success
     if (currentMode === 'signup' && !result.error) {
       var loopsBase = window.location.hostname === 'localhost'
@@ -884,6 +888,7 @@ async function handleSubmit() {
     if (_hEl) _hEl.textContent = '📬 E-postanızı kontrol edin';
 
   } catch(e) {
+    if (typeof gtag === 'function') gtag('event', currentMode === 'signup' ? 'sign_up_error' : 'sign_in_error', { error_message: String(e?.message || e).slice(0, 100) });
     errEl.textContent   = 'Beklenmeyen bir hata oluştu. Lütfen tekrar deneyin.';
     errEl.style.display = 'block';
     btn.disabled = false;

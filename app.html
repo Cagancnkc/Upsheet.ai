@@ -24,6 +24,27 @@
 
   gtag('config', 'G-H0KT59S6GP');
 </script>
+<script>
+(function() {
+  if (!('PerformanceObserver' in window)) return;
+  try {
+    new PerformanceObserver(function(list) {
+      list.getEntries().forEach(function(entry) {
+        if (typeof gtag === 'function') gtag('event', 'web_vitals', { metric_name: entry.name, metric_value: Math.round(entry.value), metric_rating: entry.rating || 'unknown' });
+      });
+    }).observe({ type: 'largest-contentful-paint', buffered: true });
+  } catch (_) {}
+  try {
+    new PerformanceObserver(function(list) {
+      list.getEntries().forEach(function(entry) {
+        if (entry.name === 'first-contentful-paint' && typeof gtag === 'function') {
+          gtag('event', 'web_vitals', { metric_name: 'FCP', metric_value: Math.round(entry.startTime) });
+        }
+      });
+    }).observe({ type: 'paint', buffered: true });
+  } catch (_) {}
+})();
+</script>
 <meta charset="utf-8" />
 <title>Mocksheets — Shopify Catalog Manager</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -785,6 +806,7 @@
         <button id="mobile-menu-btn" type="button" aria-label="Menüyü Aç" style="display:none;width:32px;height:32px;border:0.5px solid #e5e7eb;border-radius:8px;background:#fff;cursor:pointer;align-items:center;justify-content:center;flex-shrink:0;"><i class="ti ti-menu-2" style="font-size:16px;color:#374151;"></i></button>
         <img src="/images/brand/logo-128x128.png" alt="mocksheets" style="width:24px;height:24px;object-fit:contain;flex-shrink:0;">
         <span style="font-size:15px;font-weight:600;color:#111827;">mocksheets<span style="color:#16a34a;">.</span></span>
+        <span id="ms-demo-badge" class="ms-demo-badge" style="display:none;">Demo görünümü</span>
       </div>
       <div style="display:flex;align-items:center;gap:16px;">
         <div style="position:relative;">
@@ -911,8 +933,11 @@
 <script>if (typeof renderAutomationList === 'function') renderAutomationList();</script>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdn.jsdelivr.net/npm/@anthropic-ai/sdk@4.12.0/index.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/heatmap.js/2.0.5/heatmap.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/@anthropic-ai/sdk@4.12.0/index.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/heatmap.js/2.0.5/heatmap.min.js"></script>
+<script src="js/state.js"></script>
+<script src="js/analytics.js"></script>
+<script src="js/onboarding.js"></script>
 
 <script>
 // ═══════════════════════════════════════════════════════════════════════
@@ -1090,9 +1115,13 @@ function loadDemoData() {
 // ═══════════════════════════════════════════════════════════════════════
 
 async function syncShopifyData() {
+  // Guard: prevent double-fire while a sync is in-flight
+  if (window.MS && MS.state && MS.state.get().sync && MS.state.get().sync.inFlight) return;
+  if (window.MS && MS.state) MS.state.set({ sync: { inFlight: true, lastError: null } });
   try {
-    const btn = event && event.target ? event.target.closest('.sf-sync-btn') : null;
-    if (btn) btn.textContent = '⏳ Senkronize ediliyor...';
+    const btn = (typeof event !== 'undefined' && event && event.target) ? event.target.closest('button, .sf-sync-btn') : null;
+    if (btn) { btn.disabled = true; btn.dataset.busy = '1'; }
+    if (btn && btn.classList && btn.classList.contains('sf-sync-btn')) btn.textContent = '⏳ Senkronize ediliyor...';
 
     const response = await fetch(`${API_URL}/api/shopify/sync`, {
       headers: { ...(await authHeaders()) }
@@ -1110,11 +1139,28 @@ async function syncShopifyData() {
 
     const data = await response.json();
     catalogData = data;
-    syncHistory.push({ date: new Date().toLocaleString('tr-TR'), ts: Date.now(), products: (data.products||[]).length, orders: (data.orders||[]).length });
+    const productCount = (data.products || []).length;
+    syncHistory.push({ date: new Date().toLocaleString('tr-TR'), ts: Date.now(), products: productCount, orders: (data.orders||[]).length });
     localStorage.setItem('mocksheets_last_sync', new Date().toISOString());
     addActivityLog('Shopify senkronizasyonu başarılı');
+    try { window.MS?.onboarding?.recordEvent?.('catalog_scan_complete', { products: productCount }); } catch (_) {}
     updateUI();
     if (typeof renderDashboard === 'function') renderDashboard();
+    renderHeroMetrics();
+    renderCatalogHealth();
+    renderHealthTrend();
+
+    // Publish sync results to central state
+    if (window.MS && MS.state) {
+      MS.state.set({
+        connection: MS.state.CONNECTION.CONNECTED,
+        mode: MS.state.MODE.LIVE,
+        sync: { inFlight: false, lastSuccess: new Date().toISOString(), lastError: null },
+        data: { products: productCount },
+      });
+      MS.state.clearRetry('syncShopifyData');
+    }
+    if (window.MS && MS.toast) MS.toast.success('Senkronizasyon tamamlandı');
 
     if (btn) {
       btn.textContent = '✓ Senkronize Edildi';
@@ -1124,7 +1170,16 @@ async function syncShopifyData() {
     }
   } catch (error) {
     console.error('Shopify sync error:', error);
-    toast('Shopify senkronizasyonu başarısız oldu', 'error');
+    const n = (window.MS && MS.state) ? MS.state.incRetry('syncShopifyData') : 0;
+    if (window.MS && MS.state) MS.state.set({ sync: { inFlight: false, lastError: (error && error.message) || 'sync_failed' } });
+    if (n >= 3) toast('Senkronizasyon 3 kez başarısız — Destek ile iletişime geçin', 'error');
+    else toast('Shopify senkronizasyonu başarısız oldu', 'error');
+  } finally {
+    const btn2 = (typeof event !== 'undefined' && event && event.target) ? event.target.closest('button, .sf-sync-btn') : null;
+    if (btn2) { btn2.disabled = false; delete btn2.dataset.busy; }
+    if (window.MS && MS.state && MS.state.get().sync && MS.state.get().sync.inFlight) {
+      MS.state.set({ sync: { inFlight: false } });
+    }
   }
 }
 
@@ -1163,6 +1218,7 @@ async function checkShopifyStatus() {
     const d = await r.json();
     const connectBtn = document.getElementById('google-shopify-connect-btn');
     if (d.connected) {
+      try { window.MS?.onboarding?.recordEvent?.('shopify_connect_success'); } catch (_) {}
       shopifyStore = d.shop_name;
       document.title = `Mocksheets — ${shopifyStore}`;
       const storeNameEl = document.getElementById('sidebar-store-name');
@@ -1335,12 +1391,29 @@ async function loadUserPlan() {
     const data = await res.json();
     window._userPlan = data.plan;
 
+    if (window.MS && MS.state) {
+      MS.state.set({
+        plan: {
+          loaded: true,
+          tier: data.plan || 'free',
+          displayName: data.plan_name || 'Ücretsiz',
+        },
+      });
+    }
+
     const planNameEl = document.getElementById('sidebar-plan-name');
     const planBar    = document.getElementById('sidebar-plan-bar');
     const planUsage  = document.getElementById('sidebar-plan-usage');
     const upgradeBtn = document.getElementById('sidebar-plan-upgrade-btn');
 
     if (planNameEl) planNameEl.textContent = data.plan_name || 'Ücretsiz';
+
+    const chipLabel = document.getElementById('dash-chat-model-label');
+    if (chipLabel) {
+      chipLabel.textContent = data.plan === 'pro' || data.plan === 'business' || data.plan === 'ultra'
+        ? 'Mocksheets Pro'
+        : 'Mocksheets';
+    }
 
     if (data.plan === 'free') {
       const used  = data.used?.today ?? 0;
@@ -1444,6 +1517,202 @@ function toast(message, type = 'info') {
     el.classList.remove('show');
     setTimeout(() => el.remove(), 350);
   }, 3000);
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// MS: TOAST WRAPPER, BUSY GUARD, GLOBAL NAV STUBS, DATA-BIND RENDER
+// ═══════════════════════════════════════════════════════════════════════
+
+// MS.toast namespace (thin wrapper over existing toast())
+(function(){
+  window.MS = window.MS || {};
+  window.MS.toast = {
+    success: function(m){ try { toast(m, 'success'); } catch(_) { console.log('[toast:success]', m); } },
+    error:   function(m){ try { toast(m, 'error');   } catch(_) { console.error('[toast:error]', m); } },
+    info:    function(m){ try { toast(m, 'info');    } catch(_) { console.log('[toast:info]', m); } },
+  };
+})();
+
+// Prevent double-clicks on async actions
+async function withBusy(btnOrEvent, asyncFn) {
+  let btn = null;
+  if (btnOrEvent && btnOrEvent.nodeType === 1) btn = btnOrEvent;
+  else if (btnOrEvent && btnOrEvent.target && btnOrEvent.target.closest) {
+    btn = btnOrEvent.target.closest('button, [role="button"]');
+  }
+  if (btn && btn.dataset.busy === '1') return; // already in-flight
+  if (btn) { btn.disabled = true; btn.dataset.busy = '1'; }
+  try {
+    return await asyncFn();
+  } finally {
+    if (btn) { btn.disabled = false; delete btn.dataset.busy; }
+  }
+}
+
+// Route table for navigateTo — maps a friendly key to a view id understood by setView.
+const MS_NAV_MAP = {
+  dashboard:    'dashboard',
+  'ai-chat':    'ai-chat',
+  chat:         'ai-chat',
+  catalog:      'catalog-check',
+  'catalog-check':'catalog-check',
+  validation:   'catalog-check',
+  products:     'catalog-check',
+  sync:         'sync',
+  history:      'history',
+  settings:     'settings',
+};
+function navigateTo(view) {
+  const target = MS_NAV_MAP[view] || view || 'dashboard';
+  try {
+    if (typeof setView === 'function') { setView(target); return; }
+    if (typeof showView === 'function') { showView(target + '-view'); return; }
+  } catch (e) {
+    console.error('[navigateTo] error', e);
+    if (window.MS && MS.toast) MS.toast.error('Sayfaya geçilemedi');
+  }
+}
+window.navigateTo = navigateTo;
+
+function openUpgradeModal() {
+  try {
+    if (typeof showShopifyUpgradePopup === 'function') { showShopifyUpgradePopup(); return; }
+  } catch (_) {}
+  // Fallback: navigate to /pricing
+  try { window.location.href = '/pricing'; }
+  catch (_) { if (window.MS && MS.toast) MS.toast.info('Planı yükseltmek için /pricing sayfasını açın'); }
+}
+window.openUpgradeModal = openUpgradeModal;
+
+function openDemoMode() {
+  try {
+    if (window.MS && MS.state) {
+      MS.state.set({ mode: MS.state.MODE.DEMO, connection: MS.state.CONNECTION.NOT_CONNECTED, data: {
+        products: 248, visitors: 12480, sales: 312, revenue: 186400,
+        catalog: { issues: 30, affectedProducts: 39, items: [] },
+        sources: { organic: 62, direct: 24, other: 14 },
+      }});
+    }
+    if (typeof loadDemoData === 'function') loadDemoData();
+    else if (typeof setView === 'function') setView('dashboard');
+    if (window.MS && MS.toast) MS.toast.success('Demo görünümü açıldı');
+    if (typeof gtag === 'function') gtag('event', 'demo_open', { source: 'dashboard_empty' });
+  } catch (e) { console.error('[openDemoMode]', e); }
+}
+window.openDemoMode = openDemoMode;
+
+async function refreshData() {
+  if (window.MS && MS.state) MS.state.set({ mode: MS.state.MODE.LOADING });
+  if (typeof gtag === 'function') gtag('event', 'data_refresh_start');
+  try {
+    if (typeof checkShopifyStatus === 'function') await checkShopifyStatus();
+    if (typeof loadUserPlan === 'function') await loadUserPlan();
+    if (window.MS && MS.state) MS.state.clearRetry('refreshData');
+    if (window.MS && MS.toast) MS.toast.success('Veriler yenilendi');
+    if (typeof gtag === 'function') gtag('event', 'data_refresh_success');
+  } catch (e) {
+    console.error('[refreshData]', e);
+    const n = (window.MS && MS.state) ? MS.state.incRetry('refreshData') : 0;
+    if (n >= 3) { if (MS.toast) MS.toast.error('Yenilenemiyor — Destek ile iletişime geçin'); }
+    else if (window.MS && MS.toast) MS.toast.error('Veriler yenilenemedi');
+    if (window.MS && MS.state) MS.state.set({ mode: MS.state.MODE.ERROR });
+    if (typeof gtag === 'function') gtag('event', 'data_refresh_error', { error_message: String(e?.message || e).slice(0, 100) });
+  }
+}
+window.refreshData = refreshData;
+
+async function retryData() { return refreshData(); }
+window.retryData = retryData;
+
+async function handleCsvImport(event) {
+  const file = event?.target?.files?.[0];
+  if (!file) return;
+  if (typeof gtag === 'function') gtag('event', 'csv_upload_start', { file_type: file.name.split('.').pop() });
+  try {
+    const formData = new FormData();
+    formData.append('file', file);
+    const res = await fetch(API_URL + '/api/integrations/csv-import', {
+      method: 'POST',
+      headers: { Authorization: 'Bearer ' + getAuthToken() },
+      body: formData,
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    if (window.MS && MS.toast) MS.toast.success('CSV başarıyla içe aktarıldı');
+    if (typeof gtag === 'function') gtag('event', 'csv_upload_success');
+    if (typeof refreshData === 'function') refreshData();
+  } catch (e) {
+    console.error('[handleCsvImport]', e);
+    if (window.MS && MS.toast) MS.toast.error('CSV içe aktarılamadı');
+    if (typeof gtag === 'function') gtag('event', 'csv_upload_error', { error_message: String(e?.message || e).slice(0, 100) });
+  } finally {
+    event.target.value = '';
+  }
+}
+window.handleCsvImport = handleCsvImport;
+
+async function runCatalogScan() {
+  try {
+    const res = await fetch(API_URL + '/api/integrations/health-snapshot', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + getAuthToken() },
+      body: JSON.stringify({}),
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    toast('Katalog taraması başlatıldı', 'success');
+    setTimeout(renderHealthTrend, 2000);
+  } catch (e) {
+    console.warn('[runCatalogScan]', e);
+    toast('Tarama başlatılamadı', 'error');
+  }
+}
+
+// Format helpers for data-bind rendering
+function _msFmtNumber(v) {
+  if (v === null || v === undefined || v === '') return '—';
+  try { return Number(v).toLocaleString('tr-TR'); } catch(_) { return String(v); }
+}
+function _msFmtCurrency(v) {
+  if (v === null || v === undefined || v === '') return '—';
+  try { return '₺' + Number(v).toLocaleString('tr-TR'); } catch(_) { return '₺' + v; }
+}
+
+// Read state.data.<path> — supports "data.products" or "data.catalog.issues"
+function _msReadBind(state, key) {
+  if (!key) return undefined;
+  const parts = key.split('.');
+  let cur = state;
+  for (const p of parts) {
+    if (cur == null) return undefined;
+    cur = cur[p];
+  }
+  return cur;
+}
+
+function renderBindings(state) {
+  if (!state) return;
+  document.querySelectorAll('[data-bind]').forEach(node => {
+    const key = node.getAttribute('data-bind');
+    const raw = _msReadBind(state, key);
+    const fmt = node.getAttribute('data-bind-format') || 'number';
+    let out;
+    if (raw === null || raw === undefined) out = '—';
+    else if (fmt === 'currency') out = _msFmtCurrency(raw);
+    else if (fmt === 'text') out = String(raw);
+    else out = _msFmtNumber(raw);
+    node.textContent = out;
+  });
+
+  // Demo badge in header
+  try {
+    const badge = document.getElementById('ms-demo-badge');
+    const show = state.mode === (MS.state && MS.state.MODE.DEMO);
+    if (badge) badge.style.display = show ? 'inline-flex' : 'none';
+  } catch(_) {}
+}
+
+// Subscribe once at load
+if (window.MS && MS.state) {
+  MS.state.subscribe(renderBindings);
 }
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -2183,16 +2452,31 @@ function createLoadingSpinner(size) {
   return `<div style="width:${s}px;height:${s}px;border:2px solid #e5e7eb;border-top-color:#16a34a;border-radius:999px;animation:spin .6s linear infinite;display:inline-block;"></div>`;
 }
 function renderDashEmptyState(iconClass, message, subMessage) {
-  return `<div style="text-align:center;padding:32px 16px;">
+  return `<div class="ms-empty" style="text-align:center;padding:32px 16px;">
     <i class="ti ${iconClass}" style="font-size:24px;color:#d1d5db;margin-bottom:8px;display:block;"></i>
     <p style="font-size:12px;color:#6b7280;margin:0;">${message}</p>
     ${subMessage ? `<p style="font-size:11px;color:#9ca3af;margin:4px 0 0;">${subMessage}</p>` : ''}
+    <div class="ms-empty__actions" style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:14px;">
+      <button type="button" onclick="openShopifyConnectModal()" style="background:#111827;border:none;color:#fff;font-size:12px;font-weight:600;padding:8px 14px;border-radius:9px;cursor:pointer;font-family:'Inter',sans-serif;">Shopify'ı Bağla</button>
+      <button type="button" onclick="openDemoMode()" style="background:#fff;border:1px solid #e5e7eb;color:#374151;font-size:12px;font-weight:600;padding:8px 14px;border-radius:9px;cursor:pointer;font-family:'Inter',sans-serif;">Demo Görünümünü Aç</button>
+      <button type="button" onclick="refreshData()" style="background:#fff;border:1px solid #e5e7eb;color:#374151;font-size:12px;font-weight:600;padding:8px 14px;border-radius:9px;cursor:pointer;font-family:'Inter',sans-serif;">Veriyi Yenile</button>
+    </div>
   </div>`;
 }
 function renderDashErrorState(message) {
-  return `<div style="text-align:center;padding:20px 16px;">
+  const retries = (window.MS && MS.state) ? (MS.state.get().retryCounts.refreshData || 0) : 0;
+  const showSupport = retries >= 3;
+  return `<div class="ms-error" style="text-align:center;padding:20px 16px;">
     <i class="ti ti-alert-circle" style="font-size:20px;color:#fca5a5;margin-bottom:6px;display:block;"></i>
     <p style="font-size:12px;color:#9ca3af;margin:0;">${message || 'Yüklenirken bir sorun oluştu'}</p>
+    <div class="ms-error__actions" style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:14px;">
+      ${showSupport
+        ? `<a href="mailto:destek@mocksheets.com" style="background:#111827;border:none;color:#fff;font-size:12px;font-weight:600;padding:8px 14px;border-radius:9px;cursor:pointer;text-decoration:none;">Destek ile iletişime geç</a>`
+        : `<button type="button" onclick="retryData()" style="background:#111827;border:none;color:#fff;font-size:12px;font-weight:600;padding:8px 14px;border-radius:9px;cursor:pointer;font-family:'Inter',sans-serif;">Tekrar Dene</button>`
+      }
+      <button type="button" onclick="openDemoMode()" style="background:#fff;border:1px solid #e5e7eb;color:#374151;font-size:12px;font-weight:600;padding:8px 14px;border-radius:9px;cursor:pointer;font-family:'Inter',sans-serif;">Demo Görünümünü Aç</button>
+      <button type="button" onclick="openShopifyConnectModal()" style="background:#fff;border:1px solid #e5e7eb;color:#374151;font-size:12px;font-weight:600;padding:8px 14px;border-radius:9px;cursor:pointer;font-family:'Inter',sans-serif;">Shopify'ı Bağla</button>
+    </div>
   </div>`;
 }
 
@@ -2269,6 +2553,159 @@ async function loadHeatmapForPage(pagePath) {
   }
 }
 
+// ───────────── Onboarding & dashboard helpers ─────────────
+function _msOnb() { return (window.MS && MS.onboarding && MS.onboarding.get()) || null; }
+function _msMode() { return (window.MS && MS.state) ? MS.state.get().mode : 'empty'; }
+function _demoBadge() { return _msMode() === 'demo' ? '<span class="ms-demo-badge" style="margin-left:8px">Demo</span>' : ''; }
+function _trialBadge() {
+  const o = _msOnb();
+  if (!o?.trial || o.trial.status !== 'active') return '';
+  return `<span class="ms-trial-badge">Pro Deneme • ${o.trial.daysLeft} gün</span>`;
+}
+
+function renderOnboardingWelcomeCard() {
+  const o = _msOnb();
+  const step = o?.step || 'welcome';
+  const stepOrder = { welcome:0, store_connected:1, scan_complete:2, first_value:3, activated:4 };
+  const done = (name) => stepOrder[step] > stepOrder[name] ? '✓' : '○';
+  const activeStep = step === 'welcome' ? 'connect' : (step === 'store_connected' ? 'scan' : (step === 'scan_complete' ? 'apply' : 'connect'));
+  return `
+    <div class="dash-empty-store" style="text-align:center;padding:32px 20px;max-width:640px;margin:0 auto;">
+      <h3 style="font-size:20px;font-weight:700;margin:0 0 8px;color:#0f172a;">Shopify kataloğunu 3 adımda iyileştirin</h3>
+      <p style="font-size:13.5px;color:#64748b;margin:0 0 24px;line-height:1.55;">Mağazanızı bağlayın, kataloğunuzu tarayın ve ilk SEO iyileştirmelerinizi hemen görün.</p>
+      <ol style="text-align:left;list-style:none;padding:0;margin:0 auto 24px;max-width:420px;display:flex;flex-direction:column;gap:10px;">
+        <li style="display:flex;gap:10px;align-items:center;padding:12px 14px;border:1px solid ${activeStep==='connect'?'#059669':'#e5e7eb'};border-radius:12px;background:${activeStep==='connect'?'#f0fdf4':'#fff'};">
+          <span style="width:26px;height:26px;border-radius:50%;background:${stepOrder[step]>0?'#059669':'#e5e7eb'};color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;">${done('welcome')==='✓'?'✓':'1'}</span>
+          <span style="font-size:13.5px;color:#0f172a;font-weight:600;">Shopify mağazanı bağla</span>
+        </li>
+        <li style="display:flex;gap:10px;align-items:center;padding:12px 14px;border:1px solid ${activeStep==='scan'?'#059669':'#e5e7eb'};border-radius:12px;background:${activeStep==='scan'?'#f0fdf4':'#fff'};">
+          <span style="width:26px;height:26px;border-radius:50%;background:${stepOrder[step]>1?'#059669':'#e5e7eb'};color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;">${done('store_connected')==='✓'?'✓':'2'}</span>
+          <span style="font-size:13.5px;color:#0f172a;font-weight:600;">Kataloğunu tara</span>
+        </li>
+        <li style="display:flex;gap:10px;align-items:center;padding:12px 14px;border:1px solid ${activeStep==='apply'?'#059669':'#e5e7eb'};border-radius:12px;background:${activeStep==='apply'?'#f0fdf4':'#fff'};">
+          <span style="width:26px;height:26px;border-radius:50%;background:${stepOrder[step]>2?'#059669':'#e5e7eb'};color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;">${done('scan_complete')==='✓'?'✓':'3'}</span>
+          <span style="font-size:13.5px;color:#0f172a;font-weight:600;">İlk iyileştirmeni uygula</span>
+        </li>
+      </ol>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+        <button type="button" onclick="openShopifyConnectModal()" style="background:#059669;color:#fff;border:none;padding:12px 22px;border-radius:10px;font-weight:600;font-size:14px;cursor:pointer;">Shopify'ı Bağla</button>
+        <button type="button" onclick="openDemoMode()" style="background:#fff;border:1px solid #cbd5e1;color:#475569;padding:12px 22px;border-radius:10px;font-weight:600;font-size:14px;cursor:pointer;">Demo Görünümünü Aç</button>
+      </div>
+    </div>
+  `;
+}
+
+function renderConnectedStoreLiveBlock() {
+  const o = _msOnb();
+  const scanned = o?.counters?.scannedProducts || 0;
+  if (!scanned) {
+    return `
+      <div style="text-align:center;padding:28px 20px;">
+        <h4 style="font-size:15px;font-weight:700;margin:0 0 8px;color:#0f172a;">Mağaza bağlı ${_trialBadge()}</h4>
+        <p style="font-size:13px;color:#64748b;margin:0 0 16px;">Şimdi ilk katalog taramanı çalıştır — ilk 3 SEO iyileştirmeni ücretsiz göster.</p>
+        <button type="button" onclick="runFirstCatalogScan()" style="background:#059669;color:#fff;border:none;padding:11px 22px;border-radius:10px;font-weight:600;font-size:13.5px;cursor:pointer;">İlk Taramayı Başlat</button>
+      </div>
+    `;
+  }
+  return `
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+      <span style="font-size:13.5px;font-weight:600;color:#111827;">Taranan Ürünler ${_demoBadge()}</span>
+      <span style="font-size:22px;font-weight:700;color:#111827;">${scanned}</span>
+    </div>
+    <p style="font-size:12.5px;color:#64748b;margin:8px 0 0;">Canlı aktivite akışı yakında burada görünecek.</p>
+  `;
+}
+
+function renderKpiCard(label, bindKey) {
+  const badge = _demoBadge();
+  return `
+    <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:18px;box-shadow:0 1px 2px rgba(16,24,40,0.03);display:flex;flex-direction:column;gap:6px;">
+      <span style="font-size:11.5px;color:#9ca3af;font-weight:600;">${label}${badge}</span>
+      <span data-bind="${bindKey}" style="font-size:22px;font-weight:700;color:#111827;line-height:1;">—</span>
+      <span style="font-size:11px;color:#9ca3af;">İlk tarama sonrası</span>
+    </div>
+  `;
+}
+
+function renderRecommendationsEmpty() {
+  const o = _msOnb();
+  if (o?.step === 'scan_complete' || o?.step === 'first_value') {
+    return `<div id="ai-recs-list" style="padding:12px 0;"><p style="font-size:12.5px;color:#9ca3af;text-align:center;padding:16px;">Öneriler yükleniyor…</p></div>`;
+  }
+  return `
+    <div style="text-align:center;padding:28px 20px;">
+      <p style="font-size:13px;color:#475569;margin:0 0 14px;">Henüz öneri yok — ilk katalog taramanı çalıştır, ücretsiz 3 öneri görelim.</p>
+      <button type="button" onclick="runFirstCatalogScan()" style="background:#111827;color:#fff;border:none;padding:10px 20px;border-radius:9px;font-weight:600;font-size:13px;cursor:pointer;">İlk Taramayı Başlat</button>
+    </div>
+  `;
+}
+
+async function runFirstCatalogScan() {
+  const btnAll = document.querySelectorAll('[onclick*="runFirstCatalogScan"]');
+  btnAll.forEach(b => { b.disabled = true; b.textContent = 'Taranıyor…'; });
+  try {
+    if (typeof MS?.track === 'function') MS.track('catalog_scan_start', {});
+    const headers = await authHeaders();
+    const r = await fetch(API_URL + '/api/shopify/ai-analyze', {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({ preview: true }),
+    });
+    if (!r.ok) {
+      const err = await r.json().catch(() => ({}));
+      if (typeof toast === 'function') toast(err.message || 'Tarama başlatılamadı', 'error');
+      return;
+    }
+    const data = await r.json();
+    if (typeof MS?.onboarding?.recordEvent === 'function') {
+      MS.onboarding.recordEvent('catalog_scan_complete', { scannedProducts: data.totalScanned || 0 });
+    }
+    renderPreviewRecommendations(data.suggestions || []);
+    if (typeof toast === 'function') toast(`${data.totalScanned || 0} ürün tarandı, ${(data.suggestions||[]).length} öneri hazır.`, 'success');
+  } catch (e) {
+    if (typeof toast === 'function') toast('Tarama başarısız: ' + e.message, 'error');
+  } finally {
+    btnAll.forEach(b => { b.disabled = false; });
+  }
+}
+
+function renderPreviewRecommendations(suggestions) {
+  const panel = document.getElementById('ai-recommendations-panel');
+  if (!panel) return;
+  if (typeof MS?.onboarding?.recordEvent === 'function') {
+    MS.onboarding.recordEvent('recommendation_view', { count: suggestions.length });
+  }
+  if (!suggestions.length) {
+    panel.innerHTML = `<div style="padding:20px;text-align:center;font-size:13px;color:#64748b;">Kataloğunda kritik sorun bulunamadı — harika!</div>`;
+    return;
+  }
+  const rows = suggestions.slice(0, 3).map((s, i) => `
+    <div style="display:flex;align-items:center;gap:14px;padding:16px 24px;${i<2?'border-bottom:1px solid #f6f7f8;':''}">
+      <span style="font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:999px;background:#dbeafe;color:#1d4ed8;white-space:nowrap;">${(s.field||'ÖNERİ').toUpperCase()}</span>
+      <span style="font-size:13.5px;color:#111827;flex:1;">${(s.reason||s.new_value||'').toString().slice(0, 180)}</span>
+      <button data-sid="${s.product_id||i}" onclick="applyPreviewRecommendation(${i})" style="background:#059669;border:none;color:#fff;font-size:12px;font-weight:600;padding:8px 16px;border-radius:9px;cursor:pointer;white-space:nowrap;">Uygula</button>
+    </div>
+  `).join('');
+  panel.innerHTML = rows + `
+    <div style="padding:14px 24px;border-top:1px solid #f6f7f8;text-align:center;">
+      <button onclick="MS.onboarding.openUpgrade({trigger:'recommendations_limit', intent:'view_all_recommendations'})" style="background:transparent;border:none;color:#059669;font-weight:600;font-size:13px;cursor:pointer;">Tüm önerileri gör →</button>
+    </div>
+  `;
+  window._msPreviewSuggestions = suggestions;
+}
+
+function applyPreviewRecommendation(idx) {
+  const s = (window._msPreviewSuggestions || [])[idx];
+  if (!s) return;
+  if (typeof MS?.onboarding?.recordEvent === 'function') {
+    MS.onboarding.recordEvent('recommendation_apply', { field: s.field });
+    // First value = first successful apply
+    MS.onboarding.recordEvent('first_value_reached', {});
+  }
+  if (typeof toast === 'function') toast('İlk iyileştirmen tamamlandı!', 'success');
+  // TODO: hook into existing push pipeline (_pendingAiChanges + /push)
+}
+
 function renderDashboard() {
   const view = document.getElementById('dashboard-view');
   if (!view) return;
@@ -2285,7 +2722,7 @@ function renderDashboard() {
         <span style="width:6px;height:6px;border-radius:50%;background:#16a34a;animation:ms-pulse 1.8s ease-in-out infinite;"></span>
         Canlı
       </span>
-      <button onclick="syncShopifyData?.()" style="background:#111827;border:none;color:#fff;font-size:12.5px;font-weight:600;padding:9px 18px;border-radius:10px;cursor:pointer;font-family:'Inter',sans-serif;">Senkronize Et</button>
+      <button onclick="syncShopifyData()" style="background:#111827;border:none;color:#fff;font-size:12.5px;font-weight:600;padding:9px 18px;border-radius:10px;cursor:pointer;font-family:'Inter',sans-serif;">Senkronize Et</button>
     </div>
   </div>
 
@@ -2298,73 +2735,7 @@ function renderDashboard() {
     </div>
     <!-- TAB: Canlı Mağaza (default shown) -->
     <div id="dash-tab-panel-store" style="padding:22px 24px;${shopifyStore ? 'display:flex;flex-direction:column;gap:14px;' : ''}">
-      ${!shopifyStore ? `
-      <div class="dash-empty-store">
-        <svg class="dash-empty-store__logo" viewBox="0 0 109 124" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <path d="M74.7 23.5c0-.4-.4-.7-.7-.7-.4 0-6.9-.5-6.9-.5s-4.6-4.5-5.1-5c-.5-.5-1.5-.4-1.9-.3-.1 0-1 .3-2.5.8-1.5-4.3-4.1-8.2-8.7-8.2h-.4C47.2 7.9 45.6 7 44.2 7c-10.7 0-15.8 13.4-17.4 20.2-4.2 1.3-7.2 2.2-7.6 2.4-2.3.7-2.4.8-2.7 3-.2 1.6-6.4 49.4-6.4 49.4L58 92l30.5-6.6C88.5 85.4 74.7 23.9 74.7 23.5zM53.7 27.6l-8.2 2.5c0-3.5-.5-8.5-2.5-12.1 5.2 1 8.6 6.9 10.7 9.6zm-14.4-9c1.7 1.5 3.5 4 4.6 8.9L34 30.5c1-4.6 3-9.1 5.3-11.9zm-4-3.3c1 0 1.9.3 2.8.9-3.5 1.6-7.2 5.8-8.8 14L22 32.7c2.1-7.1 6.5-17.4 13.3-17.4z" fill="#95BF47"/>
-          <path d="M74 22.8c-.4 0-6.9-.5-6.9-.5s-4.6-4.5-5.1-5c-.2-.2-.4-.3-.7-.3v75l30.5-6.6S74.4 23.9 74.4 23.5c-.1-.4-.4-.7-.4-.7z" fill="#5E8E3E"/>
-          <path d="M45.5 47.3l-3.8 11.2s-3.3-1.8-7.4-1.8c-6 0-6.3 3.8-6.3 4.7 0 5.2 13.5 7.2 13.5 19.3 0 9.5-6 15.6-14.2 15.6-9.8 0-14.7-6.1-14.7-6.1l2.6-8.7s5.1 4.4 9.5 4.4c2.8 0 4-2.2 4-3.9 0-6.8-11.1-7.1-11.1-18.2 0-9.3 6.7-18.4 20.2-18.4 5 0 7.7 1.9 7.7 1.9z" fill="#fff"/>
-        </svg>
-        <h3 class="dash-empty-store__title">Shopify Mağazanı Bağla</h3>
-        <p class="dash-empty-store__desc">Mağazanız bağlandığında kullanıcılarınızın canlı olarak ne yaptığını anlık olarak takip edebileceksiniz.</p>
-        <button type="button" class="dash-empty-store__btn" onclick="openShopifyConnectModal()">
-          Shopify Mağazanı Bağla
-        </button>
-      </div>
-      ` : `
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
-        <span style="font-size:13.5px;font-weight:600;color:#111827;">Aktif Oturumlar</span>
-        <span style="font-size:22px;font-weight:700;color:#111827;">47</span>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:8px;">
-        <!-- live feed: 9 entries, first has pulsing yellow dot (İŞLENİYOR), rest green/blue/red -->
-        <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:#f9fafb;border:1px solid #f1f2f4;border-radius:12px;">
-          <span style="width:8px;height:8px;border-radius:50%;background:#f59e0b;animation:ms-pulse 1.8s ease-in-out infinite;flex-shrink:0;"></span>
-          <span style="font-size:12.5px;color:#111827;flex:1;">Ziyaretçi ürün sayfasına girdi — Kadife Kesim Ceket</span>
-          <span style="font-size:11.5px;color:#9ca3af;">09:41</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:#f9fafb;border:1px solid #f1f2f4;border-radius:12px;">
-          <span style="width:8px;height:8px;border-radius:50%;background:#16a34a;flex-shrink:0;"></span>
-          <span style="font-size:12.5px;color:#111827;flex:1;">Sipariş tamamlandı — ₺2.400</span>
-          <span style="font-size:11.5px;color:#9ca3af;">09:40</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:#f9fafb;border:1px solid #f1f2f4;border-radius:12px;">
-          <span style="width:8px;height:8px;border-radius:50%;background:#3b82f6;flex-shrink:0;"></span>
-          <span style="font-size:12.5px;color:#111827;flex:1;">Arama: "keten gömlek yazlık"</span>
-          <span style="font-size:11.5px;color:#9ca3af;">09:39</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:#f9fafb;border:1px solid #f1f2f4;border-radius:12px;">
-          <span style="width:8px;height:8px;border-radius:50%;background:#ef4444;flex-shrink:0;"></span>
-          <span style="font-size:12.5px;color:#111827;flex:1;">Sepet terk edildi — ₺4.800</span>
-          <span style="font-size:11.5px;color:#9ca3af;">09:38</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:#f9fafb;border:1px solid #f1f2f4;border-radius:12px;">
-          <span style="width:8px;height:8px;border-radius:50%;background:#16a34a;flex-shrink:0;"></span>
-          <span style="font-size:12.5px;color:#111827;flex:1;">Ürün incelemesi — Yazlık Keten Gömlek</span>
-          <span style="font-size:11.5px;color:#9ca3af;">09:37</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:#f9fafb;border:1px solid #f1f2f4;border-radius:12px;">
-          <span style="width:8px;height:8px;border-radius:50%;background:#3b82f6;flex-shrink:0;"></span>
-          <span style="font-size:12.5px;color:#111827;flex:1;">Filtre: Kategori → Dış Giyim</span>
-          <span style="font-size:11.5px;color:#9ca3af;">09:36</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:#f9fafb;border:1px solid #f1f2f4;border-radius:12px;">
-          <span style="width:8px;height:8px;border-radius:50%;background:#16a34a;flex-shrink:0;"></span>
-          <span style="font-size:12.5px;color:#111827;flex:1;">Sipariş tamamlandı — ₺1.860</span>
-          <span style="font-size:11.5px;color:#9ca3af;">09:34</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:#f9fafb;border:1px solid #f1f2f4;border-radius:12px;">
-          <span style="width:8px;height:8px;border-radius:50%;background:#ef4444;flex-shrink:0;"></span>
-          <span style="font-size:12.5px;color:#111827;flex:1;">Hata: ödeme reddedildi</span>
-          <span style="font-size:11.5px;color:#9ca3af;">09:31</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:#f9fafb;border:1px solid #f1f2f4;border-radius:12px;">
-          <span style="width:8px;height:8px;border-radius:50%;background:#16a34a;flex-shrink:0;"></span>
-          <span style="font-size:12.5px;color:#111827;flex:1;">Yeni ziyaretçi kaydoldu</span>
-          <span style="font-size:11.5px;color:#9ca3af;">09:29</span>
-        </div>
-      </div>
-      `}
+      ${!shopifyStore ? renderOnboardingWelcomeCard() : renderConnectedStoreLiveBlock()}
     </div>
     <!-- TAB: Canlı Aktivite (hidden) -->
     <div id="dash-tab-panel-live" style="display:none;padding:22px 24px;">
@@ -2376,77 +2747,24 @@ function renderDashboard() {
     </div>
   </section>
 
-  <!-- ZİYARETÇİ DAVRANIŞI — 6 metric cards -->
+  <!-- ZİYARETÇİ DAVRANIŞI — 6 metric cards. Live-bound to real data; placeholder — until scan/sync runs. -->
   <section>
     <h2 style="font-size:13px;font-weight:700;margin:0 0 10px;color:#374151;">Ziyaretçi Davranışı</h2>
     <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:12px;">
-      <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:18px;box-shadow:0 1px 2px rgba(16,24,40,0.03);display:flex;flex-direction:column;gap:6px;">
-        <span style="font-size:11.5px;color:#9ca3af;font-weight:600;">Benzersiz Ziyaretçi</span>
-        <span style="font-size:22px;font-weight:700;color:#111827;line-height:1;">12.480</span>
-        <span style="font-size:11.5px;color:#16a34a;font-weight:600;">+8.2%</span>
-      </div>
-      <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:18px;box-shadow:0 1px 2px rgba(16,24,40,0.03);display:flex;flex-direction:column;gap:6px;">
-        <span style="font-size:11.5px;color:#9ca3af;font-weight:600;">Tıklama</span>
-        <span style="font-size:22px;font-weight:700;color:#111827;line-height:1;">34.920</span>
-        <span style="font-size:11.5px;color:#16a34a;font-weight:600;">+4.1%</span>
-      </div>
-      <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:18px;box-shadow:0 1px 2px rgba(16,24,40,0.03);display:flex;flex-direction:column;gap:6px;">
-        <span style="font-size:11.5px;color:#9ca3af;font-weight:600;">Çıkış Oranı</span>
-        <span style="font-size:22px;font-weight:700;color:#111827;line-height:1;">%38.4</span>
-        <span style="font-size:11.5px;color:#16a34a;font-weight:600;">-2.3%</span>
-      </div>
-      <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:18px;box-shadow:0 1px 2px rgba(16,24,40,0.03);display:flex;flex-direction:column;gap:6px;">
-        <span style="font-size:11.5px;color:#9ca3af;font-weight:600;">Sepete Ekleme</span>
-        <span style="font-size:22px;font-weight:700;color:#111827;line-height:1;">2.140</span>
-        <span style="font-size:11.5px;color:#16a34a;font-weight:600;">+11.6%</span>
-      </div>
-      <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:18px;box-shadow:0 1px 2px rgba(16,24,40,0.03);display:flex;flex-direction:column;gap:6px;">
-        <span style="font-size:11.5px;color:#9ca3af;font-weight:600;">Dönüşüm Oranı</span>
-        <span style="font-size:22px;font-weight:700;color:#111827;line-height:1;">%3.8</span>
-        <span style="font-size:11.5px;color:#16a34a;font-weight:600;">+0.6%</span>
-      </div>
-      <div style="background:#fff;border:1px solid #eceef1;border-radius:16px;padding:18px;box-shadow:0 1px 2px rgba(16,24,40,0.03);display:flex;flex-direction:column;gap:6px;">
-        <span style="font-size:11.5px;color:#9ca3af;font-weight:600;">Ort. Oturum Süresi</span>
-        <span style="font-size:22px;font-weight:700;color:#111827;line-height:1;">4dk 12sn</span>
-        <span style="font-size:11.5px;color:#16a34a;font-weight:600;">+5.4%</span>
-      </div>
+      ${renderKpiCard('Benzersiz Ziyaretçi','data.visitors')}
+      ${renderKpiCard('Tıklama','data.clicks')}
+      ${renderKpiCard('Çıkış Oranı','data.exitRate')}
+      ${renderKpiCard('Sepete Ekleme','data.addToCart')}
+      ${renderKpiCard('Dönüşüm Oranı','data.conversion')}
+      ${renderKpiCard('Ort. Oturum Süresi','data.avgSession')}
     </div>
   </section>
 
-  <!-- AI ÖNERİLERİ — 5 rows -->
+  <!-- AI ÖNERİLERİ — live from /ai-analyze -->
   <section>
     <h2 style="font-size:13px;font-weight:700;margin:0 0 10px;color:#374151;">AI Önerileri</h2>
-    <div style="background:#fff;border:1px solid #eceef1;border-radius:18px;box-shadow:0 1px 2px rgba(16,24,40,0.03);overflow:hidden;">
-      <!-- Row 1: VERİ -->
-      <div style="display:flex;align-items:center;gap:14px;padding:16px 24px;border-bottom:1px solid #f6f7f8;">
-        <span style="font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:999px;background:#dbeafe;color:#1d4ed8;white-space:nowrap;">VERİ</span>
-        <span style="font-size:13.5px;color:#111827;flex:1;">Kadife Kesim Ceket sayfasında ortalama 4dk 47sn geçiriliyor — açıklama uzunluğu artırılabilir.</span>
-        <button onclick="navigateTo?.('products')" style="background:#111827;border:none;color:#fff;font-size:12px;font-weight:600;padding:8px 16px;border-radius:9px;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;">Uygula</button>
-      </div>
-      <!-- Row 2: VERİ -->
-      <div style="display:flex;align-items:center;gap:14px;padding:16px 24px;border-bottom:1px solid #f6f7f8;">
-        <span style="font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:999px;background:#dbeafe;color:#1d4ed8;white-space:nowrap;">VERİ</span>
-        <span style="font-size:13.5px;color:#111827;flex:1;">Mobil kullanıcıların %68'i ürün görselini tam yüklemeden çıkıyor — görsel boyutları optimize edilmeli.</span>
-        <button onclick="navigateTo?.('sync')" style="background:#111827;border:none;color:#fff;font-size:12px;font-weight:600;padding:8px 16px;border-radius:9px;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;">Uygula</button>
-      </div>
-      <!-- Row 3: KURAL -->
-      <div style="display:flex;align-items:center;gap:14px;padding:16px 24px;border-bottom:1px solid #f6f7f8;">
-        <span style="font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:999px;background:#dcfce7;color:#15803d;white-space:nowrap;">KURAL</span>
-        <span style="font-size:13.5px;color:#111827;flex:1;">18 üründe SEO başlığı 70 karakteri aşıyor — kısal için toplu düzenleme önerilir.</span>
-        <button onclick="navigateTo?.('validation')" style="background:#111827;border:none;color:#fff;font-size:12px;font-weight:600;padding:8px 16px;border-radius:9px;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;">Uygula</button>
-      </div>
-      <!-- Row 4: VERİ -->
-      <div style="display:flex;align-items:center;gap:14px;padding:16px 24px;border-bottom:1px solid #f6f7f8;">
-        <span style="font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:999px;background:#dbeafe;color:#1d4ed8;white-space:nowrap;">VERİ</span>
-        <span style="font-size:13.5px;color:#111827;flex:1;">Hafta sonu dönüşüm oranı hafta içinden %22 düşük — kampanya veya fiyat testi önerilebilir.</span>
-        <button onclick="openUpgradeModal?.()" style="background:#111827;border:none;color:#fff;font-size:12px;font-weight:600;padding:8px 16px;border-radius:9px;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;">Uygula</button>
-      </div>
-      <!-- Row 5: KURAL -->
-      <div style="display:flex;align-items:center;gap:14px;padding:16px 24px;">
-        <span style="font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:999px;background:#dcfce7;color:#15803d;white-space:nowrap;">KURAL</span>
-        <span style="font-size:13.5px;color:#111827;flex:1;">12 üründe görsel alt metni eksik — erişilebilirlik ve görsel SEO için eklenmeli.</span>
-        <button onclick="navigateTo?.('validation')" style="background:#111827;border:none;color:#fff;font-size:12px;font-weight:600;padding:8px 16px;border-radius:9px;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;">Uygula</button>
-      </div>
+    <div id="ai-recommendations-panel" style="background:#fff;border:1px solid #eceef1;border-radius:18px;box-shadow:0 1px 2px rgba(16,24,40,0.03);overflow:hidden;">
+      ${renderRecommendationsEmpty()}
     </div>
   </section>
 
@@ -2502,8 +2820,8 @@ function renderDashboard() {
           <tr style="border-bottom:1px solid #f6f7f8;">
             <td style="padding:14px 20px;font-weight:600;color:#111827;">Kadife Kesim Ceket</td>
             <td style="padding:14px 16px;text-align:right;color:#6b7280;">8.240</td>
-            <td style="padding:14px 16px;text-align:right;color:#6b7280;">312</td>
-            <td style="padding:14px 16px;text-align:right;color:#6b7280;">₺186.400</td>
+            <td data-bind="data.sales" style="padding:14px 16px;text-align:right;color:#6b7280;">—</td>
+            <td data-bind="data.revenue" data-bind-format="currency" style="padding:14px 16px;text-align:right;color:#6b7280;">—</td>
             <td style="padding:14px 16px;text-align:right;color:#6b7280;">%3.8</td>
             <td style="padding:14px 16px;text-align:right;color:#6b7280;">%22</td>
             <td style="padding:14px 16px;text-align:right;font-weight:700;color:#111827;">8.4</td>
@@ -2627,7 +2945,7 @@ function renderDashboard() {
     <div style="background:#fff;border:1px solid #eceef1;border-radius:18px;padding:20px 24px;box-shadow:0 1px 2px rgba(16,24,40,0.03);display:flex;flex-direction:column;gap:14px;">
       <span style="font-size:13.5px;font-weight:700;color:#111827;">Ürünler</span>
       <div style="display:flex;flex-wrap:wrap;gap:8px;">
-        <span style="padding:7px 14px;border-radius:999px;border:1px solid #eceef1;background:#f9fafb;font-size:12.5px;font-weight:600;color:#374151;">248 <span style="font-weight:400;color:#9ca3af;margin-left:4px;">Toplam Ürün</span></span>
+        <span style="padding:7px 14px;border-radius:999px;border:1px solid #eceef1;background:#f9fafb;font-size:12.5px;font-weight:600;color:#374151;"><span data-bind="data.products">—</span> <span style="font-weight:400;color:#9ca3af;margin-left:4px;">Toplam Ürün</span></span>
         <span style="padding:7px 14px;border-radius:999px;border:1px solid #eceef1;background:#f9fafb;font-size:12.5px;font-weight:600;color:#374151;">211 <span style="font-weight:400;color:#9ca3af;margin-left:4px;">Aktif</span></span>
         <span style="padding:7px 14px;border-radius:999px;border:1px solid #eceef1;background:#f9fafb;font-size:12.5px;font-weight:600;color:#374151;">24 <span style="font-weight:400;color:#9ca3af;margin-left:4px;">Taslak</span></span>
         <span style="padding:7px 14px;border-radius:999px;border:1px solid #eceef1;background:#f9fafb;font-size:12.5px;font-weight:600;color:#374151;">13 <span style="font-weight:400;color:#9ca3af;margin-left:4px;">Stokta Yok</span></span>
@@ -2654,19 +2972,11 @@ function renderDashboard() {
     <!-- Sağlık Trendi -->
     <div style="background:#fff;border:1px solid #eceef1;border-radius:18px;padding:20px 24px;box-shadow:0 1px 2px rgba(16,24,40,0.03);display:flex;flex-direction:column;gap:14px;">
       <span style="font-size:13.5px;font-weight:700;color:#111827;">Katalog Sağlık Trendi</span>
-      <div style="display:flex;align-items:flex-end;gap:6px;height:80px;">
-        <!-- bars: heights 62,68,64,71,75,73,80,84 — last dark, others #d1d5db -->
-        <div style="flex:1;height:62%;background:#d1d5db;border-radius:4px 4px 0 0;"></div>
-        <div style="flex:1;height:68%;background:#d1d5db;border-radius:4px 4px 0 0;"></div>
-        <div style="flex:1;height:64%;background:#d1d5db;border-radius:4px 4px 0 0;"></div>
-        <div style="flex:1;height:71%;background:#d1d5db;border-radius:4px 4px 0 0;"></div>
-        <div style="flex:1;height:75%;background:#d1d5db;border-radius:4px 4px 0 0;"></div>
-        <div style="flex:1;height:73%;background:#d1d5db;border-radius:4px 4px 0 0;"></div>
-        <div style="flex:1;height:80%;background:#d1d5db;border-radius:4px 4px 0 0;"></div>
-        <div style="flex:1;height:84%;background:#111827;border-radius:4px 4px 0 0;"></div>
+      <div id="health-trend-bars" style="display:flex;align-items:flex-end;gap:6px;height:80px;">
+        <span style="font-size:12px;color:#9ca3af;align-self:center;">Yükleniyor…</span>
       </div>
-      <div style="display:flex;justify-content:space-between;font-size:11px;color:#9ca3af;">
-        <span>7 hafta önce</span><span>Bu hafta</span>
+      <div id="health-trend-labels" style="display:flex;justify-content:space-between;font-size:11px;color:#9ca3af;">
+        <span>—</span><span>—</span>
       </div>
     </div>
     <!-- Son İşlemler -->
@@ -2674,7 +2984,7 @@ function renderDashboard() {
       <span style="font-size:13.5px;font-weight:700;color:#111827;">Son İşlemler</span>
       <div style="display:flex;flex-direction:column;gap:8px;">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;font-size:12.5px;">
-          <span style="color:#374151;line-height:1.4;">Senkronizasyon tamamlandı — 248 ürün</span>
+          <span style="color:#374151;line-height:1.4;">Senkronizasyon tamamlandı — <span data-bind="data.products">—</span> ürün</span>
           <span style="color:#9ca3af;white-space:nowrap;">2 dk önce</span>
         </div>
         <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;font-size:12.5px;">
@@ -2745,7 +3055,7 @@ function renderDashboard() {
           <div id="dash-chat-product-popover" class="dash-chat__popover" style="left:38px;" hidden></div>
           <div class="dash-chat__sep"></div>
           <button type="button" id="dash-chat-model" class="dash-chat__model-btn">
-            <span id="dash-chat-model-label">Mocksheets Pro</span>
+            <span id="dash-chat-model-label">Mocksheets</span>
             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
           </button>
           <div id="dash-chat-model-popover" class="dash-chat__popover" style="left:110px;min-width:170px;" hidden></div>
@@ -3235,6 +3545,17 @@ async function renderHeroMetrics() {
     if (!res.ok) return;
     const data = await res.json();
 
+    if (window.MS && MS.state) {
+      MS.state.set({
+        data: {
+          visitors: data.visitors?.value ?? null,
+          sales: data.rawFunnel?.purchases ?? null,
+          revenue: data.totalSales?.value ?? null,
+        },
+        mode: MS.state.MODE.LIVE,
+      });
+    }
+
     const vEl = document.getElementById('hero-visitors-value');
     if (vEl) vEl.textContent = data.visitors?.value != null ? data.visitors.value.toLocaleString('tr-TR') : '—';
     renderTrendBadge('hero-visitors-trend', data.visitors?.trend ?? 0);
@@ -3257,6 +3578,55 @@ async function renderHeroMetrics() {
     renderTrendBadge('hero-duration-trend', data.avgSessionDuration?.trend ?? 0);
     renderCartFunnelWidget(data.rawFunnel || {});
   } catch (e) { console.warn('[hero-metrics] yüklenemedi:', e); }
+}
+
+async function renderCatalogHealth() {
+  try {
+    const res = await fetch(API_URL + '/api/integrations/previous-scan', {
+      headers: { Authorization: 'Bearer ' + getAuthToken() },
+    });
+    if (!res.ok) return;
+    const data = await res.json();
+    if (window.MS && MS.state) {
+      MS.state.set({ data: { catalog: { issues: data.total_issue_count ?? null } } });
+    }
+  } catch (e) { console.warn('[catalog-health] yüklenemedi:', e); }
+}
+
+async function renderHealthTrend() {
+  const barsEl = document.getElementById('health-trend-bars');
+  const labelsEl = document.getElementById('health-trend-labels');
+  if (!barsEl) return;
+  try {
+    const res = await fetch(API_URL + '/api/integrations/health-history', {
+      headers: { Authorization: 'Bearer ' + getAuthToken() },
+    });
+    if (!res.ok) return;
+    const body = await res.json();
+    const history = Array.isArray(body.history) ? body.history : [];
+    if (history.length === 0) {
+      barsEl.innerHTML =
+        '<div style="display:flex;flex-direction:column;align-items:center;gap:8px;width:100%;align-self:center;">' +
+        '<span style="font-size:12px;color:#9ca3af;text-align:center;">Henüz sağlık verisi yok. İlk taramayı çalıştırın.</span>' +
+        '<button onclick="runCatalogScan()" style="font-size:12px;padding:6px 14px;background:#111827;color:#fff;border:none;border-radius:8px;cursor:pointer;font-family:\'Inter\',sans-serif;">Taramayı Başlat</button>' +
+        '</div>';
+      if (labelsEl) { labelsEl.innerHTML = '<span></span><span></span>'; }
+      return;
+    }
+    const maxScore = Math.max(...history.map((h) => h.score || 0), 1);
+    const slice = history.slice(-8);
+    barsEl.innerHTML = slice
+      .map((h, i) => {
+        const pct = Math.max(10, Math.round(((h.score || 0) / maxScore) * 100));
+        const isLast = i === slice.length - 1;
+        return `<div style="flex:1;height:${pct}%;background:${isLast ? '#111827' : '#d1d5db'};border-radius:4px 4px 0 0;" title="${h.score}"></div>`;
+      })
+      .join('');
+    if (labelsEl) {
+      const fmt = (iso) => new Date(iso).toLocaleDateString('tr-TR', { month: 'short', day: 'numeric' });
+      labelsEl.innerHTML = `<span>${fmt(slice[0].recorded_at)}</span><span>${fmt(slice[slice.length - 1].recorded_at)}</span>`;
+    }
+  } catch (e) { console.warn('[health-trend] yüklenemedi:', e); }
 }
 
 async function renderGrowthOpportunities() {
@@ -4058,7 +4428,7 @@ async function renderValidationCenter() {
   <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:20px;">
     <div>
       <h1 style="font-size:22px;font-weight:700;margin:0 0 3px;letter-spacing:-0.01em;">Katalog Kontrolü</h1>
-      <p style="font-size:13px;color:#9ca3af;margin:0;">Son tarama: az önce · 248 üründe sürekli denetim</p>
+      <p style="font-size:13px;color:#9ca3af;margin:0;">Son tarama: az önce · <span data-bind="data.products">—</span> üründe sürekli denetim</p>
     </div>
     <div style="display:flex;align-items:center;gap:10px;">
       <span style="display:flex;align-items:center;gap:7px;padding:8px 14px;border-radius:999px;border:1px solid #eceef1;background:#fff;font-size:12.5px;font-weight:600;color:#6b7280;">
@@ -4076,7 +4446,7 @@ async function renderValidationCenter() {
     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;">
       <div style="display:flex;flex-direction:column;gap:6px;">
         <span style="font-size:12px;color:#9ca3af;font-weight:600;">Taranan Ürün</span>
-        <span style="font-size:26px;font-weight:700;line-height:1;color:#111827;">248</span>
+        <span data-bind="data.products" style="font-size:26px;font-weight:700;line-height:1;color:#111827;">—</span>
       </div>
       <div style="display:flex;flex-direction:column;gap:6px;">
         <span style="font-size:12px;color:#9ca3af;font-weight:600;">Kritik Sorun</span>
@@ -4093,7 +4463,7 @@ async function renderValidationCenter() {
     </div>
     <div style="height:1px;background:#f1f2f4;"></div>
     <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;">
-      <p style="font-size:13px;color:#6b7280;margin:0;">30 kaçırılan fırsat tespit edildi (248 ürün tarandı).</p>
+      <p style="font-size:13px;color:#6b7280;margin:0;"><span data-bind="data.catalog.issues">—</span> kaçırılan fırsat tespit edildi (<span data-bind="data.products">—</span> ürün tarandı).</p>
       <div style="display:flex;align-items:center;gap:10px;">
         <div style="width:180px;height:6px;border-radius:999px;background:#f1f2f4;overflow:hidden;">
           <div style="height:100%;width:68%;background:#111827;border-radius:999px;"></div>
@@ -4359,12 +4729,50 @@ function renderExportPage() {
   </div>`;
 }
 
+function openGoogleSheetsConnect() {
+  if (typeof toast === 'function') toast('Google Sheets bağlantısı yakında', 'info');
+}
+
+async function refreshGoogleSheetsCard() {
+  const statusEl = document.querySelector('[data-bind-sheets-status]');
+  const btn = document.querySelector('[data-bind-sheets-btn]');
+  if (!statusEl || !btn) return;
+  try {
+    const res = await fetch(API_URL + '/api/integrations/status', { headers: await authHeaders() });
+    if (!res.ok) throw new Error('status fail');
+    const data = await res.json();
+    const connected = !!(data && (data.google_sheets_connected || data.sheets_connected));
+    if (connected) {
+      statusEl.textContent = 'Bağlı';
+      btn.textContent = "Sheets'ten Çek";
+      btn.setAttribute('onclick', "typeof pullFromGoogleSheets==='function' ? pullFromGoogleSheets() : openGoogleSheetsConnect()");
+    } else {
+      statusEl.textContent = 'Bağlı sayfa yok';
+      btn.textContent = "Google Sheets'i Bağla";
+      btn.setAttribute('onclick', 'openGoogleSheetsConnect()');
+    }
+  } catch {
+    statusEl.textContent = 'Durum yüklenemedi';
+  }
+}
+
 async function renderSyncStatusPanel() {
   const panel = document.getElementById('sync-status-panel');
   if (!panel) return;
   try {
     const res = await fetch(API_URL + '/api/shopify/status', { headers: await authHeaders() });
     const data = await res.json();
+
+    if (window.MS && MS.state) {
+      MS.state.set({
+        sync: {
+          lastSuccess: data.last_sync || null,
+          nextRun: data.next_sync || null,
+          lastError: data.sync_error || null,
+        },
+      });
+    }
+
     if (!data.connected) {
       panel.innerHTML = '<p style="font-size:12px;color:#9ca3af;margin:0;">Henüz bir mağaza bağlı değil</p>';
       return;
@@ -4372,14 +4780,33 @@ async function renderSyncStatusPanel() {
     const lastSync = data.last_sync
       ? new Date(data.last_sync).toLocaleString('tr-TR')
       : 'Henüz senkronize edilmedi';
+    const nextRun = data.next_sync
+      ? new Date(data.next_sync).toLocaleString('tr-TR')
+      : 'Otomatik değil';
+    const lastError = data.sync_error || null;
     const productCount = (catalogData && catalogData.products) ? catalogData.products.length : 0;
     panel.innerHTML = `
-      <div style="display:flex;align-items:center;justify-content:space-between;">
-        <div>
-          <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 2px;">${data.shop_name || data.shop_domain || 'Mağaza'} bağlı</p>
-          <p style="font-size:11px;color:#6b7280;margin:0;">Son senkronizasyon: ${lastSync} · ${productCount.toLocaleString('tr-TR')} ürün</p>
+      <div style="display:flex;flex-direction:column;gap:12px;width:100%;">
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <div>
+            <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 2px;">${data.shop_name || data.shop_domain || 'Mağaza'} bağlı</p>
+            <p style="font-size:11px;color:#6b7280;margin:0;">${productCount.toLocaleString('tr-TR')} ürün</p>
+          </div>
+          <span style="font-size:10px;padding:3px 10px;border-radius:999px;background:#dcfce7;color:#16a34a;">● Aktif</span>
         </div>
-        <span style="font-size:10px;padding:3px 10px;border-radius:999px;background:#dcfce7;color:#16a34a;">● Aktif</span>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px 20px;padding-top:10px;border-top:1px solid #f1f2f4;font-size:12px;">
+          <div><span style="color:#9ca3af;">Son başarılı sync:</span> <span style="color:#111827;font-weight:500;">${lastSync}</span></div>
+          <div><span style="color:#9ca3af;">Sonraki sync:</span> <span style="color:#111827;font-weight:500;">${nextRun}</span></div>
+          <div style="grid-column:1 / -1;">
+            <span style="color:#9ca3af;">Son hata:</span>
+            ${lastError
+              ? `<span style="display:inline-block;padding:2px 8px;border-radius:999px;background:#fee2e2;color:#b91c1c;font-weight:500;">${lastError}</span>`
+              : '<span style="color:#16a34a;font-weight:500;">Yok</span>'}
+          </div>
+        </div>
+        <div style="display:flex;justify-content:flex-end;">
+          <button onclick="syncShopifyData()" style="background:#111827;border:none;color:#fff;font-size:12.5px;font-weight:600;padding:9px 18px;border-radius:10px;cursor:pointer;font-family:'Inter',sans-serif;">Şimdi Senkronize Et</button>
+        </div>
       </div>`;
   } catch {
     panel.innerHTML = '<p style="font-size:12px;color:#9ca3af;margin:0;">Durum yüklenemedi</p>';
@@ -4406,7 +4833,7 @@ function renderSyncPage() {
   <div id="sync-status-panel" style="display:flex;align-items:center;justify-content:space-between;gap:16px;background:#fff;border:1px solid #eceef1;border-radius:16px;padding:18px 22px;box-shadow:0 1px 2px rgba(16,24,40,0.03);">
     <div style="display:flex;align-items:center;gap:14px;">
       <span style="width:40px;height:40px;border-radius:12px;border:1px solid #eceef1;background:#f9fafb;display:flex;align-items:center;justify-content:center;">
-        <img src="https://cdn.simpleicons.org/shopify/95BF47" width="19" height="19" style="display:block;">
+        <img src="https://cdn.simpleicons.org/shopify/95BF47" width="19" height="19" style="display:block;" loading="lazy">
       </span>
       <div>
         <div style="font-size:14px;font-weight:600;color:#111827;">mocksheets-store.myshopify.com</div>
@@ -4424,25 +4851,26 @@ function renderSyncPage() {
       <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;background:#fff;border:1px solid #eceef1;border-radius:16px;padding:18px 22px;box-shadow:0 1px 2px rgba(16,24,40,0.03);">
         <div>
           <div style="font-size:14.5px;font-weight:600;color:#111827;">Shopify Katalogu</div>
-          <div style="font-size:12.5px;color:#9ca3af;margin-top:2px;">Son çekim: 2 dk önce · 248 ürün</div>
+          <div style="font-size:12.5px;color:#9ca3af;margin-top:2px;">Son çekim: 2 dk önce · <span data-bind="data.products">—</span> ürün</div>
         </div>
         <button onclick="syncShopifyData()" style="background:#111827;border:none;color:#fff;font-size:12.5px;font-weight:600;padding:9px 20px;border-radius:10px;cursor:pointer;font-family:'Inter',sans-serif;">Şimdi Çek</button>
       </div>
       <!-- CSV -->
       <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;background:#fff;border:1px solid #eceef1;border-radius:16px;padding:18px 22px;box-shadow:0 1px 2px rgba(16,24,40,0.03);">
         <div>
-          <div style="font-size:14.5px;font-weight:600;color:#111827;">CSV Yükle</div>
-          <div style="font-size:12.5px;color:#9ca3af;margin-top:2px;">Shopify, WooCommerce veya özel CSV</div>
+          <div style="font-size:14.5px;font-weight:600;color:#111827;">CSV / Excel</div>
+          <div style="font-size:12.5px;color:#9ca3af;margin-top:2px;">Shopify, WooCommerce veya özel dosya</div>
         </div>
-        <button onclick="document.getElementById('csv-upload-input')?.click()" style="background:#111827;border:none;color:#fff;font-size:12.5px;font-weight:600;padding:9px 20px;border-radius:10px;cursor:pointer;font-family:'Inter',sans-serif;">Şimdi Çek</button>
+        <input type="file" id="csv-upload-input" accept=".csv,.xlsx" style="display:none;" onchange="typeof handleCsvImport==='function' ? handleCsvImport(event) : toast('İçe aktarma yakında','info')">
+        <button onclick="document.getElementById('csv-upload-input').click()" style="background:#111827;border:none;color:#fff;font-size:12.5px;font-weight:600;padding:9px 20px;border-radius:10px;cursor:pointer;font-family:'Inter',sans-serif;">CSV Yükle / Dosya Seç</button>
       </div>
       <!-- Google Sheets -->
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;background:#fff;border:1px solid #eceef1;border-radius:16px;padding:18px 22px;box-shadow:0 1px 2px rgba(16,24,40,0.03);">
+      <div id="google-sheets-card" style="display:flex;align-items:center;justify-content:space-between;gap:16px;background:#fff;border:1px solid #eceef1;border-radius:16px;padding:18px 22px;box-shadow:0 1px 2px rgba(16,24,40,0.03);">
         <div>
           <div style="font-size:14.5px;font-weight:600;color:#111827;">Google Sheets</div>
-          <div style="font-size:12.5px;color:#9ca3af;margin-top:2px;">Bağlı sayfa yok</div>
+          <div style="font-size:12.5px;color:#9ca3af;margin-top:2px;" data-bind-sheets-status>Bağlı sayfa yok</div>
         </div>
-        <button onclick="toast('Google Sheets bağlantısı yakında','info')" style="background:#111827;border:none;color:#fff;font-size:12.5px;font-weight:600;padding:9px 20px;border-radius:10px;cursor:pointer;font-family:'Inter',sans-serif;">Şimdi Çek</button>
+        <button data-bind-sheets-btn onclick="openGoogleSheetsConnect()" style="background:#111827;border:none;color:#fff;font-size:12.5px;font-weight:600;padding:9px 20px;border-radius:10px;cursor:pointer;font-family:'Inter',sans-serif;">Google Sheets'i Bağla</button>
       </div>
     </div>
   </section>
@@ -4463,6 +4891,7 @@ function renderSyncPage() {
   </section>
 </main>`;
   renderSyncStatusPanel();
+  refreshGoogleSheetsCard();
 }
 
 function loadAndRenderHistory() {
@@ -4823,7 +5252,7 @@ async function renderSettingsPage() {
     <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:20px 24px;border-bottom:1px solid #f6f7f8;">
       <div style="display:flex;align-items:center;gap:14px;">
         <span style="width:40px;height:40px;border-radius:12px;border:1px solid #eceef1;background:#f9fafb;display:flex;align-items:center;justify-content:center;">
-          <img src="https://cdn.simpleicons.org/shopify/95BF47" width="19" height="19" style="display:block;">
+          <img src="https://cdn.simpleicons.org/shopify/95BF47" width="19" height="19" style="display:block;" loading="lazy">
         </span>
         <div>
           <div style="font-size:14.5px;font-weight:600;color:#111827;">Shopify Bağlantısı</div>
@@ -4837,7 +5266,7 @@ async function renderSettingsPage() {
         <div style="font-size:14.5px;font-weight:600;color:#111827;">Plan</div>
         <div style="font-size:12.5px;color:#9ca3af;margin-top:2px;">Yükleniyor…</div>
       </div>
-      <button onclick="openUpgradeModal?.()" style="background:#111827;border:none;color:#fff;font-size:12.5px;font-weight:600;padding:9px 18px;border-radius:10px;cursor:pointer;font-family:'Inter',sans-serif;">Planı Yükselt</button>
+      <button onclick="openUpgradeModal()" style="background:#111827;border:none;color:#fff;font-size:12.5px;font-weight:600;padding:9px 18px;border-radius:10px;cursor:pointer;font-family:'Inter',sans-serif;">Planı Yükselt</button>
     </div>
   </section>
 
@@ -4908,7 +5337,7 @@ async function renderSettingsPage() {
     <p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 4px;">Mocksheets'i Değerlendirin</p>
     <p style="font-size:12px;color:#6b7280;margin:0 0 12px;">Deneyiminizi Shopify App Store'da paylaşmak ister misiniz?</p>
     <button id="shopify-review-btn" type="button" style="display:flex;align-items:center;gap:8px;padding:8px 16px;border:0.5px solid #e5e7eb;border-radius:10px;background:#fff;color:#374151;font-size:12px;font-weight:600;cursor:pointer;">
-      <img src="https://cdn.simpleicons.org/shopify/95BF47" width="14" height="14" style="display:block;">
+      <img src="https://cdn.simpleicons.org/shopify/95BF47" width="14" height="14" style="display:block;" loading="lazy">
       Shopify'da Değerlendirin
     </button>
   </div>
@@ -6819,7 +7248,20 @@ async function sfChatSend() {
   const text = (input?.value || '').trim();
   if (!text) return;
 
+  const DATA_KEYWORDS = /(satış|sipariş|ürün|ziyaretçi|müşteri|stok|gelir|conversion|dönüşüm)/i;
+  const needsData = DATA_KEYWORDS.test(text);
+  const connState = (window.MS && MS.state) ? MS.state.get().connection : null;
+  const notConnected = connState && connState !== 'connected' && connState !== 'syncing' && connState !== 'success';
+  if (needsData && notConnected) {
+    if (typeof toast === 'function') {
+      toast('Bu soruyu yanıtlamak için önce Shopify mağazanızı bağlayın.', 'warning');
+    }
+    if (typeof openShopifyConnectModal === 'function') openShopifyConnectModal();
+    return;
+  }
+
   _sfChatBusy = true;
+  if (window.MS && MS.state) MS.state.set({ chat: { state: 'sending' } });
   input.value = '';
   _dashChatAutosize();
   _dashChatUpdateSendState();
@@ -6861,6 +7303,7 @@ async function sfChatSend() {
     _sfChatHistory.push({ role: 'assistant', content: data.reply });
 
     if (typeof gtag === 'function') gtag('event', 'ai_chat_success', { chat_type: 'shopify' });
+    if (window.MS && MS.state) MS.state.set({ chat: { state: 'success' } });
     pending.textContent = '';
     const replyEl = document.createElement('div');
     replyEl.textContent = data.reply;
@@ -6952,9 +7395,14 @@ async function sfChatSend() {
       ' <button type="button" style="color:#f97316;background:none;border:none;cursor:pointer;font-weight:600;text-decoration:underline;padding:0;margin-left:6px;" ' +
       'onclick="this.parentElement.remove();document.getElementById(\'dash-chat-input\')?.focus()">Tekrar Dene</button>';
     pending.className = 'dash-chat__msg error';
+    if (window.MS && MS.state) MS.state.set({ chat: { state: 'error' } });
   } finally {
     _sfChatBusy = false;
     _dashChatUpdateSendState();
+    if (window.MS && MS.state) {
+      const cur = MS.state.get().chat?.state;
+      if (cur === 'sending') MS.state.set({ chat: { state: 'idle' } });
+    }
   }
 }
 async function sfImprovePrompt() {
@@ -7015,9 +7463,30 @@ async function acpImprovePrompt() {
 document.addEventListener('DOMContentLoaded', function() {
   addDropdownStyles();
   showGoogleShopifyConnectIfNeeded();
-  checkShopifyStatus();
-  loadUserPlan();
+
+  // Central bootstrap: start in loading mode, load plan+status in parallel
+  if (window.MS && MS.state) {
+    MS.state.set({ mode: MS.state.MODE.LOADING });
+  }
+  Promise.allSettled([
+    (typeof loadUserPlan === 'function') ? loadUserPlan() : Promise.resolve(),
+    (typeof checkShopifyStatus === 'function') ? checkShopifyStatus() : Promise.resolve(),
+  ]).then(() => {
+    if (window.MS && MS.state) {
+      const s = MS.state.get();
+      // Only downgrade to 'empty' if still not connected/live/demo/error
+      if (s.mode === MS.state.MODE.LOADING) {
+        MS.state.set({ mode: MS.state.MODE.EMPTY });
+      }
+      // Mark plan as loaded even if backend returned nothing, so the UI stops showing skeleton
+      if (!s.plan.loaded) {
+        MS.state.set({ plan: { loaded: true, tier: window._userPlan || null, displayName: window._userPlan ? ('Mocksheets ' + window._userPlan) : 'Mocksheets' } });
+      }
+    }
+  });
+
   document.getElementById('sidebar-plan-upgrade-btn')?.addEventListener('click', () => {
+    if (typeof gtag === 'function') gtag('event', 'plan_select', { source: 'sidebar', current_plan: window.MS?.state?.get()?.plan?.tier || 'free' });
     window.location.href = '/pricing';
   });
 

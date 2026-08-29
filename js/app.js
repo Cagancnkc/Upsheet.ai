@@ -4255,10 +4255,29 @@ function handleLockedFeature(feature) {
     competitor_analysis: 'Rakip Analizi',
     accounting_formulas: 'Muhasebe Formülleri'
   };
-  showUpgradeModal(featureNames[feature] || feature);
+  const featureToTrigger = {
+    integrations: 'auto_sync',
+    auto_report: 'recommendations_limit',
+    competitor_analysis: 'recommendations_limit',
+    accounting_formulas: 'bulk_edit'
+  };
+  showUpgradeModal({ feature, featureName: featureNames[feature] || feature, trigger: featureToTrigger[feature], intent: feature });
 }
 
-function showUpgradeModal(featureName) {
+function showUpgradeModal(arg) {
+  // Contextual mode: {trigger, feature, intent, returnAction, featureName}
+  if (arg && typeof arg === 'object' && (arg.trigger || arg.intent || arg.returnAction)) {
+    try {
+      if (window.MS?.onboarding?.openUpgrade) {
+        return window.MS.onboarding.openUpgrade({
+          trigger: arg.trigger || 'recommendations_limit',
+          intent: arg.intent || arg.feature || arg.trigger,
+          returnAction: arg.returnAction,
+        });
+      }
+    } catch (_) { /* fall through */ }
+  }
+  const featureName = (arg && typeof arg === 'object') ? (arg.featureName || arg.feature || 'Bu özellik') : arg;
   const existing = document.getElementById('upgradeModal');
   if (existing) existing.remove();
 

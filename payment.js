@@ -61,16 +61,27 @@ function _getAuthToken() {
 }
 
 // ── Ana checkout fonksiyonu ──────────────────────
-async function startCheckout(plan, period) {
+async function startCheckout(plan, period, opts) {
   const safePeriod = period || 'monthly';
   const user = getCurrentUser();
+  const trial = !!(opts && opts.trial);
+  const intent = opts && opts.intent;
+
+  if (intent || opts?.returnAction) {
+    try {
+      sessionStorage.setItem('pending_intent', JSON.stringify({
+        intent, returnAction: opts?.returnAction, trial, ts: Date.now()
+      }));
+    } catch (_) {}
+  }
+  try { window.MS?.track?.('checkout_start', { plan, period: safePeriod, trial, intent }); } catch (_) {}
 
   if (!user) {
     localStorage.setItem('pending_checkout', JSON.stringify({
-      plan, period: safePeriod, timestamp: Date.now()
+      plan, period: safePeriod, trial, intent, timestamp: Date.now()
     }));
     window.location.href = 'auth.html?redirect=checkout&plan=' +
-      plan + '&period=' + safePeriod;
+      plan + '&period=' + safePeriod + (trial ? '&trial=1' : '');
     return;
   }
 
@@ -84,7 +95,7 @@ async function startCheckout(plan, period) {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ' + token
         },
-        body: JSON.stringify({ plan, period: safePeriod }),
+        body: JSON.stringify({ plan, period: safePeriod, trial, intent }),
       });
       if (res.ok) {
         const data = await res.json();
