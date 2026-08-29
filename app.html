@@ -49,17 +49,17 @@
 <title data-i18n="app.page_title">Mocksheets — Shopify Catalog Manager</title>
 <script src="i18n.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta name="description" content="Shopify kataloğunuzu AI ile yönetin. Ürün başlıklarını, SEO'yu ve açıklamaları optimize edin — onaylama adımıyla Shopify'a yazın.">
+<meta name="description" data-i18n="app.meta.description" content="Shopify kataloğunuzu AI ile yönetin. Ürün başlıklarını, SEO'yu ve açıklamaları optimize edin — onaylama adımıyla Shopify'a yazın.">
 <meta name="robots" content="noindex, nofollow">
 <link rel="canonical" href="https://mocksheets.com/app">
-<meta property="og:title" content="Mocksheets — Shopify AI Katalog Yönetimi">
-<meta property="og:description" content="Ürün başlıklarını, SEO'yu ve açıklamaları AI ile optimize edin. Onayladığınız değişiklikler anında Shopify'a yazılır.">
+<meta property="og:title" data-i18n="app.meta.og_title" content="Mocksheets — Shopify AI Katalog Yönetimi">
+<meta property="og:description" data-i18n="app.meta.og_description" content="Ürün başlıklarını, SEO'yu ve açıklamaları AI ile optimize edin. Onayladığınız değişiklikler anında Shopify'a yazılır.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://mocksheets.com/app">
 <meta property="og:image" content="https://mocksheets.com/images/og-preview.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Mocksheets — Shopify AI Katalog Yönetimi">
-<meta name="twitter:description" content="Ürün başlıklarını, SEO'yu ve açıklamaları AI ile optimize edin.">
+<meta name="twitter:title" data-i18n="app.meta.og_title" content="Mocksheets — Shopify AI Katalog Yönetimi">
+<meta name="twitter:description" data-i18n="app.meta.twitter_description" content="Ürün başlıklarını, SEO'yu ve açıklamaları AI ile optimize edin.">
 <meta name="twitter:site" content="@mocksheets">
 <meta name="twitter:image" content="https://mocksheets.com/images/og-preview.png">
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -1001,7 +1001,7 @@ function showAutoPullBanner() {
 function hideAutoPullBanner() {
   const b = document.getElementById('auto-pull-banner');
   if (!b) return;
-  b.innerHTML = '<span style="font-size:13px;color:#16a34a;">✓ Ürünleriniz başarıyla aktarıldı</span>';
+  b.innerHTML = '<span style="font-size:13px;color:#16a34a;">' + (window.i18n ? window.i18n.t('app.autopull.success') : '✓ Ürünleriniz başarıyla aktarıldı') + '</span>';
   setTimeout(function() { b.style.display = 'none'; }, 2500);
 }
 
@@ -1263,8 +1263,8 @@ async function checkShopifyStatus() {
     const tw = document.getElementById('topbar-store-widget');
     if (tw) tw.style.display = 'none';
     toast(isNetworkErr
-      ? 'Bağlantı kontrolü başarısız — internet bağlantınızı kontrol edin'
-      : 'Mağaza durumu alınamadı. Lütfen sayfayı yenileyin.', 'err');
+      ? (window.i18n ? window.i18n.t('app.error.connection_check') : 'Bağlantı kontrolü başarısız — internet bağlantınızı kontrol edin')
+      : (window.i18n ? window.i18n.t('app.error.store_status') : 'Mağaza durumu alınamadı. Lütfen sayfayı yenileyin.'), 'err');
   }
 }
 
@@ -1813,11 +1813,11 @@ function renderAIChatPage() {
       <aside class="acp-sidebar" id="acp-sidebar">
         <button class="acp-new-btn" id="acp-new-btn" type="button">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-          Yeni sohbet
+          <span data-i18n="app.acp.new_chat">Yeni sohbet</span>
         </button>
-        <div class="acp-session-label">Sohbetler</div>
+        <div class="acp-session-label" data-i18n="app.acp.sessions_label">Sohbetler</div>
         <div class="acp-session-list" id="acp-session-list">
-          <div class="acp-session-empty">Henüz sohbet yok</div>
+          <div class="acp-session-empty" data-i18n="app.acp.empty_chat">Henüz sohbet yok</div>
         </div>
       </aside>
 
@@ -1867,16 +1867,16 @@ function renderAIChatPage() {
                   </button>
                   <button class="acp-popup-item" type="button" data-plus="image">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                    Görsel ekle
+                    <span data-i18n="app.acp.add_image">Görsel ekle</span>
                   </button>
                   <button class="acp-popup-item" type="button" data-plus="link">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-                    Bağlantı ekle
+                    <span data-i18n="app.acp.add_link">Bağlantı ekle</span>
                   </button>
                 </div>
                 <div class="acp-link-dialog" id="acp-link-dialog">
-                  <input type="url" id="acp-link-input" placeholder="https://...">
-                  <button class="acp-link-add" id="acp-link-add-btn" type="button">Ekle</button>
+                  <input type="url" id="acp-link-input" data-i18n="app.acp.link_placeholder" placeholder="https://...">
+                  <button class="acp-link-add" id="acp-link-add-btn" type="button" data-i18n="app.acp.link_add_btn">Ekle</button>
                 </div>
               </div>
               <input type="file" id="acp-file-input" multiple style="display:none" accept=".xlsx,.xls,.csv,.txt,.pdf,.docx">
@@ -1911,7 +1911,7 @@ function renderAIChatPage() {
 
               <button class="acp-opt acp-urun-sec-btn" id="acp-urun-sec-btn" type="button" onclick="openAcpProductPicker()">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
-                Ürün Seç
+                <span data-i18n="app.acp.pick_product">Ürün Seç</span>
               </button>
 
               <div class="acp-spacer"></div>
@@ -1925,7 +1925,7 @@ function renderAIChatPage() {
         </div>
 
         <div class="acp-chips">
-          <button class="acp-chip" type="button">Ürün açıklamalarını SEO'ya göre yaz</button>
+          <button class="acp-chip" type="button" data-i18n="app.acp.chip_seo">Ürün açıklamalarını SEO'ya göre yaz</button>
           <button class="acp-chip" type="button">Stok tablosunu Shopify'a hazırla</button>
           <button class="acp-chip" type="button">📊 Önümüzdeki 3 ay satış tahmini yap</button>
           <button class="acp-chip" type="button">📦 Katalogumdaki eksik başlıkları bul</button>
@@ -1934,6 +1934,8 @@ function renderAIChatPage() {
       </div>
     </div>
   `;
+
+  if (window.i18n && typeof window.i18n.applyAll === 'function') window.i18n.applyAll();
 
   const root = view.querySelector('.ai-chat-page');
   const ta = view.querySelector('#acp-pb');
@@ -2014,7 +2016,8 @@ function renderAIChatPage() {
     if (action.type === 'shopify') {
       const changes = Array.isArray(action.changes) ? action.changes : [];
       if (!changes.length) return null;
-      const fieldLabel = { title:'Başlık', body_html:'Açıklama', tags:'Etiketler', vendor:'Marka', product_type:'Ürün Tipi', status:'Durum', price:'Fiyat', compare_at_price:'Liste Fiyatı', seo_title:'SEO Başlığı', seo_description:'SEO Açıklaması' };
+      const _t = (k, fb) => (window.i18n ? window.i18n.t(k) : fb);
+      const fieldLabel = { title:_t('app.field.title','Başlık'), body_html:_t('app.field.body_html','Açıklama'), tags:_t('app.field.tags','Etiketler'), vendor:_t('app.field.vendor','Marka'), product_type:_t('app.field.product_type','Ürün Tipi'), status:_t('app.field.status','Durum'), price:_t('app.field.price','Fiyat'), compare_at_price:_t('app.field.compare_at_price','Liste Fiyatı'), seo_title:_t('app.field.seo_title','SEO Başlığı'), seo_description:_t('app.field.seo_description','SEO Açıklaması') };
       const rows = changes.map(c => `<tr><td style="font-weight:600">${escapeHtml(c.product_title||'')}</td><td>${escapeHtml(fieldLabel[c.field]||c.field)}</td><td style="color:#dc2626;text-decoration:line-through">${escapeHtml(String(c.old_value||''))}</td><td style="color:#16a34a">${escapeHtml(String(c.new_value||''))}</td></tr>`).join('');
       const actionId = 'sfact_' + Math.random().toString(36).slice(2, 8);
       return `<div class="action-card" id="${actionId}"><h4>🛍️ Shopify Değişiklikleri (${changes.length} alan)</h4><table class="action-table"><tr><th>Ürün</th><th>Alan</th><th>Eski</th><th>Yeni</th></tr>${rows}</table><div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;"><button class="action-btn action-btn-local" onclick='window._applyLocalChanges(${safeJSON(changes)}, "${actionId}")'>✓ Katalogda Güncelle</button><button class="action-btn" style="background:#374151" onclick='window._applyShopifyChanges(${safeJSON(changes)}, "${actionId}")'>Shopify\'a Uygula</button></div></div>`;
@@ -2123,7 +2126,7 @@ function renderAIChatPage() {
       dn.type = 'button'; dn.className = 'acp-feedback-btn'; dn.dataset.rating = '-1'; dn.title = 'Hayır'; dn.textContent = '👎';
       [up, dn].forEach(btn => btn.addEventListener('click', async () => {
         const rating = parseInt(btn.dataset.rating, 10);
-        fbar.innerHTML = '<span class="acp-feedback-sent">Teşekkürler, öğrendik. ✓</span>';
+        fbar.innerHTML = '<span class="acp-feedback-sent">' + (window.i18n ? window.i18n.t('app.acp.feedback_thanks') : 'Teşekkürler, öğrendik. ✓') + '</span>';
         try {
           await fetch(`${API_URL}/api/chat/rag-feedback`, {
             method: 'POST',
@@ -2146,7 +2149,7 @@ function renderAIChatPage() {
 
   const renderSessionList = () => {
     if (!sessions.length) {
-      sessionListEl.innerHTML = '<div class="acp-session-empty">Henüz sohbet yok</div>';
+      sessionListEl.innerHTML = '<div class="acp-session-empty">' + (window.i18n ? window.i18n.t('app.acp.empty_chat') : 'Henüz sohbet yok') + '</div>';
       return;
     }
     sessionListEl.innerHTML = sessions.map(s => `
@@ -2415,8 +2418,8 @@ function renderAIChatPage() {
       pending.classList.remove('pending');
       pending.classList.add('error');
       var _acpErrMsg = !navigator.onLine
-        ? 'İnternet bağlantısı yok. Tekrar bağlanıp deneyin.'
-        : (err.message || 'Bağlantı hatası. Lütfen tekrar deneyin.');
+        ? (window.i18n ? window.i18n.t('app.error.no_internet') : 'İnternet bağlantısı yok. Tekrar bağlanıp deneyin.')
+        : (err.message || (window.i18n ? window.i18n.t('app.error.connection_generic') : 'Bağlantı hatası. Lütfen tekrar deneyin.'));
       if (typeof gtag === 'function') {
         gtag('event', 'ai_chat_error', { error_message: (err.message || '').slice(0, 100), chat_type: 'acp' });
       }
@@ -4771,7 +4774,7 @@ async function refreshGoogleSheetsCard() {
       btn.setAttribute('onclick', 'openGoogleSheetsConnect()');
     }
   } catch {
-    statusEl.textContent = 'Durum yüklenemedi';
+    statusEl.textContent = (window.i18n ? window.i18n.t('app.error.status_load') : 'Durum yüklenemedi');
   }
 }
 
@@ -4793,7 +4796,7 @@ async function renderSyncStatusPanel() {
     }
 
     if (!data.connected) {
-      panel.innerHTML = '<p style="font-size:12px;color:#9ca3af;margin:0;">Henüz bir mağaza bağlı değil</p>';
+      panel.innerHTML = '<p style="font-size:12px;color:#9ca3af;margin:0;">' + (window.i18n ? window.i18n.t('app.store.none_connected') : 'Henüz bir mağaza bağlı değil') + '</p>';
       return;
     }
     const lastSync = data.last_sync
@@ -4828,7 +4831,7 @@ async function renderSyncStatusPanel() {
         </div>
       </div>`;
   } catch {
-    panel.innerHTML = '<p style="font-size:12px;color:#9ca3af;margin:0;">Durum yüklenemedi</p>';
+    panel.innerHTML = '<p style="font-size:12px;color:#9ca3af;margin:0;">' + (window.i18n ? window.i18n.t('app.error.status_load') : 'Durum yüklenemedi') + '</p>';
   }
 }
 
@@ -4856,10 +4859,10 @@ function renderSyncPage() {
       </span>
       <div>
         <div style="font-size:14px;font-weight:600;color:#111827;">mocksheets-store.myshopify.com</div>
-        <div style="font-size:12.5px;color:#9ca3af;">Bağlantı sağlıklı · son kontrol 2 dk önce</div>
+        <div style="font-size:12.5px;color:#9ca3af;">${window.i18n ? window.i18n.t('app.store.healthy_check') : 'Bağlantı sağlıklı · son kontrol 2 dk önce'}</div>
       </div>
     </div>
-    <button style="background:#fff;border:1px solid #eceef1;color:#374151;font-size:12.5px;font-weight:600;padding:9px 16px;border-radius:10px;cursor:pointer;font-family:'Inter',sans-serif;">Bağlantıyı Yönet</button>
+    <button style="background:#fff;border:1px solid #eceef1;color:#374151;font-size:12.5px;font-weight:600;padding:9px 16px;border-radius:10px;cursor:pointer;font-family:'Inter',sans-serif;">${window.i18n ? window.i18n.t('app.store.manage_connection') : 'Bağlantıyı Yönet'}</button>
   </div>
 
   <!-- IMPORT SECTION -->
@@ -5234,11 +5237,11 @@ async function disconnectShopify() {
     });
     if (!res.ok) {
       const d = await res.json().catch(() => ({}));
-      toast(d.error || 'Bağlantı kaldırılamadı', 'error');
+      toast(d.error || (window.i18n ? window.i18n.t('app.error.disconnect_failed') : 'Bağlantı kaldırılamadı'), 'error');
       return;
     }
   } catch {
-    toast('Bağlantı hatası, lütfen tekrar deneyin.', 'error');
+    toast((window.i18n ? window.i18n.t('app.error.connection_generic') : 'Bağlantı hatası, lütfen tekrar deneyin.'), 'error');
     return;
   }
   shopifyStore = null;
@@ -5256,7 +5259,7 @@ async function renderSettingsPage() {
   const view = document.getElementById('settings-view');
   if (!view) return;
   const connected = !!shopifyStore;
-  const storeName = shopifyStore || 'Bağlı değil';
+  const storeName = shopifyStore || (window.i18n ? window.i18n.t('app.store.not_connected_short') : 'Bağlı değil');
   const actionBtn = connected
     ? '<button type="button" onclick="disconnectShopify()" style="font-size:11px;color:#dc2626;background:#fff;border:1px solid #fca5a5;border-radius:8px;padding:4px 12px;cursor:pointer;">Kaldır</button>'
     : '<button type="button" onclick="setView(\'import\')" style="font-size:11px;color:#16a34a;background:#fff;border:1px solid #86efac;border-radius:8px;padding:4px 12px;cursor:pointer;">Bağlan</button>';
@@ -5274,7 +5277,7 @@ async function renderSettingsPage() {
           <img src="https://cdn.simpleicons.org/shopify/95BF47" width="19" height="19" style="display:block;" loading="lazy">
         </span>
         <div>
-          <div style="font-size:14.5px;font-weight:600;color:#111827;">Shopify Bağlantısı</div>
+          <div style="font-size:14.5px;font-weight:600;color:#111827;">${window.i18n ? window.i18n.t('app.store.shopify_section') : 'Shopify Bağlantısı'}</div>
           <div style="font-size:12.5px;color:${connected ? '#16a34a' : '#9ca3af'};margin-top:2px;">${storeName}</div>
         </div>
       </div>
@@ -6909,6 +6912,7 @@ async function authHeaders() {
   if (!token) return {};
   return { 'Authorization': 'Bearer ' + token };
 }
+window.authHeaders = authHeaders;
 
 function isGoogleUser() {
   const token = getAuthToken();

@@ -1,6 +1,13 @@
-﻿const API_URL = window.location.hostname === 'localhost'
-  ? 'http://localhost:3001'
-  : 'https://upsheet-ai.onrender.com';
+﻿const API_URL = (function() {
+  if (typeof window !== 'undefined' && window.__API_URL__) return window.__API_URL__;
+  try {
+    const meta = document.querySelector('meta[name="api-url"]');
+    if (meta && meta.content) return meta.content;
+  } catch (_) {}
+  return window.location.hostname === 'localhost'
+    ? 'http://localhost:3001'
+    : 'https://upsheet-ai.onrender.com';
+})();
 
 // ═══════════════════════════════════════════════════════════════
 //  PLAN LIMITS
@@ -986,7 +993,9 @@ function downloadFile() {
   try {
     const _wh = JSON.parse(localStorage.getItem('int_webhook') || '{}');
     if (_wh.url && (_wh.trigger === 'export' || _wh.trigger === 'all')) {
-      fetch(API_URL + '/api/integrations/webhook/send', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url: _wh.url, event: 'export', data: { filename: finalName, rows: (sheets[activeSheet] || []).length, format: 'xlsx', timestamp: new Date().toISOString() } }) }).catch(e => console.warn('[webhook] send failed:', e.message));
+      fetch(API_URL + '/api/integrations/webhook/send', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url: _wh.url, event: 'export', data: { filename: finalName, rows: (sheets[activeSheet] || []).length, format: 'xlsx', timestamp: new Date().toISOString() } }) })
+        .then(r => { if (!r.ok) showToast('⚠️ Export webhook başarısız (HTTP ' + r.status + ')', 'error'); })
+        .catch(e => showToast('⚠️ Export webhook gönderilemedi: ' + (e.message || 'bağlantı'), 'error'));
     }
   } catch(_e) {}
 }
@@ -4434,6 +4443,7 @@ async function doSentimentAnalysis(data) {
   showToast('⏳ Duygu analizi yapılıyor...', 'info');
 
   let labels;
+  let aiFailReason = null;
   try {
     const token = getAuthToken();
     const res = await fetch(API_URL + '/api/sentiment', {
@@ -4444,10 +4454,13 @@ async function doSentimentAnalysis(data) {
     if (res.ok) {
       const result = await res.json();
       labels = result.labels;
+    } else {
+      aiFailReason = res.status === 401 ? 'oturum' : (res.status === 429 ? 'limit' : 'HTTP ' + res.status);
     }
-  } catch (e) { /* fallback below */ }
+  } catch (e) { aiFailReason = 'bağlantı'; }
 
   if (!labels) {
+    if (aiFailReason) showToast('⚠️ AI erişilemedi (' + aiFailReason + '), temel analiz kullanıldı', 'error');
     const pos = ['iyi', 'güzel', 'harika', 'mükemmel', 'teşekkür', 'memnun', 'süper', 'beğendim', 'sevdim', 'başarılı'];
     const neg = ['kötü', 'berbat', 'korkunç', 'rezalet', 'sorun', 'hata', 'bozuk', 'çalışmıyor', 'iade', 'şikayet'];
     labels = texts.map(t => {
@@ -4739,6 +4752,7 @@ async function doBatchAI(data) {
   const token = getAuthToken();
   const headers = { 'Content-Type': 'application/json', ...(token ? { 'Authorization': 'Bearer ' + token } : {}) };
 
+  let aborted = false;
   for (let i = 1; i < Math.min(rows.length, maxRows + 1); i++) {
     const text = String((rows[i] || [])[srcCol] || '');
     if (!text.trim()) continue;
@@ -4749,12 +4763,23 @@ async function doBatchAI(data) {
         rows[i][newCol] = r.result || '';
         processed++;
         if (processed % 5 === 0) buildGrid(rows);
+      } else {
+        aborted = true;
+        if (res.status === 401) showToast('⚠️ Oturum süresi doldu. Lütfen tekrar giriş yapın.', 'error');
+        else if (res.status === 429) showToast('⚠️ Kullanım limitine ulaşıldı. Planınızı yükseltebilirsiniz.', 'error');
+        else showToast('⚠️ Toplu AI hata verdi (HTTP ' + res.status + ')', 'error');
+        break;
       }
-    } catch (e) { /* skip row */ }
+    } catch (e) {
+      aborted = true;
+      showToast('⚠️ Sunucuya ulaşılamıyor: ' + (e.message || 'bilinmeyen hata'), 'error');
+      break;
+    }
   }
 
   buildGrid(rows);
-  showToast((data.reply || '✓ Toplu işlem tamamlandı') + ' (' + processed + ' satır)', 'success');
+  if (!aborted) showToast((data.reply || '✓ Toplu işlem tamamlandı') + ' (' + processed + ' satır)', 'success');
+  else if (processed > 0) showToast('Kısmi tamamlandı: ' + processed + ' satır işlendi', 'info');
 }
 
 // ── GELİŞMİŞ VERİ TEMİZLEME ─────────────────────────────────

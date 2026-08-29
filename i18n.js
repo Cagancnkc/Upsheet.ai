@@ -199,6 +199,73 @@ const TRANSLATIONS = {
     'app.nav.history': 'Geçmiş İşlemler',
     'app.nav.settings': 'Ayarlar',
     'app.lang_toggle_title': 'Dili değiştir',
+
+    // Meta description (app.html)
+    'app.meta.description': 'Shopify kataloğunuzu AI ile yönetin. Ürün başlıklarını, SEO\'yu ve açıklamaları optimize edin — onaylama adımıyla Shopify\'a yazın.',
+    'app.meta.og_title': 'Mocksheets — Shopify AI Katalog Yönetimi',
+    'app.meta.og_description': 'Ürün başlıklarını, SEO\'yu ve açıklamaları AI ile optimize edin. Onayladığınız değişiklikler anında Shopify\'a yazılır.',
+    'app.meta.twitter_description': 'Ürün başlıklarını, SEO\'yu ve açıklamaları AI ile optimize edin.',
+
+    // Auto-pull banner
+    'app.autopull.success': '✓ Ürünleriniz başarıyla aktarıldı',
+
+    // Errors & toasts
+    'app.error.connection_check': 'Bağlantı kontrolü başarısız — internet bağlantınızı kontrol edin',
+    'app.error.store_status': 'Mağaza durumu alınamadı. Lütfen sayfayı yenileyin.',
+    'app.error.no_internet': 'İnternet bağlantısı yok. Tekrar bağlanıp deneyin.',
+    'app.error.connection_generic': 'Bağlantı hatası. Lütfen tekrar deneyin.',
+    'app.error.disconnect_failed': 'Bağlantı kaldırılamadı',
+    'app.error.status_load': 'Durum yüklenemedi',
+    'app.error.shopify_connect_failed': 'Shopify bağlantısı başarısız',
+    'app.error.sync_failed': 'Shopify senkronizasyonu başarısız oldu',
+    'app.error.sync_failed_3x': 'Senkronizasyon 3 kez başarısız — Destek ile iletişime geçin',
+    'app.error.generic_op': 'İşlem başarısız, lütfen tekrar deneyin.',
+
+    // AI Chat Panel (ACP)
+    'app.acp.new_chat': 'Yeni sohbet',
+    'app.acp.sessions_label': 'Sohbetler',
+    'app.acp.empty_chat': 'Henüz sohbet yok',
+    'app.acp.new_session_default': 'Yeni Sohbet',
+    'app.acp.delete_session': 'Sohbeti sil',
+    'app.acp.add_image': 'Görsel ekle',
+    'app.acp.add_link': 'Bağlantı ekle',
+    'app.acp.link_add_btn': 'Ekle',
+    'app.acp.link_placeholder': 'https://...',
+    'app.acp.pick_product': 'Ürün Seç',
+    'app.acp.feedback_thanks': 'Teşekkürler, öğrendik. ✓',
+    'app.acp.feedback_yes': 'Evet',
+    'app.acp.feedback_no': 'Hayır',
+    'app.acp.chip_seo': 'Ürün açıklamalarını SEO\'ya göre yaz',
+
+    // Field labels (product data)
+    'app.field.title': 'Başlık',
+    'app.field.body_html': 'Açıklama',
+    'app.field.tags': 'Etiketler',
+    'app.field.vendor': 'Marka',
+    'app.field.product_type': 'Ürün Tipi',
+    'app.field.status': 'Durum',
+    'app.field.price': 'Fiyat',
+    'app.field.compare_at_price': 'Liste Fiyatı',
+    'app.field.seo_title': 'SEO Başlığı',
+    'app.field.seo_description': 'SEO Açıklaması',
+    'app.field.handle': 'URL Kısaltması',
+
+    // Store / sync panels
+    'app.store.none_connected': 'Henüz bir mağaza bağlı değil',
+    'app.store.healthy_check': 'Bağlantı sağlıklı · son kontrol 2 dk önce',
+    'app.store.manage_connection': 'Bağlantıyı Yönet',
+    'app.store.shopify_section': 'Shopify Bağlantısı',
+    'app.store.disconnected_activity': 'Shopify bağlantısı kaldırıldı',
+    'app.store.not_connected_short': 'Bağlı değil',
+    'app.store.disconnect_btn': 'Kaldır',
+    'app.store.connect_btn': 'Bağlan',
+
+    // Table headers
+    'app.hist.col_date': 'Tarih',
+    'app.hist.col_type': 'Tür',
+    'app.hist.col_record': 'Kayıt',
+    'app.hist.col_product': 'Ürün',
+    'app.hist.col_order': 'Sipariş',
   },
 
   en: {
@@ -401,6 +468,73 @@ const TRANSLATIONS = {
     'app.nav.history': 'History',
     'app.nav.settings': 'Settings',
     'app.lang_toggle_title': 'Change language',
+
+    // Meta description (app.html)
+    'app.meta.description': 'Manage your Shopify catalog with AI. Optimize product titles, SEO, and descriptions — write to Shopify with an approval step.',
+    'app.meta.og_title': 'Mocksheets — Shopify AI Catalog Management',
+    'app.meta.og_description': 'Optimize product titles, SEO, and descriptions with AI. Every change you approve syncs to Shopify instantly.',
+    'app.meta.twitter_description': 'Optimize product titles, SEO, and descriptions with AI.',
+
+    // Auto-pull banner
+    'app.autopull.success': '✓ Your products were imported successfully',
+
+    // Errors & toasts
+    'app.error.connection_check': 'Connection check failed — please check your internet',
+    'app.error.store_status': 'Could not load store status. Please refresh the page.',
+    'app.error.no_internet': 'No internet connection. Reconnect and try again.',
+    'app.error.connection_generic': 'Connection error. Please try again.',
+    'app.error.disconnect_failed': 'Could not disconnect',
+    'app.error.status_load': 'Could not load status',
+    'app.error.shopify_connect_failed': 'Shopify connection failed',
+    'app.error.sync_failed': 'Shopify sync failed',
+    'app.error.sync_failed_3x': 'Sync failed 3 times — please contact Support',
+    'app.error.generic_op': 'Operation failed, please try again.',
+
+    // AI Chat Panel (ACP)
+    'app.acp.new_chat': 'New chat',
+    'app.acp.sessions_label': 'Chats',
+    'app.acp.empty_chat': 'No chats yet',
+    'app.acp.new_session_default': 'New Chat',
+    'app.acp.delete_session': 'Delete chat',
+    'app.acp.add_image': 'Add image',
+    'app.acp.add_link': 'Add link',
+    'app.acp.link_add_btn': 'Add',
+    'app.acp.link_placeholder': 'https://...',
+    'app.acp.pick_product': 'Pick product',
+    'app.acp.feedback_thanks': 'Thanks, noted. ✓',
+    'app.acp.feedback_yes': 'Yes',
+    'app.acp.feedback_no': 'No',
+    'app.acp.chip_seo': 'Rewrite product descriptions for SEO',
+
+    // Field labels (product data)
+    'app.field.title': 'Title',
+    'app.field.body_html': 'Description',
+    'app.field.tags': 'Tags',
+    'app.field.vendor': 'Vendor',
+    'app.field.product_type': 'Product Type',
+    'app.field.status': 'Status',
+    'app.field.price': 'Price',
+    'app.field.compare_at_price': 'Compare-at Price',
+    'app.field.seo_title': 'SEO Title',
+    'app.field.seo_description': 'SEO Description',
+    'app.field.handle': 'Handle',
+
+    // Store / sync panels
+    'app.store.none_connected': 'No store connected yet',
+    'app.store.healthy_check': 'Connection healthy · last checked 2 min ago',
+    'app.store.manage_connection': 'Manage Connection',
+    'app.store.shopify_section': 'Shopify Connection',
+    'app.store.disconnected_activity': 'Shopify connection removed',
+    'app.store.not_connected_short': 'Not connected',
+    'app.store.disconnect_btn': 'Remove',
+    'app.store.connect_btn': 'Connect',
+
+    // Table headers
+    'app.hist.col_date': 'Date',
+    'app.hist.col_type': 'Type',
+    'app.hist.col_record': 'Record',
+    'app.hist.col_product': 'Product',
+    'app.hist.col_order': 'Order',
   }
 };
 

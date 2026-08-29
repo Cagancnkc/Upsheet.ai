@@ -1,7 +1,18 @@
 {
   "name": "mocksheets",
   "version": "1.0.0",
+  "scripts": {
+    "check": "node --check js/state.js && node --check js/app.js",
+    "lint": "eslint \"js/**/*.js\"",
+    "format": "prettier -w \"**/*.{js,css,md,json}\"",
+    "smoke": "node smoke.js",
+    "smoke:prod": "node smoke.js https://mocksheets.com"
+  },
   "dependencies": {
     "nodemailer": "^8.0.10"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "prettier": "^3.3.0"
   }
 }
