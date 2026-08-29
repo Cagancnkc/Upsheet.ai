@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="tr" id="html-root">
 <head>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-H0KT59S6GP"></script>
@@ -12,7 +12,7 @@
 </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kayıt Ol — Mocksheets | Shopify AI Katalog Asistanı</title>
+  <title data-i18n="auth.page_title">Kayıt Ol — Mocksheets | Shopify AI Katalog Asistanı</title>
   <meta name="theme-color" content="#166534">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -20,11 +20,11 @@
   <meta name="apple-mobile-web-app-title" content="Mocksheets">
   <link rel="apple-touch-icon" href="/icon-192.png">
   <link rel="icon" type="image/png" href="/images/brand/logo-128x128.png">
-  <meta name="description" content="Shopify kataloğunuzu AI ile yönetin — Mocksheets katalog operasyon platformu">
+  <meta name="description" data-i18n="auth.page_desc" content="Shopify kataloğunuzu AI ile yönetin — Mocksheets katalog operasyon platformu">
   <link rel="canonical" href="https://mocksheets.com/auth">
   <meta name="robots" content="noindex, nofollow">
-  <meta property="og:title" content="Kayıt Ol — Mocksheets | Shopify AI Katalog Asistanı">
-  <meta property="og:description" content="Shopify kataloğunuzu AI ile yönetin — Mocksheets katalog operasyon platformu">
+  <meta property="og:title" data-i18n="auth.page_title" content="Kayıt Ol — Mocksheets | Shopify AI Katalog Asistanı">
+  <meta property="og:description" data-i18n="auth.page_desc" content="Shopify kataloğunuzu AI ile yönetin — Mocksheets katalog operasyon platformu">
   <meta property="og:type" content="website">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -32,6 +32,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="i18n.js"></script>
 
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -548,6 +549,29 @@
       to   { opacity: 1; transform: translateY(0); }
     }
     .animate-in { animation: fadeIn 0.5s ease both; }
+
+    /* Language toggle */
+    .lang-toggle {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      z-index: 10;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      color: var(--ink);
+      font-family: 'Geist', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      padding: 6px 12px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .lang-toggle:hover {
+      border-color: #C5BFB3;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
   </style>
 
   <!-- Microsoft Clarity -->
@@ -566,6 +590,7 @@
 
   <!-- ── LEFT PANEL ── -->
   <div class="auth-left">
+    <button id="lang-toggle" class="lang-toggle" type="button" data-i18n-title="app.lang_toggle_title" title="Dili değiştir" onclick="i18n.toggle()">EN</button>
     <div class="auth-left-inner animate-in">
 
       <!-- Wordmark -->
@@ -575,13 +600,13 @@
       </a>
 
       <!-- Heading -->
-      <h1 class="auth-heading" id="authHeading">
+      <h1 class="auth-heading" id="authHeading" data-i18n-html="auth.heading">
         Kataloğunu <em>optimize et,</em><br>AI halleder.
       </h1>
 
       <!-- Form Card -->
       <div class="form-card">
-        <div class="form-card-heading" id="formCardHeading">Tekrar hoş geldiniz</div>
+        <div class="form-card-heading" id="formCardHeading" data-i18n="auth.card_heading_signin">Tekrar hoş geldiniz</div>
 
         <!-- Shopify -->
         <button class="btn-google" id="btn-shopify" onclick="startShopifyAuth()">
@@ -590,7 +615,7 @@
             <path fill="#5E8E3E" d="M74 14.1c-.3 0-6.6-.1-6.6-.1s-5.3-5.1-5.8-5.6c-.2-.2-.5-.3-.7-.4L57.2 90.2l27.9-6S74.7 14.7 74.7 14.4c0-.2-.4-.3-.7-.3z"/>
             <path fill="#FFFFFF" d="M45.5 32.5l-3.4 10.2s-3-1.6-6.7-1.6c-5.4 0-5.7 3.4-5.7 4.3 0 4.6 12 6.4 12 17.2 0 8.5-5.4 14-12.7 14-8.7 0-13.2-5.4-13.2-5.4l2.3-7.7s4.6 4 8.5 4c2.6 0 3.6-2 3.6-3.5 0-6.1-9.8-6.3-9.8-16.2 0-8.3 6-16.3 18-16.3 4.7-.1 7.1 1 7.1 1z"/>
           </svg>
-          Shopify ile devam et
+          <span data-i18n="auth.btn_shopify">Shopify ile devam et</span>
         </button>
 
         <!-- Google -->
@@ -601,19 +626,20 @@
             <path fill="#FBBC05" d="M4.5 10.52a4.8 4.8 0 0 1 0-3.04V5.41H1.83a8 8 0 0 0 0 7.18l2.67-2.07z"/>
             <path fill="#EA4335" d="M8.98 4.18c1.17 0 2.23.4 3.06 1.2l2.3-2.3A8 8 0 0 0 1.83 5.4L4.5 7.49a4.77 4.77 0 0 1 4.48-3.3z"/>
           </svg>
-          Google ile Devam Et
+          <span data-i18n="auth.btn_google">Google ile Devam Et</span>
         </button>
 
         <!-- OR -->
-        <div class="or-divider">VEYA</div>
+        <div class="or-divider"><span data-i18n="auth.or">VEYA</span></div>
 
         <!-- Email -->
         <div class="auth-input-wrap">
-          <label class="auth-label" for="emailInput">E-posta adresi</label>
+          <label class="auth-label" for="emailInput" data-i18n="auth.email_label">E-posta adresi</label>
           <input
             class="auth-input"
             id="emailInput"
             type="email"
+            data-i18n="auth.email_placeholder"
             placeholder="isim@sirket.com"
             autocomplete="email"
             oninput="onEmailInput(this.value)"
@@ -624,21 +650,21 @@
 
         <!-- Submit -->
         <button class="btn-submit" id="submitBtn" onclick="handleSubmit()" disabled>
-          <span id="submitText">Giriş Yap →</span>
+          <span id="submitText" data-i18n="auth.btn_signin">Giriş Yap →</span>
         </button>
 
         <!-- Toggle -->
         <div class="toggle-row" id="toggleRow">
-          Hesabın yok mu?
-          <button class="toggle-btn" onclick="switchMode('signup')">Kaydol</button>
+          <span data-i18n="auth.toggle_to_signup">Hesabın yok mu?</span>
+          <button class="toggle-btn" onclick="switchMode('signup')" data-i18n="auth.toggle_to_signup_btn">Kaydol</button>
         </div>
       </div>
 
       <!-- Footer -->
       <p class="auth-footer">
-        © 2026 mocksheets, inc. ·
-        <a href="/privacy">Gizlilik</a> ·
-        <a href="/terms">Koşullar</a>
+        <span data-i18n="auth.footer_copy">© 2026 mocksheets, inc.</span> ·
+        <a href="/privacy" data-i18n="auth.footer_privacy">Gizlilik</a> ·
+        <a href="/terms" data-i18n="auth.footer_terms">Koşullar</a>
       </p>
 
     </div>
@@ -668,36 +694,36 @@
         <table class="sheet-grid">
           <thead>
             <tr>
-              <th>Ürün Adı</th>
-              <th>Tür</th>
-              <th>Durum</th>
-              <th>SEO</th>
+              <th data-i18n="auth.right.col_name">Ürün Adı</th>
+              <th data-i18n="auth.right.col_type">Tür</th>
+              <th data-i18n="auth.right.col_status">Durum</th>
+              <th data-i18n="auth.right.col_seo">SEO</th>
             </tr>
           </thead>
           <tbody id="sheetBody">
             <tr>
-              <td>Siyah Deri Çanta</td>
-              <td class="cell-val">çanta</td>
-              <td>Aktif</td>
-              <td class="cell-diff">❌ Eksik</td>
+              <td data-i18n="auth.right.product_1">Siyah Deri Çanta</td>
+              <td class="cell-val" data-i18n="auth.right.type_bag">çanta</td>
+              <td data-i18n="auth.right.status_active">Aktif</td>
+              <td class="cell-diff" data-i18n="auth.right.seo_missing">❌ Eksik</td>
             </tr>
             <tr>
-              <td>Mavi Yün Kazak</td>
-              <td class="cell-val">giyim</td>
-              <td>Aktif</td>
-              <td class="cell-diff">⚠ Zayıf</td>
+              <td data-i18n="auth.right.product_2">Mavi Yün Kazak</td>
+              <td class="cell-val" data-i18n="auth.right.type_clothing">giyim</td>
+              <td data-i18n="auth.right.status_active">Aktif</td>
+              <td class="cell-diff" data-i18n="auth.right.seo_weak">⚠ Zayıf</td>
             </tr>
             <tr>
-              <td>Kırmızı Sneaker</td>
-              <td class="cell-val">ayakkabı</td>
-              <td>Taslak</td>
-              <td class="cell-diff">✓ İyi</td>
+              <td data-i18n="auth.right.product_3">Kırmızı Sneaker</td>
+              <td class="cell-val" data-i18n="auth.right.type_shoes">ayakkabı</td>
+              <td data-i18n="auth.right.status_draft">Taslak</td>
+              <td class="cell-diff" data-i18n="auth.right.seo_good">✓ İyi</td>
             </tr>
             <tr>
-              <td>Ahşap Raf</td>
-              <td class="cell-val">ev &amp; yaşam</td>
-              <td>Aktif</td>
-              <td class="cell-diff">❌ Eksik</td>
+              <td data-i18n="auth.right.product_4">Ahşap Raf</td>
+              <td class="cell-val" data-i18n="auth.right.type_home">ev &amp; yaşam</td>
+              <td data-i18n="auth.right.status_active">Aktif</td>
+              <td class="cell-diff" data-i18n="auth.right.seo_missing">❌ Eksik</td>
             </tr>
           </tbody>
         </table>
@@ -710,7 +736,7 @@
           <div class="ai-prompt" id="aiPrompt">
             <span id="aiPromptText"></span><span class="ai-prompt-cursor" id="aiCursor"></span>
           </div>
-          <div class="summary-chip" id="summaryChip">
+          <div class="summary-chip" id="summaryChip" data-i18n="auth.right.summary">
             ✓ 1.247 ürün · 43 eksik SEO · 12 hata
           </div>
         </div>
@@ -718,13 +744,13 @@
 
       <!-- Testimonial -->
       <blockquote class="testimonial">
-        <p class="testimonial-text">"Yüzlerce ürünümün SEO sorunlarını dakikalar içinde düzeltti."</p>
-        <p class="testimonial-cite">— Mocksheets kullanıcısı, Shopify Mağaza Sahibi</p>
+        <p class="testimonial-text" data-i18n="auth.right.testimonial">"Yüzlerce ürünümün SEO sorunlarını dakikalar içinde düzeltti."</p>
+        <p class="testimonial-cite" data-i18n="auth.right.testimonial_cite">— Mocksheets kullanıcısı, Shopify Mağaza Sahibi</p>
       </blockquote>
 
       <!-- Social proof -->
       <div class="social-proof">
-        <div class="social-proof-label">Güvenen ekipler</div>
+        <div class="social-proof-label" data-i18n="auth.right.trusted">Güvenen ekipler</div>
         <div class="social-proof-logos">
           <span class="logo-chip">IŞIK MAĞARALAR</span>
           <span class="logo-chip">KOÇTAŞ</span>
@@ -783,13 +809,13 @@ function switchMode(mode) {
   if (authError) authError.style.display = 'none';
 
   if (mode === 'signup') {
-    if (heading)    heading.textContent    = 'Hesabınızı oluşturun';
-    if (submitText) submitText.textContent = 'Kaydol →';
-    if (toggleRow)  toggleRow.innerHTML   = 'Zaten hesabın var mı? <button class="toggle-btn" onclick="switchMode(\'signin\')">Giriş yap</button>';
+    if (heading)    { heading.textContent    = i18n.t('auth.card_heading_signup'); heading.setAttribute('data-i18n', 'auth.card_heading_signup'); }
+    if (submitText) { submitText.textContent = i18n.t('auth.btn_signup'); submitText.setAttribute('data-i18n', 'auth.btn_signup'); }
+    if (toggleRow)  toggleRow.innerHTML   = '<span data-i18n="auth.toggle_to_signin">' + i18n.t('auth.toggle_to_signin') + '</span> <button class="toggle-btn" onclick="switchMode(\'signin\')" data-i18n="auth.toggle_to_signin_btn">' + i18n.t('auth.toggle_to_signin_btn') + '</button>';
   } else {
-    if (heading)    heading.textContent    = 'Tekrar hoş geldiniz';
-    if (submitText) submitText.textContent = 'Giriş Yap →';
-    if (toggleRow)  toggleRow.innerHTML   = 'Hesabın yok mu? <button class="toggle-btn" onclick="switchMode(\'signup\')">Kaydol</button>';
+    if (heading)    { heading.textContent    = i18n.t('auth.card_heading_signin'); heading.setAttribute('data-i18n', 'auth.card_heading_signin'); }
+    if (submitText) { submitText.textContent = i18n.t('auth.btn_signin'); submitText.setAttribute('data-i18n', 'auth.btn_signin'); }
+    if (toggleRow)  toggleRow.innerHTML   = '<span data-i18n="auth.toggle_to_signup">' + i18n.t('auth.toggle_to_signup') + '</span> <button class="toggle-btn" onclick="switchMode(\'signup\')" data-i18n="auth.toggle_to_signup_btn">' + i18n.t('auth.toggle_to_signup_btn') + '</button>';
   }
 
   // Re-validate current email
@@ -826,7 +852,7 @@ async function handleSubmit() {
 
   errEl.style.display = 'none';
   btn.disabled = true;
-  btn.innerHTML = '<div class="spinner"></div><span>Bağlanıyor...</span>';
+  btn.innerHTML = '<div class="spinner"></div><span>' + i18n.t('auth.connecting') + '</span>';
 
   var _authParams   = new URLSearchParams(window.location.search);
   var _authRedirect = _authParams.get('redirect');
@@ -865,7 +891,8 @@ async function handleSubmit() {
       errEl.textContent   = translateError(result.error.message);
       errEl.style.display = 'block';
       btn.disabled = false;
-      btn.innerHTML = '<span id="submitText">' + (currentMode === 'signup' ? 'Kaydol →' : 'Giriş Yap →') + '</span>';
+      var _btnKey = currentMode === 'signup' ? 'auth.btn_signup' : 'auth.btn_signin';
+      btn.innerHTML = '<span id="submitText" data-i18n="' + _btnKey + '">' + i18n.t(_btnKey) + '</span>';
       return;
     }
 
@@ -883,16 +910,17 @@ async function handleSubmit() {
       }).catch(() => {});
     }
     btn.classList.add('success-state');
-    btn.innerHTML = '<span>✓ Bağlantı gönderildi</span>';
+    btn.innerHTML = '<span data-i18n="auth.link_sent">' + i18n.t('auth.link_sent') + '</span>';
     var _hEl = document.getElementById('formCardHeading');
-    if (_hEl) _hEl.textContent = '📬 E-postanızı kontrol edin';
+    if (_hEl) { _hEl.textContent = i18n.t('auth.card_heading_check_email'); _hEl.setAttribute('data-i18n', 'auth.card_heading_check_email'); }
 
   } catch(e) {
     if (typeof gtag === 'function') gtag('event', currentMode === 'signup' ? 'sign_up_error' : 'sign_in_error', { error_message: String(e?.message || e).slice(0, 100) });
-    errEl.textContent   = 'Beklenmeyen bir hata oluştu. Lütfen tekrar deneyin.';
+    errEl.textContent   = i18n.t('auth.err.unexpected');
     errEl.style.display = 'block';
     btn.disabled = false;
-    btn.innerHTML = '<span id="submitText">' + (currentMode === 'signup' ? 'Kaydol →' : 'Giriş Yap →') + '</span>';
+    var _btnKey2 = currentMode === 'signup' ? 'auth.btn_signup' : 'auth.btn_signin';
+    btn.innerHTML = '<span id="submitText" data-i18n="' + _btnKey2 + '">' + i18n.t(_btnKey2) + '</span>';
   }
 }
 
@@ -910,27 +938,25 @@ async function handleGoogleLogin() {
     });
   } catch(e) {
     var errEl = document.getElementById('authError');
-    errEl.textContent   = '⚠ Google ile giriş şu an kullanılamıyor. E-posta kullanın.';
+    errEl.textContent   = i18n.t('auth.err.google_unavailable');
     errEl.style.display = 'block';
   }
 }
 
 // ── Error translation ──────────────────────────────────────────
 function translateError(msg) {
-  if (!msg) return 'Bir hata oluştu, lütfen tekrar deneyin';
-  if (msg.includes('Invalid login credentials'))     return 'Hatalı e-posta veya şifre';
-  if (msg.includes('Email not confirmed'))           return 'E-postanızı doğrulayın. Gelen kutunuzu kontrol edin.';
-  if (msg.includes('User already registered') || msg.includes('Email already registered')) return 'Bu e-posta zaten kayıtlı. Giriş yapmayı deneyin.';
-  if (msg.includes('Unable to validate email'))      return 'Geçersiz e-posta adresi';
-  if (msg.includes('signup_disabled'))               return 'Kayıt şu an kapalı. Lütfen daha sonra tekrar deneyin.';
-  if (msg.includes('Too many requests') || msg.includes('rate limit')) return 'Çok fazla deneme. Lütfen bekleyin.';
-  return 'Bir hata oluştu, lütfen tekrar deneyin.';
+  if (!msg) return i18n.t('auth.err.generic');
+  if (msg.includes('Invalid login credentials'))     return i18n.t('auth.err.invalid_creds');
+  if (msg.includes('Email not confirmed'))           return i18n.t('auth.err.not_confirmed');
+  if (msg.includes('User already registered') || msg.includes('Email already registered')) return i18n.t('auth.err.already_registered');
+  if (msg.includes('Unable to validate email'))      return i18n.t('auth.err.invalid_email');
+  if (msg.includes('signup_disabled'))               return i18n.t('auth.err.signup_disabled');
+  if (msg.includes('Too many requests') || msg.includes('rate limit')) return i18n.t('auth.err.rate_limit');
+  return i18n.t('auth.err.generic');
 }
 
 // ── SheetPreview animation ─────────────────────────────────────
 (function() {
-  var promptText  = 'Eksik SEO başlıklarını bul ve düzelt';
-  var replyText   = '✓ 43 ürün güncellendi · SEO skoru +28%';
   var promptEl    = document.getElementById('aiPromptText');
   var cursorEl    = document.getElementById('aiCursor');
   var chipEl      = document.getElementById('summaryChip');
@@ -971,6 +997,8 @@ function translateError(msg) {
   }
 
   function runLoop() {
+    var promptText = i18n.t('auth.right.ai_prompt');
+    var replyText  = i18n.t('auth.right.ai_reply');
     // Stage 1: type prompt
     promptEl.textContent = '';
     chipEl.classList.remove('visible');
@@ -1038,10 +1066,10 @@ function startShopifyAuth() {
     if (typeof gtag === 'function') gtag('event', 'shopify_connect_error', { error_code: _errCode });
     var errEl = document.getElementById('authError');
     if (errEl) {
-      errEl.innerHTML = 'Shopify bağlantısı başarısız. ' +
+      errEl.innerHTML = i18n.t('auth.err.shopify_failed') + ' ' +
         '<button type="button" id="shopify-retry-btn" ' +
         'style="background:none;border:none;color:#f97316;cursor:pointer;font-weight:600;text-decoration:underline;padding:0;font-size:inherit;"' +
-        ' onclick="shopifyRetry()">Tekrar Dene</button>';
+        ' onclick="shopifyRetry()">' + i18n.t('auth.err.retry') + '</button>';
       errEl.style.display = 'block';
     }
   }
@@ -1049,7 +1077,7 @@ function startShopifyAuth() {
 
 function shopifyRetry() {
   var btn = document.getElementById('shopify-retry-btn');
-  if (btn) { btn.disabled = true; btn.textContent = 'Bağlanıyor…'; }
+  if (btn) { btn.disabled = true; btn.textContent = i18n.t('auth.err.connecting'); }
   if (typeof gtag === 'function') gtag('event', 'shopify_connect_retry');
   startShopifyAuth();
 }
@@ -1060,14 +1088,14 @@ function shopifyRetry() {
   if (_planParam && ['pro','promax','business','ultra'].includes(_planParam)) {
     var labels = { pro: 'Pro', promax: 'Pro Max', business: 'Business', ultra: 'Ultra' };
     var headingEl = document.getElementById('formCardHeading');
-    if (headingEl && headingEl.textContent === 'Tekrar hoş geldiniz') {
-      headingEl.textContent = (labels[_planParam] || _planParam) + ' planına başlamak için kaydolun';
+    if (headingEl && (headingEl.textContent === i18n.t('auth.card_heading_signin') || headingEl.getAttribute('data-i18n') === 'auth.card_heading_signin')) {
+      headingEl.textContent = (labels[_planParam] || _planParam) + i18n.t('auth.plan_prefix');
+      headingEl.removeAttribute('data-i18n');
     }
   }
 })();
 </script>
 
-<script src="i18n.js"></script>
 <script src="payment.js?v=2"></script>
 </b<!-- BEGIN PLERDY CODE -->
 <script data-plerdy_code='1'>
