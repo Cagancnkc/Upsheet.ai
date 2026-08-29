@@ -326,7 +326,7 @@ async function fireAction(action, rule, matchingRows, headers) {
         await fetch(`${BACKEND}/api/integrations/discord/notify`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-          body: JSON.stringify({ webhookUrl, content: interp(action.message), username: action.username || 'Mocksheets' })
+          body: JSON.stringify({ webhookUrl, title: interp(action.title || 'Mocksheets Bildirimi'), message: interp(action.message || '') })
         });
         break;
       }
@@ -334,7 +334,7 @@ async function fireAction(action, rule, matchingRows, headers) {
         await fetch(`${BACKEND}/api/integrations/telegram/send`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-          body: JSON.stringify({ botToken: action.botToken, chatId: action.chatId, text: interp(action.message) })
+          body: JSON.stringify({ botToken: action.botToken, chatId: action.chatId, message: interp(action.message || '') })
         });
         break;
       }

@@ -4199,18 +4199,27 @@ function getAuthToken() {
   } catch { return null; }
 }
 
+// Async header helper — prefers app.html'daki authHeaders (Supabase refresh)
+async function apiAuthHeaders() {
+  try {
+    if (typeof window !== 'undefined' && typeof window.authHeaders === 'function') {
+      return await window.authHeaders();
+    }
+  } catch { /* fallback */ }
+  const token = getAuthToken();
+  return token ? { 'Authorization': 'Bearer ' + token } : {};
+}
+
 // ── Kullanım bilgisi ─────────────────────────────
 let userUsage = null;
 let userPlan = 'free';
 
 async function loadUserUsage() {
-  const token = getAuthToken();
-  if (!token) return;
+  const headers = await apiAuthHeaders();
+  if (!headers.Authorization) return;
 
   try {
-    const res = await fetch(API_URL + '/api/usage', {
-      headers: { 'Authorization': 'Bearer ' + token }
-    });
+    const res = await fetch(API_URL + '/api/usage', { headers });
     if (!res.ok) return;
     userUsage = await res.json();
     userPlan = userUsage.plan;
@@ -4445,10 +4454,9 @@ async function doSentimentAnalysis(data) {
   let labels;
   let aiFailReason = null;
   try {
-    const token = getAuthToken();
     const res = await fetch(API_URL + '/api/sentiment', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', ...(token ? { 'Authorization': 'Bearer ' + token } : {}) },
+      headers: { 'Content-Type': 'application/json', ...(await apiAuthHeaders()) },
       body: JSON.stringify({ texts })
     });
     if (res.ok) {
@@ -4749,8 +4757,7 @@ async function doBatchAI(data) {
   let processed = 0;
   showToast('⏳ Toplu işlem başladı (max ' + maxRows + ' satır)...', 'info');
 
-  const token = getAuthToken();
-  const headers = { 'Content-Type': 'application/json', ...(token ? { 'Authorization': 'Bearer ' + token } : {}) };
+  const headers = { 'Content-Type': 'application/json', ...(await apiAuthHeaders()) };
 
   let aborted = false;
   for (let i = 1; i < Math.min(rows.length, maxRows + 1); i++) {
@@ -4945,7 +4952,7 @@ async function exportToGSheets() {
   let lastRow = 0;
   for (let r = 0; r < ROWS; r++) { if (data[r].some(c => c !== '')) lastRow = r + 1; }
   const exportData = data.slice(0, Math.max(lastRow, 1));
-  const authToken = getAuthToken();
+  const authHdrs = await apiAuthHeaders();
 
   // Google OAuth token varsa doğrudan Sheets API ile yaz
   if (cfg.tokens?.access_token) {
@@ -4953,7 +4960,7 @@ async function exportToGSheets() {
     try {
       const resp = await fetch(API_URL + '/api/integrations/sheets/write', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
+        headers: { 'Content-Type': 'application/json', ...authHdrs },
         body: JSON.stringify({
           accessToken: cfg.tokens.access_token,
           refreshToken: cfg.tokens.refresh_token,
@@ -4992,7 +4999,7 @@ async function exportToGSheets() {
   try {
     const resp = await fetch(API_URL + '/api/integrations/sheets/export', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
+      headers: { 'Content-Type': 'application/json', ...authHdrs },
       body: JSON.stringify({ sheetId: cfg.url, data: exportData, sheetName: cfg.tab || 'Sheet1' })
     });
     if (!resp.ok) throw new Error('Sunucu hatası: ' + resp.status);
@@ -5026,10 +5033,9 @@ async function exportToNotion() {
   if (!rows.length) { toast('Aktarılacak veri yok', 'err'); return; }
   toast(`${rows.length} satır Notion'a aktarılıyor...`, 'info');
   try {
-    const token = getAuthToken();
     const resp = await fetch(API_URL + '/api/integrations/notion/export', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      headers: { 'Content-Type': 'application/json', ...(await apiAuthHeaders()) },
       body: JSON.stringify({ token: cfg.token, databaseId: cfg.dbId, headers, rows })
     });
     const result = await resp.json();
@@ -5057,10 +5063,9 @@ async function triggerWebhook() {
   let lastRow = 0;
   for (let r = 0; r < ROWS; r++) { if (data[r].some(c => c !== '')) lastRow = r + 1; }
   try {
-    const token = getAuthToken();
     const resp = await fetch(API_URL + '/api/integrations/webhook/send', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      headers: { 'Content-Type': 'application/json', ...(await apiAuthHeaders()) },
       body: JSON.stringify({ url: cfg.url, event: 'manual_export', secret: cfg.secret,
         data: { rows: lastRow, sheet: activeSheet } })
     });
@@ -5086,10 +5091,9 @@ async function exportToSlack() {
   const previewRows = data.slice(0, Math.min(lastRow, 6));
   const csvPreview = previewRows.map(r => r.filter((_, i) => r.some(c => c !== '') && i < 8).join('\t')).join('\n');
   try {
-    const token = getAuthToken();
     const resp = await fetch(API_URL + '/api/integrations/slack/notify', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      headers: { 'Content-Type': 'application/json', ...(await apiAuthHeaders()) },
       body: JSON.stringify({
         webhookUrl: cfg.url,
         title: '📊 Mocksheet Dışa Aktarım',
@@ -5123,10 +5127,9 @@ async function exportToAirtable() {
   const rows = data.slice(1, lastRow);
   toast(`${rows.length} satır Airtable'a aktarılıyor...`, 'info');
   try {
-    const token = getAuthToken();
     const resp = await fetch(API_URL + '/api/integrations/airtable/export', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      headers: { 'Content-Type': 'application/json', ...(await apiAuthHeaders()) },
       body: JSON.stringify({ token: cfg.token, baseId: cfg.baseId, tableName: cfg.tableName, headers, rows })
     });
     const result = await resp.json();
@@ -5150,10 +5153,9 @@ async function exportToTeams() {
   const previewRows = data.slice(0, Math.min(lastRow, 6));
   const tablePreview = previewRows.map(r => r.filter((_, i) => i < 6).join(' | ')).join('\n');
   try {
-    const token = getAuthToken();
     const resp = await fetch(API_URL + '/api/integrations/teams/notify', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      headers: { 'Content-Type': 'application/json', ...(await apiAuthHeaders()) },
       body: JSON.stringify({
         webhookUrl: cfg.url,
         title: '📊 Mocksheet Dışa Aktarım',
@@ -5187,10 +5189,9 @@ async function exportToTrello() {
   const rows = data.slice(1, lastRow);
   toast(`${rows.length} satır Trello'ya kart olarak aktarılıyor...`, 'info');
   try {
-    const token = getAuthToken();
     const resp = await fetch(API_URL + '/api/integrations/trello/export', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      headers: { 'Content-Type': 'application/json', ...(await apiAuthHeaders()) },
       body: JSON.stringify({ apiKey: cfg.apiKey, token: cfg.token, boardId: cfg.boardId, listName: cfg.listName, headers, rows })
     });
     const result = await resp.json();
@@ -5212,10 +5213,9 @@ async function triggerMake() {
   let lastRow = 0;
   for (let r = 0; r < ROWS; r++) { if (data[r].some(c => c !== '')) lastRow = r + 1; }
   try {
-    const token = getAuthToken();
     const resp = await fetch(API_URL + '/api/integrations/make/trigger', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      headers: { 'Content-Type': 'application/json', ...(await apiAuthHeaders()) },
       body: JSON.stringify({ url: cfg.url, event: 'manual_export', data: { rows: lastRow, sheet: activeSheet, source: 'Mocksheets' } })
     });
     const result = await resp.json();
@@ -5243,10 +5243,9 @@ async function exportToDrive() {
   }).join(',')).join('\r\n');
   toast("Google Drive'a yükleniyor...", 'info');
   try {
-    const token = getAuthToken();
     const resp = await fetch(API_URL + '/api/integrations/drive/upload', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      headers: { 'Content-Type': 'application/json', ...(await apiAuthHeaders()) },
       body: JSON.stringify({ token: cfg.token, fileName: cfg.fileName || 'Mocksheets_Export', csv })
     });
     const result = await resp.json();
@@ -6252,13 +6251,12 @@ async function _pdfProcessFile(file) {
   }, 500);
 
   try {
-    const token = getAuthToken();
     const formData = new FormData();
     formData.append('pdf', file);
 
     const res = await fetch(API_URL + '/api/pdf/extract', {
       method: 'POST',
-      headers: token ? { 'Authorization': 'Bearer ' + token } : {},
+      headers: await apiAuthHeaders(),
       body: formData
     });
 

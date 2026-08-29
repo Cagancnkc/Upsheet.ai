@@ -16,8 +16,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 **Core AI flow:**
 ```
 Turkish user command
-  → backend/rag/retrieval.js (vector search → 5 similar examples from dataset.js)
-  → backend/rag/pipeline.js (Claude API with prompt caching: system + RAG context cached, user prompt not)
+  → backend/routes/chat.js (Claude chat pipeline with prompt caching)
+  → backend/rag/shopifyRetrieval.js (vector search over Shopify catalog embeddings via vectorStore.js)
   → JSON action (sort / filter / highlight / update_cells / delete_rows / etc.)
   → js/app.js applies action to the 50×26 grid
 ```
@@ -63,9 +63,11 @@ STRIPE_PRICE_BIZ_WEEKLY= STRIPE_PRICE_BIZ_MONTHLY= STRIPE_PRICE_BIZ_YEARLY=
 | File | Purpose |
 |------|---------|
 | `backend/server.js` | Express app, route registration, middleware |
-| `backend/rag/pipeline.js` | Claude API call, prompt caching, response parsing |
-| `backend/rag/dataset.js` | 600+ Turkish command examples for RAG |
-| `backend/rag/retrieval.js` | Embedding creation + vector search |
+| `backend/routes/chat.js` | Claude chat pipeline, prompt caching, action parsing |
+| `backend/rag/shopifyDataset.js` | Shopify catalog dataset builder for RAG |
+| `backend/rag/shopifyRetrieval.js` | Embedding + vector search over Shopify products |
+| `backend/rag/vectorStore.js` | Supabase pgvector store adapter |
+| `backend/rag/embeddings.js` | Anthropic/embedding helpers |
 | `backend/middleware/limits.js` | Auth verification + usage limit enforcement |
 | `backend/routes/stripe.js` | Stripe checkout + webhook handling |
 | `backend/routes/integrations.js` | Google Sheets import/export |
@@ -84,4 +86,4 @@ All UI, AI prompts, system prompts, and example dataset are in Turkish. The app 
 
 ## Prompt Caching
 
-`backend/rag/pipeline.js` uses Anthropic's `ephemeral` cache control. The system prompt and RAG examples block are marked cached; only the user command + sheet data is sent uncached. Do not restructure messages in a way that breaks cache hits (cached blocks must be identical across requests).
+`backend/routes/chat.js` uses Anthropic's `ephemeral` cache control. The system prompt and RAG examples block are marked cached; only the user command + sheet data is sent uncached. Do not restructure messages in a way that breaks cache hits (cached blocks must be identical across requests).
