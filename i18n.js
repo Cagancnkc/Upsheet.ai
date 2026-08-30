@@ -164,7 +164,7 @@ const TRANSLATIONS = {
     'auth.plan_prefix': ' planına başlamak için kaydolun',
 
     // ── APP shell ──
-    'app.page_title': 'Mocksheets — Shopify Katalog Yöneticisi',
+    'app.page_title': 'Mocksheets — Shopify Catalog Manager',
     'app.autopull_banner': 'Shopify mağazanız bağlandı — ürünleriniz aktarılıyor...',
     'app.sidebar.store_connected': 'Mağaza bağlı',
     'app.sidebar.switch_store': 'Mağaza Değiştir',
