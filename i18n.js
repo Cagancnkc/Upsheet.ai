@@ -88,7 +88,7 @@ const TRANSLATIONS = {
     'upgrade.bulk_edit.title': 'Toplu düzenleme başlatmak istiyorsun',
     'upgrade.bulk_edit.body': 'Ücretsiz plan toplu düzenlemeyi desteklemez. Pro ile birden fazla ürünü tek seferde güncelle.',
     'upgrade.bulk_edit.f1': 'Toplu düzenleme',
-    'upgrade.bulk_edit.f2': 'Geri Al geçmişi',
+    'upgrade.bulk_edit.f2': 'Undo geçmişi',
     'upgrade.bulk_edit.f3': 'Şablonlar',
     'upgrade.bulk_edit.f4': 'CSV toplu içe aktarma',
     'upgrade.auto_sync.title': 'Otomatik senkronu açmak istiyorsun',
@@ -192,12 +192,13 @@ const TRANSLATIONS = {
     'app.tabs.variants': 'Varyantlar',
     'app.tabs.inventory': 'Envanter',
     'app.tabs.collections': 'Koleksiyonlar',
-    'app.nav.dashboard': 'Pano',
-    'app.nav.ai_chat': 'AI Sohbeti',
+    'app.nav.dashboard': 'Dashboard',
+    'app.nav.ai_chat': 'AI Chat',
     'app.nav.catalog_check': 'Katalog Kontrolü',
     'app.nav.sync': 'Senkronizasyon',
     'app.nav.history': 'Geçmiş İşlemler',
     'app.nav.settings': 'Ayarlar',
+    'app.lang_toggle_title': 'Dili değiştir',
 
     // Meta description (app.html)
     'app.meta.description': 'Shopify kataloğunuzu AI ile yönetin. Ürün başlıklarını, SEO\'yu ve açıklamaları optimize edin — onaylama adımıyla Shopify\'a yazın.',
@@ -580,7 +581,8 @@ const i18n = {
   },
 
   updateToggle() {
-    // lang-toggle button removed; no action needed
+    const btn = document.getElementById('lang-toggle');
+    if (btn) btn.textContent = this.lang === 'tr' ? 'EN' : 'TR';
   },
 
   toggle() {

@@ -50,7 +50,7 @@
 <script src="i18n.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="description" data-i18n="app.meta.description" content="Shopify kataloğunuzu AI ile yönetin. Ürün başlıklarını, SEO'yu ve açıklamaları optimize edin — onaylama adımıyla Shopify'a yazın.">
-<meta name="robots" content="noindex, nofollow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+<meta name="robots" content="noindex, nofollow">
 <link rel="canonical" href="https://mocksheets.com/app">
 <meta property="og:title" data-i18n="app.meta.og_title" content="Mocksheets — Shopify AI Katalog Yönetimi">
 <meta property="og:description" data-i18n="app.meta.og_description" content="Ürün başlıklarını, SEO'yu ve açıklamaları AI ile optimize edin. Onayladığınız değişiklikler anında Shopify'a yazılır.">
@@ -830,6 +830,8 @@
         <span id="ms-demo-badge" class="ms-demo-badge" style="display:none;" data-i18n="app.demo_badge">Demo görünümü</span>
       </div>
       <div style="display:flex;align-items:center;gap:16px;">
+        <button id="lang-toggle" type="button" onclick="i18n.toggle()" data-i18n-title="app.lang_toggle_title" title="Dili değiştir"
+          style="height:32px;padding:0 10px;border:0.5px solid #e5e7eb;border-radius:10px;background:#fff;color:#374151;cursor:pointer;font-size:11px;font-weight:600;letter-spacing:0.04em;">EN</button>
         <div style="position:relative;">
           <button id="header-notif-btn" type="button" style="width:32px;height:32px;border:0.5px solid #e5e7eb;border-radius:10px;background:#fff;color:#6b7280;cursor:pointer;display:flex;align-items:center;justify-content:center;position:relative;">
             <i class="ti ti-bell" style="font-size:15px;"></i>
