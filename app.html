@@ -2754,7 +2754,7 @@ function renderDashboard() {
   <!-- HEADER -->
   <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:20px;">
     <div>
-      <h1 style="font-size:22px;font-weight:700;margin:0 0 3px;letter-spacing:-0.01em;">Pano</h1>
+      <h1 style="font-size:22px;font-weight:700;margin:0 0 3px;letter-spacing:-0.01em;">Dashboard</h1>
       <p style="font-size:13px;color:#9ca3af;margin:0;">Mağazanızın gerçek zamanlı performans özeti</p>
     </div>
     <div style="display:flex;align-items:center;gap:10px;">
@@ -3162,7 +3162,7 @@ function ensureBackToDashboardButton() {
   backBtn.type = 'button';
   backBtn.style.cssText = 'display:flex;align-items:center;gap:6px;padding:6px 12px;' +
     'border:0.5px solid #e5e7eb;border-radius:8px;background:#fff;color:#6b7280;font-size:12px;cursor:pointer;margin-right:8px;';
-  backBtn.innerHTML = '<i class="ti ti-arrow-left" style="font-size:13px;"></i> Pano\'ya Dön';
+  backBtn.innerHTML = '<i class="ti ti-arrow-left" style="font-size:13px;"></i> Dashboard\'a Dön';
   backBtn.addEventListener('click', function() { setView('dashboard'); });
   toolbar.insertBefore(backBtn, toolbar.firstChild);
 }
