@@ -230,7 +230,7 @@ a{color:inherit}
         Payroll cost alone runs
         <strong style="color:#111827;">$450+ per month.</strong>
       </p>
-      <p style="font-size:14px;color:#16a34a;font-weight:600;margin:0;">Mocksheets starts at $3/mo — or $29/yr with 20% savings.</p>
+      <p style="font-size:14px;color:#16a34a;font-weight:600;margin:0;">Mocksheets starts at $9.</p>
     </div>
 
     <div class="pricing-toggle-wrap">
@@ -272,10 +272,10 @@ a{color:inherit}
         </div>
         <p style="font-size:12px;color:#9ca3af;text-decoration:line-through;margin:0 0 4px;">If done manually: $450+/mo</p>
         <div class="plan-price-row">
-          <span class="plan-price-big" id="price-pro">$3</span>
-          <span class="plan-price-unit" id="price-unit-pro">/mo</span>
+          <span class="plan-price-big" id="price-pro">$9</span>
+          <span class="plan-price-unit">/mo</span>
         </div>
-        <div id="yearly-info-pro" style="display:none;font-size:12px;color:#a7f3d0;margin-top:-12px">🎉 Annual billing · 20% off vs monthly · Save <strong style="color:#4ade80">$7</strong></div>
+        <div id="yearly-info-pro" style="display:none;font-size:12px;color:#a7f3d0;margin-top:-12px">Billed annually: <strong style="color:#4ade80">$84</strong> · Save <strong style="color:#4ade80">$24</strong> vs monthly</div>
         <div class="plan-divider"></div>
         <ul style="list-style:none;padding:0;margin:0 0 28px;display:flex;flex-direction:column;gap:10px;">
           <li style="display:flex;gap:8px;font-size:13px;color:#e5e7eb;"><span style="color:#16a34a;">✓</span> Unlimited AI product title/description optimization</li>
@@ -297,10 +297,10 @@ a{color:inherit}
           <div class="plan-desc" style="margin-top:6px">Unlimited power for large catalogs and agencies.</div>
         </div>
         <div class="plan-price-row">
-          <span class="plan-price-big" id="price-ultra">$8</span>
-          <span class="plan-price-unit" id="price-unit-ultra">/mo</span>
+          <span class="plan-price-big" id="price-ultra">$24</span>
+          <span class="plan-price-unit">/mo</span>
         </div>
-        <div id="yearly-info-ultra" style="display:none;font-size:12px;color:#6b7280;margin-top:-12px">🎉 Annual billing · 20% off vs monthly · Save <strong style="color:#16a34a">$17</strong></div>
+        <div id="yearly-info-ultra" style="display:none;font-size:12px;color:#6b7280;margin-top:-12px">Billed annually: <strong style="color:#16a34a">$228</strong> · Save <strong style="color:#16a34a">$60</strong> vs monthly</div>
         <p style="font-size:11px;color:#9ca3af;margin:8px 0 16px;">For large catalogs and agencies</p>
         <div class="plan-divider"></div>
         <ul class="plan-feats">
@@ -365,7 +365,7 @@ a{color:inherit}
     </details>
     <details>
       <summary>What's the difference with the annual plan?</summary>
-      <p>With annual billing, Pro is $29/yr and Ultra is $79/yr — 20% cheaper than monthly. Billed once per year. Cancel any time.</p>
+      <p>With annual billing, Pro is $7/mo and Ultra is $19/mo — 20% cheaper than monthly. Billed once per year. Cancel any time.</p>
     </details>
     <details>
       <summary>Where is my data stored?</summary>
@@ -385,7 +385,7 @@ a{color:inherit}
 
 <div id="sticky-pricing-bar" aria-hidden="true">
   <div class="sticky-bar-inner">
-    <span style="font-size:15px;font-weight:600;">Pro · <span id="sticky-price">$3</span><span id="sticky-unit">/mo</span></span>
+    <span style="font-size:15px;font-weight:600;">Pro · <span id="sticky-price">$7</span>/mo</span>
     <a id="sticky-cta" href="https://buy.polar.sh/polar_cl_QIhbzKVVap5xuCuLGOwv0pVCiJ9GNzK89N6u513m0Ik" style="display:inline-flex;align-items:center;gap:6px;background:#16a34a;color:#fff;padding:10px 22px;border-radius:99px;text-decoration:none;font-weight:700;font-size:14px;transition:background .15s" onmouseover="this.style.background='#15803d'" onmouseout="this.style.background='#16a34a'">Get Started →</a>
   </div>
 </div>
@@ -396,8 +396,8 @@ a{color:inherit}
 
 <script>
 var _billingPeriod = 'monthly';
-var MONTHLY = { pro: 3, ultra: 8 };
-var YEARLY  = { pro: 29, ultra: 79 };
+var MONTHLY = { pro: 9, ultra: 24 };
+var YEARLY  = { pro: 7, ultra: 19 };
 
 // TODO: swap to USD Polar product IDs when created — using TRY links for now.
 // Polar checkout accepts any card and handles currency conversion at checkout.
@@ -421,13 +421,8 @@ function setPricingPeriod(p) {
   monthlyBtn.setAttribute('aria-selected', String(!yearly));
   yearlyBtn.setAttribute('aria-selected', String(yearly));
 
-  var unit = yearly ? '/yr' : '/mo';
   document.getElementById('price-pro').textContent   = '$' + prices.pro;
   document.getElementById('price-ultra').textContent = '$' + prices.ultra;
-  var uPro   = document.getElementById('price-unit-pro');
-  var uUltra = document.getElementById('price-unit-ultra');
-  if (uPro)   uPro.textContent   = unit;
-  if (uUltra) uUltra.textContent = unit;
 
   document.getElementById('cta-pro').href   = getPolarUrl('pro',   period);
   document.getElementById('cta-ultra').href = getPolarUrl('ultra', period);
@@ -436,10 +431,8 @@ function setPricingPeriod(p) {
   document.getElementById('yearly-info-ultra').style.display = yearly ? '' : 'none';
 
   var stickyPrice = document.getElementById('sticky-price');
-  var stickyUnit  = document.getElementById('sticky-unit');
   var stickyCta   = document.getElementById('sticky-cta');
   if (stickyPrice) stickyPrice.textContent = '$' + prices.pro;
-  if (stickyUnit)  stickyUnit.textContent  = unit;
   if (stickyCta)   stickyCta.href = getPolarUrl('pro', period);
 }
 
@@ -449,7 +442,7 @@ function updateROI() {
   var weeklyTimeSaved = hours * 0.65;
   var monthlyTimeSaved = weeklyTimeSaved * 4.33;
   var monthlyValue = monthlyTimeSaved * hourlyRate;
-  var netGain = monthlyValue - 3;
+  var netGain = monthlyValue - 9;
   document.getElementById('roi-hours-val').textContent = hours;
   document.getElementById('roi-time').textContent = Math.round(monthlyTimeSaved) + ' hrs';
   document.getElementById('roi-value').textContent = '$' + Math.round(monthlyValue).toLocaleString('en-US');
